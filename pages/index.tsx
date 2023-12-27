@@ -1,7 +1,11 @@
-import { WelcomePage } from "@refinedev/core";
+import { Button } from "src/ui/button";
 
 export default function Index() {
-  return <WelcomePage />;
+  return (
+    <div className="text-3xl">
+      <Button>Hello</Button>
+    </div>
+  );
 }
 
 Index.noLayout = true;
