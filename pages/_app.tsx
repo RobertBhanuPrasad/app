@@ -1,10 +1,5 @@
-import { GitHubBanner, Refine } from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
-import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-import routerProvider, {
-  DocumentTitleHandler,
-  UnsavedChangesNotifier,
-} from "@refinedev/nextjs-router";
+import {  Refine } from "@refinedev/core";
+import routerProvider from "@refinedev/nextjs-router";
 import type { NextPage } from "next";
 import { AppProps } from "next/app";
 
@@ -45,31 +40,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   };
 
   return (
-    <>
-      <GitHubBanner />
-      <RefineKbarProvider>
-        <DevtoolsProvider>
-          <Refine
-            routerProvider={routerProvider}
-            dataProvider={dataProvider(supabaseClient)}
-            authProvider={authProvider}
-            i18nProvider={i18nProvider}
-            options={{
-              syncWithLocation: true,
-              warnWhenUnsavedChanges: true,
-              useNewQueryKeys: true,
-              projectId: "xYm5dc-16FE6q-ikgs8l",
-            }}
-          >
-            {renderComponent()}
-            <RefineKbar />
-            <UnsavedChangesNotifier />
-            <DocumentTitleHandler />
-          </Refine>
-          <DevtoolsPanel />
-        </DevtoolsProvider>
-      </RefineKbarProvider>
-    </>
+    <Refine
+      routerProvider={routerProvider}
+      dataProvider={dataProvider(supabaseClient)}
+      authProvider={authProvider}
+      i18nProvider={i18nProvider}
+      options={{
+        syncWithLocation: true,
+        warnWhenUnsavedChanges: true,
+        useNewQueryKeys: true,
+      }}
+    >
+      {renderComponent()}
+    </Refine>
   );
 }
 
