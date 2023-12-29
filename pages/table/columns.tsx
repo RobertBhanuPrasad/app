@@ -61,6 +61,7 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+
   {
     accessorKey: "id",
     header: "id",
@@ -80,6 +81,31 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "contact_mobile",
     header: "contact_mobile",
+  },
+  {
+    accessorKey: "center",
+    header: () => <div>center</div>,
+    cell: ({ row }) => {
+      const center: any = row.getValue("center");
+
+      return <div>{center?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "state",
+    header: () => <div>State</div>,
+    cell: ({ row }) => {
+      const state: any = row.getValue("state");
+      return <div>{state?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "categoryMaster",
+    header: () => <div>Course_type</div>,
+    cell: ({ row }) => {
+      const data: any = row.getValue("categoryMaster");
+      return <div>{data?.category_value}</div>;
+    },
   },
   {
     id: "actions",
