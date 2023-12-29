@@ -1,8 +1,12 @@
 import { createClient } from "@refinedev/supabase";
 
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  throw new Error("Supabase URL or key is not defined");
+}
+
 export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY, {
   db: {
     schema: "public",
