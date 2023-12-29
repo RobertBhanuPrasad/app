@@ -17,9 +17,25 @@ import {
 // You can use a Zod schema here if you want.
 export type Payment = {
   id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
+  course_code?: string | null;
+  course_type_id?: string | null;
+  format_id?: string | null;
+  visibility_id?: string | null;
+  status_id?: string | null;
+  course_start_date?: string | null;
+  course_end_date?: string | null;
+  course_link?: string | null;
+  course_landing_page_link?: string | null;
+  course_registration_link?: string | null;
+  region_id?: string | null;
+  country_id?: number | null;
+  state_id?: string | null;
+  city_id?: string | null;
+  center_id?: string | null;
+  contact_name?: string | null;
+  contact_mobile?: string | null;
+  contact_email?: string | null;
+  organizer_user_id?: string | null;
 };
 
 export const columns: ColumnDef<Payment>[] = [
@@ -46,25 +62,24 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "id",
+    header: "id",
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "course_start_date",
+    header: "course_start_date",
   },
   {
-    accessorKey: "amount",
-    header: () => <div>Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div>{formatted}</div>;
-    },
+    accessorKey: "contact_name",
+    header: "contact_name",
+  },
+  {
+    accessorKey: "contact_email",
+    header: "contact_email",
+  },
+  {
+    accessorKey: "contact_mobile",
+    header: "contact_mobile",
   },
   {
     id: "actions",
