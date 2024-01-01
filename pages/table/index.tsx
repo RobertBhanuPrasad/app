@@ -14,10 +14,10 @@ export default function DemoPage() {
   // });
 
   const { tableQueryResult, setCurrent, filters, setFilters } = useTable<any>({
-    resource: "Course",
+    resource: "course",
     meta: {
       select:
-        "*, center(id, name), state(id, name), region(id, name) , categoryMaster(id,category_value)",
+        "*, center(id, name), state(id, name), region(id, name) , category_master(id,category_value)",
     },
   });
 
