@@ -3,17 +3,20 @@ import { Payment, columns } from "./columns";
 import { DataTable } from "./dataTable";
 import React, { useMemo } from "react";
 import { Input } from "src/ui/input";
+import { Button } from "src/ui/button";
+import { redirect, useRouter } from "next/navigation";
 
 export default function DemoPage() {
-  // const { tableQueryResult } = useTable<Payment>({
-  //   resource: "Course",
-  //   pagination: {
-  //     current: 1,
-  //     pageSize: 10,
-  //   },
-  // });
-
-  const { tableQueryResult, setCurrent, filters, setFilters } = useTable<any>({
+  const {
+    tableQueryResult,
+    current,
+    setCurrent,
+    pageCount,
+    filters,
+    setFilters,
+    setPageSize,
+    pageSize,
+  } = useTable<any>({
     resource: "course",
     meta: {
       select:
@@ -36,26 +39,40 @@ export default function DemoPage() {
         "",
     };
   }, [filters]);
+    const router = useRouter();
+
 
   return (
     <div className="container mx-auto py-10">
-      <Input
-        placeholder="Filter emails..."
-        value={currentFilterValues.email}
-        onChange={(e) => {
-          setFilters([
-            {
-              field: "contact_email",
-              operator: "contains",
-              value: !!e.currentTarget.value
-                ? e.currentTarget.value
-                : undefined,
-            },
-          ]);
-        }}
-        className="max-w-sm"
+      <div className="flex flex-row justify-between">
+        <Input
+          placeholder="Filter emails..."
+          value={currentFilterValues.email}
+          onChange={(e) => {
+            setFilters([
+              {
+                field: "contact_email",
+                operator: "contains",
+                value: !!e.currentTarget.value
+                  ? e.currentTarget.value
+                  : undefined,
+              },
+            ]);
+          }}
+          className="max-w-sm"
+        />
+        <Button onClick={() => router.push("/newCourse")}>New Course</Button>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data}
+        setCurrent={setCurrent}
+        pageCount={pageCount}
+        current={current}
+        setPageSize={setPageSize}
+        pageSize={pageSize}
       />
-      <DataTable columns={columns} data={data} setCurrent={setCurrent} />
     </div>
   );
 }

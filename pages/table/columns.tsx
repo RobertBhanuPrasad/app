@@ -100,17 +100,16 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
   {
-    accessorKey: "categoryMaster",
+    accessorKey: "category_master",
     header: () => <div>Course_type</div>,
     cell: ({ row }) => {
-      const data: any = row.getValue("categoryMaster");
+      const data: any = row.getValue("category_master");
       return <div>{data?.category_value}</div>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

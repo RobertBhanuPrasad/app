@@ -12,6 +12,13 @@ import {
 } from "@tanstack/react-table";
 
 import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DoubleArrowLeftIcon,
+  DoubleArrowRightIcon,
+} from "@radix-ui/react-icons";
+
+import {
   Table,
   TableBody,
   TableCell,
@@ -28,17 +35,32 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
 } from "../../src/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   setCurrent: any;
+  pageCount: any;
+  current: any;
+  setPageSize: any;
+  pageSize: any;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   setCurrent,
+  pageCount,
+  current,
+  setPageSize,
+  pageSize,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -143,18 +165,34 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <div className=" p-2 flex-1 text-sm text-muted-foreground">
+        <div className="flex items-center justify-between px-2 py-4">
+          <div className="flex-1 text-sm text-muted-foreground">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
-
-          <button onClick={() => setCurrent((prev: any) => prev - 1)}>
-            Previous
-          </button>
-          <button onClick={() => setCurrent((prev: any) => prev + 1)}>
-            Next
-          </button>
+          <div className="flex items-center space-x-6 lg:space-x-8">
+            <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+              Page {current} of {pageCount}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => setCurrent((prev: any) => prev - 1)}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeftIcon className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => setCurrent((prev: any) => prev + 1)}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRightIcon className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -146,11 +146,16 @@ export default function Index() {
   });
 
   console.log(courseTypes, "courseTypes");
-  const { onFinish } = useForm<IProduct, HttpError, FormValues>({
+  const {
+    onFinish,
+    queryResult,
+  } = useForm<IProduct, HttpError, FormValues>({
     resource: "course",
     action: "create",
     // redirect: "show", // redirect to show page after form submission, defaults to "list"
   });
+
+  console.log("heyy result", queryResult);
 
   const [values, setValues] = useState<FormValues>({
     contact_name: "",
