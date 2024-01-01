@@ -24,6 +24,7 @@ import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "src/ui/calendar";
+import { supabaseClient } from "src/utility/supabaseClient";
 
 interface ICategory {
   id: number;
@@ -70,23 +71,11 @@ interface FormValues {
   city_id: any;
   center_id: any;
   // organizer_user_id: any;
+  created_by_user_id: any;
 }
 export default function Index() {
-  // const { options: courseTypes } = useSelect({
-  //   resource: "categoryMaster",
-  //   optionLabel: "category_value",
-  //   optionValue: "id",
-  //   filters: [
-  //     {
-  //       field: "category_name",
-  //       operator: "eq",
-  //       value: "course_types",
-  //     },
-  //   ],
-  // });
-
   const { options: visibility } = useSelect({
-    resource: "categoryMaster",
+    resource: "category_master",
     optionLabel: "category_value",
     optionValue: "id",
     filters: [
@@ -97,9 +86,9 @@ export default function Index() {
       },
     ],
   });
-
+  console.log(visibility, "visibility");
   const { options: formatIds } = useSelect({
-    resource: "categoryMaster",
+    resource: "category_master",
     optionLabel: "category_value",
     optionValue: "id",
     filters: [
@@ -123,14 +112,16 @@ export default function Index() {
     optionValue: "id",
   });
 
+  console.log(country, "country");
+
   const { options: state } = useSelect({
     resource: "state",
     optionLabel: "name",
     optionValue: "id",
   });
-
+  console.log(state, "state");
   const { options: city } = useSelect({
-    resource: "City",
+    resource: "city",
     optionLabel: "name",
     optionValue: "id",
   });
@@ -142,7 +133,7 @@ export default function Index() {
   });
 
   const { options: courseTypes } = useSelect({
-    resource: "categoryMaster",
+    resource: "category_master",
     optionLabel: "category_value",
     optionValue: "id",
     filters: [
@@ -153,44 +144,14 @@ export default function Index() {
       },
     ],
   });
+
+  console.log(courseTypes, "courseTypes");
   const { onFinish } = useForm<IProduct, HttpError, FormValues>({
-    resource: "Course",
+    resource: "course",
     action: "create",
     // redirect: "show", // redirect to show page after form submission, defaults to "list"
   });
 
-  // const { queryResult, onFinish } = useForm<IProduct, HttpError, FormValues>({
-  //   resource: "Course",
-  //   action: "edit",
-  //   id: "7",
-  //   // redirect: "show", // redirect to show page after form submission, defaults to "list"
-  // });
-
-  // const defaultValues = queryResult?.data?.data;
-  // console.log(defaultValues, "defaultValues");
-
-  // const [values, setValues] = useState<FormValues>({
-  //   // name: defaultValues?.name || "",
-  //   // material: defaultValues?.material || "",
-  //   contact_name: defaultValues?.contact_name || "",
-  //   contact_mobile: defaultValues?.contact_mobile || "",
-  //   contact_email: defaultValues?.contact_email || "",
-  //   // course_code: "",
-  //   course_type_id: defaultValues?.course_type_id || "",
-  //   format_id: defaultValues?.format_id || "",
-  //   visibility_id: defaultValues?.visibility_id || "",
-  //   // status_id: "",
-  //   course_start_date: defaultValues?.course_start_date || "",
-  //   course_end_date: defaultValues?.course_end_date || "",
-  //   // course_link: "",
-  //   // course_landing_page_link: "",
-  //   // course_registration_link: "",
-  //   region_id: defaultValues?.region_id || "",
-  //   country_id: defaultValues?.country_id || "",
-  //   state_id: defaultValues?.state_id || "",
-  //   city_id: defaultValues?.city_id || "",
-  //   center_id: defaultValues?.center_id || "",
-  // });
   const [values, setValues] = useState<FormValues>({
     contact_name: "",
     contact_mobile: "",
@@ -210,6 +171,8 @@ export default function Index() {
     state_id: "",
     city_id: "",
     center_id: "",
+    created_by_user_id: "",
+
     // organizer_user_id: "",
   });
   const [courseValue, setCourseValue] = useState<any>();
@@ -218,19 +181,11 @@ export default function Index() {
 
   const [formatValue, setFormatValue] = useState<any>();
 
-  const [regionValue, setRegionValue] = useState<any>();
-
-  const [countryValue, setCountryValue] = useState<any>();
-
-  const [stateValue, setStateValue] = useState<any>();
-
-  const [cityValue, setCityValue] = useState<any>();
-
-  const [centerValue, setCenterValue] = useState<any>();
   const [startDate, setStartDate] = useState<any>();
 
   const [endDate, setEndDate] = useState<any>();
 
+  const [userID, setUserID] = useState<any>();
   const onSubmit = (e: any) => {
     console.log(e, "on submit");
     console.log(values, "values");
@@ -239,38 +194,20 @@ export default function Index() {
       ...values,
       course_start_date: startDate.toISOString(),
       course_end_date: endDate.toISOString(),
+      created_by_user_id: userID,
     });
 
     onFinish(values);
   };
+  const getUser = async () => {
+    const { data } = await supabaseClient.auth.getUser();
+    setUserID(data?.user?.id);
+    console.log(data?.user?.id, "data");
+  };
 
-  // useEffect(() => {
-  //   setValues({
-  //     contact_name: defaultValues?.contact_name || "",
-  //     contact_mobile: defaultValues?.contact_mobile || "",
-  //     contact_email: defaultValues?.contact_email || "",
-  //     // course_code: "",
-  //     course_type_id: defaultValues?.course_type_id || "",
-  //     format_id: defaultValues?.format_id || "",
-  //     visibility_id: defaultValues?.visibility_id || "",
-  //     // status_id: "",
-  //     course_start_date: defaultValues?.course_start_date || "",
-  //     course_end_date: defaultValues?.course_end_date || "",
-  //     // course_link: "",
-  //     // course_landing_page_link: "",
-  //     // course_registration_link: "",
-  //     region_id: defaultValues?.region_id || "",
-  //     country_id: defaultValues?.country_id || "",
-  //     state_id: defaultValues?.state_id || "",
-  //     city_id: defaultValues?.city_id || "",
-  //     center_id: defaultValues?.center_id || "",
-  //   });
-  // }, [defaultValues]);
-
-  // const onSubmit = (e: { preventDefault: () => void }) => {
-  //   e.preventDefault();
-  //   onFinish(values);
-  // };
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <div className="text-3xl ml-20 mt-20">
@@ -366,10 +303,8 @@ export default function Index() {
                 <Label htmlFor="name">Region</Label>
                 <Select
                   onValueChange={(e) => {
-                    setRegionValue(e);
                     setValues({ ...values, region_id: e });
                   }}
-                  value={regionValue}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a course" />
@@ -387,10 +322,9 @@ export default function Index() {
                 <Label htmlFor="name">Country</Label>
                 <Select
                   onValueChange={(e) => {
-                    setCountryValue(e);
+                    console.log(e, "e");
                     setValues({ ...values, country_id: e });
                   }}
-                  value={countryValue}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a course" />
@@ -408,11 +342,8 @@ export default function Index() {
                 <Label htmlFor="name">State</Label>
                 <Select
                   onValueChange={(e) => {
-                    setStateValue(e);
                     setValues({ ...values, state_id: e });
                   }}
-                  value={stateValue}
-                  defaultValue={values.state_id}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a course" />
@@ -430,10 +361,8 @@ export default function Index() {
                 <Label htmlFor="name">City</Label>
                 <Select
                   onValueChange={(e) => {
-                    setCityValue(e);
                     setValues({ ...values, city_id: e });
                   }}
-                  value={cityValue}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a course" />
@@ -451,10 +380,8 @@ export default function Index() {
                 <Label htmlFor="name">Center</Label>
                 <Select
                   onValueChange={(e) => {
-                    setCenterValue(e);
                     setValues({ ...values, center_id: e });
                   }}
-                  value={centerValue}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a course" />
