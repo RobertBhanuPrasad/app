@@ -1,4 +1,6 @@
-import { HttpError, useForm, useSelect } from "@refinedev/core";
+import { HttpError, useSelect } from "@refinedev/core";
+import { useForm } from "@refinedev/react-hook-form";
+
 import { useEffect, useState } from "react";
 import { cn } from "src/lib/utils";
 import { Button } from "src/ui/button";
@@ -26,53 +28,6 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "src/ui/calendar";
 import { supabaseClient } from "src/utility/supabaseClient";
 
-interface ICategory {
-  id: number;
-  title: string;
-}
-interface IProduct {
-  contact_name: string;
-  contact_mobile: string;
-  contact_email: string;
-  // course_code: string;
-  course_type_id: string;
-  format_id: string;
-  visibility_id: string;
-  // status_id: string;
-  course_start_date: any;
-  course_end_date: any;
-  // course_link: string;
-  // course_landing_page_link: string;
-  // course_registration_link: string;
-  region_id: any;
-  country_id: any;
-  state_id: any;
-  city_id: any;
-  center_id: any;
-}
-
-interface FormValues {
-  contact_name: string;
-  contact_mobile: string;
-  contact_email: string;
-  // course_code: string;
-  course_type_id: string;
-  format_id: string;
-  visibility_id: string;
-  // status_id: string;
-  course_start_date: any;
-  course_end_date: any;
-  // course_link: string;
-  // course_landing_page_link: string;
-  // course_registration_link: string;
-  region_id: any;
-  country_id: any;
-  state_id: any;
-  city_id: any;
-  center_id: any;
-  // organizer_user_id: any;
-  created_by_user_id: any;
-}
 export default function Index() {
   const { options: visibility } = useSelect({
     resource: "category_master",
@@ -86,7 +41,6 @@ export default function Index() {
       },
     ],
   });
-  console.log(visibility, "visibility");
   const { options: formatIds } = useSelect({
     resource: "category_master",
     optionLabel: "category_value",
@@ -112,14 +66,12 @@ export default function Index() {
     optionValue: "id",
   });
 
-  console.log(country, "country");
-
   const { options: state } = useSelect({
     resource: "state",
     optionLabel: "name",
     optionValue: "id",
   });
-  console.log(state, "state");
+
   const { options: city } = useSelect({
     resource: "city",
     optionLabel: "name",
@@ -145,74 +97,53 @@ export default function Index() {
     ],
   });
 
-  console.log(courseTypes, "courseTypes");
-  const { onFinish } = useForm<IProduct, HttpError, FormValues>({
-    resource: "course",
-    action: "create",
-    // redirect: "show", // redirect to show page after form submission, defaults to "list"
-  });
-
-  const [values, setValues] = useState<FormValues>({
-    contact_name: "",
-    contact_mobile: "",
-    contact_email: "",
-    // course_code: "",
-    course_type_id: "",
-    format_id: "",
-    visibility_id: "",
-    // status_id: "",
-    course_start_date: "",
-    course_end_date: "",
-    // course_link: "",
-    // course_landing_page_link: "",
-    // course_registration_link: "",
-    region_id: "",
-    country_id: "",
-    state_id: "",
-    city_id: "",
-    center_id: "",
-    created_by_user_id: "",
-
-    // organizer_user_id: "",
-  });
-  const [courseValue, setCourseValue] = useState<any>();
-
-  const [visibilityValue, setVisibilityValue] = useState<any>();
-
-  const [formatValue, setFormatValue] = useState<any>();
-
   const [startDate, setStartDate] = useState<any>();
 
   const [endDate, setEndDate] = useState<any>();
 
   const [userID, setUserID] = useState<any>();
-  const onSubmit = (e: any) => {
-    console.log(e, "on submit");
-    console.log(values, "values");
-    e.preventDefault();
-    setValues({
-      ...values,
-      course_start_date: startDate.toISOString(),
-      course_end_date: endDate.toISOString(),
-      created_by_user_id: userID,
-    });
 
-    onFinish(values);
-  };
   const getUser = async () => {
     const { data } = await supabaseClient.auth.getUser();
     setUserID(data?.user?.id);
-    console.log(data?.user?.id, "data");
+    console.log(data?.user?.id, "user id");
   };
 
   useEffect(() => {
     getUser();
   }, []);
 
+  const {
+    refineCore: { onFinish },
+    register,
+    handleSubmit,
+    setValue,
+  } = useForm({
+    refineCoreProps: {
+      action: "create",
+      resource: "course",
+    },
+  });
+
+  const onSubmit = async (data: any) => {
+    register("created_by_user_id");
+    setValue("created_by_user_id", userID);
+    data.created_by_user_id = userID;
+    register("course_start_date");
+    setValue("course_start_date", startDate.toISOString());
+    data.course_start_date = startDate.toISOString();
+    register("course_end_date");
+    setValue("course_end_date", endDate.toISOString());
+    data.course_end_date = endDate.toISOString();
+
+    console.log("Form values:", data);
+    await onFinish(data);
+  };
+
   return (
     <div className="text-3xl ml-20 mt-20">
       <Card className="w-[400px]">
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <CardHeader>
             <CardTitle>Create Course</CardTitle>
             <CardDescription>creating a new course</CardDescription>
@@ -221,21 +152,21 @@ export default function Index() {
             <div className="grid w-full items-center gap-10">
               <div className="flex flex-col space-y-1.5 gap-4">
                 <Label htmlFor="name">course name</Label>
+
                 <Select
-                  onValueChange={(e) => {
-                    setCourseValue(e);
-                    setValues({ ...values, course_type_id: e });
+                  {...register("course_type_id")}
+                  onValueChange={(e: any) => {
+                    setValue("course_type_id", e);
                   }}
-                  value={courseValue}
-                  defaultValue={values.course_type_id}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a course" />
                   </SelectTrigger>
                   <SelectContent>
                     {courseTypes?.map((option) => {
+                      const stringValue = String(option.value);
                       return (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -259,19 +190,19 @@ export default function Index() {
                   </Select> */}
                 <Label htmlFor="name">Visibility</Label>
                 <Select
-                  onValueChange={(e) => {
-                    setVisibilityValue(e);
-                    setValues({ ...values, visibility_id: e });
+                  {...register("visibility_id")}
+                  onValueChange={(e: any) => {
+                    setValue("visibility_id", e);
                   }}
-                  value={visibilityValue}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a course" />
                   </SelectTrigger>
                   <SelectContent>
                     {visibility?.map((option) => {
+                      const stringValue = String(option.value);
                       return (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -280,19 +211,20 @@ export default function Index() {
                 </Select>
                 <Label htmlFor="name">format</Label>
                 <Select
-                  onValueChange={(e) => {
-                    setFormatValue(e);
-                    setValues({ ...values, format_id: e });
+                  {...register("format_id")}
+                  onValueChange={(e: any) => {
+                    setValue("format_id", e);
                   }}
-                  value={formatValue}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a course" />
                   </SelectTrigger>
                   <SelectContent>
                     {formatIds?.map((option) => {
+                      const stringValue = String(option.value);
+
                       return (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -302,8 +234,9 @@ export default function Index() {
                 <label htmlFor="name">location</label>
                 <Label htmlFor="name">Region</Label>
                 <Select
-                  onValueChange={(e) => {
-                    setValues({ ...values, region_id: e });
+                  {...register("region_id")}
+                  onValueChange={(e: any) => {
+                    setValue("region_id", e);
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
@@ -311,8 +244,10 @@ export default function Index() {
                   </SelectTrigger>
                   <SelectContent>
                     {region?.map((option) => {
+                      const stringValue = String(option.value);
+
                       return (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -321,9 +256,9 @@ export default function Index() {
                 </Select>
                 <Label htmlFor="name">Country</Label>
                 <Select
-                  onValueChange={(e) => {
-                    console.log(e, "e");
-                    setValues({ ...values, country_id: e });
+                  {...register("country_id")}
+                  onValueChange={(e: any) => {
+                    setValue("country_id", e);
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
@@ -331,8 +266,10 @@ export default function Index() {
                   </SelectTrigger>
                   <SelectContent>
                     {country?.map((option) => {
+                      const stringValue = String(option.value);
+
                       return (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -341,8 +278,9 @@ export default function Index() {
                 </Select>
                 <Label htmlFor="name">State</Label>
                 <Select
-                  onValueChange={(e) => {
-                    setValues({ ...values, state_id: e });
+                  {...register("state_id")}
+                  onValueChange={(e: any) => {
+                    setValue("state_id", e);
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
@@ -350,8 +288,9 @@ export default function Index() {
                   </SelectTrigger>
                   <SelectContent>
                     {state?.map((option) => {
+                      const stringValue = String(option.value);
                       return (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -360,8 +299,9 @@ export default function Index() {
                 </Select>
                 <Label htmlFor="name">City</Label>
                 <Select
-                  onValueChange={(e) => {
-                    setValues({ ...values, city_id: e });
+                  {...register("city_id")}
+                  onValueChange={(e: any) => {
+                    setValue("city_id", e);
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
@@ -369,8 +309,10 @@ export default function Index() {
                   </SelectTrigger>
                   <SelectContent>
                     {city?.map((option) => {
+                      const stringValue = String(option.value);
+
                       return (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -379,8 +321,9 @@ export default function Index() {
                 </Select>
                 <Label htmlFor="name">Center</Label>
                 <Select
-                  onValueChange={(e) => {
-                    setValues({ ...values, center_id: e });
+                  {...register("center_id")}
+                  onValueChange={(e: any) => {
+                    setValue("center_id", e);
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
@@ -388,8 +331,10 @@ export default function Index() {
                   </SelectTrigger>
                   <SelectContent>
                     {center?.map((option) => {
+                      const stringValue = String(option.value);
+
                       return (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -403,10 +348,7 @@ export default function Index() {
                     type="Name"
                     id="Name"
                     placeholder="Name"
-                    onChange={(e) =>
-                      setValues({ ...values, contact_name: e.target.value })
-                    }
-                    value={values.contact_name}
+                    {...register("contact_name")}
                   />
                 </div>
 
@@ -416,10 +358,7 @@ export default function Index() {
                     type="email"
                     id="email"
                     placeholder="Email"
-                    onChange={(e) =>
-                      setValues({ ...values, contact_email: e.target.value })
-                    }
-                    value={values.contact_email}
+                    {...register("contact_email")}
                   />
                 </div>
 
@@ -429,10 +368,7 @@ export default function Index() {
                     type="PhoneNumber"
                     id="PhoneNumber"
                     placeholder="PhoneNumber"
-                    onChange={(e) =>
-                      setValues({ ...values, contact_mobile: e.target.value })
-                    }
-                    value={values.contact_mobile}
+                    {...register("contact_mobile")}
                   />
                 </div>
 
@@ -500,23 +436,6 @@ export default function Index() {
           </CardFooter>
         </form>
       </Card>
-      {/* <form onSubmit={onSubmit}>
-              <label htmlFor="name">Name</label>
-              <input
-                  name="name"
-                  placeholder="Name"
-                  value={values.name}
-                  onChange={(e) => setValues({ ...values, name: e.target.value })}
-              />
-              <label htmlFor="material">Material</label>
-              <input
-                  name="material"
-                  placeholder="Material"
-                  value={values.material}
-                  onChange={(e) => setValues({ ...values, material: e.target.value })}
-              />
-              <button type="submit">Submit</button>
-          </form> */}
     </div>
   );
 }
