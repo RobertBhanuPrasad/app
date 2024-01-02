@@ -1,4 +1,4 @@
-import {  useSelect } from "@refinedev/core";
+import { useSelect } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 
 import { useEffect, useState } from "react";
@@ -27,9 +27,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "src/ui/calendar";
 import { supabaseClient } from "src/utility/supabaseClient";
-import { useRouter } from "next/navigation";
 
-export default function Index() {
+export default function courseCreate() {
+  // Getting data using the useSelect hook
   const { options: visibility } = useSelect({
     resource: "category_master",
     optionLabel: "category_value",
@@ -42,6 +42,7 @@ export default function Index() {
       },
     ],
   });
+
   const { options: formatIds } = useSelect({
     resource: "category_master",
     optionLabel: "category_value",
@@ -51,7 +52,7 @@ export default function Index() {
         field: "category_name",
         operator: "eq",
         value: "format",
-      }
+      },
     ],
   });
 
@@ -60,7 +61,6 @@ export default function Index() {
     optionLabel: "name",
     optionValue: "id",
   });
-  
 
   const { options: country } = useSelect({
     resource: "country",
@@ -105,31 +105,30 @@ export default function Index() {
 
   const [userID, setUserID] = useState<any>();
 
+  //getting the logged in user
   const getUser = async () => {
     const { data } = await supabaseClient.auth.getUser();
     setUserID(data?.user?.id);
     console.log(data?.user?.id, "user id");
   };
 
-
-
-
   useEffect(() => {
     getUser();
   }, []);
 
+  //Getting functions from the useForm
   const {
-    refineCore: { onFinish , formLoading },
+    refineCore: { onFinish },
     register,
     handleSubmit,
     setValue,
   } = useForm({
     refineCoreProps: {
-      action: "create",
-      resource: "course"  
+      redirect: "list",
     },
   });
 
+  // function to submit the form
   const onSubmit = async (data: any) => {
     register("created_by_user_id");
     setValue("created_by_user_id", userID);
@@ -149,7 +148,7 @@ export default function Index() {
     <div className="text-3xl ml-20 mt-20">
       <Card className="w-[400px]">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <CardHeader className="bg-red">
+          <CardHeader>
             <CardTitle>Create Course</CardTitle>
             <CardDescription>creating a new course</CardDescription>
           </CardHeader>
@@ -169,12 +168,9 @@ export default function Index() {
                   </SelectTrigger>
                   <SelectContent>
                     {courseTypes?.map((option) => {
-                      // const stringValue = String(option.value);
+                      const stringValue = String(option.value);
                       return (
-                        <SelectItem
-                          key={option.value}
-                          value={JSON.stringify(option)}
-                        >
+                        <SelectItem key={option.value} value={stringValue}>
                           {option.label}
                         </SelectItem>
                       );
@@ -448,4 +444,4 @@ export default function Index() {
   );
 }
 
-Index.noLayout = true;
+courseCreate.noLayout = true;

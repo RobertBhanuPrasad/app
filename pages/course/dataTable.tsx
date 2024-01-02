@@ -58,9 +58,7 @@ export function DataTable<TData, TValue>({
   data,
   setCurrent,
   pageCount,
-  current,
-  setPageSize,
-  pageSize,
+  current
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

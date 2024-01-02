@@ -4,9 +4,9 @@ import { DataTable } from "./dataTable";
 import React, { useMemo } from "react";
 import { Input } from "src/ui/input";
 import { Button } from "src/ui/button";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
-export default function DemoPage() {
+export default function CourseTable() {
   const {
     tableQueryResult,
     current,
@@ -24,13 +24,9 @@ export default function DemoPage() {
     },
   });
 
-  console.log("heyy data", tableQueryResult);
-
   const data = tableQueryResult?.data?.data ?? [];
 
   const currentFilterValues = useMemo(() => {
-    // Filters can be a LogicalFilter or a ConditionalFilter. ConditionalFilter not have field property. So we need to filter them.
-    // We use flatMap for better type support.
     const logicalFilters = filters.flatMap((item) =>
       "field" in item ? item : []
     );
@@ -41,7 +37,7 @@ export default function DemoPage() {
         "",
     };
   }, [filters]);
-  const router = useRouter();
+  const { push } = useRouter();
 
   return (
     <div className="container mx-auto py-10">
@@ -62,7 +58,7 @@ export default function DemoPage() {
           }}
           className="max-w-sm"
         />
-        <Button onClick={() => router.push("/newCourse")}>New Course</Button>
+        <Button onClick={() => push("/course/create")}>New Course</Button>
       </div>
 
       <DataTable
@@ -77,3 +73,5 @@ export default function DemoPage() {
     </div>
   );
 }
+
+CourseTable.noLayout = true;

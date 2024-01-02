@@ -45,6 +45,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
       dataProvider={dataProvider(supabaseClient)}
       authProvider={authProvider}
       i18nProvider={i18nProvider}
+      resources={[
+        {
+          name: "course",
+          list: "/course",
+          create: "/course/create",
+        },
+      ]}
       options={{
         syncWithLocation: true,
         warnWhenUnsavedChanges: true,
