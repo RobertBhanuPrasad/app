@@ -50,7 +50,7 @@ export default function Index() {
         field: "category_name",
         operator: "eq",
         value: "format",
-      },
+      }
     ],
   });
 
@@ -59,6 +59,7 @@ export default function Index() {
     optionLabel: "name",
     optionValue: "id",
   });
+  
 
   const { options: country } = useSelect({
     resource: "country",
@@ -144,7 +145,7 @@ export default function Index() {
     <div className="text-3xl ml-20 mt-20">
       <Card className="w-[400px]">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <CardHeader>
+          <CardHeader className="bg-red">
             <CardTitle>Create Course</CardTitle>
             <CardDescription>creating a new course</CardDescription>
           </CardHeader>
@@ -164,9 +165,12 @@ export default function Index() {
                   </SelectTrigger>
                   <SelectContent>
                     {courseTypes?.map((option) => {
-                      const stringValue = String(option.value);
+                      // const stringValue = String(option.value);
                       return (
-                        <SelectItem key={option.value} value={stringValue}>
+                        <SelectItem
+                          key={option.value}
+                          value={JSON.stringify(option)}
+                        >
                           {option.label}
                         </SelectItem>
                       );
