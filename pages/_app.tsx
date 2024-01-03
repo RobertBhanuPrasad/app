@@ -1,4 +1,4 @@
-import {  Refine } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import type { NextPage } from "next";
 import { AppProps } from "next/app";
@@ -50,6 +50,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
           name: "course",
           list: "/course",
           create: "/course/create",
+          edit: "/course/edit/:id",
         },
       ]}
       options={{

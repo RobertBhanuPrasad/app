@@ -29,20 +29,19 @@ import { format } from "date-fns";
 
 export default function Index() {
   const {
-    refineCore: { onFinish, queryResult: productQueryResult },
+    refineCore: { onFinish, queryResult: productQueryResult, formLoading },
     register,
     handleSubmit,
     setValue,
   } = useForm<IProduct>({
     refineCoreProps: {
       resource: "course",
-      id: 22,
-      action: "edit",
     },
   });
   const courseData = productQueryResult?.data?.data;
 
   console.log(courseData, "product");
+  console.log(formLoading, "formLoading");
 
   const { options: visibility } = useSelect({
     resource: "category_master",
@@ -69,6 +68,7 @@ export default function Index() {
     ],
   });
 
+  console.log(courseData?.region_id, "region id");
   const { options: region } = useSelect({
     resource: "region",
     optionLabel: "name",
@@ -85,6 +85,7 @@ export default function Index() {
     resource: "state",
     optionLabel: "name",
     optionValue: "id",
+    defaultValue: 1,
   });
 
   const { options: city } = useSelect({
@@ -127,7 +128,9 @@ export default function Index() {
   useEffect(() => {
     getUser();
   }, []);
-  console.log(String(courseData?.course_type_id), "courseData?.course_type_id");
+  console.log(courseData?.course_type_id, "courseData?.course_type_id");
+  const ct = String(courseData?.course_type_id);
+  console.log(ct, "course type");
   return (
     <div>
       <div>
@@ -152,7 +155,7 @@ export default function Index() {
                     onValueChange={(e: any) => {
                       setValue("course_type_id", e);
                     }}
-                    defaultValue={String(courseData?.course_type_id)}
+                    defaultValue={ct}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select a course" />
@@ -160,6 +163,7 @@ export default function Index() {
                     <SelectContent>
                       {courseTypes?.map((option) => {
                         const stringValue = String(option.value);
+                        console.log(stringValue, "stringValue");
                         return (
                           <SelectItem key={option.value} value={stringValue}>
                             {option.label}
@@ -174,7 +178,7 @@ export default function Index() {
                     onValueChange={(e: any) => {
                       setValue("visibility_id", e);
                     }}
-                    value={String(courseData?.visibility_id)}
+                    // value={String(courseData?.visibility_id)}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Visibility" />
@@ -196,7 +200,7 @@ export default function Index() {
                     onValueChange={(e: any) => {
                       setValue("format_id", e);
                     }}
-                    value={String(courseData?.format_id)}
+                    // value={String(courseData?.format_id)}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Format" />
@@ -220,7 +224,7 @@ export default function Index() {
                     onValueChange={(e: any) => {
                       setValue("region_id", e);
                     }}
-                    value={String(courseData?.region_id)}
+                    // value={String(courseData?.region_id)}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Region" />
@@ -243,7 +247,7 @@ export default function Index() {
                     onValueChange={(e: any) => {
                       setValue("country_id", e);
                     }}
-                    value={String(courseData?.country_id)}
+                    // value={String(courseData?.country_id)}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Country" />
@@ -266,7 +270,7 @@ export default function Index() {
                     onValueChange={(e: any) => {
                       setValue("state_id", e);
                     }}
-                    value={String(courseData?.state_id)}
+                    // value={String(courseData?.state_id)}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="State" />
@@ -288,7 +292,7 @@ export default function Index() {
                     onValueChange={(e: any) => {
                       setValue("city_id", e);
                     }}
-                    value={String(courseData?.city_id)}
+                    // value={String(courseData?.city_id)}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="City" />
@@ -311,7 +315,7 @@ export default function Index() {
                     onValueChange={(e: any) => {
                       setValue("center_id", e);
                     }}
-                    value={String(courseData?.center_id)}
+                    // value={String(courseData?.center_id)}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Center" />
@@ -447,3 +451,11 @@ interface IProduct {
   visibility_id: number;
   defaultValues: any;
 }
+
+
+// const EditCourse=()=>{
+  
+//   return(
+
+//   )
+// }
