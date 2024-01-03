@@ -1,6 +1,6 @@
 import { useSelect } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { cn } from "src/lib/utils";
 import { Button } from "src/ui/button";
@@ -27,8 +27,57 @@ import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "src/ui/calendar";
 import { supabaseClient } from "src/utility/supabaseClient";
+import { z } from "zod";
 
 export default function courseCreate() {
+
+  //Schema definition
+  const schema = z.object({
+    course_type_id: z.string().refine((value) => value.trim().length > 0, {
+      message: "course_type required",
+    }),
+    visibility_id: z.string().refine((value) => value.trim().length > 0, {
+      message: "visibility required",
+    }),
+    format_id: z.string().refine((value) => value.trim().length > 0, {
+      message: "format required",
+    }),
+    region_id: z.string().refine((value) => value.trim().length > 0, {
+      message: "region required",
+    }),
+    country_id: z.string().refine((value) => value.trim().length > 0, {
+      message: "country required",
+    }),
+    state_id: z.string().refine((value) => value.trim().length > 0, {
+      message: "state required",
+    }),
+    city_id: z.string().refine((value) => value.trim().length > 0, {
+      message: "city required",
+    }),
+    center_id: z.string().refine((value) => value.trim().length > 0, {
+      message: "center required",
+    }),
+    contact_name: z.string().refine((value) => value.trim().length > 0, {
+      message: "Name required",
+    }),
+    contact_email: z
+      .string()
+      .email("Invalid email address")
+      .refine((value) => value.trim().length > 0, {
+        message: "email required",
+      }),
+
+    contact_mobile: z.string().refine((value) => value.trim().length > 0, {
+      message: "number required",
+    }),
+    course_start_date: z
+      .date()
+      .refine((date) => date !== null, "Start Date is required"),
+    course_end_date: z
+      .date()
+      .refine((date) => date !== null, "End Date is required"),
+  });
+
   // Getting data using the useSelect hook
   const { options: visibility } = useSelect({
     resource: "category_master",
@@ -109,7 +158,6 @@ export default function courseCreate() {
   const getUser = async () => {
     const { data } = await supabaseClient.auth.getUser();
     setUserID(data?.user?.id);
-    console.log(data?.user?.id, "user id");
   };
 
   useEffect(() => {
@@ -122,11 +170,14 @@ export default function courseCreate() {
     register,
     handleSubmit,
     setValue,
+    formState: { errors },
   } = useForm({
     refineCoreProps: {
       redirect: "list",
     },
+    resolver: zodResolver(schema),
   });
+
 
   // function to submit the form
   const onSubmit = async (data: any) => {
@@ -139,8 +190,6 @@ export default function courseCreate() {
     register("course_end_date");
     setValue("course_end_date", endDate.toISOString());
     data.course_end_date = endDate.toISOString();
-
-    console.log("Form values:", data);
     await onFinish(data);
   };
 
@@ -177,6 +226,9 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
+
+               
+
                 {/* <Label htmlFor="name">Organizer</Label>
                   <Select onValueChange={(e) => setValue(e)} value={value}>
                     <SelectTrigger className="w-[180px]">
@@ -200,7 +252,7 @@ export default function courseCreate() {
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a course" />
+                    <SelectValue placeholder="Select visibility" />
                   </SelectTrigger>
                   <SelectContent>
                     {visibility?.map((option) => {
@@ -213,6 +265,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
+               
                 <Label htmlFor="name">format</Label>
                 <Select
                   {...register("format_id")}
@@ -221,7 +274,7 @@ export default function courseCreate() {
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a course" />
+                    <SelectValue placeholder="Select format" />
                   </SelectTrigger>
                   <SelectContent>
                     {formatIds?.map((option) => {
@@ -235,6 +288,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
+                
                 <label htmlFor="name">location</label>
                 <Label htmlFor="name">Region</Label>
                 <Select
@@ -244,7 +298,7 @@ export default function courseCreate() {
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a course" />
+                    <SelectValue placeholder="Select region" />
                   </SelectTrigger>
                   <SelectContent>
                     {region?.map((option) => {
@@ -258,6 +312,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
+               
                 <Label htmlFor="name">Country</Label>
                 <Select
                   {...register("country_id")}
@@ -266,7 +321,7 @@ export default function courseCreate() {
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a course" />
+                    <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent>
                     {country?.map((option) => {
@@ -280,6 +335,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
+               
                 <Label htmlFor="name">State</Label>
                 <Select
                   {...register("state_id")}
@@ -288,7 +344,7 @@ export default function courseCreate() {
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a course" />
+                    <SelectValue placeholder="Select state" />
                   </SelectTrigger>
                   <SelectContent>
                     {state?.map((option) => {
@@ -301,6 +357,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
+               
                 <Label htmlFor="name">City</Label>
                 <Select
                   {...register("city_id")}
@@ -309,7 +366,7 @@ export default function courseCreate() {
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a course" />
+                    <SelectValue placeholder="Select city" />
                   </SelectTrigger>
                   <SelectContent>
                     {city?.map((option) => {
@@ -323,6 +380,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
+                
                 <Label htmlFor="name">Center</Label>
                 <Select
                   {...register("center_id")}
@@ -331,7 +389,7 @@ export default function courseCreate() {
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a course" />
+                    <SelectValue placeholder="Select center" />
                   </SelectTrigger>
                   <SelectContent>
                     {center?.map((option) => {
@@ -345,6 +403,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
+               
                 <label htmlFor="name">Organizer</label>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="Name">Name</Label>
@@ -354,6 +413,11 @@ export default function courseCreate() {
                     placeholder="Name"
                     {...register("contact_name")}
                   />
+                  {errors?.contact_name?.message && (
+                    <span className="text-red-500 text-[14px]">
+                      {errors?.contact_name?.message}
+                    </span>
+                  )}
                 </div>
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -365,6 +429,11 @@ export default function courseCreate() {
                     {...register("contact_email")}
                   />
                 </div>
+                {errors?.contact_email?.message && (
+                  <span className="text-red-500 text-[14px]">
+                    {errors?.contact_email?.message}
+                  </span>
+                )}
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="PhoneNumber">PhoneNumber</Label>
@@ -374,6 +443,11 @@ export default function courseCreate() {
                     placeholder="PhoneNumber"
                     {...register("contact_mobile")}
                   />
+                  {errors?.contact_mobile?.message && (
+                    <span className="text-red-500 text-[14px]">
+                      {errors?.contact_mobile?.message}
+                    </span>
+                  )}
                 </div>
 
                 <div>
