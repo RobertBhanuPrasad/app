@@ -1,6 +1,6 @@
 import { useSelect } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+// import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { cn } from "src/lib/utils";
 import { Button } from "src/ui/button";
@@ -30,53 +30,52 @@ import { supabaseClient } from "src/utility/supabaseClient";
 import { z } from "zod";
 
 export default function courseCreate() {
+  // //Schema definition
+  // const schema = z.object({
+  //   course_type_id: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "course_type required",
+  //   }),
+  //   visibility_id: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "visibility required",
+  //   }),
+  //   format_id: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "format required",
+  //   }),
+  //   region_id: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "region required",
+  //   }),
+  //   country_id: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "country required",
+  //   }),
+  //   state_id: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "state required",
+  //   }),
+  //   city_id: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "city required",
+  //   }),
+  //   center_id: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "center required",
+  //   }),
+  //   contact_name: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "Name required",
+  //   }),
+  //   contact_email: z
+  //     .string()
+  //     .email("Invalid email address")
+  //     .refine((value) => value.trim().length > 0, {
+  //       message: "email required",
+  //     }),
 
-  //Schema definition
-  const schema = z.object({
-    course_type_id: z.string().refine((value) => value.trim().length > 0, {
-      message: "course_type required",
-    }),
-    visibility_id: z.string().refine((value) => value.trim().length > 0, {
-      message: "visibility required",
-    }),
-    format_id: z.string().refine((value) => value.trim().length > 0, {
-      message: "format required",
-    }),
-    region_id: z.string().refine((value) => value.trim().length > 0, {
-      message: "region required",
-    }),
-    country_id: z.string().refine((value) => value.trim().length > 0, {
-      message: "country required",
-    }),
-    state_id: z.string().refine((value) => value.trim().length > 0, {
-      message: "state required",
-    }),
-    city_id: z.string().refine((value) => value.trim().length > 0, {
-      message: "city required",
-    }),
-    center_id: z.string().refine((value) => value.trim().length > 0, {
-      message: "center required",
-    }),
-    contact_name: z.string().refine((value) => value.trim().length > 0, {
-      message: "Name required",
-    }),
-    contact_email: z
-      .string()
-      .email("Invalid email address")
-      .refine((value) => value.trim().length > 0, {
-        message: "email required",
-      }),
-
-    contact_mobile: z.string().refine((value) => value.trim().length > 0, {
-      message: "number required",
-    }),
-    course_start_date: z
-      .date()
-      .refine((date) => date !== null, "Start Date is required"),
-    course_end_date: z
-      .date()
-      .refine((date) => date !== null, "End Date is required"),
-  });
+  //   contact_mobile: z.string().refine((value) => value.trim().length > 0, {
+  //     message: "number required",
+  //   }),
+  //   course_start_date: z
+  //     .date()
+  //     .refine((date) => date !== null, "Start Date is required"),
+  //   course_end_date: z
+  //     .date()
+  //     .refine((date) => date !== null, "End Date is required"),
+  // });
 
   // Getting data using the useSelect hook
   const { options: visibility } = useSelect({
@@ -175,9 +174,8 @@ export default function courseCreate() {
     refineCoreProps: {
       redirect: "list",
     },
-    resolver: zodResolver(schema),
+    // resolver: zodResolver(schema),
   });
-
 
   // function to submit the form
   const onSubmit = async (data: any) => {
@@ -227,8 +225,6 @@ export default function courseCreate() {
                   </SelectContent>
                 </Select>
 
-               
-
                 {/* <Label htmlFor="name">Organizer</Label>
                   <Select onValueChange={(e) => setValue(e)} value={value}>
                     <SelectTrigger className="w-[180px]">
@@ -265,7 +261,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
-               
+
                 <Label htmlFor="name">format</Label>
                 <Select
                   {...register("format_id")}
@@ -288,7 +284,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
-                
+
                 <label htmlFor="name">location</label>
                 <Label htmlFor="name">Region</Label>
                 <Select
@@ -312,7 +308,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
-               
+
                 <Label htmlFor="name">Country</Label>
                 <Select
                   {...register("country_id")}
@@ -335,7 +331,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
-               
+
                 <Label htmlFor="name">State</Label>
                 <Select
                   {...register("state_id")}
@@ -357,7 +353,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
-               
+
                 <Label htmlFor="name">City</Label>
                 <Select
                   {...register("city_id")}
@@ -380,7 +376,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
-                
+
                 <Label htmlFor="name">Center</Label>
                 <Select
                   {...register("center_id")}
@@ -403,7 +399,7 @@ export default function courseCreate() {
                     })}
                   </SelectContent>
                 </Select>
-               
+
                 <label htmlFor="name">Organizer</label>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="Name">Name</Label>
