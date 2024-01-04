@@ -1,4 +1,4 @@
-import { useSelect } from "@refinedev/core";
+import { useSelect, useTranslate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -28,6 +28,8 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "src/ui/calendar";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { z } from "zod";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { GetServerSideProps } from "next";
 
 export default function courseCreate() {
   // //Schema definition
@@ -152,6 +154,7 @@ export default function courseCreate() {
   const [endDate, setEndDate] = useState<any>();
 
   const [userID, setUserID] = useState<any>();
+  const translate = useTranslate();
 
   //getting the logged in user
   const getUser = async () => {
@@ -196,7 +199,7 @@ export default function courseCreate() {
       <Card className="w-[400px]">
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardHeader>
-            <CardTitle>Create Course</CardTitle>
+            <CardTitle>{translate("pages.login.title")}</CardTitle>
             <CardDescription>creating a new course</CardDescription>
           </CardHeader>
           <CardContent>
@@ -515,3 +518,15 @@ export default function courseCreate() {
 }
 
 courseCreate.noLayout = true;
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+  ]);
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};

@@ -91,7 +91,6 @@ const EditCourse = ({
     ],
   });
 
-  console.log(courseData?.region_id, "region id");
   const { options: region } = useSelect({
     resource: "region",
     optionLabel: "name",
@@ -138,9 +137,11 @@ const EditCourse = ({
 
   const [userID, setUserID] = useState<any>();
 
-  const [startDate, setStartDate] = useState<any>(courseData?.c);
+  const [startDate, setStartDate] = useState<any>(
+    courseData?.course_start_date
+  );
 
-  const [endDate, setEndDate] = useState<any>();
+  const [endDate, setEndDate] = useState<any>(courseData?.course_end_date);
 
   const getUser = async () => {
     const { data } = await supabaseClient.auth.getUser();
@@ -184,7 +185,6 @@ const EditCourse = ({
                     <SelectContent>
                       {courseTypes?.map((option) => {
                         const stringValue = String(option.value);
-                        console.log(stringValue, "stringValue");
                         return (
                           <SelectItem key={option.value} value={stringValue}>
                             {option.label}
@@ -475,5 +475,3 @@ interface IProduct {
   visibility_id: number;
   defaultValues: any;
 }
-
-

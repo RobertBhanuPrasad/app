@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { useRouter } from "next/router";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import {
@@ -110,6 +111,9 @@ export const columns: ColumnDef<Payment>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const { push } = useRouter();
+      const id: any = row.getValue("id");
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -119,7 +123,9 @@ export const columns: ColumnDef<Payment>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Edit Course</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => push(`/course/edit/${id}`)}>
+              Edit Course
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -1,4 +1,4 @@
-import { Refine } from "@refinedev/core";
+import { Refine, useGetLocale } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import type { NextPage } from "next";
 import { AppProps } from "next/app";
@@ -39,6 +39,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
     getLocale: () => i18n.language,
   };
 
+  const lang = i18n.language;
+  console.log(lang, "current language");
+
   return (
     <Refine
       routerProvider={routerProvider}
@@ -49,7 +52,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
         {
           name: "course",
           list: "/course",
-          create: "/course/create",
+          create: `/course/${lang}/create/`,
           edit: "/course/edit/:id",
         },
       ]}
