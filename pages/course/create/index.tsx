@@ -24,12 +24,15 @@ import {
 
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ChevronDown } from "lucide-react";
 import { Calendar } from "src/ui/calendar";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { z } from "zod";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetServerSideProps } from "next";
+import { Checkbox } from "src/ui/checkbox";
+
+import * as SelectPrimitive from "@radix-ui/react-select";
 
 export default function courseCreate() {
   // //Schema definition
@@ -194,6 +197,8 @@ export default function courseCreate() {
     await onFinish(data);
   };
 
+  const [selectvalue, setSelectValue] = useState(false);
+
   return (
     <div className="text-3xl ml-20 mt-20">
       <Card className="w-[400px]">
@@ -208,12 +213,15 @@ export default function courseCreate() {
                 <Label htmlFor="name">course name</Label>
 
                 <Select
-                  {...register("course_type_id")}
+                  {...register("course_type")}
                   onValueChange={(e: any) => {
-                    setValue("course_type_id", e);
+                    setSelectValue(true);
                   }}
                 >
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger
+                    isValueSelected={selectvalue}
+                    className="w-[180px]"
+                  >
                     <SelectValue placeholder="Select a course" />
                   </SelectTrigger>
                   <SelectContent>
@@ -225,6 +233,23 @@ export default function courseCreate() {
                         </SelectItem>
                       );
                     })}
+                  </SelectContent>
+                </Select>
+                <Select
+                  {...register("course_type_id")}
+                  onValueChange={(e: any) => {
+                    setValue("course_type_id", e);
+                  }}
+                >
+                  <SelectTrigger
+                    isValueSelected={selectvalue}
+                    className="w-[180px]"
+                  >
+                    <SelectValue placeholder="Select a course" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={"one"}>One</SelectItem>
+                    <SelectItem value={"two"}>Two</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -412,11 +437,6 @@ export default function courseCreate() {
                     placeholder="Name"
                     {...register("contact_name")}
                   />
-                  {errors?.contact_name?.message && (
-                    <span className="text-red-500 text-[14px]">
-                      {errors?.contact_name?.message}
-                    </span>
-                  )}
                 </div>
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -428,11 +448,6 @@ export default function courseCreate() {
                     {...register("contact_email")}
                   />
                 </div>
-                {errors?.contact_email?.message && (
-                  <span className="text-red-500 text-[14px]">
-                    {errors?.contact_email?.message}
-                  </span>
-                )}
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="PhoneNumber">PhoneNumber</Label>
@@ -442,11 +457,6 @@ export default function courseCreate() {
                     placeholder="PhoneNumber"
                     {...register("contact_mobile")}
                   />
-                  {errors?.contact_mobile?.message && (
-                    <span className="text-red-500 text-[14px]">
-                      {errors?.contact_mobile?.message}
-                    </span>
-                  )}
                 </div>
 
                 <div>
