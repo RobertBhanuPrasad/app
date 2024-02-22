@@ -1,67 +1,65 @@
-import { useState } from "react";
-import { Card,  } from "src/ui/card";
-import { Label } from "src/ui/label";
-import { RadioGroup, RadioGroupItem } from "src/ui/radio-group";
+import React, { useState } from "react";
+import dynamic from 'next/dynamic'
+
+import "react-quill/dist/quill.snow.css";
 
 export default function Index() {
-  const [selectedValue, setSelectedValue] = useState("option-one");
+  const [value, setValue] = useState<string>("");
+
+  const QuillNoSSRWrapper = dynamic(import('react-quill'), {	
+    ssr: false,
+    loading: () => <p>Loading ...</p>,
+    })
+
+  const handleChange = (content: string) => {
+    setValue(content);
+  };
+
+  const modules = {
+    toolbar: [
+      [{ header: '1' }, { header: '2' }, { font: [] }],
+      [{ size: [] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
+      ],
+      ['link', 'image', 'video'],
+      ['clean'],
+    ],
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false,
+    },
+  }
+  /*
+   * Quill editor formats
+   * See https://quilljs.com/docs/formats/
+   */
+  const formats = [
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
+    'video',
+  ]
 
   return (
     <div className="text-3xl">
-
-      <RadioGroup
-        defaultValue="option-one"
-        onValueChange={(value: string) => {
-          setSelectedValue(value);
-        }}
-      >
-        <div className="flex items-center space-x-2">
-          <Card
-            className={`flex justify-center p-2 gap-2 ${
-              selectedValue === "option-one" ? "border-[#7677F4]" : ""
-            }`}
-          >
-            <RadioGroupItem
-              value="option-one"
-              id="option-one"
-              className={
-                selectedValue === "option-one" ? "!bg-[#7677F4]" : "border !border-[#D6D7D8] border-[1.5px]"
-              }
-            />
-            <Label
-              htmlFor="option-one"
-              className={`text-[#333333] font-normal ${
-                selectedValue === "option-one" ? "text-[#7677F4]" : ""
-              }`}
-            >
-              Option One
-            </Label>
-          </Card>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Card
-            className={`flex justify-center p-2 gap-2 ${
-              selectedValue === "option-two" ? "border-[#7677F4]" : ""
-            }`}
-          >
-            <RadioGroupItem
-              value="option-two"
-              id="option-two"
-              className={
-                selectedValue === "option-two" ? "!bg-[#7677F4]" : "border !border-[#D6D7D8] border-[1.5px]"
-              }
-            />
-            <Label
-              htmlFor="option-two"
-              className={`text-[#333333] font-normal ${
-                selectedValue === "option-two" ? "text-[#7677F4]" : ""
-              }`}
-            >
-              Option Two
-            </Label>
-          </Card>
-        </div>
-      </RadioGroup>
+      <div>
+      <QuillNoSSRWrapper modules={modules} formats={formats} theme="snow" />
+      </div>
     </div>
   );
 }
