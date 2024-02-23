@@ -111,7 +111,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const { push } = useRouter();
+      const { push, pathname } = useRouter();
       const id: any = row.getValue("id");
 
       return (
