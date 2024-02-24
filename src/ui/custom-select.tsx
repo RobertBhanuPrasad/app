@@ -41,11 +41,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
   // Handler function when an option is selected
   const handleSelect = (value: Option) => {
-     onChange(value);
-    setSelectedValue(value)
+    onChange(value);
+    setSelectedValue(value);
     setOpen(false);
     onSearch("");
-   
   };
 
   return (
@@ -77,6 +76,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           </div>
         </Button>
       </PopoverTrigger>
+
       {/* Popover content */}
       <PopoverContent className="border-[#D6D7D8] w-80 p-0">
         <Command>

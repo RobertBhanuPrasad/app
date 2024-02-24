@@ -1,5 +1,3 @@
-
-
 // This page is to demonstrate the select component how to use in form , will be removed afterwards
 import { useSelect } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
@@ -95,15 +93,12 @@ export default function CourseCreate() {
     resolver: zodResolver(schema),
   });
 
- 
-
   // Handler for handling changes in the custom select
   const handleChange = (framework: any) => {
     resetField("test");
     setValue("test", framework);
   };
 
-  
   // Submit handler for the form
   const onSubmit = async (formData: any) => {
     console.log("Form Data Submitted:", formData);

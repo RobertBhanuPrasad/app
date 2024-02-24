@@ -1,4 +1,3 @@
-
 // This page is to demonstrate the multiselect component how to use in form , will be removed afterwards
 
 import { Button } from "src/ui/button";
@@ -71,7 +70,6 @@ export default function courseCreate() {
   } = useForm({});
 
   const values = getValues();
-
 
   // Function to submit the form
   const onSubmit = async (data: any) => {
