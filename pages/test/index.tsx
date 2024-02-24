@@ -52,9 +52,11 @@ export default function courseCreate() {
     }
   }, [options]);
 
-  // Function to handle search events
+  // Function to handle search
   const handleOnSearch = (value: any) => {
     onSearch(value);
+
+    // For resetting the data to the first page which coming from the API
     setCurrentPage(1);
   };
 
@@ -63,23 +65,22 @@ export default function courseCreate() {
     refineCore: { onFinish },
     register,
     handleSubmit,
-    getValues,
     setValue,
     resetField,
     formState: { errors },
   } = useForm({});
 
-  const values = getValues();
 
   // Function to submit the form
   const onSubmit = async (data: any) => {
-    console.log("heyy data", data);
+    console.log("Submitted data", data);
     await onFinish(data);
   };
 
   // Function to handle changes in MultiSelect component
   const handleChange = (options: any) => {
     resetField("multi");
+    //setting the value to formdata
     setValue("multi", options);
   };
 

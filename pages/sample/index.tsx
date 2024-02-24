@@ -73,9 +73,11 @@ export default function CourseCreate() {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
-  // Handler for search with pagination reset
+  // Handler for search event
   const handleOnSearch = (value: any) => {
     onSearch(value);
+
+    // For resetting the data to the first page which coming from the API
     setCurrentPage(1);
   };
 
@@ -96,6 +98,7 @@ export default function CourseCreate() {
   // Handler for handling changes in the custom select
   const handleChange = (framework: any) => {
     resetField("test");
+    //setting the value to formdata
     setValue("test", framework);
   };
 
