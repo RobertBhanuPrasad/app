@@ -1,9 +1,10 @@
-import Bell from "@public/assets/Bell";
-import Logo from "@public/assets/logo";
-import Link from "next/link";
+import { PropsWithChildren } from "react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { cn } from "src/lib/utils";
+import Link from "next/link";
+import React from "react";
+import Logo from "@public/assets/logo";
+import Bell from "@public/assets/Bell";
+import TableMenu from "@public/assets/TableMenu";
 import { Avatar, AvatarFallback, AvatarImage } from "src/ui/avatar";
 import {
   NavigationMenu,
@@ -16,118 +17,133 @@ import {
 } from "src/ui/navigation-menu";
 
 function Navbar() {
-  const components: { title: string; href: string }[] = [
+  // Define navigation components and their respective routes
+  const components = [
     {
-      title: "New course",
-      href: "/course/newcourse",
+      title: "New Course",
+      href: "/Courses/NewCourse",
     },
     {
-      title: "Find course",
-      href: "/course",
+      title: "Find Course",
+      href: "/Courses/FindCourse",
     },
     {
-      title: "Progress",
-      href: "/docs/primitives/progress",
+      title: "Discount Codes",
+      href: "/Courses/DiscountCodes",
     },
   ];
+
+  // Get the current pathname using the useRouter hook
   const { pathname } = useRouter();
-  console.log(pathname, "pathname");
-  const [tabValue, setTabValue] = useState();
+
+  // Split the pathname into segments
+  const pathSegments = pathname.split("/");
+
+  // Extract the first segment of the pathname
+  const firstRouteName = pathSegments.find((segment) => segment !== "");
+
   return (
     <div className="w-auto bg-[white] flex flex-row px-8 h-16">
-      <div className="float-left items-center">
+      {/* Logo */}
+      <div className="float-left items-center mt-2">
         <Logo />
       </div>
-      <div className="flex items-center justify-center mx-auto gap-4">
-        <NavigationMenu
-          className="text-[#999999]"
-          onValueChange={(value: any) => {
-            console.log(value, "value");
-            setTabValue(value)
-          }}
-        >
+      {/* Navigation Menu */}
+      <div className="flex items-center justify-center mx-auto ">
+        <NavigationMenu className="text-[#999999]">
           <NavigationMenuList>
-            <NavigationMenuItem value="Home">
-              <NavigationMenuTrigger>Home</NavigationMenuTrigger>
+            {/* Home Navigation */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger >Home</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[160px] gap-3 py-4 px-2 ">
                   {components.map((component) => (
-                    <ListItem
-                      key={component.title}
-                      title={component.title}
-                      href={component.href}
-                    >
-                      {" "}
-                    </ListItem>
+                    <li key={component.title}>
+                      <MenuList Name={component.title} route={component.href} />
+                    </li>
                   ))}
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            <NavigationMenuItem value="Administer">
+            {/* Administer Navigation */}
+            <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Administer
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
-            <NavigationMenuItem value="Contacts">
+            {/* Contacts Navigation */}
+            <NavigationMenuItem>
               <Link href="/Contacts" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Contacts
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
-            <NavigationMenuItem value="Courses">
-              <NavigationMenuTrigger >Courses</NavigationMenuTrigger>
+            {/* Courses Navigation */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger
+                className={
+                  firstRouteName === "Courses" ? "!text-[#7677F4] font-semibold" : ""
+                }
+              >
+                Courses
+              </NavigationMenuTrigger>
               <NavigationMenuContent className="NavigationMenuViewport">
                 <ul className="grid w-[160px] gap-3 py-4 px-2 ">
                   {components.map((component) => (
-                    <ListItem
-                      key={component.title}
-                      title={component.title}
-                      href={component.href}
-                    >
-                    </ListItem>
+                    <li key={component.title}>
+                      <MenuList Name={component.title} route={component.href} />
+                    </li>
                   ))}
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            <NavigationMenuItem value="Events">
+            {/* Events Navigation */}
+            <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Events
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
-
-            <NavigationMenuItem value="Teachers">
+            {/* Teachers Navigation */}
+            <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Teachers
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
-            <NavigationMenuItem value="Mailings">
+            {/* Mailings Navigation */}
+            <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Mailings
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
-            <NavigationMenuItem value="Menu">
+            {/* Menu Navigation */}
+            <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Menu
+                  <div className=" flex flex-row items-center gap-2">
+                    Menu
+                    <div className="mt-[2px]">
+                      <TableMenu />
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
+      {/* Bell and Avatar */}
       <div className="flex justify-end">
         <div className="flex flex-row items-center gap-4 ">
           <Bell />
-
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
@@ -140,28 +156,15 @@ function Navbar() {
 
 export default Navbar;
 
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
+// Component to render each menu item
+const MenuList = ({ Name, route }: any) => {
   return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
+    <div>
+      <Link href={route} legacyBehavior passHref>
+        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+          {Name}
+        </NavigationMenuLink>
+      </Link>
+    </div>
   );
-});
-ListItem.displayName = "ListItem";
+};

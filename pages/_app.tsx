@@ -1,4 +1,4 @@
-import { Refine, useGetLocale } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import type { NextPage } from "next";
 import { AppProps } from "next/app";
@@ -9,7 +9,6 @@ import "@styles/global.css";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
-import Navbar from "../src/components/navbar";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -41,7 +40,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   };
 
   const lang = i18n.language;
-  console.log(lang, "current language");
 
   return (
     <Refine

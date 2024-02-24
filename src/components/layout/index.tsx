@@ -8,14 +8,24 @@ import HomeIcon from "@public/assets/HomeIcon";
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const { pathname } = useRouter();
-  console.log(pathname, "pathname");
+  const addGapsToPathname = (pathname: any) => {
+    // Split the pathname by '/' and insert a hyphen before and after each '/'
+    const newPathname = pathname.split("/").join(" / ");
+
+    return newPathname;
+  };
+
+  const formattedPthName = addGapsToPathname(pathname);
 
   return (
     <div className="layout">
       <Navbar />
-      <div className="h-[32px] w-full bg-[#F9F9F9] drop-shadow-md flex flex-row items-center font-normal">
-        <HomeIcon />
-        Home{pathname}
+      <div className="h-[32px] w-full bg-[#F9F9F9] drop-shadow-md flex flex-row items-center font-normal text-[12px] text-[#7677F4] ">
+        <div className="ml-7 flex flex-row">
+          <HomeIcon />
+          Home
+          {formattedPthName}
+        </div>
       </div>
       <div className="content">
         <Breadcrumb />
