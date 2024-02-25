@@ -8,6 +8,7 @@ import { Badge } from "./badge";
 import { Command, CommandGroup, CommandItem } from "./command";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
 import { Input } from "./input";
+import { useEffect } from "react";
 
 // Define the shape of each data item
 type DataItem = Record<"value" | "label", string>;
@@ -19,12 +20,14 @@ export function MultiSelect({
   onBottomReached,
   onSearch,
   onChange,
+  value: propValue,
 }: {
   placeholder?: string;
   data: DataItem[];
   onBottomReached: () => void;
   onSearch: (query: string) => void;
   onChange: any;
+  value: any;
 }) {
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -33,7 +36,15 @@ export function MultiSelect({
   // States to manage the component's behavior
   const [open, setOpen] = React.useState(false);
   const [popoverOpen, setPopoverOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<DataItem[]>([]);
+  const [selected, setSelected] = React.useState<DataItem[]>(propValue);
+
+  useEffect(() => {
+    if (propValue !== undefined) {
+      setSelected(propValue);
+    } else {
+      setSelected([]);
+    }
+  }, [propValue]);
 
   // Handle unselecting an item from the selected list
   const handleUnselect = (item: DataItem) => {
@@ -60,7 +71,7 @@ export function MultiSelect({
   }, [open]);
 
   // Filter out selected values from the dropdown
-  const selectables = data.filter((item) => !selected.includes(item));
+  const selectables = data.filter((item) => !selected?.includes(item));
 
   return (
     <div className={clsx("grid w-[300px] items-center")}>
@@ -69,7 +80,7 @@ export function MultiSelect({
           {/* Display selected items and provide options to remove them */}
           <div className="flex gap-2 items-center">
             {/* Display up to two selected items with a badge */}
-            {selected.map((item, index) => {
+            {selected?.map((item, index) => {
               if (index > 1) return null;
               return (
                 <Badge key={item.value} variant="outline" className="border">
@@ -98,18 +109,18 @@ export function MultiSelect({
             })}
 
             {/* Display a count badge for additional selected items */}
-            {selected.length > 2 && (
+            {selected?.length > 2 && (
               <div className="flex items-center justify-center w-5 h-5 rounded-full bg-[#7677F4]/20 px-2 cursor-pointer">
                 <div
                   onClick={() => setPopoverOpen(true)}
                   className="text-[#7677F4] text-[8px] font-bold"
-                >{`+${selected.length - 2}`}</div>
+                >{`+${selected?.length - 2}`}</div>
               </div>
             )}
 
             {/* Display placeholder or "Add" button */}
             <div className="flex flex-row justify-between w-full">
-              <div>{selected.length <= 0 && <div>{placeholder}</div>}</div>
+              <div>{selected?.length <= 0 && <div>{placeholder}</div>}</div>
               <div className="flex self-end">
                 <button
                   className="ml-1 rounded-full text-[#7677F4] text-[12px] font-semibold"
@@ -126,7 +137,7 @@ export function MultiSelect({
         <div className="relative mt-2" ref={popoverDropdownRef}>
           {popoverOpen ? (
             <CommandGroup className="absolute w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-              {selected.map((item, index) => (
+              {selected?.map((item, index) => (
                 <div key={item.value}>
                   <div className="flex flex-row justify-between items-center pr-3">
                     <div className="cursor-pointer p-2 text-[12px] hover:bg-gray-200">
@@ -140,7 +151,7 @@ export function MultiSelect({
                     />
                   </div>
                   {/* Add a horizontal line for all items except the last one */}
-                  {index < selected.length - 1 && (
+                  {index < selected?.length - 1 && (
                     <hr className="border-[#D6D7D8]" />
                   )}{" "}
                 </div>

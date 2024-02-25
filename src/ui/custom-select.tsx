@@ -1,5 +1,5 @@
 // Importing React and required components/modules
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DropdownIcon from "@public/icons/DropdownIcon.svg";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import {
@@ -26,6 +26,7 @@ interface CustomSelectProps {
   onBottomReached: () => void;
   onChange: (selectedOption: Option) => void;
   placeholder: string;
+  value: any;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -34,10 +35,19 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   onBottomReached,
   onChange,
   placeholder,
+  value: propValue,
 }: CustomSelectProps) => {
   // State to manage the open/closed state of the Popover
   const [open, setOpen] = React.useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<Option | null>(null);
+  const [selectedValue, setSelectedValue] = useState<Option | null>(propValue);
+
+  useEffect(() => {
+    if (propValue !== undefined) {
+      setSelectedValue(propValue);
+    } else {
+      setSelectedValue(null);
+    }
+  }, [propValue]);
 
   // Handler function when an option is selected
   const handleSelect = (value: Option) => {

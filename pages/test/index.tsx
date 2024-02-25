@@ -67,9 +67,9 @@ export default function courseCreate() {
     handleSubmit,
     setValue,
     resetField,
+    getValues,
     formState: { errors },
   } = useForm({});
-
 
   // Function to submit the form
   const onSubmit = async (data: any) => {
@@ -84,6 +84,12 @@ export default function courseCreate() {
     setValue("multi", options);
   };
 
+  const handleClear = () => {
+    resetField("multi");
+  };
+
+  const formValues = getValues();
+
   return (
     <div className="text-3xl ml-20 mt-20">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -93,6 +99,7 @@ export default function courseCreate() {
               {/* MultiSelect component */}
               <MultiSelect
                 {...register("multi")}
+                value={formValues?.multi}
                 placeholder="Select more"
                 data={selectOptions}
                 onBottomReached={handleOnBottomReached}
@@ -100,6 +107,7 @@ export default function courseCreate() {
                 onChange={handleChange}
               />
             </div>
+            <Button onClick={handleClear}>Clear</Button>
           </CardContent>
           {/* Card footer with Create button */}
           <CardFooter className="flex justify-between">

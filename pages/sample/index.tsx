@@ -94,7 +94,7 @@ export default function CourseCreate() {
     refineCoreProps: {},
     resolver: zodResolver(schema),
   });
-
+  const formValues = getValues();
   // Handler for handling changes in the custom select
   const handleChange = (framework: any) => {
     resetField("test");
@@ -106,6 +106,10 @@ export default function CourseCreate() {
   const onSubmit = async (formData: any) => {
     console.log("Form Data Submitted:", formData);
     await onFinish(formData);
+  };
+
+  const handleClear = async () => {
+    resetField("test");
   };
 
   return (
@@ -120,6 +124,7 @@ export default function CourseCreate() {
             <div className="flex flex-col gap-4">
               {/* CustomSelect component with necessary props */}
               <CustomSelect
+                value={formValues?.test}
                 {...register("test")}
                 placeholder={"Select course type"}
                 options={selectOptions}
@@ -128,6 +133,7 @@ export default function CourseCreate() {
                 onChange={handleChange}
               />
             </div>
+            <Button onClick={handleClear}>Clear</Button>
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button type="submit">Create</Button>
