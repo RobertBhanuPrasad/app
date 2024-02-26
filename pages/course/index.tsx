@@ -74,4 +74,4 @@ export default function CourseTable() {
   );
 }
 
-CourseTable.noLayout = true;
+CourseTable.noLayout = false;

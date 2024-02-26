@@ -1,4 +1,4 @@
-import { Refine, useGetLocale } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import type { NextPage } from "next";
 import { AppProps } from "next/app";
@@ -40,7 +40,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   };
 
   const lang = i18n.language;
-  console.log(lang, "current language");
 
   return (
     <Refine
