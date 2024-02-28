@@ -57,7 +57,7 @@ export default function NewCourseStep2() {
             <MultiSelect
               value={teachers}
               placeholder="Enter Teacher Name"
-              data={data}
+              options={data}
               onBottomReached={() => {}}
               onSearch={() => {}}
               onChange={() => {}}
@@ -73,7 +73,7 @@ export default function NewCourseStep2() {
             <MultiSelect
               value={teachers}
               placeholder="Enter Teacher Name"
-              data={data}
+              options={data}
               onBottomReached={() => {}}
               onSearch={() => {}}
               onChange={() => {}}
@@ -164,7 +164,7 @@ export default function NewCourseStep2() {
             <MultiSelect
               value={teachers}
               placeholder="Enter Teacher Name"
-              data={data}
+              options={data}
               onBottomReached={() => {}}
               onSearch={() => {}}
               onChange={() => {}}

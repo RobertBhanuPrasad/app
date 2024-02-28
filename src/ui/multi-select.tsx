@@ -9,6 +9,7 @@ import { Command, CommandGroup, CommandItem } from "./command";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
 import { Input } from "./input";
 import { useEffect } from "react";
+import isEqual from "lodash/isEqual";
 
 // Define the shape of each data item
 type DataItem = Record<"value" | "label", string>;
@@ -20,14 +21,14 @@ export function MultiSelect({
   onBottomReached,
   onSearch,
   onChange,
-  value: propValue,
+  value: propValue = [],
 }: {
   placeholder?: string;
   options: DataItem[];
   onBottomReached: () => void;
   onSearch: (query: string) => void;
   onChange: any;
-  value: any;
+  value?: any;
 }) {
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -39,26 +40,34 @@ export function MultiSelect({
   const [selected, setSelected] = React.useState<DataItem[]>(propValue);
 
   useEffect(() => {
-    if (propValue !== undefined) {
+    // Update selected state only if propValue changes
+    if (!isEqual(selected, propValue)) {
       setSelected(propValue);
-    } else {
-      setSelected([]);
+      console.log(selected, propValue, "propValue");
     }
-  }, [propValue]);
+  }, []);
 
   // Handle unselecting an item from the selected list
   const handleUnselect = (item: DataItem) => {
     setSelected((prev) => prev.filter((s) => s.value !== item.value));
   };
 
+  const handleOnSelect = (option: any) => {
+    onChange([...selected, option]);
+    setSelected((prev) => [...prev, option]);
+  };
+
   // Handle clicks outside the dropdown to close it
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !dropdownRef.current.contains(event.target as Node) &&
+        popoverDropdownRef.current &&
+        !popoverDropdownRef.current.contains(event.target as Node)
       ) {
         setOpen(false);
+        setPopoverOpen(false); // Close the popover as well
       }
       onSearch("");
     };
@@ -68,7 +77,7 @@ export function MultiSelect({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [open]);
+  }, [open, popoverOpen]);
 
   // Filter out selected values from the dropdown
   const selectables = options?.filter((item) => !selected?.includes(item));
@@ -86,6 +95,7 @@ export function MultiSelect({
                 <Badge key={item.value} variant="outline" className="border">
                   {item.label}
                   <button
+                    type="button"
                     className="ml-1 rounded-full outline-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -93,7 +103,6 @@ export function MultiSelect({
                       }
                     }}
                     onMouseDown={(e) => {
-                      e.preventDefault();
                       e.stopPropagation();
                     }}
                     onClick={() => handleUnselect(item)}
@@ -129,8 +138,11 @@ export function MultiSelect({
               </div>
               <div className="flex self-end">
                 <button
+                  type="button"
                   className="ml-1 rounded-full text-[#7677F4] text-[12px] font-semibold"
-                  onClick={() => setOpen(true)}
+                  onClick={(e) => {
+                    setOpen(true);
+                  }}
                 >
                   + Add
                 </button>
@@ -193,10 +205,7 @@ export function MultiSelect({
                       <CommandItem
                         key={index}
                         className="focus:outline-[red]"
-                        onSelect={() => {
-                          onChange([...selected, option]);
-                          setSelected((prev) => [...prev, option]);
-                        }}
+                        onSelect={() => handleOnSelect(option)}
                       >
                         {option.label}
                       </CommandItem>

@@ -86,6 +86,12 @@ export default function courseCreate() {
 
   const handleClear = () => {
     resetField("multi");
+    setValue("multi", [
+      // {
+      //   label: "one",
+      //   value: 1,
+      // },
+    ]);
   };
 
   const formValues = getValues();
