@@ -16,14 +16,14 @@ type DataItem = Record<"value" | "label", string>;
 // Main MultiSelect component
 export function MultiSelect({
   placeholder = "Select an item",
-  data,
+  options,
   onBottomReached,
   onSearch,
   onChange,
   value: propValue,
 }: {
   placeholder?: string;
-  data: DataItem[];
+  options: DataItem[];
   onBottomReached: () => void;
   onSearch: (query: string) => void;
   onChange: any;
@@ -71,12 +71,12 @@ export function MultiSelect({
   }, [open]);
 
   // Filter out selected values from the dropdown
-  const selectables = data.filter((item) => !selected?.includes(item));
+  const selectables = options?.filter((item) => !selected?.includes(item));
 
   return (
-    <div className={clsx("grid w-[300px] items-center")}>
+    <div className={clsx("grid w-[320px] items-center")}>
       <Command className="overflow-visible bg-transparent">
-        <div className="border border-input px-3 py-2 text-sm rounded-md relative">
+        <div className=" border border-[#E1E1E1] rounded-xl px-3 py-2 text-sm relative h-[40px]">
           {/* Display selected items and provide options to remove them */}
           <div className="flex gap-2 items-center">
             {/* Display up to two selected items with a badge */}
@@ -120,7 +120,13 @@ export function MultiSelect({
 
             {/* Display placeholder or "Add" button */}
             <div className="flex flex-row justify-between w-full">
-              <div>{selected?.length <= 0 && <div>{placeholder}</div>}</div>
+              <div>
+                {selected?.length <= 0 && (
+                  <div className="text-[#999999] font-normal">
+                    {placeholder}
+                  </div>
+                )}
+              </div>
               <div className="flex self-end">
                 <button
                   className="ml-1 rounded-full text-[#7677F4] text-[12px] font-semibold"
@@ -182,7 +188,7 @@ export function MultiSelect({
                   id={"multioptions"}
                   className="max-h-[300px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
                 >
-                  {selectables.map((option, index) => (
+                  {selectables?.map((option, index) => (
                     <div>
                       <CommandItem
                         key={index}
@@ -195,7 +201,7 @@ export function MultiSelect({
                         {option.label}
                       </CommandItem>
                       {/* Add a horizontal line for all items except the last one */}
-                      {index < selectables.length - 1 && (
+                      {index < selectables?.length - 1 && (
                         <hr className="border-[#D6D7D8]" />
                       )}
                     </div>

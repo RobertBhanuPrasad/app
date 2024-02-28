@@ -112,8 +112,6 @@ export default function Index() {
   };
 
 
-
-
   useEffect(() => {
     getUser();
   }, []);
