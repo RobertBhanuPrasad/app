@@ -127,7 +127,7 @@ export default function CourseCreate() {
                 value={formValues?.test}
                 {...register("test")}
                 placeholder={"Select course type"}
-                options={selectOptions}
+                data={selectOptions}
                 onBottomReached={handleOnBottomReached}
                 onSearch={handleOnSearch}
                 onChange={handleChange}
