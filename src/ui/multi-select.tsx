@@ -85,7 +85,7 @@ export function MultiSelect({
   return (
     <div className={clsx("grid w-[320px] items-center")}>
       <Command className="overflow-visible bg-transparent">
-        <div className=" border border-[#E1E1E1] rounded-xl px-3 py-2 text-sm relative h-[40px]">
+        <div className=" border border-[#E1E1E1] rounded-xl px-4 py-2 text-sm relative h-[40px]">
           {/* Display selected items and provide options to remove them */}
           <div className="flex gap-2 items-center">
             {/* Display up to two selected items with a badge */}
@@ -128,7 +128,7 @@ export function MultiSelect({
             )}
 
             {/* Display placeholder or "Add" button */}
-            <div className="flex flex-row justify-between w-full">
+            <div className="flex flex-row justify-between w-full ">
               <div>
                 {selected?.length <= 0 && (
                   <div className="text-[#999999] font-normal">

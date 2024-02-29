@@ -93,7 +93,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           {/* Input for searching options */}
           <Input
             onChange={(e) => onSearch(e.target.value)}
-            className="border-none focus:outline-none rounded-xl"
+            className="border-none focus:outline-none rounded-xl text-[#999999]"
           />
           <hr className="border-[#D6D7D8]" />
           <CommandEmpty>No option found</CommandEmpty>
