@@ -21,7 +21,7 @@ interface Option {
 }
 
 interface CustomSelectProps {
-  options: any;
+  data: any;
   onSearch: (searchQuery: string) => void;
   onBottomReached: () => void;
   onChange: (selectedOption: Option) => void;
@@ -30,7 +30,7 @@ interface CustomSelectProps {
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
-  options,
+  data,
   onSearch,
   onBottomReached,
   onChange,
@@ -110,7 +110,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               className="max-h-[300px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
             >
               {/* Mapping through options to render each option */}
-              {options?.map((option: any, index: number) => {
+              {data?.map((option: any, index: number) => {
                 return (
                   <div key={option.value}>
                     {/* Individual command item representing an option */}
@@ -125,7 +125,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                       {option.label}
                     </CommandItem>
                     {/* Horizontal line as a separator */}
-                    {index < options.length - 1 && (
+                    {index < data?.length - 1 && (
                       <hr className="border-[#D6D7D8]" />
                     )}
                   </div>

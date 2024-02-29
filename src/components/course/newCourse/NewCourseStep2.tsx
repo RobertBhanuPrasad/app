@@ -41,7 +41,7 @@ export default function NewCourseStep2() {
             <CustomSelect
               value={courseType}
               placeholder="Select course type"
-              options={options}
+              data={options}
               onBottomReached={() => {}}
               onSearch={(val: string) => {onSearch(val)}}
               onChange={(val) => {
@@ -57,7 +57,7 @@ export default function NewCourseStep2() {
             <MultiSelect
               value={teachers}
               placeholder="Enter Teacher Name"
-              options={data}
+              data={data}
               onBottomReached={() => {}}
               onSearch={() => {}}
               onChange={() => {}}
@@ -73,7 +73,7 @@ export default function NewCourseStep2() {
             <MultiSelect
               value={teachers}
               placeholder="Enter Teacher Name"
-              options={data}
+              data={data}
               onBottomReached={() => {}}
               onSearch={() => {}}
               onChange={() => {}}
@@ -89,7 +89,7 @@ export default function NewCourseStep2() {
             <CustomSelect
               value={courseType}
               placeholder="Select Language"
-              options={data}
+              data={data}
               onBottomReached={() => {}}
               onSearch={() => {}}
               onChange={(val) => {
@@ -114,7 +114,7 @@ export default function NewCourseStep2() {
             <CustomSelect
               value={courseType}
               placeholder="Select translation languages"
-              options={data}
+              data={data}
               onBottomReached={() => {}}
               onSearch={() => {}}
               onChange={(val) => {
@@ -164,7 +164,7 @@ export default function NewCourseStep2() {
             <MultiSelect
               value={teachers}
               placeholder="Enter Teacher Name"
-              options={data}
+              data={data}
               onBottomReached={() => {}}
               onSearch={() => {}}
               onChange={() => {}}

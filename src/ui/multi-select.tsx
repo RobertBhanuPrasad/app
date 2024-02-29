@@ -17,14 +17,14 @@ type DataItem = Record<"value" | "label", string>;
 // Main MultiSelect component
 export function MultiSelect({
   placeholder = "Select an item",
-  options,
+  data,
   onBottomReached,
   onSearch,
   onChange,
   value: propValue = [],
 }: {
   placeholder?: string;
-  options: DataItem[];
+  data: DataItem[];
   onBottomReached: () => void;
   onSearch: (query: string) => void;
   onChange: any;
@@ -80,7 +80,7 @@ export function MultiSelect({
   }, [open, popoverOpen]);
 
   // Filter out selected values from the dropdown
-  const selectables = options?.filter((item) => !selected?.includes(item));
+  const selectables = data?.filter((item) => !selected?.includes(item));
 
   return (
     <div className={clsx("grid w-[320px] items-center")}>

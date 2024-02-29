@@ -107,7 +107,7 @@ export default function courseCreate() {
                 {...register("multi")}
                 value={formValues?.multi}
                 placeholder="Select more"
-                options={selectOptions}
+                data={selectOptions}
                 onBottomReached={handleOnBottomReached}
                 onSearch={handleOnSearch}
                 onChange={handleChange}
