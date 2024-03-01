@@ -1,15 +1,16 @@
-import NewCourseStep2 from '@components/course/newCourse/NewCourseStep2';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Group from '@public/assets/Group';
-import Info from '@public/assets/Info';
-import Profile from '@public/assets/Profile';
-import Venue from '@public/assets/Venue';
-import { useStepsForm } from '@refinedev/react-hook-form';
-import { Car } from 'lucide-react';
-import React from 'react'
-import { Button } from 'src/ui/button';
-import { Tabs, TabsList, TabsTrigger } from 'src/ui/tabs';
-import { z } from 'zod';
+import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
+import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Group from "@public/assets/Group";
+import Info from "@public/assets/Info";
+import Profile from "@public/assets/Profile";
+import Venue from "@public/assets/Venue";
+import { useStepsForm } from "@refinedev/react-hook-form";
+import { Car } from "lucide-react";
+import React from "react";
+import { Button } from "src/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "src/ui/tabs";
+import { z } from "zod";
 
 // Array of step titles, icons, and colors
 const stepTitles = [
@@ -78,20 +79,9 @@ function index() {
   const renderFormByStep = (step: number) => {
     switch (step) {
       case 0:
-        return (
-          <>
-            <label>max capacity</label>
-            <input
-              placeholder="max capacity"
-              {...register("max_capacity", { required: true })}
-            />
-            {errors.max_capacity && <span>This field is required.</span>}
-          </>
-        );
+        return <NewCourseStep1 />;
       case 1:
-        return (
-         <NewCourseStep2 />
-        );
+        return <NewCourseStep2 />;
       case 2:
         return <div className="w-auto"></div>;
     }
