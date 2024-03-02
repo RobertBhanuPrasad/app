@@ -36,6 +36,13 @@ export default function courseCreate() {
       current: currentPage,
       mode: "server",
     },
+    filters: [
+      {
+        field: "id",
+        operator: "ne",
+        value: 2,
+      },
+    ],
   });
 
   // Function to handle reaching the bottom of the paginated data
@@ -105,11 +112,22 @@ export default function courseCreate() {
               {/* MultiSelect component */}
               <MultiSelect
                 {...register("multi")}
-                value={formValues?.multi}
+                value={[{ label: "two", value: 2 }]}
                 placeholder="Select more"
                 data={selectOptions}
                 onBottomReached={handleOnBottomReached}
                 onSearch={handleOnSearch}
+                getOptionProps={(option: { value: number }) => {
+                  if (option.value === 2) {
+                    return {
+                      noIcon: true,
+                    };
+                  } else {
+                    return {
+                      noIcon: false,
+                    };
+                  }
+                }}
                 onChange={handleChange}
               />
             </div>

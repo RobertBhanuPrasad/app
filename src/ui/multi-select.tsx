@@ -22,6 +22,7 @@ export function MultiSelect({
   onSearch,
   onChange,
   value: propValue = [],
+  getOptionProps,
 }: {
   placeholder?: string;
   data: DataItem[];
@@ -29,6 +30,7 @@ export function MultiSelect({
   onSearch: (query: string) => void;
   onChange: any;
   value?: any;
+  getOptionProps?: any;
 }) {
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -90,6 +92,9 @@ export function MultiSelect({
           <div className="flex gap-2 items-center">
             {/* Display up to two selected items with a badge */}
             {selected?.map((item, index) => {
+              // Extracting option properties, including 'noIcon' to determine if a cross icon should be displayed
+              const optionProps = getOptionProps(item);
+              const { noIcon } = optionProps;
               if (index > 1) return null;
               return (
                 <Badge key={item.value} variant="outline" className="border">
@@ -107,11 +112,14 @@ export function MultiSelect({
                     }}
                     onClick={() => handleUnselect(item)}
                   >
-                    <X
-                      stroke="#7677F4"
-                      strokeWidth={2.5}
-                      className="h-3 w-3 cursor-pointer"
-                    />
+                    {!noIcon && (
+                      <X
+                        onClick={() => handleUnselect(item)}
+                        className="h-4 w-4 cursor-pointer"
+                        stroke="#7677F4"
+                        strokeWidth={2.5}
+                      />
+                    )}
                   </button>
                 </Badge>
               );
@@ -155,25 +163,32 @@ export function MultiSelect({
         <div className="relative mt-2" ref={popoverDropdownRef}>
           {popoverOpen ? (
             <CommandGroup className="absolute w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-              {selected?.map((item, index) => (
-                <div key={item.value}>
-                  <div className="flex flex-row justify-between items-center pr-3">
-                    <div className="cursor-pointer p-2 text-[12px] hover:bg-gray-200">
-                      {item.label}
+              {selected?.map((item, index) => {
+                // Extracting option properties, including 'noIcon' to determine if a cross icon should be displayed
+                const optionProps = getOptionProps(item);
+                const { noIcon } = optionProps;
+                return (
+                  <div key={item.value}>
+                    <div className="flex flex-row justify-between items-center pr-3">
+                      <div className="cursor-pointer p-2 text-[12px] hover:bg-gray-200">
+                        {item.label}
+                      </div>
+                      {!noIcon && (
+                        <X
+                          onClick={() => handleUnselect(item)}
+                          className="h-4 w-4 cursor-pointer"
+                          stroke="#7677F4"
+                          strokeWidth={2.5}
+                        />
+                      )}
                     </div>
-                    <X
-                      onClick={() => handleUnselect(item)}
-                      className="h-4 w-4 cursor-pointer"
-                      stroke="#7677F4"
-                      strokeWidth={2.5}
-                    />
+                    {/* Add a horizontal line for all items except the last one */}
+                    {index < selected?.length - 1 && (
+                      <hr className="border-[#D6D7D8]" />
+                    )}{" "}
                   </div>
-                  {/* Add a horizontal line for all items except the last one */}
-                  {index < selected?.length - 1 && (
-                    <hr className="border-[#D6D7D8]" />
-                  )}{" "}
-                </div>
-              ))}
+                );
+              })}
             </CommandGroup>
           ) : null}
         </div>
@@ -206,6 +221,7 @@ export function MultiSelect({
                         key={index}
                         className="focus:outline-[red]"
                         onSelect={() => handleOnSelect(option)}
+                        // {...getOptionProps(option)}
                       >
                         {option.label}
                       </CommandItem>
