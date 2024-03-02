@@ -55,7 +55,7 @@ export default function NewCourseStep2() {
           <div className="flex gap-1 flex-col">
             <div className="text-xs font-normal text-[#333333]">Teacher *</div>
             <MultiSelect
-              value={teachers}
+              value={[]}
               placeholder="Enter Teacher Name"
               data={data}
               onBottomReached={() => {}}
@@ -71,7 +71,7 @@ export default function NewCourseStep2() {
               Assistant Teacher *
             </div>
             <MultiSelect
-              value={teachers}
+              value={[]}
               placeholder="Enter Teacher Name"
               data={data}
               onBottomReached={() => {}}
@@ -162,7 +162,7 @@ export default function NewCourseStep2() {
               Country(s) from where registrations are allowed *
             </div>
             <MultiSelect
-              value={teachers}
+              value={[]}
               placeholder="Enter Teacher Name"
               data={data}
               onBottomReached={() => {}}

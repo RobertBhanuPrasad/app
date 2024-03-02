@@ -23,6 +23,7 @@ export function MultiSelect({
   onChange,
   value: propValue = [],
   getOptionProps,
+  error,
 }: {
   placeholder?: string;
   data: DataItem[];
@@ -31,6 +32,7 @@ export function MultiSelect({
   onChange: any;
   value?: any;
   getOptionProps?: any;
+  error?: any;
 }) {
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -45,7 +47,6 @@ export function MultiSelect({
     // Update selected state only if propValue changes
     if (!isEqual(selected, propValue)) {
       setSelected(propValue);
-      console.log(selected, propValue, "propValue");
     }
   }, []);
 
@@ -87,17 +88,30 @@ export function MultiSelect({
   return (
     <div className={clsx("grid w-[320px] items-center")}>
       <Command className="overflow-visible bg-transparent">
-        <div className=" border border-[#E1E1E1] rounded-xl px-4 py-2 text-sm relative h-[40px]">
+        <div
+          className={`rounded-xl px-4 py-2 text-sm relative h-[40px] border ${
+            //If error is present then we make the border red to show error
+            error ? "border-[#FF6D6D]" : "border-[#E1E1E1]"
+          }`}
+        >
           {/* Display selected items and provide options to remove them */}
           <div className="flex gap-2 items-center">
             {/* Display up to two selected items with a badge */}
             {selected?.map((item, index) => {
               // Extracting option properties, including 'noIcon' to determine if a cross icon should be displayed
-              const optionProps = getOptionProps(item);
+              const optionProps = getOptionProps
+                ? getOptionProps(item)
+                : {
+                    noIcon: false,
+                  };
               const { noIcon } = optionProps;
               if (index > 1) return null;
               return (
-                <Badge key={item.value} variant="outline" className="border">
+                <Badge
+                  key={item.value}
+                  variant="outline"
+                  className="border"
+                >
                   {item.label}
                   <button
                     type="button"
@@ -165,7 +179,11 @@ export function MultiSelect({
             <CommandGroup className="absolute w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
               {selected?.map((item, index) => {
                 // Extracting option properties, including 'noIcon' to determine if a cross icon should be displayed
-                const optionProps = getOptionProps(item);
+                const optionProps = getOptionProps
+                  ? getOptionProps(item)
+                  : {
+                      noIcon: false,
+                    };
                 const { noIcon } = optionProps;
                 return (
                   <div key={item.value}>

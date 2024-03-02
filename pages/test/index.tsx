@@ -9,12 +9,30 @@ import { MultiSelect } from "src/ui/multi-select";
 import { useSelect } from "@refinedev/core";
 import { useEffect, useState } from "react";
 import { useForm } from "@refinedev/react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function courseCreate() {
   // State for tracking current page in server-side paginated data
   const [currentPage, setCurrentPage] = useState(1);
   // State to hold options for the MultiSelect component
   const [selectOptions, setSelectOptions] = useState<any>([]);
+
+  // Zod schema for form validation
+  const schema = z.object({
+    multi: z
+      .array(
+        z.object({
+          label: z.string().refine((value) => value.trim().length > 0, {
+            message: "label required",
+          }),
+          value: z.number(),
+        })
+      )
+      .refine((arr) => arr.length > 0, {
+        message: "At least one option is required",
+      }),
+  });
 
   // Custom hook for handling the selection of options and fetching data
   const {
@@ -76,7 +94,12 @@ export default function courseCreate() {
     resetField,
     getValues,
     formState: { errors },
-  } = useForm({});
+  } = useForm({
+    refineCoreProps: {},
+    resolver: zodResolver(schema),
+  });
+
+  console.log("heyy errors", errors);
 
   // Function to submit the form
   const onSubmit = async (data: any) => {
@@ -94,14 +117,22 @@ export default function courseCreate() {
   const handleClear = () => {
     resetField("multi");
     setValue("multi", [
-      // {
-      //   label: "one",
-      //   value: 1,
-      // },
+      {
+        label: "one",
+        value: 1,
+      },
     ]);
   };
 
+  // useEffect(() => {
+  //   setValue("multi", [{ label: "two", value: 2 }]);
+  // }, []);
+
   const formValues = getValues();
+
+  const optiondata: any = [{ label: "two", value: 2 }];
+
+  console.log("heyy form Data", formValues.multi, optiondata);
 
   return (
     <div className="text-3xl ml-20 mt-20">
@@ -112,7 +143,7 @@ export default function courseCreate() {
               {/* MultiSelect component */}
               <MultiSelect
                 {...register("multi")}
-                value={[{ label: "two", value: 2 }]}
+                value={formValues.multi}
                 placeholder="Select more"
                 data={selectOptions}
                 onBottomReached={handleOnBottomReached}
@@ -129,6 +160,7 @@ export default function courseCreate() {
                   }
                 }}
                 onChange={handleChange}
+                error={errors?.multi}
               />
             </div>
             <Button onClick={handleClear}>Clear</Button>
