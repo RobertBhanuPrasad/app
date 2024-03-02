@@ -1,15 +1,16 @@
-import NewCourseStep2 from '@components/course/newCourse/NewCourseStep2';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Group from '@public/assets/Group';
-import Info from '@public/assets/Info';
-import Profile from '@public/assets/Profile';
-import Venue from '@public/assets/Venue';
-import { useStepsForm } from '@refinedev/react-hook-form';
-import { Car } from 'lucide-react';
-import React from 'react'
-import { Button } from 'src/ui/button';
-import { Tabs, TabsList, TabsTrigger } from 'src/ui/tabs';
-import { z } from 'zod';
+import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Group from "@public/assets/Group";
+import Info from "@public/assets/Info";
+import Profile from "@public/assets/Profile";
+import Venue from "@public/assets/Venue";
+import { useStepsForm } from "@refinedev/react-hook-form";
+import { Car } from "lucide-react";
+import React from "react";
+import { FormProvider } from "react-hook-form";
+import { Button } from "src/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "src/ui/tabs";
+import { z } from "zod";
 
 // Array of step titles, icons, and colors
 const stepTitles = [
@@ -54,19 +55,21 @@ function index() {
   });
 
   // Destructuring values from useStepsForm hook
-  const {
-    refineCore: { onFinish, formLoading },
-    register,
-    handleSubmit,
-    formState: { errors },
-    steps: { currentStep, gotoStep },
-  } = useStepsForm({
+  const methods = useStepsForm({
     refineCoreProps: {
       action: "create",
       resource: "event",
     },
     resolver: zodResolver(schema),
   });
+
+  const {
+    refineCore: { onFinish, formLoading },
+    register,
+    handleSubmit,
+    formState: { errors },
+    steps: { currentStep, gotoStep },
+  } = methods;
 
   const onSubmit = (formData: any) => {
     console.log(formData);
@@ -89,9 +92,7 @@ function index() {
           </>
         );
       case 1:
-        return (
-         <NewCourseStep2 />
-        );
+        return <NewCourseStep2 />;
       case 2:
         return <div className="w-auto"></div>;
     }
@@ -126,11 +127,13 @@ function index() {
                   ))}
                 </div>
               </TabsList>
-              <form autoComplete="off">
-                <div className="bg-[white] w-[1064px] rounded-[24px] p-6 -ml-4 -mt-1 shadow-md h-[517px]">
-                  {renderFormByStep(currentStep)}
-                </div>
-              </form>
+              <FormProvider {...methods}>
+                <form autoComplete="off">
+                  <div className="bg-[white] w-[1064px] rounded-[24px] p-6 -ml-4 -mt-1 shadow-md h-[517px]">
+                    {renderFormByStep(currentStep)}
+                  </div>
+                </form>
+              </FormProvider>
             </div>
           </Tabs>
         </div>
