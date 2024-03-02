@@ -31,6 +31,7 @@ export default function Login() {
 }
 
 Login.noLayout = true;
+Login.requireAuth = false;
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated } = await authProvider.check(context);

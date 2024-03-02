@@ -10,6 +10,7 @@ export default function Register() {
 }
 
 Register.noLayout = true;
+Register.requireAuth = false;
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated } = await authProvider.check(context);

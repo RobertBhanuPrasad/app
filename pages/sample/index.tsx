@@ -1,5 +1,5 @@
 // This page is to demonstrate the select component how to use in form , will be removed afterwards
-import { useSelect } from "@refinedev/core";
+import { Authenticated, useGetIdentity, useSelect } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetServerSideProps } from "next";
 
 import CustomSelect from "src/ui/custom-select";
+import { authProvider } from "src/authProvider";
 
 export default function CourseCreate() {
   // State for managing pagination and options for the select component
@@ -112,6 +113,10 @@ export default function CourseCreate() {
     resetField("test");
   };
 
+  const { data: identity } = useGetIdentity<any>();
+
+  console.log("user info", identity);
+
   return (
     <div className="text-3xl ml-20 mt-20">
       <Card className="w-[400px]">
@@ -149,9 +154,21 @@ CourseCreate.noLayout = true;
 
 // Server-side props function for handling translations
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated } = await authProvider.check(context);
+
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
     "common",
   ]);
+
+  if (authenticated) {
+    return {
+      props: {},
+      redirect: {
+        destination: `/`,
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

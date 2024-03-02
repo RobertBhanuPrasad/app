@@ -9,8 +9,9 @@ import { MultiSelect } from "src/ui/multi-select";
 import { useSelect } from "@refinedev/core";
 import { useEffect, useState } from "react";
 import { useForm } from "@refinedev/react-hook-form";
+import { authProvider } from "src/authProvider";
 
-export default function courseCreate() {
+export default function courseCreate({ pageProps }: any) {
   // State for tracking current page in server-side paginated data
   const [currentPage, setCurrentPage] = useState(1);
   // State to hold options for the MultiSelect component
@@ -130,9 +131,20 @@ courseCreate.noLayout = true;
 
 // Server-side props for translation
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated } = await authProvider.check(context);
+
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
     "common",
   ]);
+
+  if (authenticated) {
+    return {
+      redirect: {
+        destination: `/`,
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {
