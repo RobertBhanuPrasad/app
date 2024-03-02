@@ -82,36 +82,40 @@ function index() {
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background  data-[state=active]:shadow-sm";
   return (
-    <div className="'bg-[red]">
+    <div className="'bg-[white]">
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
-          <TabsList className="h-[513px] bg-[#7677F41A] w-[238px]  mb-10 pt-10">
+          <TabsList className="h-[513px]  bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md mb-10 pt-10">
             <div className="flex flex-col  h-full gap-6">
               {stepTitles.map((tab, index) => (
                 <TabsTrigger
                   key={index}
                   value={tab.value}
-                  className="!h-12 items-center justify-center w-[220px] bg-[yellow] data-[state=active]:bg-gradient-to-r from-[#7677F4] to-transparent"
+                  className="!h-12  items-center w-[230px]  data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
                   onClick={() => gotoStep(index)}
                 >
                   {JSON.stringify(currentStep) === tab.value && (
-                    <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-16"></div>
+                    <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
                   )}
-                  {tab.icon}
-                  {tab.label}
+                  <div className="flex flex-row gap-[10px] ml-[14px] items-center">
+                    {tab.icon}
+                    {tab.label}
+                  </div>
                 </TabsTrigger>
               ))}
             </div>
           </TabsList>
 
-          <div className="bg-[white] w-full rounded-[24px] -ml-2 -mt-1 p-4 shadow-md h-[517px]">
+          <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-4 shadow-md h-[517px]">
             <form autoComplete="off">
               <TabsContent value="0" className={contentStylings}>
-                Change your contact info
+              <NewCourseStep1 />
               </TabsContent>
-              <TabsContent value="1" className={contentStylings}></TabsContent>
+              <TabsContent value="1" className={contentStylings}>
+              <NewCourseStep2 />
+              </TabsContent>
               <TabsContent value="2" className={contentStylings}>
-                <NewCourseStep2 />
+               
               </TabsContent>
               <TabsContent value="3" className={contentStylings}>
                 Change your password here.
