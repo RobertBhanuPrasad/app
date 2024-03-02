@@ -3,40 +3,16 @@ import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useSelect } from "@refinedev/core";
 import React, { useState } from "react";
+import { useController, useForm } from "react-hook-form";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
 import { Label } from "src/ui/label";
 import { MultiSelect } from "src/ui/multi-select";
 import { RadioGroup, RadioGroupItem } from "src/ui/radio-group";
+import { Switch } from "src/ui/switch";
 
 function NewCourseStep1() {
   const [selectedRadioValue, setRadioSelectedValue] = useState("option-one");
-
-  const [organization, setOrganization] = useState();
-
-  const [teachers, setTeachers] = useState();
-
-  const { options, onSearch } = useSelect({
-    resource: "organizations",
-    optionLabel: "name",
-    optionValue: "id",
-    onSearch: (value) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-  });
-
-  const data = [
-    { label: "A", value: "a" },
-    { label: "B", value: "b" },
-    { label: "C", value: "c" },
-    { label: "D", value: "d" },
-  ];
-
-  console.log(options, "options");
 
   return (
     <div>
@@ -74,7 +50,7 @@ function NewCourseStep1() {
               />
               <Label
                 htmlFor="option-one"
-                className={`text-[#333333] font-normal ${
+                className={`text-[#999999] font-normal ${
                   selectedRadioValue === "option-one" ? "text-[#7677F4]" : ""
                 }`}
               >
@@ -107,7 +83,7 @@ function NewCourseStep1() {
               />
               <Label
                 htmlFor="option-two"
-                className={`text-[#333333] font-normal ${
+                className={`text-[#999999] font-normal ${
                   selectedRadioValue === "option-two" ? "text-[#7677F4]" : ""
                 }`}
               >
@@ -140,7 +116,7 @@ function NewCourseStep1() {
               />
               <Label
                 htmlFor="option-three"
-                className={`text-[#333333] font-normal ${
+                className={`text-[#999999] font-normal ${
                   selectedRadioValue === "option-three" ? "text-[#7677F4]" : ""
                 }`}
               >
@@ -152,39 +128,129 @@ function NewCourseStep1() {
       </RadioGroup>
       <div className="mt-8 flex flex-row gap-7 ">
         <div className="flex gap-1 flex-col">
-          <div className="text-xs font-normal text-[#333333]">
-            Organization *
-          </div>
-          <CustomSelect
-            value={organization}
-            placeholder="Select Organization"
-            data={options}
-            onBottomReached={() => {}}
-            onSearch={(val: string) => {
-              onSearch(val);
-            }}
-            onChange={(val) => {
-              console.log(val, "Value is multi select");
-            }}
-          />
+          <CourseTypeDropDown />
         </div>
         <div className="flex gap-1 flex-col">
-          <div className="text-xs font-normal text-[#333333]">Program Organizer *</div>
-          <MultiSelect
-            value={teachers}
-            placeholder="Enter Program Name"
-            data={data}
-            onBottomReached={() => {}}
-            onSearch={() => {}}
-            onChange={() => {}}
-          />
+          <ProgramOrganizerDropDown />
         </div>
       </div>
-      <div>
-      Registration via 3rd party gateway
+      <div className="flex flex-row gap-6 mt-[60px]">
+        <div className="text-[14px] font-normal">
+          Registration via 3rd party gateway
+        </div>
+        <Switch
+          id="registration"
+          className="!w-[57px] !h-[24px]"
+          onCheckedChange={(value: any) => {
+            console.log(value, "value");
+          }}
+        />
       </div>
     </div>
   );
 }
 
 export default NewCourseStep1;
+
+const CourseTypeDropDown = () => {
+  const { options, onSearch } = useSelect({
+    resource: "organizations",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+  const { getValues, register, control } = useForm();
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "organization",
+    control,
+  });
+  const formData = getValues();
+  console.log(formData, "formData");
+  return (
+    <div className="w-80">
+      <div className="flex gap-1 flex-col">
+        <div className="text-xs font-normal text-[#333333]">Organization *</div>
+
+        <CustomSelect
+          value={value}
+          {...register("organization")}
+          placeholder="Select Organization"
+          data={options}
+          onBottomReached={() => {}}
+          onSearch={(val: string) => {
+            onSearch(val);
+          }}
+          onChange={(val) => {
+            console.log(val, "Value is multi select");
+            onChange(val);
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const ProgramOrganizerDropDown = () => {
+  const [teachers, setTeachers] = useState();
+
+  const { getValues, register, control, setValue, resetField } = useForm();
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "programOrganizerId",
+    control,
+  });
+
+  const { options, onSearch } = useSelect({
+    resource: "users",
+    optionLabel: "full_name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "full_name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+
+  // Function to handle changes in MultiSelect component
+  const handleChange = (options: any) => {
+    resetField("multi");
+    //setting the value to formdata
+    setValue("multi", options);
+  };
+  const formData = getValues();
+  console.log(formData, "formData");
+
+  console.log(options, "organizer");
+
+  return (
+    <div className="flex gap-1 flex-col">
+      <div className="text-xs font-normal text-[#333333]">
+        Program Organizer *
+      </div>
+      <MultiSelect
+        value={value}
+        placeholder="Enter Program organizer Name"
+        data={options}
+        onBottomReached={() => {}}
+        onSearch={(val: string) => {
+          onSearch(val);
+        }}
+        onChange={(val: any) => {
+          console.log(val, "Value is program organizer");
+          onChange(val.value);
+        }}
+      />
+    </div>
+  );
+};
