@@ -61,8 +61,7 @@ export const authProvider: AuthBindings = {
         password,
         options: {
           data: {
-            full_name: "Bhargavi",
-            role_id: 1,
+            user_name: "Bhargavi",
           },
         },
       });
