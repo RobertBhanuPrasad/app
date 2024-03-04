@@ -94,42 +94,6 @@ export default function NewCourseStep2() {
         </div>
 
         <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Available language(s) for translation
-            </div>
-            <CustomSelect
-              value={courseType}
-              placeholder="Select translation languages"
-              data={data}
-              onBottomReached={() => {}}
-              onSearch={() => {}}
-              onChange={(val) => {
-                console.log(val, "Value is multi select");
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Available language(s) for translation
-            </div>
-            <CustomSelect
-              value={courseType}
-              placeholder="Select translation languages"
-              data={data}
-              onBottomReached={() => {}}
-              onSearch={() => {}}
-              onChange={(val) => {
-                console.log(val, "Value is multi select");
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="w-80">
           <div className="w-[254px] text-base leading-5 text-[#323232]">
             Registration is mandatory for this course
           </div>
@@ -201,8 +165,10 @@ const CourseTypeDropDown = () => {
     ],
   });
 
-  const { field:{value,onChange} } = useController({
-    name: 'courseType'
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "courseType",
   });
 
   return (
@@ -218,7 +184,7 @@ const CourseTypeDropDown = () => {
             onSearch(val);
           }}
           onChange={(val) => {
-            onChange(val)
+            onChange(val);
           }}
         />
       </div>

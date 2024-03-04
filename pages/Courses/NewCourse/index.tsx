@@ -97,13 +97,26 @@ function index() {
     },
     {
       value: "3",
-      label: "Accommodation",
+      label: "Fees",
       icon: <Car color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
       color: "#7677F4",
     },
     {
       value: "4",
+      label: "Accommodation",
+      icon: <Car color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+    {
+      value: "5",
       label: "Contact Info",
+      icon: <Info color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+
+    {
+      value: "6",
+      label: "Review",
       icon: <Info color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
       color: "#7677F4",
     },
@@ -122,16 +135,16 @@ function index() {
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
   return (
-    <div className="'bg-[white]">
+    <div className="bg-[white]  ">
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
-          <TabsList className="h-[513px]  bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md mb-10 pt-10">
-            <div className="flex flex-col  h-full gap-6">
+          <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
+            <div className="flex flex-col  h-full gap-4 ">
               {stepTitles.map((tab, index) => (
                 <TabsTrigger
                   key={index}
                   value={tab.value}
-                  className="!h-12  items-center w-[230px]  data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
+                  className="!h-12  items-center w-[230px] !text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
                   onClick={() => gotoStep(index)}
                 >
                   {JSON.stringify(currentStep) === tab.value && (
@@ -146,7 +159,7 @@ function index() {
             </div>
           </TabsList>
 
-          <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-4 shadow-md h-[517px]">
+          <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
             <FormProvider {...methods}>
               <form autoComplete="off">
                 <TabsContent value="0" className={contentStylings}>
@@ -163,6 +176,12 @@ function index() {
                   Change your password here.
                 </TabsContent>
                 <TabsContent value="4" className={contentStylings}>
+                  Change your accommodation details
+                </TabsContent>
+                <TabsContent value="5" className={contentStylings}>
+                  Change your accommodation details
+                </TabsContent>
+                <TabsContent value="6" className={contentStylings}>
                   Change your accommodation details
                 </TabsContent>
               </form>
