@@ -11,6 +11,8 @@ import { Button } from "src/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import { z } from "zod";
 import { FormProvider } from "react-hook-form";
+import Review from "@public/assets/Review";
+import Fees from "@public/assets/Fees";
 
 // Array of step titles, icons, and colors
 const stepTitles = [
@@ -98,7 +100,7 @@ function index() {
     {
       value: "3",
       label: "Fees",
-      icon: <Car color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
+      icon: <Fees color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
       color: "#7677F4",
     },
     {
@@ -117,7 +119,7 @@ function index() {
     {
       value: "6",
       label: "Review",
-      icon: <Info color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
+      icon: <Review color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
       color: "#7677F4",
     },
   ];
@@ -190,7 +192,7 @@ function index() {
         </div>
       </Tabs>
 
-      <div className="flex justify-center -mt-32 gap-4">
+      <div className="flex justify-center -mt-20 gap-4">
         {currentStep > 0 && (
           <Button
             onClick={() => {
