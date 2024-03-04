@@ -1,9 +1,20 @@
+import Globe from "@public/assets/Globe";
+import Important from "@public/assets/Important";
+import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useList, useMany, useSelect } from "@refinedev/core";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import CustomSelect from "src/ui/custom-select";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "src/ui/hover-card";
 import { Input } from "src/ui/input";
 import { DataItem, MultiSelect } from "src/ui/multi-select";
+import { RadioGroup } from "src/ui/radio-group";
+import { RadioButtonCard } from "src/ui/radioButtonCard";
+import { Switch } from "src/ui/switch";
 import { supabaseClient } from "src/utility";
 
 export default function NewCourseStep2() {
@@ -53,6 +64,7 @@ export default function NewCourseStep2() {
             <div className="text-xs font-normal text-[#333333]">
               Display language translation option for participants *
             </div>
+            <DisplayLanguage />
           </div>
         </div>
 
@@ -75,9 +87,7 @@ export default function NewCourseStep2() {
         </div>
 
         <div className="w-80">
-          <div className="w-[254px] text-base leading-5 text-[#323232]">
-            Registration is mandatory for this course
-          </div>
+          <RegistrationGateway />
         </div>
 
         <div className="w-80">
@@ -91,17 +101,61 @@ export default function NewCourseStep2() {
 
         <div className="w-80">
           <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Program Visibility
+            <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
+              Program Visibility <div className="text-[#7677F4]"> *</div>
+              <HoverCard>
+                <HoverCardTrigger>
+                  <Important />
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  <div className="w-[231px] text-wrap !rounded-[15px]">
+                    <div className="flex flex-row gap-1 items-center">
+                      <Globe />
+                      Public
+                    </div>
+                    <div>
+                      There are a lot of things you can do in space, and space
+                      essentially is unlimited resources.
+                    </div>
+                    <div className="my-2">
+                      <hr></hr>
+                    </div>
+                    <div className="flex flex-row gap-1 items-center">
+                      <LockIcon />
+                      Public
+                    </div>
+                    <div>
+                      There are a lot of things you can do in space, and space
+                      essentially is unlimited resources.
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
             </div>
+            <Visibility />
           </div>
         </div>
 
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
+        <div className="w-80 ">
+          <div>
+            <div className="text-xs font-normal text-[#333333] flex flex-row gap-1 items-center">
               Is geo restriction applicable for registrations
+              <div className="text-[#7677F4]">*</div>
+              <HoverCard>
+                <HoverCardTrigger>
+                  <Important />
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  <div className="w-[231px] text-wrap !rounded-[15px]">
+                    Text entered in the 'Email Notes' field will be included in
+                    the registration confirmation email only irrespective of the
+                    transaction status (Email notes will not be shown on the Art
+                    of Living Website)
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
             </div>
+            <GeoRestriction />
           </div>
         </div>
 
@@ -123,9 +177,53 @@ export default function NewCourseStep2() {
       </div>
 
       <div className="flex gap-x-7 text-sm text-[#323232]">
-        <div className="w-80">Course Description *</div>
-        <div className="w-80">Course Notes *</div>
-        <div className="w-80">Course Description *</div>
+        <div className="w-80 flex flex-row gap-1 items-center">
+          Course Description *
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px]">
+                Course Description text is managed by National Admin. If the
+                National Admin has allowed Organizers / Teachers to edit Course
+                description then only this field will be editable. If you want
+                to change the course description and this field is not editable
+                kindly contact your National Admin.
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+        <div className="w-80 flex flex-row gap-1 items-center">
+          Course Notes *
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px]">
+                Text entered in the 'Course Notes' field will be shown only on
+                the Art of Living Website course details page.
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+        <div className="w-80 flex flex-row gap-1 items-center">
+          Course Description *
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px]">
+                Text entered in the 'Email Notes' field will be included in the
+                registration confirmation email only irrespective of the
+                transaction status (Email notes will not be shown on the Art of
+                Living Website)
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
       </div>
     </div>
   );
@@ -215,6 +313,24 @@ const CourseTypeDropDown = () => {
           }}
         />
       </div>
+    </div>
+  );
+};
+
+const RegistrationGateway = () => {
+  const [checkedValue, setCheckedValue] = useState();
+  return (
+    <div className="w-80 flex flex-row gap-6 mt-[60px]">
+      <div className="text-[14px] w-[244px] font-normal text-wrap">
+        Registration is mandatory for this course
+      </div>
+      <Switch
+        id="registration"
+        className="!w-[57px] !h-[24px]"
+        onCheckedChange={(value: any) => {
+          setCheckedValue(value);
+        }}
+      />
     </div>
   );
 };
@@ -382,5 +498,98 @@ const AssistantTeachersDropDown = () => {
         />
       </div>
     </div>
+  );
+};
+
+const Visibility = () => {
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "visibility",
+  });
+  const {
+    getValues,
+    formState: { errors },
+  } = useFormContext();
+
+  const formdata = getValues();
+  console.log(formdata, "formdata izz");
+  return (
+    <RadioGroup defaultValue="public" onValueChange={onChange} value={value}>
+      <div className="flex flex-row gap-6 ">
+        <RadioButtonCard
+          value="public"
+          selectedRadioValue={value}
+          label="Public"
+          className="w-[112px] h-[40px] rounded-[12px] "
+        />
+        <RadioButtonCard
+          value="private"
+          selectedRadioValue={value}
+          label="Private"
+          className="w-[112px] h-[40px] rounded-[12px]"
+        />
+      </div>
+    </RadioGroup>
+  );
+};
+
+const DisplayLanguage = () => {
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "display_language",
+  });
+  const {
+    formState: { errors },
+  } = useFormContext();
+
+  return (
+    <RadioGroup value={value} onValueChange={onChange}>
+      <div className="flex flex-row gap-6 ">
+        <RadioButtonCard
+          value="true"
+          selectedRadioValue={value}
+          label="Yes"
+          className="w-[112px] h-[40px] rounded-[12px]"
+        />
+        <RadioButtonCard
+          value="false"
+          selectedRadioValue={value}
+          label="No"
+          className="w-[112px] h-[40px] rounded-[12px]"
+        />
+      </div>
+    </RadioGroup>
+  );
+};
+
+const GeoRestriction = () => {
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "geo_restriction",
+  });
+  const {
+    formState: { errors },
+  } = useFormContext();
+
+  return (
+    <RadioGroup onValueChange={onChange}>
+      <div className="flex flex-row gap-6 ">
+        <RadioButtonCard
+          value="true"
+          selectedRadioValue={value}
+          label="Yes"
+          className="w-[112px] !h-[40px] rounded-[12px]"
+        />
+        <RadioButtonCard
+          value="false"
+          selectedRadioValue={value}
+          label="No"
+          className="w-[112px] !h-[40px] rounded-[12px]"
+        />
+      </div>
+    </RadioGroup>
   );
 };
