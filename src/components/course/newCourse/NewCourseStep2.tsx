@@ -1,12 +1,12 @@
-import { useSelect } from "@refinedev/core";
-import { useState } from "react";
+import { CrudFilter, useSelect } from "@refinedev/core";
+import { useEffect, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
+import countryCodes from "src/data/CountryCodes";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
-import { MultiSelect } from "src/ui/multi-select";
+import { DataItem, MultiSelect } from "src/ui/multi-select";
 
 export default function NewCourseStep2() {
-  const [courseType, setCourseType] = useState();
-  const [teachers, setTeachers] = useState();
   const data = [
     { label: "A", value: "a" },
     { label: "B", value: "b" },
@@ -14,90 +14,26 @@ export default function NewCourseStep2() {
     { label: "D", value: "d" },
   ];
 
-  const {
-    options,
-    onSearch,
-  } = useSelect({
-    resource: "program_types",
-    optionLabel: "name",
-    optionValue: "id",
-    onSearch: (value) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-  });
+  const [courseType, setCourseType] = useState();
+  const { watch } = useFormContext();
 
+  const formData = watch();
+
+  const teachers = [];
   return (
-    <div className="pt-2 w-[1016px]">
-      <div className="flex flex-wrap gap-x-7 gap-y-8">
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Course Type *
-            </div>
-            <CustomSelect
-              value={courseType}
-              placeholder="Select course type"
-              data={options}
-              onBottomReached={() => {}}
-              onSearch={(val: string) => {onSearch(val)}}
-              onChange={(val) => {
-                console.log(val, "Value is multi select");
-              }}
-            />
-          </div>
-        </div>
+    <div className="pt-2 w-[1016px] ">
+      <div className="flex flex-wrap gap-x-7 gap-y-3">
+        <CourseTypeDropDown />
+        {formData?.courseTypeSettings?.has_alias_name === true && (
+          <CourseNameDropDown />
+        )}
+        <TeachersDropDown />
 
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">Teacher *</div>
-            <MultiSelect
-              value={[]}
-              placeholder="Enter Teacher Name"
-              data={data}
-              onBottomReached={() => {}}
-              onSearch={() => {}}
-              onChange={() => {}}
-            />
-          </div>
-        </div>
+        <AssistantTeachersDropDown />
 
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Assistant Teacher *
-            </div>
-            <MultiSelect
-              value={[]}
-              placeholder="Enter Teacher Name"
-              data={data}
-              onBottomReached={() => {}}
-              onSearch={() => {}}
-              onChange={() => {}}
-            />
-          </div>
-        </div>
+        <LanguageDropDown />
 
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Language(s) course is taught in *
-            </div>
-            <CustomSelect
-              value={courseType}
-              placeholder="Select Language"
-              data={data}
-              onBottomReached={() => {}}
-              onSearch={() => {}}
-              onChange={(val) => {
-                console.log(val, "Value is multi select");
-              }}
-            />
-          </div>
-        </div>
+        {/* Allow only for super Admin */}
         <div className="w-80">
           <div className="flex gap-1 flex-col">
             <div className="text-xs font-normal text-[#333333]">
@@ -106,39 +42,16 @@ export default function NewCourseStep2() {
           </div>
         </div>
 
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Available language(s) for translation
-            </div>
-            <CustomSelect
-              value={courseType}
-              placeholder="Select translation languages"
-              data={data}
-              onBottomReached={() => {}}
-              onSearch={() => {}}
-              onChange={(val) => {
-                console.log(val, "Value is multi select");
-              }}
-            />
-          </div>
-        </div>
+        <LanguageTranslationDropDown />
 
+        {/* Allow only for super Admin */}
         <div className="w-80">
           <div className="w-[254px] text-base leading-5 text-[#323232]">
-            Registration is mandatory for this       
-             course
+            Registration is mandatory for this course
           </div>
         </div>
 
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Max Capacity
-            </div>
-            <Input placeholder="Enter no. of attendees" />
-          </div>
-        </div>
+        <MaximumCapacity />
 
         <div className="w-80">
           <div className="flex gap-1 flex-col">
@@ -156,21 +69,7 @@ export default function NewCourseStep2() {
           </div>
         </div>
 
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Country(s) from where registrations are allowed *
-            </div>
-            <MultiSelect
-              value={[]}
-              placeholder="Enter Teacher Name"
-              data={data}
-              onBottomReached={() => {}}
-              onSearch={() => {}}
-              onChange={() => {}}
-            />
-          </div>
-        </div>
+        <AllowedCountriesDropDown />
       </div>
 
       <div className="flex gap-x-7 text-sm text-[#323232]">
@@ -181,3 +80,411 @@ export default function NewCourseStep2() {
     </div>
   );
 }
+
+const CourseTypeDropDown = () => {
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  let filter: Array<CrudFilter> = [
+    {
+      field: "organization_id",
+      operator: "eq",
+      value: 1,
+    },
+    {
+      field: "program_category_id",
+      operator: "eq",
+      value: "17",
+    },
+  ];
+
+  if (formData?.teachers?.length > 0) {
+    const programTypes = formData?.teachers?.map((val: any) => {
+      return val?.value?.program_type_id;
+    });
+
+    filter.push({
+      field: "id",
+      operator: "in",
+      value: programTypes,
+    });
+  }
+
+  const { options, onSearch, queryResult } = useSelect({
+    resource: "program_types",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+    filters: filter,
+  });
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "courseType",
+  });
+
+  const {
+    field: { onChange: setCourseTypeSettings },
+  } = useController({
+    name: "courseTypeSettings",
+  });
+
+  const getCourseTypeSettings = async (val: any) => {
+    const courseSettings = queryResult?.data?.data.filter(
+      (data) => data.id == val.value
+    );
+
+    setCourseTypeSettings(courseSettings?.[0]);
+  };
+
+  return (
+    <div className="w-80 h-20">
+      <div className="flex gap-1 flex-col">
+        <div className="flex flex-row text-xs font-normal text-[#333333]">
+          Course Type <div className="text-[#7677F4]"> *</div>
+        </div>
+        <CustomSelect
+          value={value}
+          placeholder="Select course type"
+          data={options}
+          onBottomReached={() => {}}
+          onSearch={(val: string) => {
+            onSearch(val);
+          }}
+          onChange={(val) => {
+            getCourseTypeSettings(val);
+            onChange(val);
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const CourseNameDropDown = () => {
+  const { options, onSearch } = useSelect({
+    resource: "program_type_alias_names",
+    optionLabel: "alias_name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "alias_name",
+        operator: "contains",
+        value,
+      },
+    ],
+    filters: [
+      {
+        field: "program_type_id",
+        operator: "eq",
+        value: 1,
+      },
+    ],
+  });
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "courseName",
+  });
+
+  return (
+    <div className="w-80 h-20">
+      <div className="flex gap-1 flex-col">
+        <div className="flex flex-row text-xs font-normal text-[#333333]">
+          Course Name <div className="text-[#7677F4]">*</div>
+        </div>
+        <CustomSelect
+          value={value}
+          placeholder="Select course name"
+          data={options}
+          onBottomReached={() => {}}
+          onSearch={(val: string) => {
+            onSearch(val);
+          }}
+          onChange={(val) => {
+            onChange(val);
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const TeachersDropDown = () => {
+  const { watch } = useFormContext();
+  const formData = watch();
+
+  let filter: Array<CrudFilter> = [];
+
+  if (formData?.courseType?.value) {
+    filter.push({
+      field: "program_type_id",
+      operator: "eq",
+      value: formData?.courseType?.value,
+    });
+  }
+
+  const { queryResult } = useSelect({
+    resource: "program_type_teachers",
+    meta: { select: "*,user_id(contact_id(first_name,last_name))" },
+    filters: filter,
+  });
+
+  const teachers: DataItem[] = queryResult.data?.data?.map((val) => {
+    return {
+      label:
+        val?.user_id?.contact_id?.first_name +
+        " " +
+        val?.user_id.contact_id.last_name,
+      value: val,
+    };
+  });
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "teachers",
+  });
+
+  return (
+    <div className="w-80 h-20">
+      <div className="flex gap-1 flex-col">
+        <div className="text-xs font-normal text-[#333333] flex flex-row">
+          Teacher <div className="text-[#7677F4]">*</div>
+        </div>
+        <MultiSelect
+          value={value}
+          placeholder="Enter Teacher Name"
+          data={teachers}
+          onBottomReached={() => {}}
+          onSearch={() => {}}
+          onChange={onChange}
+        />
+      </div>
+    </div>
+  );
+};
+
+const AssistantTeachersDropDown = () => {
+  const { watch } = useFormContext();
+  const formData = watch();
+
+  let filter: Array<CrudFilter> = [
+    {
+      field: "certification_level_id",
+      operator: "eq",
+      value: "38",
+    },
+  ];
+
+  if (formData?.courseType?.value) {
+    filter.push({
+      field: "program_type_id",
+      operator: "eq",
+      value: formData?.courseType?.value,
+    });
+  }
+
+  const { queryResult } = useSelect({
+    resource: "program_type_teachers",
+    meta: { select: "*,user_id(contact_id(first_name,last_name))" },
+    filters: filter,
+  });
+
+  const teachers: DataItem[] = queryResult.data?.data?.map((val) => {
+    return {
+      label:
+        val?.user_id?.contact_id?.first_name +
+        " " +
+        val?.user_id.contact_id.last_name,
+      value: val,
+    };
+  });
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "teachers",
+  });
+
+  return (
+    <div className="w-80 h-20">
+      <div className="flex gap-1 flex-col">
+        <div className="text-xs font-normal text-[#333333]">
+          Assistant Teacher
+        </div>
+        <MultiSelect
+          value={value}
+          placeholder="Enter Teacher Name"
+          data={teachers}
+          onBottomReached={() => {}}
+          onSearch={() => {}}
+          onChange={onChange}
+        />
+      </div>
+    </div>
+  );
+};
+
+const LanguageDropDown = () => {
+  const { options, onSearch } = useSelect({
+    resource: "organization_languages",
+    optionLabel: "language_name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "language_name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "languages",
+  });
+
+  return (
+    <div className="w-80 h-20">
+      <div className="flex gap-1 flex-col">
+        <div className=" flex flex-row text-xs font-normal text-[#333333]">
+          Language(s) course is taught in
+          <div className="text-[#7677F4]"> *</div>
+        </div>
+        <MultiSelect
+          value={value}
+          placeholder="Select Language"
+          data={options}
+          onBottomReached={() => {}}
+          onSearch={onSearch}
+          onChange={onChange}
+        />
+      </div>
+    </div>
+  );
+};
+
+const LanguageTranslationDropDown = () => {
+  const { options, onSearch } = useSelect({
+    resource: "organization_languages",
+    optionLabel: "language_name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "language_name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "translationLanguages",
+  });
+
+  return (
+    <div className="w-80 h-20">
+      <div className="flex gap-1 flex-col">
+        <div className="text-xs font-normal text-[#333333]">
+          Available language(s) for translation
+        </div>
+        <MultiSelect
+          value={value}
+          placeholder="Select translation languages"
+          data={options}
+          onBottomReached={() => {}}
+          onSearch={onSearch}
+          onChange={onChange}
+        />
+      </div>
+    </div>
+  );
+};
+
+const AllowedCountriesDropDown = () => {
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const countryArray: DataItem[] = Object.entries(countryCodes).map(
+    ([countryCode, countryName]) => ({
+      label: countryName,
+      value: countryCode,
+    })
+  );
+
+  const allowedCountries = formData?.courseTypeSettings?.allowed_countries;
+
+  const allowedCountriesData = countryArray?.filter((val) =>
+    allowedCountries?.includes(val?.value)
+  );
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "allowedCountries",
+  });
+
+  return (
+    <div className="w-80 h-20">
+      <div className="flex gap-1 flex-col">
+        <div className="flex flex-row text-xs font-normal text-[#333333]">
+          Country(s) from where registrations are allowed
+          <div className="text-[#7677F4]">*</div>
+        </div>
+        <MultiSelect
+          value={value}
+          placeholder="Enter Countries"
+          data={allowedCountriesData}
+          onBottomReached={() => {}}
+          onSearch={() => {}}
+          onChange={onChange}
+        />
+      </div>
+    </div>
+  );
+};
+
+const MaximumCapacity = () => {
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const maxAttendees = formData?.courseTypeSettings?.maximum_capacity;
+
+  useEffect(() => {
+    onChange(formData?.courseTypeSettings?.max_capacity);
+  }, [formData?.courseTypeSettings?.max_capacity]);
+
+  const {
+    field: { value = maxAttendees, onChange },
+  } = useController({ name: "maxCapacity" });
+
+  return (
+    <div className="w-80">
+      <div className="flex gap-1 flex-col">
+        <div className="text-xs font-normal text-[#333333]">Max Capacity</div>
+        <Input
+          placeholder="Enter no. of attendees"
+          value={value}
+          onChange={(val) => {
+            onChange(val?.target?.value);
+          }}
+        />
+      </div>
+    </div>
+  );
+};
