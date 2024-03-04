@@ -233,10 +233,17 @@ const TeachersDropDown = () => {
     });
   }
 
-  const { queryResult } = useSelect({
+  const { queryResult, onSearch } = useSelect({
     resource: "program_type_teachers",
-    meta: { select: "*,user_id(contact_id(first_name,last_name))" },
+    meta: { select: "*,user_id!inner(contact_id!inner(first_name,last_name))" },
     filters: filter,
+    onSearch: (value) => [
+      {
+        field: "user_id.contact_id.full_name",
+        operator: "contains",
+        value,
+      },
+    ],
   });
 
   const teachers: DataItem[] = queryResult.data?.data?.map((val) => {
@@ -266,7 +273,7 @@ const TeachersDropDown = () => {
           placeholder="Enter Teacher Name"
           data={teachers}
           onBottomReached={() => {}}
-          onSearch={() => {}}
+          onSearch={onSearch}
           onChange={onChange}
         />
       </div>
@@ -294,10 +301,17 @@ const AssistantTeachersDropDown = () => {
     });
   }
 
-  const { queryResult } = useSelect({
+  const { queryResult,onSearch } = useSelect({
     resource: "program_type_teachers",
     meta: { select: "*,user_id(contact_id(first_name,last_name))" },
     filters: filter,
+    onSearch: (value) => [
+      {
+        field: "user_id.contact_id.full_name",
+        operator: "contains",
+        value,
+      },
+    ],
   });
 
   const teachers: DataItem[] = queryResult.data?.data?.map((val) => {
@@ -327,7 +341,7 @@ const AssistantTeachersDropDown = () => {
           placeholder="Enter Teacher Name"
           data={teachers}
           onBottomReached={() => {}}
-          onSearch={() => {}}
+          onSearch={onSearch}
           onChange={onChange}
         />
       </div>
