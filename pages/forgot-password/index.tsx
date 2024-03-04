@@ -10,6 +10,7 @@ export default function ForgotPassword() {
 }
 
 ForgotPassword.noLayout = true;
+ForgotPassword.requireAuth = false;
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated } = await authProvider.check(context);
