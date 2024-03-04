@@ -185,14 +185,18 @@ const CourseTypeDropDown = () => {
   });
   const {
     field: { value, onChange },
+    fieldState: { error: organizationError },
   } = useController({
     name: "organization",
   });
   const {
     register,
     getValues,
+    resetField,
+    setValue,
     formState: { errors },
   } = useFormContext();
+
 
   const formData = getValues();
   console.log(formData, "formData");
@@ -202,6 +206,7 @@ const CourseTypeDropDown = () => {
         <div className="text-xs font-normal text-[#333333]">Organization *</div>
 
         <CustomSelect
+          error={organizationError}
           value={value}
           {...(register("organization"), { required: true })}
           placeholder="Select Organization"
@@ -212,6 +217,8 @@ const CourseTypeDropDown = () => {
           }}
           onChange={(val) => {
             onChange(val);
+            resetField("organization");
+            setValue("organization", val);
           }}
         />
 
