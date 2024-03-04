@@ -5,6 +5,8 @@ import { Menu } from "../menu";
 import Navbar from "@components/navbar";
 import { useRouter } from "next/router";
 import HomeIcon from "@public/assets/HomeIcon";
+import Image from "next/image";
+import background from "@public/images/background.png";
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const { pathname } = useRouter();
@@ -19,17 +21,27 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <div className="layout">
-      <Navbar />
-      <div className="h-[32px] w-full bg-[#F9F9F9] drop-shadow-md flex flex-row items-center font-normal text-[12px] text-[#7677F4] ">
-        <div className="ml-7 flex flex-row">
+      <Image
+        src={background}
+        alt="bg"
+        className="w-full -mt-1 !h-[227px]"
+      />
+      <div className="absolute top-0 left-0 w-full z-10 inset-0">
+        <Navbar />
+        <div className="h-[32px]  bg-[#F9F9F9] drop-shadow-md flex items-center gap-2 shrink-0  font-normal text-[12px] text-[#7677F4] ">
           <HomeIcon />
-          Home
-          {formattedPthName}
+          <div>
+            Home
+            {formattedPthName}
+          </div>
         </div>
-      </div>
-      <div className="content">
         <Breadcrumb />
-        <div>{children}</div>
+        <div className="mt-9">
+          <div className="mx-8 ">
+            <div className="text-[24px] my-4 font-semibold">NEW COURSE</div>
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   );

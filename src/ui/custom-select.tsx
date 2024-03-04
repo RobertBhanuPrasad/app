@@ -27,6 +27,7 @@ interface CustomSelectProps {
   onChange: (selectedOption: Option) => void;
   placeholder: string;
   value: any;
+  error?:any
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -36,6 +37,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   onChange,
   placeholder,
   value: propValue,
+  error
 }: CustomSelectProps) => {
   // State to manage the open/closed state of the Popover
   const [open, setOpen] = React.useState<boolean>(false);
@@ -61,11 +63,15 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         {/* Button acting as a trigger for the Popover */}
+
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-80 h-[40px] border-[#E1E1E1] rounded-xl"
+          className={`w-80 h-[40px] rounded-xl ${
+            //If error is present then we make the border red to show error
+            error ? "border-[#FF6D6D]" : "border-[#E1E1E1]"
+          }`}
         >
           <div className="flex w-full justify-between text-sm">
             {/* Displaying selected value or placeholder if none selected */}
@@ -93,7 +99,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           {/* Input for searching options */}
           <Input
             onChange={(e) => onSearch(e.target.value)}
-            className="border-none focus:outline-none rounded-xl"
+            className="border-none focus:outline-none rounded-xl text-[#999999]"
           />
           <hr className="border-[#D6D7D8]" />
           <CommandEmpty>No option found</CommandEmpty>
