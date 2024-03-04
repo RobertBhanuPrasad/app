@@ -14,9 +14,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function courseCreate() {
   // State for tracking current page in server-side paginated data
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   // State to hold options for the MultiSelect component
-  const [selectOptions, setSelectOptions] = useState<any>([]);
+  // const [selectOptions, setSelectOptions] = useState<any>([]);
 
   // Zod schema for form validation
   const schema = z.object({
@@ -51,38 +51,39 @@ export default function courseCreate() {
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
-    filters: [
-      {
-        field: "id",
-        operator: "ne",
-        value: 2,
-      },
-    ],
+    // filters: [
+    //   {
+    //     field: "id",
+    //     operator: "ne",
+    //     value: 2,
+    //   },
+    // ],
   });
 
   // Function to handle reaching the bottom of the paginated data
   const handleOnBottomReached = () => {
-    if (data && data?.total >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    if (data && data?.total >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 20);
   };
 
+  console.log("heyy page size", pageSize);
   // useEffect to update selectOptions when new options are fetched
-  useEffect(() => {
-    if (options) {
-      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
-      else setSelectOptions(options);
-    }
-  }, [options]);
+  // useEffect(() => {
+  //   if (options) {
+  //     if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
+  //     else setSelectOptions(options);
+  //   }
+  // }, [options]);
 
   // Function to handle search
   const handleOnSearch = (value: any) => {
     onSearch(value);
 
-    // For resetting the data to the first page which coming from the API
-    setCurrentPage(1);
+    // // For resetting the data to the first page which coming from the API
+    // setCurrentPage(1);
   };
 
   // Form handling using react-hook-form
@@ -130,9 +131,11 @@ export default function courseCreate() {
 
   const formValues = getValues();
 
-  const optiondata: any = [{ label: "two", value: 2 }];
+  // const optiondata: any = [{ label: "two", value: 2 }];
 
-  console.log("heyy form Data", formValues.multi, optiondata);
+  console.log("heyy form Data", formValues.multi);
+
+  console.log("heyy data", options);
 
   return (
     <div className="text-3xl ml-20 mt-20">
@@ -145,7 +148,7 @@ export default function courseCreate() {
                 {...register("multi")}
                 value={formValues.multi}
                 placeholder="Select more"
-                data={selectOptions}
+                data={options}
                 onBottomReached={handleOnBottomReached}
                 onSearch={handleOnSearch}
                 getOptionProps={(option: { value: number }) => {
