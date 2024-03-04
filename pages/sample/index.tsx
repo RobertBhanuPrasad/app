@@ -96,6 +96,8 @@ export default function CourseCreate() {
     resolver: zodResolver(schema),
   });
   const formValues = getValues();
+
+  console.log("heyy errors", errors?.test);
   // Handler for handling changes in the custom select
   const handleChange = (framework: any) => {
     resetField("test");
@@ -136,6 +138,7 @@ export default function CourseCreate() {
                 onBottomReached={handleOnBottomReached}
                 onSearch={handleOnSearch}
                 onChange={handleChange}
+                error={errors?.test}
               />
             </div>
             <Button onClick={handleClear}>Clear</Button>
