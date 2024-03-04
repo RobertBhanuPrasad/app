@@ -1,36 +1,189 @@
-import { AuthPage } from "@refinedev/core";
-
-import { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
+import {
+  useActiveAuthProvider,
+  useList,
+  useRegister,
+  useSelect,
+} from "@refinedev/core";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
+import CustomSelect from "src/ui/custom-select";
+import { supabaseClient } from "src/utility";
 
-export default function Register() {
-  return <AuthPage type="register" />;
-}
+const Signup = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [roleValue, setRoleValue] = useState(42); // Teacher role id
 
-Register.noLayout = true;
+  const router = useRouter();
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const { authenticated } = await authProvider.check(context);
-
-  const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-  ]);
-
-  if (authenticated) {
-    return {
-      props: {},
-      redirect: {
-        destination: `/`,
-        permanent: false,
+  const { data } = useList<any>({
+    resource: "option_labels",
+    filters: [
+      {
+        field: "name",
+        operator: "eq",
+        value: "User Role",
       },
-    };
-  }
+    ],
+  });
 
-  return {
-    props: {
-      ...translateProps,
-    },
+  const { options } = useSelect({
+    resource: "option_values",
+    optionLabel: "value",
+    optionValue: "id",
+    filters: [
+      {
+        field: "option_label_id",
+        operator: "eq",
+        value: data?.data[0]?.id,
+      },
+    ],
+  });
+
+  const handleSignup = async () => {
+    const { data } = await supabaseClient.auth.signUp({
+      email,
+      password,
+    });
+
+    const { data: contactData } = await supabaseClient
+      .from("contact")
+      .insert([{ first_name: firstName, last_name: lastName }])
+      .select();
+
+    const { data: userData } = await supabaseClient
+      .from("users")
+      .insert([
+        { user_identifier: data?.user?.id, contact_id: contactData?.[0]?.id },
+      ])
+      .select();
+
+    const { data: roleData } = await supabaseClient
+      .from("user_roles")
+      .insert([{ user_id: userData?.[0]?.id, role_id: roleValue }])
+      .select();
+
+    router.push("/login");
   };
+
+  return (
+    <div className="login flex min-h-screen bg-neutral justify-center items-center">
+      <div className="card w-full max-w-sm bg-base-100 px-4 py-8 shadow-xl">
+        <div className="px-4">
+          <h1 className="text-[32px] font-bold text-center my-5 bg-clip-text bg-gradient-to-br">
+            Sign up
+          </h1>
+        </div>
+        <form
+          className="card-body pt-2 space-y-[10px]"
+          onSubmit={async (ev) => {
+            ev.preventDefault();
+          }}
+        >
+          {error && (
+            <div className="alert alert-error justify-start">
+              <i className="i-feather-alert-triangle"></i>
+              <span className="flex-grow">{error.message}</span>
+            </div>
+          )}
+          <div className="form-control">
+            <label htmlFor="email" className="label">
+              <span className="label-text">User Name</span>
+            </label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(ev) => setFirstName(ev.target.value)}
+              name="firstname"
+              placeholder="enter name"
+              className="border-[1px] border-black ml-[10px]"
+            />
+          </div>
+          <div className="form-control">
+            <label htmlFor="email" className="label">
+              <span className="label-text">Last Name</span>
+            </label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(ev) => setLastName(ev.target.value)}
+              name="lastname"
+              placeholder="enter last name"
+              className="border-[1px] border-black ml-[10px]"
+            />
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="email" className="label">
+              <span className="label-text">Email</span>
+            </label>
+            <input
+              type="text"
+              value={email}
+              onChange={(ev) => setEmail(ev.target.value)}
+              name="email"
+              placeholder="enter email"
+              className="border-[1px] border-black ml-[10px]"
+            />
+          </div>
+          <div>
+            <label>
+              Select Role:
+              <select
+                value={roleValue}
+                onChange={(event: any) => {
+                  setRoleValue(event.target.value);
+                }}
+              >
+                {options?.map((option: any) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="form-control mt-0">
+            <label htmlFor="password" className="label">
+              <span className="label-text">Password</span>
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(ev) => setPassword(ev.target.value)}
+              name="password"
+              placeholder="enter password"
+              className="border-[1px] border-black ml-[10px]"
+            />
+          </div>
+          {/* <div className="form-control mt-6">
+            <button id="login" type="submit" className="btn">
+              Login
+            </button>
+          </div> */}
+          <div className="form-control mt-6">
+            <button
+              id="signup"
+              type="button"
+              className="btn"
+              disabled={loading}
+              onClick={handleSignup}
+            >
+              {loading ? "Loading..." : "Signup"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
+export default Signup;
+
+Signup.requireAuth = false;
+Signup.noLayout = true;

@@ -10,6 +10,7 @@ import GetScrollTypesAlert from "@components/GetScrollAlert";
 import { Input } from "./input";
 import { useEffect } from "react";
 import isEqual from "lodash/isEqual";
+import _ from "lodash";
 
 // Define the shape of each data item
 export type DataItem = Record<"value" | "label", string>;
@@ -22,6 +23,8 @@ export function MultiSelect({
   onSearch,
   onChange,
   value: propValue = [],
+  getOptionProps,
+  error,
 }: {
   placeholder?: string;
   data: DataItem[];
@@ -29,6 +32,8 @@ export function MultiSelect({
   onSearch: (query: string) => void;
   onChange: any;
   value?: any;
+  getOptionProps?: any;
+  error?: any;
 }) {
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -43,7 +48,6 @@ export function MultiSelect({
     // Update selected state only if propValue changes
     if (!isEqual(selected, propValue)) {
       setSelected(propValue);
-      console.log(selected, propValue, "propValue");
     }
   }, []);
 
@@ -80,20 +84,33 @@ export function MultiSelect({
   }, [open, popoverOpen]);
 
   // Filter out selected values from the dropdown
-  const selectables = data?.filter((item) => !selected?.includes(item));
+  const selectables = _.differenceWith(data, selected, _.isEqual);
 
   return (
     <div className={clsx("grid w-[320px] items-center")}>
       <Command className="overflow-visible bg-transparent">
-        <div className=" border border-[#E1E1E1] rounded-xl px-3 py-2 text-sm relative h-[40px]">
+        <div
+          className={`rounded-xl px-4 py-2 text-sm relative h-[40px] border ${
+            //If error is present then we make the border red to show error
+            error ? "border-[#FF6D6D]" : "border-[#E1E1E1]"
+          }`}
+        >
           {/* Display selected items and provide options to remove them */}
           <div className="flex gap-2 items-center">
             {/* Display up to two selected items with a badge */}
             {selected?.map((item, index) => {
+              // Extracting option properties, including 'noIcon' to determine if a cross icon should be displayed
+              const optionProps = getOptionProps
+                ? getOptionProps(item)
+                : {
+                    noIcon: false,
+                  };
+              const { noIcon } = optionProps;
               if (index > 1) return null;
               return (
                 <Badge key={item.value} variant="outline" className="border">
-                  {item.label}
+                  <div className="max-w-[60px] truncate"> {item.label}</div>
+
                   <button
                     type="button"
                     className="ml-1 rounded-full outline-none"
@@ -107,11 +124,14 @@ export function MultiSelect({
                     }}
                     onClick={() => handleUnselect(item)}
                   >
-                    <X
-                      stroke="#7677F4"
-                      strokeWidth={2.5}
-                      className="h-3 w-3 cursor-pointer"
-                    />
+                    {!noIcon && (
+                      <X
+                        onClick={() => handleUnselect(item)}
+                        className="h-4 w-4 cursor-pointer"
+                        stroke="#7677F4"
+                        strokeWidth={2.5}
+                      />
+                    )}
                   </button>
                 </Badge>
               );
@@ -128,7 +148,7 @@ export function MultiSelect({
             )}
 
             {/* Display placeholder or "Add" button */}
-            <div className="flex flex-row justify-between w-full">
+            <div className="flex flex-row justify-between w-full ">
               <div>
                 {selected?.length <= 0 && (
                   <div className="text-[#999999] font-normal">
@@ -155,25 +175,36 @@ export function MultiSelect({
         <div className="relative mt-2" ref={popoverDropdownRef}>
           {popoverOpen ? (
             <CommandGroup className="absolute w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-              {selected?.map((item, index) => (
-                <div key={item.value}>
-                  <div className="flex flex-row justify-between items-center pr-3">
-                    <div className="cursor-pointer p-2 text-[12px] hover:bg-gray-200">
-                      {item.label}
+              {selected?.map((item, index) => {
+                // Extracting option properties, including 'noIcon' to determine if a cross icon should be displayed
+                const optionProps = getOptionProps
+                  ? getOptionProps(item)
+                  : {
+                      noIcon: false,
+                    };
+                const { noIcon } = optionProps;
+                return (
+                  <div key={item.value}>
+                    <div className="flex flex-row justify-between items-center pr-3">
+                      <div className="cursor-pointer p-2 text-[12px] hover:bg-gray-200">
+                        {item.label}
+                      </div>
+                      {!noIcon && (
+                        <X
+                          onClick={() => handleUnselect(item)}
+                          className="h-4 w-4 cursor-pointer"
+                          stroke="#7677F4"
+                          strokeWidth={2.5}
+                        />
+                      )}
                     </div>
-                    <X
-                      onClick={() => handleUnselect(item)}
-                      className="h-4 w-4 cursor-pointer"
-                      stroke="#7677F4"
-                      strokeWidth={2.5}
-                    />
+                    {/* Add a horizontal line for all items except the last one */}
+                    {index < selected?.length - 1 && (
+                      <hr className="border-[#D6D7D8]" />
+                    )}{" "}
                   </div>
-                  {/* Add a horizontal line for all items except the last one */}
-                  {index < selected?.length - 1 && (
-                    <hr className="border-[#D6D7D8]" />
-                  )}{" "}
-                </div>
-              ))}
+                );
+              })}
             </CommandGroup>
           ) : null}
         </div>
@@ -206,6 +237,7 @@ export function MultiSelect({
                         key={index}
                         className="focus:outline-[red]"
                         onSelect={() => handleOnSelect(option)}
+                        // {...getOptionProps(option)}
                       >
                         {option.label}
                       </CommandItem>
