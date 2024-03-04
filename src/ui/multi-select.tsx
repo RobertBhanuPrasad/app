@@ -10,6 +10,7 @@ import GetScrollTypesAlert from "@components/GetScrollAlert";
 import { Input } from "./input";
 import { useEffect } from "react";
 import isEqual from "lodash/isEqual";
+import _ from "lodash";
 
 // Define the shape of each data item
 type DataItem = Record<"value" | "label", string>;
@@ -83,7 +84,7 @@ export function MultiSelect({
   }, [open, popoverOpen]);
 
   // Filter out selected values from the dropdown
-  const selectables = data?.filter((item) => !selected?.includes(item));
+  const selectables = _.differenceWith(data, selected, _.isEqual);
 
   return (
     <div className={clsx("grid w-[320px] items-center")}>
