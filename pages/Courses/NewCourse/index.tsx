@@ -7,20 +7,66 @@ import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import { useStepsForm } from "@refinedev/react-hook-form";
-import React from "react";
 import { Button } from "src/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import { z } from "zod";
+import { FormProvider } from "react-hook-form";
+
+// Array of step titles, icons, and colors
+const stepTitles = [
+  {
+    value: "0",
+    label: "Basic Details",
+    icon: <Profile />,
+    color: "#7677F4",
+  },
+  {
+    value: "1",
+    label: "Course Details",
+    icon: <Group />,
+    color: "#7677F4",
+  },
+  {
+    value: "2",
+    label: "Time and Venue",
+    icon: <Venue />,
+    color: "#7677F4",
+  },
+  {
+    value: "3",
+    label: "Accommodation",
+    icon: <Car />,
+    color: "#7677F4",
+  },
+  {
+    value: "4",
+    label: "Contact Info",
+    icon: <Info />,
+    color: "#7677F4",
+  },
+];
 
 function index() {
   // Schema definition for form validation
-  // const schema = z.object({
-  //   max_capacity: z.string().refine((value: any) => value.trim().length > 3, {
-  //     message: "course_type required",
-  //   }),
-  // });
+  const schema = z.object({
+    organization: z.object({
+      // Define the schema for the organization object's properties here
+      // For example:
+      value: z.number(),
+      label: z.string(),
+
+      // Add more properties as needed
+    }),
+  });
 
   // Destructuring values from useStepsForm hook
+  const methods = useStepsForm({
+    refineCoreProps: {
+      action: "create",
+      resource: "event",
+    },
+    resolver: zodResolver(schema),
+  });
 
   const {
     refineCore: { onFinish, formLoading },
@@ -28,13 +74,7 @@ function index() {
     handleSubmit,
     formState: { errors },
     steps: { currentStep, gotoStep },
-  } = useStepsForm({
-    refineCoreProps: {
-      action: "create",
-      resource: "event",
-    },
-    // resolver: zodResolver(schema),
-  });
+  } = methods;
   // Array of step titles, icons, and colors
   const stepTitles = [
     {
@@ -80,7 +120,7 @@ function index() {
     return <div>Loading...</div>;
   }
   const contentStylings =
-    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background  data-[state=active]:shadow-sm";
+    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
   return (
     <div className="'bg-[white]">
       <Tabs value={JSON.stringify(currentStep)}>
@@ -107,23 +147,26 @@ function index() {
           </TabsList>
 
           <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-4 shadow-md h-[517px]">
-            <form autoComplete="off">
-              <TabsContent value="0" className={contentStylings}>
-              <NewCourseStep1 />
-              </TabsContent>
-              <TabsContent value="1" className={contentStylings}>
-              <NewCourseStep2 />
-              </TabsContent>
-              <TabsContent value="2" className={contentStylings}>
-               
-              </TabsContent>
-              <TabsContent value="3" className={contentStylings}>
-                Change your password here.
-              </TabsContent>
-              <TabsContent value="4" className={contentStylings}>
-                Change your accommodation details
-              </TabsContent>
-            </form>
+            <FormProvider {...methods}>
+              <form autoComplete="off">
+                <TabsContent value="0" className={contentStylings}>
+                  <NewCourseStep1 />
+                </TabsContent>
+                <TabsContent value="1" className={contentStylings}>
+                  <NewCourseStep2 />
+                </TabsContent>
+                <TabsContent
+                  value="2"
+                  className={contentStylings}
+                ></TabsContent>
+                <TabsContent value="3" className={contentStylings}>
+                  Change your password here.
+                </TabsContent>
+                <TabsContent value="4" className={contentStylings}>
+                  Change your accommodation details
+                </TabsContent>
+              </form>
+            </FormProvider>
           </div>
         </div>
       </Tabs>

@@ -2,24 +2,32 @@ import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useSelect } from "@refinedev/core";
-import React, { useState } from "react";
-import { useController, useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useController, useForm, useFormContext } from "react-hook-form";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
+import { Input } from "src/ui/input";
 import { Label } from "src/ui/label";
 import { MultiSelect } from "src/ui/multi-select";
-import { RadioGroup, RadioGroupItem } from "src/ui/radio-group";
+import {
+  RadioGroup,
+  RadioGroupCheckItem,
+  RadioGroupItem,
+} from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
 
 function NewCourseStep1() {
   const [selectedRadioValue, setRadioSelectedValue] = useState("option-one");
+  const methods = useFormContext(); // Access form methods
 
+  const [checkedValue, setCheckedValue] = useState();
+
+  useEffect(() => {}, [methods]);
   return (
     <div>
       <RadioGroup
         defaultValue="option-one"
         onValueChange={(selectedRadioValue: string) => {
-          console.log(selectedRadioValue, "selectedRadioValue");
           setRadioSelectedValue(selectedRadioValue);
         }}
       >
@@ -32,13 +40,13 @@ function NewCourseStep1() {
             }`}
           >
             <div>
-              <RadioGroupItem
+              <RadioGroupCheckItem
                 value="option-one"
                 id="option-one"
                 className={
                   selectedRadioValue === "option-one"
-                    ? "!bg-[#7677F4]"
-                    : "border !border-[#D6D7D8] border-[1.5px]"
+                    ? "!bg-[#7677F4] !border-none "
+                    : "!border-[#D6D7D8] !shadow-none "
                 }
               />
             </div>
@@ -66,13 +74,13 @@ function NewCourseStep1() {
                 : ""
             }`}
           >
-            <RadioGroupItem
+            <RadioGroupCheckItem
               value="option-two"
               id="option-two"
               className={
                 selectedRadioValue === "option-two"
-                  ? "!bg-[#7677F4]"
-                  : "border !border-[#D6D7D8] border-[1.5px]"
+                  ? "!bg-[#7677F4] !border-none "
+                  : "!border-[#D6D7D8] !shadow-none "
               }
             />
             <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
@@ -99,13 +107,13 @@ function NewCourseStep1() {
                 : ""
             }`}
           >
-            <RadioGroupItem
+            <RadioGroupCheckItem
               value="option-three"
               id="option-three"
               className={
                 selectedRadioValue === "option-three"
-                  ? "!bg-[#7677F4]"
-                  : "border !border-[#D6D7D8] border-[1.5px]"
+                  ? "!bg-[#7677F4] !border-none "
+                  : "!border-[#D6D7D8] !shadow-none "
               }
             />
             <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
@@ -142,9 +150,19 @@ function NewCourseStep1() {
           id="registration"
           className="!w-[57px] !h-[24px]"
           onCheckedChange={(value: any) => {
-            console.log(value, "value");
+            setCheckedValue(value);
           }}
         />
+        {checkedValue && (
+          <div className="flex gap-1 flex-col -mt-7">
+            <div className="text-xs font-normal text-[#333333]">
+              Please input the site's URL *
+            </div>
+            <div className="w-[320px] h-[40px] rounded-[1px] text-[#999999] font-normal">
+              <Input placeholder="Enter URL" />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -165,13 +183,17 @@ const CourseTypeDropDown = () => {
       },
     ],
   });
-  const { getValues, register, control } = useForm();
   const {
     field: { value, onChange },
   } = useController({
     name: "organization",
-    control,
   });
+  const {
+    register,
+    getValues,
+    formState: { errors },
+  } = useFormContext();
+
   const formData = getValues();
   console.log(formData, "formData");
   return (
@@ -181,7 +203,7 @@ const CourseTypeDropDown = () => {
 
         <CustomSelect
           value={value}
-          {...register("organization")}
+          {...(register("organization"), { required: true })}
           placeholder="Select Organization"
           data={options}
           onBottomReached={() => {}}
@@ -189,10 +211,15 @@ const CourseTypeDropDown = () => {
             onSearch(val);
           }}
           onChange={(val) => {
-            console.log(val, "Value is multi select");
             onChange(val);
           }}
         />
+
+        {errors.organization && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            Select Organizer Name.
+          </span>
+        )}
       </div>
     </div>
   );
@@ -229,9 +256,6 @@ const ProgramOrganizerDropDown = () => {
     setValue("multi", options);
   };
   const formData = getValues();
-  console.log(formData, "formData");
-
-  console.log(options, "organizer");
 
   return (
     <div className="flex gap-1 flex-col">
@@ -247,7 +271,6 @@ const ProgramOrganizerDropDown = () => {
           onSearch(val);
         }}
         onChange={(val: any) => {
-          console.log(val, "Value is program organizer");
           onChange(val.value);
         }}
       />
