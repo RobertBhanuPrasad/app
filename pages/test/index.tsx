@@ -11,8 +11,9 @@ import { useEffect, useState } from "react";
 import { useForm } from "@refinedev/react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { authProvider } from "src/authProvider";
 
-export default function courseCreate() {
+export default function courseCreate({ pageProps }: any) {
   // State for tracking current page in server-side paginated data
   const [pageSize, setPageSize] = useState(20);
   // State to hold options for the MultiSelect component
@@ -44,7 +45,7 @@ export default function courseCreate() {
     optionLabel: "name",
     optionValue: "id",
     onSearch: (value) => [
-      {
+    {
         field: "name",
         operator: "contains",
         value,
@@ -183,9 +184,20 @@ courseCreate.noLayout = true;
 
 // Server-side props for translation
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated } = await authProvider.check(context);
+
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
     "common",
   ]);
+
+  if (authenticated) {
+    return {
+      redirect: {
+        destination: `/`,
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

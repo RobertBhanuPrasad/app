@@ -1,16 +1,18 @@
+import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
 import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Car from "@public/assets/Car";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import { useStepsForm } from "@refinedev/react-hook-form";
-import { Car } from "lucide-react";
-import React from "react";
-import { FormProvider } from "react-hook-form";
 import { Button } from "src/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "src/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import { z } from "zod";
+import { FormProvider } from "react-hook-form";
+import Review from "@public/assets/Review";
+import Fees from "@public/assets/Fees";
 
 // Array of step titles, icons, and colors
 const stepTitles = [
@@ -49,8 +51,13 @@ const stepTitles = [
 function index() {
   // Schema definition for form validation
   const schema = z.object({
-    max_capacity: z.string().refine((value: any) => value.trim().length > 3, {
-      message: "course_type required",
+    organization: z.object({
+      // Define the schema for the organization object's properties here
+      // For example:
+      value: z.number(),
+      label: z.string(),
+
+      // Add more properties as needed
     }),
   });
 
@@ -70,6 +77,52 @@ function index() {
     formState: { errors },
     steps: { currentStep, gotoStep },
   } = methods;
+  // Array of step titles, icons, and colors
+  const stepTitles = [
+    {
+      value: "0",
+      label: "Basic Details",
+      icon: <Profile color={` ${currentStep == 0 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+    {
+      value: "1",
+      label: "Course Details",
+      icon: <Group color={` ${currentStep == 1 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+    {
+      value: "2",
+      label: "Time and Venue",
+      icon: <Venue color={` ${currentStep == 2 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+    {
+      value: "3",
+      label: "Fees",
+      icon: <Fees color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+    {
+      value: "4",
+      label: "Accommodation",
+      icon: <Car color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+    {
+      value: "5",
+      label: "Contact Info",
+      icon: <Info color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+
+    {
+      value: "6",
+      label: "Review",
+      icon: <Review color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
+      color: "#7677F4",
+    },
+  ];
 
   const onSubmit = (formData: any) => {
     console.log(formData);
@@ -77,69 +130,69 @@ function index() {
     onFinish(formData);
   };
 
-  // Function to render form based on the current step
-  const renderFormByStep = (step: number) => {
-    switch (step) {
-      case 0:
-        return (
-          <>
-            <label>max capacity</label>
-            <input
-              placeholder="max capacity"
-              {...register("max_capacity", { required: true })}
-            />
-            {errors.max_capacity && <span>This field is required.</span>}
-          </>
-        );
-      case 1:
-        return <NewCourseStep2 />;
-      case 2:
-        return <div className="w-auto"></div>;
-    }
-  };
-
   // If the form is still loading, display a loading message
   if (formLoading) {
     return <div>Loading...</div>;
   }
-
+  const contentStylings =
+    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", gap: 36 }}>
-        <div>
-          <Tabs value={JSON.stringify(currentStep)}>
-            <div className="flex flex-row">
-              <TabsList className="h-[513px] bg-[#7677F41A]  mb-10 pt-10">
-                <div className="flex flex-col mr-6 h-full gap-6">
-                  {stepTitles.map((tab, index) => (
-                    <TabsTrigger
-                      key={index}
-                      value={tab.value}
-                      className="!h-12 w-[200px] items-center !shadow-none gap-2 data-[state=active]:bg-gradient-to-r from-[#7677F41A] to-transparent"
-                      onClick={() => gotoStep(index)}
-                    >
-                      {JSON.stringify(currentStep) === tab.value && (
-                        <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-16"></div>
-                      )}
-                      {tab.icon}
-                      {tab.label}
-                    </TabsTrigger>
-                  ))}
-                </div>
-              </TabsList>
-              <FormProvider {...methods}>
-                <form autoComplete="off">
-                  <div className="bg-[white] w-[1064px] rounded-[24px] p-6 -ml-4 -mt-1 shadow-md h-[517px]">
-                    {renderFormByStep(currentStep)}
+    <div className="bg-[white]  ">
+      <Tabs value={JSON.stringify(currentStep)}>
+        <div className="flex flex-row">
+          <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
+            <div className="flex flex-col  h-full gap-4 ">
+              {stepTitles.map((tab, index) => (
+                <TabsTrigger
+                  key={index}
+                  value={tab.value}
+                  className="!h-12  items-center w-[230px] !text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
+                  onClick={() => gotoStep(index)}
+                >
+                  {JSON.stringify(currentStep) === tab.value && (
+                    <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
+                  )}
+                  <div className="flex flex-row gap-[10px] ml-[14px] items-center">
+                    {tab.icon}
+                    {tab.label}
                   </div>
-                </form>
-              </FormProvider>
+                </TabsTrigger>
+              ))}
             </div>
-          </Tabs>
-        </div>
-      </div>
+          </TabsList>
 
-      <div className="flex justify-center -mt-32 gap-4">
+          <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
+            <FormProvider {...methods}>
+              <form autoComplete="off">
+                <TabsContent value="0" className={contentStylings}>
+                  <NewCourseStep1 />
+                </TabsContent>
+                <TabsContent value="1" className={contentStylings}>
+                  <NewCourseStep2 />
+                </TabsContent>
+                <TabsContent
+                  value="2"
+                  className={contentStylings}
+                ></TabsContent>
+                <TabsContent value="3" className={contentStylings}>
+                  Change your password here.
+                </TabsContent>
+                <TabsContent value="4" className={contentStylings}>
+                  Change your accommodation details
+                </TabsContent>
+                <TabsContent value="5" className={contentStylings}>
+                  Change your accommodation details
+                </TabsContent>
+                <TabsContent value="6" className={contentStylings}>
+                  Change your accommodation details
+                </TabsContent>
+              </form>
+            </FormProvider>
+          </div>
+        </div>
+      </Tabs>
+
+      <div className="flex justify-center -mt-20 gap-4">
         {currentStep > 0 && (
           <Button
             onClick={() => {
