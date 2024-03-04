@@ -42,13 +42,11 @@ function Navbar() {
   const firstRouteName = pathSegments.find((segment) => segment !== "");
 
   return (
-    <div className="w-auto bg-[white] flex flex-row px-8 h-16">
+    <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
       {/* Logo */}
-      <div className="float-left items-center mt-2">
         <Logo />
-      </div>
       {/* Navigation Menu */}
-      <div className="flex items-center justify-center mx-auto ">
+      <div className="flex items-center justify-center ">
         <NavigationMenu className="text-[#999999]">
           <NavigationMenuList>
             {/* Home Navigation */}
@@ -140,15 +138,13 @@ function Navbar() {
         </NavigationMenu>
       </div>
       {/* Bell and Avatar */}
-      <div className="flex justify-end">
-        <div className="flex flex-row items-center gap-4 ">
+        <div className="flex flex-row items-center gap-4  ">
           <Bell />
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>
-      </div>
     </div>
   );
 }
