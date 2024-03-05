@@ -2,24 +2,17 @@ import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useSelect } from "@refinedev/core";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
 import { Label } from "src/ui/label";
 import { DataItem, MultiSelect } from "src/ui/multi-select";
-import {
-  RadioGroup,
-  RadioGroupCheckItem,
-  RadioGroupItem,
-} from "src/ui/radio-group";
+import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
-import { supabaseClient } from "src/utility/supabaseClient";
 
 function NewCourseStep1() {
-  const methods = useFormContext(); // Access form methods
-
   return (
     <div>
       <RadioCards />
@@ -50,9 +43,6 @@ const RegistrationGateway = () => {
   } = useController({
     name: "site_url",
   });
-  const {
-    formState: { errors },
-  } = useFormContext();
 
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
@@ -89,15 +79,11 @@ const RadioCards = () => {
   } = useController({
     name: "teaching_type",
   });
-  const {
-    formState: { errors },
-  } = useFormContext();
 
   const { data: identity } = useGetIdentity<any>();
 
   const user_roles: any[] = identity?.userData[0]?.user_roles;
 
-  console.log(user_roles, "user_roles");
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.value === "Teacher");
 
@@ -227,14 +213,11 @@ const OrganizationDropDown = () => {
     name: "organization",
   });
   const {
-    getValues,
     resetField,
     setValue,
     formState: { errors },
   } = useFormContext();
 
-  const formData = getValues();
-  console.log(formData, "formData");
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
