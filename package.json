@@ -6,9 +6,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "refine dev --port 5000",
+    "dev": "refine dev --port 6000",
     "build": "refine build",
-    "start": "refine start --port 5000",
+    "start": "refine start --port 6000",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "refine": "refine"
   },
