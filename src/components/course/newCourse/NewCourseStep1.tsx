@@ -215,13 +215,17 @@ const OrganizationDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: organizationError },
   } = useController({
     name: "organization",
   });
   const {
     getValues,
+    resetField,
+    setValue,
     formState: { errors },
   } = useFormContext();
+
 
   const formData = getValues();
   console.log(formData, "formData");
@@ -231,6 +235,7 @@ const OrganizationDropDown = () => {
         <div className="text-xs font-normal text-[#333333]">Organization *</div>
 
         <CustomSelect
+          error={organizationError}
           value={value}
           placeholder="Select Organization"
           data={options}
@@ -240,6 +245,8 @@ const OrganizationDropDown = () => {
           }}
           onChange={(val) => {
             onChange(val);
+            resetField("organization");
+            setValue("organization", val);
           }}
         />
 
