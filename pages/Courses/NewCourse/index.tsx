@@ -45,8 +45,8 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
     resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
-      display_language: "true",
-      geo_restriction: "true",
+      displayLanguage:"true",
+      isGeoRestriction:"true",
       teaching_type:
         defaultProgramOrganizer[0]?.user_roles[0]?.role_id?.value === "Teacher"
           ? "option-one"

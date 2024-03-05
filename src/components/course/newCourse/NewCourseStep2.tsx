@@ -1,7 +1,7 @@
 import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
-import { CrudFilter, useList, useMany, useSelect } from "@refinedev/core";
+import { CrudFilter, useSelect } from "@refinedev/core";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import countryCodes from "src/data/CountryCodes";
@@ -16,126 +16,79 @@ import { DataItem, MultiSelect } from "src/ui/multi-select";
 import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { Switch } from "src/ui/switch";
-import { supabaseClient } from "src/utility";
 
 export default function NewCourseStep2() {
-  const data = [
-    { label: "A", value: "a" },
-    { label: "B", value: "b" },
-    { label: "C", value: "c" },
-    { label: "D", value: "d" },
-  ];
-
-  const [courseType, setCourseType] = useState();
   const { watch } = useFormContext();
 
   const formData = watch();
-
-  const teachers = [];
+  console.log(formData, "formData");
   return (
-    <div className="pt-2 w-[1016px] ">
+    <div className="pt-2 w-auto ">
       <div className="flex flex-wrap gap-x-7 gap-y-3">
-        <CourseTypeDropDown />
+        <div className="w-80 h-20">
+          <CourseTypeDropDown />
+        </div>
         {formData?.courseTypeSettings?.has_alias_name === true && (
-          <CourseNameDropDown />
-        )}
-        <TeachersDropDown />
-
-        <AssistantTeachersDropDown />
-
-        <LanguageDropDown />
-
-        {/* Allow only for super Admin */}
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333]">
-              Display language translation option for participants *
-            </div>
-            <DisplayLanguage />
+          <div className="w-80 h-20">
+            <CourseNameDropDown />
           </div>
+        )}
+
+        <div className="w-80 h-20">
+          <TeachersDropDown />
         </div>
 
-        <LanguageTranslationDropDown />
+        <div className="w-80 h-20">
+          <AssistantTeachersDropDown />
+        </div>
+
+        <div className="w-80 h-20">
+          <LanguageDropDown />
+        </div>
 
         {/* Allow only for super Admin */}
-        <div className="w-80">
+        <div className="w-80 h-20">
+          <DisplayLanguage />
+        </div>
+
+        {formData?.displayLanguage == "true" && (
+          <div className="w-80 h-20">
+            <LanguageTranslationDropDown />
+          </div>
+        )}
+
+        {/* Allow only for super Admin */}
+        <div className="w-80 h-20 flex items-center">
           <RegistrationGateway />
         </div>
 
-        <MaximumCapacity />
-
-        <div className="w-80">
-          <div className="flex gap-1 flex-col">
-            <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-              Program Visibility <div className="text-[#7677F4]"> *</div>
-              <HoverCard>
-                <HoverCardTrigger>
-                  <Important />
-                </HoverCardTrigger>
-                <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px]">
-                    <div className="flex flex-row gap-1 items-center">
-                      <Globe />
-                      Public
-                    </div>
-                    <div>
-                      There are a lot of things you can do in space, and space
-                      essentially is unlimited resources.
-                    </div>
-                    <div className="my-2">
-                      <hr></hr>
-                    </div>
-                    <div className="flex flex-row gap-1 items-center">
-                      <LockIcon />
-                      Public
-                    </div>
-                    <div>
-                      There are a lot of things you can do in space, and space
-                      essentially is unlimited resources.
-                    </div>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
-            </div>
-            <Visibility />
-          </div>
+        <div className="w-80 h-20">
+          <MaximumCapacity />
         </div>
 
-        <div className="w-80 ">
-          <div>
-            <div className="text-xs font-normal text-[#333333] flex flex-row gap-1 items-center">
-              Is geo restriction applicable for registrations
-              <div className="text-[#7677F4]">*</div>
-              <HoverCard>
-                <HoverCardTrigger>
-                  <Important />
-                </HoverCardTrigger>
-                <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px]">
-                    Text entered in the 'Email Notes' field will be included in
-                    the registration confirmation email only irrespective of the
-                    transaction status (Email notes will not be shown on the Art
-                    of Living Website)
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
-            </div>
-            <GeoRestriction />
-          </div>
+        <div className="w-80 h-20">
+          <Visibility />
         </div>
 
-        <AllowedCountriesDropDown />
+        <div className="w-80 h-20">
+          <GeoRestriction />
+        </div>
+
+        {formData?.isGeoRestriction == "true" && (
+          <div className="w-80 h-20">
+            <AllowedCountriesDropDown />
+          </div>
+        )}
       </div>
-
-      <div className="flex gap-x-7 text-sm text-[#323232]">
-        <div className="w-80 flex flex-row gap-1 items-center">
+      <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
+        <div className="w-80 h-10 flex flex-row gap-1 items-center">
           Course Description *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px]">
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 Course Description text is managed by National Admin. If the
                 National Admin has allowed Organizers / Teachers to edit Course
                 description then only this field will be editable. If you want
@@ -145,28 +98,28 @@ export default function NewCourseStep2() {
             </HoverCardContent>
           </HoverCard>
         </div>
-        <div className="w-80 flex flex-row gap-1 items-center">
+        <div className="w-80 h-10 flex flex-row gap-1 items-center">
           Course Notes *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px]">
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 Text entered in the 'Course Notes' field will be shown only on
                 the Art of Living Website course details page.
               </div>
             </HoverCardContent>
           </HoverCard>
         </div>
-        <div className="w-80 flex flex-row gap-1 items-center">
+        <div className="w-80 h-10 flex flex-row gap-1 items-center">
           Course Description *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px]">
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 Text entered in the 'Email Notes' field will be included in the
                 registration confirmation email only irrespective of the
                 transaction status (Email notes will not be shown on the Art of
@@ -182,6 +135,8 @@ export default function NewCourseStep2() {
 
 const CourseTypeDropDown = () => {
   const { watch } = useFormContext();
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const formData = watch();
 
@@ -222,6 +177,10 @@ const CourseTypeDropDown = () => {
       },
     ],
     filters: filter,
+    pagination: {
+      current: currentPage,
+      mode: "server",
+    },
   });
 
   const {
@@ -244,26 +203,30 @@ const CourseTypeDropDown = () => {
     setCourseTypeSettings(courseSettings?.[0]);
   };
 
+  // Handler for bottom reached to load more options
+  const handleOnBottomReached = () => {
+    if (options && options?.total >= currentPage * 10)
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
+
   return (
-    <div className="w-80 h-20">
-      <div className="flex gap-1 flex-col">
-        <div className="flex flex-row text-xs font-normal text-[#333333]">
-          Course Type <div className="text-[#7677F4]"> *</div>
-        </div>
-        <CustomSelect
-          value={value}
-          placeholder="Select course type"
-          data={options}
-          onBottomReached={() => {}}
-          onSearch={(val: string) => {
-            onSearch(val);
-          }}
-          onChange={(val) => {
-            getCourseTypeSettings(val);
-            onChange(val);
-          }}
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="flex flex-row text-xs font-normal text-[#333333]">
+        Course Type <div className="text-[#7677F4]"> *</div>
       </div>
+      <CustomSelect
+        value={value}
+        placeholder="Select course type"
+        data={options}
+        onBottomReached={handleOnBottomReached}
+        onSearch={(val: string) => {
+          onSearch(val);
+        }}
+        onChange={(val) => {
+          getCourseTypeSettings(val);
+          onChange(val);
+        }}
+      />
     </div>
   );
 };
@@ -271,8 +234,8 @@ const CourseTypeDropDown = () => {
 const RegistrationGateway = () => {
   const [checkedValue, setCheckedValue] = useState();
   return (
-    <div className="w-80 flex flex-row gap-6 mt-[60px]">
-      <div className="text-[14px] w-[244px] font-normal text-wrap">
+<div className="flex flex-row items-center gap-[19px]">
+      <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">
         Registration is mandatory for this course
       </div>
       <Switch
@@ -287,7 +250,9 @@ const RegistrationGateway = () => {
 };
 
 const CourseNameDropDown = () => {
-  const { options, onSearch } = useSelect({
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { options, onSearch} = useSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -305,6 +270,10 @@ const CourseNameDropDown = () => {
         value: 1,
       },
     ],
+    pagination: {
+      current: currentPage,
+      mode: "server",
+    },
   });
 
   const {
@@ -313,25 +282,29 @@ const CourseNameDropDown = () => {
     name: "courseName",
   });
 
+  // Handler for bottom reached to load more options
+  const handleOnBottomReached = () => {
+    if (options && options?.total >= currentPage * 10)
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
+
   return (
-    <div className="w-80 h-20">
-      <div className="flex gap-1 flex-col">
-        <div className="flex flex-row text-xs font-normal text-[#333333]">
-          Course Name <div className="text-[#7677F4]">*</div>
-        </div>
-        <CustomSelect
-          value={value}
-          placeholder="Select course name"
-          data={options}
-          onBottomReached={() => {}}
-          onSearch={(val: string) => {
-            onSearch(val);
-          }}
-          onChange={(val) => {
-            onChange(val);
-          }}
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="flex flex-row text-xs font-normal text-[#333333]">
+        Course Name <div className="text-[#7677F4]">*</div>
       </div>
+      <CustomSelect
+        value={value}
+        placeholder="Select course name"
+        data={options}
+        onBottomReached={handleOnBottomReached}
+        onSearch={(val: string) => {
+          onSearch(val);
+        }}
+        onChange={(val) => {
+          onChange(val);
+        }}
+      />
     </div>
   );
 };
@@ -350,10 +323,17 @@ const TeachersDropDown = () => {
     });
   }
 
-  const { queryResult } = useSelect({
+  const { queryResult, onSearch } = useSelect({
     resource: "program_type_teachers",
-    meta: { select: "*,user_id(contact_id(first_name,last_name))" },
+    meta: { select: "*,user_id!inner(contact_id!inner(first_name,last_name))" },
     filters: filter,
+    onSearch: (value) => [
+      {
+        field: "user_id.contact_id.full_name",
+        operator: "contains",
+        value,
+      },
+    ],
   });
 
   const teachers: DataItem[] = queryResult.data?.data?.map((val) => {
@@ -373,20 +353,18 @@ const TeachersDropDown = () => {
   });
 
   return (
-    <div className="w-80 h-20">
-      <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333] flex flex-row">
-          Teacher <div className="text-[#7677F4]">*</div>
-        </div>
-        <MultiSelect
-          value={value}
-          placeholder="Enter Teacher Name"
-          data={teachers}
-          onBottomReached={() => {}}
-          onSearch={() => {}}
-          onChange={onChange}
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="text-xs font-normal text-[#333333] flex flex-row">
+        Teacher <div className="text-[#7677F4]">*</div>
       </div>
+      <MultiSelect
+        value={value}
+        placeholder="Enter Teacher Name"
+        data={teachers}
+        onBottomReached={() => {}}
+        onSearch={onSearch}
+        onChange={onChange}
+      />
     </div>
   );
 };
@@ -411,10 +389,17 @@ const AssistantTeachersDropDown = () => {
     });
   }
 
-  const { queryResult } = useSelect({
+  const { queryResult, onSearch } = useSelect({
     resource: "program_type_teachers",
     meta: { select: "*,user_id(contact_id(first_name,last_name))" },
     filters: filter,
+    onSearch: (value) => [
+      {
+        field: "user_id.contact_id.full_name",
+        operator: "contains",
+        value,
+      },
+    ],
   });
 
   const teachers: DataItem[] = queryResult.data?.data?.map((val) => {
@@ -434,20 +419,18 @@ const AssistantTeachersDropDown = () => {
   });
 
   return (
-    <div className="w-80 h-20">
-      <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333]">
-          Assistant Teacher
-        </div>
-        <MultiSelect
-          value={value}
-          placeholder="Enter Teacher Name"
-          data={teachers}
-          onBottomReached={() => {}}
-          onSearch={() => {}}
-          onChange={onChange}
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="text-xs font-normal text-[#333333]">
+        Assistant Teacher
       </div>
+      <MultiSelect
+        value={value}
+        placeholder="Enter Teacher Name"
+        data={teachers}
+        onBottomReached={() => {}}
+        onSearch={onSearch}
+        onChange={onChange}
+      />
     </div>
   );
 };
@@ -458,30 +441,58 @@ const Visibility = () => {
   } = useController({
     name: "visibility",
   });
-  const {
-    getValues,
-    formState: { errors },
-  } = useFormContext();
 
-  const formdata = getValues();
-  console.log(formdata, "formdata izz");
   return (
-    <RadioGroup defaultValue="public" onValueChange={onChange} value={value}>
-      <div className="flex flex-row gap-6 ">
-        <RadioButtonCard
-          value="public"
-          selectedRadioValue={value}
-          label="Public"
-          className="w-[112px] h-[40px] rounded-[12px] "
-        />
-        <RadioButtonCard
-          value="private"
-          selectedRadioValue={value}
-          label="Private"
-          className="w-[112px] h-[40px] rounded-[12px]"
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
+        Program Visibility <div className="text-[#7677F4]"> *</div>
+        <HoverCard>
+          <HoverCardTrigger>
+            <Important />
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <div className="w-[231px] text-wrap !rounded-[15px]">
+              <div className="flex flex-row gap-1 items-center">
+                <Globe />
+                Public
+              </div>
+              <div>
+                There are a lot of things you can do in space, and space
+                essentially is unlimited resources.
+              </div>
+              <div className="my-2">
+                <hr></hr>
+              </div>
+              <div className="flex flex-row gap-1 items-center">
+                <LockIcon />
+                Private
+              </div>
+              <div>
+                There are a lot of things you can do in space, and space
+                essentially is unlimited resources.
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
       </div>
-    </RadioGroup>
+
+      <RadioGroup defaultValue="public" onValueChange={onChange} value={value}>
+        <div className="flex flex-row gap-6 ">
+          <RadioButtonCard
+            value="public"
+            selectedRadioValue={value}
+            label="Public"
+            className="w-[112px] h-[40px] rounded-[12px] "
+          />
+          <RadioButtonCard
+            value="private"
+            selectedRadioValue={value}
+            label="Private"
+            className="w-[112px] h-[40px] rounded-[12px]"
+          />
+        </div>
+      </RadioGroup>
+    </div>
   );
 };
 
@@ -489,29 +500,31 @@ const DisplayLanguage = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "display_language",
+    name: "displayLanguage",
   });
-  const {
-    formState: { errors },
-  } = useFormContext();
 
   return (
-    <RadioGroup value={value} onValueChange={onChange}>
-      <div className="flex flex-row gap-6 ">
-        <RadioButtonCard
-          value="true"
-          selectedRadioValue={value}
-          label="Yes"
-          className="w-[112px] h-[40px] rounded-[12px]"
-        />
-        <RadioButtonCard
-          value="false"
-          selectedRadioValue={value}
-          label="No"
-          className="w-[112px] h-[40px] rounded-[12px]"
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="text-xs font-normal text-[#333333]">
+        Display language translation option for participants *
       </div>
-    </RadioGroup>
+      <RadioGroup value={value} onValueChange={onChange}>
+        <div className="flex flex-row gap-6 ">
+          <RadioButtonCard
+            value="true"
+            selectedRadioValue={value}
+            label="Yes"
+            className="w-[112px] h-[40px] rounded-[12px]"
+          />
+          <RadioButtonCard
+            value="false"
+            selectedRadioValue={value}
+            label="No"
+            className="w-[112px] h-[40px] rounded-[12px]"
+          />
+        </div>
+      </RadioGroup>
+    </div>
   );
 };
 
@@ -519,29 +532,49 @@ const GeoRestriction = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "geo_restriction",
+    name: "isGeoRestriction",
   });
   const {
     formState: { errors },
   } = useFormContext();
-
+  console.log(value, "value izzz");
   return (
-    <RadioGroup onValueChange={onChange}>
-      <div className="flex flex-row gap-6 ">
-        <RadioButtonCard
-          value="true"
-          selectedRadioValue={value}
-          label="Yes"
-          className="w-[112px] !h-[40px] rounded-[12px]"
-        />
-        <RadioButtonCard
-          value="false"
-          selectedRadioValue={value}
-          label="No"
-          className="w-[112px] !h-[40px] rounded-[12px]"
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
+        Is geo restriction applicable for registrations
+        <div className="text-[#7677F4]">*</div>
+        <HoverCard>
+          <HoverCardTrigger>
+            <Important />
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+              Text entered in the 'Email Notes' field will be included in the
+              registration confirmation email only irrespective of the
+              transaction status (Email notes will not be shown on the Art of
+              Living Website)
+            </div>
+          </HoverCardContent>
+        </HoverCard>
       </div>
-    </RadioGroup>
+
+      <RadioGroup value={value} onValueChange={onChange}>
+        <div className="flex flex-row gap-6 ">
+          <RadioButtonCard
+            value="true"
+            selectedRadioValue={value}
+            label="Yes"
+            className="w-[112px] !h-[40px] rounded-[12px]"
+          />
+          <RadioButtonCard
+            value="false"
+            selectedRadioValue={value}
+            label="No"
+            className="w-[112px] !h-[40px] rounded-[12px]"
+          />
+        </div>
+      </RadioGroup>
+    </div>
   );
 };
 const LanguageDropDown = () => {
@@ -565,21 +598,19 @@ const LanguageDropDown = () => {
   });
 
   return (
-    <div className="w-80 h-20">
-      <div className="flex gap-1 flex-col">
-        <div className=" flex flex-row text-xs font-normal text-[#333333]">
-          Language(s) course is taught in
-          <div className="text-[#7677F4]"> *</div>
-        </div>
-        <MultiSelect
-          value={value}
-          placeholder="Select Language"
-          data={options}
-          onBottomReached={() => {}}
-          onSearch={onSearch}
-          onChange={onChange}
-        />
+    <div className="flex gap-1 flex-col">
+      <div className=" flex flex-row text-xs font-normal text-[#333333]">
+        Language(s) course is taught in
+        <div className="text-[#7677F4]"> *</div>
       </div>
+      <MultiSelect
+        value={value}
+        placeholder="Select Language"
+        data={options}
+        onBottomReached={() => {}}
+        onSearch={onSearch}
+        onChange={onChange}
+      />
     </div>
   );
 };
@@ -605,20 +636,18 @@ const LanguageTranslationDropDown = () => {
   });
 
   return (
-    <div className="w-80 h-20">
-      <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333]">
-          Available language(s) for translation
-        </div>
-        <MultiSelect
-          value={value}
-          placeholder="Select translation languages"
-          data={options}
-          onBottomReached={() => {}}
-          onSearch={onSearch}
-          onChange={onChange}
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="text-xs font-normal text-[#333333]">
+        Available language(s) for translation
       </div>
+      <MultiSelect
+        value={value}
+        placeholder="Select translation languages"
+        data={options}
+        onBottomReached={() => {}}
+        onSearch={onSearch}
+        onChange={onChange}
+      />
     </div>
   );
 };
@@ -648,21 +677,19 @@ const AllowedCountriesDropDown = () => {
   });
 
   return (
-    <div className="w-80 h-20">
-      <div className="flex gap-1 flex-col">
-        <div className="flex flex-row text-xs font-normal text-[#333333]">
-          Country(s) from where registrations are allowed
-          <div className="text-[#7677F4]">*</div>
-        </div>
-        <MultiSelect
-          value={value}
-          placeholder="Enter Countries"
-          data={allowedCountriesData}
-          onBottomReached={() => {}}
-          onSearch={() => {}}
-          onChange={onChange}
-        />
+    <div className="flex gap-1 flex-col">
+      <div className="flex flex-row text-xs font-normal text-[#333333]">
+        Country(s) from where registrations are allowed
+        <div className="text-[#7677F4]">*</div>
       </div>
+      <MultiSelect
+        value={value}
+        placeholder="Enter Countries"
+        data={allowedCountriesData}
+        onBottomReached={() => {}}
+        onSearch={() => {}}
+        onChange={onChange}
+      />
     </div>
   );
 };
@@ -683,17 +710,16 @@ const MaximumCapacity = () => {
   } = useController({ name: "maxCapacity" });
 
   return (
-    <div className="w-80">
-      <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333]">Max Capacity</div>
-        <Input
-          placeholder="Enter no. of attendees"
-          value={value}
-          onChange={(val) => {
-            onChange(val?.target?.value);
-          }}
-        />
-      </div>
+    <div className="flex gap-1 flex-col">
+      <div className="text-xs font-normal text-[#333333]">Max Capacity</div>
+      <Input
+        placeholder="Enter no. of attendees"
+        value={value}
+        onChange={(val) => {
+          onChange(val?.target?.value);
+        }}
+        className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
+      />
     </div>
   );
 };
