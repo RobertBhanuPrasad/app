@@ -16,7 +16,7 @@ export const RadioButtonCard: React.FC<RadioItemProps> = ({
   className,
 }) => {
   const cardClassName = classNames(
-    "flex pl-4 py-3 gap-2",
+    "flex pl-4 items-center gap-2 ",
     {
       "border-[#7677F4]": selectedRadioValue === value,
     },

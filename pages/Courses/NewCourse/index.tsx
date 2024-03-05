@@ -68,6 +68,13 @@ function index() {
       resource: "event",
     },
     resolver: zodResolver(schema),
+    defaultValues: {
+      visibility: "public",
+      display_language:"true",
+      geo_restriction:"true",
+      teaching_type:"option-one"
+
+    },
   });
 
   const {

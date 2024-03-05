@@ -13,7 +13,7 @@ import isEqual from "lodash/isEqual";
 import _ from "lodash";
 
 // Define the shape of each data item
-type DataItem = Record<"value" | "label", string>;
+export type DataItem = Record<"value" | "label", string>;
 
 // Main MultiSelect component
 export function MultiSelect({
