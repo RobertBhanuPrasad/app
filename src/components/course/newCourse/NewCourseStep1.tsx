@@ -9,17 +9,10 @@ import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
 import { Label } from "src/ui/label";
 import { DataItem, MultiSelect } from "src/ui/multi-select";
-import {
-  RadioGroup,
-  RadioGroupCheckItem,
-  RadioGroupItem,
-} from "src/ui/radio-group";
+import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
-import { supabaseClient } from "src/utility/supabaseClient";
 
 function NewCourseStep1() {
-  const methods = useFormContext(); // Access form methods
-
   return (
     <div>
       <RadioCards />
@@ -46,13 +39,10 @@ const RegistrationGateway = () => {
   });
 
   const {
-    field: { value: registration_site, onChange: RegistrationUrlOnchange },
+    field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
   } = useController({
     name: "site_url",
   });
-  const {
-    formState: { errors },
-  } = useFormContext();
 
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
@@ -65,12 +55,17 @@ const RegistrationGateway = () => {
         onCheckedChange={onChange}
       />
       {value && (
-        <div className="flex gap-1 flex-col -mt-7">
+        <div className="flex gap-1 flex-col -mt-7 ml-8">
           <div className="text-xs font-normal text-[#333333]">
             Please input the site's URL *
           </div>
           <div className="w-[320px] h-[40px] rounded-[1px] text-[#999999] font-normal">
-            <Input placeholder="Enter URL" />
+            <Input
+              placeholder="Enter URL"
+              value={registrationSieUrl}
+              onChange={RegistrationUrlOnchange}
+              className="placeholder:text-[#999999]"
+            />
           </div>
         </div>
       )}
@@ -84,13 +79,13 @@ const RadioCards = () => {
   } = useController({
     name: "teaching_type",
   });
-  const {
-    formState: { errors },
-  } = useFormContext();
 
-  const { data: identity } = useGetIdentity<any>();
+  const { watch } = useFormContext();
 
-  const user_roles: any[] = identity?.userData[0]?.user_roles;
+  const formData = watch();
+
+  const user_roles: any[] = formData?.loginUserData[0]?.user_roles;
+
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.value === "Teacher");
 
@@ -165,7 +160,7 @@ const RadioCards = () => {
         )}
 
         <Card
-          className={`flex justify-center p-2 gap-2 w-80 h-[106px] flex flex-row ${
+          className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
             value === "option-three"
               ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
               : ""
@@ -180,7 +175,7 @@ const RadioCards = () => {
                 : "!border-[#D6D7D8] !shadow-none "
             }
           />
-          <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
+          <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
             <Organizer
               color={` ${value === "option-three" ? "#7677F4" : "#999999"}`}
             />
@@ -190,7 +185,9 @@ const RadioCards = () => {
                 value === "option-three" ? "text-[#7677F4]" : ""
               }`}
             >
-              I am organizing this course for another teacher
+              <div className="w-[240px] text-wrap text-center justify-center">
+                I am organizing this course for another teacher
+              </div>
             </Label>
           </div>
         </Card>
@@ -220,17 +217,13 @@ const OrganizationDropDown = () => {
     name: "organization",
   });
   const {
-    getValues,
     resetField,
     setValue,
     formState: { errors },
   } = useFormContext();
 
-
-  const formData = getValues();
-  console.log(formData, "formData");
   return (
-    <div className="w-80">
+    <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
         <div className="text-xs font-normal text-[#333333]">Organization *</div>
 
@@ -263,13 +256,20 @@ const OrganizationDropDown = () => {
 const ProgramOrganizerDropDown = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const {
-    getValues,
-    formState: { errors },
-  } = useFormContext();
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const loginUserData = {
+    value: formData?.loginUserData[0]?.id,
+    label:
+      formData?.loginUserData[0]?.contact_id?.first_name +
+      " " +
+      formData?.loginUserData[0]?.contact_id?.last_name,
+  };
 
   const {
-    field: { value, onChange },
+    field: { value = [loginUserData], onChange },
   } = useController({
     name: "program_organizer_ids",
   });
@@ -319,8 +319,6 @@ const ProgramOrganizerDropDown = () => {
     };
   });
 
-  const formData = getValues();
-
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
@@ -335,6 +333,17 @@ const ProgramOrganizerDropDown = () => {
           onSearch(val);
         }}
         onChange={onChange}
+        getOptionProps={(option: { value: number }) => {
+          if (option.value === loginUserData?.value) {
+            return {
+              noIcon: true,
+            };
+          } else {
+            return {
+              noIcon: false,
+            };
+          }
+        }}
       />
     </div>
   );
