@@ -1,7 +1,7 @@
 import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
-import { useSelect } from "@refinedev/core";
+import { useGetIdentity, useSelect } from "@refinedev/core";
 import React, { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { Card } from "src/ui/card";
@@ -15,6 +15,7 @@ import {
   RadioGroupItem,
 } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
+import { supabaseClient } from "src/utility/supabaseClient";
 
 function NewCourseStep1() {
   const methods = useFormContext(); // Access form methods
@@ -24,7 +25,7 @@ function NewCourseStep1() {
       <RadioCards />
       <div className="mt-8 flex flex-row gap-7 ">
         <div className="flex gap-1 flex-col">
-          <CourseTypeDropDown />
+          <OrganizationDropDown />
         </div>
         <div className="flex gap-1 flex-col">
           <ProgramOrganizerDropDown />
@@ -87,72 +88,81 @@ const RadioCards = () => {
     formState: { errors },
   } = useFormContext();
 
+  const { data: identity } = useGetIdentity<any>();
+
+  const user_roles: any[] = identity?.userData[0]?.user_roles;
+  const hasTeacherRole =
+    user_roles && user_roles.some((role) => role.role_id.value === "Teacher");
+
   return (
     <RadioGroup value={value} onValueChange={onChange}>
       <div className="flex items-center flex-row gap-7">
-        <Card
-          className={` p-2 w-80 h-[106px] flex flex-row ${
-            value === "option-one"
-              ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
-              : ""
-          }`}
-        >
-          <div>
+        {hasTeacherRole && (
+          <Card
+            className={` p-2 w-80 h-[106px] flex flex-row ${
+              value === "option-one"
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                : ""
+            }`}
+          >
+            <div>
+              <RadioGroupCheckItem
+                value="option-one"
+                id="option-one"
+                className={
+                  value === "option-one"
+                    ? "!bg-[#7677F4] !border-none "
+                    : "!border-[#D6D7D8] !shadow-none "
+                }
+              />
+            </div>
+            <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
+              <Teacher
+                color={` ${value === "option-one" ? "#7677F4" : "#999999"}`}
+              />
+              <Label
+                htmlFor="option-one"
+                className={`text-[#999999] font-normal ${
+                  value === "option-one" ? "text-[#7677F4]" : ""
+                }`}
+              >
+                I am teaching this course
+              </Label>
+            </div>
+          </Card>
+        )}
+        {hasTeacherRole && (
+          <Card
+            className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
+              value === "option-two"
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                : ""
+            }`}
+          >
             <RadioGroupCheckItem
-              value="option-one"
-              id="option-one"
+              value="option-two"
+              id="option-two"
               className={
-                value === "option-one"
+                value === "option-two"
                   ? "!bg-[#7677F4] !border-none "
                   : "!border-[#D6D7D8] !shadow-none "
               }
             />
-          </div>
-          <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
-            <Teacher
-              color={` ${value === "option-one" ? "#7677F4" : "#999999"}`}
-            />
-            <Label
-              htmlFor="option-one"
-              className={`text-[#999999] font-normal ${
-                value === "option-one" ? "text-[#7677F4]" : ""
-              }`}
-            >
-              I am teaching this course
-            </Label>
-          </div>
-        </Card>
-
-        <Card
-          className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
-            value === "option-two"
-              ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-              : ""
-          }`}
-        >
-          <RadioGroupCheckItem
-            value="option-two"
-            id="option-two"
-            className={
-              value === "option-two"
-                ? "!bg-[#7677F4] !border-none "
-                : "!border-[#D6D7D8] !shadow-none "
-            }
-          />
-          <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
-            <Coteacher
-              color={` ${value === "option-two" ? "#7677F4" : "#999999"}`}
-            />
-            <Label
-              htmlFor="option-two"
-              className={`text-[#999999] font-normal ${
-                value === "option-two" ? "text-[#7677F4]" : ""
-              }`}
-            >
-              I am co-teaching this course
-            </Label>
-          </div>
-        </Card>
+            <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
+              <Coteacher
+                color={` ${value === "option-two" ? "#7677F4" : "#999999"}`}
+              />
+              <Label
+                htmlFor="option-two"
+                className={`text-[#999999] font-normal ${
+                  value === "option-two" ? "text-[#7677F4]" : ""
+                }`}
+              >
+                I am co-teaching this course
+              </Label>
+            </div>
+          </Card>
+        )}
 
         <Card
           className={`flex justify-center p-2 gap-2 w-80 h-[106px] flex flex-row ${
@@ -189,7 +199,7 @@ const RadioCards = () => {
   );
 };
 
-const CourseTypeDropDown = () => {
+const OrganizationDropDown = () => {
   const { options, onSearch } = useSelect({
     resource: "organizations",
     optionLabel: "name",
@@ -203,7 +213,6 @@ const CourseTypeDropDown = () => {
     ],
   });
 
-  console.log(options, "options");
   const {
     field: { value, onChange },
   } = useController({
@@ -296,7 +305,6 @@ const ProgramOrganizerDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
-  console.log(queryResult?.data?.data, "queryResult?.data?.data ");
   const options: DataItem[] = queryResult?.data?.data?.map((item) => {
     return {
       label: item?.contact_id?.first_name + " " + item?.contact_id?.last_name,
@@ -304,10 +312,7 @@ const ProgramOrganizerDropDown = () => {
     };
   });
 
-  console.log(options, "options");
   const formData = getValues();
-
-  console.log(formData, "formData multi");
 
   return (
     <div className="flex gap-1 flex-col">
