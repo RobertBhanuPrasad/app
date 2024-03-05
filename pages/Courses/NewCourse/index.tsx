@@ -70,10 +70,9 @@ function index() {
     resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
-      display_language:"true",
-      geo_restriction:"true",
+      displayLanguage:"true",
+      isGeoRestriction:"true",
       teaching_type:"option-one"
-
     },
   });
 
