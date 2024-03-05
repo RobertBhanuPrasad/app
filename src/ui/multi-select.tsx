@@ -107,6 +107,7 @@ export function MultiSelect({
                   };
               const { noIcon } = optionProps;
               if (index > 1) return null;
+              console.log(item,'Item mmmF')
               return (
                 <Badge key={item.value} variant="outline" className="border">
                   <div className="max-w-[60px] truncate"> {item.label}</div>

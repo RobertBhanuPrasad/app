@@ -2,7 +2,7 @@ import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useSelect } from "@refinedev/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
@@ -46,7 +46,7 @@ const RegistrationGateway = () => {
   });
 
   const {
-    field: { value: registration_site, onChange: RegistrationUrlOnchange },
+    field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
   } = useController({
     name: "site_url",
   });
@@ -65,12 +65,17 @@ const RegistrationGateway = () => {
         onCheckedChange={onChange}
       />
       {value && (
-        <div className="flex gap-1 flex-col -mt-7">
+        <div className="flex gap-1 flex-col -mt-7 ml-8">
           <div className="text-xs font-normal text-[#333333]">
             Please input the site's URL *
           </div>
           <div className="w-[320px] h-[40px] rounded-[1px] text-[#999999] font-normal">
-            <Input placeholder="Enter URL" />
+            <Input
+              placeholder="Enter URL"
+              value={registrationSieUrl}
+              onChange={RegistrationUrlOnchange}
+              className="placeholder:text-[#999999]"
+            />
           </div>
         </div>
       )}
@@ -91,6 +96,8 @@ const RadioCards = () => {
   const { data: identity } = useGetIdentity<any>();
 
   const user_roles: any[] = identity?.userData[0]?.user_roles;
+
+  console.log(user_roles, "user_roles");
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.value === "Teacher");
 
@@ -226,7 +233,6 @@ const OrganizationDropDown = () => {
     formState: { errors },
   } = useFormContext();
 
-
   const formData = getValues();
   console.log(formData, "formData");
   return (
@@ -263,13 +269,18 @@ const OrganizationDropDown = () => {
 const ProgramOrganizerDropDown = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const {
-    getValues,
-    formState: { errors },
-  } = useFormContext();
+  const { data: identity } = useGetIdentity<any>();
+
+  const loginUserData = {
+    value: identity?.userData[0]?.id,
+    label:
+      identity?.userData[0]?.contact_id?.first_name +
+      " " +
+      identity?.userData[0]?.contact_id?.last_name,
+  };
 
   const {
-    field: { value, onChange },
+    field: { value = [loginUserData], onChange },
   } = useController({
     name: "program_organizer_ids",
   });
@@ -319,8 +330,6 @@ const ProgramOrganizerDropDown = () => {
     };
   });
 
-  const formData = getValues();
-
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
@@ -335,6 +344,17 @@ const ProgramOrganizerDropDown = () => {
           onSearch(val);
         }}
         onChange={onChange}
+        getOptionProps={(option: { value: number }) => {
+          if (option.value === loginUserData?.value) {
+            return {
+              noIcon: true,
+            };
+          } else {
+            return {
+              noIcon: false,
+            };
+          }
+        }}
       />
     </div>
   );
