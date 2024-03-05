@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import React from "react";
-import Logo from "@public/assets/logo";
+import Logo from "@public/assets/Logo";
 import Bell from "@public/assets/Bell";
 import TableMenu from "@public/assets/TableMenu";
 import { Avatar, AvatarFallback, AvatarImage } from "src/ui/avatar";
@@ -44,14 +44,14 @@ function Navbar() {
   return (
     <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
       {/* Logo */}
-        <Logo />
+      <Logo />
       {/* Navigation Menu */}
       <div className="flex items-center justify-center ">
         <NavigationMenu className="text-[#999999]">
           <NavigationMenuList>
             {/* Home Navigation */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger >Home</NavigationMenuTrigger>
+              <NavigationMenuTrigger>Home</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[160px] gap-3 py-4 px-2 ">
                   {components.map((component) => (
@@ -82,7 +82,9 @@ function Navbar() {
             <NavigationMenuItem>
               <NavigationMenuTrigger
                 className={
-                  firstRouteName === "Courses" ? "!text-[#7677F4] font-semibold" : ""
+                  firstRouteName === "Courses"
+                    ? "!text-[#7677F4] font-semibold"
+                    : ""
                 }
               >
                 Courses
@@ -138,13 +140,13 @@ function Navbar() {
         </NavigationMenu>
       </div>
       {/* Bell and Avatar */}
-        <div className="flex flex-row items-center gap-4  ">
-          <Bell />
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-        </div>
+      <div className="flex flex-row items-center gap-4  ">
+        <Bell />
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+      </div>
     </div>
   );
 }

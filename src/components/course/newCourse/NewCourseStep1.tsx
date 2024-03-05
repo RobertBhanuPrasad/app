@@ -8,7 +8,7 @@ import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
 import { Label } from "src/ui/label";
-import { DataItem, MultiSelect } from "src/ui/multi-select";
+import { MultiSelect } from "src/ui/multi-select";
 import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
 
@@ -312,7 +312,7 @@ const ProgramOrganizerDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
-  const options: DataItem[] = queryResult?.data?.data?.map((item) => {
+  const options: any = queryResult?.data?.data?.map((item) => {
     return {
       label: item?.contact_id?.first_name + " " + item?.contact_id?.last_name,
       value: item.id,
