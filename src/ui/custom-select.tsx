@@ -85,7 +85,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
   // Render the CustomSelect component
   return (
-    <div>
+    <div className="relative">
       <Command>
         <Button
           onClick={(e) => {
@@ -117,9 +117,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             />
           </div>
         </Button>
-        <div className="relative mt-2" ref={commandRef}>
+        <div className="absolute mt-2 top-full z-50 w-full" ref={commandRef}>
           {open && (
-            <div className="rounded-xl border border-[1px]">
+            <div className=" bg-[white] rounded-xl border border-[1px]">
               <Input
                 onChange={(e) => onSearch(e.target.value)}
                 className="border-none focus:outline-none rounded-xl text-[#999999]"
