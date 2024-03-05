@@ -4,6 +4,7 @@ import nookies from "nookies";
 import { supabaseClient } from "./utility";
 
 export const authProvider: AuthBindings = {
+
   login: async ({ email, password }) => {
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
@@ -121,14 +122,16 @@ export const authProvider: AuthBindings = {
   },
   getIdentity: async () => {
     const { data } = await supabaseClient.auth.getUser();
-
-    if (data?.user) {
+    const { data: userData } = await supabaseClient
+      .from("users")
+      .select("*,contact_id(*),user_roles(*,role_id(value))")
+      .eq("user_identifier", data?.user?.id);
+    if (userData) {
       return {
-        ...data.user,
-        name: data.user.email,
+        data,
+        userData,
       };
     }
-
     return null;
   },
   onError: async (error) => {

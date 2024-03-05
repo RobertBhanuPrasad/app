@@ -1,12 +1,10 @@
-// Importing React and required components/modules
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DropdownIcon from "@public/icons/DropdownIcon.svg";
-import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import {
+  Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
-  Command,
 } from "src/ui/command";
 import { cn } from "src/lib/utils";
 import { Button } from "src/ui/button";
@@ -14,12 +12,13 @@ import { Input } from "./input";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
 import Image from "next/image";
 
-// Defining TypeScript types for props
+// Define the shape of each option
 interface Option {
   value: string;
   label: string;
 }
 
+// Define the props for the CustomSelect component
 interface CustomSelectProps {
   data: any;
   onSearch: (searchQuery: string) => void;
@@ -27,7 +26,7 @@ interface CustomSelectProps {
   onChange: (selectedOption: Option) => void;
   placeholder: string;
   value: any;
-  error?:any
+  error?: any;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -37,12 +36,18 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   onChange,
   placeholder,
   value: propValue,
-  error
+  error,
 }: CustomSelectProps) => {
-  // State to manage the open/closed state of the Popover
+  // State to manage whether the dropdown is open or closed
   const [open, setOpen] = React.useState<boolean>(false);
+
+  // State to keep track of the currently selected option
   const [selectedValue, setSelectedValue] = useState<Option | null>(propValue);
 
+  // Reference to the command div for handling clicks outside the dropdown
+  const commandRef = useRef<HTMLDivElement>(null);
+
+  // Update the selected value when the propValue changes
   useEffect(() => {
     if (propValue !== undefined) {
       setSelectedValue(propValue);
@@ -51,7 +56,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     }
   }, [propValue]);
 
-  // Handler function when an option is selected
+  // Handle the selection of an option
   const handleSelect = (value: Option) => {
     onChange(value);
     setSelectedValue(value);
@@ -59,22 +64,44 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     onSearch("");
   };
 
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        {/* Button acting as a trigger for the Popover */}
+  // Add an event listener to close the dropdown when clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        commandRef.current &&
+        !commandRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+      onSearch("");
+    };
 
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
+  // Render the CustomSelect component
+  return (
+    <div className="relative">
+      <Command>
         <Button
+          onClick={(e) => {
+            e.preventDefault();
+            setOpen(true);
+          }}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+          }}
           variant="outline"
           role="combobox"
-          aria-expanded={open}
           className={`w-80 h-[40px] rounded-xl ${
-            //If error is present then we make the border red to show error
             error ? "border-[#FF6D6D]" : "border-[#E1E1E1]"
           }`}
         >
           <div className="flex w-full justify-between text-sm">
-            {/* Displaying selected value or placeholder if none selected */}
             {selectedValue ? (
               <div className="text-[#414141] font-semibold">
                 {selectedValue.label}
@@ -82,7 +109,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             ) : (
               <div className="text-[#999999] font-normal">{placeholder}</div>
             )}
-            {/* Dropdown Icon */}
             <Image
               src={DropdownIcon.src}
               alt="Dropdown Icon"
@@ -91,57 +117,52 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             />
           </div>
         </Button>
-      </PopoverTrigger>
-
-      {/* Popover content */}
-      <PopoverContent className="border-[#D6D7D8] w-80 p-0">
-        <Command>
-          {/* Input for searching options */}
-          <Input
-            onChange={(e) => onSearch(e.target.value)}
-            className="border-none focus:outline-none rounded-xl text-[#999999]"
-          />
-          <hr className="border-[#D6D7D8]" />
-          <CommandEmpty>No option found</CommandEmpty>
-          {/* Alert for scrolling types */}
-          <GetScrollTypesAlert
-            id={"options"}
-            onBottom={() => {
-              onBottomReached();
-            }}
-          >
-            {/* Group of command items representing options */}
-            <CommandGroup
-              id={"options"}
-              className="max-h-[300px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
-            >
-              {/* Mapping through options to render each option */}
-              {data?.map((option: any, index: number) => {
-                return (
-                  <div key={option.value}>
-                    {/* Individual command item representing an option */}
-                    <CommandItem
-                      value={option}
-                      className={cn({
-                        "bg-[#7677F4]/30 hover:!bg-[#7677F4]/30":
-                          selectedValue && selectedValue.value === option.value,
-                      })}
-                      onSelect={() => handleSelect(option)}
-                    >
-                      {option.label}
-                    </CommandItem>
-                    {/* Horizontal line as a separator */}
-                    {index < data?.length - 1 && (
-                      <hr className="border-[#D6D7D8]" />
-                    )}
-                  </div>
-                );
-              })}
-            </CommandGroup>
-          </GetScrollTypesAlert>
-        </Command>
-      </PopoverContent>
-    </Popover>
+        <div className="absolute mt-2 top-full z-50 w-full" ref={commandRef}>
+          {open && (
+            <div className=" bg-[white] rounded-xl border border-[1px]">
+              <Input
+                onChange={(e) => onSearch(e.target.value)}
+                className="border-none focus:outline-none rounded-xl text-[#999999]"
+              />
+              <hr className="border-[#D6D7D8]" />
+              <CommandEmpty>No option found</CommandEmpty>
+              <GetScrollTypesAlert
+                id={"options"}
+                onBottom={() => {
+                  onBottomReached();
+                }}
+              >
+                <CommandGroup
+                  id={"options"}
+                  className="max-h-[300px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
+                >
+                  {data?.map((option: any, index: number) => {
+                    return (
+                      <div key={option.value}>
+                        <CommandItem
+                          value={option}
+                          className={cn({
+                            "bg-[#7677F4]/30 hover:!bg-[#7677F4]/30":
+                              selectedValue &&
+                              selectedValue.value === option.value,
+                          })}
+                          onSelect={() => handleSelect(option)}
+                        >
+                          {option.label}
+                        </CommandItem>
+                        {index < data?.length - 1 && (
+                          <hr className="border-[#D6D7D8]" />
+                        )}
+                      </div>
+                    );
+                  })}
+                </CommandGroup>
+              </GetScrollTypesAlert>
+            </div>
+          )}
+        </div>
+      </Command>
+    </div>
   );
 };
 

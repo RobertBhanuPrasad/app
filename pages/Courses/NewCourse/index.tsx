@@ -68,6 +68,13 @@ function index() {
       resource: "event",
     },
     resolver: zodResolver(schema),
+    defaultValues: {
+      visibility: "public",
+      display_language:"true",
+      geo_restriction:"true",
+      teaching_type:"option-one"
+
+    },
   });
 
   const {
@@ -164,64 +171,70 @@ function index() {
           <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
             <FormProvider {...methods}>
               <form autoComplete="off">
-                <TabsContent value="0" className={contentStylings}>
-                  <NewCourseStep1 />
-                </TabsContent>
-                <TabsContent value="1" className={contentStylings}>
-                  <NewCourseStep2 />
-                </TabsContent>
-                <TabsContent
-                  value="2"
-                  className={contentStylings}
-                ></TabsContent>
-                <TabsContent value="3" className={contentStylings}>
-                  Change your password here.
-                </TabsContent>
-                <TabsContent value="4" className={contentStylings}>
-                  Change your accommodation details
-                </TabsContent>
-                <TabsContent value="5" className={contentStylings}>
-                  Change your accommodation details
-                </TabsContent>
-                <TabsContent value="6" className={contentStylings}>
-                  Change your accommodation details
-                </TabsContent>
+                <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
+                  <div>
+                    <TabsContent value="0" className={contentStylings}>
+                      <NewCourseStep1 />
+                    </TabsContent>
+                    <TabsContent value="1" className={contentStylings}>
+                      <NewCourseStep2 />
+                    </TabsContent>
+                    <TabsContent
+                      value="2"
+                      className={contentStylings}
+                    ></TabsContent>
+                    <TabsContent value="3" className={contentStylings}>
+                      Change your password here.
+                    </TabsContent>
+                    <TabsContent value="4" className={contentStylings}>
+                      Change your accommodation details
+                    </TabsContent>
+                    <TabsContent value="5" className={contentStylings}>
+                      Change your accommodation details
+                    </TabsContent>
+                    <TabsContent value="6" className={contentStylings}>
+                      Change your accommodation details
+                    </TabsContent>
+                  </div>
+
+                  <div className="flex self-end justify-center gap-4 w-full mt-2">
+                    {currentStep > 0 && (
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          gotoStep(currentStep - 1);
+                        }}
+                        className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
+                      >
+                        Previous
+                      </Button>
+                    )}
+                    {currentStep < stepTitles.length - 1 && (
+                      <Button
+                        className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          gotoStep(currentStep + 1);
+                        }}
+                      >
+                        Next
+                      </Button>
+                    )}
+                    {currentStep === stepTitles.length - 1 && (
+                      <Button
+                        className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
+                        onClick={handleSubmit(onSubmit)}
+                      >
+                        Save
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </form>
             </FormProvider>
           </div>
         </div>
       </Tabs>
-
-      <div className="flex justify-center -mt-20 gap-4">
-        {currentStep > 0 && (
-          <Button
-            onClick={() => {
-              gotoStep(currentStep - 1);
-            }}
-            className="border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
-          >
-            Previous
-          </Button>
-        )}
-        {currentStep < stepTitles.length - 1 && (
-          <Button
-            className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
-            onClick={() => {
-              gotoStep(currentStep + 1);
-            }}
-          >
-            Next
-          </Button>
-        )}
-        {currentStep === stepTitles.length - 1 && (
-          <Button
-            className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
-            onClick={handleSubmit(onSubmit)}
-          >
-            Save
-          </Button>
-        )}
-      </div>
     </div>
   );
 }
