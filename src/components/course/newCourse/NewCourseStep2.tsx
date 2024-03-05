@@ -1,8 +1,11 @@
+import EditIcon from "@public/assets/EditIcon";
 import { CrudFilter, useSelect } from "@refinedev/core";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import countryCodes from "src/data/CountryCodes";
+import { Button } from "src/ui/button";
 import CustomSelect from "src/ui/custom-select";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Input } from "src/ui/input";
 import { DataItem, MultiSelect } from "src/ui/multi-select";
 
@@ -73,9 +76,54 @@ export default function NewCourseStep2() {
       </div>
 
       <div className="flex gap-x-7 text-sm text-[#323232]">
-        <div className="w-80">Course Description *</div>
-        <div className="w-80">Course Notes *</div>
-        <div className="w-80">Course Description *</div>
+        <div className="flex flex-row justify-between w-80">
+          <div>Course Description *</div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <div className="flex flex-row gap-1 justify-center items-center">
+                <div>
+                  <EditIcon />
+                </div>
+                <div className="text-[#7677F4]">Manage</div>
+              </div>
+            </DialogTrigger>
+            <DialogContent>
+              <div>hello</div>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <div className="flex flex-row justify-between w-80">
+          <div>Course Notes *</div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <div className="flex flex-row gap-1 justify-center items-center">
+                <div>
+                  <EditIcon />
+                </div>
+                <div className="text-[#7677F4]">Manage</div>
+              </div>
+            </DialogTrigger>
+            <DialogContent>
+              <div>hello</div>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <div className="flex flex-row justify-between w-80">
+          <div>Email Notes *</div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <div className="flex flex-row gap-1 justify-center items-center">
+                <div>
+                  <EditIcon />
+                </div>
+                <div className="text-[#7677F4]">Manage</div>
+              </div>
+            </DialogTrigger>
+            <DialogContent>
+              <div>hello</div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   );

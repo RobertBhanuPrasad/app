@@ -51,14 +51,14 @@ const stepTitles = [
 function index() {
   // Schema definition for form validation
   const schema = z.object({
-    organization: z.object({
-      // Define the schema for the organization object's properties here
-      // For example:
-      value: z.number(),
-      label: z.string(),
+    // organization: z.object({
+    //   // Define the schema for the organization object's properties here
+    //   // For example:
+    //   value: z.number(),
+    //   label: z.string(),
 
-      // Add more properties as needed
-    }),
+    //   // Add more properties as needed
+    // }),
   });
 
   // Destructuring values from useStepsForm hook
