@@ -356,7 +356,7 @@ const TeachersDropDown = () => {
     filters: filter,
   });
 
-  const teachers: DataItem[] = queryResult.data?.data?.map((val) => {
+  const teachers: any = queryResult.data?.data?.map((val) => {
     return {
       label:
         val?.user_id?.contact_id?.first_name +
@@ -417,7 +417,7 @@ const AssistantTeachersDropDown = () => {
     filters: filter,
   });
 
-  const teachers: DataItem[] = queryResult.data?.data?.map((val) => {
+  const teachers:any = queryResult.data?.data?.map((val) => {
     return {
       label:
         val?.user_id?.contact_id?.first_name +
