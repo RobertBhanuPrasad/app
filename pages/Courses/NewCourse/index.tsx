@@ -13,42 +13,17 @@ import { z } from "zod";
 import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
-
-// Array of step titles, icons, and colors
-const stepTitles = [
-  {
-    value: "0",
-    label: "Basic Details",
-    icon: <Profile />,
-    color: "#7677F4",
-  },
-  {
-    value: "1",
-    label: "Course Details",
-    icon: <Group />,
-    color: "#7677F4",
-  },
-  {
-    value: "2",
-    label: "Time and Venue",
-    icon: <Venue />,
-    color: "#7677F4",
-  },
-  {
-    value: "3",
-    label: "Accommodation",
-    icon: <Car />,
-    color: "#7677F4",
-  },
-  {
-    value: "4",
-    label: "Contact Info",
-    icon: <Info />,
-    color: "#7677F4",
-  },
-];
+import { useGetIdentity } from "@refinedev/core";
 
 function index() {
+  const { data: identity } = useGetIdentity<any>();
+
+  if (identity?.userData?.length > 0) {
+    return <NewCourseStep defaultProgramOrganizer={identity?.userData} />;
+  }
+}
+
+function NewCourseStep({ defaultProgramOrganizer }: any) {
   // Schema definition for form validation
   const schema = z.object({
     organization: z.object({
@@ -72,7 +47,11 @@ function index() {
       visibility: "public",
       displayLanguage:"true",
       isGeoRestriction:"true",
-      teaching_type:"option-one"
+      teaching_type:
+        defaultProgramOrganizer[0]?.user_roles[0]?.role_id?.value === "Teacher"
+          ? "option-one"
+          : "option-three",
+      loginUserData: defaultProgramOrganizer,
     },
   });
 
