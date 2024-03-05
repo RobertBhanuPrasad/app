@@ -80,9 +80,11 @@ const RadioCards = () => {
     name: "teaching_type",
   });
 
-  const { data: identity } = useGetIdentity<any>();
+  const { watch } = useFormContext();
 
-  const user_roles: any[] = identity?.userData[0]?.user_roles;
+  const formData = watch();
+
+  const user_roles: any[] = formData?.loginUserData[0]?.user_roles;
 
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.value === "Teacher");
@@ -158,7 +160,7 @@ const RadioCards = () => {
         )}
 
         <Card
-          className={`flex justify-center p-2 gap-2 w-80 h-[106px] flex flex-row ${
+          className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
             value === "option-three"
               ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
               : ""
@@ -173,7 +175,7 @@ const RadioCards = () => {
                 : "!border-[#D6D7D8] !shadow-none "
             }
           />
-          <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
+          <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
             <Organizer
               color={` ${value === "option-three" ? "#7677F4" : "#999999"}`}
             />
@@ -183,7 +185,9 @@ const RadioCards = () => {
                 value === "option-three" ? "text-[#7677F4]" : ""
               }`}
             >
-              I am organizing this course for another teacher
+              <div className="w-[240px] text-wrap text-center justify-center">
+                I am organizing this course for another teacher
+              </div>
             </Label>
           </div>
         </Card>
@@ -252,14 +256,16 @@ const OrganizationDropDown = () => {
 const ProgramOrganizerDropDown = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: identity } = useGetIdentity<any>();
+  const { watch } = useFormContext();
+
+  const formData = watch();
 
   const loginUserData = {
-    value: identity?.userData[0]?.id,
+    value: formData?.loginUserData[0]?.id,
     label:
-      identity?.userData[0]?.contact_id?.first_name +
+      formData?.loginUserData[0]?.contact_id?.first_name +
       " " +
-      identity?.userData[0]?.contact_id?.last_name,
+      formData?.loginUserData[0]?.contact_id?.last_name,
   };
 
   const {
