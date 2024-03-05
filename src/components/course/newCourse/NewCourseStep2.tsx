@@ -205,7 +205,7 @@ const CourseTypeDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && options?.total >= currentPage * 10)
+    if (options && queryResult?.data?.total as number >= currentPage * 10)
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
@@ -252,7 +252,7 @@ const RegistrationGateway = () => {
 const CourseNameDropDown = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { options, onSearch} = useSelect({
+  const { options, onSearch,queryResult} = useSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -284,7 +284,7 @@ const CourseNameDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && options?.total >= currentPage * 10)
+    if (options && queryResult?.data?.total as number >= currentPage * 10)
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
