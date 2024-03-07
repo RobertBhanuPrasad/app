@@ -14,16 +14,36 @@ import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
 import { useGetIdentity } from "@refinedev/core";
+import { useEffect, useState } from "react";
+import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 
 function index() {
   const { data: identity } = useGetIdentity<any>();
 
-  if (identity?.userData?.length > 0) {
-    return <NewCourseStep defaultProgramOrganizer={identity?.userData} />;
+  const [programOrganizedBy, setProgramOrganizedBy]: any[] = useState();
+
+  const fetchProgramOrganizedBy = async () => {
+    const programOrganizedBy = (await getOptionValuesByOptionLabel(
+      "PROGRAM_ORGANIZER_TYPE"
+    )) as any[];
+    setProgramOrganizedBy(programOrganizedBy);
+  };
+
+  useEffect(() => {
+    fetchProgramOrganizedBy();
+  }, []);
+
+  if (identity?.userData?.length > 0 && programOrganizedBy?.length > 0) {
+    return (
+      <NewCourseStep
+        defaultProgramOrganizer={identity?.userData?.[0]}
+        programOrganizedBy={programOrganizedBy}
+      />
+    );
   }
 }
 
-function NewCourseStep({ defaultProgramOrganizer }: any) {
+function NewCourseStep({ defaultProgramOrganizer, programOrganizedBy }: any) {
   // Schema definition for form validation
   const schema = z.object({
     organization: z.object({
@@ -36,6 +56,20 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
     }),
   });
 
+  const loginUserRole = defaultProgramOrganizer?.user_roles;
+
+  const isTeacherRole = loginUserRole.find(
+    (value: { value: string  }) => value.value == "Teacher"
+  );
+
+  const loginUserData = {
+    value: defaultProgramOrganizer?.id,
+    label:
+      defaultProgramOrganizer?.contact_id?.first_name +
+      " " +
+      defaultProgramOrganizer?.contact_id?.last_name,
+  };
+
   // Destructuring values from useStepsForm hook
   const methods = useStepsForm({
     refineCoreProps: {
@@ -45,13 +79,13 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
     resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
-      displayLanguage:"true",
-      isGeoRestriction:"true",
-      teaching_type:
-        defaultProgramOrganizer[0]?.user_roles[0]?.role_id?.value === "Teacher"
-          ? "option-one"
-          : "option-three",
+      displayLanguage: "true",
+      isGeoRestriction: "true",
       loginUserData: defaultProgramOrganizer,
+      programOrganizers: [loginUserData],
+      programOrganizedBy: isTeacherRole
+        ? programOrganizedBy[0]?.id
+        : programOrganizedBy[2]?.id,
     },
   });
 

@@ -1,8 +1,9 @@
 import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
-import { useGetIdentity, useSelect } from "@refinedev/core";
-import React, { useState } from "react";
+import { useSelect } from "@refinedev/core";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
@@ -11,6 +12,8 @@ import { Label } from "src/ui/label";
 import { MultiSelect } from "src/ui/multi-select";
 import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
+import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+
 
 function NewCourseStep1() {
   return (
@@ -77,35 +80,85 @@ const RadioCards = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "teaching_type",
+    name: "programOrganizedBy",
   });
 
   const { watch } = useFormContext();
 
   const formData = watch();
 
-  const user_roles: any[] = formData?.loginUserData[0]?.user_roles;
+  const user_roles: any[] = formData?.loginUserData?.user_roles;
 
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.value === "Teacher");
 
+  const [programOrganizedBy, setProgramOrganizedBy]: any[] = useState();
+
+  const fetchProgramOrganizedBy = async () => {
+    const programOrganizedBy = (await getOptionValuesByOptionLabel(
+      "PROGRAM_ORGANIZER_TYPE"
+    )) as any[];
+    setProgramOrganizedBy(programOrganizedBy);
+  };
+
+  useEffect(() => {
+    fetchProgramOrganizedBy();
+  }, []);
+
+  const loginInTeacherData = {
+    value: {
+      id: formData?.loginUserData?.id,
+      contact_id: {
+        first_name: formData?.loginUserData?.contact_id?.first_name,
+        last_name: formData?.loginUserData?.contact_id?.last_name,
+      },
+      created_at: formData?.loginUserData?.created_at,
+      program_type_teachers: formData?.loginUserData?.program_type_teachers,
+      user_identifier: formData?.loginUserData?.user_identifier,
+      user_name: formData?.loginUserData?.user_name,
+    },
+    label:
+      formData?.loginUserData?.contact_id?.first_name +
+      " " +
+      formData?.loginUserData?.contact_id?.last_name,
+  };
+
+  const {
+    field: { value: teachers, onChange: teachersOnChange },
+  } = useController({
+    name: "teachers",
+  });
+
+  const handleOnChange = (val: string) => {
+    onChange(val);
+    if (val != "48") {
+      if (!teachers) {
+        teachersOnChange([loginInTeacherData]);
+      } else if (
+        !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
+      ) {
+        teachersOnChange([loginInTeacherData, ...teachers]);
+      }
+    }
+  };
+
   return (
-    <RadioGroup value={value} onValueChange={onChange}>
+    <RadioGroup value={value} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
         {hasTeacherRole && (
           <Card
             className={` p-2 w-80 h-[106px] flex flex-row ${
-              value === "option-one"
+              value === programOrganizedBy?.[0]?.id
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
                 : ""
             }`}
           >
             <div>
               <RadioGroupCheckItem
-                value="option-one"
-                id="option-one"
+                value={programOrganizedBy?.[0]?.id}
+                id={programOrganizedBy?.[0]?.id}
                 className={
-                  value === "option-one"
+                  value === programOrganizedBy?.[0]?.id
                     ? "!bg-[#7677F4] !border-none "
                     : "!border-[#D6D7D8] !shadow-none "
                 }
@@ -113,12 +166,14 @@ const RadioCards = () => {
             </div>
             <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
               <Teacher
-                color={` ${value === "option-one" ? "#7677F4" : "#999999"}`}
+                color={` ${
+                  value === programOrganizedBy?.[0]?.id ? "#7677F4" : "#999999"
+                }`}
               />
               <Label
-                htmlFor="option-one"
+                htmlFor={programOrganizedBy?.[0]?.id}
                 className={`text-[#999999] font-normal ${
-                  value === "option-one" ? "text-[#7677F4]" : ""
+                  value === programOrganizedBy?.[0]?.id ? "text-[#7677F4]" : ""
                 }`}
               >
                 I am teaching this course
@@ -129,28 +184,30 @@ const RadioCards = () => {
         {hasTeacherRole && (
           <Card
             className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
-              value === "option-two"
+              value === programOrganizedBy?.[1]?.id
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                 : ""
             }`}
           >
             <RadioGroupCheckItem
-              value="option-two"
-              id="option-two"
+              value={programOrganizedBy?.[1]?.id}
+              id={programOrganizedBy?.[1]?.id}
               className={
-                value === "option-two"
+                value === programOrganizedBy?.[1]?.id
                   ? "!bg-[#7677F4] !border-none "
                   : "!border-[#D6D7D8] !shadow-none "
               }
             />
             <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
               <Coteacher
-                color={` ${value === "option-two" ? "#7677F4" : "#999999"}`}
+                color={` ${
+                  value === programOrganizedBy?.[1]?.id ? "#7677F4" : "#999999"
+                }`}
               />
               <Label
-                htmlFor="option-two"
+                htmlFor={programOrganizedBy?.[1]?.id}
                 className={`text-[#999999] font-normal ${
-                  value === "option-two" ? "text-[#7677F4]" : ""
+                  value === programOrganizedBy?.[1]?.id ? "text-[#7677F4]" : ""
                 }`}
               >
                 I am co-teaching this course
@@ -161,28 +218,30 @@ const RadioCards = () => {
 
         <Card
           className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
-            value === "option-three"
+            value === programOrganizedBy?.[2]?.id
               ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
               : ""
           }`}
         >
           <RadioGroupCheckItem
-            value="option-three"
-            id="option-three"
+            value={programOrganizedBy?.[2]?.id}
+            id={programOrganizedBy?.[2]?.id}
             className={
-              value === "option-three"
+              value === programOrganizedBy?.[2]?.id
                 ? "!bg-[#7677F4] !border-none "
                 : "!border-[#D6D7D8] !shadow-none "
             }
           />
           <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
             <Organizer
-              color={` ${value === "option-three" ? "#7677F4" : "#999999"}`}
+              color={` ${
+                value === programOrganizedBy?.[2]?.id ? "#7677F4" : "#999999"
+              }`}
             />
             <Label
-              htmlFor="option-three"
+              htmlFor={programOrganizedBy?.[2]?.id}
               className={`text-[#999999] font-normal ${
-                value === "option-three" ? "text-[#7677F4]" : ""
+                value === programOrganizedBy?.[2]?.id ? "text-[#7677F4]" : ""
               }`}
             >
               <div className="w-[240px] text-wrap text-center justify-center">
@@ -254,24 +313,16 @@ const OrganizationDropDown = () => {
 };
 
 const ProgramOrganizerDropDown = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
   const { watch } = useFormContext();
 
   const formData = watch();
 
-  const loginUserData = {
-    value: formData?.loginUserData[0]?.id,
-    label:
-      formData?.loginUserData[0]?.contact_id?.first_name +
-      " " +
-      formData?.loginUserData[0]?.contact_id?.last_name,
-  };
+  const [currentPage, setCurrentPage] = useState(1);
 
   const {
-    field: { value = [loginUserData], onChange },
+    field: { value, onChange },
   } = useController({
-    name: "program_organizer_ids",
+    name: "programOrganizers",
   });
 
   const { queryResult, onSearch } = useSelect({
@@ -334,13 +385,13 @@ const ProgramOrganizerDropDown = () => {
         }}
         onChange={onChange}
         getOptionProps={(option: { value: number }) => {
-          if (option.value === loginUserData?.value) {
+          if (option.value === formData?.loginUserData?.id) {
             return {
-              noIcon: true,
+              disable: true,
             };
           } else {
             return {
-              noIcon: false,
+              disable: false,
             };
           }
         }}
