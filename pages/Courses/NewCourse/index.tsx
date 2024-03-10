@@ -14,6 +14,7 @@ import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
 import { useGetIdentity } from "@refinedev/core";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 
 function index() {
   const { data: identity } = useGetIdentity<any>();
@@ -160,7 +161,9 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
                     <TabsContent
                       value="2"
                       className={contentStylings}
-                    ></TabsContent>
+                    >
+                      <NewCourseStep3 />
+                    </TabsContent>
                     <TabsContent value="3" className={contentStylings}>
                       Change your password here.
                     </TabsContent>
