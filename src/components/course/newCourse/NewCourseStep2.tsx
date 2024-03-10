@@ -2,8 +2,10 @@ import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useSelect } from "@refinedev/core";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValues";
 import countryCodes from "src/data/CountryCodes";
 import CustomSelect from "src/ui/custom-select";
 import {
@@ -16,11 +18,19 @@ import { DataItem, MultiSelect } from "src/ui/multi-select";
 import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { Switch } from "src/ui/switch";
+import { getOptionValueObjectByOptionValue } from "src/utility/GetOptionValuesByOptionLabel";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
 
   const formData = watch();
+
+  const { loginUserData } = loginUserStore();
+
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { value: string } }) => val.role_id?.value == SUPER_ADMIN
+  );
 
   return (
     <div className="pt-2 w-auto ">
@@ -28,6 +38,8 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <CourseTypeDropDown />
         </div>
+
+        {/* Course Name drop will come from settings */}
         {formData?.courseTypeSettings?.has_alias_name === true && (
           <div className="w-80 h-20">
             <CourseNameDropDown />
@@ -47,9 +59,11 @@ export default function NewCourseStep2() {
         </div>
 
         {/* Allow only for super Admin */}
-        <div className="w-80 h-20">
-          <DisplayLanguage />
-        </div>
+        {hasSuperAdminRole && (
+          <div className="w-80 h-20">
+            <DisplayLanguage />
+          </div>
+        )}
 
         {formData?.displayLanguage == "true" && (
           <div className="w-80 h-20">
@@ -58,9 +72,11 @@ export default function NewCourseStep2() {
         )}
 
         {/* Allow only for super Admin */}
-        <div className="w-80 h-20 flex items-center">
-          <RegistrationGateway />
-        </div>
+        {hasSuperAdminRole && (
+          <div className="w-80 h-20 flex items-center">
+            <RegistrationGateway />
+          </div>
+        )}
 
         <div className="w-80 h-20">
           <MaximumCapacity />
@@ -315,9 +331,13 @@ const CourseNameDropDown = () => {
 };
 
 const TeachersDropDown = () => {
+  const { loginUserData } = loginUserStore();
+
   const { watch } = useFormContext();
 
   const formData = watch();
+
+  const iAmOrganizerId = getOptionValueObjectByOptionValue(I_AM_ORGANIZER)?.id;
 
   let filter: Array<CrudFilter> = [];
 
@@ -385,9 +405,10 @@ const TeachersDropDown = () => {
           onChange(val);
         }}
         getOptionProps={(option: { value: { id: number } }) => {
+          //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
           if (
-            option.value?.id === formData?.loginUserData?.id &&
-            formData?.programOrganizedBy != "48"
+            option.value?.id === loginUserData?.userData?.id &&
+            formData?.programOrganizedBy != iAmOrganizerId
           ) {
             return {
               disable: true,
@@ -625,6 +646,10 @@ const GeoRestriction = () => {
   );
 };
 const LanguageDropDown = () => {
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const { options, onSearch, queryResult } = useSelect({
@@ -642,6 +667,14 @@ const LanguageDropDown = () => {
       current: currentPage,
       mode: "server",
     },
+  });
+
+  const filteredOptions = options?.filter((val) => {
+    if (
+      _.some(formData?.translationLanguages, (obj) => obj.value === val.value)
+    )
+      return false;
+    return true;
   });
 
   // Handler for bottom reached to load more options
@@ -665,7 +698,7 @@ const LanguageDropDown = () => {
       <MultiSelect
         value={value}
         placeholder="Select Language"
-        data={options}
+        data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={onChange}
@@ -675,6 +708,10 @@ const LanguageDropDown = () => {
 };
 
 const LanguageTranslationDropDown = () => {
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const { options, onSearch, queryResult } = useSelect({
@@ -694,6 +731,13 @@ const LanguageTranslationDropDown = () => {
     },
   });
 
+  const filteredOptions = options?.filter((val) => {
+    if (_.some(formData?.languages, (obj) => obj.value === val.value))
+      return false;
+
+    return true;
+  });
+  console.log(filteredOptions, formData?.languages);
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
     if (options && (queryResult?.data?.total as number) >= currentPage * 10)
@@ -714,7 +758,7 @@ const LanguageTranslationDropDown = () => {
       <MultiSelect
         value={value}
         placeholder="Select translation languages"
-        data={options}
+        data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={onChange}

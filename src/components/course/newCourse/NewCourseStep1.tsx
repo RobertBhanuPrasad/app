@@ -3,8 +3,14 @@ import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useSelect } from "@refinedev/core";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
+import {
+  I_AM_CO_TEACHING,
+  I_AM_ORGANIZER,
+  I_AM_TEACHING,
+} from "src/constants/OptionValues";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
@@ -12,8 +18,11 @@ import { Label } from "src/ui/label";
 import { MultiSelect } from "src/ui/multi-select";
 import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
-import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
-
+import {
+  getOptionValueObjectByOptionValue,
+  getOptionValuesByOptionLabel,
+} from "src/utility/GetOptionValuesByOptionLabel";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 function NewCourseStep1() {
   return (
@@ -83,44 +92,35 @@ const RadioCards = () => {
     name: "programOrganizedBy",
   });
 
-  const { watch } = useFormContext();
+  const iAmTeachingId = getOptionValueObjectByOptionValue(I_AM_TEACHING)?.id;
 
-  const formData = watch();
+  const iAmCoTeachingId = getOptionValueObjectByOptionValue(I_AM_CO_TEACHING)?.id;
 
-  const user_roles: any[] = formData?.loginUserData?.user_roles;
+  const iAmOrganizerId = getOptionValueObjectByOptionValue(I_AM_ORGANIZER)?.id;
+
+  const { loginUserData } = loginUserStore();
+
+  const user_roles: any[] = loginUserData?.userData?.user_roles;
 
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.value === "Teacher");
 
-  const [programOrganizedBy, setProgramOrganizedBy]: any[] = useState();
-
-  const fetchProgramOrganizedBy = async () => {
-    const programOrganizedBy = (await getOptionValuesByOptionLabel(
-      "PROGRAM_ORGANIZER_TYPE"
-    )) as any[];
-    setProgramOrganizedBy(programOrganizedBy);
-  };
-
-  useEffect(() => {
-    fetchProgramOrganizedBy();
-  }, []);
-
   const loginInTeacherData = {
     value: {
-      id: formData?.loginUserData?.id,
+      id: loginUserData?.userData?.id,
       contact_id: {
-        first_name: formData?.loginUserData?.contact_id?.first_name,
-        last_name: formData?.loginUserData?.contact_id?.last_name,
+        first_name: loginUserData?.userData?.contact_id?.first_name,
+        last_name: loginUserData?.userData?.contact_id?.last_name,
       },
-      created_at: formData?.loginUserData?.created_at,
-      program_type_teachers: formData?.loginUserData?.program_type_teachers,
-      user_identifier: formData?.loginUserData?.user_identifier,
-      user_name: formData?.loginUserData?.user_name,
+      created_at: loginUserData?.userData?.created_at,
+      program_type_teachers: loginUserData?.userData?.program_type_teachers,
+      user_identifier: loginUserData?.userData?.user_identifier,
+      user_name: loginUserData?.userData?.user_name,
     },
     label:
-      formData?.loginUserData?.contact_id?.first_name +
+      loginUserData?.userData?.contact_id?.first_name +
       " " +
-      formData?.loginUserData?.contact_id?.last_name,
+      loginUserData?.userData?.contact_id?.last_name,
   };
 
   const {
@@ -131,10 +131,15 @@ const RadioCards = () => {
 
   const handleOnChange = (val: string) => {
     onChange(val);
-    if (val != "48") {
+
+    //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
+    if (val != iAmOrganizerId) {
+      //If teachers does not exist prefill with login user
       if (!teachers) {
         teachersOnChange([loginInTeacherData]);
-      } else if (
+      }
+      //If already teacher are exist then check weather login user is present in teacher drop down or not. If not prefill with login user
+      else if (
         !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
       ) {
         teachersOnChange([loginInTeacherData, ...teachers]);
@@ -148,17 +153,17 @@ const RadioCards = () => {
         {hasTeacherRole && (
           <Card
             className={` p-2 w-80 h-[106px] flex flex-row ${
-              value === programOrganizedBy?.[0]?.id
+              value === iAmTeachingId
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
                 : ""
             }`}
           >
             <div>
               <RadioGroupCheckItem
-                value={programOrganizedBy?.[0]?.id}
-                id={programOrganizedBy?.[0]?.id}
+                value={iAmTeachingId}
+                id={iAmTeachingId}
                 className={
-                  value === programOrganizedBy?.[0]?.id
+                  value === iAmTeachingId
                     ? "!bg-[#7677F4] !border-none "
                     : "!border-[#D6D7D8] !shadow-none "
                 }
@@ -166,14 +171,12 @@ const RadioCards = () => {
             </div>
             <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
               <Teacher
-                color={` ${
-                  value === programOrganizedBy?.[0]?.id ? "#7677F4" : "#999999"
-                }`}
+                color={` ${value === iAmTeachingId ? "#7677F4" : "#999999"}`}
               />
               <Label
-                htmlFor={programOrganizedBy?.[0]?.id}
+                htmlFor={iAmTeachingId}
                 className={`text-[#999999] font-normal ${
-                  value === programOrganizedBy?.[0]?.id ? "text-[#7677F4]" : ""
+                  value === iAmTeachingId ? "text-[#7677F4]" : ""
                 }`}
               >
                 I am teaching this course
@@ -184,30 +187,28 @@ const RadioCards = () => {
         {hasTeacherRole && (
           <Card
             className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
-              value === programOrganizedBy?.[1]?.id
+              value === iAmCoTeachingId
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                 : ""
             }`}
           >
             <RadioGroupCheckItem
-              value={programOrganizedBy?.[1]?.id}
-              id={programOrganizedBy?.[1]?.id}
+              value={iAmCoTeachingId}
+              id={iAmCoTeachingId}
               className={
-                value === programOrganizedBy?.[1]?.id
+                value === iAmCoTeachingId
                   ? "!bg-[#7677F4] !border-none "
                   : "!border-[#D6D7D8] !shadow-none "
               }
             />
             <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
               <Coteacher
-                color={` ${
-                  value === programOrganizedBy?.[1]?.id ? "#7677F4" : "#999999"
-                }`}
+                color={` ${value === iAmCoTeachingId ? "#7677F4" : "#999999"}`}
               />
               <Label
-                htmlFor={programOrganizedBy?.[1]?.id}
+                htmlFor={iAmCoTeachingId}
                 className={`text-[#999999] font-normal ${
-                  value === programOrganizedBy?.[1]?.id ? "text-[#7677F4]" : ""
+                  value === iAmCoTeachingId ? "text-[#7677F4]" : ""
                 }`}
               >
                 I am co-teaching this course
@@ -218,30 +219,28 @@ const RadioCards = () => {
 
         <Card
           className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
-            value === programOrganizedBy?.[2]?.id
+            value === iAmOrganizerId
               ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
               : ""
           }`}
         >
           <RadioGroupCheckItem
-            value={programOrganizedBy?.[2]?.id}
-            id={programOrganizedBy?.[2]?.id}
+            value={iAmOrganizerId}
+            id={iAmOrganizerId}
             className={
-              value === programOrganizedBy?.[2]?.id
+              value === iAmOrganizerId
                 ? "!bg-[#7677F4] !border-none "
                 : "!border-[#D6D7D8] !shadow-none "
             }
           />
           <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
             <Organizer
-              color={` ${
-                value === programOrganizedBy?.[2]?.id ? "#7677F4" : "#999999"
-              }`}
+              color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
             />
             <Label
-              htmlFor={programOrganizedBy?.[2]?.id}
+              htmlFor={iAmOrganizerId}
               className={`text-[#999999] font-normal ${
-                value === programOrganizedBy?.[2]?.id ? "text-[#7677F4]" : ""
+                value === iAmOrganizerId ? "text-[#7677F4]" : ""
               }`}
             >
               <div className="w-[240px] text-wrap text-center justify-center">
@@ -313,9 +312,7 @@ const OrganizationDropDown = () => {
 };
 
 const ProgramOrganizerDropDown = () => {
-  const { watch } = useFormContext();
-
-  const formData = watch();
+  const { loginUserData } = loginUserStore();
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -385,7 +382,7 @@ const ProgramOrganizerDropDown = () => {
         }}
         onChange={onChange}
         getOptionProps={(option: { value: number }) => {
-          if (option.value === formData?.loginUserData?.id) {
+          if (option.value === loginUserData?.userData?.id) {
             return {
               disable: true,
             };
