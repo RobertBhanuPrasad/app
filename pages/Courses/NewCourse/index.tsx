@@ -13,18 +13,13 @@ import { z } from "zod";
 import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
-import { useGetIdentity } from "@refinedev/core";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
+import _ from "lodash";
 
 function index() {
-  const { data: identity } = useGetIdentity<any>();
+  const { loginUserData } = loginUserStore();
 
-  if (identity?.userData?.length > 0) {
-    return <NewCourseStep defaultProgramOrganizer={identity?.userData} />;
-  }
-}
-
-function NewCourseStep({ defaultProgramOrganizer }: any) {
   // Schema definition for form validation
   const schema = z.object({
     organization: z.object({
@@ -37,30 +32,32 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
     }),
   });
 
+  const loggedUserData = {
+    value: loginUserData?.userData?.id,
+    label:
+      loginUserData?.userData?.contact_id?.first_name +
+      " " +
+      loginUserData?.userData?.contact_id?.last_name,
+  };
+
   // Destructuring values from useStepsForm hook
   const methods = useStepsForm({
     refineCoreProps: {
       action: "create",
       resource: "event",
     },
-    resolver: zodResolver(schema),
+    // resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
-      displayLanguage:"true",
-      isGeoRestriction:"true",
-      teaching_type:
-        defaultProgramOrganizer[0]?.user_roles[0]?.role_id?.value === "Teacher"
-          ? "option-one"
-          : "option-three",
-      loginUserData: defaultProgramOrganizer,
+      displayLanguage: "true",
+      isGeoRestriction: "true",
+      programOrganizers: [loggedUserData],
     },
   });
 
   const {
     refineCore: { onFinish, formLoading },
-    register,
     handleSubmit,
-    formState: { errors },
     steps: { currentStep, gotoStep },
   } = methods;
   // Array of step titles, icons, and colors
