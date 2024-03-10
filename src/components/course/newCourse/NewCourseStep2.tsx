@@ -1,3 +1,4 @@
+"use client";
 import EditIcon from "@public/assets/EditIcon";
 import { CrudFilter, useSelect } from "@refinedev/core";
 import { useEffect, useState } from "react";
@@ -5,9 +6,20 @@ import { useController, useFormContext } from "react-hook-form";
 import countryCodes from "src/data/CountryCodes";
 import { Button } from "src/ui/button";
 import CustomSelect from "src/ui/custom-select";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "src/ui/dialog";
 import { Input } from "src/ui/input";
 import { DataItem, MultiSelect } from "src/ui/multi-select";
+import "react-quill/dist/quill.snow.css";
+import QuillToolbar, { formats, modules } from "src/ui/QuillToolbar";
+import dynamic from "next/dynamic";
 
 export default function NewCourseStep2() {
   const data = [
@@ -17,11 +29,27 @@ export default function NewCourseStep2() {
     { label: "D", value: "d" },
   ];
 
-  const [courseType, setCourseType] = useState();
+  const QuillNoSSRWrapper = dynamic(import("react-quill"), {
+    ssr: false,
+    loading: () => <p>Loading ...</p>,
+  });
+
   const { watch } = useFormContext();
 
   const formData = watch();
 
+  console.log(formData, "formData");
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "courseDescription",
+  });
+
+  const handleChange = (content: any) => {
+    onChange(content);
+  };
+
+  console.log(value, "value");
   const teachers = [];
   return (
     <div className="pt-2 w-[1016px] ">
@@ -87,8 +115,41 @@ export default function NewCourseStep2() {
                 <div className="text-[#7677F4]">Manage</div>
               </div>
             </DialogTrigger>
-            <DialogContent>
-              <div>hello</div>
+            <DialogContent className="sm:max-w-[858px] h-[523px]">
+              <div>
+                <div className="font-semibold text-[24px]">
+                  Course Description
+                </div>
+                <div className="mt-[12px] mb-[20px]">
+                  <QuillToolbar />
+                </div>
+                <div>
+                  <QuillNoSSRWrapper
+                    modules={modules}
+                    formats={formats}
+                    theme="snow"
+                    onChange={handleChange}
+                    value={value}
+                    className="w-[810px] h-[300px] rounded-[16px]"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <div className="flex items-center justify-center w-full gap-4">
+                  <DialogClose>
+                    <Button
+                      type="submit"
+                      className="border-none bg-[white] text-[#999999]"
+                    >
+                      Cancel
+                    </Button>
+                  </DialogClose>
+
+                  <Button type="submit" className="w-[106px] rounded-[12px]">
+                    Save
+                  </Button>
+                </div>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
