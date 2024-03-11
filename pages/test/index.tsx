@@ -155,11 +155,11 @@ export default function courseCreate({ pageProps }: any) {
                 getOptionProps={(option: { value: number }) => {
                   if (option.value === 2) {
                     return {
-                      noIcon: true,
+                      disable: true,
                     };
                   } else {
                     return {
-                      noIcon: false,
+                      disable: false,
                     };
                   }
                 }}

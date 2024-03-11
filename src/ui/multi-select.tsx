@@ -54,6 +54,7 @@ export function MultiSelect({
   // Handle unselecting an item from the selected list
   const handleUnselect = (item: DataItem) => {
     setSelected((prev) => prev.filter((s) => s.value !== item.value));
+    onChange(selected.filter((s) => s.value !== item.value))
   };
 
   const handleOnSelect = (option: any) => {
@@ -105,7 +106,7 @@ export function MultiSelect({
                 : {
                     noIcon: false,
                   };
-              const { noIcon } = optionProps;
+              const { disable:noIcon } = optionProps;
               if (index > 1) return null;
 
               return (

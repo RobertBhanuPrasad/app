@@ -2,8 +2,10 @@ import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useSelect } from "@refinedev/core";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValues";
 import countryCodes from "src/data/CountryCodes";
 import CustomSelect from "src/ui/custom-select";
 import {
@@ -16,18 +18,28 @@ import { DataItem, MultiSelect } from "src/ui/multi-select";
 import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { Switch } from "src/ui/switch";
+import { getOptionValueObjectByOptionValue } from "src/utility/GetOptionValuesByOptionLabel";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
 
   const formData = watch();
-  console.log(formData, "formData");
+
+  const { loginUserData } = loginUserStore();
+
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { value: string } }) => val.role_id?.value == SUPER_ADMIN
+  );
+
   return (
     <div className="pt-2 w-auto ">
       <div className="flex flex-wrap gap-x-7 gap-y-3">
         <div className="w-80 h-20">
           <CourseTypeDropDown />
         </div>
+
+        {/* Course Name drop will come from settings */}
         {formData?.courseTypeSettings?.has_alias_name === true && (
           <div className="w-80 h-20">
             <CourseNameDropDown />
@@ -47,9 +59,11 @@ export default function NewCourseStep2() {
         </div>
 
         {/* Allow only for super Admin */}
-        <div className="w-80 h-20">
-          <DisplayLanguage />
-        </div>
+        {hasSuperAdminRole && (
+          <div className="w-80 h-20">
+            <DisplayLanguage />
+          </div>
+        )}
 
         {formData?.displayLanguage == "true" && (
           <div className="w-80 h-20">
@@ -58,9 +72,11 @@ export default function NewCourseStep2() {
         )}
 
         {/* Allow only for super Admin */}
-        <div className="w-80 h-20 flex items-center">
-          <RegistrationGateway />
-        </div>
+        {hasSuperAdminRole && (
+          <div className="w-80 h-20 flex items-center">
+            <RegistrationGateway />
+          </div>
+        )}
 
         <div className="w-80 h-20">
           <MaximumCapacity />
@@ -147,21 +163,25 @@ const CourseTypeDropDown = () => {
       value: 1,
     },
     {
-      field: "program_category_id",
+      field: "program_category_id.value",
       operator: "eq",
-      value: "17",
+      value: "Course",
     },
   ];
 
   if (formData?.teachers?.length > 0) {
-    const programTypes = formData?.teachers?.map((val: any) => {
-      return val?.value?.program_type_id;
+    const programTypeIds: number[] = [];
+    formData?.teachers?.map((val: any) => {
+      val?.value?.program_type_teachers?.map(
+        (val: { program_type_id: number }) =>
+          programTypeIds.push(val?.program_type_id)
+      );
     });
 
     filter.push({
       field: "id",
       operator: "in",
-      value: programTypes,
+      value: programTypeIds,
     });
   }
 
@@ -169,6 +189,7 @@ const CourseTypeDropDown = () => {
     resource: "program_types",
     optionLabel: "name",
     optionValue: "id",
+    meta: { select: "*,program_category_id!inner(*)" },
     onSearch: (value) => [
       {
         field: "name",
@@ -205,7 +226,7 @@ const CourseTypeDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && queryResult?.data?.total as number >= currentPage * 10)
+    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
@@ -234,7 +255,7 @@ const CourseTypeDropDown = () => {
 const RegistrationGateway = () => {
   const [checkedValue, setCheckedValue] = useState();
   return (
-<div className="flex flex-row items-center gap-[19px]">
+    <div className="flex flex-row items-center gap-[19px]">
       <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">
         Registration is mandatory for this course
       </div>
@@ -252,7 +273,7 @@ const RegistrationGateway = () => {
 const CourseNameDropDown = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { options, onSearch,queryResult} = useSelect({
+  const { options, onSearch, queryResult } = useSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -284,7 +305,7 @@ const CourseNameDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && queryResult?.data?.total as number >= currentPage * 10)
+    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
@@ -310,38 +331,55 @@ const CourseNameDropDown = () => {
 };
 
 const TeachersDropDown = () => {
+  const { loginUserData } = loginUserStore();
+
   const { watch } = useFormContext();
+
   const formData = watch();
+
+  const iAmOrganizerId = getOptionValueObjectByOptionValue(I_AM_ORGANIZER)?.id;
 
   let filter: Array<CrudFilter> = [];
 
   if (formData?.courseType?.value) {
     filter.push({
-      field: "program_type_id",
+      field: "program_type_teachers.program_type_id",
       operator: "eq",
       value: formData?.courseType?.value,
     });
   }
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { queryResult, onSearch } = useSelect({
-    resource: "program_type_teachers",
-    meta: { select: "*,user_id!inner(contact_id!inner(first_name,last_name))" },
+    resource: "users",
+    meta: {
+      select:
+        "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
+    },
     filters: filter,
     onSearch: (value) => [
       {
-        field: "user_id.contact_id.full_name",
+        field: "contact_id.full_name",
         operator: "contains",
         value,
       },
     ],
+    pagination: {
+      current: currentPage,
+      mode: "server",
+    },
   });
+
+  // Handler for bottom reached to load more options
+  const handleOnBottomReached = () => {
+    if (queryResult && (queryResult?.data?.total as number) >= currentPage * 10)
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
 
   const teachers: any = queryResult.data?.data?.map((val) => {
     return {
-      label:
-        val?.user_id?.contact_id?.first_name +
-        " " +
-        val?.user_id.contact_id.last_name,
+      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
       value: val,
     };
   });
@@ -361,9 +399,26 @@ const TeachersDropDown = () => {
         value={value}
         placeholder="Enter Teacher Name"
         data={teachers}
-        onBottomReached={() => {}}
+        onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
-        onChange={onChange}
+        onChange={(val: any) => {
+          onChange(val);
+        }}
+        getOptionProps={(option: { value: { id: number } }) => {
+          //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
+          if (
+            option.value?.id === loginUserData?.userData?.id &&
+            formData?.programOrganizedBy != iAmOrganizerId
+          ) {
+            return {
+              disable: true,
+            };
+          } else {
+            return {
+              disable: false,
+            };
+          }
+        }}
       />
     </div>
   );
@@ -371,11 +426,14 @@ const TeachersDropDown = () => {
 
 const AssistantTeachersDropDown = () => {
   const { watch } = useFormContext();
+
+  const [currentPage, setCurrentPage] = useState(1);
+
   const formData = watch();
 
   let filter: Array<CrudFilter> = [
     {
-      field: "certification_level_id",
+      field: "program_type_teachers.certification_level_id",
       operator: "eq",
       value: "38",
     },
@@ -383,31 +441,41 @@ const AssistantTeachersDropDown = () => {
 
   if (formData?.courseType?.value) {
     filter.push({
-      field: "program_type_id",
+      field: "program_type_teachers.program_type_id",
       operator: "eq",
       value: formData?.courseType?.value,
     });
   }
 
   const { queryResult, onSearch } = useSelect({
-    resource: "program_type_teachers",
-    meta: { select: "*,user_id(contact_id(first_name,last_name))" },
+    resource: "users",
+    meta: {
+      select:
+        "*,contact_id!inner(first_name,last_name),program_type_teachers!inner(program_type_id,certification_level_id)",
+    },
     filters: filter,
     onSearch: (value) => [
       {
-        field: "user_id.contact_id.full_name",
+        field: "contact_id.full_name",
         operator: "contains",
         value,
       },
     ],
+    pagination: {
+      current: currentPage,
+      mode: "server",
+    },
   });
 
-  const teachers:any = queryResult.data?.data?.map((val) => {
+  // Handler for bottom reached to load more options
+  const handleOnBottomReached = () => {
+    if (queryResult && (queryResult?.data?.total as number) >= currentPage * 10)
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
+
+  const teachers: any = queryResult.data?.data?.map((val) => {
     return {
-      label:
-        val?.user_id?.contact_id?.first_name +
-        " " +
-        val?.user_id.contact_id.last_name,
+      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
       value: val,
     };
   });
@@ -415,7 +483,7 @@ const AssistantTeachersDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "teachers",
+    name: "assistantTeachers",
   });
 
   return (
@@ -427,7 +495,7 @@ const AssistantTeachersDropDown = () => {
         value={value}
         placeholder="Enter Teacher Name"
         data={teachers}
-        onBottomReached={() => {}}
+        onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={onChange}
       />
@@ -537,7 +605,7 @@ const GeoRestriction = () => {
   const {
     formState: { errors },
   } = useFormContext();
-  console.log(value, "value izzz");
+
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
@@ -578,7 +646,13 @@ const GeoRestriction = () => {
   );
 };
 const LanguageDropDown = () => {
-  const { options, onSearch } = useSelect({
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { options, onSearch, queryResult } = useSelect({
     resource: "organization_languages",
     optionLabel: "language_name",
     optionValue: "id",
@@ -589,7 +663,25 @@ const LanguageDropDown = () => {
         value,
       },
     ],
+    pagination: {
+      current: currentPage,
+      mode: "server",
+    },
   });
+
+  const filteredOptions = options?.filter((val) => {
+    if (
+      _.some(formData?.translationLanguages, (obj) => obj.value === val.value)
+    )
+      return false;
+    return true;
+  });
+
+  // Handler for bottom reached to load more options
+  const handleOnBottomReached = () => {
+    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
 
   const {
     field: { value, onChange },
@@ -606,8 +698,8 @@ const LanguageDropDown = () => {
       <MultiSelect
         value={value}
         placeholder="Select Language"
-        data={options}
-        onBottomReached={() => {}}
+        data={filteredOptions}
+        onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={onChange}
       />
@@ -616,7 +708,13 @@ const LanguageDropDown = () => {
 };
 
 const LanguageTranslationDropDown = () => {
-  const { options, onSearch } = useSelect({
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { options, onSearch, queryResult } = useSelect({
     resource: "organization_languages",
     optionLabel: "language_name",
     optionValue: "id",
@@ -627,7 +725,24 @@ const LanguageTranslationDropDown = () => {
         value,
       },
     ],
+    pagination: {
+      current: currentPage,
+      mode: "server",
+    },
   });
+
+  const filteredOptions = options?.filter((val) => {
+    if (_.some(formData?.languages, (obj) => obj.value === val.value))
+      return false;
+
+    return true;
+  });
+  console.log(filteredOptions, formData?.languages);
+  // Handler for bottom reached to load more options
+  const handleOnBottomReached = () => {
+    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
 
   const {
     field: { value, onChange },
@@ -643,8 +758,8 @@ const LanguageTranslationDropDown = () => {
       <MultiSelect
         value={value}
         placeholder="Select translation languages"
-        data={options}
-        onBottomReached={() => {}}
+        data={filteredOptions}
+        onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={onChange}
       />
