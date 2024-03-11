@@ -14,6 +14,7 @@ import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
 import { useGetIdentity } from "@refinedev/core";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 
 function index() {
   const { data: identity } = useGetIdentity<any>();
@@ -26,14 +27,13 @@ function index() {
 function NewCourseStep({ defaultProgramOrganizer }: any) {
   // Schema definition for form validation
   const schema = z.object({
-    organization: z.object({
-      // Define the schema for the organization object's properties here
-      // For example:
-      value: z.number(),
-      label: z.string(),
-
-      // Add more properties as needed
-    }),
+    // organization: z.object({
+    //   // Define the schema for the organization object's properties here
+    //   // For example:
+    //   value: z.number(),
+    //   label: z.string(),
+    //   // Add more properties as needed
+    // }),
   });
 
   // Destructuring values from useStepsForm hook
@@ -45,8 +45,8 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
     resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
-      displayLanguage:"true",
-      isGeoRestriction:"true",
+      displayLanguage: "true",
+      isGeoRestriction: "true",
       teaching_type:
         defaultProgramOrganizer[0]?.user_roles[0]?.role_id?.value === "Teacher"
           ? "option-one"
@@ -165,7 +165,7 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
                       Change your password here.
                     </TabsContent>
                     <TabsContent value="4" className={contentStylings}>
-                      Change your accommodation details
+                      <NewCourseStep5 />
                     </TabsContent>
                     <TabsContent value="5" className={contentStylings}>
                       Change your accommodation details
