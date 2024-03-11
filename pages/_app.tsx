@@ -10,6 +10,8 @@ import { appWithTranslation, useTranslation } from "next-i18next";
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/navigation";
+import Login from "./login";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -24,12 +26,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   const renderComponent = () => {
     const renderContent = () => <Component {...pageProps} />;
 
+    const router = useRouter();
+
     if (Component.requireAuth || Component.requireAuth === undefined) {
       return (
-        <Authenticated
-          key="app"
-          fallback={<div>You cannot access this section</div>}
-        >
+        <Authenticated key="app">
           {Component.noLayout ? (
             renderContent()
           ) : (

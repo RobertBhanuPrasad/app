@@ -1,58 +1,113 @@
-import { AuthPage } from "@refinedev/core";
-
-import { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
+import {
+  useActiveAuthProvider,
+  useList,
+  useRegister,
+  useSelect,
+} from "@refinedev/core";
+import nookies from "nookies";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
+import CustomSelect from "src/ui/custom-select";
+import { supabaseClient } from "src/utility";
 
-export default function Login() {
-  return (
-    <AuthPage
-      type="login"
-      renderContent={(content) => (
-        <div>
-          <p
-            style={{
-              padding: 10,
-              color: "#004085",
-              backgroundColor: "#cce5ff",
-              borderColor: "#b8daff",
-              textAlign: "center",
-            }}
-          >
-            email: info@refine.dev
-            <br /> password: refine-supabase
-          </p>
-          {content}
-        </div>
-      )}
-    />
-  );
-}
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-Login.noLayout = true;
-Login.requireAuth = false;
+  const router = useRouter();
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const { authenticated } = await authProvider.check(context);
+  const handleLogin = async () => {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-  ]);
+    console.log("heyy error", error);
 
-  if (authenticated) {
-    return {
-      props: {},
-      redirect: {
-        destination: `/`,
-        permanent: false,
-      },
-    };
-  }
+    if (data?.session) {
+      nookies.set(null, "token", data.session.access_token, {
+        maxAge: 30 * 24 * 60 * 60,
+        path: "/",
+      });
+    }
 
-  return {
-    props: {
-      ...translateProps,
-    },
+    if (!error) {
+      router.push("/");
+    }
   };
+  return (
+    <div className="login flex min-h-screen bg-neutral justify-center items-center ">
+      <div className="card w-[300px] bg-base-100 px-4 py-8 shadow-xl">
+        <div className="px-4">
+          <h1 className="text-[32px] font-bold text-center my-5">LOGIN</h1>
+        </div>
+        <form
+          className="card-body pt-2 space-y-[10px]"
+          onSubmit={async (ev) => {
+            ev.preventDefault();
+          }}
+        >
+          <div className="form-control flex justify-between items-center">
+            <label htmlFor="email" className="label">
+              <span className="label-text">Email</span>
+            </label>
+            <input
+              type="text"
+              value={email}
+              onChange={(ev) => setEmail(ev.target.value)}
+              name="email"
+              placeholder="Enter email"
+              className="border-[1px] border-black ml-[10px] p-1"
+            />
+          </div>
+
+          <div className="form-control mt-0  flex justify-between items-center">
+            <label htmlFor="password" className="label">
+              <span className="label-text">Password</span>
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(ev) => setPassword(ev.target.value)}
+              name="password"
+              placeholder="Enter password"
+              className="border-[1px] border-black ml-[10px] p-1"
+            />
+          </div>
+          {/* <div className="form-control mt-6">
+            <button id="login" type="submit" className="btn">
+              Login
+            </button>
+          </div> */}
+          <div className="form-control mt-6 flex justify-center">
+            <button
+              id="signup"
+              type="button"
+              className="btn font-semibold"
+              onClick={handleLogin}
+            >
+              Login
+            </button>
+          </div>
+        </form>
+
+        <div>
+          If not registered then?{" "}
+          <span
+            onClick={() => {
+              router.push("/register");
+            }}
+            className="font-semibold"
+          >
+            Register
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 };
+export default Login;
+
+Login.requireAuth = false;
+Login.noLayout = true;
