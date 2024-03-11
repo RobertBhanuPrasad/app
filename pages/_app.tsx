@@ -62,9 +62,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
 
     const renderContent = () =>
       optionLabelValue?.length != 0 &&
-      Object.keys(loginUserData?.userData)?.length > 0 && (
+      // Object.keys(loginUserData?.userData)?.length > 0 && (
         <Component {...pageProps} />
-      );
+      // );
 
     const router = useRouter();
 
