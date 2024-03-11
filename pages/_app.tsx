@@ -10,6 +10,8 @@ import { appWithTranslation, useTranslation } from "next-i18next";
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/navigation";
+import Login from "./login";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { useEffect } from "react";
@@ -60,16 +62,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
 
     const renderContent = () =>
       optionLabelValue?.length != 0 &&
-      Object.keys(loginUserData?.userData)?.length > 0 && (
+      // Object.keys(loginUserData?.userData)?.length > 0 && (
         <Component {...pageProps} />
-      );
+      // );
+
+    const router = useRouter();
 
     if (Component.requireAuth || Component.requireAuth === undefined) {
       return (
-        <Authenticated
-          key="app"
-          fallback={<div>You cannot access this section</div>}
-        >
+        <Authenticated key="app" fallback={<Login />}>
           {Component.noLayout ? (
             renderContent()
           ) : (
