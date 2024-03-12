@@ -46,10 +46,12 @@ const Signup = () => {
   });
 
   const handleSignup = async () => {
-    const { data } = await supabaseClient.auth.signUp({
+    const { data, error } = await supabaseClient.auth.signUp({
       email,
       password,
     });
+
+    console.log("heyy register data", data, error);
 
     const { data: contactData } = await supabaseClient
       .from("contact")

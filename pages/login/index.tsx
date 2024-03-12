@@ -33,9 +33,6 @@ const Login = () => {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
       });
-    }
-
-    if (!error) {
       router.push("/");
     }
 
