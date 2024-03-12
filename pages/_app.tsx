@@ -10,6 +10,7 @@ import { appWithTranslation, useTranslation } from "next-i18next";
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Login from "./login";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { useEffect } from "react";
@@ -25,32 +26,34 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   const renderComponent = () => {
-    const { setOptionLabelValue, optionLabelValue } = optionLabelValueStore();
+    const { setOptionLabelValue } = optionLabelValueStore();
 
-    const { setLoginUserData, loginUserData } = loginUserStore();
+    const { setLoginUserData } = loginUserStore();
 
     const fetchOptionLabelOptionValueData = async () => {
       const { data } = await supabaseClient
         .from("option_labels")
         .select("*,option_values(*)");
-
+      console.log("Option Label Value Data", data);
       setOptionLabelValue(data as any[]);
     };
 
     const fetchLoginUserData = async () => {
       const { data } = await supabaseClient.auth.getUser();
 
-      const { data: userData } = await supabaseClient
-        .from("users")
-        .select(
-          "*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
-        )
-        .eq("user_identifier", data?.user?.id);
+      if (data?.user?.id) {
+        const { data: userData } = await supabaseClient
+          .from("users")
+          .select(
+            "*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
+          )
+          .eq("user_identifier", data?.user?.id);
 
-      setLoginUserData({
-        loginData: data?.user as Object,
-        userData: userData?.[0],
-      });
+        setLoginUserData({
+          loginData: data?.user as Object,
+          userData: userData?.[0],
+        });
+      }
     };
 
     useEffect(() => {
@@ -58,15 +61,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
       fetchLoginUserData();
     }, []);
 
-    const renderContent = () =>
-      optionLabelValue?.length != 0 && <Component {...pageProps} />;
+    const renderContent = () => <Component {...pageProps} />;
 
     if (Component.requireAuth || Component.requireAuth === undefined) {
       return (
-        <Authenticated
-          key="app"
-          fallback={<div>You cannot access this section</div>}
-        >
+        <Authenticated key="app" fallback={<Login />}>
           {Component.noLayout ? (
             renderContent()
           ) : (

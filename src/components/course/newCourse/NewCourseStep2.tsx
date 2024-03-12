@@ -737,7 +737,7 @@ const LanguageTranslationDropDown = () => {
 
     return true;
   });
-  console.log(filteredOptions, formData?.languages);
+
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
     if (options && (queryResult?.data?.total as number) >= currentPage * 10)
