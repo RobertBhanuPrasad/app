@@ -13,19 +13,24 @@ import { z } from "zod";
 import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
-import { useGetIdentity } from "@refinedev/core";
-import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
+import _ from "lodash";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 
 function index() {
-  const { data: identity } = useGetIdentity<any>();
+  const { loginUserData } = loginUserStore();
 
-  if (identity?.userData?.length > 0) {
-    return <NewCourseStep defaultProgramOrganizer={identity?.userData} />;
+  if (Object.keys(loginUserData?.userData).length == 0) {
+    return <div>Loading...</div>;
   }
-}
 
-function NewCourseStep({ defaultProgramOrganizer }: any) {
+  return <NewCourse />;
+}
+function NewCourse() {
+  const { loginUserData } = loginUserStore();
+
   // Schema definition for form validation
   const schema = z.object({
     // organization: z.object({
@@ -37,30 +42,32 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
     // }),
   });
 
+  const loggedUserData = {
+    value: loginUserData?.userData?.id,
+    label:
+      loginUserData?.userData?.contact_id?.first_name +
+      " " +
+      loginUserData?.userData?.contact_id?.last_name,
+  };
+
   // Destructuring values from useStepsForm hook
   const methods = useStepsForm({
     refineCoreProps: {
       action: "create",
       resource: "event",
     },
-    resolver: zodResolver(schema),
+    // resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
       displayLanguage: "true",
       isGeoRestriction: "true",
-      teaching_type:
-        defaultProgramOrganizer[0]?.user_roles[0]?.role_id?.value === "Teacher"
-          ? "option-one"
-          : "option-three",
-      loginUserData: defaultProgramOrganizer,
+      programOrganizers: [loggedUserData],
     },
   });
 
   const {
     refineCore: { onFinish, formLoading },
-    register,
     handleSubmit,
-    formState: { errors },
     steps: { currentStep, gotoStep },
   } = methods;
   // Array of step titles, icons, and colors
@@ -69,44 +76,37 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
       value: "0",
       label: "Basic Details",
       icon: <Profile color={` ${currentStep == 0 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
     },
     {
       value: "1",
       label: "Course Details",
       icon: <Group color={` ${currentStep == 1 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
     },
     {
       value: "2",
       label: "Time and Venue",
       icon: <Venue color={` ${currentStep == 2 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
     },
     {
       value: "3",
       label: "Fees",
       icon: <Fees color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
     },
     {
       value: "4",
       label: "Accommodation",
-      icon: <Car color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
+      icon: <Car color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
     },
     {
       value: "5",
       label: "Contact Info",
-      icon: <Info color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
+      icon: <Info color={` ${currentStep == 5 ? "#7677F4" : "#999999"}`} />,
     },
 
     {
       value: "6",
       label: "Review",
-      icon: <Review color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
+      icon: <Review color={` ${currentStep == 6 ? "#7677F4" : "#999999"}`} />,
     },
   ];
 
@@ -132,7 +132,7 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
                 <TabsTrigger
                   key={index}
                   value={tab.value}
-                  className="!h-12  items-center w-[230px] !text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
+                  className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
                   onClick={() => gotoStep(index)}
                 >
                   {JSON.stringify(currentStep) === tab.value && (
@@ -169,7 +169,7 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
                       <NewCourseStep5 />
                     </TabsContent>
                     <TabsContent value="5" className={contentStylings}>
-                      Change your accommodation details
+                      <NewCourseStep6 />
                     </TabsContent>
                     <TabsContent value="6" className={contentStylings}>
                       Change your accommodation details

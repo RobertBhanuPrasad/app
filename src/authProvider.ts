@@ -124,8 +124,9 @@ export const authProvider: AuthBindings = {
     const { data } = await supabaseClient.auth.getUser();
     const { data: userData } = await supabaseClient
       .from("users")
-      .select("*,contact_id(*),user_roles(*,role_id(value))")
+      .select("*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)")
       .eq("user_identifier", data?.user?.id);
+
     if (userData) {
       return {
         data,

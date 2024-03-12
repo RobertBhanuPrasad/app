@@ -132,6 +132,11 @@ export default function CourseCreate() {
               {/* CustomSelect component with necessary props */}
               <CustomSelect
                 value={formValues?.test}
+                // If we want to send the styles this way we need to send
+                selectBoxStyles={{
+                  header: "w-80",
+                  dropdown: "w-80",
+                }}
                 {...register("test")}
                 placeholder={"Select course type"}
                 data={selectOptions}

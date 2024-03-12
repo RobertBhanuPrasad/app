@@ -1,4 +1,4 @@
-import { Authenticated, Refine } from "@refinedev/core";
+import { Authenticated, Refine, useGetIdentity } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import type { GetServerSideProps, NextPage } from "next";
 import { AppProps } from "next/app";
@@ -10,6 +10,10 @@ import { appWithTranslation, useTranslation } from "next-i18next";
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Login from "./login";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+import { useEffect } from "react";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -22,14 +26,46 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   const renderComponent = () => {
+    const { setOptionLabelValue } = optionLabelValueStore();
+
+    const { setLoginUserData } = loginUserStore();
+
+    const fetchOptionLabelOptionValueData = async () => {
+      const { data } = await supabaseClient
+        .from("option_labels")
+        .select("*,option_values(*)");
+      console.log("Option Label Value Data", data);
+      setOptionLabelValue(data as any[]);
+    };
+
+    const fetchLoginUserData = async () => {
+      const { data } = await supabaseClient.auth.getUser();
+
+      if (data?.user?.id) {
+        const { data: userData } = await supabaseClient
+          .from("users")
+          .select(
+            "*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
+          )
+          .eq("user_identifier", data?.user?.id);
+
+        setLoginUserData({
+          loginData: data?.user as Object,
+          userData: userData?.[0],
+        });
+      }
+    };
+
+    useEffect(() => {
+      fetchOptionLabelOptionValueData();
+      fetchLoginUserData();
+    }, []);
+
     const renderContent = () => <Component {...pageProps} />;
 
     if (Component.requireAuth || Component.requireAuth === undefined) {
       return (
-        <Authenticated
-          key="app"
-          fallback={<div>You cannot access this section</div>}
-        >
+        <Authenticated key="app" fallback={<Login />}>
           {Component.noLayout ? (
             renderContent()
           ) : (
