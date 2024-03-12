@@ -25,6 +25,7 @@ export function MultiSelect({
   value: propValue = [],
   getOptionProps,
   error,
+  selectBoxStyles,
 }: {
   placeholder?: string;
   data: DataItem[];
@@ -34,6 +35,7 @@ export function MultiSelect({
   value?: any;
   getOptionProps?: any;
   error?: any;
+  selectBoxStyles?: any;
 }) {
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -51,10 +53,13 @@ export function MultiSelect({
     }
   }, []);
 
+  const headerStyles = selectBoxStyles?.header || "";
+  const dropdownStyles = selectBoxStyles?.dropdown || "";
+
   // Handle unselecting an item from the selected list
   const handleUnselect = (item: DataItem) => {
     setSelected((prev) => prev.filter((s) => s.value !== item.value));
-    onChange(selected.filter((s) => s.value !== item.value))
+    onChange(selected.filter((s) => s.value !== item.value));
   };
 
   const handleOnSelect = (option: any) => {
@@ -88,7 +93,7 @@ export function MultiSelect({
   const selectables = _.differenceWith(data, selected, _.isEqual);
 
   return (
-    <div className={clsx("grid w-[320px] items-center")}>
+    <div className={`grid w-full items-center ${headerStyles}`}>
       <Command className="overflow-visible bg-transparent">
         <div
           className={`rounded-xl px-4 py-2 text-sm relative h-[40px] border ${
@@ -106,12 +111,20 @@ export function MultiSelect({
                 : {
                     noIcon: false,
                   };
-              const { disable:noIcon } = optionProps;
+              const { disable: noIcon } = optionProps;
               if (index > 1) return null;
 
               return (
-                <Badge key={item.value} variant="outline" className="border">
-                  <div className="max-w-[60px] truncate"> {item.label}</div>
+                <Badge
+                  key={item.value}
+                  variant="outline"
+                  className="border flex items-center"
+                >
+                  <div className="max-w-[60px] truncate">
+                    <abbr className="no-underline" title={item.label}>
+                      {item.label}
+                    </abbr>
+                  </div>
 
                   <button
                     type="button"
@@ -176,7 +189,9 @@ export function MultiSelect({
         {/* Selected Items List (Popover) */}
         <div className="relative mt-2" ref={popoverDropdownRef}>
           {popoverOpen ? (
-            <CommandGroup className="absolute w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+            <CommandGroup
+              className={`absolute w-full  rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in ${dropdownStyles}`}
+            >
               {selected?.map((item, index) => {
                 // Extracting option properties, including 'noIcon' to determine if a cross icon should be displayed
                 const optionProps = getOptionProps
