@@ -10,6 +10,7 @@ import { appWithTranslation, useTranslation } from "next-i18next";
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Login from "./login";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { useEffect } from "react";
@@ -25,15 +26,15 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   const renderComponent = () => {
-    const { setOptionLabelValue, optionLabelValue } = optionLabelValueStore();
+    const { setOptionLabelValue } = optionLabelValueStore();
 
-    const { setLoginUserData, loginUserData } = loginUserStore();
+    const { setLoginUserData } = loginUserStore();
 
     const fetchOptionLabelOptionValueData = async () => {
       const { data } = await supabaseClient
         .from("option_labels")
         .select("*,option_values(*)");
-
+      console.log("Option Label Value Data", data);
       setOptionLabelValue(data as any[]);
     };
 
@@ -60,11 +61,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
       fetchLoginUserData();
     }, []);
 
-    const renderContent = () =>
-      optionLabelValue?.length != 0 &&
-      Object.keys(loginUserData?.userData).length > 0 && (
-        <Component {...pageProps} />
-      );
+    const renderContent = () => <Component {...pageProps} />;
 
     if (Component.requireAuth || Component.requireAuth === undefined) {
       return (

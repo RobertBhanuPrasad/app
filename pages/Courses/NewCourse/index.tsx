@@ -16,8 +16,18 @@ import Fees from "@public/assets/Fees";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import _ from "lodash";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 
 function index() {
+  const { loginUserData } = loginUserStore();
+
+  if (Object.keys(loginUserData?.userData).length == 0) {
+    return <div>Loading...</div>;
+  }
+
+  return <NewCourse />;
+}
+function NewCourse() {
   const { loginUserData } = loginUserStore();
 
   // Schema definition for form validation
@@ -66,44 +76,37 @@ function index() {
       value: "0",
       label: "Basic Details",
       icon: <Profile color={` ${currentStep == 0 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
     },
     {
       value: "1",
       label: "Course Details",
       icon: <Group color={` ${currentStep == 1 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
     },
     {
       value: "2",
       label: "Time and Venue",
       icon: <Venue color={` ${currentStep == 2 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
     },
     {
       value: "3",
       label: "Fees",
       icon: <Fees color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
     },
     {
       value: "4",
       label: "Accommodation",
-      icon: <Car color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
+      icon: <Car color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
     },
     {
       value: "5",
       label: "Contact Info",
-      icon: <Info color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
+      icon: <Info color={` ${currentStep == 5 ? "#7677F4" : "#999999"}`} />,
     },
 
     {
       value: "6",
       label: "Review",
-      icon: <Review color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
-      color: "#7677F4",
+      icon: <Review color={` ${currentStep == 6 ? "#7677F4" : "#999999"}`} />,
     },
   ];
 
@@ -129,7 +132,7 @@ function index() {
                 <TabsTrigger
                   key={index}
                   value={tab.value}
-                  className="!h-12  items-center w-[230px] !text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
+                  className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
                   onClick={() => gotoStep(index)}
                 >
                   {JSON.stringify(currentStep) === tab.value && (
@@ -168,7 +171,7 @@ function index() {
                       Change your accommodation details
                     </TabsContent>
                     <TabsContent value="5" className={contentStylings}>
-                      Change your accommodation details
+                      <NewCourseStep6 />
                     </TabsContent>
                     <TabsContent value="6" className={contentStylings}>
                       Change your accommodation details
