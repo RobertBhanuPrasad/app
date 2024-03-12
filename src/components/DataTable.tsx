@@ -33,6 +33,7 @@ interface DataTableProps<TData, TValue> {
   setPageSize?: any;
   pageSize?: any;
   tableStyles?: any;
+  showEarlyBirdFees?: any;
 }
 
 export function DataTable<TData, TValue>({
@@ -42,6 +43,7 @@ export function DataTable<TData, TValue>({
   setCurrent,
   pageCount,
   current,
+  showEarlyBirdFees,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -51,10 +53,8 @@ export function DataTable<TData, TValue>({
 
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const [showColumns, setShowColumns] = useState(false); // State to track checkbox state
-
   // Define columns dynamically based on checkbox state
-  const tableColumns: any = showColumns
+  const tableColumns: any =  showEarlyBirdFees
     ? initialColumns
     : initialColumns.filter(
         (column: any) =>
@@ -81,16 +81,6 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex justify-end items-center gap-2 py-4">
-        <Checkbox
-          checked={showColumns}
-          onCheckedChange={(val) => {
-            setShowColumns((prev) => !prev);
-          }}
-          className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
-        />
-        <div>Enable early bird fees?</div>
-      </div>
       <div className="rounded-md border">
         <Table className={tableStyles}>
           <TableHeader className="bg-[#7677F41B]">

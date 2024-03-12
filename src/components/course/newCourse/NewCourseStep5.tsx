@@ -6,25 +6,23 @@ import {
   useFormContext,
   useController,
   FieldValues,
+  useWatch,
 } from "react-hook-form";
 import { Checkbox } from "src/ui/checkbox";
 import { Input } from "src/ui/input";
 import Delete from "@public/assets/Delete";
 import CustomSelect from "src/ui/custom-select";
-import { useSelect } from "@refinedev/core";
-
+import {  useSelect } from "@refinedev/core";
 
 export default function CourseTable() {
-  const { fields, append, remove } = useFieldArray({
+  const { append, remove } = useFieldArray({
     name: "fees",
   });
 
-  const { getValues } = useFormContext();
+  const feeData = useWatch({ name: "fees" });
 
   useEffect(() => {
-    const initialFees = getValues()?.fees;
-
-    if (initialFees.length <= 0) {
+    if (feeData.length <= 0) {
       append({
         accomodationFee: "",
         accomodationSpots: "",
@@ -34,22 +32,23 @@ export default function CourseTable() {
   }, []);
 
   const handleAddRow = () => {
-    append({ label: "" });
+    append({
+      accomodationFee: "",
+      accomodationSpots: "",
+      accomodationType: undefined,
+    });
   };
 
   const handleDeleteRow = (index: number) => {
     remove(index);
   };
 
-  const formData = getValues();
-
-  console.log("heyyy formData", formData?.fees);
-
   return (
-    <div >
+    <div>
       <DataTable
-        columns={columns(handleAddRow, handleDeleteRow, fields)}
-        data={formData?.fees || []}
+        tableStyles="w-[1100px]"
+        columns={columns(handleAddRow, handleDeleteRow, feeData)}
+        data={feeData || []}
       />
     </div>
   );
@@ -66,7 +65,6 @@ export const columns = (
     id: "fees",
     header: () => <div>Accommodation Type</div>,
     cell: ({ row }: any) => {
-      console.log("heyy row", row);
       const { field, fieldState } = useController({
         name: `fees.${row.index}.accomodationType`,
       });
@@ -75,6 +73,7 @@ export const columns = (
         resource: "accomdation_types",
         optionLabel: "name",
         optionValue: "id",
+
         onSearch: (value) => [
           {
             field: "name",
@@ -83,8 +82,6 @@ export const columns = (
           },
         ],
       });
-
-      console.log("heyy value", field.value);
 
       return (
         <CustomSelect
@@ -108,7 +105,6 @@ export const columns = (
     id: "fees",
     header: () => <div>Fees Per Person inc VAT</div>,
     cell: ({ row }: any) => {
-      console.log("heyy row", row);
       const { field } = useController({
         name: `fees.${row.index}.accomodationFee`,
       });
@@ -120,7 +116,6 @@ export const columns = (
     id: "fees",
     header: () => <div>Number of spots avaliable</div>,
     cell: ({ row }: any) => {
-      console.log("heyy row", row);
       const { field } = useController({
         name: `fees.${row.index}.accomodationSpots`,
       });
@@ -134,8 +129,6 @@ export const columns = (
     cell: ({ row }: any) => {
       const isLastRow = row.index === fields.length - 1;
       const isFirstRow = row.index === 0;
-
-      console.log("heyy last row", row.index, fields.length - 1);
 
       return (
         <div className="flex gap-4">

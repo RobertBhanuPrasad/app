@@ -1,6 +1,8 @@
 import { DataTable } from "../../DataTable";
-import React from "react";
+import React, { useState } from "react";
 export default function CourseTable() {
+  const [showColumns, setShowColumns] = useState(false); // State to track checkbox state
+
   const data: Payment[] = [
     {
       feelevel: "low",
@@ -49,15 +51,24 @@ export default function CourseTable() {
     },
   ];
 
-  const { fields } = useFieldArray({
-    name: "fees",
-  });
-
-  console.log("heyy fees", fields);
-
   return (
-    <div >
-      <DataTable tableStyles="w-[1016px]"  columns={columns} data={data} />
+    <div className="px-8 flex flex-col justify-center">
+      <div className="flex justify-end items-center gap-2 py-4">
+        <Checkbox
+          checked={showColumns}
+          onCheckedChange={(val) => {
+            setShowColumns((prev) => !prev);
+          }}
+          className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+        />
+        <div>Enable early bird fees?</div>
+      </div>
+      <DataTable
+        tableStyles="w-[1100px]"
+        columns={columns}
+        data={data}
+        showEarlyBirdFees={showColumns}
+      />
     </div>
   );
 }
@@ -66,7 +77,6 @@ CourseTable.noLayout = false;
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "src/ui/checkbox";
-import { useFieldArray } from "react-hook-form";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
