@@ -32,11 +32,13 @@ interface DataTableProps<TData, TValue> {
   current?: any;
   setPageSize?: any;
   pageSize?: any;
+  tableStyles?: any;
 }
 
 export function DataTable<TData, TValue>({
   columns: initialColumns,
   data,
+  tableStyles,
   setCurrent,
   pageCount,
   current,
@@ -90,27 +92,28 @@ export function DataTable<TData, TValue>({
         <div>Enable early bird fees?</div>
       </div>
       <div className="rounded-md border">
-        <Table>
+        <Table className={tableStyles}>
           <TableHeader className="bg-[#7677F41B]">
-            {table && table?.getHeaderGroups()?.map((headerGroup) => (
-              <TableRow
-                className="border-none text-[16px] font-bold"
-                key={headerGroup?.id}
-              >
-                {headerGroup?.headers?.map((header) => {
-                  return (
-                    <TableHead className="text-[#333333]" key={header?.id}>
-                      {header?.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header?.column?.columnDef?.header,
-                            header?.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
+            {table &&
+              table?.getHeaderGroups()?.map((headerGroup) => (
+                <TableRow
+                  className="border-none text-[16px] font-bold"
+                  key={headerGroup?.id}
+                >
+                  {headerGroup?.headers?.map((header) => {
+                    return (
+                      <TableHead className="text-[#333333]" key={header?.id}>
+                        {header?.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header?.column?.columnDef?.header,
+                              header?.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
           </TableHeader>
           <TableBody>
             {table && table?.getRowModel()?.rows?.length ? (
@@ -141,7 +144,6 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-       
       </div>
     </div>
   );

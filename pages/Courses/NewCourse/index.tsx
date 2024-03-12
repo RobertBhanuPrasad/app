@@ -15,6 +15,7 @@ import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
 import { useGetIdentity } from "@refinedev/core";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 
 function index() {
   const { data: identity } = useGetIdentity<any>();
@@ -162,7 +163,7 @@ function NewCourseStep({ defaultProgramOrganizer }: any) {
                       className={contentStylings}
                     ></TabsContent>
                     <TabsContent value="3" className={contentStylings}>
-                      Change your password here.
+                      <NewCourseStep4 />
                     </TabsContent>
                     <TabsContent value="4" className={contentStylings}>
                       <NewCourseStep5 />

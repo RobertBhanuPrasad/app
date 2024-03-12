@@ -56,8 +56,8 @@ export default function CourseTable() {
   console.log("heyy fees", fields);
 
   return (
-    <div className="w-fit">
-      <DataTable columns={columns} data={data} />
+    <div >
+      <DataTable tableStyles="w-[1016px]"  columns={columns} data={data} />
     </div>
   );
 }
