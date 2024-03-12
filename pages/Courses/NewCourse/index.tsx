@@ -15,6 +15,7 @@ import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import _ from "lodash";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 
 function index() {
   const { loginUserData } = loginUserStore();
@@ -154,10 +155,9 @@ function index() {
                     <TabsContent value="1" className={contentStylings}>
                       <NewCourseStep2 />
                     </TabsContent>
-                    <TabsContent
-                      value="2"
-                      className={contentStylings}
-                    ></TabsContent>
+                    <TabsContent value="2" className={contentStylings}>
+                      <NewCourseStep3 />
+                    </TabsContent>
                     <TabsContent value="3" className={contentStylings}>
                       Change your password here.
                     </TabsContent>

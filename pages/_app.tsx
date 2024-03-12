@@ -59,10 +59,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
     }, []);
 
     const renderContent = () =>
-      optionLabelValue?.length != 0 &&
-      Object.keys(loginUserData?.userData)?.length > 0 && (
-        <Component {...pageProps} />
-      );
+      optionLabelValue?.length != 0 && <Component {...pageProps} />;
 
     if (Component.requireAuth || Component.requireAuth === undefined) {
       return (
