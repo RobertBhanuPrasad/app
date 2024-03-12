@@ -1,19 +1,53 @@
 import { useSelect } from "@refinedev/core";
 import { useEffect, useState } from "react";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import CustomSelect from "src/ui/custom-select";
+import { Input } from "src/ui/input";
 import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep3() {
+  const { watch } = useFormContext();
+  const formData = watch();
   return (
     <div>
+      <div>
+        {formData?.courseTypeSettings?.is_online_program ? (
+          <OnlineProgram />
+        ) : (
+          <div>Render Venue</div>
+        )}
+      </div>
       <Schedules />
     </div>
   );
 }
 
 export default NewCourseStep3;
+
+const OnlineProgram = () => {
+  return (
+    <div className="h-[218px] flex flex-col gap-8">
+      <div>
+        <div className="">Online zoom URL </div>
+        <div className="w-80">
+          <Input placeholder="URL" className="rounded-[12px]" />
+          <div className="">
+            Note: Participants will join your online course through your virtual
+            venue
+          </div>
+        </div>
+      </div>
+      <div>
+        <div className="">
+          Please associate your course with a specific location for reporting
+          purposes
+        </div>
+        <div>Location drop downs</div>
+      </div>
+    </div>
+  );
+};
 
 const Schedules = () => {
   return (
@@ -27,9 +61,17 @@ const Schedules = () => {
 const SchedulesHeader = () => {
   const [value, onChange] = useState<any>();
 
-  const timeFormatOptions =
+  let timeFormatOptions =
     getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
 
+  timeFormatOptions = timeFormatOptions?.map(
+    (val: { id: any; value: string }) => {
+      return {
+        value: val?.id,
+        label: val?.value,
+      };
+    }
+  );
   return (
     <div className="h-9 flex justify-between">
       <div className="font-semibold text-[#333333] flex items-center">
@@ -102,9 +144,9 @@ const Sessions = () => {
             <div className="h-10 flex items-center gap-6">
               <div className="w-[233px] ">Date</div>
               <div className="text-sm text-[#999999] font-normal">From</div>
-              <div className="w-[233px] bg-[pink]">From Time Selector</div>
+              <div className="w-[233px]">From Time Selector</div>
               <div className="text-sm text-[#999999] font-normal">To</div>
-              <div className="w-[233px] bg-[red]">To Time Selector</div>
+              <div className="w-[233px]">To Time Selector</div>
 
               <div className="w-[127px] flex gap-4 ">
                 {index == schedules?.length - 1 && (

@@ -160,7 +160,7 @@ const CourseTypeDropDown = () => {
     {
       field: "organization_id",
       operator: "eq",
-      value: 1,
+      value: formData?.organization?.value,
     },
     {
       field: "program_category_id.value",
@@ -168,7 +168,7 @@ const CourseTypeDropDown = () => {
       value: "Course",
     },
   ];
-
+  console.log(filter,'filter')
   if (formData?.teachers?.length > 0) {
     const programTypeIds: number[] = [];
     formData?.teachers?.map((val: any) => {

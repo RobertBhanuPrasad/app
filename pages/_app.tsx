@@ -65,10 +65,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
 
     if (Component.requireAuth || Component.requireAuth === undefined) {
       return (
-        <Authenticated
-          key="app"
-          fallback={<div>You cannot access this section</div>}
-        >
+        <Authenticated key="app" fallback={<Login />}>
           {Component.noLayout ? (
             renderContent()
           ) : (
