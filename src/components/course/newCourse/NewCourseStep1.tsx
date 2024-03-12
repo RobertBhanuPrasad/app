@@ -94,7 +94,8 @@ const RadioCards = () => {
 
   const iAmTeachingId = getOptionValueObjectByOptionValue(I_AM_TEACHING)?.id;
 
-  const iAmCoTeachingId = getOptionValueObjectByOptionValue(I_AM_CO_TEACHING)?.id;
+  const iAmCoTeachingId =
+    getOptionValueObjectByOptionValue(I_AM_CO_TEACHING)?.id;
 
   const iAmOrganizerId = getOptionValueObjectByOptionValue(I_AM_ORGANIZER)?.id;
 
@@ -368,7 +369,7 @@ const ProgramOrganizerDropDown = () => {
   });
 
   return (
-    <div className="flex gap-1 flex-col">
+    <div className="w-80 flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
         Program Organizer *
       </div>

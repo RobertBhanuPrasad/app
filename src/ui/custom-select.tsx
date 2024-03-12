@@ -27,6 +27,7 @@ interface CustomSelectProps {
   placeholder: string;
   value: any;
   error?: any;
+  selectBoxStyles?: any;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -37,9 +38,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   placeholder,
   value: propValue,
   error,
+  selectBoxStyles,
 }: CustomSelectProps) => {
   // State to manage whether the dropdown is open or closed
   const [open, setOpen] = React.useState<boolean>(false);
+
+  //This is to set the select styles
+  const headerStyles = selectBoxStyles?.header || "";
+  const dropdownStyles = selectBoxStyles?.dropdown || "";
 
   // State to keep track of the currently selected option
   const [selectedValue, setSelectedValue] = useState<Option | null>(propValue);
@@ -97,7 +103,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           }}
           variant="outline"
           role="combobox"
-          className={`w-80 h-[40px] rounded-xl ${
+          className={`w-full h-[40px] rounded-xl ${headerStyles} ${
             error ? "border-[#FF6D6D]" : "border-[#E1E1E1]"
           }`}
         >
@@ -117,7 +123,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             />
           </div>
         </Button>
-        <div className="absolute mt-2 top-full z-50 w-full" ref={commandRef}>
+        <div
+          className={`absolute mt-2 top-full z-50 w-full ${dropdownStyles}`}
+          ref={commandRef}
+        >
           {open && (
             <div className=" bg-[white] rounded-xl border border-[1px]">
               <Input
