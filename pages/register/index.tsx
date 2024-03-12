@@ -1,13 +1,6 @@
-import {
-  useActiveAuthProvider,
-  useList,
-  useRegister,
-  useSelect,
-} from "@refinedev/core";
+import { useList, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { authProvider } from "src/authProvider";
-import CustomSelect from "src/ui/custom-select";
+import React, { useState } from "react";
 import { supabaseClient } from "src/utility";
 
 const Signup = () => {
@@ -78,7 +71,7 @@ const Signup = () => {
       <div className="card w-full max-w-sm bg-base-100 px-4 py-8 shadow-xl">
         <div className="px-4">
           <h1 className="text-[32px] font-bold text-center my-5 bg-clip-text bg-gradient-to-br">
-            Sign up
+            SIGN UP
           </h1>
         </div>
         <form
@@ -93,7 +86,7 @@ const Signup = () => {
               <span className="flex-grow">{error.message}</span>
             </div>
           )}
-          <div className="form-control">
+          <div className="form-control flex items-center justify-between">
             <label htmlFor="email" className="label">
               <span className="label-text">User Name</span>
             </label>
@@ -102,11 +95,11 @@ const Signup = () => {
               value={firstName}
               onChange={(ev) => setFirstName(ev.target.value)}
               name="firstname"
-              placeholder="enter name"
-              className="border-[1px] border-black ml-[10px]"
+              placeholder="Enter name"
+              className="border-[1px] border-black ml-[10px] p-1"
             />
           </div>
-          <div className="form-control">
+          <div className="form-control flex items-center justify-between">
             <label htmlFor="email" className="label">
               <span className="label-text">Last Name</span>
             </label>
@@ -115,12 +108,12 @@ const Signup = () => {
               value={lastName}
               onChange={(ev) => setLastName(ev.target.value)}
               name="lastname"
-              placeholder="enter last name"
-              className="border-[1px] border-black ml-[10px]"
+              placeholder="Enter last name"
+              className="border-[1px] border-black ml-[10px] p-1"
             />
           </div>
 
-          <div className="form-control">
+          <div className="form-control flex items-center justify-between">
             <label htmlFor="email" className="label">
               <span className="label-text">Email</span>
             </label>
@@ -129,29 +122,29 @@ const Signup = () => {
               value={email}
               onChange={(ev) => setEmail(ev.target.value)}
               name="email"
-              placeholder="enter email"
-              className="border-[1px] border-black ml-[10px]"
+              placeholder="Enter email"
+              className="border-[1px] border-black ml-[10px] p-1"
             />
           </div>
-          <div>
-            <label>
-              Select Role:
-              <select
-                value={roleValue}
-                onChange={(event: any) => {
-                  setRoleValue(event.target.value);
-                }}
-              >
-                {options?.map((option: any) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+          <div className=" form-control flex items-center justify-between">
+            <label>Select Role:</label>
+
+            <select
+              value={roleValue}
+              onChange={(event: any) => {
+                setRoleValue(event.target.value);
+              }}
+              className="w-[190px] border border-1 border-[black] p-1"
+            >
+              {options?.map((option: any) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="form-control mt-0">
+          <div className="form-control mt-0 flex items-center justify-between">
             <label htmlFor="password" className="label">
               <span className="label-text">Password</span>
             </label>
@@ -160,8 +153,8 @@ const Signup = () => {
               value={password}
               onChange={(ev) => setPassword(ev.target.value)}
               name="password"
-              placeholder="enter password"
-              className="border-[1px] border-black ml-[10px]"
+              placeholder="Enter password"
+              className="border-[1px] border-black ml-[10px] p-1"
             />
           </div>
           {/* <div className="form-control mt-6">
@@ -169,11 +162,11 @@ const Signup = () => {
               Login
             </button>
           </div> */}
-          <div className="form-control mt-6">
+          <div className="form-control mt-6 flex justify-center ">
             <button
               id="signup"
               type="button"
-              className="btn"
+              className="font-semibold cursor-pointer"
               disabled={loading}
               onClick={handleSignup}
             >

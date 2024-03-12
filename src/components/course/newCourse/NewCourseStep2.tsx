@@ -168,7 +168,7 @@ const CourseTypeDropDown = () => {
       value: "Course",
     },
   ];
-  console.log(filter,'filter')
+
   if (formData?.teachers?.length > 0) {
     const programTypeIds: number[] = [];
     formData?.teachers?.map((val: any) => {
