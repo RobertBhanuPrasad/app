@@ -10,10 +10,13 @@ import React, { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
 import CustomSelect from "src/ui/custom-select";
 import { supabaseClient } from "src/utility";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { setLoginUserData } = loginUserStore();
 
   const router = useRouter();
 
@@ -23,7 +26,7 @@ const Login = () => {
       password,
     });
 
-    console.log("heyy error", error);
+    console.log("heyy error", error, data);
 
     if (data?.session) {
       nookies.set(null, "token", data.session.access_token, {
@@ -34,6 +37,22 @@ const Login = () => {
 
     if (!error) {
       router.push("/");
+    }
+
+    const { data: loginData } = await supabaseClient.auth.getUser();
+
+    if (loginData?.user?.id) {
+      const { data: userData } = await supabaseClient
+        .from("users")
+        .select(
+          "*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
+        )
+        .eq("user_identifier", loginData?.user?.id);
+
+      setLoginUserData({
+        loginData: data?.user as Object,
+        userData: userData?.[0],
+      });
     }
   };
   return (
