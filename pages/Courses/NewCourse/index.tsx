@@ -19,6 +19,15 @@ import _ from "lodash";
 function index() {
   const { loginUserData } = loginUserStore();
 
+  if (Object.keys(loginUserData?.userData).length == 0) {
+    return <div>Loading...</div>;
+  }
+
+  return <NewCourse />;
+}
+function NewCourse() {
+  const { loginUserData } = loginUserStore();
+
   // Schema definition for form validation
   const schema = z.object({
     organization: z.object({
