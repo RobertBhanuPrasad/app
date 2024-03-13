@@ -33,17 +33,15 @@ interface DataTableProps<TData, TValue> {
   setPageSize?: any;
   pageSize?: any;
   tableStyles?: any;
-  showEarlyBirdFees?: any;
 }
 
 export function DataTable<TData, TValue>({
-  columns: initialColumns,
+  columns,
   data,
   tableStyles,
   setCurrent,
   pageCount,
   current,
-  showEarlyBirdFees,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -53,19 +51,9 @@ export function DataTable<TData, TValue>({
 
   const [rowSelection, setRowSelection] = React.useState({});
 
-  // Define columns dynamically based on checkbox state
-  const tableColumns: any =  showEarlyBirdFees
-    ? initialColumns
-    : initialColumns.filter(
-        (column: any) =>
-          column.accessorKey !== "earlynormalfee" &&
-          column.accessorKey !== "earlyvatfee" &&
-          column.accessorKey !== "earlytotalfee"
-      );
-
   const table = useReactTable({
     data,
-    columns: tableColumns,
+    columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -125,7 +113,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={initialColumns?.length}
+                  colSpan={columns?.length}
                   className="h-24 text-center"
                 >
                   No results.
