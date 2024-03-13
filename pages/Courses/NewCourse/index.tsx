@@ -16,6 +16,8 @@ import Fees from "@public/assets/Fees";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import _ from "lodash";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 
 function index() {
   const { loginUserData } = loginUserStore();
@@ -31,14 +33,13 @@ function NewCourse() {
 
   // Schema definition for form validation
   const schema = z.object({
-    organization: z.object({
-      // Define the schema for the organization object's properties here
-      // For example:
-      value: z.number(),
-      label: z.string(),
-
-      // Add more properties as needed
-    }),
+    // organization: z.object({
+    //   // Define the schema for the organization object's properties here
+    //   // For example:
+    //   value: z.number(),
+    //   label: z.string(),
+    //   // Add more properties as needed
+    // }),
   });
 
   const loggedUserData = {
@@ -162,10 +163,10 @@ function NewCourse() {
                       className={contentStylings}
                     ></TabsContent>
                     <TabsContent value="3" className={contentStylings}>
-                      Change your password here.
+                      <NewCourseStep4 />
                     </TabsContent>
                     <TabsContent value="4" className={contentStylings}>
-                      Change your accommodation details
+                      <NewCourseStep5 />
                     </TabsContent>
                     <TabsContent value="5" className={contentStylings}>
                       <NewCourseStep6 />
