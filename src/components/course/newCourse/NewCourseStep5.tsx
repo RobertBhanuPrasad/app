@@ -29,7 +29,7 @@ export default function CourseTable() {
 
   // Effect to add initial data if no fees are present
   useEffect(() => {
-    if (!formData?.fees || formData?.length <= 0) {
+    if (!formData?.fees || formData?.fees?.length <= 0) {
       append({
         accomodationFee: "",
         accomodationSpots: "",
