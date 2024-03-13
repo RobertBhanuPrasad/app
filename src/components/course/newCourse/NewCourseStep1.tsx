@@ -11,8 +11,16 @@ import {
   I_AM_ORGANIZER,
   I_AM_TEACHING,
 } from "src/constants/OptionValues";
+import { Button } from "src/ui/button";
+import { Calendar } from "src/ui/calendar";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "src/ui/dialog";
 import { Input } from "src/ui/input";
 import { Label } from "src/ui/label";
 import { MultiSelect } from "src/ui/multi-select";
@@ -35,6 +43,16 @@ function NewCourseStep1() {
         <div className="flex gap-1 flex-col">
           <ProgramOrganizerDropDown />
         </div>
+        <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Date</Button>
+            </DialogTrigger>
+            <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
+              <CalenderComponent />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
       <RegistrationGateway />
     </div>
@@ -42,6 +60,25 @@ function NewCourseStep1() {
 }
 
 export default NewCourseStep1;
+
+const CalenderComponent = () => {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
+  return (
+    <div className="flex flex-row gap-4">
+      <div className="flex-[1]">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          className="rounded-md"
+        />
+      </div>
+      <div className="border-l border-gray-300 h-full"></div>
+      <div className="flex-[1]">courses</div>
+    </div>
+  );
+};
 
 const RegistrationGateway = () => {
   const {
