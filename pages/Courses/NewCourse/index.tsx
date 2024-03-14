@@ -18,6 +18,7 @@ import _ from "lodash";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 
 function index() {
   const { loginUserData } = loginUserStore();
@@ -161,7 +162,9 @@ function NewCourse() {
                     <TabsContent
                       value="2"
                       className={contentStylings}
-                    ></TabsContent>
+                    >
+                      <NewCourseStep3 />
+                    </TabsContent>
                     <TabsContent value="3" className={contentStylings}>
                       <NewCourseStep4 />
                     </TabsContent>

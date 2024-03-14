@@ -15,12 +15,6 @@ import { Button } from "src/ui/button";
 import { Calendar } from "src/ui/calendar";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-} from "src/ui/dialog";
 import { Input } from "src/ui/input";
 import { Label } from "src/ui/label";
 import { MultiSelect } from "src/ui/multi-select";
@@ -43,16 +37,7 @@ function NewCourseStep1() {
         <div className="flex gap-1 flex-col">
           <ProgramOrganizerDropDown />
         </div>
-        <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">Date</Button>
-            </DialogTrigger>
-            <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
-              <CalenderComponent />
-            </DialogContent>
-          </Dialog>
-        </div>
+        <div></div>
       </div>
       <RegistrationGateway />
     </div>
@@ -60,115 +45,6 @@ function NewCourseStep1() {
 }
 
 export default NewCourseStep1;
-
-const CalenderComponent = () => {
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  // const { data } = useList<any>({
-  //   resource: "program_schedules",
-  //   filters: [
-  //     {
-  //       field: "name",
-  //       operator: "eq",
-  //       value: "User Role",
-  //     },
-  //   ],
-  // });
-
-  // console.log("heyy data", data);
-
-  const handleOnSelect = (selected: Date | undefined) => {
-    setDate(selected);
-  };
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="h-[401px] flex flex-row gap-4">
-        <div className="flex-[1]">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={handleOnSelect}
-            className="rounded-md"
-            count={1}
-          />
-        </div>
-        <div className="border-l border-gray-300 h-full"></div>
-        <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
-          <div className="text-[20px] font-semibold">Course</div>
-          <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
-            <div>
-              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                10:00-12:00 . Los Angeles, USA
-              </div>
-              <div className="font-semibold text-[16px]">
-                Happiness Program for Youth
-              </div>
-            </div>
-            <div>
-              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                10:00-12:00 . Los Angeles, USA
-              </div>
-              <div className="font-semibold text-[16px]">
-                Online Meditation and Breath Workshop{" "}
-              </div>
-            </div>
-            <div>
-              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                10:00-12:00 . Los Angeles, USA
-              </div>
-              <div className="font-semibold text-[16px]">
-                Happiness Program for Youth
-              </div>
-            </div>
-            <div>
-              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                10:00-12:00 . Los Angeles, USA
-              </div>
-              <div className="font-semibold text-[16px]">
-                Online Meditation and Breath Workshop{" "}
-              </div>
-            </div>
-            <div>
-              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                10:00-12:00 . Los Angeles, USA
-              </div>
-              <div className="font-semibold text-[16px]">
-                Happiness Program for Youth
-              </div>
-            </div>
-            <div>
-              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                10:00-12:00 . Los Angeles, USA
-              </div>
-              <div className="font-semibold text-[16px]">
-                Happiness Program for Youth
-              </div>
-            </div>
-            <div>
-              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                10:00-12:00 . Los Angeles, USA
-              </div>
-              <div className="font-semibold text-[16px]">
-                Happiness Program for Youth
-              </div>
-            </div>
-            <div>
-              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                10:00-12:00 . Los Angeles, USA
-              </div>
-              <div className="font-semibold text-[16px]">
-                Online Meditation and Breath Workshop{" "}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex self-center">
-        <Button className="w-24 rounded-[12px]">Submit</Button>
-      </div>
-    </div>
-  );
-};
 
 const RegistrationGateway = () => {
   const {
