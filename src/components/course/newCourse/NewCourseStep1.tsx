@@ -1,7 +1,7 @@
 import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
-import { useSelect } from "@refinedev/core";
+import { useList, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import React, { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -63,19 +63,109 @@ export default NewCourseStep1;
 
 const CalenderComponent = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  // const { data } = useList<any>({
+  //   resource: "program_schedules",
+  //   filters: [
+  //     {
+  //       field: "name",
+  //       operator: "eq",
+  //       value: "User Role",
+  //     },
+  //   ],
+  // });
+
+  // console.log("heyy data", data);
+
+  const handleOnSelect = (selected: Date | undefined) => {
+    setDate(selected);
+  };
 
   return (
-    <div className="flex flex-row gap-4">
-      <div className="flex-[1]">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          className="rounded-md"
-        />
+    <div className="flex flex-col gap-4">
+      <div className="h-[401px] flex flex-row gap-4">
+        <div className="flex-[1]">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={handleOnSelect}
+            className="rounded-md"
+            count={1}
+          />
+        </div>
+        <div className="border-l border-gray-300 h-full"></div>
+        <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
+          <div className="text-[20px] font-semibold">Course</div>
+          <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
+            <div>
+              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                10:00-12:00 . Los Angeles, USA
+              </div>
+              <div className="font-semibold text-[16px]">
+                Happiness Program for Youth
+              </div>
+            </div>
+            <div>
+              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                10:00-12:00 . Los Angeles, USA
+              </div>
+              <div className="font-semibold text-[16px]">
+                Online Meditation and Breath Workshop{" "}
+              </div>
+            </div>
+            <div>
+              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                10:00-12:00 . Los Angeles, USA
+              </div>
+              <div className="font-semibold text-[16px]">
+                Happiness Program for Youth
+              </div>
+            </div>
+            <div>
+              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                10:00-12:00 . Los Angeles, USA
+              </div>
+              <div className="font-semibold text-[16px]">
+                Online Meditation and Breath Workshop{" "}
+              </div>
+            </div>
+            <div>
+              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                10:00-12:00 . Los Angeles, USA
+              </div>
+              <div className="font-semibold text-[16px]">
+                Happiness Program for Youth
+              </div>
+            </div>
+            <div>
+              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                10:00-12:00 . Los Angeles, USA
+              </div>
+              <div className="font-semibold text-[16px]">
+                Happiness Program for Youth
+              </div>
+            </div>
+            <div>
+              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                10:00-12:00 . Los Angeles, USA
+              </div>
+              <div className="font-semibold text-[16px]">
+                Happiness Program for Youth
+              </div>
+            </div>
+            <div>
+              <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                10:00-12:00 . Los Angeles, USA
+              </div>
+              <div className="font-semibold text-[16px]">
+                Online Meditation and Breath Workshop{" "}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="border-l border-gray-300 h-full"></div>
-      <div className="flex-[1]">courses</div>
+      <div className="flex self-center">
+        <Button className="w-24 rounded-[12px]">Submit</Button>
+      </div>
     </div>
   );
 };
