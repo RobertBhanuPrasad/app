@@ -1,3 +1,4 @@
+import Calender from "@public/assets/Calender";
 import { useList } from "@refinedev/core";
 import { format } from "date-fns/format";
 import _ from "lodash";
@@ -20,7 +21,15 @@ function NewCourseStep1() {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline"> {format(date, "PPP")}</Button>
+          <Button
+            className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-6"
+            variant="outline"
+          >
+            <div>
+              <Calender />
+            </div>
+            <div>{format(date, "PPP")}</div>
+          </Button>
         </DialogTrigger>
         <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
           <CalenderComponent date={date} setDate={setDate} />
