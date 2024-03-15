@@ -1,14 +1,6 @@
-import {
-  useActiveAuthProvider,
-  useList,
-  useRegister,
-  useSelect,
-} from "@refinedev/core";
 import nookies from "nookies";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { authProvider } from "src/authProvider";
-import CustomSelect from "src/ui/custom-select";
+import React, { useState } from "react";
 import { supabaseClient } from "src/utility";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
