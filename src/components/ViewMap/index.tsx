@@ -1,54 +1,65 @@
-import { OpenStreetMapProvider } from 'leaflet-geosearch'
-import 'leaflet/dist/leaflet.css'
-import React, { FC, useMemo, useRef } from 'react'
-import { MapContainer, Marker, TileLayer } from 'react-leaflet'
+import { OpenStreetMapProvider } from "leaflet-geosearch";
+import "leaflet/dist/leaflet.css";
+import React, { FC, useMemo, useRef } from "react";
+import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import MapIcon from "../../../public/assets/MapIcon";
+import { icon } from "leaflet";
 
-type locationValueType = { lat: number; lng: number }
+type locationValueType = { lat: number; lng: number };
 
 interface ViewMapProps {
   /**
    * @value This variable is used to store Latitude and longitude value in an array. Ex: [15,20]
    */
-  value?: locationValueType
+  value?: locationValueType;
   /**
    * @onChange This is a call back function, which return selected latitude and longitude.
    */
-  onChange?: any
+  onChange?: any;
 
   /**
    * @draggable This is a boolean which is responsible for movement of marker in map. If draggable is true then user can move the marker inside map else it is fixed.
    */
-  draggable?: boolean
+  draggable?: boolean;
 
   /**
    * @zoom Default zoom for the map.
    */
-  zoom?: number
+  zoom?: number;
 }
 
 /**
  * @function ViewMap is a function used to render map in the front end.
  */
-export const ViewMap: FC<ViewMapProps> = ({ value = { lat: 0, lng: 0 }, onChange, draggable = false, zoom = 10 }) => {
-  const markerRef = useRef(null)
+export const ViewMap: FC<ViewMapProps> = ({
+  value = { lat: 0, lng: 0 },
+  onChange,
+  draggable = false,
+  zoom = 10,
+}) => {
+  const ICON = icon({
+    iconUrl: "../../../public/assets/MapIcon",
+    iconSize: [32, 32],
+  });
+  const markerRef = useRef(null);
 
   const eventHandlers = useMemo(
     () => ({
       dragend() {
-        const marker: any = markerRef.current
+        const marker: any = markerRef.current;
         if (marker != null) {
-          onChange(marker.getLatLng())
+          onChange(marker.getLatLng());
         }
-      }
+      },
     }),
     []
-  )
+  );
   return (
     <div>
       <MapContainer
         center={value}
         zoom={zoom}
-        style={{ height: '160px', width: '586px' }}
+        style={{ height: "160px", width: "586px" }}
         scrollWheelZoom={false}
         // position={value}
       >
@@ -56,11 +67,17 @@ export const ViewMap: FC<ViewMapProps> = ({ value = { lat: 0, lng: 0 }, onChange
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={value} draggable={draggable} eventHandlers={eventHandlers} ref={markerRef}></Marker>
+        <Marker
+          position={value}
+          draggable={draggable}
+          eventHandlers={eventHandlers}
+          ref={markerRef}
+          icon={ICON}
+        ></Marker>
       </MapContainer>
     </div>
-  )
-}
+  );
+};
 
 /**
  * @function fetchLongitudeLatitudeData is used to fetch co-ordinates of given address
@@ -69,12 +86,12 @@ export const ViewMap: FC<ViewMapProps> = ({ value = { lat: 0, lng: 0 }, onChange
  */
 
 export const fetchLongitudeLatitudeData = async (address: string) => {
-  const provider = new OpenStreetMapProvider()
+  const provider = new OpenStreetMapProvider();
 
   // Fetch location data using leaflet-geosearch package
   const response = await provider.search({
-    query: address
-  })
+    query: address,
+  });
 
-  return response
-}
+  return response;
+};
