@@ -13,9 +13,12 @@ import { z } from "zod";
 import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import _ from "lodash";
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 
 function index() {
   const { loginUserData } = loginUserStore();
@@ -31,14 +34,13 @@ function NewCourse() {
 
   // Schema definition for form validation
   const schema = z.object({
-    organization: z.object({
-      // Define the schema for the organization object's properties here
-      // For example:
-      value: z.number(),
-      label: z.string(),
-
-      // Add more properties as needed
-    }),
+    // organization: z.object({
+    //   // Define the schema for the organization object's properties here
+    //   // For example:
+    //   value: z.number(),
+    //   label: z.string(),
+    //   // Add more properties as needed
+    // }),
   });
 
   const loggedUserData = {
@@ -157,17 +159,20 @@ function NewCourse() {
                     <TabsContent value="1" className={contentStylings}>
                       <NewCourseStep2 />
                     </TabsContent>
-                    <TabsContent value="2" className={contentStylings}>
+                    <TabsContent
+                      value="2"
+                      className={contentStylings}
+                    >
                       <NewCourseStep3 />
                     </TabsContent>
                     <TabsContent value="3" className={contentStylings}>
-                      Change your password here.
+                      <NewCourseStep4 />
                     </TabsContent>
                     <TabsContent value="4" className={contentStylings}>
-                      Change your accommodation details
+                      <NewCourseStep5 />
                     </TabsContent>
                     <TabsContent value="5" className={contentStylings}>
-                      Change your accommodation details
+                      <NewCourseStep6 />
                     </TabsContent>
                     <TabsContent value="6" className={contentStylings}>
                       Change your accommodation details

@@ -275,6 +275,8 @@ const OrganizationDropDown = () => {
   } = useController({
     name: "organization",
   });
+
+  console.log(value, "value");
   const {
     resetField,
     setValue,

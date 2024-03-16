@@ -1,17 +1,13 @@
-import { ViewMap, fetchLongitudeLatitudeData } from "@components/ViewMap";
+"use client";
+import { fetchLongitudeLatitudeData } from "@components/ViewMap";
 import Delete from "@public/assets/Delete";
 import EditIcon from "@public/assets/EditIcon";
 import SearchIcon from "@public/assets/SearchIcon";
-import {
-  useDelete,
-  useForm,
-  useList,
-  useOne,
-  useSelect,
-} from "@refinedev/core";
+import { useDelete, useList, useSelect } from "@refinedev/core";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useController, useFieldArray, useFormContext } from "react-hook-form";
+import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { Badge } from "src/ui/badge";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
@@ -27,14 +23,198 @@ import {
   DialogTrigger,
 } from "src/ui/dialog";
 import { Input } from "src/ui/input";
+import { supabaseClient } from "src/utility";
+import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+import dynamic from "next/dynamic";
+
+export function MyAwesomeMap() {
+  const Component = dynamic(() => import("../../ViewMap/index"), {
+    ssr: false,
+  });
+  return <Component />;
+}
+// const MyAwesomeMap = dynamic(() => import("../../ViewMap/index"), {
+//   ssr: false,
+// });
 
 function NewCourseStep3() {
+  const { watch } = useFormContext();
+  const formData = watch();
+  return (
+    <div>
+      <div>
+        {formData?.courseTypeSettings?.is_online_program ? (
+          <OnlineProgram />
+        ) : (
+          <div className="mb-8">
+            <Venue />
+          </div>
+        )}
+      </div>
+      <Schedules />
+    </div>
+  );
+}
+
+export default NewCourseStep3;
+
+const OnlineProgram = () => {
+  return (
+    <div className="h-[218px] flex flex-col gap-8">
+      <div>
+        <div className="">Online zoom URL </div>
+        <div className="w-80">
+          <Input placeholder="URL" className="rounded-[12px]" />
+          <div className="">
+            Note: Participants will join your online course through your virtual
+            venue
+          </div>
+        </div>
+      </div>
+      <div>
+        <div className="">
+          Please associate your course with a specific location for reporting
+          purposes
+        </div>
+        <div>Location drop downs</div>
+      </div>
+    </div>
+  );
+};
+
+const Schedules = () => {
+  return (
+    <div className="flex flex-col gap-4 w-[1016px]">
+      <SchedulesHeader />
+      <Sessions />
+    </div>
+  );
+};
+
+const SchedulesHeader = () => {
+  const [value, onChange] = useState<any>();
+
+  let timeFormatOptions =
+    getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
+
+  timeFormatOptions = timeFormatOptions?.map(
+    (val: { id: any; value: string }) => {
+      return {
+        value: val?.id,
+        label: val?.value,
+      };
+    }
+  );
+  return (
+    <div className="h-9 flex justify-between">
+      <div className="font-semibold text-[#333333] flex items-center">
+        Event Date and Time
+      </div>
+      <div className="flex gap-4">
+        <div className="w-[161px]">
+          <CustomSelect
+            value={value}
+            placeholder="Select time format"
+            data={timeFormatOptions}
+            onBottomReached={() => {}}
+            onSearch={() => {}}
+            onChange={(val) => {
+              onChange(val);
+            }}
+          />
+        </div>
+        <div className="w-[257px]">
+          <CustomSelect
+            value={value}
+            placeholder="Select time format"
+            data={timeFormatOptions}
+            onBottomReached={() => {}}
+            onSearch={() => {}}
+            onChange={(val) => {
+              onChange(val);
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+const Sessions = () => {
+  const {
+    fields: schedules,
+    append,
+    remove,
+  } = useFieldArray({
+    name: "schedules",
+  });
+
+  useEffect(() => {
+    if (schedules?.length == 0) {
+      append({ value: "1" });
+    }
+  });
+
+  const options: any[] = [];
+
+  const [value, onChange] = useState<any>();
+
+  const handleAddSession = (index: number) => {
+    append({ value: index });
+  };
+
+  const handleRemoveSession = (index: number) => {
+    remove(index);
+  };
+  return (
+    <div>
+      {schedules?.map((schedule: any, index: number) => {
+        return (
+          <div className="h-15 flex flex-col gap-1 justify-between">
+            <div className="h-4 font-[#333333] font-normal flex text-xs">
+              <div>Session {index + 1} </div>
+              <div className="text-[#7677F4]">&nbsp;*</div>
+            </div>
+            <div className="h-10 flex items-center gap-6">
+              <div className="w-[233px] ">Date</div>
+              <div className="text-sm text-[#999999] font-normal">From</div>
+              <div className="w-[233px]">From Time Selector</div>
+              <div className="text-sm text-[#999999] font-normal">To</div>
+              <div className="w-[233px]">To Time Selector</div>
+
+              <div className="w-[127px] flex gap-4 ">
+                {index == schedules?.length - 1 && (
+                  <div
+                    onClick={() => {
+                      handleAddSession(index);
+                    }}
+                    className="text-[#7677F4] font-normal cursor-pointer"
+                  >
+                    + Add
+                  </div>
+                )}
+                {index != 0 && (
+                  <div
+                    onClick={() => {
+                      handleRemoveSession(index);
+                    }}
+                    className="text-[#7677F4] font-normal cursor-pointer"
+                  >
+                    Delete
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const Venue = () => {
   const { data, isError } = useList({
     resource: "venue",
   });
-
-  console.log(isError, "isError");
-  console.log(data, "data");
 
   const { mutate } = useDelete();
 
@@ -44,6 +224,12 @@ function NewCourseStep3() {
       id: id,
     });
   };
+
+  const {
+    field: { value: cityValue },
+  } = useController({
+    name: "city_id",
+  });
 
   return (
     <div className="flex flex-row gap-7">
@@ -96,7 +282,7 @@ function NewCourseStep3() {
                             </DialogContent>
                           </Dialog>
 
-                          <Dialog>
+                          <Dialog open={true}>
                             <DialogTrigger>
                               <Delete />
                             </DialogTrigger>
@@ -159,18 +345,14 @@ function NewCourseStep3() {
           <AddOrEditVenue isNewVenue={true} />
           <DialogFooter>
             <div className="w-full flex items-center justify-center">
-              <DialogClose>
-                <Button type="submit">Submit</Button>
-              </DialogClose>
+              <Button type="submit">Submit</Button>
             </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
   );
-}
-
-export default NewCourseStep3;
+};
 
 interface AddOrEditVenueProps {
   isNewVenue: boolean;
@@ -179,6 +361,49 @@ interface AddOrEditVenueProps {
 export const AddOrEditVenue: React.FC<AddOrEditVenueProps> = ({
   isNewVenue,
 }) => {
+  return (
+    <div>
+      {isNewVenue ? (
+        <div className="flex justify-center text-[24px] font-semibold">
+          New Venue
+        </div>
+      ) : (
+        <div className="flex justify-center text-[24px] font-semibold">
+          Edit Venue
+        </div>
+      )}
+
+      <MapComponent />
+      <div className="flex flex-row gap-[30px]">
+        <div className="flex flex-col gap-5">
+          <VenueComponent />
+          <PostalCodeComponent />
+          <CityComponent />
+        </div>
+
+        <div className="flex flex-col gap-5">
+          <StreetAddressComponent />
+          <StateComponent />
+          <CenterComponent />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MapComponent = () => {
+  const {
+    field: { value: stateValue },
+  } = useController({
+    name: "state_id",
+  });
+
+  const {
+    field: { value: cityValue },
+  } = useController({
+    name: "city_id",
+  });
+
   const {
     field: { value: coordinates, onChange: setCoordinates },
   }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
@@ -186,43 +411,203 @@ export const AddOrEditVenue: React.FC<AddOrEditVenueProps> = ({
       name: "address_line_coordinates",
     });
 
+  useEffect(() => {
+    loadInitialCoordinates();
+  }, [stateValue, cityValue]);
+
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  console.log(formData, "formData");
+
+  const loadInitialCoordinates = async () => {
+    let LocationData: any;
+    if (formData?.city_id && formData?.state_id) {
+      LocationData = await fetchLongitudeLatitudeData(
+        `${formData?.city_id?.label},${formData?.state_id?.label}`
+      );
+    }
+
+    if (LocationData?.length > 0) {
+      setCoordinates({ lat: LocationData?.[0]?.y, lng: LocationData?.[0]?.x });
+    }
+  };
+
+  return (
+    <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
+      <MyAwesomeMap
+        value={coordinates}
+        onChange={setCoordinates}
+        draggable={true}
+        //If coordinates are [0,0] then display whole map
+        zoom={_.isEqual(coordinates, { lat: 0, lng: 0 }) ? 1 : 15}
+      />
+    </div>
+  );
+};
+const VenueComponent = () => {
   const {
     field: { value: venueName, onChange: venueOnchange },
+    fieldState: { error: venueError },
   } = useController({
     name: "venue",
   });
+  return (
+    <div className="flex gap-1 flex-col h-[60px]">
+      <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
+        Venue <div className="text-[#7677F4]"> *</div>
+      </div>
+      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
+        <Input
+          value={venueName}
+          placeholder="Enter Venue Name"
+          className="placeholder:text-[#999999]"
+          onChange={venueOnchange}
+        />
+      </div>
+    </div>
+  );
+};
 
+const PostalCodeComponent = () => {
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
   } = useController({
     name: "postalCode",
   });
+  const { setValue, trigger } = useFormContext();
 
-  const {
-    field: { value: cityValue, onChange: cityValueOnchange },
-  } = useController({
-    name: "city_id",
-  });
+  const fetchCityStateData = async () => {
+    if (postalCodeValue?.length > 4) {
+      const { data: prefillData } = await supabaseClient
+        .from("city")
+        .select("*,state_id(id,name)")
+        .eq("postal_code", postalCodeValue);
 
-  const {
-    field: { value: stateValue, onChange: stateValueOnchange },
-  } = useController({
-    name: "state_id",
-  });
+      const transformed = {
+        label: prefillData?.[0]?.name,
+        value: prefillData?.[0]?.id,
+      };
 
-  const {
-    field: { value: centerValue, onChange: centerValueOnchange },
-  } = useController({
-    name: "center",
-  });
+      const transformedState = {
+        label: prefillData?.[0]?.state_id?.name,
+        value: prefillData?.[0]?.state_id?.id,
+      };
 
+      setValue("city_id", transformed);
+      setValue("state_id", transformedState);
+    }
+  };
+  useEffect(() => {
+    fetchCityStateData();
+  }, [postalCodeValue]);
+  return (
+    <div className="flex gap-1 flex-col h-[60px]">
+      <div className="text-xs font-normal text-[#333333]">Postal Code</div>
+      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
+        <Input
+          value={postalCodeValue}
+          placeholder="Enter Postal Code"
+          className="placeholder:text-[#999999]"
+          onChange={postalCodeOnchange}
+          required
+        />
+      </div>
+    </div>
+  );
+};
+
+const StreetAddressComponent = () => {
   const {
     field: { value: streetAddressValue, onChange: streetAddressOnchange },
   } = useController({
     name: "streetAddress",
   });
+  return (
+    <div className="flex gap-1 flex-col h-[60px]">
+      <div className="text-xs font-normal text-[#333333]">Street Address</div>
+      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
+        <Input
+          value={streetAddressValue}
+          placeholder="Enter Street Address"
+          className="placeholder:text-[#999999]"
+          onChange={streetAddressOnchange}
+        />
+      </div>
+    </div>
+  );
+};
 
-  const { options: stateOptions, onSearch: stateOnsearch } = useSelect({
+const CityComponent = () => {
+  const [selectOptions, setSelectOptions] = useState<any>([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const {
+    field: { value: cityValue, onChange: cityValueOnchange },
+    fieldState: { error: cityValueError },
+  } = useController({
+    name: "city_id",
+  });
+
+  const { options, onSearch, queryResult } = useSelect({
+    resource: "city",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+    pagination: {
+      current: currentPage,
+      mode: "server",
+    },
+  });
+
+  useEffect(() => {
+    if (options) {
+      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
+      else setSelectOptions(options);
+    }
+  }, [options, currentPage]);
+
+  const handleOnBottomReached = () => {
+    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
+  return (
+    <div className="flex gap-1 flex-col h-[60px] w-[278px]">
+      <div className="text-xs font-normal text-[#333333]">City</div>
+
+      <CustomSelect
+        value={cityValue}
+        placeholder="Select City"
+        data={selectOptions}
+        onBottomReached={handleOnBottomReached}
+        onSearch={(val: string) => {
+          onSearch(val);
+        }}
+        onChange={cityValueOnchange}
+        error={cityValueError}
+      />
+    </div>
+  );
+};
+
+const StateComponent = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [selectOptions, setSelectOptions] = useState<any>([]);
+
+  const {
+    options: stateOptions,
+    onSearch: stateOnsearch,
+    queryResult,
+  } = useSelect({
     resource: "state",
     optionLabel: "name",
     optionValue: "id",
@@ -233,9 +618,66 @@ export const AddOrEditVenue: React.FC<AddOrEditVenueProps> = ({
         value,
       },
     ],
+    pagination: {
+      current: currentPage,
+      mode: "server",
+    },
+  });
+  const {
+    field: { value: stateValue, onChange: stateValueOnchange },
+  } = useController({
+    name: "state_id",
   });
 
-  const { options: centerOptions, onSearch: centerOnsearch } = useSelect({
+  useEffect(() => {
+    if (stateOptions) {
+      if (currentPage > 1)
+        setSelectOptions([...selectOptions, ...stateOptions]);
+      else setSelectOptions(stateOptions);
+    }
+  }, [stateOptions, currentPage]);
+
+  const handleOnBottomReached = () => {
+    if (
+      stateOptions &&
+      (queryResult?.data?.total as number) >= currentPage * 10
+    )
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
+  return (
+    <div className="flex gap-1 flex-col h-[60px] w-[278px]">
+      <div className="text-xs font-normal text-[#333333]">Province</div>
+
+      <CustomSelect
+        value={stateValue}
+        placeholder="Select Province"
+        data={selectOptions}
+        onBottomReached={handleOnBottomReached}
+        onSearch={(val: string) => {
+          stateOnsearch(val);
+        }}
+        onChange={stateValueOnchange}
+      />
+    </div>
+  );
+};
+
+const CenterComponent = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [selectOptions, setSelectOptions] = useState<any>([]);
+
+  const {
+    field: { value: centerValue, onChange: centerValueOnchange },
+  } = useController({
+    name: "center",
+  });
+
+  const {
+    options: centerOptions,
+    onSearch: centerOnsearch,
+    queryResult,
+  } = useSelect({
     resource: "center",
     optionLabel: "name",
     optionValue: "id",
@@ -246,186 +688,41 @@ export const AddOrEditVenue: React.FC<AddOrEditVenueProps> = ({
         value,
       },
     ],
-  });
-
-  const { watch, setValue } = useFormContext();
-
-  const formData = watch();
-
-  console.log(formData, "formData");
-
-  useEffect(() => {
-    loadInitialCoordinates();
-  }, [stateValue, cityValue]);
-
-  const loadInitialCoordinates = async () => {
-    let LocationData = await fetchLongitudeLatitudeData(
-      formData?.state?.label ? formData?.state?.label : "westbengal,kolkata"
-    );
-
-    console.log(LocationData, "LocationData");
-
-    if (LocationData?.length > 0) {
-      setCoordinates({ lat: LocationData?.[0]?.y, lng: LocationData?.[0]?.x });
-    }
-  };
-
-  const { data: prefillData } = useList({
-    resource: "city",
-    meta: {
-      select: "*,state_id!inner(id,name)",
+    pagination: {
+      current: currentPage,
+      mode: "server",
     },
-    filters: [
-      {
-        field: "postal_code",
-        operator: "eq",
-        value: postalCodeValue,
-      },
-    ],
   });
-
-  console.log(prefillData, "prefillData");
-
-  const transformed = {
-    label: prefillData?.data[0]?.name,
-    value: prefillData?.data[0]?.id,
-  };
-  const transformedState = {
-    label: prefillData?.data[0]?.state_id?.name,
-    value: prefillData?.data[0]?.state_id?.id,
-  };
-  const { options, onSearch } = useSelect({
-    resource: "city",
-    optionLabel: "name",
-    optionValue: "id",
-    onSearch: (value) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-  });
-
-  console.log(transformed, "transformed");
 
   useEffect(() => {
-    setValue("city_id", transformed);
-    setValue("state_id", transformedState);
-  }, [prefillData]);
+    if (centerOptions) {
+      if (currentPage > 1)
+        setSelectOptions([...selectOptions, ...centerOptions]);
+      else setSelectOptions(centerOptions);
+    }
+  }, [centerOptions, currentPage]);
 
+  const handleOnBottomReached = () => {
+    if (
+      centerOptions &&
+      (queryResult?.data?.total as number) >= currentPage * 10
+    )
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
+  };
   return (
-    <div>
-      <div>
-        {isNewVenue ? (
-          <div className="flex justify-center text-[24px] font-semibold">
-            New Venue
-          </div>
-        ) : (
-          <div className="flex justify-center text-[24px] font-semibold">
-            Edit Venue
-          </div>
-        )}
-        <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
-          <ViewMap
-            value={coordinates}
-            onChange={setCoordinates}
-            draggable={true}
-            //If coordinates are [0,0] then display whole map
-            zoom={_.isEqual(coordinates, { lat: 0, lng: 0 }) ? 1 : 15}
-          />
-        </div>
-        <div className="flex flex-row gap-[30px]">
-          <div className="flex flex-col gap-5">
-            <div className="flex gap-1 flex-col">
-              <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-                Venue <div className="text-[#7677F4]"> *</div>
-              </div>
-              <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
-                <Input
-                  value={venueName}
-                  placeholder="Enter Venue Name"
-                  className="placeholder:text-[#999999]"
-                  onChange={venueOnchange}
-                />
-              </div>
-            </div>
-            <div className="flex gap-1 flex-col ">
-              <div className="text-xs font-normal text-[#333333]">
-                Postal Code
-              </div>
-              <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
-                <Input
-                  value={postalCodeValue}
-                  placeholder="Enter Postal Code"
-                  className="placeholder:text-[#999999]"
-                  onChange={postalCodeOnchange}
-                />
-              </div>
-            </div>
-            <div className="flex gap-1 flex-col  w-[278px]">
-              <div className="text-xs font-normal text-[#333333]">City</div>
+    <div className="flex gap-1 flex-col h-[60px] w-[278px]">
+      <div className="text-xs font-normal text-[#333333]">Local Center</div>
 
-              <CustomSelect
-                value={cityValue}
-                placeholder="Select City"
-                data={options}
-                onBottomReached={() => {}}
-                onSearch={(val: string) => {
-                  onSearch(val);
-                }}
-                onChange={cityValueOnchange}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-5">
-            <div className="flex gap-1 flex-col ">
-              <div className="text-xs font-normal text-[#333333]">
-                Street Address
-              </div>
-              <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
-                <Input
-                  value={streetAddressValue}
-                  placeholder="Enter Street Address"
-                  className="placeholder:text-[#999999]"
-                  onChange={streetAddressOnchange}
-                />
-              </div>
-            </div>
-            <div className="flex gap-1 flex-col w-[278px]">
-              <div className="text-xs font-normal text-[#333333]">Province</div>
-
-              <CustomSelect
-                value={stateValue}
-                placeholder="Select Province"
-                data={stateOptions}
-                onBottomReached={() => {}}
-                onSearch={(val: string) => {
-                  stateOnsearch(val);
-                }}
-                onChange={stateValueOnchange}
-              />
-            </div>
-            <div className="flex gap-1 flex-col w-[278px]">
-              <div className="text-xs font-normal text-[#333333]">
-                Local Center
-              </div>
-
-              <CustomSelect
-                value={centerValue}
-                placeholder="Select Local center"
-                data={centerOptions}
-                onBottomReached={() => {}}
-                onSearch={(val: string) => {
-                  centerOnsearch(val);
-                }}
-                onChange={centerValueOnchange}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <CustomSelect
+        value={centerValue}
+        placeholder="Select Local center"
+        data={selectOptions}
+        onBottomReached={handleOnBottomReached}
+        onSearch={(val: string) => {
+          centerOnsearch(val);
+        }}
+        onChange={centerValueOnchange}
+      />
     </div>
   );
 };

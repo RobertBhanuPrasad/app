@@ -143,7 +143,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               >
                 <CommandGroup
                   id={"options"}
-                  className="max-h-[300px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
+                  className="max-h-[300px]  text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
                 >
                   {data?.map((option: any, index: number) => {
                     return (

@@ -2,6 +2,7 @@ import { Authenticated, Refine, useGetIdentity } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import type { GetServerSideProps, NextPage } from "next";
 import { AppProps } from "next/app";
+import "leaflet/dist/leaflet.css";
 
 import { Layout } from "@components/layout";
 import { dataProvider } from "@refinedev/supabase";

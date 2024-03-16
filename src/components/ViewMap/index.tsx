@@ -1,8 +1,10 @@
+"use client";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
+
 import "leaflet/dist/leaflet.css";
-import React, { FC, useMemo, useRef } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import MapIcon from "../../../public/assets/MapIcon";
+
 import { icon } from "leaflet";
 
 type locationValueType = { lat: number; lng: number };
@@ -31,14 +33,14 @@ interface ViewMapProps {
 /**
  * @function ViewMap is a function used to render map in the front end.
  */
-export const ViewMap: FC<ViewMapProps> = ({
+const ViewMap: FC<ViewMapProps> = ({
   value = { lat: 0, lng: 0 },
   onChange,
   draggable = false,
   zoom = 10,
 }) => {
   const ICON = icon({
-    iconUrl: "../../../public/assets/MapIcon",
+    iconUrl: "../../../public/assets/MapIcon.svg",
     iconSize: [32, 32],
   });
   const markerRef = useRef(null);
@@ -54,30 +56,41 @@ export const ViewMap: FC<ViewMapProps> = ({
     }),
     []
   );
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   return (
     <div>
-      <MapContainer
-        center={value}
-        zoom={zoom}
-        style={{ height: "160px", width: "586px" }}
-        scrollWheelZoom={false}
-        // position={value}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker
-          position={value}
-          draggable={draggable}
-          eventHandlers={eventHandlers}
-          ref={markerRef}
-          icon={ICON}
-        ></Marker>
-      </MapContainer>
+      {isMounted && (
+        <div>
+          <MapContainer
+            center={value}
+            zoom={zoom}
+            style={{ height: "160px", width: "586px" }}
+            scrollWheelZoom={false}
+            // position={value}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker
+              position={value}
+              draggable={draggable}
+              eventHandlers={eventHandlers}
+              ref={markerRef}
+              icon={ICON}
+            ></Marker>
+          </MapContainer>
+        </div>
+      )}
     </div>
   );
 };
+
+export default ViewMap;
 
 /**
  * @function fetchLongitudeLatitudeData is used to fetch co-ordinates of given address
