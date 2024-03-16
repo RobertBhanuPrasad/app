@@ -13,6 +13,7 @@ import { z } from "zod";
 import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import _ from "lodash";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";

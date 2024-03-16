@@ -1,116 +1,179 @@
-import Calender from "@public/assets/Calender";
-import { useList } from "@refinedev/core";
-import { format } from "date-fns/format";
-import _ from "lodash";
-import React, { useState } from "react";
+import { useSelect } from "@refinedev/core";
+import { useEffect, useState } from "react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { TIME_FORMAT } from "src/constants/OptionLabels";
+import CustomSelect from "src/ui/custom-select";
+import { Input } from "src/ui/input";
+import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 
-import { Button } from "src/ui/button";
-import { Calendar } from "src/ui/calendar";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-} from "src/ui/dialog";
-
-function NewCourseStep1() {
-  const [date, setDate] = useState<Date | any>(new Date());
-
+function NewCourseStep3() {
+  const { watch } = useFormContext();
+  const formData = watch();
   return (
     <div>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-6"
-            variant="outline"
-          >
-            <div>
-              <Calender />
-            </div>
-            <div>{format(date, "PPP")}</div>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
-          <CalenderComponent date={date} setDate={setDate} />
-        </DialogContent>
-      </Dialog>
+      <div>
+        {formData?.courseTypeSettings?.is_online_program ? (
+          <OnlineProgram />
+        ) : (
+          <div>Render Venue</div>
+        )}
+      </div>
+      <Schedules />
     </div>
   );
 }
 
-export default NewCourseStep1;
+export default NewCourseStep3;
 
-const CalenderComponent = ({ date, setDate }: any) => {
-  const { data } = useList<any>({
-    resource: "program_schedules",
-    meta: {
-      select:
-        "*,program_id!inner(program_type_id!inner(name),city_id!inner(name) , state_id!inner(name)))",
-    },
-    filters: date
-      ? [
-          {
-            field: "start_time",
-            operator: "gte",
-            value: new Date(date.setHours(0, 0, 0, 0)).toISOString(),
-          },
-          {
-            field: "end_time",
-            operator: "lt",
-            value: new Date(date.getTime() + 24 * 60 * 60 * 1000).toISOString(),
-          },
-        ]
-      : [],
-  });
-
-  const handleOnSelect = (selected: Date | undefined) => {
-    setDate(selected);
-  };
-  const formatTime = (timeString: string) => {
-    const dateObj = new Date(timeString);
-    const hours = dateObj.getHours();
-    const minutes = dateObj.getMinutes();
-    return `${hours < 10 ? "0" + hours : hours}:${
-      minutes < 10 ? "0" + minutes : minutes
-    }`;
-  };
-
+const OnlineProgram = () => {
   return (
-    <div className="flex flex-col gap-4">
-      <div className="h-[401px] flex flex-row gap-4">
-        <div className="flex-[1]">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={handleOnSelect}
-            className="rounded-md"
-            count={data?.total || 0}
-          />
-        </div>
-        <div className="border-l border-gray-300 h-full"></div>
-        <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
-          <div className="text-[20px] font-semibold">Course</div>
-          <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
-            {data?.data?.map((course: any) => (
-              <div key={course.id}>
-                <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                  {formatTime(course.start_time)} -{" "}
-                  {formatTime(course?.end_time)} .{" "}
-                  {course?.program_id?.city_id?.name},{" "}
-                  {course?.program_id?.state_id?.name}
-                </div>
-                <div className="font-semibold text-[16px]">
-                  {course.program_id?.program_type_id?.name}
-                </div>
-              </div>
-            ))}
+    <div className="h-[218px] flex flex-col gap-8">
+      <div>
+        <div className="">Online zoom URL </div>
+        <div className="w-80">
+          <Input placeholder="URL" className="rounded-[12px]" />
+          <div className="">
+            Note: Participants will join your online course through your virtual
+            venue
           </div>
         </div>
       </div>
-      <div className="flex self-center">
-        <Button className="w-24 rounded-[12px]">Submit</Button>
+      <div>
+        <div className="">
+          Please associate your course with a specific location for reporting
+          purposes
+        </div>
+        <div>Location drop downs</div>
       </div>
+    </div>
+  );
+};
+
+const Schedules = () => {
+  return (
+    <div className="flex flex-col gap-4 w-[1016px]">
+      <SchedulesHeader />
+      <Sessions />
+    </div>
+  );
+};
+
+const SchedulesHeader = () => {
+  const [value, onChange] = useState<any>();
+
+  let timeFormatOptions =
+    getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
+
+  timeFormatOptions = timeFormatOptions?.map(
+    (val: { id: any; value: string }) => {
+      return {
+        value: val?.id,
+        label: val?.value,
+      };
+    }
+  );
+  return (
+    <div className="h-9 flex justify-between">
+      <div className="font-semibold text-[#333333] flex items-center">
+        Event Date and Time
+      </div>
+      <div className="flex gap-4">
+        <div className="w-[161px]">
+          <CustomSelect
+            value={value}
+            placeholder="Select time format"
+            data={timeFormatOptions}
+            onBottomReached={() => {}}
+            onSearch={() => {}}
+            onChange={(val) => {
+              onChange(val);
+            }}
+          />
+        </div>
+        <div className="w-[257px]">
+          <CustomSelect
+            value={value}
+            placeholder="Select time format"
+            data={timeFormatOptions}
+            onBottomReached={() => {}}
+            onSearch={() => {}}
+            onChange={(val) => {
+              onChange(val);
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+const Sessions = () => {
+  const {
+    fields: schedules,
+    append,
+    remove,
+  } = useFieldArray({
+    name: "schedules",
+  });
+
+  useEffect(() => {
+    if (schedules?.length == 0) {
+      append({ value: "1" });
+    }
+  });
+
+  const options: any[] = [];
+
+  const [value, onChange] = useState<any>();
+
+  const handleAddSession = (index: number) => {
+    append({ value: index });
+  };
+
+  const handleRemoveSession = (index: number) => {
+    remove(index);
+  };
+  return (
+    <div>
+      {schedules?.map((schedule: any, index: number) => {
+        return (
+          <div className="h-15 flex flex-col gap-1 justify-between">
+            <div className="h-4 font-[#333333] font-normal flex text-xs">
+              <div>Session {index + 1} </div>
+              <div className="text-[#7677F4]">&nbsp;*</div>
+            </div>
+            <div className="h-10 flex items-center gap-6">
+              <div className="w-[233px] ">Date</div>
+              <div className="text-sm text-[#999999] font-normal">From</div>
+              <div className="w-[233px]">From Time Selector</div>
+              <div className="text-sm text-[#999999] font-normal">To</div>
+              <div className="w-[233px]">To Time Selector</div>
+
+              <div className="w-[127px] flex gap-4 ">
+                {index == schedules?.length - 1 && (
+                  <div
+                    onClick={() => {
+                      handleAddSession(index);
+                    }}
+                    className="text-[#7677F4] font-normal cursor-pointer"
+                  >
+                    + Add
+                  </div>
+                )}
+                {index != 0 && (
+                  <div
+                    onClick={() => {
+                      handleRemoveSession(index);
+                    }}
+                    className="text-[#7677F4] font-normal cursor-pointer"
+                  >
+                    Delete
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

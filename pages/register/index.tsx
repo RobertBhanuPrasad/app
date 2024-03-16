@@ -1,13 +1,6 @@
-import {
-  useActiveAuthProvider,
-  useList,
-  useRegister,
-  useSelect,
-} from "@refinedev/core";
+import { useList, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { authProvider } from "src/authProvider";
-import CustomSelect from "src/ui/custom-select";
+import React, { useState } from "react";
 import { supabaseClient } from "src/utility";
 
 const Signup = () => {

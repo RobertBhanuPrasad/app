@@ -160,7 +160,7 @@ const CourseTypeDropDown = () => {
     {
       field: "organization_id",
       operator: "eq",
-      value: 1,
+      value: formData?.organization?.value,
     },
     {
       field: "program_category_id.value",
