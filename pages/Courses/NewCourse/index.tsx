@@ -63,6 +63,7 @@ function NewCourse() {
       displayLanguage: "true",
       isGeoRestriction: "true",
       programOrganizers: [loggedUserData],
+      courseType:24
     },
   });
 

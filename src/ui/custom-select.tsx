@@ -47,8 +47,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const headerStyles = selectBoxStyles?.header || "";
   const dropdownStyles = selectBoxStyles?.dropdown || "";
 
+  const requiredOption = data?.filter(
+    (val: { value: any }) => val.value === propValue
+  );
+
   // State to keep track of the currently selected option
-  const [selectedValue, setSelectedValue] = useState<Option | null>(propValue);
+  const [selectedValue, setSelectedValue] = useState<Option | null>(
+    requiredOption?.[0]
+  );
 
   // Reference to the command div for handling clicks outside the dropdown
   const commandRef = useRef<HTMLDivElement>(null);
@@ -56,15 +62,15 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   // Update the selected value when the propValue changes
   useEffect(() => {
     if (propValue !== undefined) {
-      setSelectedValue(propValue);
+      setSelectedValue(requiredOption?.[0]);
     } else {
       setSelectedValue(null);
     }
-  }, [propValue]);
+  }, [propValue, data]);
 
   // Handle the selection of an option
-  const handleSelect = (value: Option) => {
-    onChange(value);
+  const handleSelect = (value: any) => {
+    onChange(value?.value);
     setSelectedValue(value);
     setOpen(false);
     onSearch("");

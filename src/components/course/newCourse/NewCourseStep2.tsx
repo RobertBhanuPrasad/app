@@ -149,12 +149,14 @@ export default function NewCourseStep2() {
   );
 }
 
-const CourseTypeDropDown = () => {
+export const CourseTypeDropDown = () => {
   const { watch } = useFormContext();
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const formData = watch();
+
+  const [selectOptions, setSelectOptions] = useState<any>();
 
   let filter: Array<CrudFilter> = [
     {
@@ -185,11 +187,17 @@ const CourseTypeDropDown = () => {
     });
   }
 
-  const { options, onSearch, queryResult } = useSelect({
-    resource: "program_types",
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "courseType",
+  });
+
+  const selectQuery: any = {
+    resource: "organizations",
     optionLabel: "name",
     optionValue: "id",
-    meta: { select: "*,program_category_id!inner(*)" },
+    // meta: { select: "*,program_category_id!inner(*)" },
     onSearch: (value) => [
       {
         field: "name",
@@ -197,18 +205,25 @@ const CourseTypeDropDown = () => {
         value,
       },
     ],
-    filters: filter,
+    // filters: filter,
     pagination: {
       current: currentPage,
       mode: "server",
     },
-  });
+  };
 
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "courseType",
-  });
+  if (value) {
+    selectQuery.defaultValue = value;
+  }
+
+  const { options, onSearch, queryResult } = useSelect(selectQuery);
+
+  useEffect(() => {
+    if (options) {
+      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
+      else setSelectOptions(options);
+    }
+  }, [options]);
 
   const {
     field: { onChange: setCourseTypeSettings },
@@ -230,6 +245,10 @@ const CourseTypeDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
+  console.log(options,'optionss');
+  if (queryResult.isLoading) {
+    return null;
+  }
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
@@ -238,7 +257,7 @@ const CourseTypeDropDown = () => {
       <CustomSelect
         value={value}
         placeholder="Select course type"
-        data={options}
+        data={selectOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
           onSearch(val);
@@ -652,6 +671,8 @@ const LanguageDropDown = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [selectOptions, setSelectOptions] = useState<any>();
+
   const { options, onSearch, queryResult } = useSelect({
     resource: "organization_languages",
     optionLabel: "language_name",
@@ -669,7 +690,14 @@ const LanguageDropDown = () => {
     },
   });
 
-  const filteredOptions = options?.filter((val) => {
+  useEffect(() => {
+    if (options) {
+      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
+      else setSelectOptions(options);
+    }
+  }, [options]);
+
+  const filteredOptions = selectOptions?.filter((val: any) => {
     if (
       _.some(formData?.translationLanguages, (obj) => obj.value === val.value)
     )
@@ -679,12 +707,21 @@ const LanguageDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
+    if (queryResult?.data && queryResult?.data?.total >= currentPage * 10)
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
+  const handleOnSearch = (value: any) => {
+    // For resetting the data to the first page which coming from the API
+    setCurrentPage(1);
+    onSearch(value);
+  };
+
   const {
-    field: { value, onChange },
+    field: {
+      value,
+      onChange,
+    },
   } = useController({
     name: "languages",
   });
@@ -700,7 +737,7 @@ const LanguageDropDown = () => {
         placeholder="Select Language"
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
-        onSearch={onSearch}
+        onSearch={handleOnSearch}
         onChange={onChange}
       />
     </div>
