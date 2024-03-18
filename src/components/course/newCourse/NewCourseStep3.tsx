@@ -32,6 +32,7 @@ import {
   RadioGroupItem,
 } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
+import useDebounce from "src/utility/useDebounceHook";
 
 // export function MyAwesomeMap() {
 //   const Component = dynamic(() => import("../../ViewMap/index"), {
@@ -395,12 +396,13 @@ const Venue = () => {
 };
 
 const ExistingVenue = () => {
-  const { data } = useList({
-    resource: "venue",
-    meta: {
-      select: "*,city_id!inner(id,name),state_id!inner(id,name)",
-    },
-  });
+  const [searchValue, searchOnChange] = useState<string>("");
+
+  const debouncedSearchValue = useDebounce(searchValue, 500);
+
+  const [otherVenueSkip, setOtherVenueSkip] = useState<number>(0);
+
+  const [venueData, setVenueData] = useState<any[]>([]);
 
   const { mutate } = useDelete();
 
@@ -460,6 +462,61 @@ const ExistingVenue = () => {
   } = useController({
     name: "isNewVenue",
   });
+
+  const fetchLoginUserVenue = async () => {
+    const { data, error } = await supabaseClient
+      .from("venue_view_with_names")
+      .select("city_id!inner(id,name),state_id!inner(id,name)")
+      .eq("created_by_user_id", "1")
+      .or(
+        `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
+      );
+
+    return data;
+  };
+
+  const fetchOtherVenues = async () => {
+    const { data } = await supabaseClient
+      .from("venue_view_with_names")
+      .select("*,city_id!inner(id,name),state_id!inner(id,name)")
+      // .neq("created_by_user_id", "1")
+      .or(
+        `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
+      )
+      .range(otherVenueSkip, otherVenueSkip + 9);
+
+    return data;
+  };
+
+  const fetchVenueData = async () => {
+    const loginUserVenues = (await fetchLoginUserVenue()) as any[];
+    const otherVenueData = (await fetchOtherVenues()) as any[];
+
+    setVenueData([...loginUserVenues, ...otherVenueData]);
+  };
+
+  //Fetching initial Data of venues
+  useEffect(() => {
+    fetchVenueData();
+  }, []);
+
+  //Fetching venue data after search
+  useEffect(() => {
+    setVenueData([]);
+    setOtherVenueSkip(0);
+
+    fetchVenueData();
+  }, [debouncedSearchValue]);
+
+  //fetching other venue data after scrolling
+  useEffect(() => {
+    const fetchOtherVenueDataAfterScroll = async () => {
+      const otherVenueData = (await fetchOtherVenues()) as any[];
+      setVenueData([...venueData, ...otherVenueData]);
+    };
+    fetchOtherVenueDataAfterScroll();
+  }, [otherVenueSkip]);
+
   return (
     <div>
       <div className="w-[858px] h-[585px] rounded-[24px] !py-6 !pl-6 !pr-4">
@@ -470,13 +527,17 @@ const ExistingVenue = () => {
           <Input
             placeholder="Search by Venue Name, City or state"
             className="border border-gray-400 rounded-lg pl-10"
+            value={searchValue}
+            onChange={(val) => {
+              searchOnChange(val.target.value);
+            }}
           />
           <div className="absolute left-0 top-0 m-2.5 h-4 w-4 text-muted-foreground">
             <SearchIcon />
           </div>
         </div>
         <div className="flex flex-row flex-wrap gap-6 h-[354px]  overflow-auto overscroll-none">
-          {data?.data?.map((item: any) => {
+          {venueData?.map((item: any) => {
             console.log(item, "item");
             return (
               <div className="flex flex-row w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
@@ -489,12 +550,12 @@ const ExistingVenue = () => {
                       <Dialog
                         onOpenChange={() => {
                           setValue("city_id", {
-                            value: item?.city_id?.id,
-                            label: item?.city_id?.name,
+                            value: item?.city_id,
+                            label: item?.city_name,
                           });
                           setValue("state_id", {
-                            value: item?.state?.id,
-                            label: item?.state?.name,
+                            value: item?.state_id,
+                            label: item?.state_name,
                           });
                         }}
                       >
