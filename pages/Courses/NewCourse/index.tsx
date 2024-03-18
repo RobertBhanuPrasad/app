@@ -13,24 +13,24 @@ import { z } from "zod";
 import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
-import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import _ from "lodash";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import { useGetIdentity } from "@refinedev/core";
 
 function index() {
-  const { loginUserData } = loginUserStore();
+  const { data: loginUserData }: any = useGetIdentity();
 
-  if (Object.keys(loginUserData?.userData).length == 0) {
+  if (!loginUserData?.userData) {
     return <div>Loading...</div>;
   }
 
   return <NewCourse />;
 }
 function NewCourse() {
-  const { loginUserData } = loginUserStore();
+  const { data: loginUserData }: any = useGetIdentity();
 
   // Schema definition for form validation
   const organizationSchema = z.object({
