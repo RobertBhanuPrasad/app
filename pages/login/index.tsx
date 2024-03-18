@@ -2,13 +2,10 @@ import nookies from "nookies";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { supabaseClient } from "src/utility";
-import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const { setLoginUserData } = loginUserStore();
 
   const router = useRouter();
 
@@ -26,22 +23,6 @@ const Login = () => {
         path: "/",
       });
       router.push("/");
-    }
-
-    const { data: loginData } = await supabaseClient.auth.getUser();
-
-    if (loginData?.user?.id) {
-      const { data: userData } = await supabaseClient
-        .from("users")
-        .select(
-          "*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
-        )
-        .eq("user_identifier", loginData?.user?.id);
-
-      setLoginUserData({
-        loginData: data?.user as Object,
-        userData: userData?.[0],
-      });
     }
   };
   return (

@@ -1,7 +1,7 @@
 import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
-import { CrudFilter, useSelect } from "@refinedev/core";
+import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -19,15 +19,13 @@ import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionValue } from "src/utility/GetOptionValuesByOptionLabel";
-import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
 
   const formData = watch();
 
-  const { loginUserData } = loginUserStore();
-
+  const { data: loginUserData }: any = useGetIdentity();
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { value: string } }) => val.role_id?.value == SUPER_ADMIN
   );
@@ -331,7 +329,7 @@ const CourseNameDropDown = () => {
 };
 
 const TeachersDropDown = () => {
-  const { loginUserData } = loginUserStore();
+  const { data: loginUserData }: any = useGetIdentity();
 
   const { watch } = useFormContext();
 
