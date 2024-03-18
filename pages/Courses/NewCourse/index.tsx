@@ -13,12 +13,12 @@ import { z } from "zod";
 import { FormProvider } from "react-hook-form";
 import Review from "@public/assets/Review";
 import Fees from "@public/assets/Fees";
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
-import { loginUserStore } from "src/zustandStore/LoginUserStore";
 import _ from "lodash";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 function index() {
   const { loginUserData } = loginUserStore();
@@ -159,10 +159,7 @@ function NewCourse() {
                     <TabsContent value="1" className={contentStylings}>
                       <NewCourseStep2 />
                     </TabsContent>
-                    <TabsContent
-                      value="2"
-                      className={contentStylings}
-                    >
+                    <TabsContent value="2" className={contentStylings}>
                       <NewCourseStep3 />
                     </TabsContent>
                     <TabsContent value="3" className={contentStylings}>
