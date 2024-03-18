@@ -11,8 +11,6 @@ import {
   I_AM_ORGANIZER,
   I_AM_TEACHING,
 } from "src/constants/OptionValues";
-import { Button } from "src/ui/button";
-import { Calendar } from "src/ui/calendar";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
@@ -37,7 +35,6 @@ function NewCourseStep1() {
         <div className="flex gap-1 flex-col">
           <ProgramOrganizerDropDown />
         </div>
-        <div></div>
       </div>
       <RegistrationGateway />
     </div>
