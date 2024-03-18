@@ -165,7 +165,7 @@ const Sessions = () => {
   )?.id;
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {schedules?.map((schedule: any, index: number) => {
         return (
           <div
