@@ -10,7 +10,7 @@ import {
   I_AM_CO_TEACHING,
   I_AM_ORGANIZER,
   I_AM_TEACHING,
-} from "src/constants/OptionValues";
+} from "src/constants/OptionValueOrder";
 import { Card } from "src/ui/card";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
@@ -18,10 +18,7 @@ import { Label } from "src/ui/label";
 import { MultiSelect } from "src/ui/multi-select";
 import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
-import {
-  getOptionValueObjectByOptionValue,
-  getOptionValuesByOptionLabel,
-} from "src/utility/GetOptionValuesByOptionLabel";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 function NewCourseStep1() {
@@ -92,12 +89,22 @@ const RadioCards = () => {
     name: "programOrganizedBy",
   });
 
-  const iAmTeachingId = getOptionValueObjectByOptionValue(I_AM_TEACHING)?.id;
+  const iAmTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_TEACHING
+  )?.id;
 
-  const iAmCoTeachingId =
-    getOptionValueObjectByOptionValue(I_AM_CO_TEACHING)?.id;
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
 
-  const iAmOrganizerId = getOptionValueObjectByOptionValue(I_AM_ORGANIZER)?.id;
+  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_ORGANIZER
+  )?.id;
+
+  console.log(iAmOrganizerId, "lllllllllllllllllllllll");
 
   const { loginUserData } = loginUserStore();
 

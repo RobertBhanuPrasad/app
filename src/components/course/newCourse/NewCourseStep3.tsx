@@ -6,12 +6,12 @@ import DropDown from "@public/assets/DropDown";
 import { useEffect, useState } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
-import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValues";
+import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import {
-  getOptionValueObjectByOptionValue,
+  getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
 
@@ -149,8 +149,10 @@ const Sessions = () => {
     remove(index);
   };
 
-  const timeFormat12HoursId =
-    getOptionValueObjectByOptionValue(TIME_FORMAT_12_HOURS)?.id;
+  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id;
 
   return (
     <div>

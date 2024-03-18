@@ -14,14 +14,18 @@ export const getOptionValuesByOptionLabel = (optionLabelKey: string): any[] => {
   );
 };
 
-export const getOptionValueObjectByOptionValue = (optionValue: string): any => {
+export const getOptionValueObjectByOptionOrder = (
+  optionLabel: string,
+  optionOrder: number
+): any => {
   const { optionLabelValue } = optionLabelValueStore();
-
-  const foundOptionValue = _.find(optionLabelValue, (val) =>
-    _.find(val.option_values, { value: optionValue })
+  console.log(optionLabelValue,'optionLabelValue')
+  const foundOptionValue = _.find(
+    optionLabelValue,
+    (val) => (val.key = optionLabel)
   );
-
+  console.log(foundOptionValue, "foundOptionValue op");
   return foundOptionValue
-    ? _.find(foundOptionValue.option_values, { value: optionValue })
+    ? _.find(foundOptionValue.option_values, { order: optionOrder })
     : undefined;
 };
