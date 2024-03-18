@@ -32,6 +32,7 @@ import {
   RadioGroupItem,
 } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
+import { Circle } from "lucide-react";
 
 // export function MyAwesomeMap() {
 //   const Component = dynamic(() => import("../../ViewMap/index"), {
@@ -277,29 +278,67 @@ const Venue = () => {
     name: "isNewVenue",
   });
 
+  // const { data } = useList({
+  //   resource: "venue",
+  // });
+
+  const {
+    field: { value: VenueId, onChange: venueIdOnChange },
+  } = useController({
+    name: "venueId",
+  });
+
+  const found = true;
   return (
     <div className="flex flex-row gap-7">
-      <div className="rounded-[16px] w-[494px] h-[118px] border  border-[#999999] relative">
-        <Dialog>
-          <DialogTrigger>
-            <Badge
-              variant="outline"
-              className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
-            >
-              View All
-            </Badge>
-          </DialogTrigger>
-          <DialogContent className="w-[858px] h-[585px] rounded-[24px] !py-6 !pl-6 !pr-4">
-            <ExistingVenue />
-            <DialogFooter>
-              <div className="w-full flex items-center justify-center">
-                <DialogClose>
-                  <Button type="submit">Submit</Button>
-                </DialogClose>
+      <div className="rounded-[16px] w-[494px] h-[118px] border  border-[#D6D7D8] relative flex py-[24px] px-4 flex-col">
+        <RadioGroup>
+          <Label htmlFor="option-two">
+            <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
+              <RadioGroupCircleItem
+                value={VenueId ? "val" : ""}
+                id="val"
+                className={` ${
+                  VenueId
+                    ? "!bg-[#7677F4]"
+                    : "border !border-[#D6D7D8] border-[1.5px] "
+                }`}
+              />
+              <div>Existing Venue</div>
+            </div>
+            {found ? (
+              <div>
+                <div className="pl-[30px] leading-6 font-normal">
+                  Select a venue by clicking “View All” button
+                </div>
+                <Dialog>
+                  <DialogTrigger>
+                    <Badge
+                      variant="outline"
+                      className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
+                    >
+                      View All
+                    </Badge>
+                  </DialogTrigger>
+                  <DialogContent className="w-[858px] h-[585px] rounded-[24px] !py-6 !pl-6 !pr-4">
+                    <ExistingVenue />
+                    <DialogFooter>
+                      <div className="w-full flex items-center justify-center">
+                        <DialogClose>
+                          <Button type="submit">Submit</Button>
+                        </DialogClose>
+                      </div>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            ) : (
+              <div className="px-[30px] leading-6 font-normal">
+                No existing venue found
+              </div>
+            )}
+          </Label>
+        </RadioGroup>
       </div>
       {cityValue ? (
         <RadioGroup defaultValue="option-one">
@@ -395,7 +434,7 @@ const Venue = () => {
 };
 
 const ExistingVenue = () => {
-  const { data } = useList({
+  const { data, isLoading } = useList({
     resource: "venue",
     meta: {
       select: "*,city_id!inner(id,name),state_id!inner(id,name)",
@@ -460,105 +499,122 @@ const ExistingVenue = () => {
   } = useController({
     name: "isNewVenue",
   });
+
+  const set = (item: any) => {
+    console.log(
+      item?.city_id?.id,
+      " item?.city_id?.id",
+      " item?.city_id?.name"
+    );
+    setValue("city_id", {
+      label: item?.city_id?.name,
+      value: item?.city_id?.id,
+    });
+    setValue("state_id", {
+      label: item?.state_id?.name,
+      value: item?.state_id?.id,
+    });
+    setValue("venue", item.name);
+    setValue("streetAddress", item?.address);
+    setValue("postalCode", item?.postal_code);
+  };
   return (
     <div>
-      <div className="w-[858px] h-[585px] rounded-[24px] !py-6 !pl-6 !pr-4">
-        <div className="flex justify-center text-[24px] font-semibold">
-          Existing Venues
-        </div>
-        <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto">
-          <Input
-            placeholder="Search by Venue Name, City or state"
-            className="border border-gray-400 rounded-lg pl-10"
-          />
-          <div className="absolute left-0 top-0 m-2.5 h-4 w-4 text-muted-foreground">
-            <SearchIcon />
+      {!isLoading && (
+        <div className=" rounded-[24px]">
+          <div className="flex justify-center text-[24px] font-semibold">
+            Existing Venues
           </div>
-        </div>
-        <div className="flex flex-row flex-wrap gap-6 h-[354px]  overflow-auto overscroll-none">
-          {data?.data?.map((item: any) => {
-            console.log(item, "item");
-            return (
-              <div className="flex flex-row w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
-                <Checkbox id={item.name} value={item.name} />
+          <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto mt-4">
+            <Input
+              placeholder="Search by Venue Name, City or state"
+              className="border border-gray-400 rounded-lg pl-10"
+            />
+            <div className="absolute left-0 top-0 m-2.5 h-4 w-4 text-muted-foreground">
+              <SearchIcon />
+            </div>
+          </div>
+          <div className="flex flex-row flex-wrap gap-6 h-[354px]  overflow-auto overscroll-none mt-6">
+            {data?.data?.map((item: any) => {
+              // console.log(item, "item");
+              return (
+                <div className="flex flex-row w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <Checkbox
+                    id={item.id}
+                    value={item.id}
+                    onCheckedChange={(val) => {
+                      console.log(val, "val");
+                    }}
+                  />
 
-                <div className="space-y-1 leading-none">
-                  <div className="flex justify-between">
-                    <div className="font-semibold">{item.name}</div>
-                    <div className="flex flex-row gap-3">
-                      <Dialog
-                        onOpenChange={() => {
-                          setValue("city_id", {
-                            value: item?.city_id?.id,
-                            label: item?.city_id?.name,
-                          });
-                          setValue("state_id", {
-                            value: item?.state?.id,
-                            label: item?.state?.name,
-                          });
-                        }}
-                      >
-                        <DialogTrigger
-                          onClick={() => {
-                            onChange(false);
-                          }}
-                        >
-                          <EditIcon />
-                        </DialogTrigger>
-                        <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
-                          <AddOrEditVenue />
-                          <DialogFooter>
-                            <div className="w-full flex items-center justify-center">
+                  <div className="space-y-1 leading-none">
+                    <div className="flex justify-between">
+                      <div className="font-semibold">{item.name}</div>
+                      <div className="flex flex-row gap-3">
+                        <Dialog>
+                          <DialogTrigger
+                            onClick={() => {
+                              onChange(false);
+                              set(item);
+                            }}
+                          >
+                            <EditIcon />
+                          </DialogTrigger>
+                          <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
+                            <AddOrEditVenue />
+                            <DialogFooter>
+                              <div className="w-full flex items-center justify-center">
+                                <DialogClose>
+                                  <Button type="submit">Submit</Button>
+                                </DialogClose>
+                              </div>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+
+                        <Dialog>
+                          <DialogTrigger>
+                            <Delete />
+                          </DialogTrigger>
+                          <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+                            <DialogHeader>
+                              <DialogTitle className="flex justify-center">
+                                Delete
+                              </DialogTitle>
+                              <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
+                                Are you sure you want to delete the address
+                              </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter className="w-full flex !justify-center gap-6">
                               <DialogClose>
-                                <Button type="submit">Submit</Button>
+                                <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+                                  No
+                                </Button>
                               </DialogClose>
-                            </div>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                              <DialogClose>
+                                <Button
+                                  className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+                                  onClick={() => deleteVenue(item.id)}
+                                >
+                                  Yes
+                                </Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    </div>
 
-                      <Dialog>
-                        <DialogTrigger>
-                          <Delete />
-                        </DialogTrigger>
-                        <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                          <DialogHeader>
-                            <DialogTitle className="flex justify-center">
-                              Delete
-                            </DialogTitle>
-                            <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-                              Are you sure you want to delete the address
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter className="w-full flex !justify-center gap-6">
-                            <DialogClose>
-                              <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-                                No
-                              </Button>
-                            </DialogClose>
-                            <DialogClose>
-                              <Button
-                                className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
-                                onClick={() => deleteVenue(item.id)}
-                              >
-                                Yes
-                              </Button>
-                            </DialogClose>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                    <div className="leading-tight">
+                      {item.address} {item.postal_code}
                     </div>
                   </div>
-
-                  <div className="leading-tight">
-                    {item.address} {item.postal_code}
-                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -759,6 +815,8 @@ const CityComponent = () => {
   } = useController({
     name: "city_id",
   });
+
+  console.log(cityValue, "cityValue");
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "city",

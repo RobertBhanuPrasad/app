@@ -50,6 +50,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   // State to keep track of the currently selected option
   const [selectedValue, setSelectedValue] = useState<Option | null>(propValue);
 
+  console.log(selectedValue, "selectedValue");
+
+  console.log(propValue, "propValue");
+
   // Reference to the command div for handling clicks outside the dropdown
   const commandRef = useRef<HTMLDivElement>(null);
 
