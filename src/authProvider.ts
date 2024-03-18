@@ -130,7 +130,7 @@ export const authProvider: AuthBindings = {
     if (userData) {
       return {
         data,
-        userData,
+        userData:userData?.[0],
       };
     }
     return null;
