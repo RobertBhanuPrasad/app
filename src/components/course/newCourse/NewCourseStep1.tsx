@@ -1,7 +1,7 @@
 import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
-import { useSelect } from "@refinedev/core";
+import { useGetIdentity, useList, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import React, { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -19,7 +19,7 @@ import { MultiSelect } from "src/ui/multi-select";
 import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import { loginUserStore } from "src/zustandStore/LoginUserStore";
+
 
 function NewCourseStep1() {
   return (
@@ -106,7 +106,7 @@ const RadioCards = () => {
 
   console.log(iAmOrganizerId, "lllllllllllllllllllllll");
 
-  const { loginUserData } = loginUserStore();
+  const { data: loginUserData }: any = useGetIdentity();
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
 
@@ -320,7 +320,7 @@ const OrganizationDropDown = () => {
 };
 
 const ProgramOrganizerDropDown = () => {
-  const { loginUserData } = loginUserStore();
+  const { data: loginUserData }: any = useGetIdentity();
 
   const [currentPage, setCurrentPage] = useState(1);
 

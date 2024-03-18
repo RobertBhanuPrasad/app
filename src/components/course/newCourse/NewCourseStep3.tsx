@@ -3,17 +3,26 @@ import Arrow from "@public/assets/Arrow";
 import Clock from "@public/assets/Clock";
 import Delete from "@public/assets/Delete";
 import DropDown from "@public/assets/DropDown";
+import CalenderIcon from "@public/assets/CalenderIcon";
+import Calender from "@public/assets/CalenderIcon";
+import { CrudFilters, useList, useSelect } from "@refinedev/core";
+import { format, setDate } from "date-fns";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
-import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
+import { Button } from "src/ui/button";
+import { Calendar } from "src/ui/calendar";
 import CustomSelect from "src/ui/custom-select";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Input } from "src/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import { date } from "zod";
+import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -116,10 +125,6 @@ const SchedulesHeader = () => {
   );
 };
 const Sessions = () => {
-  const { watch } = useFormContext();
-
-  const formData = watch();
-
   const {
     fields: schedules,
     append,
@@ -128,11 +133,13 @@ const Sessions = () => {
     name: "schedules",
   });
 
-  useEffect(() => {
-    if (schedules?.length == 0) {
-      handleAddSession();
-    }
-  }, []);
+  const { watch } = useFormContext();
+
+  const [open, setOpen] = useState(false);
+
+  const formData = watch();
+
+  // const schedules = formData?.schedules;
 
   const handleAddSession = () => {
     append({
@@ -142,8 +149,15 @@ const Sessions = () => {
       endMinute: "00",
       startTimeFormat: "AM",
       endTimeFormat: "AM",
+      date: new Date(),
     });
   };
+
+  useEffect(() => {
+    if (schedules?.length == 0) {
+      handleAddSession();
+    }
+  }, []);
 
   const handleRemoveSession = (index: number) => {
     remove(index);
@@ -167,7 +181,25 @@ const Sessions = () => {
               <div className="text-[#7677F4]">&nbsp;*</div>
             </div>
             <div className="h-10 flex items-center gap-6">
-              <div className="w-[233px] ">Date</div>
+              <Dialog open={open}>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={() => setOpen(true)}
+                    className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
+                    variant="outline"
+                  >
+                    <div>
+                      <CalenderIcon />
+                    </div>
+                    <div>
+                      {format(new Date(schedule?.date), "dd MMM, yyyy")}
+                    </div>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
+                  <CalenderComponent index={index} setOpen={setOpen} />
+                </DialogContent>
+              </Dialog>
               <TimePicker
                 index={index}
                 is12HourFormat={
@@ -177,7 +209,7 @@ const Sessions = () => {
                 }
               />
               <div className="w-[127px] flex gap-4 ">
-                {index == schedules?.length - 1 && (
+                {index == formData?.schedules?.length - 1 && (
                   <div
                     onClick={() => {
                       handleAddSession();
@@ -229,6 +261,155 @@ const TimePicker = ({
           name={`schedules[${index}].end`}
           is12HourFormat={is12HourFormat}
         />
+      </div>
+    </div>
+  );
+};
+const CalenderComponent = ({ index, setOpen }: any) => {
+  // Get the date value and onChange function from the controller
+  const {
+    field: { value: dateValue, onChange },
+  } = useController({
+    name: `schedules[${index}].date`,
+  });
+
+  // Initialize state for the selected date, defaulting to the provided dateValue or today's date
+  const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
+  console.log(date, "mmmmmmmmmmmmmmmm");
+  // Fetch organization calendar settings
+  const { data: settingsData } = useList<any>({
+    resource: "organization_calender_settings",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: 1,
+      },
+    ],
+  });
+
+  // Define filters based on the selected date
+  const dateFilters: CrudFilters = [
+    {
+      field: "start_time",
+      operator: "gte",
+      value: new Date(date.setHours(0, 0, 0, 0)).toISOString(),
+    },
+    {
+      field: "end_time",
+      operator: "lt",
+      value: new Date(date.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+    },
+  ];
+
+  // Add additional filters based on organization calendar settings
+  const filter = [...dateFilters];
+  if (settingsData) {
+    if (settingsData?.data[0]?.is_city_enabled) {
+      filter.push({
+        field: "program_id.city_id.id",
+        operator: "eq",
+        value: 1,
+      });
+    }
+    if (settingsData?.data[0]?.is_state_enabled) {
+      filter.push({
+        field: "program_id.state_id.id",
+        operator: "eq",
+        value: 1,
+      });
+    }
+    if (settingsData?.data[0]?.is_venue_enabled) {
+      filter.push({
+        field: "program_id.venue_id",
+        operator: "eq",
+        value: 1,
+      });
+    }
+  }
+
+  // Fetch program schedules based on the filters
+  const { data } = useList<any>({
+    resource: "program_schedules",
+    meta: {
+      select:
+        "*,program_id!inner(program_type_id!inner(name),city_id!inner(id ,name),state_id!inner(id ,name),venue_id))",
+    },
+    filters: filter,
+  });
+
+  // Handle date selection in the calendar
+  const handleOnSelect = (selected: Date | undefined) => {
+    console.log(selected, "kkkkkkkkk");
+    setDate(selected);
+  };
+
+  // Format time string
+  const formatTime = (timeString: string) => {
+    const dateObj = new Date(timeString);
+    const hours = dateObj.getHours();
+    const minutes = dateObj.getMinutes();
+    return `${hours < 10 ? "0" + hours : hours}:${
+      minutes < 10 ? "0" + minutes : minutes
+    }`;
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="h-[401px] flex flex-row gap-4">
+        {/* Calendar component */}
+        <div className="flex-[1]">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={handleOnSelect}
+            className="rounded-md"
+            count={data?.total || 0}
+          />
+        </div>
+        {/* Course details */}
+        <div className="border-l border-gray-300 h-full"></div>
+        <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
+          <div className="flex flex-row justify-between text-[20px] font-semibold">
+            Course
+            {/* Close button */}
+            <div
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <X className="h-6 w-6" />
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
+            {/* Display course details */}
+            {data?.data?.map((course: any) => (
+              <div key={course.id}>
+                <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                  {formatTime(course.start_time)} -{" "}
+                  {formatTime(course?.end_time)} .{" "}
+                  {course?.program_id?.city_id?.name},{" "}
+                  {course?.program_id?.state_id?.name}
+                </div>
+                <div className="font-semibold text-[16px]">
+                  {course.program_id?.program_type_id?.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* Submit button */}
+      <div className="flex self-center">
+        <Button
+          onClick={() => {
+            onChange(date);
+            setOpen(false);
+          }}
+          className="w-24 rounded-[12px]"
+        >
+          Submit
+        </Button>
       </div>
     </div>
   );
