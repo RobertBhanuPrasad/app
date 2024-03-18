@@ -125,11 +125,7 @@ const SchedulesHeader = () => {
   );
 };
 const Sessions = () => {
-  const {
-    fields: schedules,
-    append,
-    remove,
-  } = useFieldArray({
+  const { append, remove } = useFieldArray({
     name: "schedules",
   });
 
@@ -139,7 +135,7 @@ const Sessions = () => {
 
   const formData = watch();
 
-  // const schedules = formData?.schedules;
+  const schedules = formData?.schedules;
 
   const handleAddSession = () => {
     append({
@@ -154,7 +150,7 @@ const Sessions = () => {
   };
 
   useEffect(() => {
-    if (schedules?.length == 0) {
+    if (schedules?.length <= 0 || !schedules) {
       handleAddSession();
     }
   }, []);
