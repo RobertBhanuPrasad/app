@@ -330,7 +330,7 @@ const CourseNameDropDown = () => {
 
 const TeachersDropDown = () => {
   const { data: loginUserData }: any = useGetIdentity();
-  console.log(loginUserData, "mmmmmmmmmmmmmmmmmmmmmmm");
+
   const { watch } = useFormContext();
 
   const formData = watch();
