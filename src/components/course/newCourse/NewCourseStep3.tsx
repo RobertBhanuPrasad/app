@@ -3,8 +3,8 @@ import ViewMap, { fetchLongitudeLatitudeData } from "@components/ViewMap";
 import Delete from "@public/assets/Delete";
 import EditIcon from "@public/assets/EditIcon";
 import SearchIcon from "@public/assets/SearchIcon";
-import { useDelete, useList, useSelect } from "@refinedev/core";
-import _ from "lodash";
+import { CrudFilter, useDelete, useList, useSelect } from "@refinedev/core";
+import _, { truncate } from "lodash";
 import { useEffect, useState } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
@@ -32,7 +32,9 @@ import {
   RadioGroupItem,
 } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
-import { Circle } from "lucide-react";
+import useDebounce from "src/utility/useDebounceHook";
+import GetScrollTypesAlert from "@components/GetScrollAlert";
+import { loginUserStore } from "src/zustandStore/LoginUserStore";
 
 // export function MyAwesomeMap() {
 //   const Component = dynamic(() => import("../../ViewMap/index"), {
@@ -270,17 +272,15 @@ const Venue = () => {
 
   const formData = watch();
 
-  console.log(formData, "formData");
-
   const {
-    field: { onChange },
+    field: { onChange: isNewVenueOnchange },
   } = useController({
     name: "isNewVenue",
   });
 
-  // const { data } = useList({
-  //   resource: "venue",
-  // });
+  const { data } = useList({
+    resource: "venue",
+  });
 
   const {
     field: { value: VenueId, onChange: venueIdOnChange },
@@ -288,16 +288,23 @@ const Venue = () => {
     name: "venueId",
   });
 
-  const found = true;
+  const {
+    field: { onChange },
+  } = useController({
+    name: "isNewVenueSelected",
+  });
   return (
-    <div className="flex flex-row gap-7">
-      <div className="rounded-[16px] w-[494px] h-[118px] border  border-[#D6D7D8] relative flex py-[24px] px-4 flex-col">
-        <RadioGroup>
-          <Label htmlFor="option-two">
+    <div>
+      <RadioGroup
+        className="flex flex-row gap-7"
+        value={VenueId ? "existing-venue" : "new-venue"}
+      >
+        <div className="rounded-[16px] w-[494px] h-[118px] border  border-[#D6D7D8] relative flex py-[24px] px-4 flex-col">
+          <Label htmlFor="existing-venue">
             <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
               <RadioGroupCircleItem
-                value={VenueId ? "val" : ""}
-                id="val"
+                value={VenueId ? "existing-venue" : ""}
+                id="existing-venue"
                 className={` ${
                   VenueId
                     ? "!bg-[#7677F4]"
@@ -306,11 +313,18 @@ const Venue = () => {
               />
               <div>Existing Venue</div>
             </div>
-            {found ? (
+            {data ? (
               <div>
-                <div className="pl-[30px] leading-6 font-normal">
-                  Select a venue by clicking “View All” button
-                </div>
+                {VenueId ? (
+                  <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
+                    {formData?.streetAddress},{formData?.city_id?.label},
+                    {formData?.postalCode}
+                  </div>
+                ) : (
+                  <div className="pl-[30px] leading-6 font-normal">
+                    Select a venue by clicking “View All” button
+                  </div>
+                )}
                 <Dialog>
                   <DialogTrigger>
                     <Badge
@@ -320,10 +334,10 @@ const Venue = () => {
                       View All
                     </Badge>
                   </DialogTrigger>
-                  <DialogContent className="w-[858px] h-[585px] rounded-[24px] !py-6 !pl-6 !pr-4">
+                  <DialogContent className="w-[858px] h-[585px] rounded-[24px] ">
                     <ExistingVenue />
                     <DialogFooter>
-                      <div className="w-full flex items-center justify-center">
+                      <div className="w-full flex items-center justify-center -mt-10">
                         <DialogClose>
                           <Button type="submit">Submit</Button>
                         </DialogClose>
@@ -338,17 +352,15 @@ const Venue = () => {
               </div>
             )}
           </Label>
-        </RadioGroup>
-      </div>
-      {cityValue ? (
-        <RadioGroup defaultValue="option-one">
-          <Label htmlFor="option-one">
+        </div>
+        {formData?.isNewVenueSelected ? (
+          <Label htmlFor="new-venue">
             <div className="w-[494px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6">
               <div className=" flex flex-row justify-between">
                 <div className="text-[16px] font-semibold text-[#7677F4] gap-3 flex flex-row">
                   <RadioGroupCircleItem
-                    value="option-one"
-                    id="option-one"
+                    value="new-venue"
+                    id="new-venue"
                     className="!bg-[#7677F4]"
                   />
                   <div>New Venue</div>
@@ -403,43 +415,52 @@ const Venue = () => {
                 </div>
               </div>
               <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                {formData?.streetAddress},{formData?.city_id?.label}
+                {formData?.streetAddress},{formData?.city_id?.label},
+                {formData?.postalCode}
               </div>
             </div>
           </Label>
-        </RadioGroup>
-      ) : (
-        <Dialog>
-          <DialogTrigger
-            onClick={() => {
-              onChange(true);
-            }}
-          >
-            <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
-              + Add New Venue
-            </div>
-          </DialogTrigger>
-          <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
-            <AddOrEditVenue />
-            <DialogFooter>
-              <div className="w-full flex items-center justify-center">
-                <Button type="submit">Submit</Button>
+        ) : (
+          <Dialog>
+            <DialogTrigger
+              onClick={() => {
+                isNewVenueOnchange(true);
+              }}
+            >
+              <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
+                + Add New Venue
               </div>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+            </DialogTrigger>
+            <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
+              <AddOrEditVenue />
+              <DialogFooter>
+                <div className="w-full flex items-center justify-center">
+                  <Button
+                    type="submit"
+                    onClick={() => {
+                      onChange(true);
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+      </RadioGroup>
     </div>
   );
 };
 
 const ExistingVenue = () => {
-  const { data, isLoading } = useList({
-    resource: "venue",
-    meta: {
-      select: "*,city_id!inner(id,name),state_id!inner(id,name)",
-    },
-  });
+  const [searchValue, searchOnChange] = useState<string>("");
+
+  const debouncedSearchValue = useDebounce(searchValue, 500);
+
+  const [otherVenueSkip, setOtherVenueSkip] = useState<number>(0);
+
+  const [venueData, setVenueData] = useState<any[]>([]);
 
   const { mutate } = useDelete();
 
@@ -449,6 +470,7 @@ const ExistingVenue = () => {
       id: id,
     });
   };
+
   const {
     field: { value: stateValue },
   } = useController({
@@ -492,7 +514,11 @@ const ExistingVenue = () => {
       name: "address_line_coordinates",
     });
 
-  const { setValue } = useFormContext();
+  const { setValue, watch } = useFormContext();
+
+  const formData = watch();
+
+  console.log(formData, "formData");
 
   const {
     field: { onChange },
@@ -500,108 +526,198 @@ const ExistingVenue = () => {
     name: "isNewVenue",
   });
 
-  const set = (item: any) => {
-    console.log(
-      item?.city_id?.id,
-      " item?.city_id?.id",
-      " item?.city_id?.name"
-    );
+  const fetchLoginUserVenue = async () => {
+    const { data, error } = await supabaseClient
+      .from("venue_view_with_names")
+      .select("city_id!inner(id,name),state_id!inner(id,name),")
+      .eq("created_by_user_id", "1")
+      .or(
+        `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
+      );
+
+    return data;
+  };
+
+  const fetchOtherVenues = async () => {
+    const { data } = await supabaseClient
+      .from("venue_view_with_names")
+      .select("*,city_id!inner(id,name),state_id!inner(id,name)")
+      // .neq("created_by_user_id", "1")
+      .or(
+        `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
+      )
+      .range(otherVenueSkip, otherVenueSkip + 5);
+
+    return data;
+  };
+
+  const fetchVenueData = async () => {
+    const loginUserVenues = ((await fetchLoginUserVenue()) as any[]) ?? [];
+    const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
+    setVenueData([...loginUserVenues, ...otherVenueData]);
+  };
+
+  //Fetching initial Data of venues
+  useEffect(() => {
+    fetchVenueData();
+  }, []);
+
+  //Fetching venue data after search
+  useEffect(() => {
+    setVenueData([]);
+    setOtherVenueSkip(0);
+
+    fetchVenueData();
+  }, [debouncedSearchValue]);
+
+  //fetching other venue data after scrolling
+  useEffect(() => {
+    const fetchOtherVenueDataAfterScroll = async () => {
+      const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
+      setVenueData([...venueData, ...otherVenueData]);
+    };
+    fetchOtherVenueDataAfterScroll();
+  }, [otherVenueSkip]);
+
+  const onBottomReached = () => {
+    if (venueData && venueData?.length >= 6)
+      setOtherVenueSkip((previousLimit: number) => previousLimit + 6);
+  };
+
+  const handleCheckboxChange = (item: any) => {
+    setValue("venueId", item.id);
     setValue("city_id", {
-      label: item?.city_id?.name,
-      value: item?.city_id?.id,
+      value: item?.city_id,
+      label: item?.city_name,
     });
     setValue("state_id", {
-      label: item?.state_id?.name,
-      value: item?.state_id?.id,
+      value: item?.state_id,
+      label: item?.state_name,
     });
-    setValue("venue", item.name);
-    setValue("streetAddress", item?.address);
     setValue("postalCode", item?.postal_code);
+    setValue("venue", item?.name);
+    setValue("streetAddress", item?.address);
   };
+
+  const { loginUserData } = loginUserStore();
+
+  const user_roles: any[] = loginUserData?.userData?.user_roles;
+
+  const hasNationalAdminRole =
+    user_roles &&
+    user_roles.some((role) => role.role_id.value === "National Admin");
+
+  const hasSuperAdminRole =
+    user_roles &&
+    user_roles.some((role) => role.role_id.value === "Super Admin");
+
   return (
     <div>
-      {!isLoading && (
-        <div className=" rounded-[24px]">
-          <div className="flex justify-center text-[24px] font-semibold">
-            Existing Venues
+      <div className="w-[858px]  rounded-[24px]  pt-6 !pl-4 !pr-4 ">
+        <div className="flex justify-center text-[24px] font-semibold">
+          Existing Venues
+        </div>
+        <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto mt-4">
+          <Input
+            placeholder="Search by Venue Name, City or state"
+            className="border border-gray-400 rounded-lg pl-10"
+            value={searchValue}
+            onChange={(val) => {
+              searchOnChange(val.target.value);
+            }}
+          />
+          <div className="absolute left-0 top-0 m-2.5 h-4 w-4 text-muted-foreground">
+            <SearchIcon />
           </div>
-          <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto mt-4">
-            <Input
-              placeholder="Search by Venue Name, City or state"
-              className="border border-gray-400 rounded-lg pl-10"
-            />
-            <div className="absolute left-0 top-0 m-2.5 h-4 w-4 text-muted-foreground">
-              <SearchIcon />
-            </div>
-          </div>
-          <div className="flex flex-row flex-wrap gap-6 h-[354px]  overflow-auto overscroll-none mt-6">
-            {data?.data?.map((item: any) => {
-              // console.log(item, "item");
+        </div>
+        <GetScrollTypesAlert
+          id={"options"}
+          onBottom={() => {
+            onBottomReached();
+          }}
+        >
+          <div
+            className="flex flex-row flex-wrap gap-6 h-[344px] mt-6  overflow-auto overscroll-none"
+            id={"options"}
+          >
+            {venueData?.map((item: any) => {
               return (
                 <div className="flex flex-row w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
                   <Checkbox
                     id={item.id}
                     value={item.id}
-                    onCheckedChange={(val) => {
-                      console.log(val, "val");
-                    }}
+                    onCheckedChange={() => handleCheckboxChange(item)}
+                    checked={formData?.venueId == item.id ? true : false}
                   />
-
                   <div className="space-y-1 leading-none">
                     <div className="flex justify-between">
                       <div className="font-semibold">{item.name}</div>
                       <div className="flex flex-row gap-3">
-                        <Dialog>
-                          <DialogTrigger
-                            onClick={() => {
-                              onChange(false);
-                              set(item);
+                        {(hasNationalAdminRole ||
+                          hasSuperAdminRole ||
+                          item?.created_by_user_id ==
+                            loginUserData?.userData?.id) && (
+                          <Dialog
+                            onOpenChange={() => {
+                              setValue("city_id", {
+                                value: item?.city_id,
+                                label: item?.city_name,
+                              });
+                              setValue("state_id", {
+                                value: item?.state_id,
+                                label: item?.state_name,
+                              });
                             }}
                           >
-                            <EditIcon />
-                          </DialogTrigger>
-                          <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
-                            <AddOrEditVenue />
-                            <DialogFooter>
-                              <div className="w-full flex items-center justify-center">
-                                <DialogClose>
+                            <DialogTrigger
+                              onClick={() => {
+                                onChange(false);
+                              }}
+                            >
+                              <EditIcon />
+                            </DialogTrigger>
+                            <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
+                              <AddOrEditVenue />
+                              <DialogFooter>
+                                <div className="w-full flex items-center justify-center">
                                   <Button type="submit">Submit</Button>
+                                </div>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                        )}
+                        {hasNationalAdminRole && (
+                          <Dialog>
+                            <DialogTrigger>
+                              <Delete />
+                            </DialogTrigger>
+                            <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+                              <DialogHeader>
+                                <DialogTitle className="flex justify-center">
+                                  Delete
+                                </DialogTitle>
+                                <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
+                                  Are you sure you want to delete the address
+                                </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter className="w-full flex !justify-center gap-6">
+                                <DialogClose>
+                                  <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+                                    No
+                                  </Button>
                                 </DialogClose>
-                              </div>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-
-                        <Dialog>
-                          <DialogTrigger>
-                            <Delete />
-                          </DialogTrigger>
-                          <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                            <DialogHeader>
-                              <DialogTitle className="flex justify-center">
-                                Delete
-                              </DialogTitle>
-                              <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-                                Are you sure you want to delete the address
-                              </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter className="w-full flex !justify-center gap-6">
-                              <DialogClose>
-                                <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-                                  No
-                                </Button>
-                              </DialogClose>
-                              <DialogClose>
-                                <Button
-                                  className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
-                                  onClick={() => deleteVenue(item.id)}
-                                >
-                                  Yes
-                                </Button>
-                              </DialogClose>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
+                                <DialogClose>
+                                  <Button
+                                    className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+                                    onClick={() => deleteVenue(item.id)}
+                                  >
+                                    Yes
+                                  </Button>
+                                </DialogClose>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                        )}
                       </div>
                     </div>
 
@@ -613,8 +729,8 @@ const ExistingVenue = () => {
               );
             })}
           </div>
-        </div>
-      )}
+        </GetScrollTypesAlert>
+      </div>
     </div>
   );
 };
@@ -684,8 +800,6 @@ const MapComponent = () => {
 
   const formData = watch();
 
-  console.log(formData, "formData");
-
   const loadInitialCoordinates = async () => {
     let LocationData: any;
     if (formData?.city_id && formData?.state_id) {
@@ -741,7 +855,7 @@ const PostalCodeComponent = () => {
   } = useController({
     name: "postalCode",
   });
-  const { setValue, trigger } = useFormContext();
+  const { setValue } = useFormContext();
 
   const fetchCityStateData = async () => {
     if (postalCodeValue?.length > 4) {
@@ -805,6 +919,12 @@ const StreetAddressComponent = () => {
 };
 
 const CityComponent = () => {
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  console.log(formData, "formData");
+
   const [selectOptions, setSelectOptions] = useState<any>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -816,12 +936,20 @@ const CityComponent = () => {
     name: "city_id",
   });
 
-  console.log(cityValue, "cityValue");
+  let filter: Array<CrudFilter> = [];
 
+  if (formData?.state_id?.value) {
+    filter.push({
+      field: "state_id",
+      operator: "eq",
+      value: formData?.state_id?.value,
+    });
+  }
   const { options, onSearch, queryResult } = useSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
+    filters: filter,
     onSearch: (value) => [
       {
         field: "name",
@@ -940,6 +1068,30 @@ const CenterComponent = () => {
   } = useController({
     name: "center",
   });
+  const { watch } = useFormContext();
+
+  const formData = watch();
+  let filter: Array<CrudFilter> = [];
+  if (formData?.state_id?.value && formData?.city_id?.value) {
+    filter.push(
+      {
+        field: "state_id",
+        operator: "eq",
+        value: formData?.state_id?.value,
+      },
+      {
+        field: "city_id",
+        operator: "eq",
+        value: formData?.city_id?.value,
+      }
+    );
+  } else if (formData?.state_id?.value) {
+    filter.push({
+      field: "state_id",
+      operator: "eq",
+      value: formData?.state_id?.value,
+    });
+  }
 
   const {
     options: centerOptions,
@@ -949,6 +1101,7 @@ const CenterComponent = () => {
     resource: "center",
     optionLabel: "name",
     optionValue: "id",
+    filters: filter,
     onSearch: (value) => [
       {
         field: "name",

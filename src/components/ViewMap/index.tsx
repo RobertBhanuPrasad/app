@@ -63,7 +63,7 @@ const ViewMap: FC<ViewMapProps> = ({
   }, []);
   return (
     <div>
-      {isMounted && (
+      {isMounted && typeof window !== "undefined" && (
         <div>
           <MapContainer
             center={value}
