@@ -19,12 +19,12 @@ export const getOptionValueObjectByOptionOrder = (
   optionOrder: number
 ): any => {
   const { optionLabelValue } = optionLabelValueStore();
-  console.log(optionLabelValue,'optionLabelValue')
+
   const foundOptionValue = _.find(
     optionLabelValue,
     (val) => (val.key = optionLabel)
   );
-  console.log(foundOptionValue, "foundOptionValue op");
+
   return foundOptionValue
     ? _.find(foundOptionValue.option_values, { order: optionOrder })
     : undefined;

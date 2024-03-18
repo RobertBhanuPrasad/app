@@ -20,7 +20,6 @@ import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
-
 function NewCourseStep1() {
   return (
     <div>
@@ -103,8 +102,6 @@ const RadioCards = () => {
     PROGRAM_ORGANIZER_TYPE,
     I_AM_ORGANIZER
   )?.id;
-
-  console.log(iAmOrganizerId, "lllllllllllllllllllllll");
 
   const { data: loginUserData }: any = useGetIdentity();
 

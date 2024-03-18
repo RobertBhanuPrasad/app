@@ -275,7 +275,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date
   const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
-  console.log(date, "mmmmmmmmmmmmmmmm");
+
   // Fetch organization calendar settings
   const { data: settingsData } = useList<any>({
     resource: "organization_calender_settings",
@@ -340,7 +340,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 
   // Handle date selection in the calendar
   const handleOnSelect = (selected: Date | undefined) => {
-    console.log(selected, "kkkkkkkkk");
     setDate(selected);
   };
 
