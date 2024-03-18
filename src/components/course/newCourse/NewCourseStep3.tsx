@@ -1,7 +1,8 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import Calender from "@public/assets/CalenderIcon";
-import { useList, useSelect } from "@refinedev/core";
+import { CrudFilters, useList, useSelect } from "@refinedev/core";
 import { format, setDate } from "date-fns";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
@@ -124,8 +125,6 @@ const Sessions = () => {
 
   const formData = watch();
 
-  console.log("heyy form daa", formData?.schedules);
-
   useEffect(() => {
     if (formData?.schedules?.length == 0) {
       append({ value: "1", date: new Date() });
@@ -209,39 +208,84 @@ const Sessions = () => {
 };
 
 const CalenderComponent = ({ index, setOpen }: any) => {
+  // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },
   } = useController({
     name: `schedules[${index}].date`,
   });
 
+  // Initialize state for the selected date, defaulting to the provided dateValue or today's date 
+  const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
+
+  // Fetch organization calendar settings
+  const { data: settingsData } = useList<any>({
+    resource: "organization_calender_settings",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: 1,
+      },
+    ],
+  });
+
+  // Define filters based on the selected date
+  const dateFilters: CrudFilters = [
+    {
+      field: "start_time",
+      operator: "gte",
+      value: new Date(date.setHours(0, 0, 0, 0)).toISOString(),
+    },
+    {
+      field: "end_time",
+      operator: "lt",
+      value: new Date(date.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+    },
+  ];
+
+  // Add additional filters based on organization calendar settings
+  const filter = [...dateFilters];
+  if (settingsData) {
+    if (settingsData?.data[0]?.is_city_enabled) {
+      filter.push({
+        field: "program_id.city_id.id",
+        operator: "eq",
+        value: 1,
+      });
+    }
+    if (settingsData?.data[0]?.is_state_enabled) {
+      filter.push({
+        field: "program_id.state_id.id",
+        operator: "eq",
+        value: 1,
+      });
+    }
+    if (settingsData?.data[0]?.is_venue_enabled) {
+      filter.push({
+        field: "program_id.venue_id",
+        operator: "eq",
+        value: 1,
+      });
+    }
+  }
+
+  // Fetch program schedules based on the filters
   const { data } = useList<any>({
     resource: "program_schedules",
     meta: {
       select:
-        "*,program_id!inner(program_type_id!inner(name),city_id!inner(name) , state_id!inner(name)))",
+        "*,program_id!inner(program_type_id!inner(name),city_id!inner(id ,name),state_id!inner(id ,name),venue_id))",
     },
-    filters: dateValue
-      ? [
-          {
-            field: "start_time",
-            operator: "gte",
-            value: new Date(dateValue.setHours(0, 0, 0, 0)).toISOString(),
-          },
-          {
-            field: "end_time",
-            operator: "lt",
-            value: new Date(
-              dateValue.getTime() + 24 * 60 * 60 * 1000
-            ).toISOString(),
-          },
-        ]
-      : [],
+    filters: filter,
   });
 
+  // Handle date selection in the calendar
   const handleOnSelect = (selected: Date | undefined) => {
-    onChange(selected);
+    setDate(selected);
   };
+
+  // Format time string
   const formatTime = (timeString: string) => {
     const dateObj = new Date(timeString);
     const hours = dateObj.getHours();
@@ -254,19 +298,32 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="h-[401px] flex flex-row gap-4">
+        {/* Calendar component */}
         <div className="flex-[1]">
           <Calendar
             mode="single"
-            selected={dateValue}
+            selected={date}
             onSelect={handleOnSelect}
             className="rounded-md"
             count={data?.total || 0}
           />
         </div>
+        {/* Course details */}
         <div className="border-l border-gray-300 h-full"></div>
         <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
-          <div className="text-[20px] font-semibold">Course</div>
+          <div className="flex flex-row justify-between text-[20px] font-semibold">
+            Course
+            {/* Close button */}
+            <div
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <X className="h-6 w-6" />
+            </div>
+          </div>
           <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
+            {/* Display course details */}
             {data?.data?.map((course: any) => (
               <div key={course.id}>
                 <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
@@ -283,8 +340,15 @@ const CalenderComponent = ({ index, setOpen }: any) => {
           </div>
         </div>
       </div>
+      {/* Submit button */}
       <div className="flex self-center">
-        <Button onClick={() => setOpen(false)} className="w-24 rounded-[12px]">
+        <Button
+          onClick={() => {
+            onChange(date);
+            setOpen(false);
+          }}
+          className="w-24 rounded-[12px]"
+        >
           Submit
         </Button>
       </div>
