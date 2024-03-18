@@ -529,7 +529,7 @@ const ExistingVenue = () => {
   const fetchLoginUserVenue = async () => {
     const { data, error } = await supabaseClient
       .from("venue_view_with_names")
-      .select("city_id!inner(id,name),state_id!inner(id,name),")
+      .select("*")
       .eq("created_by_user_id", "1")
       .or(
         `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
@@ -541,7 +541,7 @@ const ExistingVenue = () => {
   const fetchOtherVenues = async () => {
     const { data } = await supabaseClient
       .from("venue_view_with_names")
-      .select("*,city_id!inner(id,name),state_id!inner(id,name)")
+      .select("*")
       // .neq("created_by_user_id", "1")
       .or(
         `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
