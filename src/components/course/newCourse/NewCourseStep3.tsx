@@ -215,7 +215,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     name: `schedules[${index}].date`,
   });
 
-  // Initialize state for the selected date, defaulting to the provided dateValue or today's date 
+  // Initialize state for the selected date, defaulting to the provided dateValue or today's date
   const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
 
   // Fetch organization calendar settings
@@ -235,12 +235,13 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     {
       field: "start_time",
       operator: "gte",
-      value: new Date(date.setHours(0, 0, 0, 0)).toISOString(),
+      value: date && new Date(date?.setHours(0, 0, 0, 0))?.toISOString(),
     },
     {
       field: "end_time",
       operator: "lt",
-      value: new Date(date.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+      value:
+        date && new Date(date?.getTime() + 24 * 60 * 60 * 1000)?.toISOString(),
     },
   ];
 
