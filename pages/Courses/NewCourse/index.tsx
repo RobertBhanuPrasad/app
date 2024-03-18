@@ -33,8 +33,17 @@ function NewCourse() {
   const { loginUserData } = loginUserStore();
 
   // Schema definition for form validation
+  const organizationSchema = z.object({
+    // Define the schema for the organization object's properties here
+    // For example:
+    value: z.number(),
+    label: z.string(),
+    // Add more properties as needed
+  });
+
   const schema = z.object({
-    // organization: z.object({
+    organization: organizationSchema,
+    // city_id: z.object({
     //   // Define the schema for the organization object's properties here
     //   // For example:
     //   value: z.number(),
@@ -57,7 +66,8 @@ function NewCourse() {
       action: "create",
       resource: "event",
     },
-    // resolver: zodResolver(schema),
+
+    resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
       displayLanguage: "true",
@@ -70,7 +80,10 @@ function NewCourse() {
     refineCore: { onFinish, formLoading },
     handleSubmit,
     steps: { currentStep, gotoStep },
+    formState: { errors },
   } = methods;
+
+  console.log(errors, "errors");
   // Array of step titles, icons, and colors
   const stepTitles = [
     {
@@ -159,10 +172,7 @@ function NewCourse() {
                     <TabsContent value="1" className={contentStylings}>
                       <NewCourseStep2 />
                     </TabsContent>
-                    <TabsContent
-                      value="2"
-                      className={contentStylings}
-                    >
+                    <TabsContent value="2" className={contentStylings}>
                       <NewCourseStep3 />
                     </TabsContent>
                     <TabsContent value="3" className={contentStylings}>
