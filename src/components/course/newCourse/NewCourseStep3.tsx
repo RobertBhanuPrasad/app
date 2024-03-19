@@ -1,5 +1,4 @@
 "use client";
-import ViewMap, { fetchLongitudeLatitudeData } from "@components/ViewMap";
 import Delete from "@public/assets/Delete";
 import EditIcon from "@public/assets/EditIcon";
 import SearchIcon from "@public/assets/SearchIcon";
@@ -33,13 +32,14 @@ import CalenderIcon from "@public/assets/CalenderIcon";
 import Calender from "@public/assets/CalenderIcon";
 import { format, setDate } from "date-fns";
 import { X } from "lucide-react";
-
 import { Calendar } from "src/ui/calendar";
-
 import { Input } from "src/ui/input";
 import { supabaseClient } from "src/utility";
-import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
-import dynamic from "next/dynamic";
+import {
+  fetchLongitudeLatitudeData,
+  getOptionValuesByOptionLabel,
+} from "src/utility/GetOptionValuesByOptionLabel";
+
 import {
   RadioGroup,
   RadioGroupCircleItem,
@@ -48,17 +48,8 @@ import {
 import { Label } from "src/ui/label";
 import useDebounce from "src/utility/useDebounceHook";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
-
-// export function MyAwesomeMap() {
-//   const Component = dynamic(() => import("../../ViewMap/index"), {
-//     ssr: false,
-//   });
-//   return <Component />;
-// }
-// const MyAwesomeMap = dynamic(() => import("../../ViewMap/index"), {
-//   ssr: false,
-// });
 import { date } from "zod";
+import MapPointer from "../../MapComponent";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -256,57 +247,15 @@ const Sessions = () => {
 };
 
 const Venue = () => {
-  const {
-    field: { value: stateValue },
-  } = useController({
-    name: "state_id",
-  });
-
-  const {
-    field: { value: venue },
-  } = useController({
-    name: "venue",
-  });
-
-  const {
-    field: { value: streetAddress },
-  } = useController({
-    name: "streetAddress",
-  });
-
-  const {
-    field: { value: postalCode },
-  } = useController({
-    name: "postalCode",
-  });
-
-  const {
-    field: { value: center },
-  } = useController({
-    name: "center",
-  });
-
-  const {
-    field: { value: cityValue },
-  } = useController({
-    name: "city_id",
-  });
-
-  const {
-    field: { value: coordinates, onChange: setCoordinates },
-  }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
-    useController({
-      name: "address_line_coordinates",
-    });
-
-  const { watch, setValue } = useFormContext();
+  const { watch, setValue, resetField } = useFormContext();
 
   const removeVenue = () => {
-    setValue("city_id", null);
+    setValue("newVenue", null);
   };
 
   const formData = watch();
 
+  console.log(formData, "formData");
   const {
     field: { onChange: isNewVenueOnchange },
   } = useController({
@@ -318,31 +267,45 @@ const Venue = () => {
   });
 
   const {
-    field: { value: VenueId, onChange: venueIdOnChange },
+    field: { value: existingVenue },
   } = useController({
-    name: "venueId",
+    name: "existingVenue",
   });
 
   const {
-    field: { onChange },
+    field: { value, onChange },
   } = useController({
     name: "isNewVenueSelected",
   });
+
+  const {
+    field: { onChange: newVenueOnchange },
+  } = useController({
+    name: "newVenue",
+  });
+
   return (
     <div>
       <RadioGroup
         className="flex flex-row gap-7"
-        value={VenueId ? "existing-venue" : "new-venue"}
+        onValueChange={onChange}
+        value={value}
       >
-        <div className="rounded-[16px] w-[494px] h-[118px] border  border-[#D6D7D8] relative flex py-[24px] px-4 flex-col">
+        <div
+          className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
+            value === "existing-venue"
+              ? "border border-[#7677F4]"
+              : "border border-[#D6D7D8]"
+          }`}
+        >
           <Label htmlFor="existing-venue">
             <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
               <RadioGroupCircleItem
-                value={VenueId ? "existing-venue" : ""}
+                value="existing-venue"
                 id="existing-venue"
                 className={` ${
-                  VenueId
-                    ? "!bg-[#7677F4]"
+                  value == "existing-venue"
+                    ? "!bg-[#7677F4] "
                     : "border !border-[#D6D7D8] border-[1.5px] "
                 }`}
               />
@@ -350,36 +313,31 @@ const Venue = () => {
             </div>
             {data ? (
               <div>
-                {VenueId ? (
+                {existingVenue ? (
                   <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                    {formData?.streetAddress},{formData?.city_id?.label},
-                    {formData?.postalCode}
+                    {formData?.existingVenue[0]?.address},
+                    {formData?.existingVenue[0]?.postal_code}
                   </div>
                 ) : (
                   <div className="pl-[30px] leading-6 font-normal">
                     Select a venue by clicking “View All” button
                   </div>
                 )}
-                <Dialog>
-                  <DialogTrigger>
-                    <Badge
-                      variant="outline"
-                      className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
-                    >
-                      View All
-                    </Badge>
-                  </DialogTrigger>
-                  <DialogContent className="w-[858px] h-[585px] rounded-[24px] ">
-                    <ExistingVenue />
-                    <DialogFooter>
-                      <div className="w-full flex items-center justify-center -mt-10">
-                        <DialogClose>
-                          <Button type="submit">Submit</Button>
-                        </DialogClose>
-                      </div>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                {!(value === "new-venue") && (
+                  <Dialog>
+                    <DialogTrigger>
+                      <Badge
+                        variant="outline"
+                        className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
+                      >
+                        View All
+                      </Badge>
+                    </DialogTrigger>
+                    <DialogContent className="w-[858px] h-[585px] rounded-[24px] ">
+                      <ExistingVenue />
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
             ) : (
               <div className="px-[30px] leading-6 font-normal">
@@ -388,21 +346,56 @@ const Venue = () => {
             )}
           </Label>
         </div>
-        {formData?.isNewVenueSelected ? (
+        {formData?.newVenue ? (
           <Label htmlFor="new-venue">
-            <div className="w-[494px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6">
+            <div
+              className={`w-[494px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
+                value === "new-venue"
+                  ? "border border-[#7677F4]"
+                  : "border border-[#D6D7D8]"
+              }`}
+            >
               <div className=" flex flex-row justify-between">
                 <div className="text-[16px] font-semibold text-[#7677F4] gap-3 flex flex-row">
                   <RadioGroupCircleItem
                     value="new-venue"
                     id="new-venue"
-                    className="!bg-[#7677F4]"
+                    className={` ${
+                      value == "new-venue"
+                        ? "!bg-[#7677F4] "
+                        : "border !border-[#D6D7D8] border-[1.5px] "
+                    }`}
                   />
                   <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
-                  <Dialog>
-                    <DialogTrigger>
+                  <Dialog
+                    onOpenChange={() => {
+                      setValue("newVenue.city", {
+                        value: formData?.newVenue?.city?.value,
+                        label: formData?.newVenue?.city?.label,
+                      });
+                      setValue("newVenue.state", {
+                        value: formData?.newVenue?.state?.value,
+                        label: formData?.newVenue?.state?.value,
+                      });
+                      setValue(
+                        "newVenue.postalCode",
+                        formData?.newVenue?.postalCode
+                      );
+                      setValue(
+                        "newVenue.streetAddress",
+                        formData?.newVenue?.streetAddress
+                      );
+                      setValue("newVenue.venue", formData?.newVenue?.venue);
+                      setValue("newVenue.center", formData?.newVenue?.center);
+                    }}
+                  >
+                    <DialogTrigger
+                      onClick={() => {
+                        isNewVenueOnchange(false);
+                      }}
+                    >
                       <EditIcon />
                     </DialogTrigger>
                     <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
@@ -450,13 +443,23 @@ const Venue = () => {
                 </div>
               </div>
               <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                {formData?.streetAddress},{formData?.city_id?.label},
-                {formData?.postalCode}
+                {formData?.newVenue?.streetAddress},
+                {formData?.newVenue?.city_id?.label},
+                {formData?.newVenue?.postalCode}
               </div>
             </div>
           </Label>
         ) : (
-          <Dialog>
+          <Dialog
+            onOpenChange={() => {
+              resetField("center");
+              resetField("state_id");
+              resetField("streetAddress");
+              resetField("postalCode");
+              resetField("city_id");
+              resetField("venue");
+            }}
+          >
             <DialogTrigger
               onClick={() => {
                 isNewVenueOnchange(true);
@@ -470,14 +473,24 @@ const Venue = () => {
               <AddOrEditVenue />
               <DialogFooter>
                 <div className="w-full flex items-center justify-center">
-                  <Button
-                    type="submit"
-                    onClick={() => {
-                      onChange(true);
-                    }}
-                  >
-                    Submit
-                  </Button>
+                  <DialogClose>
+                    <Button
+                      type="submit"
+                      onClick={() => {
+                        onChange("new-venue");
+                        newVenueOnchange({
+                          venue: formData?.venue,
+                          state: formData?.state_id,
+                          city: formData?.city_id,
+                          streetAddress: formData?.streetAddress,
+                          postalCode: formData?.postalCode,
+                          center: formData?.center,
+                        });
+                      }}
+                    >
+                      Submit
+                    </Button>
+                  </DialogClose>
                 </div>
               </DialogFooter>
             </DialogContent>
@@ -638,6 +651,11 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 };
 
 const ExistingVenue = () => {
+  const { setValue, watch } = useFormContext();
+
+  const formData = watch();
+
+  console.log(formData, "formData");
   const [searchValue, searchOnChange] = useState<string>("");
 
   const debouncedSearchValue = useDebounce(searchValue, 500);
@@ -646,63 +664,11 @@ const ExistingVenue = () => {
 
   const [venueData, setVenueData] = useState<any[]>([]);
 
-  const { mutate } = useDelete();
-
-  const deleteVenue = (id: any) => {
-    mutate({
-      resource: "venue",
-      id: id,
-    });
-  };
-
   const {
-    field: { value: stateValue },
+    field: { value: deletedVenueIds = [], onChange: deleteVenueIdOnChange },
   } = useController({
-    name: "state_id",
+    name: "deletedVenueID",
   });
-
-  const {
-    field: { value: venue },
-  } = useController({
-    name: "venue",
-  });
-
-  const {
-    field: { value: streetAddress },
-  } = useController({
-    name: "streetAddress",
-  });
-
-  const {
-    field: { value: postalCode },
-  } = useController({
-    name: "postalCode",
-  });
-
-  const {
-    field: { value: center },
-  } = useController({
-    name: "center",
-  });
-
-  const {
-    field: { value: cityValue },
-  } = useController({
-    name: "city_id",
-  });
-
-  const {
-    field: { value: coordinates, onChange: setCoordinates },
-  }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
-    useController({
-      name: "address_line_coordinates",
-    });
-
-  const { setValue, watch } = useFormContext();
-
-  const formData = watch();
-
-  console.log(formData, "formData");
 
   const {
     field: { onChange },
@@ -710,8 +676,14 @@ const ExistingVenue = () => {
     name: "isNewVenue",
   });
 
+  const {
+    field: { onChange: isNewVenueSelectedOnchange },
+  } = useController({
+    name: "isNewVenueSelected",
+  });
+
   const fetchLoginUserVenue = async () => {
-    const { data, error } = await supabaseClient
+    const { data } = await supabaseClient
       .from("venue_view_with_names")
       .select("*")
       .eq("created_by_user_id", "1")
@@ -754,46 +726,55 @@ const ExistingVenue = () => {
     fetchVenueData();
   }, [debouncedSearchValue]);
 
+  const filteredVenueData = venueData.filter(
+    (obj) => !deletedVenueIds.includes(obj.id)
+  );
+
+  console.log(filteredVenueData, "filteredVenueData");
+
+  const deleteVenue = (id: any) => {
+    deleteVenueIdOnChange([...deletedVenueIds, id]);
+  };
+
   //fetching other venue data after scrolling
   useEffect(() => {
     const fetchOtherVenueDataAfterScroll = async () => {
       const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
-      setVenueData([...venueData, ...otherVenueData]);
+      setVenueData([...filteredVenueData, ...otherVenueData]);
     };
     fetchOtherVenueDataAfterScroll();
   }, [otherVenueSkip]);
 
   const onBottomReached = () => {
-    if (venueData && venueData?.length >= 6)
+    if (filteredVenueData && filteredVenueData?.length >= 6)
       setOtherVenueSkip((previousLimit: number) => previousLimit + 6);
   };
 
   const handleCheckboxChange = (item: any) => {
     setValue("venueId", item.id);
-    setValue("city_id", {
-      value: item?.city_id,
-      label: item?.city_name,
-    });
-    setValue("state_id", {
-      value: item?.state_id,
-      label: item?.state_name,
-    });
-    setValue("postalCode", item?.postal_code);
-    setValue("venue", item?.name);
-    setValue("streetAddress", item?.address);
+  };
+  const {
+    field: { onChange: existingVenueOnChange },
+  } = useController({
+    name: "existingVenue",
+  });
+
+  const getExistingVenueDetails = () => {
+    const existingVenueObject = venueData.filter(
+      (venue) => venue.id == formData?.venueId
+    );
+    existingVenueOnChange(existingVenueObject);
   };
 
   const { data: loginUserData }: any = useGetIdentity();
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
 
-  const hasNationalAdminRole =
-    user_roles &&
-    user_roles.some((role) => role.role_id.value === "National Admin");
+  console.log(user_roles, "user_roles");
 
-  const hasSuperAdminRole =
-    user_roles &&
-    user_roles.some((role) => role.role_id.value === "Super Admin");
+  const isUserNationAdminOrSuperAdmin =
+    user_roles[0]?.role_id?.value == "National Admin" ||
+    user_roles[0]?.role_id?.value == "Super Admin";
 
   return (
     <div>
@@ -821,12 +802,13 @@ const ExistingVenue = () => {
           }}
         >
           <div
-            className="flex flex-row flex-wrap gap-6 h-[344px] mt-6  overflow-auto overscroll-none"
+            className=" h-[344px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
             id={"options"}
           >
-            {venueData?.map((item: any) => {
+            {/* <div className="flex flex-row flex-wrap gap-6 "> */}
+            {filteredVenueData?.map((item: any) => {
               return (
-                <div className="flex flex-row w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
+                <div className="flex  flex-row !w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
                   <Checkbox
                     id={item.id}
                     value={item.id}
@@ -837,8 +819,7 @@ const ExistingVenue = () => {
                     <div className="flex justify-between">
                       <div className="font-semibold">{item.name}</div>
                       <div className="flex flex-row gap-3">
-                        {(hasNationalAdminRole ||
-                          hasSuperAdminRole ||
+                        {(isUserNationAdminOrSuperAdmin ||
                           item?.created_by_user_id ==
                             loginUserData?.userData?.id) && (
                           <Dialog
@@ -862,15 +843,10 @@ const ExistingVenue = () => {
                             </DialogTrigger>
                             <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
                               <AddOrEditVenue />
-                              <DialogFooter>
-                                <div className="w-full flex items-center justify-center">
-                                  <Button type="submit">Submit</Button>
-                                </div>
-                              </DialogFooter>
                             </DialogContent>
                           </Dialog>
                         )}
-                        {hasNationalAdminRole && (
+                        {isUserNationAdminOrSuperAdmin && (
                           <Dialog>
                             <DialogTrigger>
                               <Delete />
@@ -912,8 +888,22 @@ const ExistingVenue = () => {
                 </div>
               );
             })}
+            {/* </div> */}
           </div>
         </GetScrollTypesAlert>
+      </div>
+      <div className="w-full flex items-center justify-center mt-8">
+        <DialogClose>
+          <Button
+            type="submit"
+            onClick={() => {
+              isNewVenueSelectedOnchange("existing-venue");
+              getExistingVenueDetails();
+            }}
+          >
+            Submit
+          </Button>
+        </DialogClose>
       </div>
     </div>
   );
@@ -999,7 +989,7 @@ const MapComponent = () => {
 
   return (
     <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
-      <ViewMap
+      <MapPointer
         value={coordinates}
         onChange={setCoordinates}
         draggable={true}

@@ -1,5 +1,3 @@
-"use client";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
 
 import "leaflet/dist/leaflet.css";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
@@ -33,6 +31,7 @@ interface ViewMapProps {
 /**
  * @function ViewMap is a function used to render map in the front end.
  */
+
 const ViewMap: FC<ViewMapProps> = ({
   value = { lat: 0, lng: 0 },
   onChange,
@@ -40,7 +39,7 @@ const ViewMap: FC<ViewMapProps> = ({
   zoom = 10,
 }) => {
   const ICON = icon({
-    iconUrl: "../../../public/assets/MapIcon.svg",
+    iconUrl: "@public/assets/MapIcon.svg",
     iconSize: [32, 32],
   });
   const markerRef = useRef(null);
@@ -56,36 +55,49 @@ const ViewMap: FC<ViewMapProps> = ({
     }),
     []
   );
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // const componentDidMount = () => {
+  //   console.log("window.innerHeight", window.innerHeight);
+  // };
+
+  // componentDidMount();
+
+  // // Call componentDidMount immediately after the component is defined
+
+  // const [isMounted, setIsMounted] = useState(false);
+
+  // useEffect(() => {
+  //   setIsMounted(true);
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log("window.innerHeight", window.innerHeight);
+  // }, []);
   return (
     <div>
-      {isMounted && typeof window !== "undefined" && (
-        <div>
-          <MapContainer
-            center={value}
-            zoom={zoom}
-            style={{ height: "160px", width: "586px" }}
-            scrollWheelZoom={false}
-            // position={value}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker
-              position={value}
-              draggable={draggable}
-              eventHandlers={eventHandlers}
-              ref={markerRef}
-              icon={ICON}
-            ></Marker>
-          </MapContainer>
-        </div>
-      )}
+      {/* {isMounted && typeof window !== "undefined" && ( */}
+      <div>
+        <MapContainer
+          center={value}
+          zoom={zoom}
+          style={{ height: "160px", width: "586px" }}
+          scrollWheelZoom={false}
+          // position={value}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker
+            position={value}
+            draggable={draggable}
+            eventHandlers={eventHandlers}
+            ref={markerRef}
+            icon={ICON}
+          ></Marker>
+        </MapContainer>
+      </div>
+      {/* )} */}
     </div>
   );
 };
@@ -98,13 +110,4 @@ export default ViewMap;
  * @returns array of objects containing longitudes and latitudes
  */
 
-export const fetchLongitudeLatitudeData = async (address: string) => {
-  const provider = new OpenStreetMapProvider();
 
-  // Fetch location data using leaflet-geosearch package
-  const response = await provider.search({
-    query: address,
-  });
-
-  return response;
-};

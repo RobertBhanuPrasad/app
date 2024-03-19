@@ -19,8 +19,6 @@ import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
-import "leaflet/dist/leaflet.css";
-
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -85,7 +83,6 @@ function NewCourse() {
     formState: { errors },
   } = methods;
 
-  console.log(errors, "errors");
   // Array of step titles, icons, and colors
   const stepTitles = [
     {
