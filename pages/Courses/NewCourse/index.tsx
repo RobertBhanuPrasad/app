@@ -64,6 +64,7 @@ function NewCourse() {
       isGeoRestriction: "true",
       languages: [2, 3],
       programOrganizers: [loggedUserData],
+      courseType:24
     },
   });
 
