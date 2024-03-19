@@ -2,8 +2,6 @@
 
 import { X } from "lucide-react";
 import * as React from "react";
-
-import clsx from "clsx";
 import { Badge } from "./badge";
 import { Command, CommandGroup, CommandItem } from "./command";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
@@ -18,7 +16,7 @@ export type DataItem = Record<"value" | "label", string>;
 // Main MultiSelect component
 export function MultiSelect({
   placeholder = "Select an item",
-  data,
+  data = [],
   onBottomReached,
   onSearch,
   onChange,
@@ -37,6 +35,8 @@ export function MultiSelect({
   error?: any;
   selectBoxStyles?: any;
 }) {
+  console.log("heyy data", data, propValue);
+
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const popoverDropdownRef = React.useRef<HTMLDivElement>(null);
@@ -44,7 +44,8 @@ export function MultiSelect({
   // States to manage the component's behavior
   const [open, setOpen] = React.useState(false);
   const [popoverOpen, setPopoverOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<DataItem[]>(propValue);
+
+  const [selected, setSelected] = React.useState<number[]>(propValue);
 
   useEffect(() => {
     // Update selected state only if propValue changes
@@ -57,9 +58,9 @@ export function MultiSelect({
   const dropdownStyles = selectBoxStyles?.dropdown || "";
 
   // Handle unselecting an item from the selected list
-  const handleUnselect = (item: DataItem) => {
-    setSelected((prev) => prev.filter((s) => s.value !== item.value));
-    onChange(selected.filter((s) => s.value !== item.value));
+  const handleUnselect = (item: number) => {
+    setSelected((prev) => prev.filter((s) => s !== item));
+    onChange(selected.filter((s) => s !== item));
   };
 
   const handleOnSelect = (option: any) => {
@@ -89,8 +90,16 @@ export function MultiSelect({
     };
   }, [open, popoverOpen]);
 
+  const findObjectById = (id: number): DataItem | undefined => {
+    // Find the object with the given id
+    return data.find((obj) => parseInt(obj.value) === id);
+  };
+
   // Filter out selected values from the dropdown
-  const selectables = _.differenceWith(data, selected, _.isEqual);
+  const selectables = data.filter(
+    (obj) => !selected.includes(parseInt(obj.value))
+  );
+  console.log(data, propValue, selectables, "selectables");
 
   return (
     <div className={`grid w-full items-center ${headerStyles}`}>
@@ -116,13 +125,13 @@ export function MultiSelect({
 
               return (
                 <Badge
-                  key={item.value}
+                  key={item}
                   variant="outline"
                   className="border flex items-center"
                 >
                   <div className="max-w-[60px] truncate">
-                    <abbr className="no-underline" title={item.label}>
-                      {item.label}
+                    <abbr className="no-underline" title={item?.toString()}>
+                      {findObjectById(item)?.label}
                     </abbr>
                   </div>
 
@@ -201,10 +210,10 @@ export function MultiSelect({
                     };
                 const { noIcon } = optionProps;
                 return (
-                  <div key={item.value}>
+                  <div key={item}>
                     <div className="flex flex-row justify-between items-center pr-3">
                       <div className="cursor-pointer p-2 text-[12px] hover:bg-gray-200">
-                        {item.label}
+                        {findObjectById(item)?.label}
                       </div>
                       {!noIcon && (
                         <X
@@ -253,7 +262,7 @@ export function MultiSelect({
                       <CommandItem
                         key={index}
                         className="focus:outline-[red]"
-                        onSelect={() => handleOnSelect(option)}
+                        onSelect={() => handleOnSelect(option.value)}
                         // {...getOptionProps(option)}
                       >
                         {option.label}

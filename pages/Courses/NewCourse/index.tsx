@@ -34,13 +34,13 @@ function NewCourse() {
 
   // Schema definition for form validation
   const schema = z.object({
-    // organization: z.object({
-    //   // Define the schema for the organization object's properties here
-    //   // For example:
-    //   value: z.number(),
-    //   label: z.string(),
-    //   // Add more properties as needed
-    // }),
+    organization: z.object({
+      // Define the schema for the organization object's properties here
+      // For example:
+      value: z.number(),
+      label: z.string(),
+      // Add more properties as needed
+    }),
   });
 
   const loggedUserData = {
@@ -57,14 +57,17 @@ function NewCourse() {
       action: "create",
       resource: "event",
     },
-    // resolver: zodResolver(schema),
+    resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
       displayLanguage: "true",
       isGeoRestriction: "true",
+      languages: [2, 3],
       programOrganizers: [loggedUserData],
     },
   });
+
+  console.log("heyy logged in user data form", loggedUserData);
 
   const {
     refineCore: { onFinish, formLoading },
