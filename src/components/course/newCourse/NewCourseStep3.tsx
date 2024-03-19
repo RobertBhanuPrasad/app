@@ -255,7 +255,6 @@ const Venue = () => {
 
   const formData = watch();
 
-  console.log(formData, "formData");
   const {
     field: { onChange: isNewVenueOnchange },
   } = useController({
@@ -655,7 +654,6 @@ const ExistingVenue = () => {
 
   const formData = watch();
 
-  console.log(formData, "formData");
   const [searchValue, searchOnChange] = useState<string>("");
 
   const debouncedSearchValue = useDebounce(searchValue, 500);
@@ -730,8 +728,6 @@ const ExistingVenue = () => {
     (obj) => !deletedVenueIds.includes(obj.id)
   );
 
-  console.log(filteredVenueData, "filteredVenueData");
-
   const deleteVenue = (id: any) => {
     deleteVenueIdOnChange([...deletedVenueIds, id]);
   };
@@ -769,8 +765,6 @@ const ExistingVenue = () => {
   const { data: loginUserData }: any = useGetIdentity();
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
-
-  console.log(user_roles, "user_roles");
 
   const isUserNationAdminOrSuperAdmin =
     user_roles[0]?.role_id?.value == "National Admin" ||
@@ -1096,8 +1090,6 @@ const CityComponent = () => {
   const { watch } = useFormContext();
 
   const formData = watch();
-
-  console.log(formData, "formData");
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
 
