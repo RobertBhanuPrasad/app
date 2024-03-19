@@ -35,7 +35,6 @@ export function MultiSelect({
   error?: any;
   selectBoxStyles?: any;
 }) {
-  console.log("heyy data", data, propValue);
 
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -99,7 +98,7 @@ export function MultiSelect({
   const selectables = data.filter(
     (obj) => !selected.includes(parseInt(obj.value))
   );
-  console.log(data, propValue, selectables, "selectables");
+  // console.log(data, propValue, selectables, "selectables");
 
   return (
     <div className={`grid w-full items-center ${headerStyles}`}>
@@ -138,14 +137,6 @@ export function MultiSelect({
                   <button
                     type="button"
                     className="ml-1 rounded-full outline-none"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleUnselect(item);
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      e.stopPropagation();
-                    }}
                     onClick={() => handleUnselect(item)}
                   >
                     {!noIcon && (
@@ -248,22 +239,20 @@ export function MultiSelect({
 
               {/* Scrollable list of selectable items */}
               <GetScrollTypesAlert
-                id={"multioptions"}
+                id={"multiselect"}
                 onBottom={() => {
                   onBottomReached();
                 }}
               >
                 <CommandGroup
-                  id={"multioptions"}
-                  className="max-h-[300px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
+                  id={"multiselect"}
+                  className="max-h-[250px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
                 >
                   {selectables?.map((option, index) => (
                     <div>
                       <CommandItem
-                        key={index}
-                        className="focus:outline-[red]"
+                        key={option?.value}
                         onSelect={() => handleOnSelect(option.value)}
-                        // {...getOptionProps(option)}
                       >
                         {option.label}
                       </CommandItem>
