@@ -57,7 +57,7 @@ function NewCourse() {
       action: "create",
       resource: "event",
     },
-    resolver: zodResolver(schema),
+    // resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
       displayLanguage: "true",
