@@ -670,14 +670,21 @@ const LanguageDropDown = () => {
 
   const formData = watch();
 
-  const [pageSize, setPageSize] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // const [selectOptions, setSelectOptions] = useState<any>();
+  const [selectOptions, setSelectOptions] = useState<any>();
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "languages",
+  });
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "organization_languages",
     optionLabel: "language_name",
     optionValue: "id",
+    defaultValue: value,
     onSearch: (value) => [
       {
         field: "language_name",
@@ -686,19 +693,22 @@ const LanguageDropDown = () => {
       },
     ],
     pagination: {
-      pageSize: pageSize,
+      current: currentPage,
+      pageSize: 20,
       mode: "server",
     },
   });
 
-  // useEffect(() => {
-  //   if (options) {
-  //     if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
-  //     else setSelectOptions(options);
-  //   }
-  // }, [options]);
+  console.log("heyy options", options);
 
-  const filteredOptions = options?.filter((val: any) => {
+  useEffect(() => {
+    if (options) {
+      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
+      else setSelectOptions(options);
+    }
+  }, [options]);
+
+  const filteredOptions = selectOptions?.filter((val: any) => {
     if (
       _.some(formData?.translationLanguages, (obj) => obj.value === val.value)
     )
@@ -708,20 +718,14 @@ const LanguageDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (queryResult?.data && queryResult?.data?.total >= pageSize)
-      setPageSize((previousLimit: number) => previousLimit + 20);
+    if (options && (queryResult?.data?.total as number) >= currentPage * 20)
+      setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
   const handleOnSearch = (value: any) => {
     // For resetting the data to the first page which coming from the API
     onSearch(value);
   };
-
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "languages",
-  });
 
   return (
     <div className="flex gap-1 flex-col">
@@ -765,7 +769,6 @@ const LanguageTranslationDropDown = () => {
     },
   });
 
-  console.log("heyy current page", currentPage, options);
 
   const filteredOptions = options?.filter((val) => {
     if (_.some(formData?.languages, (obj) => obj.value === val.value))
