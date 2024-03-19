@@ -14,6 +14,10 @@ import { Input } from "src/ui/input";
 export default function CourseTable() {
   const [courseFeeSettings, setCourseFeeSettings] = useState();
 
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
   const fetchFeeData = async () => {
     const { data, error } = await supabaseClient.functions.invoke(
       "course-fee",
@@ -34,7 +38,7 @@ export default function CourseTable() {
 
   useEffect(() => {
     fetchFeeData();
-  }, []);
+  }, [formData?.organization]);
 
   if (courseFeeSettings == undefined) {
     return <LoadingIcon />;
@@ -59,6 +63,8 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   const { data: loginUserData }: any = useGetIdentity();
 
   const { watch } = useFormContext();
+
+  const formData = watch();
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
 
@@ -99,7 +105,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
           ? val?.custom_fee_label
           : val?.fee_level_id?.value,
         isEnable: val?.is_enable,
-        subtotal: val?.sub_total,
+        subTotal: val?.sub_total,
         tax: val?.tax,
         total: val?.total,
       };
@@ -108,25 +114,18 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   const { fields, append } = useFieldArray({ name: "feeLevels" });
 
   useEffect(() => {
-    //Initializing setting data into form if fee is editable
-    if (isFeeEditable) {
-      courseFeeData.map((val) => append(val));
+    //Initializing setting data into form if fee is editable.Appending only if we have no data present in field
+    if (isFeeEditable && fields?.length == 0) {
+      append(courseFeeData);
     }
   }, []);
-
-  //Not rendering components until data is loaded in form
-  if (isFeeEditable == true && fields?.length == 0) {
-    return <LoadingIcon />;
-  }
-
-  const formData = watch();
 
   const organizationData = formData?.organizationDetails;
 
   const feeLevels = formData?.feeLevels;
 
   //Normal Fee Columns
-  let defaultColumns: ColumnDef<FeeLevelType>[] = [
+  let normalFeeColumns: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
         return <div className="">{row?.original?.feeLevelLabel}</div>;
@@ -137,7 +136,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
     },
     {
       cell: ({ row }) => {
-        return <div className="">{row?.original?.subtotal}</div>;
+        return <div className="">{row?.original?.subTotal}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -162,7 +161,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   ];
 
   //Editable Fee Columns
-  let editableColumns: ColumnDef<FeeLevelType>[] = [
+  let editableFeeColumns: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
         return <div className="">{row?.original?.feeLevelLabel}</div>;
@@ -173,20 +172,11 @@ function CourseFeeTable({ courseFeeSettings }: any) {
     },
     {
       cell: ({ row }) => {
-        const taxEnable = organizationData?.tax_enabled;
-        const taxRate = organizationData?.tax_rate;
-
         const {
-          field: { value: feeLevel },
-        } = useController({ name: `feeLevels[${row?.index}]` });
+          field: { value },
+        } = useController({ name: `feeLevels[${row?.index}][subTotal]` });
 
-        if (taxEnable) {
-          return <div>{feeLevel?.total}</div>;
-        }
-
-        //Calculation of Normal Fee based on tax rate
-        const normalFee = feeLevel?.total - (feeLevel?.total * taxRate) / 100;
-        return <div className="">{100}</div>;
+        return <div className="">{value}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -194,16 +184,10 @@ function CourseFeeTable({ courseFeeSettings }: any) {
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
-        const taxEnable = organizationData?.tax_enabled;
-        const taxRate = organizationData?.tax_rate;
-
         const {
-          field: { value: feeLevel },
-        } = useController({ name: `feeLevels[${row?.index}]` });
-
-        //Calculation of Normal Fee based on tax rate
-        const taxFee = (feeLevel?.total * taxRate) / 100;
-        return <div className="">{11}</div>;
+          field: { value },
+        } = useController({ name: `feeLevels[${row?.index}][tax]` });
+        return <div className="">{value}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -215,11 +199,32 @@ function CourseFeeTable({ courseFeeSettings }: any) {
           field: { value, onChange },
         } = useController({ name: `feeLevels[${row?.index}][total]` });
 
+        const taxRate = organizationData?.tax_rate;
+
+        const { setValue } = useFormContext();
+
+        const [feeAmount, setFeeAmount] = useState(value);
+
+        //Calculation of Normal Fee based on tax rate
+        const normalFee = feeAmount - (feeAmount * taxRate) / 100;
+
+        const handleTotalChange = () => {
+          onChange(feeAmount || 0);
+          setValue(`feeLevels[${row?.index}][subTotal]`, normalFee);
+          setValue(
+            `feeLevels[${row?.index}][tax]`,
+            (feeAmount * taxRate) / 100
+          );
+        };
+
         return (
-          <div className="w-[150px]">
+          <div className="w-[75px]">
             <Input
-              value={value}
-              onChange={(val) => onChange(parseFloat(val.target.value || "0"))}
+              value={feeAmount}
+              onChange={(val) => {
+                setFeeAmount(parseFloat(val.target.value || "0"));
+              }}
+              onBlur={handleTotalChange}
             />
           </div>
         );
@@ -231,7 +236,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   ];
 
   //Early bird Normal Fee
-  const otherDefaultColumns: ColumnDef<FeeLevelType>[] = [
+  const earlyBirdFeeColumn: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
         return <div className="">{row?.original?.earlyBirdSubTotal}</div>;
@@ -259,10 +264,20 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   ];
 
   //Early bird Editable Fee
-  const otherEditableColumns: ColumnDef<FeeLevelType>[] = [
+  const editableEarlyBirdFeeColumn: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
-        return <div className="">{row?.original?.earlyBirdSubTotal}</div>;
+        const taxEnable = organizationData?.tax_enabled;
+
+        const {
+          field: { value: feeLevel },
+        } = useController({ name: `feeLevels[${row?.index}]` });
+
+        if (taxEnable == false) {
+          return <div>{feeLevel?.earlyBirdTotal}</div>;
+        }
+
+        return <div className="">{feeLevel?.earlyBirdSubTotal}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -270,7 +285,11 @@ function CourseFeeTable({ courseFeeSettings }: any) {
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
-        return <div className="">{row?.original?.earlyBirdTax}</div>;
+        const {
+          field: { value },
+        } = useController({ name: `feeLevels[${row?.index}]` });
+
+        return <div className="">{value?.earlyBirdTax}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -278,7 +297,42 @@ function CourseFeeTable({ courseFeeSettings }: any) {
     },
     {
       cell: ({ row }) => {
-        return <div className="">{row?.original?.earlyBirdTotal}</div>;
+        const {
+          field: { value, onChange },
+        } = useController({ name: `feeLevels[${row?.index}][earlyBirdTotal]` });
+
+        const { setValue } = useFormContext();
+
+        const taxRate = organizationData?.tax_rate;
+
+        const [feeAmount, setFeeAmount] = useState(value);
+
+        //Calculation of Normal Fee based on tax rate
+        const normalEarlyBirdFee = feeAmount - (feeAmount * taxRate) / 100;
+
+        const handleTotalChange = () => {
+          onChange(feeAmount || 0);
+          setValue(
+            `feeLevels[${row?.index}][earlyBirdSubTotal]`,
+            normalEarlyBirdFee
+          );
+          setValue(
+            `feeLevels[${row?.index}][earlyBirdTax]`,
+            (feeAmount * taxRate) / 100
+          );
+        };
+
+        return (
+          <div className="w-[75px]">
+            <Input
+              value={feeAmount}
+              onChange={(val) => {
+                setFeeAmount(parseFloat(val.target.value || "0"));
+              }}
+              onBlur={handleTotalChange}
+            />
+          </div>
+        );
       },
       enableSorting: false,
       enableHiding: false,
@@ -290,31 +344,42 @@ function CourseFeeTable({ courseFeeSettings }: any) {
 
   if (isFeeEditable == false) {
     if (showEarlyBirdColumns) {
-      feeColumns = [...defaultColumns, ...otherDefaultColumns];
+      feeColumns = [...normalFeeColumns, ...earlyBirdFeeColumn];
+    } else {
+      feeColumns = normalFeeColumns;
     }
-    feeColumns = defaultColumns;
   } else if (feeLevels?.length != 0) {
     if (showEarlyBirdColumns) {
-      feeColumns = [...editableColumns, ...otherEditableColumns];
+      feeColumns = [...editableFeeColumns, ...editableEarlyBirdFeeColumn];
+    } else {
+      feeColumns = editableFeeColumns;
     }
-    feeColumns = editableColumns;
   }
 
   //When user clicks on enable early bird fee then need to show fee of early bird
-
   if (isFeeEditable) {
     feeColumns = [
       {
         id: "select",
         header: () => <div>Enable fees</div>,
-        cell: ({ row }) => (
-          <Checkbox
-            className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
+        cell: ({ row }) => {
+          const {
+            field: { value, onChange },
+          } = useController({ name: `feeLevels[${row?.index}][isEnable]` });
+
+          return (
+            <Checkbox
+              className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+              checked={value}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+              onClick={() => {
+                onChange(!value);
+              }}
+              value={value}
+            />
+          );
+        },
         enableSorting: false,
         enableHiding: false,
       },
@@ -364,7 +429,7 @@ type FeeLevelType = {
   feeLevelId: number;
   feeLevelLabel: string;
   isEnable: boolean;
-  subtotal: number;
+  subTotal: number;
   tax: number;
   total: number;
 };
