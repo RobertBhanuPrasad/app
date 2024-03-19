@@ -5,7 +5,8 @@ import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValues";
+import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
+import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import CustomSelect from "src/ui/custom-select";
 import {
@@ -18,7 +19,7 @@ import { DataItem, MultiSelect } from "src/ui/multi-select";
 import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { Switch } from "src/ui/switch";
-import { getOptionValueObjectByOptionValue } from "src/utility/GetOptionValuesByOptionLabel";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -27,7 +28,7 @@ export default function NewCourseStep2() {
 
   const { data: loginUserData }: any = useGetIdentity();
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
-    (val: { role_id: { value: string } }) => val.role_id?.value == SUPER_ADMIN
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
   return (
@@ -335,7 +336,10 @@ const TeachersDropDown = () => {
 
   const formData = watch();
 
-  const iAmOrganizerId = getOptionValueObjectByOptionValue(I_AM_ORGANIZER)?.id;
+  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_ORGANIZER
+  )?.id;
 
   let filter: Array<CrudFilter> = [];
 
