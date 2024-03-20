@@ -340,6 +340,7 @@ const ProgramOrganizerDropDown = () => {
         value: 43,
       },
     ],
+    defaultValue: value,
     onSearch: (value) => [
       {
         field: "contact_id.first_name",
@@ -365,12 +366,28 @@ const ProgramOrganizerDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
-  const options: any = queryResult?.data?.data?.map((item) => {
-    return {
-      label: item?.contact_id?.first_name + " " + item?.contact_id?.last_name,
-      value: item.id,
-    };
-  });
+  const options: any =
+    queryResult?.data?.data?.map((item) => {
+      return {
+        label: item?.contact_id?.first_name + " " + item?.contact_id?.last_name,
+        value: item.id,
+      };
+    }) ?? [];
+
+  //If logged user is not present in data then append the value and send it to data
+  const isUserPresentInData = options?.find(
+    (obj: { val: number }) => obj?.val == loginUserData?.userData?.id
+  );
+
+  const filteredOptions = isUserPresentInData
+    ? options
+    : [
+        ...options,
+        {
+          label: loginUserData?.userData?.contact_id?.full_name,
+          value: loginUserData?.userData?.id,
+        },
+      ];
 
   return (
     <div className="w-80 flex gap-1 flex-col">
@@ -380,14 +397,14 @@ const ProgramOrganizerDropDown = () => {
       <MultiSelect
         value={value}
         placeholder="Enter Program organizer Name"
-        data={options}
+        data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
           onSearch(val);
         }}
         onChange={onChange}
-        getOptionProps={(option: { value: number }) => {
-          if (option.value === loginUserData?.userData?.id) {
+        getOptionProps={(option: number) => {
+          if (option === loginUserData?.userData?.id) {
             return {
               disable: true,
             };

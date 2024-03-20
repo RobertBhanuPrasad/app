@@ -148,18 +148,20 @@ export default function NewCourseStep2() {
   );
 }
 
-const CourseTypeDropDown = () => {
+export const CourseTypeDropDown = () => {
   const { watch } = useFormContext();
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const formData = watch();
 
+  const [selectOptions, setSelectOptions] = useState<any>();
+
   let filter: Array<CrudFilter> = [
     {
       field: "organization_id",
       operator: "eq",
-      value: formData?.organization?.value,
+      value: formData?.organization,
     },
     {
       field: "program_category_id.value",
@@ -184,12 +186,18 @@ const CourseTypeDropDown = () => {
     });
   }
 
-  const { options, onSearch, queryResult } = useSelect({
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "courseType",
+  });
+
+  const selectQuery: any = {
     resource: "program_types",
     optionLabel: "name",
     optionValue: "id",
     meta: { select: "*,program_category_id!inner(*)" },
-    onSearch: (value) => [
+    onSearch: (value: any) => [
       {
         field: "name",
         operator: "contains",
@@ -201,13 +209,20 @@ const CourseTypeDropDown = () => {
       current: currentPage,
       mode: "server",
     },
-  });
+  };
 
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "courseType",
-  });
+  if (value) {
+    selectQuery.defaultValue = value;
+  }
+
+  const { options, onSearch, queryResult } = useSelect(selectQuery);
+
+  useEffect(() => {
+    if (options) {
+      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
+      else setSelectOptions(options);
+    }
+  }, [options]);
 
   const {
     field: { onChange: setCourseTypeSettings },
@@ -229,6 +244,9 @@ const CourseTypeDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
+  if (queryResult.isLoading) {
+    return null;
+  }
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
@@ -237,7 +255,7 @@ const CourseTypeDropDown = () => {
       <CustomSelect
         value={value}
         placeholder="Select course type"
-        data={options}
+        data={selectOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
           onSearch(val);
@@ -654,10 +672,19 @@ const LanguageDropDown = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [selectOptions, setSelectOptions] = useState<any>();
+
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "languages",
+  });
+
   const { options, onSearch, queryResult } = useSelect({
     resource: "organization_languages",
     optionLabel: "language_name",
     optionValue: "id",
+    defaultValue: value,
     onSearch: (value) => [
       {
         field: "language_name",
@@ -666,12 +693,18 @@ const LanguageDropDown = () => {
       },
     ],
     pagination: {
+      pageSize: 20,
       current: currentPage,
       mode: "server",
     },
   });
 
-  const filteredOptions = options?.filter((val) => {
+  useEffect(() => {
+    if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
+    else setSelectOptions(options);
+  }, [options]);
+
+  const filteredOptions = selectOptions?.filter((val: any) => {
     if (
       _.some(formData?.translationLanguages, (obj) => obj.value === val.value)
     )
@@ -681,15 +714,16 @@ const LanguageDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
+    if (options && (queryResult?.data?.total as number) >= currentPage * 20)
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "languages",
-  });
+  const handleOnSearch = (value: any) => {
+    // For resetting the data to the first page which coming from the API
+    setCurrentPage(1);
+
+    onSearch(value);
+  };
 
   return (
     <div className="flex gap-1 flex-col">
@@ -702,7 +736,7 @@ const LanguageDropDown = () => {
         placeholder="Select Language"
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
-        onSearch={onSearch}
+        onSearch={handleOnSearch}
         onChange={onChange}
       />
     </div>
@@ -752,6 +786,11 @@ const LanguageTranslationDropDown = () => {
     name: "translationLanguages",
   });
 
+  const handleOnSearch = (value: any) => {
+    setCurrentPage(1);
+    onSearch(value);
+  };
+
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
@@ -762,7 +801,7 @@ const LanguageTranslationDropDown = () => {
         placeholder="Select translation languages"
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
-        onSearch={onSearch}
+        onSearch={handleOnSearch}
         onChange={onChange}
       />
     </div>
