@@ -1,7 +1,8 @@
-import { DataTable } from "../../DataTable"; 
-import React, { useState } from "react"; 
-import { ColumnDef } from "@tanstack/react-table"; 
-import { Checkbox } from "src/ui/checkbox"; 
+import { DataTable } from "../../DataTable";
+import React, { useEffect, useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "src/ui/checkbox";
+import { supabaseClient } from "src/utility";
 
 // Define CourseTable component
 export default function CourseTable() {
@@ -79,6 +80,27 @@ export default function CourseTable() {
         ]
       : []),
   ];
+
+  const fetchFeeData = async () => {
+    const { data, error } = await supabaseClient.functions.invoke(
+      "course-fee",
+      {
+        method: "POST",
+        body: {
+          state_id: "1",
+          city_id: "1",
+          center_id: "1",
+          start_date: "2024-03-18T07:00:00-00:00",
+          program_type_id: "1",
+        },
+      }
+    );
+    console.log(data, "course fee is", error);
+  };
+
+  useEffect(() => {
+    fetchFeeData();
+  }, []);
 
   // JSX returned by the component
   return (

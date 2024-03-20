@@ -33,24 +33,15 @@ function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
 
   // Schema definition for form validation
-  const organizationSchema = z.object({
-    // Define the schema for the organization object's properties here
-    // For example:
-    value: z.number(),
-    label: z.string(),
-    // Add more properties as needed
-  });
-
-  const schema = z.object({
-    organization: organizationSchema,
-    // city_id: z.object({
-    //   // Define the schema for the organization object's properties here
-    //   // For example:
-    //   value: z.number(),
-    //   label: z.string(),
-    //   // Add more properties as needed
-    // }),
-  });
+  // const schema = z.object({
+  //   organization: z.object({
+  //     // Define the schema for the organization object's properties here
+  //     // For example:
+  //     value: z.number(),
+  //     label: z.string(),
+  //     // Add more properties as needed
+  //   }),
+  // });
 
   const loggedUserData = {
     value: loginUserData?.userData?.id,
@@ -67,12 +58,12 @@ function NewCourse() {
       resource: "event",
     },
 
-    resolver: zodResolver(schema),
+    // resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
       displayLanguage: "true",
       isGeoRestriction: "true",
-      programOrganizers: [loggedUserData],
+      programOrganizers: [loggedUserData?.value],
     },
   });
 

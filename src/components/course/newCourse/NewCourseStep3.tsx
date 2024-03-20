@@ -4,13 +4,15 @@ import EditIcon from "@public/assets/EditIcon";
 import SearchIcon from "@public/assets/SearchIcon";
 import {
   CrudFilter,
-  useDelete,
   useList,
   useSelect,
   CrudFilters,
   useGetIdentity,
 } from "@refinedev/core";
-import _, { truncate } from "lodash";
+import _ from "lodash";
+import Add from "@public/assets/Add";
+import Clock from "@public/assets/Clock";
+import DropDown from "@public/assets/DropDown";
 import { useEffect, useState } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
@@ -29,33 +31,38 @@ import {
   DialogTrigger,
 } from "src/ui/dialog";
 import CalenderIcon from "@public/assets/CalenderIcon";
-import Calender from "@public/assets/CalenderIcon";
 import { format, setDate } from "date-fns";
 import { X } from "lucide-react";
 import { Calendar } from "src/ui/calendar";
 import { Input } from "src/ui/input";
 import { supabaseClient } from "src/utility";
-import {
-  fetchLongitudeLatitudeData,
-  getOptionValuesByOptionLabel,
-} from "src/utility/GetOptionValuesByOptionLabel";
+import { fetchLongitudeLatitudeData } from "src/utility/GetOptionValuesByOptionLabel";
 
-import {
-  RadioGroup,
-  RadioGroupCircleItem,
-  RadioGroupItem,
-} from "src/ui/radio-group";
+import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
 import useDebounce from "src/utility/useDebounceHook";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
-import { date } from "zod";
-import MapPointer from "../../MapComponent";
+import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
+import {
+  getOptionValueObjectByOptionOrder,
+  getOptionValuesByOptionLabel,
+} from "src/utility/GetOptionValuesByOptionLabel";
+import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
+import {
+  CenterDropDown,
+  CityDropDown,
+  MapComponent,
+  PostalCodeComponent,
+  StateDropDown,
+  StreetAddressComponent,
+  VenueNameComponent,
+} from "@components/CommonComponents/DropDowns";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
   const formData = watch();
   return (
-    <div>
+    <div className="flex flex-col gap-8">
       <div>
         {formData?.courseTypeSettings?.is_online_program ? (
           <OnlineProgram />
@@ -79,18 +86,30 @@ const OnlineProgram = () => {
         <div className="">Online zoom URL </div>
         <div className="w-80">
           <Input placeholder="URL" className="rounded-[12px]" />
-          <div className="">
-            Note: Participants will join your online course through your virtual
-            venue
+          <div className="text-xs font-normal text-[#666666] italic w-[320px] overflow-hidden">
+            <div>
+              Note: Participants will join your online course through your
+            </div>
+            <div>virtual venue</div>
           </div>
         </div>
       </div>
-      <div>
-        <div className="">
+      <div className="flex gap-2 flex-col">
+        <div>
           Please associate your course with a specific location for reporting
           purposes
         </div>
-        <div>Location drop downs</div>
+        <div className="flex gap-7">
+          <div className="w-80">
+            <StateDropDown />
+          </div>
+          <div className="w-80">
+            <CityDropDown />
+          </div>
+          <div className="w-80">
+            <CenterDropDown />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -106,7 +125,9 @@ const Schedules = () => {
 };
 
 const SchedulesHeader = () => {
-  const [value, onChange] = useState<any>();
+  const {
+    field: { value: hoursFormat, onChange: hoursFormatOnChange },
+  } = useController({ name: "hoursFormat" });
 
   let timeFormatOptions =
     getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
@@ -127,26 +148,24 @@ const SchedulesHeader = () => {
       <div className="flex gap-4">
         <div className="w-[161px]">
           <CustomSelect
-            value={value}
+            value={hoursFormat}
             placeholder="Select time format"
             data={timeFormatOptions}
             onBottomReached={() => {}}
             onSearch={() => {}}
             onChange={(val) => {
-              onChange(val);
+              hoursFormatOnChange(val);
             }}
           />
         </div>
         <div className="w-[257px]">
           <CustomSelect
-            value={value}
+            value={""}
             placeholder="Select time format"
             data={timeFormatOptions}
             onBottomReached={() => {}}
             onSearch={() => {}}
-            onChange={(val) => {
-              onChange(val);
-            }}
+            onChange={() => {}}
           />
         </div>
       </div>
@@ -164,29 +183,43 @@ const Sessions = () => {
 
   const formData = watch();
 
-  useEffect(() => {
-    if (formData?.schedules?.length == 0) {
-      append({ value: "1", date: new Date() });
-    }
-  });
+  const schedules = formData?.schedules;
 
-  const handleAddSession = (index: number) => {
-    if (formData?.schedules[index]?.date) {
-      append({ value: index, date: formData?.schedules[index]?.date });
-    } else {
-      append({ value: index, date: new Date() });
-    }
+  const handleAddSession = () => {
+    append({
+      startHour: "00",
+      startMinute: "00",
+      endHour: "00",
+      endMinute: "00",
+      startTimeFormat: "AM",
+      endTimeFormat: "AM",
+      date: new Date(),
+    });
   };
+
+  useEffect(() => {
+    if (schedules?.length <= 0 || !schedules) {
+      handleAddSession();
+    }
+  }, []);
 
   const handleRemoveSession = (index: number) => {
     remove(index);
   };
 
+  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id;
+
   return (
-    <div>
-      {formData?.schedules?.map((schedule: any, index: number) => {
+    <div className="flex flex-col gap-4">
+      {schedules?.map((schedule: any, index: number) => {
         return (
-          <div className="h-15 flex flex-col gap-1 justify-between">
+          <div
+            className="h-15 flex flex-col gap-1 justify-between"
+            key={schedule?.id}
+          >
             <div className="h-4 font-[#333333] font-normal flex text-xs">
               <div>Session {index + 1} </div>
               <div className="text-[#7677F4]">&nbsp;*</div>
@@ -211,20 +244,23 @@ const Sessions = () => {
                   <CalenderComponent index={index} setOpen={setOpen} />
                 </DialogContent>
               </Dialog>
-              <div className="text-sm text-[#999999] font-normal">From</div>
-              <div className="w-[233px]">From Time Selector</div>
-              <div className="text-sm text-[#999999] font-normal">To</div>
-              <div className="w-[233px]">To Time Selector</div>
-
+              <TimePicker
+                index={index}
+                is12HourFormat={
+                  formData?.hoursFormat?.value == timeFormat12HoursId
+                    ? true
+                    : false
+                }
+              />
               <div className="w-[127px] flex gap-4 ">
                 {index == formData?.schedules?.length - 1 && (
                   <div
                     onClick={() => {
-                      handleAddSession(index);
+                      handleAddSession();
                     }}
-                    className="text-[#7677F4] font-normal cursor-pointer"
+                    className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
                   >
-                    + Add
+                    <Add /> Add
                   </div>
                 )}
                 {index != 0 && (
@@ -232,8 +268,9 @@ const Sessions = () => {
                     onClick={() => {
                       handleRemoveSession(index);
                     }}
-                    className="text-[#7677F4] font-normal cursor-pointer"
+                    className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
                   >
+                    <Delete />
                     Delete
                   </div>
                 )}
@@ -456,7 +493,7 @@ const Venue = () => {
               resetField("streetAddress");
               resetField("postalCode");
               resetField("city_id");
-              resetField("venue");
+              resetField("venueName");
             }}
           >
             <DialogTrigger
@@ -500,6 +537,32 @@ const Venue = () => {
   );
 };
 
+const TimePicker = ({
+  index,
+  is12HourFormat,
+}: {
+  index: number;
+  is12HourFormat: Boolean;
+}) => {
+  return (
+    <div className="flex items-center gap-6">
+      <div className="text-sm text-[#999999] font-normal">From</div>
+      <div className="w-[233px]">
+        <TimeSelector
+          name={`schedules[${index}].start`}
+          is12HourFormat={is12HourFormat}
+        />
+      </div>
+      <div className="text-sm text-[#999999] font-normal">To</div>
+      <div className="w-[233px]">
+        <TimeSelector
+          name={`schedules[${index}].end`}
+          is12HourFormat={is12HourFormat}
+        />
+      </div>
+    </div>
+  );
+};
 const CalenderComponent = ({ index, setOpen }: any) => {
   // Get the date value and onChange function from the controller
   const {
@@ -925,391 +988,238 @@ export const AddOrEditVenue = ({}) => {
       <MapComponent />
       <div className="flex flex-row gap-[30px]">
         <div className="flex flex-col gap-5">
-          <VenueComponent />
+          <VenueNameComponent />
           <PostalCodeComponent />
-          <CityComponent />
+          <CityDropDown />
         </div>
 
         <div className="flex flex-col gap-5">
           <StreetAddressComponent />
-          <StateComponent />
-          <CenterComponent />
+          <StateDropDown />
+          <CenterDropDown />
         </div>
       </div>
     </div>
   );
 };
 
-const MapComponent = () => {
+// Component for selecting time with hour and minute inputs
+const TimeSelector = ({
+  name, // Name of the time selector
+  is12HourFormat, // Boolean indicating whether to display time in 12-hour format
+}: {
+  name: string;
+  is12HourFormat: Boolean;
+}) => {
+  // Maximum hours depending on the time format
+  const maximumHours = is12HourFormat ? 12 : 23;
+
+  // Extracting hour value and onChange function using useController hook
   const {
-    field: { value: stateValue },
-  } = useController({
-    name: "state_id",
-  });
+    field: { value: hourValue = "00", onChange: hourOnChange },
+  } = useController({ name: `${name}Hour` });
 
+  // Extracting minute value and onChange function using useController hook
   const {
-    field: { value: cityValue },
-  } = useController({
-    name: "city_id",
-  });
+    field: { value: minuteValue = "00", onChange: minuteOnChange },
+  } = useController({ name: `${name}Minute` });
 
+  // Extracting time format value and onChange function using useController hook
   const {
-    field: { value: coordinates, onChange: setCoordinates },
-  }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
-    useController({
-      name: "address_line_coordinates",
-    });
+    field: { value: timeFormat = "AM", onChange: timeFormatOnChange },
+  } = useController({ name: `${name}TimeFormat` });
 
-  useEffect(() => {
-    loadInitialCoordinates();
-  }, [stateValue, cityValue]);
-
-  const { watch } = useFormContext();
-
-  const formData = watch();
-
-  const loadInitialCoordinates = async () => {
-    let LocationData: any;
-    if (formData?.city_id && formData?.state_id) {
-      LocationData = await fetchLongitudeLatitudeData(
-        `${formData?.city_id?.label},${formData?.state_id?.label}`
-      );
+  // Function to preprocess input value (add leading zeros and remove non-numeric characters)
+  const preProcessInputValue = (value: string): string => {
+    while (value.length < 2) {
+      value = "0" + value;
     }
+    // Remove any non-numeric characters from the input
+    const numericValue = value.replace(/[^0-9]/g, "");
 
-    if (LocationData?.length > 0) {
-      setCoordinates({ lat: LocationData?.[0]?.y, lng: LocationData?.[0]?.x });
-    }
+    // Truncate to 2 characters
+    const truncatedValue = numericValue.slice(-2);
+
+    return truncatedValue;
   };
 
-  return (
-    <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
-      <MapPointer
-        value={coordinates}
-        onChange={setCoordinates}
-        draggable={true}
-        //If coordinates are [0,0] then display whole map
-        zoom={_.isEqual(coordinates, { lat: 0, lng: 0 }) ? 1 : 15}
-      />
-    </div>
-  );
-};
-const VenueComponent = () => {
-  const {
-    field: { value: venueName, onChange: venueOnchange },
-    fieldState: { error: venueError },
-  } = useController({
-    name: "venue",
-  });
-  return (
-    <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Venue <div className="text-[#7677F4]"> *</div>
-      </div>
-      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
-        <Input
-          value={venueName}
-          placeholder="Enter Venue Name"
-          className="placeholder:text-[#999999]"
-          onChange={venueOnchange}
-        />
-      </div>
-    </div>
-  );
-};
+  // Event handler for hour input change
+  const handleHour = (event: { target: { value: any } }) => {
+    let inputValue = event.target.value;
 
-const PostalCodeComponent = () => {
-  const {
-    field: { value: postalCodeValue, onChange: postalCodeOnchange },
-  } = useController({
-    name: "postalCode",
-  });
-  const { setValue } = useFormContext();
+    const hour = preProcessInputValue(inputValue);
 
-  const fetchCityStateData = async () => {
-    if (postalCodeValue?.length > 4) {
-      const { data: prefillData } = await supabaseClient
-        .from("city")
-        .select("*,state_id(id,name)")
-        .eq("postal_code", postalCodeValue);
-
-      const transformed = {
-        label: prefillData?.[0]?.name,
-        value: prefillData?.[0]?.id,
-      };
-
-      const transformedState = {
-        label: prefillData?.[0]?.state_id?.name,
-        value: prefillData?.[0]?.state_id?.id,
-      };
-
-      setValue("city_id", transformed);
-      setValue("state_id", transformedState);
-    }
-  };
-  useEffect(() => {
-    fetchCityStateData();
-  }, [postalCodeValue]);
-  return (
-    <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Postal Code</div>
-      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
-        <Input
-          value={postalCodeValue}
-          placeholder="Enter Postal Code"
-          className="placeholder:text-[#999999]"
-          onChange={postalCodeOnchange}
-          required
-        />
-      </div>
-    </div>
-  );
-};
-
-const StreetAddressComponent = () => {
-  const {
-    field: { value: streetAddressValue, onChange: streetAddressOnchange },
-  } = useController({
-    name: "streetAddress",
-  });
-  return (
-    <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Street Address</div>
-      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
-        <Input
-          value={streetAddressValue}
-          placeholder="Enter Street Address"
-          className="placeholder:text-[#999999]"
-          onChange={streetAddressOnchange}
-        />
-      </div>
-    </div>
-  );
-};
-
-const CityComponent = () => {
-  const { watch } = useFormContext();
-
-  const formData = watch();
-
-  const [selectOptions, setSelectOptions] = useState<any>([]);
-
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const {
-    field: { value: cityValue, onChange: cityValueOnchange },
-    fieldState: { error: cityValueError },
-  } = useController({
-    name: "city_id",
-  });
-
-  let filter: Array<CrudFilter> = [];
-
-  if (formData?.state_id?.value) {
-    filter.push({
-      field: "state_id",
-      operator: "eq",
-      value: formData?.state_id?.value,
-    });
-  }
-  const { options, onSearch, queryResult } = useSelect({
-    resource: "city",
-    optionLabel: "name",
-    optionValue: "id",
-    filters: filter,
-    onSearch: (value) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-    pagination: {
-      current: currentPage,
-      mode: "server",
-    },
-  });
-
-  useEffect(() => {
-    if (options) {
-      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
-      else setSelectOptions(options);
-    }
-  }, [options, currentPage]);
-
-  const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
-  };
-  return (
-    <div className="flex gap-1 flex-col h-[60px] w-[278px]">
-      <div className="text-xs font-normal text-[#333333]">City</div>
-
-      <CustomSelect
-        value={cityValue}
-        placeholder="Select City"
-        data={selectOptions}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          onSearch(val);
-        }}
-        onChange={cityValueOnchange}
-        error={cityValueError}
-      />
-    </div>
-  );
-};
-
-const StateComponent = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [selectOptions, setSelectOptions] = useState<any>([]);
-
-  const {
-    options: stateOptions,
-    onSearch: stateOnsearch,
-    queryResult,
-  } = useSelect({
-    resource: "state",
-    optionLabel: "name",
-    optionValue: "id",
-    onSearch: (value) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-    pagination: {
-      current: currentPage,
-      mode: "server",
-    },
-  });
-  const {
-    field: { value: stateValue, onChange: stateValueOnchange },
-  } = useController({
-    name: "state_id",
-  });
-
-  useEffect(() => {
-    if (stateOptions) {
-      if (currentPage > 1)
-        setSelectOptions([...selectOptions, ...stateOptions]);
-      else setSelectOptions(stateOptions);
-    }
-  }, [stateOptions, currentPage]);
-
-  const handleOnBottomReached = () => {
-    if (
-      stateOptions &&
-      (queryResult?.data?.total as number) >= currentPage * 10
-    )
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    hourOnChange(hour);
   };
 
-  return (
-    <div className="flex gap-1 flex-col h-[60px] w-[278px]">
-      <div className="text-xs font-normal text-[#333333]">Province</div>
+  // Event handler for incrementing hour
+  const handleHourUpArrow = () => {
+    if (hourValue == "00") {
+      hourOnChange(maximumHours);
+      return;
+    }
 
-      <CustomSelect
-        value={stateValue}
-        placeholder="Select Province"
-        data={selectOptions}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          stateOnsearch(val);
-        }}
-        onChange={stateValueOnchange}
-      />
-    </div>
-  );
-};
+    let hour = (parseInt(hourValue) - 1).toString();
+    hour = preProcessInputValue(hour);
+    hourOnChange(hour);
+  };
 
-const CenterComponent = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  // Event handler for decrementing hour
+  const handleHourDownArrow = () => {
+    if (hourValue >= maximumHours) {
+      hourOnChange("00");
+      return;
+    }
 
-  const [selectOptions, setSelectOptions] = useState<any>([]);
+    let hour = (parseInt(hourValue) + 1).toString();
+    hour = preProcessInputValue(hour);
+    hourOnChange(hour);
+  };
 
-  const {
-    field: { value: centerValue, onChange: centerValueOnchange },
-  } = useController({
-    name: "center",
-  });
-  const { watch } = useFormContext();
+  // Event handler for minute input change
+  const handleMinute = (event: { target: { value: any } }) => {
+    let inputValue = event.target.value;
+    const minute = preProcessInputValue(inputValue);
+    minuteOnChange(minute);
+  };
 
-  const formData = watch();
-  let filter: Array<CrudFilter> = [];
-  if (formData?.state_id?.value && formData?.city_id?.value) {
-    filter.push(
-      {
-        field: "state_id",
-        operator: "eq",
-        value: formData?.state_id?.value,
-      },
-      {
-        field: "city_id",
-        operator: "eq",
-        value: formData?.city_id?.value,
+  // Event handler for incrementing minutes
+  const handleMinutesUpArrow = () => {
+    if (minuteValue == "00") {
+      minuteOnChange("59");
+      return;
+    }
+
+    let minute = (parseInt(minuteValue) - 1).toString();
+    minute = preProcessInputValue(minute);
+    minuteOnChange(minute);
+  };
+
+  // Event handler for decrementing minutes
+  const handleMinutesDownArrow = () => {
+    if (minuteValue == "59") {
+      minuteOnChange("00");
+      return;
+    }
+
+    let minute = (parseInt(minuteValue) + 1).toString();
+    minute = preProcessInputValue(minute);
+    minuteOnChange(minute);
+  };
+
+  // Effect to handle hour format change
+  useEffect(() => {
+    if (is12HourFormat == true) {
+      if (hourValue > 12) {
+        const hours = parseInt(hourValue) - 12;
+        const newHourValue = preProcessInputValue(hours.toString());
+        hourOnChange(newHourValue);
+        timeFormatOnChange("PM");
       }
-    );
-  } else if (formData?.state_id?.value) {
-    filter.push({
-      field: "state_id",
-      operator: "eq",
-      value: formData?.state_id?.value,
-    });
-  }
-
-  const {
-    options: centerOptions,
-    onSearch: centerOnsearch,
-    queryResult,
-  } = useSelect({
-    resource: "center",
-    optionLabel: "name",
-    optionValue: "id",
-    filters: filter,
-    onSearch: (value) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-    pagination: {
-      current: currentPage,
-      mode: "server",
-    },
-  });
-
-  useEffect(() => {
-    if (centerOptions) {
-      if (currentPage > 1)
-        setSelectOptions([...selectOptions, ...centerOptions]);
-      else setSelectOptions(centerOptions);
+    } else {
+      if (timeFormat == "PM" && hourValue != 12) {
+        const hours = parseInt(hourValue) + 12;
+        const newHourValue = preProcessInputValue(hours.toString());
+        hourOnChange(newHourValue);
+      }
     }
-  }, [centerOptions, currentPage]);
+  }, [is12HourFormat]);
 
-  const handleOnBottomReached = () => {
-    if (
-      centerOptions &&
-      (queryResult?.data?.total as number) >= currentPage * 10
-    )
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
-  };
   return (
-    <div className="flex gap-1 flex-col h-[60px] w-[278px]">
-      <div className="text-xs font-normal text-[#333333]">Local Center</div>
-
-      <CustomSelect
-        value={centerValue}
-        placeholder="Select Local center"
-        data={selectOptions}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          centerOnsearch(val);
-        }}
-        onChange={centerValueOnchange}
-      />
-    </div>
+    <Popover>
+      <PopoverTrigger name={`TimeSelector ${name}`}>
+        <div className="border border-1 py-[10px] px-[14px] flex justify-between items-center rounded-xl cursor-pointer w-[233px]">
+          <div className="flex gap-2 items-center">
+            <Clock />
+            <div>
+              {hourValue} : {minuteValue} {is12HourFormat && timeFormat}
+            </div>
+          </div>
+          <div className="px-1 py-[7px]">
+            <DropDown />
+          </div>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="!w-[233px] h-[154px] flex items-center justify-center">
+        <div className="flex w-[200px] items-center justify-center">
+          <div className="flex basis-4/5 items-center justify-center gap-3">
+            <div className="flex items-center justify-center flex-col gap-4">
+              <div
+                className="rotate-180 cursor-pointer"
+                onClick={handleHourUpArrow}
+              >
+                <DropDown fill="#7677F4" />
+              </div>
+              <div>
+                <Input
+                  className="w-12"
+                  name={`${name}-hours`}
+                  value={hourValue}
+                  onChange={handleHour}
+                  onBlur={() => {
+                    if (hourValue > maximumHours) {
+                      hourOnChange(maximumHours);
+                    }
+                  }}
+                />
+              </div>
+              <div className="cursor-pointer" onClick={handleHourDownArrow}>
+                <DropDown fill="#7677F4" />
+              </div>
+            </div>
+            :
+            <div>
+              <div className="flex items-center justify-center flex-col gap-4">
+                <div
+                  className="rotate-180 cursor-pointer"
+                  onClick={handleMinutesUpArrow}
+                >
+                  <DropDown fill="#7677F4" />
+                </div>
+                <div>
+                  <Input
+                    className="w-12"
+                    name={`${name}-minutes`}
+                    value={minuteValue}
+                    onChange={handleMinute}
+                    onBlur={() => {
+                      if (minuteValue > 59) {
+                        minuteOnChange(59);
+                      }
+                    }}
+                  />
+                </div>
+                <div
+                  className="cursor-pointer"
+                  onClick={handleMinutesDownArrow}
+                >
+                  <DropDown fill="#7677F4" />
+                </div>
+              </div>
+            </div>
+          </div>
+          {is12HourFormat && (
+            <div className="flex basis-1/5 flex-col items-center justify-center gap-2">
+              <div
+                className="w-12 h-10 border border-2 border-[blue] flex items-center justify-center bg-blue-600 text-white font-medium rounded-md cursor-pointer"
+                onClick={() => {
+                  timeFormatOnChange("AM");
+                }}
+              >
+                AM
+              </div>
+              <div
+                className="w-12 h-10 border border-2 border-[blue] flex items-center justify-center bg-blue-600 text-white font-medium rounded-md cursor-pointer"
+                onClick={() => {
+                  timeFormatOnChange("PM");
+                }}
+              >
+                PM
+              </div>
+            </div>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
