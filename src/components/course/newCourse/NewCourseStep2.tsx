@@ -693,19 +693,15 @@ const LanguageDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
       pageSize: 20,
+      current: currentPage,
       mode: "server",
     },
   });
 
-  console.log("heyy options", options);
-
   useEffect(() => {
-    if (options) {
-      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
-      else setSelectOptions(options);
-    }
+    if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
+    else setSelectOptions(options);
   }, [options]);
 
   const filteredOptions = selectOptions?.filter((val: any) => {
@@ -724,6 +720,8 @@ const LanguageDropDown = () => {
 
   const handleOnSearch = (value: any) => {
     // For resetting the data to the first page which coming from the API
+    setCurrentPage(1);
+
     onSearch(value);
   };
 
@@ -768,7 +766,6 @@ const LanguageTranslationDropDown = () => {
       mode: "server",
     },
   });
-
 
   const filteredOptions = options?.filter((val) => {
     if (_.some(formData?.languages, (obj) => obj.value === val.value))

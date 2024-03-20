@@ -8,7 +8,7 @@ import GetScrollTypesAlert from "@components/GetScrollAlert";
 import { Input } from "./input";
 import { useEffect } from "react";
 import isEqual from "lodash/isEqual";
-import _ from "lodash";
+import _, { uniqBy } from "lodash";
 
 // Define the shape of each data item
 export type DataItem = Record<"value" | "label", string>;
@@ -35,6 +35,8 @@ export function MultiSelect({
   error?: any;
   selectBoxStyles?: any;
 }) {
+  const filteredData = uniqBy(data, "value");
+
 
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -45,13 +47,6 @@ export function MultiSelect({
   const [popoverOpen, setPopoverOpen] = React.useState(false);
 
   const [selected, setSelected] = React.useState<number[]>(propValue);
-
-  useEffect(() => {
-    // Update selected state only if propValue changes
-    if (!isEqual(selected, propValue)) {
-      setSelected(propValue);
-    }
-  }, []);
 
   const headerStyles = selectBoxStyles?.header || "";
   const dropdownStyles = selectBoxStyles?.dropdown || "";
@@ -65,6 +60,7 @@ export function MultiSelect({
   const handleOnSelect = (option: any) => {
     onChange([...selected, option]);
     setSelected((prev) => [...prev, option]);
+    console.log(data, selected, selectables, "selectables");
   };
 
   // Handle clicks outside the dropdown to close it
@@ -91,14 +87,13 @@ export function MultiSelect({
 
   const findObjectById = (id: number): DataItem | undefined => {
     // Find the object with the given id
-    return data.find((obj) => parseInt(obj.value) === id);
+    return filteredData.find((obj) => parseInt(obj.value) === id);
   };
 
   // Filter out selected values from the dropdown
-  const selectables = data.filter(
+  const selectables = filteredData.filter(
     (obj) => !selected.includes(parseInt(obj.value))
   );
-  // console.log(data, propValue, selectables, "selectables");
 
   return (
     <div className={`grid w-full items-center ${headerStyles}`}>
