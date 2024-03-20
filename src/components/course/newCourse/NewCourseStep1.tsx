@@ -404,7 +404,6 @@ const ProgramOrganizerDropDown = () => {
         }}
         onChange={onChange}
         getOptionProps={(option: number) => {
-          console.log(option, "kkkkkkkkkkkkk");
           if (option === loginUserData?.userData?.id) {
             return {
               disable: true,
