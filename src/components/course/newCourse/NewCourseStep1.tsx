@@ -340,6 +340,7 @@ const ProgramOrganizerDropDown = () => {
         value: 43,
       },
     ],
+    defaultValue: value,
     onSearch: (value) => [
       {
         field: "contact_id.first_name",
@@ -375,14 +376,18 @@ const ProgramOrganizerDropDown = () => {
 
   //If logged user is not present in data then append the value and send it to data
   const isUserPresentInData = options?.find(
-    (obj: { value: number }) => obj.value == value
+    (obj: { val: number }) => obj?.val == loginUserData?.userData?.id
   );
 
   const filteredOptions = isUserPresentInData
     ? options
-    : [...options, ...value];
-
- 
+    : [
+        ...options,
+        {
+          label: loginUserData?.userData?.contact_id?.full_name,
+          value: loginUserData?.userData?.id,
+        },
+      ];
 
   return (
     <div className="w-80 flex gap-1 flex-col">
@@ -390,7 +395,7 @@ const ProgramOrganizerDropDown = () => {
         Program Organizer *
       </div>
       <MultiSelect
-        value={[value?.[0]?.value]}
+        value={value}
         placeholder="Enter Program organizer Name"
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
@@ -399,6 +404,7 @@ const ProgramOrganizerDropDown = () => {
         }}
         onChange={onChange}
         getOptionProps={(option: number) => {
+          console.log(option, "kkkkkkkkkkkkk");
           if (option === loginUserData?.userData?.id) {
             return {
               disable: true,

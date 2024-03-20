@@ -62,13 +62,9 @@ function NewCourse() {
       visibility: "public",
       displayLanguage: "true",
       isGeoRestriction: "true",
-      languages: [2, 3],
-      programOrganizers: [loggedUserData],
-      courseType:24
+      programOrganizers: [loggedUserData?.value],
     },
   });
-
-  console.log("heyy logged in user data form", loggedUserData);
 
   const {
     refineCore: { onFinish, formLoading },

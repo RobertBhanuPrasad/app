@@ -161,7 +161,7 @@ export const CourseTypeDropDown = () => {
     {
       field: "organization_id",
       operator: "eq",
-      value: formData?.organization?.value,
+      value: formData?.organization,
     },
     {
       field: "program_category_id.value",
@@ -193,18 +193,18 @@ export const CourseTypeDropDown = () => {
   });
 
   const selectQuery: any = {
-    resource: "organizations",
+    resource: "program_types",
     optionLabel: "name",
     optionValue: "id",
-    // meta: { select: "*,program_category_id!inner(*)" },
-    onSearch: (value) => [
+    meta: { select: "*,program_category_id!inner(*)" },
+    onSearch: (value: any) => [
       {
         field: "name",
         operator: "contains",
         value,
       },
     ],
-    // filters: filter,
+    filters: filter,
     pagination: {
       current: currentPage,
       mode: "server",
