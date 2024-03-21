@@ -262,7 +262,7 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
-  const { options, onSearch } = useSelect({
+  const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
     optionLabel: "name",
     optionValue: "id",
@@ -280,6 +280,12 @@ const OrganizationDropDown = () => {
     fieldState: { error: organizationError },
   } = useController({
     name: "organization",
+  });
+
+  const {
+    field: { onChange: organizationDetailsOnChange },
+  } = useController({
+    name: "organizationDetails",
   });
 
   const {
@@ -306,6 +312,12 @@ const OrganizationDropDown = () => {
             onChange(val);
             resetField("organization");
             setValue("organization", val);
+            organizationDetailsOnChange(
+              queryResult?.data?.data?.filter(
+                //Need to change val?.value to val in future.
+                (value) => value?.id == val
+              )?.[0]
+            );
           }}
         />
 
