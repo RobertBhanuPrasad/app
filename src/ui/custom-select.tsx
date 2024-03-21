@@ -11,6 +11,7 @@ import { Button } from "src/ui/button";
 import { Input } from "./input";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
 import Image from "next/image";
+import { uniqBy } from "lodash";
 
 // Define the shape of each option
 interface Option {
@@ -40,6 +41,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   error,
   selectBoxStyles,
 }: CustomSelectProps) => {
+  const filteredData: any = uniqBy(data, "value");
+
   // State to manage whether the dropdown is open or closed
   const [open, setOpen] = React.useState<boolean>(false);
 
@@ -47,7 +50,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const headerStyles = selectBoxStyles?.header || "";
   const dropdownStyles = selectBoxStyles?.dropdown || "";
 
-  const requiredOption = data?.filter(
+  const requiredOption = filteredData?.filter(
     (val: { value: any }) => val.value === propValue
   );
 
@@ -66,7 +69,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     } else {
       setSelectedValue(null);
     }
-  }, [propValue, data]);
+  }, [propValue, filteredData]);
 
   // Handle the selection of an option
   const handleSelect = (value: any) => {
@@ -151,7 +154,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                   id={"options"}
                   className="max-h-[300px]  text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
                 >
-                  {data?.map((option: any, index: number) => {
+                  {filteredData?.map((option: any, index: number) => {
                     return (
                       <div key={option.value}>
                         <CommandItem
@@ -165,7 +168,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                         >
                           {option.label}
                         </CommandItem>
-                        {index < data?.length - 1 && (
+                        {index < filteredData?.length - 1 && (
                           <hr className="border-[#D6D7D8]" />
                         )}
                       </div>

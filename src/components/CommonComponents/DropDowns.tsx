@@ -11,7 +11,7 @@ export const VenueNameComponent = () => {
     field: { value: venueName, onChange: venueOnchange },
     fieldState: { error: venueError },
   } = useController({
-    name: "venueName",
+    name: "name",
   });
   return (
     <div className="flex gap-1 flex-col h-[60px]">
@@ -34,7 +34,7 @@ export const PostalCodeComponent = () => {
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
   } = useController({
-    name: "postalCode",
+    name: "postal_code",
   });
   const { setValue } = useFormContext();
 
@@ -44,19 +44,10 @@ export const PostalCodeComponent = () => {
         .from("city")
         .select("*")
         .eq("postal_code", postalCodeValue);
-
-      const transformed = {
-        label: prefillData?.[0]?.name,
-        value: prefillData?.[0]?.id,
-      };
-
-      const transformedState = {
-        label: prefillData?.[0]?.state_id?.name,
-        value: prefillData?.[0]?.state_id?.id,
-      };
-
-      setValue("city_id", transformed);
-      setValue("state_id", transformedState);
+      if (prefillData && prefillData?.length > 0) {
+        setValue("city_id", prefillData?.[0]?.id);
+        setValue("state_id", prefillData?.[0]?.state_id);
+      }
     }
   };
   useEffect(() => {
@@ -82,7 +73,7 @@ export const StreetAddressComponent = () => {
   const {
     field: { value: streetAddressValue, onChange: streetAddressOnchange },
   } = useController({
-    name: "streetAddress",
+    name: "address",
   });
   return (
     <div className="flex gap-1 flex-col h-[60px]">
@@ -127,10 +118,10 @@ export const CityDropDown = () => {
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "city",
-    meta: { select: "*" },
     optionLabel: "name",
     optionValue: "id",
     filters: filter,
+    defaultValue: cityValue,
     onSearch: (value) => [
       {
         field: "name",
@@ -161,7 +152,9 @@ export const CityDropDown = () => {
     const cityData: any = queryResult?.data?.data?.find(
       (city) => city.id == val
     );
+    setValue("city", cityData);
     setValue("state_id", cityData?.state_id);
+    setValue("postal_code", cityData?.postal_code);
   };
   return (
     <div className="flex gap-1 flex-col h-[60px]">
@@ -183,9 +176,17 @@ export const CityDropDown = () => {
 };
 
 export const StateDropDown = () => {
+  const { setValue } = useFormContext();
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
+
+  const {
+    field: { value: stateValue, onChange: stateValueOnchange },
+  } = useController({
+    name: "state_id",
+  });
 
   const {
     options: stateOptions,
@@ -196,6 +197,7 @@ export const StateDropDown = () => {
     meta: { select: "*" },
     optionLabel: "name",
     optionValue: "id",
+    defaultValue: stateValue,
     onSearch: (value) => [
       {
         field: "name",
@@ -207,12 +209,6 @@ export const StateDropDown = () => {
       current: currentPage,
       mode: "server",
     },
-  });
-
-  const {
-    field: { value: stateValue, onChange: stateValueOnchange },
-  } = useController({
-    name: "state_id",
   });
 
   useEffect(() => {
@@ -231,6 +227,13 @@ export const StateDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
+  const handleStateOnChange = (val: number) => {
+    stateValueOnchange(val);
+    const stateObject = queryResult?.data?.data?.find(
+      (state) => state.id == val
+    );
+    setValue("state", stateObject);
+  };
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
       <div className="text-xs font-normal text-[#333333]">Province</div>
@@ -243,7 +246,7 @@ export const StateDropDown = () => {
         onSearch={(val: string) => {
           stateOnsearch(val);
         }}
-        onChange={stateValueOnchange}
+        onChange={handleStateOnChange}
       />
     </div>
   );
@@ -257,7 +260,7 @@ export const CenterDropDown = () => {
   const {
     field: { value: centerValue, onChange: centerValueOnchange },
   } = useController({
-    name: "center",
+    name: "center_id",
   });
   const { watch, setValue } = useFormContext();
 
@@ -289,6 +292,7 @@ export const CenterDropDown = () => {
     optionLabel: "name",
     optionValue: "id",
     filters: filter,
+    defaultValue: centerValue,
     onSearch: (value) => [
       {
         field: "name",
@@ -318,14 +322,18 @@ export const CenterDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
-  const handleCenterOnChange = (val: number) => {
+  const handleCenterOnChange = async (val: number) => {
     centerValueOnchange(val);
-    const centerData: any = queryResult?.data?.data?.find(
-      (center) => center.id == val
-    );
-
-    setValue("state_id", centerData?.state_id);
-    setValue("city_id", centerData?.city_id);
+    const { data: centerData } = await supabaseClient
+      .from("center")
+      .select("*,city_id(*),state_id(*)")
+      .eq("id", val);
+    setValue("center", centerData?.[0]);
+    setValue("state_id", centerData?.[0]?.state_id?.id);
+    setValue("state", centerData?.[0]?.state_id);
+    setValue("city_id", centerData?.[0]?.city_id?.id);
+    setValue("city", centerData?.[0]?.city_id);
+    setValue("postal_code", centerData?.[0]?.city_id?.postal_code);
   };
   return (
     <div className="flex gap-1 flex-col h-[60px]">
@@ -346,55 +354,55 @@ export const CenterDropDown = () => {
 };
 
 export const MapComponent = () => {
-    const {
-      field: { value: stateValue },
-    } = useController({
-      name: "state_id",
+  const {
+    field: { value: stateValue },
+  } = useController({
+    name: "state_id",
+  });
+
+  const {
+    field: { value: cityValue },
+  } = useController({
+    name: "city_id",
+  });
+
+  const {
+    field: { value: coordinates, onChange: setCoordinates },
+  }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
+    useController({
+      name: "address_line_coordinates",
     });
-  
-    const {
-      field: { value: cityValue },
-    } = useController({
-      name: "city_id",
-    });
-  
-    const {
-      field: { value: coordinates, onChange: setCoordinates },
-    }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
-      useController({
-        name: "address_line_coordinates",
-      });
-  
-    useEffect(() => {
-      loadInitialCoordinates();
-    }, [stateValue, cityValue]);
-  
-    const { watch } = useFormContext();
-  
-    const formData = watch();
-  
-    const loadInitialCoordinates = async () => {
-      let LocationData: any;
-      if (formData?.city_id && formData?.state_id) {
-        LocationData = await fetchLongitudeLatitudeData(
-          `${formData?.city_id?.label},${formData?.state_id?.label}`
-        );
-      }
-  
-      if (LocationData?.length > 0) {
-        setCoordinates({ lat: LocationData?.[0]?.y, lng: LocationData?.[0]?.x });
-      }
-    };
-  
-    return (
-      <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
-        <MapPointer
-          value={coordinates}
-          onChange={setCoordinates}
-          draggable={true}
-          //If coordinates are [0,0] then display whole map
-          zoom={_.isEqual(coordinates, { lat: 0, lng: 0 }) ? 1 : 15}
-        />
-      </div>
-    );
+
+  useEffect(() => {
+    loadInitialCoordinates();
+  }, [stateValue, cityValue]);
+
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const loadInitialCoordinates = async () => {
+    let LocationData: any;
+    if (formData?.city_id && formData?.state_id) {
+      LocationData = await fetchLongitudeLatitudeData(
+        `${formData?.city_id?.label},${formData?.state_id?.label}`
+      );
+    }
+
+    if (LocationData?.length > 0) {
+      setCoordinates({ lat: LocationData?.[0]?.y, lng: LocationData?.[0]?.x });
+    }
   };
+
+  return (
+    <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
+      <MapPointer
+        value={coordinates}
+        onChange={setCoordinates}
+        draggable={true}
+        //If coordinates are [0,0] then display whole map
+        zoom={_.isEqual(coordinates, { lat: 0, lng: 0 }) ? 1 : 15}
+      />
+    </div>
+  );
+};

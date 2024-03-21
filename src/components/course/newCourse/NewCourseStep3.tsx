@@ -314,11 +314,42 @@ const Venue = () => {
     name: "isNewVenueSelected",
   });
 
-  const {
-    field: { onChange: newVenueOnchange },
-  } = useController({
-    name: "newVenue",
-  });
+  const handleAddNewVenue = () => {
+    setValue("newVenue", {
+      city_id: formData?.city_id,
+      city: formData?.city,
+      state_id: formData?.state_id,
+      state: formData?.state,
+      center_id: formData?.center_id,
+      center: formData?.center,
+      postal_code: formData?.postal_code,
+      address: formData?.address,
+      name: formData?.name,
+    });
+  };
+
+  const handleOpenEditNewVenue = () => {
+    setValue("name", formData?.newVenue?.name);
+    setValue("address", formData?.newVenue?.address);
+    setValue("state_id", formData?.newVenue?.state_id);
+    setValue("state", formData?.newVenue?.state);
+    setValue("city_id", formData?.newVenue?.city_id);
+    setValue("city", formData?.newVenue?.city);
+    setValue("center_id", formData?.newVenue?.center_id);
+    setValue("center", formData?.newVenue?.center);
+    setValue("postal_code", formData?.newVenue?.postal_code);
+    isNewVenueOnchange(true);
+  };
+
+  const handleOpenAddNewVenue = () => {
+    resetField("center_id");
+    resetField("state_id");
+    resetField("address");
+    resetField("postal_code");
+    resetField("city_id");
+    resetField("name");
+    isNewVenueOnchange(true);
+  };
 
   return (
     <div>
@@ -327,14 +358,14 @@ const Venue = () => {
         onValueChange={onChange}
         value={value}
       >
-        <div
-          className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
-            value === "existing-venue"
-              ? "border border-[#7677F4]"
-              : "border border-[#D6D7D8]"
-          }`}
-        >
-          <Label htmlFor="existing-venue">
+        <Label htmlFor="existing-venue">
+          <div
+            className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
+              value === "existing-venue"
+                ? "border border-[#7677F4]"
+                : "border border-[#D6D7D8]"
+            }`}
+          >
             <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
               <RadioGroupCircleItem
                 value="existing-venue"
@@ -351,8 +382,8 @@ const Venue = () => {
               <div>
                 {existingVenue ? (
                   <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                    {formData?.existingVenue[0]?.address},
-                    {formData?.existingVenue[0]?.postal_code}
+                    {formData?.existingVenue?.address},
+                    {formData?.existingVenue?.postal_code}
                   </div>
                 ) : (
                   <div className="pl-[30px] leading-6 font-normal">
@@ -370,7 +401,7 @@ const Venue = () => {
                       </Badge>
                     </DialogTrigger>
                     <DialogContent className="w-[858px] h-[585px] rounded-[24px] ">
-                      <ExistingVenue />
+                      <ExistingVenueList />
                     </DialogContent>
                   </Dialog>
                 )}
@@ -380,8 +411,8 @@ const Venue = () => {
                 No existing venue found
               </div>
             )}
-          </Label>
-        </div>
+          </div>
+        </Label>
         {formData?.newVenue ? (
           <Label htmlFor="new-venue">
             <div
@@ -405,44 +436,12 @@ const Venue = () => {
                   <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
-                  <Dialog
-                    onOpenChange={() => {
-                      setValue("newVenue.city", {
-                        value: formData?.newVenue?.city?.value,
-                        label: formData?.newVenue?.city?.label,
-                      });
-                      setValue("newVenue.state", {
-                        value: formData?.newVenue?.state?.value,
-                        label: formData?.newVenue?.state?.value,
-                      });
-                      setValue(
-                        "newVenue.postalCode",
-                        formData?.newVenue?.postalCode
-                      );
-                      setValue(
-                        "newVenue.streetAddress",
-                        formData?.newVenue?.streetAddress
-                      );
-                      setValue("newVenue.venue", formData?.newVenue?.venue);
-                      setValue("newVenue.center", formData?.newVenue?.center);
-                    }}
-                  >
-                    <DialogTrigger
-                      onClick={() => {
-                        isNewVenueOnchange(false);
-                      }}
-                    >
+                  <Dialog>
+                    <DialogTrigger onClick={handleOpenEditNewVenue}>
                       <EditIcon />
                     </DialogTrigger>
-                    <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
-                      <AddOrEditVenue />
-                      <DialogFooter>
-                        <div className="w-full flex items-center justify-center">
-                          <DialogClose>
-                            <Button type="submit">Submit</Button>
-                          </DialogClose>
-                        </div>
-                      </DialogFooter>
+                    <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                      <AddOrEditVenue handleSubmit={handleAddNewVenue} />
                     </DialogContent>
                   </Dialog>
 
@@ -451,84 +450,30 @@ const Venue = () => {
                       <Delete />
                     </DialogTrigger>
                     <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                      <DialogHeader>
-                        <DialogTitle className="flex justify-center">
-                          Delete
-                        </DialogTitle>
-                        <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-                          Are you sure you want to delete the address
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter className="w-full flex !justify-center gap-6">
-                        <DialogClose>
-                          <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-                            No
-                          </Button>
-                        </DialogClose>
-                        <DialogClose>
-                          <Button
-                            className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
-                            onClick={() => removeVenue()}
-                          >
-                            Yes
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
+                      <DeleteVenueComponent
+                        handleDeleteVenue={() => {
+                          removeVenue();
+                        }}
+                      />
                     </DialogContent>
                   </Dialog>
                 </div>
               </div>
               <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                {formData?.newVenue?.streetAddress},
-                {formData?.newVenue?.city_id?.label},
-                {formData?.newVenue?.postalCode}
+                {formData?.newVenue?.address},{formData?.newVenue?.city?.name},
+                {formData?.newVenue?.postal_code}
               </div>
             </div>
           </Label>
         ) : (
-          <Dialog
-            onOpenChange={() => {
-              resetField("center");
-              resetField("state_id");
-              resetField("streetAddress");
-              resetField("postalCode");
-              resetField("city_id");
-              resetField("venueName");
-            }}
-          >
-            <DialogTrigger
-              onClick={() => {
-                isNewVenueOnchange(true);
-              }}
-            >
+          <Dialog>
+            <DialogTrigger onClick={handleOpenAddNewVenue}>
               <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
                 + Add New Venue
               </div>
             </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
-              <AddOrEditVenue />
-              <DialogFooter>
-                <div className="w-full flex items-center justify-center">
-                  <DialogClose>
-                    <Button
-                      type="submit"
-                      onClick={() => {
-                        onChange("new-venue");
-                        newVenueOnchange({
-                          venue: formData?.venue,
-                          state: formData?.state_id,
-                          city: formData?.city_id,
-                          streetAddress: formData?.streetAddress,
-                          postalCode: formData?.postalCode,
-                          center: formData?.center,
-                        });
-                      }}
-                    >
-                      Submit
-                    </Button>
-                  </DialogClose>
-                </div>
-              </DialogFooter>
+            <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+              <AddOrEditVenue handleSubmit={handleAddNewVenue} />
             </DialogContent>
           </Dialog>
         )}
@@ -712,7 +657,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   );
 };
 
-const ExistingVenue = () => {
+const ExistingVenueList = () => {
   const { setValue, watch } = useFormContext();
 
   const formData = watch();
@@ -732,7 +677,7 @@ const ExistingVenue = () => {
   });
 
   const {
-    field: { onChange },
+    field: { onChange: setIsNewVenue },
   } = useController({
     name: "isNewVenue",
   });
@@ -771,12 +716,17 @@ const ExistingVenue = () => {
   const fetchVenueData = async () => {
     const loginUserVenues = ((await fetchLoginUserVenue()) as any[]) ?? [];
     const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
-    setVenueData([...loginUserVenues, ...otherVenueData]);
+    let modifiedVenueData = [...loginUserVenues, ...otherVenueData];
+    if (existingVenue) {
+      modifiedVenueData = [existingVenue, ...modifiedVenueData];
+      modifiedVenueData = _.uniqBy(modifiedVenueData, "id");
+    }
+    setVenueData(modifiedVenueData);
   };
 
   //Fetching initial Data of venues
   useEffect(() => {
-    fetchVenueData();
+    if (venueData?.length == 0) fetchVenueData();
   }, []);
 
   //Fetching venue data after search
@@ -787,8 +737,8 @@ const ExistingVenue = () => {
     fetchVenueData();
   }, [debouncedSearchValue]);
 
-  const filteredVenueData = venueData.filter(
-    (obj) => !deletedVenueIds.includes(obj.id)
+  let filteredVenueData = venueData.filter(
+    (obj: { id: number }) => !deletedVenueIds.includes(obj.id)
   );
 
   const deleteVenue = (id: any) => {
@@ -813,25 +763,51 @@ const ExistingVenue = () => {
     setValue("venueId", item.id);
   };
   const {
-    field: { onChange: existingVenueOnChange },
+    field: { value: existingVenue, onChange: existingVenueOnChange },
   } = useController({
     name: "existingVenue",
   });
 
-  const getExistingVenueDetails = () => {
+  const handleSubmitVenueList = () => {
     const existingVenueObject = venueData.filter(
       (venue) => venue.id == formData?.venueId
     );
-    existingVenueOnChange(existingVenueObject);
+    existingVenueOnChange(existingVenueObject?.[0]);
   };
 
   const { data: loginUserData }: any = useGetIdentity();
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
 
-  const isUserNationAdminOrSuperAdmin =
-    user_roles[0]?.role_id?.value == "National Admin" ||
-    user_roles[0]?.role_id?.value == "Super Admin";
+  const isUserNationAdminOrSuperAdmin = user_roles?.find(
+    (role) =>
+      role.role_id.value == "National Admin" ||
+      role.role_id.value == "Super Admin"
+  );
+
+  const handleOpenExistingVenue = (item: any) => {
+    setIsNewVenue(false);
+    setValue("name", item?.name);
+    setValue("address", item?.address);
+    setValue("state_id", item?.state_id);
+    setValue("city_id", item?.city_id);
+    setValue("center_id", item?.center_id);
+    setValue("postal_code", item?.postal_code);
+  };
+
+  const handleSubmitExistingVenue = (index: number) => {
+    const allVenuesData = [...venueData];
+    (allVenuesData[index] = {
+      ...allVenuesData[index],
+      name: formData?.name,
+      address: formData?.address,
+      state_id: formData?.state_id,
+      city_id: formData?.city_id,
+      center_id: formData?.center_id,
+      postal_code: formData?.postal_code,
+    }),
+      setVenueData(allVenuesData);
+  };
 
   return (
     <div>
@@ -863,7 +839,7 @@ const ExistingVenue = () => {
             id={"options"}
           >
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
-            {filteredVenueData?.map((item: any) => {
+            {filteredVenueData?.map((item: any, index: number) => {
               return (
                 <div className="flex  flex-row !w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
                   <Checkbox
@@ -872,66 +848,43 @@ const ExistingVenue = () => {
                     onCheckedChange={() => handleCheckboxChange(item)}
                     checked={formData?.venueId == item.id ? true : false}
                   />
-                  <div className="space-y-1 leading-none">
+                  <div className="space-y-1 leading-none w-full">
                     <div className="flex justify-between">
                       <div className="font-semibold">{item.name}</div>
                       <div className="flex flex-row gap-3">
-                        {(isUserNationAdminOrSuperAdmin ||
-                          item?.created_by_user_id ==
-                            loginUserData?.userData?.id) && (
-                          <Dialog
-                            onOpenChange={() => {
-                              setValue("city_id", {
-                                value: item?.city_id,
-                                label: item?.city_name,
-                              });
-                              setValue("state_id", {
-                                value: item?.state_id,
-                                label: item?.state_name,
-                              });
-                            }}
-                          >
+                        {true && (
+                          // isUserNationAdminOrSuperAdmin ||
+                          // item?.created_by_user_id ==
+                          //   loginUserData?.userData?.id
+                          <Dialog>
                             <DialogTrigger
                               onClick={() => {
-                                onChange(false);
+                                handleOpenExistingVenue(item);
                               }}
                             >
                               <EditIcon />
                             </DialogTrigger>
-                            <DialogContent className="!w-[636px] !h-[647px] pt-6 px-[25px] rounded-6">
-                              <AddOrEditVenue />
+                            <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                              <AddOrEditVenue
+                                handleSubmit={() => {
+                                  handleSubmitExistingVenue(index);
+                                }}
+                              />
                             </DialogContent>
                           </Dialog>
                         )}
-                        {isUserNationAdminOrSuperAdmin && (
+                        {true && (
+                          // isUserNationAdminOrSuperAdmin
                           <Dialog>
                             <DialogTrigger>
                               <Delete />
                             </DialogTrigger>
                             <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                              <DialogHeader>
-                                <DialogTitle className="flex justify-center">
-                                  Delete
-                                </DialogTitle>
-                                <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-                                  Are you sure you want to delete the address
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter className="w-full flex !justify-center gap-6">
-                                <DialogClose>
-                                  <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-                                    No
-                                  </Button>
-                                </DialogClose>
-                                <DialogClose>
-                                  <Button
-                                    className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
-                                    onClick={() => deleteVenue(item.id)}
-                                  >
-                                    Yes
-                                  </Button>
-                                </DialogClose>
-                              </DialogFooter>
+                              <DeleteVenueComponent
+                                handleDeleteVenue={() => {
+                                  deleteVenue(item?.id);
+                                }}
+                              />
                             </DialogContent>
                           </Dialog>
                         )}
@@ -955,7 +908,7 @@ const ExistingVenue = () => {
             type="submit"
             onClick={() => {
               isNewVenueSelectedOnchange("existing-venue");
-              getExistingVenueDetails();
+              handleSubmitVenueList();
             }}
           >
             Submit
@@ -966,7 +919,11 @@ const ExistingVenue = () => {
   );
 };
 
-export const AddOrEditVenue = ({}) => {
+export const AddOrEditVenue = ({
+  handleSubmit,
+}: {
+  handleSubmit: () => void;
+}) => {
   const { watch } = useFormContext();
 
   const formData = watch();
@@ -999,6 +956,13 @@ export const AddOrEditVenue = ({}) => {
           <CenterDropDown />
         </div>
       </div>
+      <DialogFooter>
+        <div className="w-full flex items-center justify-center mt-5">
+          <DialogClose>
+            <Button onClick={handleSubmit}>Submit</Button>
+          </DialogClose>
+        </div>
+      </DialogFooter>
     </div>
   );
 };
@@ -1221,5 +1185,37 @@ const TimeSelector = ({
         </div>
       </PopoverContent>
     </Popover>
+  );
+};
+
+const DeleteVenueComponent = ({
+  handleDeleteVenue,
+}: {
+  handleDeleteVenue: () => void;
+}) => {
+  return (
+    <div>
+      <DialogHeader>
+        <DialogTitle className="flex justify-center">Delete</DialogTitle>
+        <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
+          Are you sure you want to delete the address
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter className="w-full flex !justify-center gap-6">
+        <DialogClose>
+          <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+            No
+          </Button>
+        </DialogClose>
+        <DialogClose>
+          <Button
+            className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+            onClick={handleDeleteVenue}
+          >
+            Yes
+          </Button>
+        </DialogClose>
+      </DialogFooter>
+    </div>
   );
 };
