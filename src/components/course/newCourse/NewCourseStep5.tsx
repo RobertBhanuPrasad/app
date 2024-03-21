@@ -14,22 +14,25 @@ import Delete from "@public/assets/Delete";
 import CustomSelect from "src/ui/custom-select";
 import { useSelect } from "@refinedev/core";
 import Add from "@public/assets/Add";
+import { RadioButtonCard } from "src/ui/radioButtonCard";
+import { RadioGroup } from "src/ui/radio-group";
 
 export default function CourseTable() {
   // Hook to manage dynamically added fields in the form
-  const { append } = useFieldArray({
-    name: "fees",
+  const { append, remove } = useFieldArray({
+    name: "accommodation",
   });
 
-  // Hook to access form context
-  const { getValues } = useFormContext();
 
-  // Get form data
-  const formData = getValues();
+  // const formData = useWatch({ name: "accommodation" });
+
+  const { watch } = useFormContext();
+
+  const formData = watch();
 
   // Effect to add initial data if no fees are present
   useEffect(() => {
-    if (!formData?.fees || formData?.fees?.length <= 0) {
+    if (!formData?.accommodation || formData?.accommodation.length <= 0) {
       append({
         accomodationFee: "",
         accomodationSpots: "",
@@ -39,13 +42,14 @@ export default function CourseTable() {
   }, []);
 
   return (
-    <div>
-      {/* Render DataTable with form data */}
+    <div className="flex flex-col gap-8">
+      <ResidentialCourse />
       <DataTable
         tableStyles="w-[1072px]"
-        columns={columns}
-        data={formData?.fees || []}
+        columns={columns(append, remove, formData?.accommodation)}
+        data={formData?.accommodation || []}
       />
+      <AccommodationFeeMode />
     </div>
   );
 }
@@ -54,15 +58,22 @@ export default function CourseTable() {
 CourseTable.noLayout = false;
 
 // Definition of columns for the DataTable
-export const columns: ColumnDef<any>[] = [
+const columns = (append: any, remove: any, formData: any) => [
   {
     // Column for Accommodation Type
-    id: "fees",
+    id: "accommodation",
     header: () => <div>Accommodation Type</div>,
     cell: ({ row }: any) => {
+      const existingAccommodationValues = formData
+        ?.map((field: any) => field?.accomodationType?.value)
+        .filter((value: any) => value !== undefined);
+
       // Custom hook to control a field in the form
-      const { field, fieldState } = useController({
-        name: `fees.${row.index}.accomodationType`,
+      const {
+        field: { value, onChange },
+        fieldState: { error },
+      } = useController({
+        name: `accommodation[${row.index}].accomodationType`,
       });
 
       // Hook to fetch and manage options for a select input
@@ -78,21 +89,24 @@ export const columns: ColumnDef<any>[] = [
           },
         ],
       });
+      const filteredOptions = options.filter(
+        (option) => !existingAccommodationValues?.includes(option.value)
+      );
 
       return (
         <div className="w-72 ">
           {/* Custom select input */}
           <CustomSelect
-            error={fieldState.error}
-            value={field.value}
-            placeholder="Select Organization"
-            data={options}
+            error={error}
+            value={value}
+            placeholder="Select Accommodation"
+            data={filteredOptions}
             onBottomReached={() => {}}
             onSearch={(val: string) => {
               onSearch(val);
             }}
             onChange={(val) => {
-              field.onChange(val);
+              onChange(val);
             }}
           />
         </div>
@@ -102,13 +116,13 @@ export const columns: ColumnDef<any>[] = [
 
   // Column for Fees Per Person including VAT
   {
-    id: "fees",
+    id: "accommodationFee",
     header: () => <div>Fees Per Person inc VAT</div>,
     cell: ({ row }: any) => {
       const {
         field: { value, onChange },
       } = useController({
-        name: `fees.${row.index}.accomodationFee`,
+        name: `accommodation[${row.index}].accomodationFee`,
       });
 
       return (
@@ -126,13 +140,13 @@ export const columns: ColumnDef<any>[] = [
   },
   // Column for Number of spots available
   {
-    id: "fees",
+    id: "accommodationspots",
     header: () => <div>Number of spots available</div>,
     cell: ({ row }: any) => {
       const {
         field: { value, onChange },
       } = useController({
-        name: `fees.${row.index}.accomodationSpots`,
+        name: `accommodation[${row.index}].accomodationSpots`,
       });
 
       return (
@@ -153,12 +167,7 @@ export const columns: ColumnDef<any>[] = [
     id: "Actions",
     header: () => <div>Actions</div>,
     cell: ({ row }: any) => {
-      const { getValues } = useFormContext();
-      const { append, remove } = useFieldArray({
-        name: "fees",
-      });
-      const formData = getValues();
-      const isLastRow = row.index === formData?.fees?.length - 1;
+      const isLastRow = row.index === formData?.length - 1;
       const isFirstRow = row.index === 0;
 
       // Function to add a new row
@@ -174,7 +183,6 @@ export const columns: ColumnDef<any>[] = [
       const handleDeleteRow = (index: number) => {
         remove(index);
       };
-
       return (
         <div className="w-[150px] flex gap-4">
           {/* Button to add a new row */}
@@ -202,3 +210,66 @@ export const columns: ColumnDef<any>[] = [
     },
   },
 ];
+
+export const ResidentialCourse = () => {
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "isResidentialCourse",
+  });
+
+  return (
+    <div className="flex gap-1 flex-col">
+      <div className="text-sm font-normal text-[#333333]">
+        Residential Course <span className="text-[#7677F4]">*</span>
+      </div>
+      <RadioGroup value={value} onValueChange={onChange}>
+        <div className="flex flex-row gap-6 ">
+          <RadioButtonCard
+            value="Yes"
+            selectedRadioValue={value}
+            label="Yes"
+            className="w-[112px] h-[40px] rounded-[12px]"
+          />
+          <RadioButtonCard
+            value="No"
+            selectedRadioValue={value}
+            label="No"
+            className="w-[112px] h-[40px] rounded-[12px]"
+          />
+        </div>
+      </RadioGroup>
+    </div>
+  );
+};
+
+export const AccommodationFeeMode = () => {
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "accommodationPaymentMode",
+  });
+  return (
+    <div className="flex gap-1 flex-col">
+      <div className="text-sm font-normal text-[#333333]">
+        Accommodation fee payment mode <span className="text-[#7677F4]">*</span>
+      </div>
+      <RadioGroup onValueChange={onChange} value={value}>
+        <div className="flex flex-row gap-6 ">
+          <RadioButtonCard
+            value="Pay Online"
+            selectedRadioValue={value}
+            label="Pay Online"
+            className="w-[131px] h-[40px] rounded-[12px] "
+          />
+          <RadioButtonCard
+            value="Pay Offline"
+            selectedRadioValue={value}
+            label="Pay Offline"
+            className="w-[131px] h-[40px] rounded-[12px]"
+          />
+        </div>
+      </RadioGroup>
+    </div>
+  );
+};

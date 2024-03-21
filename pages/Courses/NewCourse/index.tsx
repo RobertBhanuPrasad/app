@@ -62,7 +62,9 @@ function NewCourse() {
       visibility: "public",
       displayLanguage: "true",
       isGeoRestriction: "true",
-      programOrganizers: [loggedUserData?.value],
+      isResidentialCourse:"No",
+      accommodationPaymentMode:"Pay Online",
+      programOrganizers: [loggedUserData],
     },
   });
 
@@ -219,3 +221,5 @@ function NewCourse() {
 }
 
 export default index;
+
+
