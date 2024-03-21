@@ -18,30 +18,30 @@ import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
-import { loginUserStore } from "src/zustandStore/LoginUserStore";
+import { useGetIdentity } from "@refinedev/core";
 
 function index() {
-  const { loginUserData } = loginUserStore();
+  const { data: loginUserData }: any = useGetIdentity();
 
-  if (Object.keys(loginUserData?.userData).length == 0) {
+  if (!loginUserData?.userData) {
     return <div>Loading...</div>;
   }
 
   return <NewCourse />;
 }
 function NewCourse() {
-  const { loginUserData } = loginUserStore();
+  const { data: loginUserData }: any = useGetIdentity();
 
   // Schema definition for form validation
-  const schema = z.object({
-    // organization: z.object({
-    //   // Define the schema for the organization object's properties here
-    //   // For example:
-    //   value: z.number(),
-    //   label: z.string(),
-    //   // Add more properties as needed
-    // }),
-  });
+  // const schema = z.object({
+  //   organization: z.object({
+  //     // Define the schema for the organization object's properties here
+  //     // For example:
+  //     value: z.number(),
+  //     label: z.string(),
+  //     // Add more properties as needed
+  //   }),
+  // });
 
   const loggedUserData = {
     value: loginUserData?.userData?.id,
