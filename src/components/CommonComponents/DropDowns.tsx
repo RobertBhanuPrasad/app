@@ -1,11 +1,12 @@
+import { MapPointer } from "@components/MapComponent";
 import { CrudFilter, useSelect } from "@refinedev/core";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
 import { supabaseClient } from "src/utility";
 import { fetchLongitudeLatitudeData } from "src/utility/GetOptionValuesByOptionLabel";
-import MapPointer from "@components/MapComponent";
 export const VenueNameComponent = () => {
   const {
     field: { value: venueName, onChange: venueOnchange },
@@ -147,14 +148,16 @@ export const CityDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
-  const handleCityOnChange = (val: number) => {
+  const handleCityOnChange = async (val: number) => {
     cityValueOnchange(val);
-    const cityData: any = queryResult?.data?.data?.find(
-      (city) => city.id == val
-    );
-    setValue("city", cityData);
-    setValue("state_id", cityData?.state_id);
-    setValue("postal_code", cityData?.postal_code);
+    const { data: cityData }: any = await supabaseClient
+      .from("city")
+      .select("*,state_id(*)")
+      .eq("id", val);
+    setValue("city", cityData?.[0]);
+    setValue("state_id", cityData?.[0]?.state_id?.id);
+    setValue("state", cityData?.[0]?.state_id);
+    setValue("postal_code", cityData?.[0]?.postal_code);
   };
   return (
     <div className="flex gap-1 flex-col h-[60px]">
@@ -367,7 +370,10 @@ export const MapComponent = () => {
   });
 
   const {
-    field: { value: coordinates, onChange: setCoordinates },
+    field: {
+      value: coordinates = { lat: 37.0902, lng: -95.7129 },
+      onChange: setCoordinates,
+    },
   }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
     useController({
       name: "address_line_coordinates",
@@ -377,20 +383,45 @@ export const MapComponent = () => {
     loadInitialCoordinates();
   }, [stateValue, cityValue]);
 
-  const { watch } = useFormContext();
+  const { watch, setValue } = useFormContext();
 
   const formData = watch();
 
   const loadInitialCoordinates = async () => {
-    let LocationData: any;
-    if (formData?.city_id && formData?.state_id) {
-      LocationData = await fetchLongitudeLatitudeData(
-        `${formData?.city_id?.label},${formData?.state_id?.label}`
-      );
-    }
+    if (formData?.state_id && formData?.state?.name) {
+      let location = formData?.state?.name;
 
-    if (LocationData?.length > 0) {
-      setCoordinates({ lat: LocationData?.[0]?.y, lng: LocationData?.[0]?.x });
+      if (formData?.city_id && formData?.city?.name) {
+        location = `${formData?.state?.name}${" "}${formData?.city?.name}`;
+      }
+
+      if (location) {
+        const locationData = await fetchLongitudeLatitudeData(location);
+        if (locationData?.length > 0) {
+          setCoordinates({
+            lat: locationData?.[0]?.y,
+            lng: locationData?.[0]?.x,
+          });
+        }
+      }
+    }
+  };
+
+  const handleChangeCoOrdinates = async (val: any) => {
+    setCoordinates(val);
+
+    const { data } = await supabaseClient.rpc(
+      "get_cities_by_nearest_location",
+      {
+        reference_latitude: val.lat,
+        reference_longitude: val.lng,
+        limit_count: 1,
+      }
+    );
+
+    if (data?.[0]?.distance < 50) {
+      setValue("state_id", data?.[0]?.city_state_id);
+      setValue("city_id", data?.[0]?.city_id);
     }
   };
 
@@ -398,10 +429,10 @@ export const MapComponent = () => {
     <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
       <MapPointer
         value={coordinates}
-        onChange={setCoordinates}
+        onChange={handleChangeCoOrdinates}
         draggable={true}
         //If coordinates are [0,0] then display whole map
-        zoom={_.isEqual(coordinates, { lat: 0, lng: 0 }) ? 1 : 15}
+        zoom={5}
       />
     </div>
   );
