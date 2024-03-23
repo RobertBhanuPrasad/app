@@ -185,7 +185,7 @@ const Sessions = () => {
                     variant="outline"
                   >
                     <div>
-                      <CalenderIcon />
+                      <CalenderIcon color="#999999" />
                     </div>
                     <div>
                       {format(new Date(schedule?.date), "dd MMM, yyyy")}
