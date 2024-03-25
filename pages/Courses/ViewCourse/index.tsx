@@ -1,4 +1,8 @@
+import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useState } from "react";
+import { authProvider } from "src/authProvider";
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
@@ -8,18 +12,31 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 
 function index() {
+  const { t } = useTranslation("common");
   const [selectedValue, setSelectedValue] = useState();
   const tabTriggers: any = [
-    { value: COURSE_DETAILS_TAB, label: "Course Details", disabled: false },
-    { value: PARTICIPANTS_TAB, label: "Participants", disabled: false },
-    { value: REVENUE_SUMMARY_TAB, label: "Revenue Summary", disabled: false },
+    {
+      value: COURSE_DETAILS_TAB,
+      label: t("pages.Tabs.CourseDetailsTab"),
+      disabled: false,
+    },
+    {
+      value: PARTICIPANTS_TAB,
+      label: t("pages.Tabs.participantTab"),
+      disabled: false,
+    },
+    {
+      value: REVENUE_SUMMARY_TAB,
+      label: t("pages.Tabs.revenueSummaryTab"),
+      disabled: false,
+    },
     {
       value: COURSE_ACCOUNTING_FORM_TAB,
-      label: "Course Accounting Form",
+      label: t("pages.Tabs.courseAccountingFormTab"),
       disabled: true,
     },
   ];
-  
+
   return (
     <div className="w-full ">
       <Tabs
@@ -34,7 +51,7 @@ function index() {
               value={trigger.value}
               className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
               disabled={trigger.disabled}
-            > 
+            >
               <div className="flex flex-col gap-1">
                 {trigger.label}
                 <div
@@ -49,17 +66,49 @@ function index() {
           ))}
         </TabsList>
         <div className="w-full border-b -mt-2"></div>
-        <TabsContent value="Course Details">
-          Make changes to your account here.
+        <TabsContent value={COURSE_DETAILS_TAB}>
+          Place course details tab here
         </TabsContent>
-        <TabsContent value="Participants">
-          Change your password here.
+        <TabsContent value={PARTICIPANTS_TAB}>
+          Place participant tab here
         </TabsContent>
-        <TabsContent value="Revenue Summary">Change your password</TabsContent>
-        <TabsContent value="Course Accounting Form">Change your</TabsContent>
+        <TabsContent value={REVENUE_SUMMARY_TAB}>
+          Place Revenue Summary tab here
+        </TabsContent>
+        <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>
+          Place Course Accounting Form tab here
+        </TabsContent>
       </Tabs>
     </div>
   );
 }
 
 export default index;
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};
