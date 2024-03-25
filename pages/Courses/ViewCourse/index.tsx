@@ -4,13 +4,26 @@ import Important from "@public/assets/Important";
 import LocationIcon from "@public/assets/LocationIcon";
 import ParticipantsIcon from "@public/assets/ParticipantsIcon";
 import { useList, useOne } from "@refinedev/core";
+import { Circle } from "lucide-react";
 import React from "react";
+import {
+  PARTICIPANT_PAYMENT_STATUS,
+  TIME_FORMAT,
+} from "src/constants/OptionLabels";
+import {
+  PARTICIPANT_PENDING_PAYMENT_STATUS,
+  PARTICIPANT_SUCCESS_PAYMENT_STATUS,
+} from "src/constants/OptionValueOrder";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "src/ui/hover-card";
 import { formatDate } from "src/utility/DateFunctions";
+import {
+  getOptionValueObjectByOptionOrder,
+  getOptionValuesByOptionLabel,
+} from "src/utility/GetOptionValuesByOptionLabel";
 
 function index() {
   const Id: number = 3;
@@ -22,6 +35,42 @@ function index() {
       select:
         "*,program_alias_name_id!inner(id,alias_name),program_schedules!inner(*),venue(*,city_id!inner(id ,name),state_id!inner(id ,name))",
     },
+  });
+
+  const participantSuccessPaymentId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_PAYMENT_STATUS,
+    PARTICIPANT_SUCCESS_PAYMENT_STATUS
+  )?.id;
+
+  const participantPendingPaymentId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_PAYMENT_STATUS,
+    PARTICIPANT_PENDING_PAYMENT_STATUS
+  )?.id;
+
+  const { data } = useList<any>({
+    resource: "participation_registration",
+    filters: [
+      {
+        field: "program_id",
+        operator: "eq",
+        value: Id,
+      },
+      {
+        field: "payment_status",
+        operator: "eq",
+        value: participantSuccessPaymentId,
+      },
+      {
+        field: "payment_status",
+        operator: "eq",
+        value: participantPendingPaymentId,
+      },
+      {
+        field: "is_payment_refunded",
+        operator: "eq",
+        value: false,
+      },
+    ],
   });
 
   const startDate = formatDate(
@@ -44,7 +93,14 @@ function index() {
         <div className="text-[32px] font-semibold">
           {courseData?.data?.program_alias_name_id?.alias_name}
         </div>
-        <div className="w-[70px] h-6 bg-[#15AF530D] rounded-[15px] text-[#15AF53] items-center">Active</div>
+        <div className="w-[70px] h-6 bg-[#15AF530D] rounded-[15px] text-[#15AF53] text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] ">
+          <Circle className="fill-[#15AF53] size-2" />
+          Active
+        </div>
+        <div className="w-[135px] h-[27px] bg-[#FFB9001A] rounded-[15px] text-[#FFB900] text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] ">
+          <Circle className="fill-[#FFB900] size-2" />
+          Pending Review
+        </div>
       </div>
       <div className="flex flex-row gap-2 items-center mt-3">
         <CalenderIcon color="#7677F4" />

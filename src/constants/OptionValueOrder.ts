@@ -12,3 +12,7 @@ export const SUPER_ADMIN = 4;
 //Time format
 export const TIME_FORMAT_12_HOURS = 1;
 export const TIME_FORMAT_24_HOURS = 2;
+
+//Time format
+export const PARTICIPANT_SUCCESS_PAYMENT_STATUS = 1;
+export const PARTICIPANT_PENDING_PAYMENT_STATUS = 2;

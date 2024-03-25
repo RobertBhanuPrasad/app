@@ -20,10 +20,15 @@ export const getOptionValueObjectByOptionOrder = (
 ): any => {
   const { optionLabelValue } = optionLabelValueStore();
 
+
+
   const foundOptionValue = _.find(
     optionLabelValue,
-    (val) => (val.key = optionLabel)
+    (val) => (val.key == optionLabel)
+
   );
+  console.log(optionLabel, 'optionLabel')
+  console.log(foundOptionValue, 'foundOptionValue')
 
   return foundOptionValue
     ? _.find(foundOptionValue.option_values, { order: optionOrder })
