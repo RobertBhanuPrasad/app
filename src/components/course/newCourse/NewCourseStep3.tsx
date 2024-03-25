@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { Button } from "src/ui/button";
-import { DateCalendar } from "src/ui/DateCalender";
+import { DateCalendar } from "src/ui/DateCalendar";
 import CustomSelect from "src/ui/custom-select";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Input } from "src/ui/input";
