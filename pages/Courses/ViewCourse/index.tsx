@@ -7,12 +7,16 @@ import { useList, useOne } from "@refinedev/core";
 import { Circle } from "lucide-react";
 import React from "react";
 import {
+  PARTICIPANT_ATTENDANCE_STATUS,
   PARTICIPANT_PAYMENT_STATUS,
   TIME_FORMAT,
 } from "src/constants/OptionLabels";
 import {
+  COMPLETED_ATTENDANCE_STATUS,
+  DROPOUT_ATTENDANCE_STATUS,
   PARTICIPANT_PENDING_PAYMENT_STATUS,
   PARTICIPANT_SUCCESS_PAYMENT_STATUS,
+  PENDING_ATTENDANCE_STATUS,
 } from "src/constants/OptionValueOrder";
 import {
   HoverCard,
@@ -42,36 +46,68 @@ function index() {
     PARTICIPANT_SUCCESS_PAYMENT_STATUS
   )?.id;
 
+  const pendingAttendanceStatusId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_ATTENDANCE_STATUS,
+    PENDING_ATTENDANCE_STATUS
+  )?.id;
+
+  const completedAttendanceStatusId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_ATTENDANCE_STATUS,
+    COMPLETED_ATTENDANCE_STATUS
+  )?.id;
+
+  const dropoutAttendanceStatusId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_ATTENDANCE_STATUS,
+    DROPOUT_ATTENDANCE_STATUS
+  )?.id;
+
   const participantPendingPaymentId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
 
-  const { data } = useList<any>({
-    resource: "participation_registration",
-    filters: [
-      {
-        field: "program_id",
-        operator: "eq",
-        value: Id,
-      },
-      {
-        field: "payment_status",
-        operator: "eq",
-        value: participantSuccessPaymentId,
-      },
-      {
-        field: "payment_status",
-        operator: "eq",
-        value: participantPendingPaymentId,
-      },
-      {
-        field: "is_payment_refunded",
-        operator: "eq",
-        value: false,
-      },
-    ],
+  const { data: participantData } = useList<any>({
+    resource: "participant_registration",
+    // filters: [
+    //   {
+    //     field: "program_id",
+    //     operator: "eq",
+    //     value: Id,
+    //   },
+    //   {
+    //     field: "payment_status",
+    //     operator: "eq",
+    //     value: participantSuccessPaymentId,
+    //   },
+    //   {
+    //     field: "payment_status",
+    //     operator: "eq",
+    //     value: participantPendingPaymentId,
+    //   },
+    //   {
+    //     field: "is_payment_refunded",
+    //     operator: "eq",
+    //     value: false,
+    //   },
+    //   {
+    //     field: "participant_attendence_status_id",
+    //     operator: "eq",
+    //     value: completedAttendanceStatusId,
+    //   },
+    //   {
+    //     field: "participant_attendence_status_id",
+    //     operator: "eq",
+    //     value: dropoutAttendanceStatusId,
+    //   },
+    //   {
+    //     field: "participant_attendence_status_id",
+    //     operator: "eq",
+    //     value: pendingAttendanceStatusId,
+    //   },
+    // ],
   });
+
+  console.log(participantData, "participantData");
 
   const startDate = formatDate(
     courseData?.data?.program_schedules[0]?.start_time
