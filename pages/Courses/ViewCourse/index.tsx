@@ -1,3 +1,4 @@
+import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -67,7 +68,7 @@ function index() {
         </TabsList>
         <div className="w-full border-b -mt-2"></div>
         <TabsContent value={COURSE_DETAILS_TAB}>
-          Place course details tab here
+         <CourseDetailsTab/>
         </TabsContent>
         <TabsContent value={PARTICIPANTS_TAB}>
           Place participant tab here
