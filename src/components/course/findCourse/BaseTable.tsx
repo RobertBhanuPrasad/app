@@ -161,7 +161,6 @@ export function BaseTable<TData, TValue>({
     {}
   );
 
-
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
