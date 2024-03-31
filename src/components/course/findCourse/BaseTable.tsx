@@ -65,10 +65,7 @@ export function BaseTable<TData, TValue>({
   setPageSize,
   pageSize,
 }: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-
+  // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
     (acc: any, column: any) => {
       if (column.accessorKey) {
@@ -79,46 +76,40 @@ export function BaseTable<TData, TValue>({
     {}
   );
 
-  console.log("heyy initial", initialColumnVisibilityChanges);
-
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
+  //Local state for column selector to apply chnages when we click on apply button
   const [columnVisibilityChanges, setColumnVisibilityChanges] =
     useState<VisibilityState>(initialColumnVisibilityChanges);
 
+  //initial state for select all checkbox
   const initialSelectAll =
     Object.keys(columnVisibilityChanges).length > 0 &&
     Object.values(columnVisibilityChanges).every(Boolean);
 
   const [selectAll, setSelectAll] = useState(initialSelectAll);
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-
   const [rowSelection, setRowSelection] = React.useState({});
 
+  // table hook
   const table = useReactTable({
     data,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     state: {
       columnVisibility,
-      columnFilters,
       rowSelection,
-      sorting,
     },
   });
 
+  // Function to handle the select all checkbox changes
   const handleSelectAllChange = (checked: boolean) => {
     setSelectAll(checked);
-
+ 
     const newColumnVisibilityChanges: VisibilityState = {};
     Object.keys(columnVisibilityChanges).forEach((columnId) => {
       newColumnVisibilityChanges[columnId] = checked;
@@ -127,6 +118,7 @@ export function BaseTable<TData, TValue>({
     setColumnVisibilityChanges(newColumnVisibilityChanges);
   };
 
+  //function to handle the columns in column selector
   const handleColumnVisibilityChange = (
     columnId: string,
     isVisible: boolean
@@ -143,10 +135,13 @@ export function BaseTable<TData, TValue>({
     setSelectAll(allChecked);
   };
 
+  // function to apply all the columns state in coulmns selector
   const applyColumnVisibilityChanges = () => {
     table.setColumnVisibility(columnVisibilityChanges);
     setOpen(false);
   };
+  
+  // functions to clear the columns in column selector
   const clearColumnVisibilityChanges = () => {
     const finalColumnVisibilityChanges = columns.reduce(
       (acc: any, column: any) => {
@@ -161,25 +156,31 @@ export function BaseTable<TData, TValue>({
     setSelectAll(false);
   };
 
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const tableRef = useRef<HTMLDivElement>(null);
 
-  const handlePrevButtonClick = () => {
-    if (tableRef.current) {
-      tableRef.current.scrollLeft -= 100;
-      setScrollLeft(tableRef.current.scrollLeft);
-    }
-  };
+{ /*  code is for column pinning
 
-  const handleNextButtonClick = () => {
-    if (tableRef.current) {
-      tableRef.current.scrollLeft += 100;
-      setScrollLeft(
-        tableRef.current.scrollWidth - tableRef.current.clientWidth
-      );
-    }
-  };
+ // const [scrollLeft, setScrollLeft] = useState(0);
+  // const tableRef = useRef<HTMLDivElement>(null);
 
+  // const handlePrevButtonClick = () => {
+  //   if (tableRef.current) {
+  //     tableRef.current.scrollLeft -= 100;
+  //     setScrollLeft(tableRef.current.scrollLeft);
+  //   }
+  // };
+
+  // const handleNextButtonClick = () => {
+  //   if (tableRef.current) {
+  //     tableRef.current.scrollLeft += 100;
+  //     setScrollLeft(
+  //       tableRef.current.scrollWidth - tableRef.current.clientWidth
+  //     );
+  //   }
+  // };
+
+
+*/}
+ 
   const [open, setOpen] = useState(false);
 
   return (
@@ -288,7 +289,7 @@ export function BaseTable<TData, TValue>({
                               header?.column?.columnDef?.header,
                               header?.getContext()
                             )}
-                        {index === headerGroup.headers.length - 1 && (
+                        {/* {index === headerGroup.headers.length - 1 && (
                           <div className="flex flex-row gap-2">
                             <ArrowLeft
                               onClick={handlePrevButtonClick}
@@ -299,7 +300,7 @@ export function BaseTable<TData, TValue>({
                               className="h-4 w-6 cursor-pointer"
                             />
                           </div>
-                        )}
+                        )} */}
                       </TableHead>
                     );
                   })}
@@ -362,7 +363,7 @@ export function BaseTable<TData, TValue>({
                 <SelectValue placeholder={`${pageSize} jhgf`} />
               </SelectTrigger>
               <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map((pageSize) => (
+                {[10, 20, 30, 40, 50].map((pageSize) => ( // Till now there is no limit will change after confirming TODO
                   <SelectItem key={pageSize} value={`${pageSize}`}>
                     Showing {pageSize}
                   </SelectItem>
@@ -390,6 +391,7 @@ const DataPagination = ({
 }: DataPaginationProps) => {
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
+      {/* prev button */}
       <Button
         variant="outline"
         className="h-8 w-8 p-0 border-none"
@@ -398,6 +400,8 @@ const DataPagination = ({
       >
         <div>Prev</div>
       </Button>
+
+      {/*pages buttons */}
       {[1, 2, 3, 4, 10].map((page, index, array) => (
         <div key={index}>
           <Button
@@ -410,6 +414,8 @@ const DataPagination = ({
           {index === 3 && array.length > 4 && <span className="p-2">...</span>}
         </div>
       ))}
+
+      {/*next button */}
       <Button
         variant="outline"
         className="h-8 w-8 p-0 border-none"
