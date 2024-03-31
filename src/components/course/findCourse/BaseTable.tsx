@@ -69,8 +69,29 @@ export function BaseTable<TData, TValue>({
     []
   );
 
+  const initialColumnVisibilityChanges = columns.reduce(
+    (acc: any, column: any) => {
+      if (column.accessorKey) {
+        acc[column.accessorKey] = true;
+      }
+      return acc;
+    },
+    {}
+  );
+
+  console.log("heyy initial", initialColumnVisibilityChanges);
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+
+  const [columnVisibilityChanges, setColumnVisibilityChanges] =
+    useState<VisibilityState>(initialColumnVisibilityChanges);
+
+  const initialSelectAll =
+    Object.keys(columnVisibilityChanges).length > 0 &&
+    Object.values(columnVisibilityChanges).every(Boolean);
+
+  const [selectAll, setSelectAll] = useState(initialSelectAll);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -88,12 +109,57 @@ export function BaseTable<TData, TValue>({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     state: {
-      columnFilters,
       columnVisibility,
+      columnFilters,
       rowSelection,
       sorting,
     },
   });
+
+  const handleSelectAllChange = (checked: boolean) => {
+    setSelectAll(checked);
+
+    const newColumnVisibilityChanges: VisibilityState = {};
+    Object.keys(columnVisibilityChanges).forEach((columnId) => {
+      newColumnVisibilityChanges[columnId] = checked;
+    });
+
+    setColumnVisibilityChanges(newColumnVisibilityChanges);
+  };
+
+  const handleColumnVisibilityChange = (
+    columnId: string,
+    isVisible: boolean
+  ) => {
+    setColumnVisibilityChanges((prevState) => ({
+      ...prevState,
+      [columnId]: isVisible,
+    }));
+
+    const allChecked = Object.values({
+      ...columnVisibilityChanges,
+      [columnId]: isVisible,
+    }).every(Boolean);
+    setSelectAll(allChecked);
+  };
+
+  const applyColumnVisibilityChanges = () => {
+    table.setColumnVisibility(columnVisibilityChanges);
+    setOpen(false);
+  };
+  const clearColumnVisibilityChanges = () => {
+    const finalColumnVisibilityChanges = columns.reduce(
+      (acc: any, column: any) => {
+        if (column.accessorKey) {
+          acc[column.accessorKey] = false;
+        }
+        return acc;
+      },
+      {}
+    );
+    setColumnVisibilityChanges(finalColumnVisibilityChanges);
+    setSelectAll(false);
+  };
 
   const [scrollLeft, setScrollLeft] = useState(0);
   const tableRef = useRef<HTMLDivElement>(null);
@@ -137,8 +203,8 @@ export function BaseTable<TData, TValue>({
                   <div className="flex flex-row gap-4 items-center">
                     <Checkbox
                       className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
-                      checked={table.getIsAllColumnsVisible()}
-                      onCheckedChange={table.getToggleAllColumnsVisibilityHandler()}
+                      checked={selectAll}
+                      onCheckedChange={handleSelectAllChange}
                     />
                     <div className="font-bold text-[14px]">Select All</div>
                   </div>
@@ -152,9 +218,9 @@ export function BaseTable<TData, TValue>({
                           <Checkbox
                             key={column.id}
                             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
-                            checked={column.getIsVisible()}
+                            checked={columnVisibilityChanges[column.id]}
                             onCheckedChange={(value) =>
-                              column.toggleVisibility(!!value)
+                              handleColumnVisibilityChange(column.id, !!value)
                             }
                           />
                           {column.id}
@@ -164,11 +230,19 @@ export function BaseTable<TData, TValue>({
                 </div>
 
                 <div className="flex flex-row gap-4 p-2 w-full items-center ">
-                  <div className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4]">
+                  <div
+                    onClick={clearColumnVisibilityChanges}
+                    className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
+                  >
                     <ClearAll />
                     <div>Clear All</div>
                   </div>
-                  <Button className="h-9 w-18 rounded-xl">Apply</Button>
+                  <Button
+                    onClick={applyColumnVisibilityChanges}
+                    className="h-9 w-18 rounded-xl"
+                  >
+                    Apply
+                  </Button>
                 </div>
               </div>
             </DropdownMenuContent>
@@ -188,91 +262,90 @@ export function BaseTable<TData, TValue>({
             ref={tableRef}
             className={` max-w-[${tableStyles}] overflow-x-auto scrollbar`}
           > */}
-            <TableHeader className="bg-[#7677F41B]">
-              {table &&
-                table?.getHeaderGroups()?.map((headerGroup) => (
-                  <TableRow
-                    className="border-none text-[16px] font-bold"
-                    key={headerGroup?.id}
-                  >
-                    {headerGroup?.headers?.map((header, index) => {
-                      return (
-                        <TableHead
+          <TableHeader className="bg-[#7677F41B]">
+            {table &&
+              table?.getHeaderGroups()?.map((headerGroup) => (
+                <TableRow
+                  className="border-none text-[16px] font-bold"
+                  key={headerGroup?.id}
+                >
+                  {headerGroup?.headers?.map((header, index) => {
+                    return (
+                      <TableHead
                         className="text-[#333333]"
-                          // className={`${
-                          //   index === 0 ? "sticky left-0 z-10" : ""
-                          // } ${
-                          //   index === headerGroup.headers.length - 1
-                          //     ? "sticky right-0 z-10 text-[#333333]"
-                          //     : ""
-                          // } text-[#333333]`}
-                          key={header?.id}
-                        >
-                          {header?.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header?.column?.columnDef?.header,
-                                header?.getContext()
-                              )}
-                          {index === headerGroup.headers.length - 1 && (
-                            <div className="flex flex-row gap-2">
-                              <ArrowLeft
-                                onClick={handlePrevButtonClick}
-                                className="h-4 w-4 cursor-pointer mr-2"
-                              />
-                              <ArrowRight
-                                onClick={handleNextButtonClick}
-                                className="h-4 w-6 cursor-pointer"
-                              />
-                            </div>
-                          )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-            </TableHeader>
-            <TableBody>
-              {table && table?.getRowModel()?.rows?.length ? (
-                table?.getRowModel()?.rows?.map((row) => (
-                  <TableRow
-                    key={row?.id}
-                    data-state={row?.getIsSelected() && "selected"}
-                  >
-                    {row?.getVisibleCells().map((cell, index) => (
-                      <TableCell
                         // className={`${
-                        //   index === 0 ? "sticky left-0 bg-[#FFFFFF] " : ""
+                        //   index === 0 ? "sticky left-0 z-10" : ""
                         // } ${
-                        //   index === row.getVisibleCells().length - 1
-                        //     ? "sticky right-0 top-0 bg-[#FFFFFF] z-10"
+                        //   index === headerGroup.headers.length - 1
+                        //     ? "sticky right-0 z-10 text-[#333333]"
                         //     : ""
                         // } text-[#333333]`}
-                        key={cell.id}
+                        key={header?.id}
                       >
-                        {flexRender(
-                          cell?.column?.columnDef?.cell,
-                          cell?.getContext()
+                        {header?.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header?.column?.columnDef?.header,
+                              header?.getContext()
+                            )}
+                        {index === headerGroup.headers.length - 1 && (
+                          <div className="flex flex-row gap-2">
+                            <ArrowLeft
+                              onClick={handlePrevButtonClick}
+                              className="h-4 w-4 cursor-pointer mr-2"
+                            />
+                            <ArrowRight
+                              onClick={handleNextButtonClick}
+                              className="h-4 w-6 cursor-pointer"
+                            />
+                          </div>
                         )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns?.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              )}
-            </TableBody>
+              ))}
+          </TableHeader>
+          <TableBody>
+            {table && table?.getRowModel()?.rows?.length ? (
+              table?.getRowModel()?.rows?.map((row) => (
+                <TableRow
+                  key={row?.id}
+                  data-state={row?.getIsSelected() && "selected"}
+                >
+                  {row?.getVisibleCells().map((cell, index) => (
+                    <TableCell
+                      // className={`${
+                      //   index === 0 ? "sticky left-0 bg-[#FFFFFF] " : ""
+                      // } ${
+                      //   index === row.getVisibleCells().length - 1
+                      //     ? "sticky right-0 top-0 bg-[#FFFFFF] z-10"
+                      //     : ""
+                      // } text-[#333333]`}
+                      key={cell.id}
+                    >
+                      {flexRender(
+                        cell?.column?.columnDef?.cell,
+                        cell?.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns?.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
           {/* </div> */}
         </Table>
         <div className="flex flex-row justify-between">
-
           <DataPagination
             setCurrent={setCurrent}
             current={current}
