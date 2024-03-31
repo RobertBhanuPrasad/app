@@ -70,15 +70,13 @@ const HeaderSection = () => {
 const TableSection = () => {
   const {
     tableQueryResult: programData,
+    pageCount,
+    pageSize,
+    setPageSize,
     current,
     setCurrent,
-    pageCount,
   } = useTable({
     resource: "program",
-    pagination: {
-      pageSize: 10,
-      mode: "server",
-    },
     meta: {
       select: "*,program_type_id!inner(name) , state_id!inner(name)",
     },
@@ -91,7 +89,11 @@ const TableSection = () => {
       <BaseTable
         current={current}
         setCurrent={setCurrent}
-        tableStyles="border w-[700px] border-[1px]"
+        pageCount={pageCount}
+        total={programData?.data?.total || 0}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        tableStyles="border border-[1px]"
         columns={columns as ColumnDef<any>[]}
         data={programData?.data?.data || []}
       />

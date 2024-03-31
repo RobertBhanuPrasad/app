@@ -24,15 +24,9 @@ import {
 
 import React, { useRef, useState } from "react";
 import { Button } from "src/ui/button";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
@@ -45,18 +39,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "src/ui/select";
-import {
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-} from "@radix-ui/react-icons";
+
 import DropDown from "@public/assets/DropDown";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   tableStyles?: string;
-  current?: number;
-  setCurrent?: any;
+  setCurrent: (value: React.SetStateAction<number>) => void;
+  current: number;
+  pageCount: number;
+  setPageSize: (value: React.SetStateAction<number>) => void;
+  pageSize: number;
+  total: number;
 }
 
 export function BaseTable<TData, TValue>({
@@ -65,10 +60,15 @@ export function BaseTable<TData, TValue>({
   tableStyles,
   current,
   setCurrent,
+  pageCount,
+  total,
+  setPageSize,
+  pageSize,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
@@ -118,67 +118,76 @@ export function BaseTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <DropdownMenu open={open}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              onClick={() => setOpen(true)}
-              variant="outline"
-              className="flex flex-row justify-between w-[192px] h-10"
-            >
-              Columns
-              <DropDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <div>
-              <div className="flex flex-col gap-4 p-3 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
-                <div className="flex flex-row gap-4 items-center">
-                  <Checkbox
-                    className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
-                    checked={table.getIsAllColumnsVisible()}
-                    onCheckedChange={table.getToggleAllColumnsVisibilityHandler()}
-                  />
-                  <div className="font-bold text-[14px]">Select All</div>
+      <div className="flex flex-row justify-between">
+        <div>
+          <DropdownMenu open={open}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                onClick={() => setOpen(true)}
+                variant="outline"
+                className="flex flex-row justify-between w-[192px] h-10"
+              >
+                Columns
+                <DropDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <div>
+                <div className="flex flex-col gap-4 p-3 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
+                  <div className="flex flex-row gap-4 items-center">
+                    <Checkbox
+                      className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+                      checked={table.getIsAllColumnsVisible()}
+                      onCheckedChange={table.getToggleAllColumnsVisibilityHandler()}
+                    />
+                    <div className="font-bold text-[14px]">Select All</div>
+                  </div>
+
+                  {table
+                    .getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => {
+                      return (
+                        <div className="flex flex-row gap-4 items-center">
+                          <Checkbox
+                            key={column.id}
+                            className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+                            checked={column.getIsVisible()}
+                            onCheckedChange={(value) =>
+                              column.toggleVisibility(!!value)
+                            }
+                          />
+                          {column.id}
+                        </div>
+                      );
+                    })}
                 </div>
 
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <div className="flex flex-row gap-4 items-center">
-                        <Checkbox
-                          key={column.id}
-                          className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
-                          checked={column.getIsVisible()}
-                          onCheckedChange={(value) =>
-                            column.toggleVisibility(!!value)
-                          }
-                        />
-                        {column.id}
-                      </div>
-                    );
-                  })}
-              </div>
-
-              <div className="flex flex-row gap-4 p-2 w-full items-center ">
-                <div className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4]">
-                  <ClearAll />
-                  <div>Clear All</div>
+                <div className="flex flex-row gap-4 p-2 w-full items-center ">
+                  <div className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4]">
+                    <ClearAll />
+                    <div>Clear All</div>
+                  </div>
+                  <Button className="h-9 w-18 rounded-xl">Apply</Button>
                 </div>
-                <Button className="h-9 w-18 rounded-xl">Apply</Button>
               </div>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div>
+          <DataPagination
+            setCurrent={setCurrent}
+            current={current}
+            pageCount={pageCount}
+          />
+        </div>
       </div>
       <div>
         <Table className={`${tableStyles}`}>
-          <div
+          {/* <div
             ref={tableRef}
             className={` max-w-[${tableStyles}] overflow-x-auto scrollbar`}
-          >
+          > */}
             <TableHeader className="bg-[#7677F41B]">
               {table &&
                 table?.getHeaderGroups()?.map((headerGroup) => (
@@ -189,13 +198,14 @@ export function BaseTable<TData, TValue>({
                     {headerGroup?.headers?.map((header, index) => {
                       return (
                         <TableHead
-                          className={`${
-                            index === 0 ? "sticky left-0 z-10" : ""
-                          } ${
-                            index === headerGroup.headers.length - 1
-                              ? "sticky right-0 z-10 text-[#333333]"
-                              : ""
-                          } text-[#333333]`}
+                        className="text-[#333333]"
+                          // className={`${
+                          //   index === 0 ? "sticky left-0 z-10" : ""
+                          // } ${
+                          //   index === headerGroup.headers.length - 1
+                          //     ? "sticky right-0 z-10 text-[#333333]"
+                          //     : ""
+                          // } text-[#333333]`}
                           key={header?.id}
                         >
                           {header?.isPlaceholder
@@ -231,13 +241,13 @@ export function BaseTable<TData, TValue>({
                   >
                     {row?.getVisibleCells().map((cell, index) => (
                       <TableCell
-                        className={`${
-                          index === 0 ? "sticky left-0 bg-[#FFFFFF] " : ""
-                        } ${
-                          index === row.getVisibleCells().length - 1
-                            ? "sticky right-0 top-0 bg-[#FFFFFF] z-10"
-                            : ""
-                        } text-[#333333]`}
+                        // className={`${
+                        //   index === 0 ? "sticky left-0 bg-[#FFFFFF] " : ""
+                        // } ${
+                        //   index === row.getVisibleCells().length - 1
+                        //     ? "sticky right-0 top-0 bg-[#FFFFFF] z-10"
+                        //     : ""
+                        // } text-[#333333]`}
                         key={cell.id}
                       >
                         {flexRender(
@@ -259,69 +269,82 @@ export function BaseTable<TData, TValue>({
                 </TableRow>
               )}
             </TableBody>
-          </div>
+          {/* </div> */}
         </Table>
-        <div className="flex items-center justify-between px-2">
-          <div className="flex items-center space-x-6 lg:space-x-8">
-            <div className="flex items-center space-x-2">
-              <p className="text-sm font-medium">Rows per page</p>
-              <Select
-                value={`${table.getState().pagination.pageSize}`}
-                onValueChange={(value) => {
-                  table.setPageSize(Number(value));
-                }}
-              >
-                <SelectTrigger className="h-8 w-[70px]">
-                  <SelectValue
-                    placeholder={table.getState().pagination.pageSize}
-                  />
-                </SelectTrigger>
-                <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>
-                      {pageSize}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center space-x-2 p-2">
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0 border-none"
-                onClick={() => table.previousPage()}
-              >
-                <div>prev</div>
-              </Button>
-              {[1, 2, 3, 4, 10].map((page, index, array) => (
-                <div key={index}>
-                  <Button
-                    variant={
-                      page - 1 === table.getState().pagination.pageIndex
-                        ? "default"
-                        : "outline"
-                    }
-                    onClick={() => table.setPageIndex(page - 1)}
-                  >
-                    {page}
-                  </Button>
-                  {index === 3 && array.length > 4 && (
-                    <span className="p-2">...</span>
-                  )}
-                </div>
-              ))}
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0 border-none"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                <div>next</div>
-              </Button>
-            </div>
+        <div className="flex flex-row justify-between">
+
+          <DataPagination
+            setCurrent={setCurrent}
+            current={current}
+            pageCount={pageCount}
+          />
+          <div className="flex items-center space-x-2">
+            <Select
+              value={`${pageSize}`}
+              onValueChange={(value) => {
+                setPageSize(Number(value));
+              }}
+            >
+              <SelectTrigger className="h-8 w-[131px]">
+                <SelectValue placeholder={`${pageSize} jhgf`} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[10, 20, 30, 40, 50].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    Showing {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div>of {total}</div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+interface DataPaginationProps {
+  setCurrent: (value: React.SetStateAction<number>) => void;
+  current: number;
+  pageCount: number;
+}
+
+const DataPagination = ({
+  setCurrent,
+  current,
+  pageCount,
+}: DataPaginationProps) => {
+  return (
+    <div className="flex flex-row self-center items-center space-x-2 p-2">
+      <Button
+        variant="outline"
+        className="h-8 w-8 p-0 border-none"
+        onClick={() => setCurrent(current - 1)}
+        disabled={current <= 1}
+      >
+        <div>Prev</div>
+      </Button>
+      {[1, 2, 3, 4, 10].map((page, index, array) => (
+        <div key={index}>
+          <Button
+            variant={page === current ? "default" : "outline"}
+            onClick={() => setCurrent(page)}
+            disabled={page > pageCount}
+          >
+            {page}
+          </Button>
+          {index === 3 && array.length > 4 && <span className="p-2">...</span>}
+        </div>
+      ))}
+      <Button
+        variant="outline"
+        className="h-8 w-8 p-0 border-none"
+        onClick={() => setCurrent(current + 1)}
+        disabled={pageCount < current + 1}
+      >
+        <div>Next</div>
+      </Button>
+    </div>
+  );
+};
