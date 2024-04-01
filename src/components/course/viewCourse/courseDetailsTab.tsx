@@ -1,23 +1,17 @@
 "use client";
 import CopyIcon from "@public/assets/CopyIcon";
-import { useOne } from "@refinedev/core";
+import { useList, useOne } from "@refinedev/core";
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
-import { formatSchedule } from "src/utility/DateFunctions";
+import { formatDateTime } from "src/utility/DateFunctions";
 
-export const getDateInEnglishFormat = dateStr => {
-    const currentDate = getDateAndMonth(dateStr)
-    const year = getDate(dateStr).slice(6, 8)
-    return `${currentDate}, 20${year}`
-  }
-
-const SubHeading = ({ children }: any) => {
+export const SubHeading = ({ children }: any) => {
   return (
     <div className="text-[#999999] text-[14px] font-normal">{children}</div>
   );
 };
 
-const ItemValue = ({ children }: any) => {
+export const ItemValue = ({ children }: any) => {
   return <div className="text-base font-semibold">{children}</div>;
 };
 
@@ -28,15 +22,17 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,program_fee_settings_id(program_fee_level_settings!inner(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),program_details_info(max_capacity,visibility_id(value)),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_schedules(*),venue(*,center_id!inner(id ,name),city_id!inner(id ,name),state_id!inner(id ,name)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(id,name)),program_type_id!inner(id,name),program_assistant_teachers!inner(*,user_id(contact_id(id,full_name))),program_teachers!inner(*,user_id(contact_id(id,full_name)))",
+        "*,organization_id(id,name),program_fee_settings_id(program_fee_level_settings!inner(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),program_details_info(max_capacity,visibility_id(value)),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_schedules(*),venue(*,center_id!inner(id ,name),city_id!inner(id ,name),state_id!inner(id ,name)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(id,name)),program_type_id!inner(id,name),program_assistant_teachers!inner(*,user_id(contact_id(id,full_name))),program_teachers!inner(*,user_id(contact_id(id,full_name)))",
     },
+  });
+
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
   });
 
   const programFees = courseData?.data?.program_fee_settings_id
     ? courseData?.data?.program_fee_settings_id?.program_fee_level_settings
     : courseData?.data?.program_fee_level_settings;
-
-  console.log(programFees, "programFees");
 
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
@@ -67,16 +63,13 @@ function CourseDetailsTab() {
     }, 1000);
   };
 
-  console.log(courseData, "data");
-  console.log(courseData?.data?.program_accommodations, "data");
-
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
       {/**
        * Basic details card
        */}
       <div>
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-md ">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] ">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Basic Details
@@ -84,7 +77,10 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            <SubHeading>Organization</SubHeading>
+            <div>
+              <SubHeading>Organization</SubHeading>
+              <ItemValue>{courseData?.data?.organization_id?.name}</ItemValue>
+            </div>
             <div>
               <SubHeading>Course ID</SubHeading>
               <ItemValue>{courseData?.data?.program_code}</ItemValue>
@@ -159,7 +155,7 @@ function CourseDetailsTab() {
        * Fee and accommodation card
        */}
       <div>
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-md">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Fee and Accommodation
@@ -171,7 +167,10 @@ function CourseDetailsTab() {
               return (
                 <div className="flex flex-col gap-1">
                   <SubHeading>{item?.fee_level_id?.value}</SubHeading>
-                  <ItemValue>MYR {item?.total}</ItemValue>
+                  <ItemValue>
+                    {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                    {item?.total}
+                  </ItemValue>
                 </div>
               );
             })}
@@ -179,7 +178,10 @@ function CourseDetailsTab() {
               return (
                 <div className="flex flex-col gap-1">
                   <SubHeading>{item?.accommodation_type_id?.name}</SubHeading>
-                  <ItemValue>MYR {item?.fee_per_person}</ItemValue>
+                  <ItemValue>
+                    {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                    {item?.fee_per_person}
+                  </ItemValue>
                 </div>
               );
             })}
@@ -188,7 +190,7 @@ function CourseDetailsTab() {
       </div>
 
       <div className="flex flex-col gap-[30px]">
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-md">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Time and Venue
@@ -202,7 +204,7 @@ function CourseDetailsTab() {
                 {courseData?.data?.venue?.address},
                 {courseData?.data?.venue?.center_id?.name},
                 {courseData?.data?.venue?.city_id?.name},
-                {courseData?.data?.venue?.state_id?.name}
+                {courseData?.data?.venue?.state_id?.name}{" "}
                 {courseData?.data?.venue?.postal_code}
               </ItemValue>
             </div>
@@ -213,7 +215,9 @@ function CourseDetailsTab() {
                   (item: any, index: number) => (
                     <div key={index}>
                       <div className="flex flex-col">
-                        <div>{getDate(item?.start_time)}</div>
+                        <div>
+                          {formatDateTime(item?.start_time, item?.end_time)}
+                        </div>
                       </div>
                     </div>
                   )
@@ -226,7 +230,7 @@ function CourseDetailsTab() {
         {/**
          * Registration Links card*/}
 
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-md">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Registration Links
@@ -290,7 +294,7 @@ function CourseDetailsTab() {
         {/**
          * Contact details card
          */}
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-md">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Contact Details

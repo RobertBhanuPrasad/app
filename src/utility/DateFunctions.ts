@@ -1,25 +1,31 @@
-export const formatDate = (dateString: any) => {
-    const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
+export const formatDateTime = (startDateTime: any, endDateTime: any) => {
+    // Convert start and end date strings to Date objects
 
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'pm' : 'am';
+    console.log(startDateTime, "startDateTime")
 
-    // Convert day to ordinal suffix
-    const suffixes = ['th', 'st', 'nd', 'rd'];
-    const suffix = day % 10 < 4 && (day < 11 || day > 13) ? suffixes[day % 10] : suffixes[0];
+    const startDate = new Date(startDateTime);
+    const endDate = new Date(endDateTime);
 
-    // Convert hours to 12-hour format
-    const formattedHours = hours % 12 || 12;
 
-    // Add leading zero to minutes if necessary
-    const formattedMinutes = String(minutes).padStart(2, '0');
+    // Format day and month for start date
+    let startDay: any = startDate.getDate();
+    if (startDay < 10) {
+        startDay = `0${startDay}`
+    }
 
-    return `${day}${suffix} ${month} ${formattedHours}:${formattedMinutes} ${ampm}`;
+    const startMonth = startDate?.toLocaleString('default', { month: 'long' }).slice(0, 3);
+    const startYear = startDate.getFullYear();
+
+
+    // Format time for start and end time
+    const startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const endTime = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Construct formatted string
+    const formattedStartDateTime = `${startDay} ${startMonth}, ${startYear} | ${startTime}`;
+    const formattedEndDateTime = `${endTime}`;
+
+    return `${formattedStartDateTime} to ${formattedEndDateTime}`;
 }
+
+
