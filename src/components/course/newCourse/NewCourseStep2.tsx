@@ -244,9 +244,6 @@ export const CourseTypeDropDown = () => {
       setCurrentPage((previousLimit: number) => previousLimit + 1);
   };
 
-  if (queryResult.isLoading) {
-    return null;
-  }
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">

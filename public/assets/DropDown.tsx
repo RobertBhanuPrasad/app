@@ -1,6 +1,6 @@
 import React from "react";
 
-function DropDown({fill="#333333"}) {
+function DropDown({ fill = "#333333" }) {
   return (
     <svg
       width="12"
@@ -12,9 +12,9 @@ function DropDown({fill="#333333"}) {
       <path
         d="M1 1.5L6 6.5L11 1.5"
         stroke={fill}
-        stroke-width="1.75"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
