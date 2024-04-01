@@ -38,16 +38,26 @@ import {
 
 import DropDown from "@public/assets/DropDown";
 
-interface DataTableProps<TData, TValue> {
+interface IBaseTable<TData, TValue> {
+  // Array of column definitions for the table
   columns: ColumnDef<TData, TValue>[];
+  // Array of data objects to be displayed in the table
   data: TData[];
+  // Additional CSS classes to apply to the table
   tableStyles?: string;
+  // Function to update the current page number
   setCurrent: (value: React.SetStateAction<number>) => void;
+  // Current page number
   current: number;
+  // Total number of pages
   pageCount: number;
+  // Function to update the page size
   setPageSize: (value: React.SetStateAction<number>) => void;
+  // Number of items to display per page
   pageSize: number;
+  // Total number of items in the dataset
   total: number;
+  // Flag to indicate whether pagination controls should be displayed
   pagination?: boolean;
 }
 
@@ -62,7 +72,7 @@ export function BaseTable<TData, TValue>({
   setPageSize,
   pageSize,
   pagination,
-}: DataTableProps<TData, TValue>) {
+}: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
     (acc: any, column: any) => {
@@ -213,9 +223,9 @@ export function BaseTable<TData, TValue>({
                             disabled={!column.getCanHide()}
                             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
                             checked={columnVisibilityChanges[column.id]}
-                            onCheckedChange={(value) =>
-                              handleColumnVisibilityChange(column.id, !!value)
-                            }
+                            onCheckedChange={(value: boolean) => {
+                              handleColumnVisibilityChange(column.id, value);
+                            }}
                           />
                           {column.id}
                         </div>

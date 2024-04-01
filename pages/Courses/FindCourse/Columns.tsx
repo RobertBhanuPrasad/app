@@ -32,9 +32,14 @@ interface Program {
   use_default_fee: boolean | null;
 }
 
+interface CustomColumnDef<T> {
+  pinPosition?: string;
+}
 
+// Use an intersection type to combine with ColumnDef
+type ExtendedColumnDef<T> = CustomColumnDef<T> & ColumnDef<T>;
 
-export const columns: ColumnDef<Program>[] = [
+export const columns: ExtendedColumnDef<Program>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -44,11 +49,14 @@ export const columns: ColumnDef<Program>[] = [
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value: boolean) =>
+            table.toggleAllPageRowsSelected(value)
+          }
           aria-label="Select all"
         />
       </div>
     ),
+
     cell: ({ row }) => (
       <div className="w-[50px]">
         <Checkbox
@@ -60,6 +68,7 @@ export const columns: ColumnDef<Program>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+    pinPosition: "left",
   },
 
   {

@@ -3,12 +3,6 @@ import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowDownIcon,
-  ArrowUpDown,
-  ArrowUpIcon,
-  MoreHorizontal,
-} from "lucide-react";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
@@ -93,7 +87,7 @@ const TableSection = () => {
         total={programData?.data?.total || 0}
         pageSize={pageSize}
         setPageSize={setPageSize}
-        pagination={false}
+        pagination={true}
         tableStyles="border border-[1px] w-[500px]"
         columns={columns as ColumnDef<any>[]}
         data={programData?.data?.data || []}
