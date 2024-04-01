@@ -1,7 +1,6 @@
 export const formatDateTime = (startDateTime: any, endDateTime: any) => {
     // Convert start and end date strings to Date objects
 
-    console.log(startDateTime, "startDateTime")
 
     const startDate = new Date(startDateTime);
     const endDate = new Date(endDateTime);
