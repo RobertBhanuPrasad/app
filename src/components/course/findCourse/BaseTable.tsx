@@ -2,14 +2,10 @@
 
 import {
   ColumnDef,
-  ColumnFiltersState,
-  SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -52,6 +48,7 @@ interface DataTableProps<TData, TValue> {
   setPageSize: (value: React.SetStateAction<number>) => void;
   pageSize: number;
   total: number;
+  pagination?: boolean;
 }
 
 export function BaseTable<TData, TValue>({
@@ -64,6 +61,7 @@ export function BaseTable<TData, TValue>({
   total,
   setPageSize,
   pageSize,
+  pagination,
 }: DataTableProps<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
@@ -109,7 +107,7 @@ export function BaseTable<TData, TValue>({
   // Function to handle the select all checkbox changes
   const handleSelectAllChange = (checked: boolean) => {
     setSelectAll(checked);
- 
+
     const newColumnVisibilityChanges: VisibilityState = {};
     Object.keys(columnVisibilityChanges).forEach((columnId) => {
       newColumnVisibilityChanges[columnId] = checked;
@@ -140,7 +138,7 @@ export function BaseTable<TData, TValue>({
     table.setColumnVisibility(columnVisibilityChanges);
     setOpen(false);
   };
-  
+
   // functions to clear the columns in column selector
   const clearColumnVisibilityChanges = () => {
     const finalColumnVisibilityChanges = columns.reduce(
@@ -156,31 +154,25 @@ export function BaseTable<TData, TValue>({
     setSelectAll(false);
   };
 
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const tableRef = useRef<HTMLDivElement>(null);
 
-{ /*  code is for column pinning
+  const handlePrevButtonClick = () => {
+    if (tableRef.current) {
+      tableRef.current.scrollLeft -= 100;
+      setScrollLeft(tableRef.current.scrollLeft);
+    }
+  };
 
- // const [scrollLeft, setScrollLeft] = useState(0);
-  // const tableRef = useRef<HTMLDivElement>(null);
+  const handleNextButtonClick = () => {
+    if (tableRef.current) {
+      tableRef.current.scrollLeft += 100;
+      setScrollLeft(
+        tableRef.current.scrollWidth - tableRef.current.clientWidth
+      );
+    }
+  };
 
-  // const handlePrevButtonClick = () => {
-  //   if (tableRef.current) {
-  //     tableRef.current.scrollLeft -= 100;
-  //     setScrollLeft(tableRef.current.scrollLeft);
-  //   }
-  // };
-
-  // const handleNextButtonClick = () => {
-  //   if (tableRef.current) {
-  //     tableRef.current.scrollLeft += 100;
-  //     setScrollLeft(
-  //       tableRef.current.scrollWidth - tableRef.current.clientWidth
-  //     );
-  //   }
-  // };
-
-
-*/}
- 
   const [open, setOpen] = useState(false);
 
   return (
@@ -212,12 +204,13 @@ export function BaseTable<TData, TValue>({
 
                   {table
                     .getAllColumns()
-                    .filter((column) => column.getCanHide())
+                    .filter((column) => column?.accessorFn)
                     .map((column) => {
                       return (
                         <div className="flex flex-row gap-4 items-center">
                           <Checkbox
                             key={column.id}
+                            disabled={!column.getCanHide()}
                             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
                             checked={columnVisibilityChanges[column.id]}
                             onCheckedChange={(value) =>
@@ -250,108 +243,114 @@ export function BaseTable<TData, TValue>({
           </DropdownMenu>
         </div>
         <div>
-          <DataPagination
-            setCurrent={setCurrent}
-            current={current}
-            pageCount={pageCount}
-          />
+          {pagination && (
+            <DataPagination
+              setCurrent={setCurrent}
+              current={current}
+              pageCount={pageCount}
+            />
+          )}
         </div>
       </div>
       <div>
         <Table className={`${tableStyles}`}>
-          {/* <div
+          <div
             ref={tableRef}
-            className={` max-w-[${tableStyles}] overflow-x-auto scrollbar`}
-          > */}
-          <TableHeader className="bg-[#7677F41B]">
-            {table &&
-              table?.getHeaderGroups()?.map((headerGroup) => (
-                <TableRow
-                  className="border-none text-[16px] font-bold"
-                  key={headerGroup?.id}
-                >
-                  {headerGroup?.headers?.map((header, index) => {
-                    return (
-                      <TableHead
-                        className="text-[#333333]"
-                        // className={`${
-                        //   index === 0 ? "sticky left-0 z-10" : ""
-                        // } ${
-                        //   index === headerGroup.headers.length - 1
-                        //     ? "sticky right-0 z-10 text-[#333333]"
-                        //     : ""
-                        // } text-[#333333]`}
-                        key={header?.id}
+            className={` max-w-[500px] overflow-x-auto scrollbar`}
+          >
+            <TableHeader className="bg-[#7677F41B]">
+              {table &&
+                table?.getHeaderGroups()?.map((headerGroup) => (
+                  <TableRow
+                    className="border-none text-[16px] font-bold"
+                    key={headerGroup?.id}
+                  >
+                    {headerGroup?.headers?.map((header, index) => {
+                      return (
+                        <TableHead
+                          // className="text-[#333333]"
+                          className={`${
+                            index === 0 ? "sticky left-0 z-10 bg-[#E9E9F5]" : ""
+                          } ${
+                            index === headerGroup.headers.length - 1
+                              ? "sticky right-0 z-10 bg-[#E9E9F5]"
+                              : ""
+                          } text-[#333333]`}
+                          key={header?.id}
+                        >
+                          {header?.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header?.column?.columnDef?.header,
+                                header?.getContext()
+                              )}
+                          {index === headerGroup.headers.length - 1 && (
+                            <div className="flex flex-row gap-2">
+                              <ArrowLeft
+                                onClick={handlePrevButtonClick}
+                                className="h-4 w-4 cursor-pointer mr-2"
+                              />
+                              <ArrowRight
+                                onClick={handleNextButtonClick}
+                                className="h-4 w-6 cursor-pointer"
+                              />
+                            </div>
+                          )}
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+            </TableHeader>
+            <TableBody>
+              {table && table?.getRowModel()?.rows?.length ? (
+                table?.getRowModel()?.rows?.map((row) => (
+                  <TableRow
+                    key={row?.id}
+                    data-state={row?.getIsSelected() && "selected"}
+                  >
+                    {row?.getVisibleCells().map((cell, index) => (
+                      <TableCell
+                        className={`${
+                          index === 0
+                            ? "sticky left-0 top-0 z-10 bg-[#FFFFFF]"
+                            : ""
+                        } ${
+                          index === row.getVisibleCells().length - 1
+                            ? "sticky right-0 top-0 bg-[#FFFFFF] z-10 "
+                            : ""
+                        } text-[#333333]`}
+                        key={cell.id}
                       >
-                        {header?.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header?.column?.columnDef?.header,
-                              header?.getContext()
-                            )}
-                        {/* {index === headerGroup.headers.length - 1 && (
-                          <div className="flex flex-row gap-2">
-                            <ArrowLeft
-                              onClick={handlePrevButtonClick}
-                              className="h-4 w-4 cursor-pointer mr-2"
-                            />
-                            <ArrowRight
-                              onClick={handleNextButtonClick}
-                              className="h-4 w-6 cursor-pointer"
-                            />
-                          </div>
-                        )} */}
-                      </TableHead>
-                    );
-                  })}
+                        {flexRender(
+                          cell?.column?.columnDef?.cell,
+                          cell?.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns?.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
                 </TableRow>
-              ))}
-          </TableHeader>
-          <TableBody>
-            {table && table?.getRowModel()?.rows?.length ? (
-              table?.getRowModel()?.rows?.map((row) => (
-                <TableRow
-                  key={row?.id}
-                  data-state={row?.getIsSelected() && "selected"}
-                >
-                  {row?.getVisibleCells().map((cell, index) => (
-                    <TableCell
-                      // className={`${
-                      //   index === 0 ? "sticky left-0 bg-[#FFFFFF] " : ""
-                      // } ${
-                      //   index === row.getVisibleCells().length - 1
-                      //     ? "sticky right-0 top-0 bg-[#FFFFFF] z-10"
-                      //     : ""
-                      // } text-[#333333]`}
-                      key={cell.id}
-                    >
-                      {flexRender(
-                        cell?.column?.columnDef?.cell,
-                        cell?.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns?.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-          {/* </div> */}
+              )}
+            </TableBody>
+          </div>
         </Table>
         <div className="flex flex-row justify-between">
-          <DataPagination
-            setCurrent={setCurrent}
-            current={current}
-            pageCount={pageCount}
-          />
+          {pagination && (
+            <DataPagination
+              setCurrent={setCurrent}
+              current={current}
+              pageCount={pageCount}
+            />
+          )}
           <div className="flex items-center space-x-2">
             <Select
               value={`${pageSize}`}
@@ -363,11 +362,15 @@ export function BaseTable<TData, TValue>({
                 <SelectValue placeholder={`${pageSize} jhgf`} />
               </SelectTrigger>
               <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map((pageSize) => ( // Till now there is no limit will change after confirming TODO
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    Showing {pageSize}
-                  </SelectItem>
-                ))}
+                {[10, 20, 30, 40, 50].map(
+                  (
+                    pageSize // Till now there is no limit will change after confirming TODO
+                  ) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      Showing {pageSize}
+                    </SelectItem>
+                  )
+                )}
               </SelectContent>
             </Select>
             <div>of {total}</div>

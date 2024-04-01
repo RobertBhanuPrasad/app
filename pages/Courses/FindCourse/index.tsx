@@ -93,7 +93,8 @@ const TableSection = () => {
         total={programData?.data?.total || 0}
         pageSize={pageSize}
         setPageSize={setPageSize}
-        tableStyles="border border-[1px]"
+        pagination={false}
+        tableStyles="border border-[1px] w-[500px]"
         columns={columns as ColumnDef<any>[]}
         data={programData?.data?.data || []}
       />
