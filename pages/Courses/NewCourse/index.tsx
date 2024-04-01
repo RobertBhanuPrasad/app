@@ -19,13 +19,14 @@ import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
+import ThankyouPage from "@components/course/newCourse/ThankyouPage";
 
 function index() {
-  const { data: loginUserData }: any = useGetIdentity();
+  // const { data: loginUserData }: any = useGetIdentity();
 
-  if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
-  }
+  // if (!loginUserData?.userData) {
+  //   return <div>Loading...</div>;
+  // }
 
   return <NewCourse />;
 }
@@ -120,14 +121,15 @@ function NewCourse() {
   };
 
   // If the form is still loading, display a loading message
-  if (formLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (formLoading) {
+  //   return <div>Loading...</div>;
+  // }
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
   return (
     <div className="bg-[white]  ">
-      <Tabs value={JSON.stringify(currentStep)}>
+      <ThankyouPage />
+      {/* <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
           <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
             <div className="flex flex-col  h-full gap-4 ">
@@ -215,7 +217,7 @@ function NewCourse() {
             </FormProvider>
           </div>
         </div>
-      </Tabs>
+      </Tabs> */}
     </div>
   );
 }

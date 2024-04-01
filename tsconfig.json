@@ -26,6 +26,6 @@
     },
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/test"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/test", "public/assets/ThankYouIcon.png"],
   "exclude": ["node_modules"]
 }
