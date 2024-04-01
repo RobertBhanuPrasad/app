@@ -293,13 +293,13 @@ export function BaseTable<TData, TValue>({
         <Table className={tableStyles?.table}>
           <div
             ref={tableRef}
-            className={`max-w-[1440px] overflow-x-auto scrollbar`}
+            className={`flex flex-col max-w-[1440px] overflow-x-auto scrollbar`}
           >
-            <TableHeader className="bg-[#7677F41B]">
+            <TableHeader className="bg-[#7677F41B] w-full">
               {table &&
                 table?.getHeaderGroups()?.map((headerGroup) => (
                   <TableRow
-                    className="border-none text-[16px] font-bold"
+                    className="flex justify-between items-center border-none text-[16px] font-bold "
                     key={headerGroup?.id}
                   >
                     {/* If the checkboxSelection is true then we need to show checkboxes  */}
@@ -365,11 +365,11 @@ export function BaseTable<TData, TValue>({
                   </TableRow>
                 ))}
             </TableHeader>
-            <TableBody>
+            <TableBody className="w-full">
               {table && table?.getRowModel()?.rows?.length ? (
                 table?.getRowModel()?.rows?.map((row) => (
                   <TableRow
-                    className={tableStyles?.rowStyles}
+                    className={`{${tableStyles?.rowStyles} flex justify-between item-center`}
                     key={row?.id}
                     data-state={row?.getIsSelected() && "selected"}
                   >
