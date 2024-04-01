@@ -1,22 +1,57 @@
 "use client";
 import CopyIcon from "@public/assets/CopyIcon";
 import { useList, useOne } from "@refinedev/core";
+import { NextRouter, useRouter } from "next/router";
 import React, { useState } from "react";
+import { Header2, ItemValue } from "src/commonComponents";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { formatDateTime } from "src/utility/DateFunctions";
+interface fullNameObject {
+  user_id?: {
+    contact_id?: {
+      full_name?: string;
+    };
+  };
+}
 
-export const SubHeading = ({ children }: any) => {
-  return (
-    <div className="text-[#999999] text-[14px] font-normal">{children}</div>
-  );
-};
+interface LanguageItem {
+  language_id?: {
+    language_name?: string;
+  };
+}
 
-export const ItemValue = ({ children }: any) => {
-  return <div className="text-base font-semibold">{children}</div>;
-};
+interface ProgramFeeItem {
+  fee_level_id?: {
+    value?: string;
+  };
+  total?: number;
+}
+
+interface AccommodationItem {
+  accommodation_type_id?: {
+    name?: string;
+  };
+  fee_per_person?: number;
+}
+
+interface ContactDetailsItem {
+  contact_name?: string;
+  contact_email?: string;
+  contact_number?: string;
+}
+
+interface ProgramScheduleItem {
+  start_time: string;
+  end_time: string;
+}
 
 function CourseDetailsTab() {
-  const Id = 10;
+  const router = useRouter();
+
+  const Id: number | undefined = router?.query?.id
+    ? parseInt(router.query.id as string)
+    : undefined;
+
   const { data: courseData } = useOne({
     resource: "program",
     id: Id,
@@ -30,6 +65,7 @@ function CourseDetailsTab() {
     resource: "country_config",
   });
 
+  // If the course fee is editable then we can use custom fees otherwise we can use default fees
   const programFees = courseData?.data?.program_fee_settings_id
     ? courseData?.data?.program_fee_settings_id?.program_fee_level_settings
     : courseData?.data?.program_fee_level_settings;
@@ -37,7 +73,7 @@ function CourseDetailsTab() {
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
 
-  const copyText = async (text: any) => {
+  const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {
@@ -78,54 +114,56 @@ function CourseDetailsTab() {
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div>
-              <SubHeading>Organization</SubHeading>
+              <Header2>Organization</Header2>
               <ItemValue>{courseData?.data?.organization_id?.name}</ItemValue>
             </div>
             <div>
-              <SubHeading>Course ID</SubHeading>
+              <Header2>Course ID</Header2>
               <ItemValue>{courseData?.data?.program_code}</ItemValue>
             </div>
             <div>
-              <SubHeading>Course type</SubHeading>
+              <Header2>Course type</Header2>
               <ItemValue>{courseData?.data?.program_type_id?.name}</ItemValue>
             </div>
-            <SubHeading>Course Accounting Status</SubHeading>
+            <Header2>Course Accounting Status</Header2>
             <div>
-              <SubHeading>Teachers</SubHeading>
+              <Header2>Teachers</Header2>
               <ItemValue>
-                {courseData?.data?.program_teachers?.map((item: any) => {
-                  return item?.user_id?.contact_id?.full_name;
-                })}
-              </ItemValue>
-            </div>
-            <div>
-              <SubHeading>Assistant Teachers</SubHeading>
-              <ItemValue>
-                {courseData?.data?.program_assistant_teachers?.map(
-                  (item: any) => {
+                {courseData?.data?.program_teachers?.map(
+                  (item: fullNameObject) => {
                     return item?.user_id?.contact_id?.full_name;
                   }
                 )}
               </ItemValue>
             </div>
             <div>
-              <SubHeading>Available language(s) for translation </SubHeading>
+              <Header2>Assistant Teachers</Header2>
+              <ItemValue>
+                {courseData?.data?.program_assistant_teachers?.map(
+                  (item: fullNameObject) => {
+                    return item?.user_id?.contact_id?.full_name;
+                  }
+                )}
+              </ItemValue>
+            </div>
+            <div>
+              <Header2>Available language(s) for translation </Header2>
               <ItemValue>
                 {courseData?.data?.program_translation_languages
-                  .map((item: any) => item?.language_id?.language_name)
+                  .map((item: LanguageItem) => item?.language_id?.language_name)
                   .join(", ")}
               </ItemValue>
             </div>
             <div>
-              <SubHeading>Language(s) course is taught in </SubHeading>
+              <Header2>Language(s) course is taught in </Header2>
               <ItemValue>
                 {courseData?.data?.program_languages
-                  .map((item: any) => item?.language_id?.language_name)
+                  .map((item: LanguageItem) => item?.language_id?.language_name)
                   .join(", ")}
               </ItemValue>
             </div>
             <div>
-              <SubHeading>Program Visibility</SubHeading>
+              <Header2>Program Visibility</Header2>
               <ItemValue>
                 {
                   courseData?.data?.program_details_info?.[0]?.visibility_id
@@ -134,16 +172,19 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <SubHeading>Max Capacity</SubHeading>
+              <Header2>Max Capacity</Header2>
               <ItemValue>
                 {courseData?.data?.program_details_info?.[0]?.max_capacity}
               </ItemValue>
             </div>
             <div>
-              <SubHeading>Program organizer</SubHeading>
+              <Header2>Program organizer</Header2>
               <ItemValue>
                 {courseData?.data?.program_organizers
-                  .map((item: any) => item?.user_id?.contact_id?.full_name)
+                  .map(
+                    (item: fullNameObject) =>
+                      item?.user_id?.contact_id?.full_name
+                  )
                   .join(", ")}
               </ItemValue>
             </div>
@@ -163,10 +204,10 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {programFees?.map((item: any) => {
+            {programFees?.map((item: ProgramFeeItem) => {
               return (
                 <div className="flex flex-col gap-1">
-                  <SubHeading>{item?.fee_level_id?.value}</SubHeading>
+                  <Header2>{item?.fee_level_id?.value}</Header2>
                   <ItemValue>
                     {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                     {item?.total}
@@ -174,17 +215,19 @@ function CourseDetailsTab() {
                 </div>
               );
             })}
-            {courseData?.data?.program_accommodations?.map((item: any) => {
-              return (
-                <div className="flex flex-col gap-1">
-                  <SubHeading>{item?.accommodation_type_id?.name}</SubHeading>
-                  <ItemValue>
-                    {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                    {item?.fee_per_person}
-                  </ItemValue>
-                </div>
-              );
-            })}
+            {courseData?.data?.program_accommodations?.map(
+              (item: AccommodationItem) => {
+                return (
+                  <div className="flex flex-col gap-1">
+                    <Header2>{item?.accommodation_type_id?.name}</Header2>
+                    <ItemValue>
+                      {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                      {item?.fee_per_person}
+                    </ItemValue>
+                  </div>
+                );
+              }
+            )}
           </CardContent>
         </Card>
       </div>
@@ -199,7 +242,7 @@ function CourseDetailsTab() {
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div>
-              <SubHeading>Venue Address</SubHeading>
+              <Header2>Venue Address</Header2>
               <ItemValue>
                 {courseData?.data?.venue?.address},
                 {courseData?.data?.venue?.center_id?.name},
@@ -208,11 +251,11 @@ function CourseDetailsTab() {
                 {courseData?.data?.venue?.postal_code}
               </ItemValue>
             </div>
-            <SubHeading>
+            <Header2>
               Sessions
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
                 {courseData?.data?.program_schedules?.map(
-                  (item: any, index: number) => (
+                  (item: ProgramScheduleItem, index: number) => (
                     <div key={index}>
                       <div className="flex flex-col">
                         <div>
@@ -223,7 +266,7 @@ function CourseDetailsTab() {
                   )
                 )}
               </div>
-            </SubHeading>
+            </Header2>
           </CardContent>
         </Card>
 
@@ -240,7 +283,7 @@ function CourseDetailsTab() {
           <CardContent className="gap-[23px] flex flex-col">
             <div className="gap-[23px] flex flex-col">
               <div>
-                <SubHeading>Course Details URL</SubHeading>
+                <Header2>Course Details URL</Header2>
                 <ItemValue>
                   <div className="flex flex-row gap-4">
                     <div className="w-[90%] break-words">
@@ -265,7 +308,7 @@ function CourseDetailsTab() {
                 </ItemValue>
               </div>
               <div>
-                <SubHeading>Registration URL</SubHeading>
+                <Header2>Registration URL</Header2>
                 <div className="flex flex-row gap-4 ">
                   <div className="text-[16px] font-semibold w-[90%] break-words">
                     {courseData?.data?.registration_link}
@@ -302,24 +345,26 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {courseData?.data?.program_contact_details?.map((item: any) => {
-              return (
-                <div className="gap-[23px] flex flex-col">
-                  <div>
-                    <SubHeading>Contact Name</SubHeading>
-                    <ItemValue>{item.contact_name}</ItemValue>
+            {courseData?.data?.program_contact_details?.map(
+              (item: ContactDetailsItem) => {
+                return (
+                  <div className="gap-[23px] flex flex-col">
+                    <div>
+                      <Header2>Contact Name</Header2>
+                      <ItemValue>{item.contact_name}</ItemValue>
+                    </div>
+                    <div>
+                      <Header2>Contact Email</Header2>
+                      <ItemValue>{item.contact_email}</ItemValue>
+                    </div>
+                    <div>
+                      <Header2>Contact Phone</Header2>
+                      <ItemValue>{item.contact_number}</ItemValue>
+                    </div>
                   </div>
-                  <div>
-                    <SubHeading>Contact Email</SubHeading>
-                    <ItemValue>{item.contact_email}</ItemValue>
-                  </div>
-                  <div>
-                    <SubHeading>Contact Phone</SubHeading>
-                    <ItemValue>{item.contact_number}</ItemValue>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              }
+            )}
           </CardContent>
         </Card>
       </div>
