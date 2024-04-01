@@ -14,22 +14,22 @@ interface Program {
   id: number;
   created_at: string;
   organization_id: number;
-  venue_id: number | null;
-  registration_link: string | null;
-  program_code: string | null;
-  program_fee_settings_id: number | null;
+  venue_id: number;
+  registration_link: string;
+  program_code: string;
+  program_fee_settings_id: number;
   program_type_id: number;
-  status_id: number | null;
+  status_id: number;
   accommodation_fee_payment_mode: number | null;
-  center_id: number | null;
-  city_id: number | null;
-  details_page_link: string | null;
+  center_id: number;
+  city_id: number;
+  details_page_link: string;
   is_early_bird_enabled: boolean;
-  is_residential_program: boolean | null;
-  program_alias_name_id: number | null;
+  is_residential_program: boolean;
+  program_alias_name_id: number;
   program_created_by: number;
-  state_id: number | null;
-  use_default_fee: boolean | null;
+  state_id: number;
+  use_default_fee: boolean;
 }
 
 interface CustomColumnDef<T> {
@@ -41,36 +41,124 @@ type ExtendedColumnDef<T> = CustomColumnDef<T> & ColumnDef<T>;
 
 export const columns: ExtendedColumnDef<Program>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <div className="w-[50px]">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value: boolean) =>
-            table.toggleAllPageRowsSelected(value)
-          }
-          aria-label="Select all"
-        />
-      </div>
-    ),
+    accessorKey: "state_id",
+    enablePinning: true,
+    header: ({ column }) => {
+      return (
+        <div className="w-[100px]">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            State
+            {column.getIsSorted() === "desc" ? (
+              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : (
+              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+            )}
+          </Button>
+        </div>
+      );
+    },
 
-    cell: ({ row }) => (
-      <div className="w-[50px]">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-    pinPosition: "left",
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return <div className="w-[100px]">{row?.original?.state_id?.name}</div>;
+    },
   },
+  {
+    accessorKey: "program_type_id",
+    header: () => {
+      return <div>Course Name</div>;
+    },
 
+    cell: ({ row }: any) => {
+      return (
+        <div className="lowercase">{row?.original?.program_type_id?.name}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "state_id",
+    enablePinning: true,
+    header: ({ column }) => {
+      return (
+        <div className="w-[100px]">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            State
+            {column.getIsSorted() === "desc" ? (
+              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : (
+              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+            )}
+          </Button>
+        </div>
+      );
+    },
+
+    cell: ({ row }: any) => {
+      return <div className="w-[100px]">{row?.original?.state_id?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "program_type_id",
+    header: () => {
+      return <div>Course Name</div>;
+    },
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="lowercase">{row?.original?.program_type_id?.name}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "state_id",
+    enablePinning: true,
+    header: ({ column }) => {
+      return (
+        <div className="w-[100px]">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            State
+            {column.getIsSorted() === "desc" ? (
+              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : (
+              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+            )}
+          </Button>
+        </div>
+      );
+    },
+
+    cell: ({ row }: any) => {
+      return <div className="w-[100px]">{row?.original?.state_id?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "program_type_id",
+    header: () => {
+      return <div>Course Name</div>;
+    },
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="lowercase">{row?.original?.program_type_id?.name}</div>
+      );
+    },
+  },
   {
     accessorKey: "state_id",
     enablePinning: true,

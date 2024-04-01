@@ -20,7 +20,7 @@ import {
 
 import React, { useRef, useState } from "react";
 import { Button } from "src/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,24 +41,42 @@ import DropDown from "@public/assets/DropDown";
 interface IBaseTable<TData, TValue> {
   // Array of column definitions for the table
   columns: ColumnDef<TData, TValue>[];
+
   // Array of data objects to be displayed in the table
   data: TData[];
+
   // Additional CSS classes to apply to the table
-  tableStyles?: string;
+  tableStyles?: {
+    table: string;
+    rowStyles: string;
+  };
+
   // Function to update the current page number
   setCurrent: (value: React.SetStateAction<number>) => void;
+
   // Current page number
   current: number;
+
   // Total number of pages
   pageCount: number;
+
   // Function to update the page size
   setPageSize: (value: React.SetStateAction<number>) => void;
+
   // Number of items to display per page
   pageSize: number;
+
   // Total number of items in the dataset
   total: number;
+
   // Flag to indicate whether pagination controls should be displayed
   pagination?: boolean;
+
+  // Flag to indicate whether checkboxes should be displayed
+  checkboxSelection?: boolean;
+
+  // Flag to indicate whether sticky coulmns should be displayed
+  columnPinning?: boolean;
 }
 
 export function BaseTable<TData, TValue>({
@@ -72,6 +90,8 @@ export function BaseTable<TData, TValue>({
   setPageSize,
   pageSize,
   pagination,
+  checkboxSelection,
+  columnPinning = false,
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
@@ -188,6 +208,9 @@ export function BaseTable<TData, TValue>({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
+
+
+        {/* column selector  */}
         <div>
           <DropdownMenu open={open}>
             <DropdownMenuTrigger asChild>
@@ -252,6 +275,8 @@ export function BaseTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
+        {/* If pagination set true then we have to show pagination  */}
         <div>
           {pagination && (
             <DataPagination
@@ -262,11 +287,13 @@ export function BaseTable<TData, TValue>({
           )}
         </div>
       </div>
+
+      {/* Table */}
       <div>
-        <Table className={`${tableStyles}`}>
+        <Table className={tableStyles?.table}>
           <div
             ref={tableRef}
-            className={` max-w-[500px] overflow-x-auto scrollbar`}
+            className={`max-w-[1440px] overflow-x-auto scrollbar`}
           >
             <TableHeader className="bg-[#7677F41B]">
               {table &&
@@ -275,15 +302,40 @@ export function BaseTable<TData, TValue>({
                     className="border-none text-[16px] font-bold"
                     key={headerGroup?.id}
                   >
+                    {/* If the checkboxSelection is true then we need to show checkboxes  */}
+                    {checkboxSelection && (
+                      <TableHead
+                        className={`flex items-center justify-center ${
+                          columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
+                        }`}
+                      >
+                        <Checkbox
+                          checked={
+                            table.getIsAllPageRowsSelected() ||
+                            (table.getIsSomePageRowsSelected() &&
+                              "indeterminate")
+                          }
+                          onCheckedChange={(value: boolean) =>
+                            table.toggleAllPageRowsSelected(value)
+                          }
+                          aria-label="Select all"
+                        />
+                      </TableHead>
+                    )}
                     {headerGroup?.headers?.map((header, index) => {
                       return (
                         <TableHead
-                          // className="text-[#333333]"
+                          //If we have column pinning true then we have to make the first and last column sticky
                           className={`${
-                            index === 0 ? "sticky left-0 z-10 bg-[#E9E9F5]" : ""
+                            columnPinning && index === 0
+                              ? `sticky ${
+                                  checkboxSelection ? "left-8" : "left-0"
+                                } z-10 bg-[#E9E9F5]`
+                              : ""
                           } ${
+                            columnPinning &&
                             index === headerGroup.headers.length - 1
-                              ? "sticky right-0 z-10 bg-[#E9E9F5]"
+                              ? `sticky right-0 z-10 bg-[#E9E9F5]`
                               : ""
                           } text-[#333333]`}
                           key={header?.id}
@@ -294,15 +346,16 @@ export function BaseTable<TData, TValue>({
                                 header?.column?.columnDef?.header,
                                 header?.getContext()
                               )}
+
                           {index === headerGroup.headers.length - 1 && (
                             <div className="flex flex-row gap-2">
-                              <ArrowLeft
+                              <ChevronLeft
                                 onClick={handlePrevButtonClick}
-                                className="h-4 w-4 cursor-pointer mr-2"
+                                className="size-6 cursor-pointer mr-2 bg-[white] text-[#7677F4] rounded-full"
                               />
-                              <ArrowRight
+                              <ChevronRight
                                 onClick={handleNextButtonClick}
-                                className="h-4 w-6 cursor-pointer"
+                                className="size-6 cursor-pointer bg-[#7677F4] text-[white] rounded-full"
                               />
                             </div>
                           )}
@@ -316,18 +369,40 @@ export function BaseTable<TData, TValue>({
               {table && table?.getRowModel()?.rows?.length ? (
                 table?.getRowModel()?.rows?.map((row) => (
                   <TableRow
+                    className={tableStyles?.rowStyles}
                     key={row?.id}
                     data-state={row?.getIsSelected() && "selected"}
                   >
+                    {/* If the checkboxSelection is true then we need to show checkboxes  */}
+                    {checkboxSelection && (
+                      <TableCell
+                        className={`flex items-center justify-center ${
+                          columnPinning && "sticky left-0 z-10 bg-[#FFFFFF]"
+                        }`}
+                      >
+                        <Checkbox
+                          checked={row.getIsSelected()}
+                          onCheckedChange={(value) =>
+                            row.toggleSelected(!!value)
+                          }
+                          aria-label="Select row"
+                        />
+                      </TableCell>
+                    )}
+
                     {row?.getVisibleCells().map((cell, index) => (
+                      //If we have column pinning true then we have to make the first and last column sticky
                       <TableCell
                         className={`${
-                          index === 0
-                            ? "sticky left-0 top-0 z-10 bg-[#FFFFFF]"
+                          columnPinning && index === 0
+                            ? `sticky ${
+                                checkboxSelection ? "left-8" : "left-0"
+                              }  top-0 z-10 bg-[#FFFFFF]`
                             : ""
                         } ${
+                          columnPinning &&
                           index === row.getVisibleCells().length - 1
-                            ? "sticky right-0 top-0 bg-[#FFFFFF] z-10 "
+                            ? `sticky right-0 top-0 bg-[#FFFFFF] z-10`
                             : ""
                         } text-[#333333]`}
                         key={cell.id}

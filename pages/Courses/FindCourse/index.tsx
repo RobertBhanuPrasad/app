@@ -82,15 +82,20 @@ const TableSection = () => {
     <div>
       <BaseTable
         current={current}
+        checkboxSelection={true}
         setCurrent={setCurrent}
         pageCount={pageCount}
         total={programData?.data?.total || 0}
         pageSize={pageSize}
         setPageSize={setPageSize}
         pagination={true}
-        tableStyles="border border-[1px] w-[500px]"
+        tableStyles={{
+          table: "w-[1440] border border-[1px]",
+          rowStyles: "",
+        }}
         columns={columns as ColumnDef<any>[]}
         data={programData?.data?.data || []}
+        columnPinning={true}
       />
     </div>
   );
