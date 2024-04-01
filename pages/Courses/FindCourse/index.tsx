@@ -90,7 +90,7 @@ const TableSection = () => {
         setPageSize={setPageSize}
         pagination={true}
         tableStyles={{
-          table: "border border-[1px] w-[1440px]",
+          table: "border border-[1px] w-[1000px]",
           rowStyles: "",
         }}
         columns={columns as ColumnDef<any>[]}

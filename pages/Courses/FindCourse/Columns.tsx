@@ -1,43 +1,38 @@
-import { CaretSortIcon } from "@radix-ui/react-icons";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowDownIcon, ArrowUpIcon, MoreHorizontal } from "lucide-react";
-import { Button } from "src/ui/button";
-import { Checkbox } from "src/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "src/ui/dropdown-menu";
+import { CaretSortIcon } from "@radix-ui/react-icons"
+import { ColumnDef } from "@tanstack/react-table"
+import { ArrowDownIcon, ArrowUpIcon, MoreHorizontal } from "lucide-react"
+import { Button } from "src/ui/button"
+import { Checkbox } from "src/ui/checkbox"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "src/ui/dropdown-menu"
 
 interface Program {
-  id: number;
-  created_at: string;
-  organization_id: number;
-  venue_id: number;
-  registration_link: string;
-  program_code: string;
-  program_fee_settings_id: number;
-  program_type_id: number;
-  status_id: number;
-  accommodation_fee_payment_mode: number | null;
-  center_id: number;
-  city_id: number;
-  details_page_link: string;
-  is_early_bird_enabled: boolean;
-  is_residential_program: boolean;
-  program_alias_name_id: number;
-  program_created_by: number;
-  state_id: number;
-  use_default_fee: boolean;
+  id: number
+  created_at: string
+  organization_id: number
+  venue_id: number
+  registration_link: string
+  program_code: string
+  program_fee_settings_id: number
+  program_type_id: number
+  status_id: number
+  accommodation_fee_payment_mode: number | null
+  center_id: number
+  city_id: number
+  details_page_link: string
+  is_early_bird_enabled: boolean
+  is_residential_program: boolean
+  program_alias_name_id: number
+  program_created_by: number
+  state_id: number
+  use_default_fee: boolean
 }
 
 interface CustomColumnDef<T> {
-  pinPosition?: string;
+  pinPosition?: string
 }
 
 // Use an intersection type to combine with ColumnDef
-type ExtendedColumnDef<T> = CustomColumnDef<T> & ColumnDef<T>;
+type ExtendedColumnDef<T> = CustomColumnDef<T> & ColumnDef<T>
 
 export const columns: ExtendedColumnDef<Program>[] = [
   {
@@ -45,11 +40,8 @@ export const columns: ExtendedColumnDef<Program>[] = [
     enablePinning: true,
     header: ({ column }) => {
       return (
-        <div className="flex-[0.25]">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+        <div className="min-w-[100px]">
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
             State
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
@@ -60,25 +52,23 @@ export const columns: ExtendedColumnDef<Program>[] = [
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      return <div>{row?.original?.state_id?.name}</div>;
+      return <div className="min-w-[100px]">{row?.original?.state_id?.name}</div>
     },
   },
   {
     accessorKey: "program_type_id",
     header: () => {
-      return <div className="flex-[0.25]">Course</div>;
+      return <div className="min-w-[400px] text-center">Course</div>
     },
 
     cell: ({ row }: any) => {
-      return (
-        <div className="lowercase">{row?.original?.program_type_id?.name}</div>
-      );
+      return <div className="lowercase min-w-[400px] text-center">{row?.original?.program_type_id?.name}</div>
     },
   },
 
@@ -100,7 +90,7 @@ export const columns: ExtendedColumnDef<Program>[] = [
             <DropdownMenuItem>View Course</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      );
+      )
     },
   },
-];
+]

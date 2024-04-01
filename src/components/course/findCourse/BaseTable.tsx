@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   ColumnDef,
@@ -7,76 +7,59 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from "@tanstack/react-table"
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../../ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../ui/table"
 
-import React, { useRef, useState } from "react";
-import { Button } from "src/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "src/ui/dropdown-menu";
-import ClearAll from "@public/assets/ClearAll";
-import { Checkbox } from "src/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "src/ui/select";
+import ClearAll from "@public/assets/ClearAll"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import React, { useRef, useState } from "react"
+import { Button } from "src/ui/button"
+import { Checkbox } from "src/ui/checkbox"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "src/ui/dropdown-menu"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "src/ui/select"
 
-import DropDown from "@public/assets/DropDown";
+import DropDown from "@public/assets/DropDown"
 
 interface IBaseTable<TData, TValue> {
   // Array of column definitions for the table
-  columns: ColumnDef<TData, TValue>[];
+  columns: ColumnDef<TData, TValue>[]
 
   // Array of data objects to be displayed in the table
-  data: TData[];
+  data: TData[]
 
   // Additional CSS classes to apply to the table
   tableStyles?: {
-    table: string;
-    rowStyles: string;
-  };
+    table: string
+    rowStyles: string
+  }
 
   // Function to update the current page number
-  setCurrent: (value: React.SetStateAction<number>) => void;
+  setCurrent: (value: React.SetStateAction<number>) => void
 
   // Current page number
-  current: number;
+  current: number
 
   // Total number of pages
-  pageCount: number;
+  pageCount: number
 
   // Function to update the page size
-  setPageSize: (value: React.SetStateAction<number>) => void;
+  setPageSize: (value: React.SetStateAction<number>) => void
 
   // Number of items to display per page
-  pageSize: number;
+  pageSize: number
 
   // Total number of items in the dataset
-  total: number;
+  total: number
 
   // Flag to indicate whether pagination controls should be displayed
-  pagination?: boolean;
+  pagination?: boolean
 
   // Flag to indicate whether checkboxes should be displayed
-  checkboxSelection?: boolean;
+  checkboxSelection?: boolean
 
   // Flag to indicate whether sticky coulmns should be displayed
-  columnPinning?: boolean;
+  columnPinning?: boolean
 }
 
 export function BaseTable<TData, TValue>({
@@ -94,31 +77,26 @@ export function BaseTable<TData, TValue>({
   columnPinning = false,
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
-  const initialColumnVisibilityChanges = columns.reduce(
-    (acc: any, column: any) => {
-      if (column.accessorKey) {
-        acc[column.accessorKey] = true;
-      }
-      return acc;
-    },
-    {}
-  );
+  const initialColumnVisibilityChanges = columns.reduce((acc: any, column: any) => {
+    if (column.accessorKey) {
+      acc[column.accessorKey] = true
+    }
+    return acc
+  }, {})
 
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
   //Local state for column selector to apply chnages when we click on apply button
   const [columnVisibilityChanges, setColumnVisibilityChanges] =
-    useState<VisibilityState>(initialColumnVisibilityChanges);
+    useState<VisibilityState>(initialColumnVisibilityChanges)
 
   //initial state for select all checkbox
   const initialSelectAll =
-    Object.keys(columnVisibilityChanges).length > 0 &&
-    Object.values(columnVisibilityChanges).every(Boolean);
+    Object.keys(columnVisibilityChanges).length > 0 && Object.values(columnVisibilityChanges).every(Boolean)
 
-  const [selectAll, setSelectAll] = useState(initialSelectAll);
+  const [selectAll, setSelectAll] = useState(initialSelectAll)
 
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({})
 
   // table hook
   const table = useReactTable({
@@ -132,84 +110,74 @@ export function BaseTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
-  });
+  })
 
   // Function to handle the select all checkbox changes
   const handleSelectAllChange = (checked: boolean) => {
-    setSelectAll(checked);
+    setSelectAll(checked)
 
-    const newColumnVisibilityChanges: VisibilityState = {};
+    const newColumnVisibilityChanges: VisibilityState = {}
     Object.keys(columnVisibilityChanges).forEach((columnId) => {
-      newColumnVisibilityChanges[columnId] = checked;
-    });
+      newColumnVisibilityChanges[columnId] = checked
+    })
 
-    setColumnVisibilityChanges(newColumnVisibilityChanges);
-  };
+    setColumnVisibilityChanges(newColumnVisibilityChanges)
+  }
 
   //function to handle the columns in column selector
-  const handleColumnVisibilityChange = (
-    columnId: string,
-    isVisible: boolean
-  ) => {
+  const handleColumnVisibilityChange = (columnId: string, isVisible: boolean) => {
     setColumnVisibilityChanges((prevState) => ({
       ...prevState,
       [columnId]: isVisible,
-    }));
+    }))
 
     const allChecked = Object.values({
       ...columnVisibilityChanges,
       [columnId]: isVisible,
-    }).every(Boolean);
-    setSelectAll(allChecked);
-  };
+    }).every(Boolean)
+    setSelectAll(allChecked)
+  }
 
   // function to apply all the columns state in coulmns selector
   const applyColumnVisibilityChanges = () => {
-    table.setColumnVisibility(columnVisibilityChanges);
-    setOpen(false);
-  };
+    table.setColumnVisibility(columnVisibilityChanges)
+    setOpen(false)
+  }
 
   // functions to clear the columns in column selector
   const clearColumnVisibilityChanges = () => {
-    const finalColumnVisibilityChanges = columns.reduce(
-      (acc: any, column: any) => {
-        if (column.accessorKey) {
-          acc[column.accessorKey] = false;
-        }
-        return acc;
-      },
-      {}
-    );
-    setColumnVisibilityChanges(finalColumnVisibilityChanges);
-    setSelectAll(false);
-  };
+    const finalColumnVisibilityChanges = columns.reduce((acc: any, column: any) => {
+      if (column.accessorKey) {
+        acc[column.accessorKey] = false
+      }
+      return acc
+    }, {})
+    setColumnVisibilityChanges(finalColumnVisibilityChanges)
+    setSelectAll(false)
+  }
 
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const tableRef = useRef<HTMLDivElement>(null);
+  const [scrollLeft, setScrollLeft] = useState(0)
+  const tableRef = useRef<HTMLDivElement>(null)
 
   const handlePrevButtonClick = () => {
     if (tableRef.current) {
-      tableRef.current.scrollLeft -= 100;
-      setScrollLeft(tableRef.current.scrollLeft);
+      tableRef.current.scrollLeft -= 100
+      setScrollLeft(tableRef.current.scrollLeft)
     }
-  };
+  }
 
   const handleNextButtonClick = () => {
     if (tableRef.current) {
-      tableRef.current.scrollLeft += 100;
-      setScrollLeft(
-        tableRef.current.scrollWidth - tableRef.current.clientWidth
-      );
+      tableRef.current.scrollLeft += 100
+      setScrollLeft(tableRef.current.scrollWidth - tableRef.current.clientWidth)
     }
-  };
+  }
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
-
-
         {/* column selector  */}
         <div>
           <DropdownMenu open={open}>
@@ -247,12 +215,12 @@ export function BaseTable<TData, TValue>({
                             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
                             checked={columnVisibilityChanges[column.id]}
                             onCheckedChange={(value: boolean) => {
-                              handleColumnVisibilityChange(column.id, value);
+                              handleColumnVisibilityChange(column.id, value)
                             }}
                           />
                           {column.id}
                         </div>
-                      );
+                      )
                     })}
                 </div>
 
@@ -264,10 +232,7 @@ export function BaseTable<TData, TValue>({
                     <ClearAll />
                     <div>Clear All</div>
                   </div>
-                  <Button
-                    onClick={applyColumnVisibilityChanges}
-                    className="h-9 w-18 rounded-xl"
-                  >
+                  <Button onClick={applyColumnVisibilityChanges} className="h-9 w-18 rounded-xl">
                     Apply
                   </Button>
                 </div>
@@ -277,47 +242,32 @@ export function BaseTable<TData, TValue>({
         </div>
 
         {/* If pagination set true then we have to show pagination  */}
-        <div>
-          {pagination && (
-            <DataPagination
-              setCurrent={setCurrent}
-              current={current}
-              pageCount={pageCount}
-            />
-          )}
-        </div>
+        <div>{pagination && <DataPagination setCurrent={setCurrent} current={current} pageCount={pageCount} />}</div>
       </div>
 
       {/* Table */}
       <div>
         <Table className={tableStyles?.table}>
-          <div
-            ref={tableRef}
-            className={`flex flex-col max-w-[1440px] overflow-x-auto scrollbar`}
-          >
-            <TableHeader className="bg-[#7677F41B] w-full">
+          <div ref={tableRef} className={`max-w-[1000px] overflow-x-auto scrollbar`}>
+            <TableHeader className="bg-[#7677F41B]">
               {table &&
                 table?.getHeaderGroups()?.map((headerGroup) => (
                   <TableRow
-                    className="flex justify-between items-center border-none text-[16px] font-bold "
+                    className="flex items-center border-none text-[16px] font-bold w-full"
                     key={headerGroup?.id}
                   >
                     {/* If the checkboxSelection is true then we need to show checkboxes  */}
                     {checkboxSelection && (
                       <TableHead
-                        className={`flex items-center justify-center ${
+                        className={`flex justify-center items-center w-full flex-[0.1] ${
                           columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
                         }`}
                       >
                         <Checkbox
                           checked={
-                            table.getIsAllPageRowsSelected() ||
-                            (table.getIsSomePageRowsSelected() &&
-                              "indeterminate")
+                            table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
                           }
-                          onCheckedChange={(value: boolean) =>
-                            table.toggleAllPageRowsSelected(value)
-                          }
+                          onCheckedChange={(value: boolean) => table.toggleAllPageRowsSelected(value)}
                           aria-label="Select all"
                         />
                       </TableHead>
@@ -328,24 +278,18 @@ export function BaseTable<TData, TValue>({
                           //If we have column pinning true then we have to make the first and last column sticky
                           className={`${
                             columnPinning && index === 0
-                              ? `sticky ${
-                                  checkboxSelection ? "left-8" : "left-0"
-                                } z-10 bg-[#E9E9F5]`
+                              ? `sticky ${checkboxSelection ? "left-8" : "left-0"} z-10 bg-[#E9E9F5]`
                               : ""
                           } ${
-                            columnPinning &&
-                            index === headerGroup.headers.length - 1
+                            columnPinning && index === headerGroup.headers.length - 1
                               ? `sticky right-0 z-10 bg-[#E9E9F5]`
                               : ""
-                          } text-[#333333]`}
+                          } text-[#333333] flex justify-center items-center w-full`}
                           key={header?.id}
                         >
                           {header?.isPlaceholder
                             ? null
-                            : flexRender(
-                                header?.column?.columnDef?.header,
-                                header?.getContext()
-                              )}
+                            : flexRender(header?.column?.columnDef?.header, header?.getContext())}
 
                           {index === headerGroup.headers.length - 1 && (
                             <div className="flex flex-row gap-2">
@@ -360,7 +304,7 @@ export function BaseTable<TData, TValue>({
                             </div>
                           )}
                         </TableHead>
-                      );
+                      )
                     })}
                   </TableRow>
                 ))}
@@ -369,22 +313,20 @@ export function BaseTable<TData, TValue>({
               {table && table?.getRowModel()?.rows?.length ? (
                 table?.getRowModel()?.rows?.map((row) => (
                   <TableRow
-                    className={`{${tableStyles?.rowStyles} flex justify-between item-center`}
+                    className={`{${tableStyles?.rowStyles} flex item-center w-full`}
                     key={row?.id}
                     data-state={row?.getIsSelected() && "selected"}
                   >
                     {/* If the checkboxSelection is true then we need to show checkboxes  */}
                     {checkboxSelection && (
                       <TableCell
-                        className={`flex items-center justify-center ${
+                        className={`flex justify-center w-full items-center flex-[0.1] ${
                           columnPinning && "sticky left-0 z-10 bg-[#FFFFFF]"
                         }`}
                       >
                         <Checkbox
                           checked={row.getIsSelected()}
-                          onCheckedChange={(value) =>
-                            row.toggleSelected(!!value)
-                          }
+                          onCheckedChange={(value) => row.toggleSelected(!!value)}
                           aria-label="Select row"
                         />
                       </TableCell>
@@ -393,34 +335,25 @@ export function BaseTable<TData, TValue>({
                     {row?.getVisibleCells().map((cell, index) => (
                       //If we have column pinning true then we have to make the first and last column sticky
                       <TableCell
-                        className={`${
+                        className={`flex justify-center w-full items-center ${
                           columnPinning && index === 0
-                            ? `sticky ${
-                                checkboxSelection ? "left-8" : "left-0"
-                              }  top-0 z-10 bg-[#FFFFFF]`
+                            ? `sticky ${checkboxSelection ? "left-8" : "left-0"}  top-0 z-10 bg-[#FFFFFF]`
                             : ""
                         } ${
-                          columnPinning &&
-                          index === row.getVisibleCells().length - 1
+                          columnPinning && index === row.getVisibleCells().length - 1
                             ? `sticky right-0 top-0 bg-[#FFFFFF] z-10`
                             : ""
                         } text-[#333333]`}
                         key={cell.id}
                       >
-                        {flexRender(
-                          cell?.column?.columnDef?.cell,
-                          cell?.getContext()
-                        )}
+                        {flexRender(cell?.column?.columnDef?.cell, cell?.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns?.length}
-                    className="h-24 text-center"
-                  >
+                  <TableCell colSpan={columns?.length} className="h-24 text-center">
                     No results.
                   </TableCell>
                 </TableRow>
@@ -428,19 +361,13 @@ export function BaseTable<TData, TValue>({
             </TableBody>
           </div>
         </Table>
-        <div className="flex flex-row justify-between">
-          {pagination && (
-            <DataPagination
-              setCurrent={setCurrent}
-              current={current}
-              pageCount={pageCount}
-            />
-          )}
+        <div className="flex">
+          {pagination && <DataPagination setCurrent={setCurrent} current={current} pageCount={pageCount} />}
           <div className="flex items-center space-x-2">
             <Select
               value={`${pageSize}`}
               onValueChange={(value) => {
-                setPageSize(Number(value));
+                setPageSize(Number(value))
               }}
             >
               <SelectTrigger className="h-8 w-[131px]">
@@ -463,20 +390,16 @@ export function BaseTable<TData, TValue>({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface DataPaginationProps {
-  setCurrent: (value: React.SetStateAction<number>) => void;
-  current: number;
-  pageCount: number;
+  setCurrent: (value: React.SetStateAction<number>) => void
+  current: number
+  pageCount: number
 }
 
-const DataPagination = ({
-  setCurrent,
-  current,
-  pageCount,
-}: DataPaginationProps) => {
+const DataPagination = ({ setCurrent, current, pageCount }: DataPaginationProps) => {
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
@@ -513,5 +436,5 @@ const DataPagination = ({
         <div>Next</div>
       </Button>
     </div>
-  );
-};
+  )
+}
