@@ -361,7 +361,7 @@ export function BaseTable<TData, TValue>({
             </TableBody>
           </div>
         </Table>
-        <div className="flex">
+        <div className="flex justify-between">
           {pagination && <DataPagination setCurrent={setCurrent} current={current} pageCount={pageCount} />}
           <div className="flex items-center space-x-2">
             <Select
