@@ -58,7 +58,7 @@ export default function CourseTable() {
 CourseTable.noLayout = false;
 
 // Definition of columns for the DataTable
-const columns = (append: any, remove: any, formData: any) => [
+export const columns = (append: any, remove: any, formData: any) => [
   {
     // Column for Accommodation Type
     id: "accommodation",
