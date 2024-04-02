@@ -42,6 +42,38 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import CustomSelect from "src/ui/custom-select";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogTrigger,
+  DialogTitle,
+} from "src/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "src/ui/alert-dialog";
+import { Button } from "src/ui/button";
+import { FiAlertCircle } from "react-icons/fi";
+import { FcOk } from "react-icons/fc";
+import { IoCloseSharp } from "react-icons/io5";
+import { FaWindowClose } from "react-icons/fa";
+
 function index() {
   const Id: number = 3;
 
@@ -228,6 +260,7 @@ function index() {
           </HoverCardContent>
         </HoverCard>
       </div>
+      
 
       <div className="w-full ">
         <Tabs
@@ -255,6 +288,95 @@ function index() {
                 </div>
               </TabsTrigger>
             ))}
+
+            {/* ----------------------------------------------------- */}
+            <Select>
+            <SelectTrigger className="w-[180px] ">
+                <SelectValue placeholder="Providing Course" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup className="flex flex-col">
+                    <Dialog>
+                        <DialogTrigger className="text-sm text-center">Approve Course</DialogTrigger>
+                        <DialogContent className="flex flex-col items-center">
+                            <DialogHeader className="text-center">
+                                <FiAlertCircle className={'text-yellow-300 w-12 h-12 mx-auto'} /><br />
+                                <DialogDescription className="font-bold text-black text-lg">Are you sure you want to approve this course?</DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <DialogTrigger>
+                                    <Button type="button" variant="outline" className="text-blue-500">No</Button>
+                                </DialogTrigger>
+                                <AlertDialog className="w-full max-w-xs">
+                                    <AlertDialogTrigger>
+                                        <Button type="button" className="bg-blue-500 text-white px-4 py-2">Yes</Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent className="w-50">
+                                        <AlertDialogHeader className="text-center">
+                                            <AlertDialogTrigger>
+                                                <IoCloseSharp className="absolute top-3 right-3 cursor-pointer " />
+                                            </AlertDialogTrigger>
+                                            <FcOk className="w-11 h-11 mx-auto" />
+                                            <AlertDialogTitle className="font-bold text-center">Course approved Successfully</AlertDialogTitle>
+                                            <AlertDialogDescription className="text-center">
+                                                Thank you for contribution in the course<br /> approval process.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter className="flex items-center justify-center">
+                                            <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">Close</AlertDialogCancel>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                    <Dialog>
+                        <DialogTrigger className="text-sm">Reject Course</DialogTrigger>
+                        <DialogContent className="flex flex-col items-center">
+                            <DialogHeader className="text-center">
+                                <FaWindowClose className="w-11 h-11 mx-auto text-red-500" />
+                                <DialogTitle className="text-gray-500 text-sm"> Describe your rejection reason<span className="text-blue-500">(optional)</span></DialogTitle>
+                                <DialogDescription>
+                                    <p className="box-border h-32 w-80 p-4 border-[2px] text-gray-400 rounded-lg">Comment.</p>
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <DialogTrigger>
+                                <Button type="button" variant="outline" className="text-blue-500">No</Button>
+                                </DialogTrigger>
+                                <AlertDialog className="w-full max-w-xs">
+                                    <AlertDialogTrigger>
+                                        <Button type="button" className="bg-blue-500 text-white px-4 py-2">Reject</Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent className="w-50">
+                                        <AlertDialogHeader className="text-center">
+                                            <AlertDialogTrigger>
+                                                <IoCloseSharp className="absolute top-3 right-3 cursor-pointer " />
+                                            </AlertDialogTrigger>
+                                            <FaWindowClose className="w-11 h-11 mx-auto text-red-500" />
+                                            <AlertDialogTitle className="font-bold text-center">Course Rejected</AlertDialogTitle>
+                                            <AlertDialogDescription className="text-center">
+                                                The Course got rejected successfully
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter className="flex items-center justify-center">
+                                            <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">Close</AlertDialogCancel>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+
+        {/* ---------------------------------------------- */}
+
+
+            
+        
+
           </TabsList>
           <div className="w-full border-b -mt-2"></div>
           <TabsContent value={COURSE_DETAILS_TAB}>
@@ -269,6 +391,7 @@ function index() {
           <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>
             Place Course Accounting Form tab here
           </TabsContent>
+          
         </Tabs>
       </div>
     </div>
