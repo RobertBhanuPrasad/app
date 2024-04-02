@@ -1,10 +1,12 @@
-import CalenderIcon from "@public/assets/CalenderIcon";
-import ClearAll from "@public/assets/ClearAll";
-import React, { useState } from "react";
-import { DateRange } from "react-day-picker";
-import { DateRangePicker } from "src/ui/DateRangePicker";
-import { Button } from "src/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import CalenderIcon from '@public/assets/CalenderIcon'
+import ClearAll from '@public/assets/ClearAll'
+import React, { useState } from 'react'
+import { DateRange } from 'react-day-picker'
+import { DateRangePicker } from 'src/ui/DateRangePicker'
+import { Button } from 'src/ui/button'
+import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
+import Filters from 'src/participants/Filters'
+import { Sheet, SheetContent, SheetTrigger } from 'src/ui/sheet'
 
 function index() {
   return (
@@ -12,20 +14,29 @@ function index() {
       <HeaderSection />
       <TableSection />
     </div>
-  );
+  )
 }
 
-export default index;
+export default index
 
 const HeaderSection = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
-      <div>All filters</div>
+      <div>
+        <Sheet>
+          <SheetTrigger className="p-0">
+            <Button variant="outline">All Filters</Button>
+          </SheetTrigger>
+          <SheetContent className="w-[446px] rounded-l-xl">
+            <Filters />
+          </SheetContent>
+        </Sheet>
+      </div>
       <div>Search</div>
       <div>
-        {" "}
+        {' '}
         <Dialog open={open}>
           <DialogTrigger asChild>
             <Button
@@ -53,21 +64,21 @@ const HeaderSection = () => {
         <Button className="h-9 w-18 rounded-xl">Apply</Button>
       </div>
     </div>
-  );
-};
+  )
+}
 const TableSection = () => {
   return (
     <div>
       <div>Table section</div>
     </div>
-  );
-};
+  )
+}
 
-const DateRangePickerComponent = ({ setOpen }: any) => {
+export const DateRangePickerComponent = ({ setOpen }: any) => {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(),
-    to: new Date(2024, 3, 20),
-  });
+    to: new Date(2024, 3, 20)
+  })
 
   return (
     <div className="relative">
@@ -86,20 +97,17 @@ const DateRangePickerComponent = ({ setOpen }: any) => {
           onClick={() =>
             setDate({
               from: new Date(),
-              to: new Date(2024, 3, 20),
+              to: new Date(2024, 3, 20)
             })
           }
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
           Reset
         </Button>
-        <Button
-          onClick={() => setOpen(false)}
-          className=" w-[94px] h-10 rounded-xl"
-        >
+        <Button onClick={() => setOpen(false)} className=" w-[94px] h-10 rounded-xl">
           Apply
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
