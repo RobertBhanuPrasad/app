@@ -101,9 +101,9 @@ const CourseThankyouPage = () => {
                 </div>
                 <p className="mx-auto text-accent-secondary max-w-fit">Or</p>
                 {/* Hyper links section */}
-                <div className="flex items-center justify-center mt-4 ">
+                <div className="flex items-center justify-center gap-4 mt-4 ">
                     <div className="relative">
-                        <p className="absolute text-xs bg-white text-accent-secondary -top-3 left-4 ">
+                        <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
                             Registration link
                         </p>
                         <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
@@ -127,8 +127,8 @@ const CourseThankyouPage = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="pl-5 ">
-                        <p className="absolute text-xs bg-white text-accent-secondary -top-3 left-4 ">
+                    <div className="relative ">
+                        <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
                             Details page link
                         </p>
                         <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">

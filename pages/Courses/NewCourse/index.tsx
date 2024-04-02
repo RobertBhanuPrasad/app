@@ -4,8 +4,7 @@ import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import ThankyouPage from "@components/course/newCourse/ThankyouPage";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { default as CourseThankyouPage } from "@components/course/newCourse/ThankyouPage";
 import Car from "@public/assets/Car";
 import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
@@ -18,35 +17,52 @@ import { useStepsForm } from "@refinedev/react-hook-form";
 import { FormProvider } from "react-hook-form";
 import { Button } from "src/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import { z } from "zod";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
     const { data: loginUserData }: any = useGetIdentity();
+    const { viewPreviewPage, viewThankyouPage, setViewThankyouPage } = newCourseStore();
+
+    console.log(viewPreviewPage, viewThankyouPage, "viewPreviewPage,viewThankyouPage");
 
     if (!loginUserData?.userData) {
         return <div>Loading...</div>;
     }
+    if (viewThankyouPage) {
+        return <CourseThankyouPage />;
+    }
 
-    return (
-        <div>
-            <ThankyouPage />
-            <NewCourse />;
-        </div>
-    );
+    if (viewPreviewPage) {
+        return (
+            <div>
+                review page
+                <Button
+                    onClick={() => {
+                        setViewThankyouPage(true);
+                    }}
+                >
+                    submit
+                </Button>
+            </div>
+        );
+    }
+
+    return <NewCourse />;
 }
 function NewCourse() {
     const { data: loginUserData }: any = useGetIdentity();
+    const { setViewPreviewPage } = newCourseStore();
 
     // Schema definition for form validation
-    const schema = z.object({
-        organization: z.object({
-            // Define the schema for the organization object's properties here
-            // For example:
-            value: z.number(),
-            label: z.string(),
-            // Add more properties as needed
-        }),
-    });
+    // const schema = z.object({
+    //     organization: z.object({
+    //         // Define the schema for the organization object's properties here
+    //         // For example:
+    //         value: z.number(),
+    //         label: z.string(),
+    //         // Add more properties as needed
+    //     }),
+    // });
 
     const loggedUserData = {
         value: loginUserData?.userData?.id,
@@ -59,7 +75,7 @@ function NewCourse() {
             action: "create",
             resource: "event",
         },
-        resolver: zodResolver(schema),
+        // resolver: zodResolver(schema),
         defaultValues: {
             visibility: "public",
             displayLanguage: "true",
@@ -211,6 +227,14 @@ function NewCourse() {
                                                 Save
                                             </Button>
                                         )}
+                                        <Button
+                                            className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
+                                            onClick={() => {
+                                                setViewPreviewPage(true);
+                                            }}
+                                        >
+                                            Review Details
+                                        </Button>
                                     </div>
                                 </div>
                             </form>
