@@ -1,3 +1,4 @@
+import CourseReviewPage from "@components/course/newCourse/CourseReviewPage";
 import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
 import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
@@ -9,6 +10,7 @@ import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
+import Review from "@public/assets/Review";
 import Venue from "@public/assets/Venue";
 import { useGetIdentity } from "@refinedev/core";
 import { useStepsForm } from "@refinedev/react-hook-form";
@@ -98,6 +100,12 @@ function NewCourse() {
             label: "Contact Info",
             icon: <Info color={` ${currentStep == 5 ? "#7677F4" : "#999999"}`} />,
         },
+
+        {
+            value: "6",
+            label: "Review",
+            icon: <Review color={` ${currentStep == 6 ? "#7677F4" : "#999999"}`} />,
+        },
     ];
 
     const onSubmit = (formData: any) => {
@@ -159,6 +167,9 @@ function NewCourse() {
                                         </TabsContent>
                                         <TabsContent value="5" className={contentStylings}>
                                             <NewCourseStep6 />
+                                        </TabsContent>
+                                        <TabsContent value="6" className={contentStylings}>
+                                            <CourseReviewPage />
                                         </TabsContent>
                                     </div>
 
