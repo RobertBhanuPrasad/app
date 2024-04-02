@@ -1,10 +1,16 @@
+import { BaseTable } from "@components/course/findCourse/BaseTable";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
+import { Checkbox } from "src/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { columns } from "./Columns";
+import { HttpError, useTable } from "@refinedev/core";
 
 function index() {
   return (
@@ -56,9 +62,41 @@ const HeaderSection = () => {
   );
 };
 const TableSection = () => {
+  const {
+    tableQueryResult: programData,
+    pageCount,
+    pageSize,
+    setPageSize,
+    current,
+    setCurrent,
+  } = useTable({
+    resource: "program",
+    meta: {
+      select: "*,program_type_id!inner(name) , state_id!inner(name)",
+    },
+  });
+
+  console.log("hey table data", programData);
+
   return (
     <div>
-      <div>Table section</div>
+      <BaseTable
+        current={current}
+        checkboxSelection={true}
+        setCurrent={setCurrent}
+        pageCount={pageCount}
+        total={programData?.data?.total || 0}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        pagination={true}
+        tableStyles={{
+          table: "border border-[1px] w-[1000px]",
+          rowStyles: "",
+        }}
+        columns={columns as ColumnDef<any>[]}
+        data={programData?.data?.data || []}
+        columnPinning={true}
+      />
     </div>
   );
 };
