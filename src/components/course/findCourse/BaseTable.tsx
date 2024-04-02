@@ -371,7 +371,7 @@ export function BaseTable<TData, TValue>({
               }}
             >
               <SelectTrigger className="h-8 w-[131px]">
-                <SelectValue placeholder={`${pageSize} jhgf`} />
+                <SelectValue placeholder={`${pageSize}`} />
               </SelectTrigger>
               <SelectContent side="top">
                 {[10, 20, 30, 40, 50].map(
