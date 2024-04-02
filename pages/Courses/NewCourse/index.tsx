@@ -4,7 +4,8 @@ import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import { default as CourseThankyouPage } from "@components/course/newCourse/ThankyouPage";
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
+
 import Car from "@public/assets/Car";
 import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
@@ -18,18 +19,24 @@ import { FormProvider } from "react-hook-form";
 import { Button } from "src/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { z } from "zod";
 
 function index() {
     const { data: loginUserData }: any = useGetIdentity();
-    const { viewPreviewPage, viewThankyouPage, setViewThankyouPage } = newCourseStore();
+    const { viewPreviewPage, viewThankyouPage, setViewThankyouPage } =
+        newCourseStore();
 
-    console.log(viewPreviewPage, viewThankyouPage, "viewPreviewPage,viewThankyouPage");
+    console.log(
+        viewPreviewPage,
+        viewThankyouPage,
+        "viewPreviewPage,viewThankyouPage"
+    );
 
     if (!loginUserData?.userData) {
         return <div>Loading...</div>;
     }
     if (viewThankyouPage) {
-        return <CourseThankyouPage />;
+        return <NewCourseThankyouPage />;
     }
 
     if (viewPreviewPage) {
@@ -54,19 +61,22 @@ function NewCourse() {
     const { setViewPreviewPage } = newCourseStore();
 
     // Schema definition for form validation
-    // const schema = z.object({
-    //     organization: z.object({
-    //         // Define the schema for the organization object's properties here
-    //         // For example:
-    //         value: z.number(),
-    //         label: z.string(),
-    //         // Add more properties as needed
-    //     }),
-    // });
+    const schema = z.object({
+        organization: z.object({
+            // Define the schema for the organization object's properties here
+            // For example:
+            value: z.number(),
+            label: z.string(),
+            // Add more properties as needed
+        }),
+    });
 
     const loggedUserData = {
         value: loginUserData?.userData?.id,
-        label: loginUserData?.userData?.contact_id?.first_name + " " + loginUserData?.userData?.contact_id?.last_name,
+        label:
+            loginUserData?.userData?.contact_id?.first_name +
+            " " +
+            loginUserData?.userData?.contact_id?.last_name,
     };
 
     // Destructuring values from useStepsForm hook
@@ -96,38 +106,56 @@ function NewCourse() {
         {
             value: "0",
             label: "Basic Details",
-            icon: <Profile color={` ${currentStep == 0 ? "#7677F4" : "#999999"}`} />,
+            icon: (
+                <Profile
+                    color={` ${currentStep == 0 ? "#7677F4" : "#999999"}`}
+                />
+            ),
         },
         {
             value: "1",
             label: "Course Details",
-            icon: <Group color={` ${currentStep == 1 ? "#7677F4" : "#999999"}`} />,
+            icon: (
+                <Group color={` ${currentStep == 1 ? "#7677F4" : "#999999"}`} />
+            ),
         },
         {
             value: "2",
             label: "Time and Venue",
-            icon: <Venue color={` ${currentStep == 2 ? "#7677F4" : "#999999"}`} />,
+            icon: (
+                <Venue color={` ${currentStep == 2 ? "#7677F4" : "#999999"}`} />
+            ),
         },
         {
             value: "3",
             label: "Fees",
-            icon: <Fees color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
+            icon: (
+                <Fees color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />
+            ),
         },
         {
             value: "4",
             label: "Accommodation",
-            icon: <Car color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
+            icon: (
+                <Car color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />
+            ),
         },
         {
             value: "5",
             label: "Contact Info",
-            icon: <Info color={` ${currentStep == 5 ? "#7677F4" : "#999999"}`} />,
+            icon: (
+                <Info color={` ${currentStep == 5 ? "#7677F4" : "#999999"}`} />
+            ),
         },
 
         {
             value: "6",
             label: "Review",
-            icon: <Review color={` ${currentStep == 6 ? "#7677F4" : "#999999"}`} />,
+            icon: (
+                <Review
+                    color={` ${currentStep == 6 ? "#7677F4" : "#999999"}`}
+                />
+            ),
         },
     ];
 
@@ -138,9 +166,9 @@ function NewCourse() {
     };
 
     // If the form is still loading, display a loading message
-    // if (formLoading) {
-    //   return <div>Loading...</div>;
-    // }
+    if (formLoading) {
+        return <div>Loading...</div>;
+    }
     const contentStylings =
         "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
     return (
@@ -156,7 +184,8 @@ function NewCourse() {
                                     className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                                     onClick={() => gotoStep(index)}
                                 >
-                                    {JSON.stringify(currentStep) === tab.value && (
+                                    {JSON.stringify(currentStep) ===
+                                        tab.value && (
                                         <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
                                     )}
                                     <div className="flex flex-row gap-[10px] ml-[14px] items-center">
@@ -173,25 +202,46 @@ function NewCourse() {
                             <form autoComplete="off">
                                 <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
                                     <div>
-                                        <TabsContent value="0" className={contentStylings}>
+                                        <TabsContent
+                                            value="0"
+                                            className={contentStylings}
+                                        >
                                             <NewCourseStep1 />
                                         </TabsContent>
-                                        <TabsContent value="1" className={contentStylings}>
+                                        <TabsContent
+                                            value="1"
+                                            className={contentStylings}
+                                        >
                                             <NewCourseStep2 />
                                         </TabsContent>
-                                        <TabsContent value="2" className={contentStylings}>
+                                        <TabsContent
+                                            value="2"
+                                            className={contentStylings}
+                                        >
                                             <NewCourseStep3 />
                                         </TabsContent>
-                                        <TabsContent value="3" className={contentStylings}>
+                                        <TabsContent
+                                            value="3"
+                                            className={contentStylings}
+                                        >
                                             <NewCourseStep4 />
                                         </TabsContent>
-                                        <TabsContent value="4" className={contentStylings}>
+                                        <TabsContent
+                                            value="4"
+                                            className={contentStylings}
+                                        >
                                             <NewCourseStep5 />
                                         </TabsContent>
-                                        <TabsContent value="5" className={contentStylings}>
+                                        <TabsContent
+                                            value="5"
+                                            className={contentStylings}
+                                        >
                                             <NewCourseStep6 />
                                         </TabsContent>
-                                        <TabsContent value="6" className={contentStylings}>
+                                        <TabsContent
+                                            value="6"
+                                            className={contentStylings}
+                                        >
                                             Change your accommodation details
                                         </TabsContent>
                                     </div>
@@ -208,7 +258,8 @@ function NewCourse() {
                                                 Previous
                                             </Button>
                                         )}
-                                        {currentStep < stepTitles.length - 1 && (
+                                        {currentStep <
+                                            stepTitles.length - 1 && (
                                             <Button
                                                 className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
                                                 onClick={(e) => {
@@ -219,7 +270,8 @@ function NewCourse() {
                                                 Next
                                             </Button>
                                         )}
-                                        {currentStep === stepTitles.length - 1 && (
+                                        {currentStep ===
+                                            stepTitles.length - 1 && (
                                             <Button
                                                 className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
                                                 onClick={handleSubmit(onSubmit)}
