@@ -62,8 +62,8 @@ function NewCourse() {
       visibility: "public",
       displayLanguage: "true",
       isGeoRestriction: "true",
-      isResidentialCourse:"No",
-      accommodationPaymentMode:"Pay Online",
+      isResidentialCourse: "No",
+      accommodationPaymentMode: "Pay Online",
       programOrganizers: [loggedUserData],
     },
   });
@@ -135,7 +135,7 @@ function NewCourse() {
                 <TabsTrigger
                   key={index}
                   value={tab.value}
-                  className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] "
+                  className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                   onClick={() => gotoStep(index)}
                 >
                   {JSON.stringify(currentStep) === tab.value && (
@@ -221,5 +221,3 @@ function NewCourse() {
 }
 
 export default index;
-
-
