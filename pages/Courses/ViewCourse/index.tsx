@@ -1,3 +1,4 @@
+import Expenses from "@components/course/viewCourse/courseAccountingForm/Expenses";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -33,7 +34,7 @@ function index() {
     {
       value: COURSE_ACCOUNTING_FORM_TAB,
       label: t("pages.Tabs.courseAccountingFormTab"),
-      disabled: true,
+      disabled: false,
     },
   ];
 
@@ -70,13 +71,13 @@ function index() {
           Place course details tab here
         </TabsContent>
         <TabsContent value={PARTICIPANTS_TAB}>
-          Place participant tab here
+          Place pherearticipant tab 
         </TabsContent>
         <TabsContent value={REVENUE_SUMMARY_TAB}>
           Place Revenue Summary tab here
         </TabsContent>
         <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>
-          Place Course Accounting Form tab here
+          <Expenses/>
         </TabsContent>
       </Tabs>
     </div>
