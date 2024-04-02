@@ -42,7 +42,7 @@ const NewCourseThankyouPage = () => {
     };
 
     return (
-        <div className="relative pb-8 m-4 bg-white rounded-lg">
+        <div className="relative pb-8 m-4 !mb-8 bg-white rounded-3xl shadow-md">
             {/* header : top buttons */}
             <div className="absolute flex items-center gap-4 right-6 top-4 rid-cols-2">
                 <Button className=" width-[135px] rounded-[25px] bg-yellow-100 text-yellow-500 h-[25px] gap-2">

@@ -30,7 +30,11 @@ function index() {
         return <div>Loading...</div>;
     }
     if (viewThankyouPage) {
-        return <NewCourseThankyouPage />;
+        return (
+            <div className="pb-8">
+                <NewCourseThankyouPage />
+            </div>
+        );
     }
     //TODO: Need to call the review page here
     if (viewPreviewPage) {
