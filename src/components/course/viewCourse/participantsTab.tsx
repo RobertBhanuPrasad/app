@@ -11,24 +11,25 @@ function ParticipantsTab() {
   const genderOptions =
     getOptionValuesByOptionLabel(GENDER)?.[0]?.option_values;
 
-  // Function to generate random color
-  const getRandomColor = () => {
-    // Implement your logic to generate a random color
-    // For simplicity, returning a fixed color for now
-    return "#" + Math.floor(Math.random() * 16777215).toString(16);
-  };
+  //   // Function to generate random color
+  //   const getRandomColor = () => {
+  //     // Implement your logic to generate a random color
+  //     // For simplicity, returning a fixed color for now
+  //     return "#" + Math.floor(Math.random() * 16777215).toString(16);
+  //   };
 
   const baseColor = "#7677F4";
   const numColors = genderOptions.length; // Use the length of genderOptions for the number of colors
 
-  console.log(generateColors(baseColor, numColors),)
+  console.log(generateColors(baseColor, numColors)[1]);
 
   const data = genderOptions.map((item: any, index: number) => ({
-    title: item.gender,
+    title: item.value,
     value: 5,
     color: generateColors(baseColor, numColors)[index], // Use the index to get the color from the generated colors
   }));
 
+  console.log(data, "data");
   return (
     <div className="my-[31px]">
       <div className="flex justify-between">
@@ -51,7 +52,11 @@ function ParticipantsTab() {
             <div className="">
               <PieChart
                 data={[
-                  { title: "One", value: 1, color: "#E2E3FF" },
+                  {
+                    title: "One",
+                    value: 1,
+                    color: "#3637b4",
+                  },
                   { title: "Two", value: 2, color: "#CCCCFF" },
                   { title: "Three", value: 3, color: "#AFB0FF" },
                   { title: "four", value: 3, color: "#7677F4" },
@@ -60,7 +65,7 @@ function ParticipantsTab() {
                 lineWidth={20}
                 paddingAngle={18}
                 radius={20}
-              />
+              />    
             </div>
           </div>
         </Card>
