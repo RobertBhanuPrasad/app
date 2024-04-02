@@ -7,8 +7,7 @@ export const generateColors = (baseColor: string, numColors: number) => {
     ];
 
     // Calculate the decrease factor for each RGB component
-    const decreaseFactor = 31.82;
-
+    const decreaseFactor = 5.67
     // Generate colors
     const colors = [];
     
@@ -17,10 +16,10 @@ export const generateColors = (baseColor: string, numColors: number) => {
 
     for (let i = 1; i < numColors; i++) { // Start from 1 as we already included the base color
         // Calculate the decrease in brightness for each component
-        const decrease = decreaseFactor * i;
+        const decrease = decreaseFactor + i;
 
         // Decrease brightness for each RGB component
-        const newRGB = baseRGB.map(color => Math.max(color - decrease, 0));
+        const newRGB = baseRGB.map(color => Math.max(color + decrease, 0));
 
         // Convert RGB components back to hexadecimal color code
         const rgbToHex = (rgb: any) => '#' + rgb.map((c: any) => Math.round(c).toString(16).padStart(2, '0')).join('');
