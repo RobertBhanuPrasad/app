@@ -1,10 +1,18 @@
 import EditIcon from "@public/assets/EditIcon";
 import { useTranslation } from "next-i18next";
+import { useFormContext } from "react-hook-form";
+import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { Button } from "src/ui/button";
+import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
 
 export default function CourseReviewPage() {
     const { t } = useTranslation("common");
-    console.log("lanugage is", t("pages"));
+    const { getValues } = useFormContext();
+
+    const formData = getValues();
+    const programOrganizedBy = getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, formData?.programOrganizedBy);
+    const organization = getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, formData?.organization);
+    console.log("form Data is", getValues());
 
     return (
         <div className="w-full text-base max-h-fit">
@@ -19,7 +27,7 @@ export default function CourseReviewPage() {
                 <div className="grid grid-cols-3 gap-4 mt-2">
                     <div className=" min-w-72">
                         <p className="text-sm font-normal text-accent-light ">Creator</p>
-                        <p className="font-semibold truncate text-accent-secondary">I am teaching this course</p>
+                        <p className="font-semibold truncate text-accent-secondary">{programOrganizedBy?.value}</p>
                     </div>
                     <div className=" min-w-72">
                         <p className="text-sm font-normal text-accent-light">Organization</p>
