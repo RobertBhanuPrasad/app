@@ -42,34 +42,21 @@ const NewCourseThankyouPage = () => {
     };
 
     return (
-        <div className="relative m-4 bg-white rounded-lg ">
+        <div className="relative pb-8 m-4 bg-white rounded-lg">
             {/* header : top buttons */}
             <div className="absolute flex items-center gap-4 right-6 top-4 rid-cols-2">
                 <Button className=" width-[135px] rounded-[25px] bg-yellow-100 text-yellow-500 h-[25px] gap-2">
                     <Circle color="#FFB900" size={5} fill="#FFB900" />
                     Review Pending
                 </Button>
-                <Button
-                    variant="outline"
-                    className="text-indigo-600 border-indigo-600 "
-                >
+                <Button variant="outline" className="text-indigo-600 border-indigo-600 ">
                     Go to Course Listing
                 </Button>
             </div>
-            <Image
-                src={ThankYou}
-                alt="My Image"
-                width={148}
-                height={148}
-                className="mx-auto"
-            />
+            <Image src={ThankYou} alt="My Image" width={148} height={148} className="mx-auto" />
             <div className="mx-auto text-center max-w-fit ">
-                <p className="text-2xl font-semibold text-accent-primary">
-                    Congratulations!
-                </p>
-                <p className="text-accent-secondary">
-                    You have successfully announced a course
-                </p>
+                <p className="text-2xl font-semibold text-accent-primary">Congratulations!</p>
+                <p className="text-accent-secondary">You have successfully announced a course</p>
             </div>
             {/* body: Course details view section */}
             <div className="flex h-auto px-4 py-4 m-5 text-base border-2 border-indigo-600 border-dashed rounded-2xl bg-indigo-50">
@@ -79,45 +66,30 @@ const NewCourseThankyouPage = () => {
                 </div>
                 <div className="flex-[1.5] p-4 border-r border-light">
                     <p className="text-accent-secondary">Course Name</p>
-                    <p className="font-bold text-accent-primary">
-                        Happiness Program for Youth
-                    </p>
+                    <p className="font-bold text-accent-primary">Happiness Program for Youth</p>
                 </div>
                 <div className="flex-[1.5] p-4 border-r border-light">
                     <p className="text-accent-secondary">Teachers</p>
-                    <p className="font-bold text-accent-primary">
-                        Kathryn Murthy, cameron williamson
-                    </p>
+                    <p className="font-bold text-accent-primary">Kathryn Murthy, cameron williamson</p>
                 </div>
                 <div className="flex-[2.5] p-4 border-r border-light">
                     <p className="text-accent-secondary">Venue</p>
                     <p className="font-bold text-accent-primary">
-                        2118 Thornridge Cir. Syracuse, Connecticut,
-                        Manchester,kentucky 33624
+                        2118 Thornridge Cir. Syracuse, Connecticut, Manchester,kentucky 33624
                     </p>
                 </div>
                 <div className="flex-[2.5] p-4 ">
-                    <p className="text-accent-secondary">
-                        Course Date (UTC 05:00)
-                    </p>
-                    <p className="font-bold">
-                        08 Feb,2024 | 0:00 am to 12:00 pm
-                    </p>
-                    <p className="font-bold">
-                        08 Feb,2024 | 03:00 am to 6:00 pm
-                    </p>
-                    <p className="font-bold">
-                        09 Feb,2024 | 09:00 am to 12:00 pm
-                    </p>
+                    <p className="text-accent-secondary">Course Date (UTC 05:00)</p>
+                    <p className="font-bold">08 Feb,2024 | 0:00 am to 12:00 pm</p>
+                    <p className="font-bold">08 Feb,2024 | 03:00 am to 6:00 pm</p>
+                    <p className="font-bold">09 Feb,2024 | 09:00 am to 12:00 pm</p>
                 </div>
             </div>
 
             {/* Thank you page footer  */}
             <section>
                 <div className="">
-                    <p className="mx-auto text-accent-secondary max-w-fit">
-                        Share in Social Platforms
-                    </p>
+                    <p className="mx-auto text-accent-secondary max-w-fit">Share in Social Platforms</p>
                     {/* Social media icons */}
                     <div className="flex items-center justify-center gap-4 my-4">
                         <Image src={WhatsappIcon} alt="whats app icon"></Image>
