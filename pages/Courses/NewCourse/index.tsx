@@ -32,7 +32,7 @@ function index() {
     if (viewThankyouPage) {
         return <NewCourseThankyouPage />;
     }
-
+    //TODO: Need to call the review page here
     if (viewPreviewPage) {
         return (
             <div>
@@ -227,14 +227,18 @@ function NewCourse() {
                                                 Save
                                             </Button>
                                         )}
-                                        <Button
-                                            className="bg-[#7677F4]  h-[46px] rounded-[12px] "
-                                            onClick={() => {
-                                                setViewPreviewPage(true);
-                                            }}
-                                        >
-                                            Review Details
-                                        </Button>
+
+                                        {/* Render the Review details button only in the contact info step */}
+                                        {currentStep == 6 && (
+                                            <Button
+                                                className="bg-[#7677F4]  h-[46px] rounded-[12px] "
+                                                onClick={() => {
+                                                    setViewPreviewPage(true);
+                                                }}
+                                            >
+                                                Review Details
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             </form>
