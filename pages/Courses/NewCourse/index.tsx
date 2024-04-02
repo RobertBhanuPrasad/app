@@ -19,6 +19,7 @@ import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
+import Task3 from "@components/course/newCourse/CoursePreview";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -174,7 +175,7 @@ function NewCourse() {
                       <NewCourseStep6 />
                     </TabsContent>
                     <TabsContent value="6" className={contentStylings}>
-                      Change your accommodation details
+                      <Task3/>
                     </TabsContent>
                   </div>
 

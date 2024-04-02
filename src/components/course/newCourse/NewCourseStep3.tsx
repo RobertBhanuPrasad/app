@@ -43,7 +43,7 @@ function NewCourseStep3() {
 
 export default NewCourseStep3;
 
-const OnlineProgram = () => {
+export const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
@@ -67,7 +67,7 @@ const OnlineProgram = () => {
   );
 };
 
-const Schedules = () => {
+export const Schedules = () => {
   return (
     <div className="flex flex-col gap-4 w-[1016px]">
       <SchedulesHeader />

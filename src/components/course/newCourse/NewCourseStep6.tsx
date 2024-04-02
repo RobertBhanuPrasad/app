@@ -1,42 +1,41 @@
-import Add from "@public/assets/Add";
-import Delete from "@public/assets/Delete";
-import React from "react";
-import { useEffect } from "react";
-import { useController, useFieldArray, useFormContext } from "react-hook-form";
-import { Input } from "src/ui/input";
-import { Textarea } from "src/ui/textarea";
+import Add from '@public/assets/Add'
+import Delete from '@public/assets/Delete'
+import { useEffect } from 'react'
+import { useController, useFieldArray, useFormContext } from 'react-hook-form'
+import { Input } from 'src/ui/input'
+import { Textarea } from 'src/ui/textarea'
 
-function NewCourseStep6() {
+export function NewCourseStep6() {
   // Destructuring the necessary functions from react-hook-form
   const { append, fields, remove } = useFieldArray({
-    name: "contact",
-  });
-  const { getValues } = useFormContext();
+    name: 'contact'
+  })
+  const { getValues } = useFormContext()
 
   const {
-    field: { value: courseEmails, onChange: courseEmailOnChange },
-  } = useController({ name: "contact.courseEmails" });
+    field: { value: courseEmails, onChange: courseEmailOnChange }
+  } = useController({ name: 'contact.courseEmails' })
 
-  const formData = getValues();
+  const formData = getValues()
 
-  console.log("heyy formData", formData);
+  console.log('heyy formData', formData)
 
   // useEffect to add an initial contact field if none exists
   useEffect(() => {
     if (fields.length === 0) {
-      append({ contactName: "", contactEmail: "", contactMobile: "" });
+      append({ contactName: '', contactEmail: '', contactMobile: '' })
     }
-  }, []);
+  }, [])
 
   // Function to handle adding a new contact item
   const handleAddItem = () => {
-    append({ contactName: "", contactEmail: "", contactMobile: "" });
-  };
+    append({ contactName: '', contactEmail: '', contactMobile: '' })
+  }
 
   // Function to handle deleting a contact item based on index
   const handleDeleteItem = (index: number) => {
-    remove(index);
-  };
+    remove(index)
+  }
 
   return (
     <div className="p-2">
@@ -46,8 +45,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Name */}
           <div className="w-80 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Name" : `Contact Name ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
+              {index === 0 ? 'Contact Name' : `Contact Name ${index + 1}`} <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactName index={index} />
           </div>
@@ -55,8 +53,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Email */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Email" : `Contact Email ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
+              {index === 0 ? 'Contact Email' : `Contact Email ${index + 1}`} <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactEmail index={index} />
           </div>
@@ -64,8 +61,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Number */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Number" : `Contact Number ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
+              {index === 0 ? 'Contact Number' : `Contact Number ${index + 1}`} <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactMobile index={index} />
           </div>
@@ -99,70 +95,69 @@ function NewCourseStep6() {
       {/* Additional section for BCC registration confirmation email */}
       <div className="w-80 h-24 flex gap-1 flex-col ">
         <div className="flex flex-row text-xs font-normal text-[#333333]">
-          Send BCC registration confirmation email to{" "}
-          <div className="text-[#7677F4]"> *</div>
+          Send BCC registration confirmation email to <div className="text-[#7677F4]"> *</div>
         </div>
         <Textarea
           value={courseEmails}
-          onChange={(val) => {
-            courseEmailOnChange(val?.target?.value);
+          onChange={val => {
+            courseEmailOnChange(val?.target?.value)
           }}
           placeholder="Enter course emails"
           className="!w-58"
         />
         <div className="flex flex-row gap-1 text-[#666666] text-[12px] italic">
-          <span className="font-semibold">Note:</span>{" "}
-          <div className="font-[400]">
-            Enter comma separated list of email addresses.
-          </div>
+          <span className="font-semibold">Note:</span>{' '}
+          <div className="font-[400]">Enter comma separated list of email addresses.</div>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default NewCourseStep6;
+export default NewCourseStep6
 
 export const ContactName = ({ index }: any) => {
   const {
-    field: { value, onChange },
-  } = useController({ name: `contact[${index}].contactName` });
+    field: { value, onChange }
+  } = useController({ name: `contact[${index}].contactName` })
   return (
     <Input
       placeholder="Enter contact name"
       value={value}
-      onChange={(val) => {
-        onChange(val?.target?.value);
+      onChange={val => {
+        console.log(val, 'jan')
+
+        onChange(val?.target?.value)
       }}
     />
-  );
-};
+  )
+}
 export const ContactEmail = ({ index }: any) => {
   const {
-    field: { value, onChange },
-  } = useController({ name: `contact[${index}].contactEmail` });
+    field: { value, onChange }
+  } = useController({ name: `contact[${index}].contactEmail` })
   return (
     <Input
       placeholder="Enter contact email"
       value={value}
-      onChange={(val) => {
-        onChange(val?.target?.value);
+      onChange={val => {
+        onChange(val?.target?.value)
       }}
     />
-  );
-};
+  )
+}
 
 export const ContactMobile = ({ index }: any) => {
   const {
-    field: { value, onChange },
-  } = useController({ name: `contact[${index}].contactMobile` });
+    field: { value, onChange }
+  } = useController({ name: `contact[${index}].contactMobile` })
   return (
     <Input
       placeholder="Enter contact mobile"
       value={value}
-      onChange={(val) => {
-        onChange(val?.target?.value);
+      onChange={val => {
+        onChange(val?.target?.value)
       }}
     />
-  );
-};
+  )
+}

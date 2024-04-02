@@ -1,45 +1,36 @@
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "../../DataTable";
-import { useEffect } from "react";
-import {
-  useFieldArray,
-  useFormContext,
-  useController,
-  FieldValues,
-  useWatch,
-} from "react-hook-form";
-import { Checkbox } from "src/ui/checkbox";
-import { Input } from "src/ui/input";
-import Delete from "@public/assets/Delete";
-import CustomSelect from "src/ui/custom-select";
-import { useSelect } from "@refinedev/core";
-import Add from "@public/assets/Add";
-import { RadioButtonCard } from "src/ui/radioButtonCard";
-import { RadioGroup } from "src/ui/radio-group";
+import Add from '@public/assets/Add'
+import Delete from '@public/assets/Delete'
+import { useSelect } from '@refinedev/core'
+import { useEffect } from 'react'
+import { useController, useFieldArray, useFormContext } from 'react-hook-form'
+import CustomSelect from 'src/ui/custom-select'
+import { Input } from 'src/ui/input'
+import { RadioGroup } from 'src/ui/radio-group'
+import { RadioButtonCard } from 'src/ui/radioButtonCard'
+import { DataTable } from '../../DataTable'
 
 export default function CourseTable() {
   // Hook to manage dynamically added fields in the form
   const { append, remove } = useFieldArray({
-    name: "accommodation",
-  });
-
+    name: 'accommodation'
+  })
 
   // const formData = useWatch({ name: "accommodation" });
 
-  const { watch } = useFormContext();
+  const { watch } = useFormContext()
 
-  const formData = watch();
+  const formData = watch()
 
   // Effect to add initial data if no fees are present
   useEffect(() => {
     if (!formData?.accommodation || formData?.accommodation.length <= 0) {
       append({
-        accomodationFee: "",
-        accomodationSpots: "",
-        accomodationType: undefined,
-      });
+        accomodationFee: '',
+        accomodationSpots: '',
+        accomodationType: undefined
+      })
     }
-  }, []);
+  }, [])
 
   return (
     <div className="flex flex-col gap-8">
@@ -51,47 +42,45 @@ export default function CourseTable() {
       />
       <AccommodationFeeMode />
     </div>
-  );
+  )
 }
 
 // Setting a property on the CourseTable function to indicate it has a layout
-CourseTable.noLayout = false;
+CourseTable.noLayout = false
 
 // Definition of columns for the DataTable
-const columns = (append: any, remove: any, formData: any) => [
+export const columns = (append: any, remove: any, formData: any) => [
   {
     // Column for Accommodation Type
-    id: "accommodation",
+    id: 'accommodation',
     header: () => <div>Accommodation Type</div>,
     cell: ({ row }: any) => {
       const existingAccommodationValues = formData
         ?.map((field: any) => field?.accomodationType?.value)
-        .filter((value: any) => value !== undefined);
+        .filter((value: any) => value !== undefined)
 
       // Custom hook to control a field in the form
       const {
         field: { value, onChange },
-        fieldState: { error },
+        fieldState: { error }
       } = useController({
-        name: `accommodation[${row.index}].accomodationType`,
-      });
+        name: `accommodation[${row.index}].accomodationType`
+      })
 
       // Hook to fetch and manage options for a select input
       const { options, onSearch } = useSelect({
-        resource: "accomdation_types",
-        optionLabel: "name",
-        optionValue: "id",
-        onSearch: (value) => [
+        resource: 'accomdation_types',
+        optionLabel: 'name',
+        optionValue: 'id',
+        onSearch: value => [
           {
-            field: "name",
-            operator: "contains",
-            value,
-          },
-        ],
-      });
-      const filteredOptions = options.filter(
-        (option) => !existingAccommodationValues?.includes(option.value)
-      );
+            field: 'name',
+            operator: 'contains',
+            value
+          }
+        ]
+      })
+      const filteredOptions = options.filter(option => !existingAccommodationValues?.includes(option.value))
 
       return (
         <div className="w-72 ">
@@ -103,86 +92,86 @@ const columns = (append: any, remove: any, formData: any) => [
             data={filteredOptions}
             onBottomReached={() => {}}
             onSearch={(val: string) => {
-              onSearch(val);
+              onSearch(val)
             }}
-            onChange={(val) => {
-              onChange(val);
+            onChange={val => {
+              onChange(val)
             }}
           />
         </div>
-      );
-    },
+      )
+    }
   },
 
   // Column for Fees Per Person including VAT
   {
-    id: "accommodationFee",
+    id: 'accommodationFee',
     header: () => <div>Fees Per Person inc VAT</div>,
     cell: ({ row }: any) => {
       const {
-        field: { value, onChange },
+        field: { value, onChange }
       } = useController({
-        name: `accommodation[${row.index}].accomodationFee`,
-      });
+        name: `accommodation[${row.index}].accomodationFee`
+      })
 
       return (
         <div className="w-72">
           {/* Input field for fees */}
           <Input
             value={value}
-            onChange={(val) => {
-              onChange(val?.target?.value);
+            onChange={val => {
+              onChange(val?.target?.value)
             }}
           />
         </div>
-      );
-    },
+      )
+    }
   },
   // Column for Number of spots available
   {
-    id: "accommodationspots",
+    id: 'accommodationspots',
     header: () => <div>Number of spots available</div>,
     cell: ({ row }: any) => {
       const {
-        field: { value, onChange },
+        field: { value, onChange }
       } = useController({
-        name: `accommodation[${row.index}].accomodationSpots`,
-      });
+        name: `accommodation[${row.index}].accomodationSpots`
+      })
 
       return (
         <div className="w-72">
           {/* Input field for number of spots available */}
           <Input
             value={value}
-            onChange={(val) => {
-              onChange(val?.target?.value);
+            onChange={val => {
+              onChange(val?.target?.value)
             }}
           />
         </div>
-      );
-    },
+      )
+    }
   },
   // Column for Actions
   {
-    id: "Actions",
+    id: 'Actions',
     header: () => <div>Actions</div>,
     cell: ({ row }: any) => {
-      const isLastRow = row.index === formData?.length - 1;
-      const isFirstRow = row.index === 0;
+      const isLastRow = row.index === formData?.length - 1
+      const isFirstRow = row.index === 0
 
       // Function to add a new row
       const handleAddRow = () => {
         append({
-          accomodationFee: "",
-          accomodationSpots: "",
-          accomodationType: undefined,
-        });
-      };
+          accomodationFee: '',
+          accomodationSpots: '',
+          accomodationType: undefined
+        })
+      }
 
       // Function to delete a row
       const handleDeleteRow = (index: number) => {
-        remove(index);
-      };
+        remove(index)
+      }
       return (
         <div className="w-[150px] flex gap-4">
           {/* Button to add a new row */}
@@ -206,17 +195,17 @@ const columns = (append: any, remove: any, formData: any) => [
             </div>
           )}
         </div>
-      );
-    },
-  },
-];
+      )
+    }
+  }
+]
 
 export const ResidentialCourse = () => {
   const {
-    field: { value, onChange },
+    field: { value, onChange }
   } = useController({
-    name: "isResidentialCourse",
-  });
+    name: 'isResidentialCourse'
+  })
 
   return (
     <div className="flex gap-1 flex-col">
@@ -240,15 +229,15 @@ export const ResidentialCourse = () => {
         </div>
       </RadioGroup>
     </div>
-  );
-};
+  )
+}
 
 export const AccommodationFeeMode = () => {
   const {
-    field: { value, onChange },
+    field: { value, onChange }
   } = useController({
-    name: "accommodationPaymentMode",
-  });
+    name: 'accommodationPaymentMode'
+  })
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-sm font-normal text-[#333333]">
@@ -271,5 +260,5 @@ export const AccommodationFeeMode = () => {
         </div>
       </RadioGroup>
     </div>
-  );
-};
+  )
+}

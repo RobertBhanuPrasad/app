@@ -39,7 +39,7 @@ function NewCourseStep1() {
 
 export default NewCourseStep1;
 
-const RegistrationGateway = () => {
+export const RegistrationGateway = () => {
   const {
     field: { value, onChange },
   } = useController({
@@ -81,7 +81,7 @@ const RegistrationGateway = () => {
   );
 };
 
-const RadioCards = () => {
+export const RadioCards = () => {
   const {
     field: { value, onChange },
   } = useController({
@@ -259,7 +259,7 @@ const RadioCards = () => {
   );
 };
 
-const OrganizationDropDown = () => {
+export const OrganizationDropDown = () => {
   const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
     optionLabel: "name",
@@ -329,7 +329,7 @@ const OrganizationDropDown = () => {
   );
 };
 
-const ProgramOrganizerDropDown = () => {
+export const ProgramOrganizerDropDown = () => {
   const { data: loginUserData }: any = useGetIdentity();
 
   const [currentPage, setCurrentPage] = useState(1);
