@@ -11,6 +11,7 @@ import { Checkbox } from "src/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { columns } from "./Columns";
 import { HttpError, useTable } from "@refinedev/core";
+import { mapProgramModifiedDataStructure } from "src/api/MappingFunctions";
 
 function index() {
   return (
@@ -76,6 +77,12 @@ const TableSection = () => {
     },
   });
 
+  const modifiedData = Object.values(
+    mapProgramModifiedDataStructure(
+      programData?.data?.data as ProgramDataBaseType
+    )
+  );
+
   const [rowSelection, setRowSelection] = React.useState({});
 
   return (
@@ -93,10 +100,10 @@ const TableSection = () => {
         pagination={true}
         tableStyles={{
           table: "",
-          rowStyles: "",
+          rowStyles: "!important border-none",
         }}
-        columns={columns as ColumnDef<any>[]}
-        data={programData?.data?.data || []}
+        columns={columns}
+        data={modifiedData}
         columnPinning={true}
       />
     </div>

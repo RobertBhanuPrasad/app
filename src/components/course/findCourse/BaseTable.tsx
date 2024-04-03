@@ -381,7 +381,7 @@ export function BaseTable<TData, TValue>({
                 {table &&
                   table?.getHeaderGroups()?.map((headerGroup) => (
                     <TableRow
-                      className=" border-none text-[16px] font-bold w-full"
+                      className="border-none text-[16px] font-bold w-full"
                       key={headerGroup?.id}
                     >
                       {/* If the checkboxSelection is true then we need to show checkboxes  */}
@@ -447,7 +447,7 @@ export function BaseTable<TData, TValue>({
                 {table && table?.getRowModel()?.rows?.length ? (
                   table?.getRowModel()?.rows?.map((row) => (
                     <TableRow
-                      className={`{${tableStyles?.rowStyles} `}
+                      className={`{${tableStyles?.rowStyles}`}
                       key={row?.id}
                       data-state={row?.getIsSelected() && "selected"}
                     >
@@ -473,14 +473,14 @@ export function BaseTable<TData, TValue>({
                         <TableCell
                           className={` ${
                             columnPinning &&
-                            index === 0 &&
+                            index === 0 ?
                             `sticky ${
                               checkboxSelection ? "left-8" : "left-0"
-                            }  top-0 z-10 bg-[#FFFFFF]`
+                            }  top-0 z-10 bg-[#FFFFFF]` :"shadow-inner-left"
                           } ${
                             columnPinning &&
-                            index === row.getVisibleCells().length - 1 &&
-                            `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[100px]`
+                            index === row.getVisibleCells().length - 1 ?
+                            `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[100px] `:"shadow-inner-left"
                           } text-[#333333]`}
                           key={cell.id}
                         >

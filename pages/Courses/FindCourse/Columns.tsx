@@ -1,6 +1,11 @@
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowDownIcon, ArrowUpIcon, MoreHorizontal, MoreVertical } from "lucide-react";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  MoreHorizontal,
+  MoreVertical,
+} from "lucide-react";
 import { Button } from "src/ui/button";
 import {
   DropdownMenu,
@@ -9,29 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
 
-interface Program {
-  id: number;
-  created_at: string;
-  organization_id: number;
-  venue_id: number;
-  registration_link: string;
-  program_code: string;
-  program_fee_settings_id: number;
-  program_type_id: number;
-  status_id: number;
-  accommodation_fee_payment_mode: number | null;
-  center_id: number;
-  city_id: number;
-  details_page_link: string;
-  is_early_bird_enabled: boolean;
-  is_residential_program: boolean;
-  program_alias_name_id: number;
-  program_created_by: number;
-  state_id: number;
-  use_default_fee: boolean;
-}
-
-export const columns: ColumnDef<Program>[] = [
+export const columns: ColumnDef<ProgramDataBaseType>[] = [
   {
     accessorKey: "state_id",
     enableHiding: false,
@@ -57,8 +40,15 @@ export const columns: ColumnDef<Program>[] = [
 
     // This any will be removed after internal dataStructure implementation
 
-    cell: ({ row }: any) => {
-      return <div>{row?.original?.state_id?.name}</div>;
+    cell: ({ row }) => {
+      return (
+        <div>
+          <div>
+            {typeof row?.original?.state_id !== "number" &&
+              row?.original?.state_id?.name}
+          </div>
+        </div>
+      );
     },
   },
   {
@@ -67,10 +57,11 @@ export const columns: ColumnDef<Program>[] = [
       return <div className=" text-center">Course</div>;
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return (
         <div className="lowercase text-center">
-          {row?.original?.program_type_id?.name}
+          {typeof row?.original?.program_type_id !== "number" &&
+            row?.original?.program_type_id?.name}
         </div>
       );
     },

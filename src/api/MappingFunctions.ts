@@ -406,10 +406,10 @@ export const mapProgramModifiedDataStructure = (
 ): Program => {
   const modifiedData: Program = {};
 
-  if (data.id !== undefined) modifiedData.id = data.id;
-  if (data.created_at !== undefined) modifiedData.created_at = data.created_at;
+  if (data?.id !== undefined) modifiedData.id = data?.id;
+  if (data?.created_at !== undefined) modifiedData.created_at = data.created_at;
 
-  if (data.organization_id !== undefined) {
+  if (data?.organization_id !== undefined) {
     if (typeof data.organization_id === "number") {
       modifiedData.organization_id = data.organization_id;
     } else {
@@ -418,7 +418,7 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.venue_id !== undefined) {
+  if (data?.venue_id !== undefined) {
     if (typeof data.venue_id === "number") {
       modifiedData.venue_id = data.venue_id;
     } else {
@@ -427,12 +427,12 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.registration_link !== undefined)
+  if (data?.registration_link !== undefined)
     modifiedData.registration_link = data.registration_link;
-  if (data.program_code !== undefined)
+  if (data?.program_code !== undefined)
     modifiedData.program_code = data.program_code;
 
-  if (data.program_fee_settings_id !== undefined) {
+  if (data?.program_fee_settings_id !== undefined) {
     if (typeof data.program_fee_settings_id === "number") {
       modifiedData.program_fee_settings_id = data.program_fee_settings_id;
     } else {
@@ -442,7 +442,7 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.program_type_id !== undefined) {
+  if (data?.program_type_id !== undefined) {
     if (typeof data.program_type_id === "number") {
       modifiedData.program_type_id = data.program_type_id;
     } else {
@@ -451,7 +451,7 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.status_id !== undefined) {
+  if (data?.status_id !== undefined) {
     if (typeof data.status_id === "number") {
       modifiedData.status_id = data.status_id;
     } else {
@@ -460,12 +460,12 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.accommodation_fee_payment_mode !== undefined) {
+  if (data?.accommodation_fee_payment_mode !== undefined) {
     modifiedData.accommodation_fee_payment_mode =
       data.accommodation_fee_payment_mode;
   }
 
-  if (data.center_id !== undefined) {
+  if (data?.center_id !== undefined) {
     if (typeof data.center_id === "number") {
       modifiedData.center_id = data.center_id;
     } else {
@@ -474,7 +474,7 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.city_id !== undefined) {
+  if (data?.city_id !== undefined) {
     if (typeof data.city_id === "number") {
       modifiedData.city_id = data.city_id;
     } else {
@@ -483,16 +483,16 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.details_page_link !== undefined)
+  if (data?.details_page_link !== undefined)
     modifiedData.details_page_link = data.details_page_link;
 
-  if (data.is_early_bird_enabled !== undefined)
+  if (data?.is_early_bird_enabled !== undefined)
     modifiedData.is_early_bird_enabled = data.is_early_bird_enabled;
 
-  if (data.is_residential_program !== undefined)
+  if (data?.is_residential_program !== undefined)
     modifiedData.is_residential_program = data.is_residential_program;
 
-  if (data.program_alias_name_id !== undefined) {
+  if (data?.program_alias_name_id !== undefined) {
     if (typeof data.program_alias_name_id === "number") {
       modifiedData.program_alias_name_id = data.program_alias_name_id;
     } else {
@@ -504,7 +504,7 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.program_created_by !== undefined) {
+  if (data?.program_created_by !== undefined) {
     if (typeof data.program_created_by === "number") {
       modifiedData.program_created_by = data.program_created_by;
     } else {
@@ -513,7 +513,7 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.state_id !== undefined) {
+  if (data?.state_id !== undefined) {
     if (typeof data.state_id === "number") {
       modifiedData.state_id = data.state_id;
     } else {
@@ -522,10 +522,10 @@ export const mapProgramModifiedDataStructure = (
     }
   }
 
-  if (data.use_default_fee !== undefined)
+  if (data?.use_default_fee !== undefined)
     modifiedData.use_default_fee = data.use_default_fee;
 
-  if (data.program_accommodations !== undefined) {
+  if (data?.program_accommodations !== undefined) {
     modifiedData.program_accommodations = modifiedData.program_accommodations =
       TransformDataStructureWithHigherOrderConversion(
         data.program_accommodations,
@@ -533,7 +533,7 @@ export const mapProgramModifiedDataStructure = (
       );
   }
 
-  if (data.program_assistant_teachers !== undefined) {
+  if (data?.program_assistant_teachers !== undefined) {
     modifiedData.program_assistant_teachers =
       TransformDataStructureWithHigherOrderConversion(
         data.program_assistant_teachers,
@@ -545,28 +545,28 @@ export const mapProgramModifiedDataStructure = (
     ) as number[];
   }
 
-  if (data.program_contact_details !== undefined)
+  if (data?.program_contact_details !== undefined)
     modifiedData.program_contact_details =
       TransformDataStructureWithHigherOrderConversion(
         data.program_contact_details,
         mapProgramContactDetailsModifiedDataStructure
       );
 
-  if (data.program_details_info !== undefined)
+  if (data?.program_details_info !== undefined)
     modifiedData.program_details_info =
       TransformDataStructureWithHigherOrderConversion(
         data.program_details_info,
         mapProgramDetailsInfoModifiedDataStructure
       );
 
-  if (data.program_fee_level_settings !== undefined)
+  if (data?.program_fee_level_settings !== undefined)
     modifiedData.program_fee_level_settings =
       TransformDataStructureWithHigherOrderConversion(
         data?.program_fee_level_settings,
         mapProgramFeeLevelSettingsModifiedDataStructure
       );
 
-  if (data.program_schedules !== undefined) {
+  if (data?.program_schedules !== undefined) {
     modifiedData.program_schedules =
       TransformDataStructureWithHigherOrderConversion(
         data?.program_schedules,
@@ -574,7 +574,7 @@ export const mapProgramModifiedDataStructure = (
       );
   }
 
-  if (data.program_teachers !== undefined) {
+  if (data?.program_teachers !== undefined) {
     modifiedData.program_teachers =
       TransformDataStructureWithHigherOrderConversion(
         data?.program_teachers,
@@ -586,7 +586,7 @@ export const mapProgramModifiedDataStructure = (
     ) as number[];
   }
 
-  if (data.program_translation_languages !== undefined) {
+  if (data?.program_translation_languages !== undefined) {
     modifiedData.program_translation_languages =
       TransformDataStructureWithHigherOrderConversion(
         data?.program_translation_languages,
@@ -594,7 +594,7 @@ export const mapProgramModifiedDataStructure = (
       );
   }
 
-  if (data.program_organizers !== undefined) {
+  if (data?.program_organizers !== undefined) {
     modifiedData.program_organizers =
       TransformDataStructureWithHigherOrderConversion(
         data.program_organizers,
