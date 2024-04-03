@@ -3,42 +3,48 @@ import { Button } from "src/ui/button";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 export default function NewCourseReviewPage() {
-    const { newCourseData } = newCourseStore();
-    console.log("form data is", newCourseData);
+    const { newCourseData, setViewPreviewPage } = newCourseStore();
+    const newCourseFormData = newCourseData as any;
+    console.log("form data", newCourseFormData);
 
     return (
         <div className="pb-12">
+            <div className="text-[24px] my-4 font-semibold">Review Your Details Right Here</div>
             <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
                 {/* Basic Details */}
                 <section className="w-full pb-8 text-base border-b">
                     {/* title section */}
                     <div className="flex items-center gap-2 ">
-                        <p className="text-accent-primary">Basic Details</p>
+                        <p className="font-semibold text-accent-primary">Basic Details</p>
                         <EditIcon />
                     </div>
                     {/* body */}
                     <div className="grid grid-cols-3 gap-4 mt-2">
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light ">Creator</p>
-                            <p className="font-semibold truncate text-accent-secondary">programOrganizedBy</p>
+                            <p className="font-semibold truncate text-accent-secondary">
+                                {newCourseData?.program_creator?.user_name}
+                            </p>
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Organization</p>
-                            <p className="font-semibold truncate text-accent-secondary">Name of the organization</p>
+                            <p className="font-semibold truncate text-accent-secondary">
+                                {newCourseData?.organization?.name}
+                            </p>
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Program Organizer</p>
-                            <p className="font-semibold truncate text-accent-secondary">Jenny Wilson</p>
+                            <p className="font-semibold truncate text-accent-secondary">-</p>
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">
                                 Is geo restriction applicable for registrations
                             </p>
-                            <p className="font-semibold truncate text-accent-secondary">Yes</p>
+                            <p className="font-semibold truncate text-accent-secondary">{true ? "yes" : "No"}</p>
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Registration via 3rd party gateway</p>
-                            <p className="font-semibold truncate text-accent-secondary">No</p>
+                            <p className="font-semibold truncate text-accent-secondary">{true ? "yes" : "No"}</p>
                         </div>
                     </div>
                 </section>
@@ -46,14 +52,14 @@ export default function NewCourseReviewPage() {
                 <section className="w-full py-8 text-base border-b">
                     {/* title section */}
                     <div className="flex items-center gap-2 ">
-                        <p className="text-accent-primary">Course Details</p>
+                        <p className="font-semibold text-accent-primary">Course Details</p>
                         <EditIcon />
                     </div>
                     {/* body */}
                     <div className="grid grid-cols-3 gap-4 mt-2">
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light ">Course Type</p>
-                            <p className="font-semibold truncate text-accent-secondary">Shailendra Kamble</p>
+                            <p className="font-semibold truncate text-accent-secondary">{"-"}</p>
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Teacher</p>
@@ -122,7 +128,7 @@ export default function NewCourseReviewPage() {
                 <section className="w-full py-8 text-base border-b">
                     {/* title section */}
                     <div className="flex items-center gap-2 ">
-                        <p className="text-accent-primary">Time and Venue</p>
+                        <p className="font-semibold text-accent-primary">Time and Venue</p>
                         <EditIcon />
                     </div>
                     {/* body */}
@@ -150,7 +156,7 @@ export default function NewCourseReviewPage() {
                 <section className="w-full py-8 text-base border-b">
                     {/* title section */}
                     <div className="flex items-center gap-2 ">
-                        <p className="text-accent-primary">Fees Information</p>
+                        <p className="font-semibold text-accent-primary">Fees Information</p>
                         <EditIcon />
                     </div>
                     {/* body */}
@@ -201,7 +207,7 @@ export default function NewCourseReviewPage() {
                 <section className="w-full py-8 text-base border-b">
                     {/* title section */}
                     <div className="flex items-center gap-2 ">
-                        <p className="text-accent-primary">Accommodation Information</p>
+                        <p className="font-semibold text-accent-primary">Accommodation Information</p>
                         <EditIcon />
                     </div>
                     {/* body */}
@@ -228,7 +234,7 @@ export default function NewCourseReviewPage() {
                 <section className="w-full py-8 text-base ">
                     {/* title section */}
                     <div className="flex items-center gap-2 ">
-                        <p className="text-accent-primary">Contact Info</p>
+                        <p className="font-semibold text-accent-primary">Contact Info</p>
                         <EditIcon />
                     </div>
                     {/* body */}
@@ -252,7 +258,13 @@ export default function NewCourseReviewPage() {
                     </div>
                 </section>
                 <div className="flex items-center justify-center ">
-                    <Button>Continue</Button>
+                    <Button
+                        onClick={() => {
+                            setViewPreviewPage(false);
+                        }}
+                    >
+                        Continue
+                    </Button>
                 </div>
             </div>
         </div>
