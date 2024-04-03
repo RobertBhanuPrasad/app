@@ -18,6 +18,22 @@ export default function NewCourseReviewPage() {
         id: newCourseData?.organization_id,
     });
 
+    const getUserName = (user_id: number) => {
+        const { data: userName } = useOne({
+            resource: "users",
+            id: user_id,
+        });
+        return userName;
+    };
+
+    const programOrganizers = newCourseData?.organizer_ids
+        ?.map((user_id: any) => {
+            console.log("user id", user_id);
+
+            return getUserName(user_id)?.data?.user_name;
+        })
+        .join(",");
+
     return (
         <div className="pb-12">
             <div className="text-[24px] my-4 font-semibold">Review Your Details Right Here</div>
@@ -46,7 +62,7 @@ export default function NewCourseReviewPage() {
                         {/* // TODO: Need to work after Program Organizer field done  */}
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Program Organizer</p>
-                            <p className="font-semibold truncate text-accent-secondary">-</p>
+                            <p className="font-semibold truncate text-accent-secondary">{programOrganizers || "-"}</p>
                         </div>
 
                         <div className=" min-w-72">
