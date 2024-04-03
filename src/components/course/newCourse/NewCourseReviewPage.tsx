@@ -1,5 +1,5 @@
 import EditIcon from "@public/assets/EditIcon";
-import { useOne, useSelect } from "@refinedev/core";
+import { useOne } from "@refinedev/core";
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
@@ -12,14 +12,11 @@ export default function NewCourseReviewPage() {
     const creator =
         newCourseData?.program_created_by &&
         getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by);
-    // Get the organization data
-    const { options, onSearch, queryResult } = useSelect({
-        resource: "organizations",
-        optionLabel: "name",
-        optionValue: "id",
-    });
 
-    console.log("data is", options, queryResult, newCourseData);
+    const { data: organizationName } = useOne({
+        resource: "organizations",
+        id: newCourseData?.organization_id,
+    });
 
     return (
         <div className="pb-12">
@@ -43,9 +40,10 @@ export default function NewCourseReviewPage() {
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Organization</p>
                             <p className="font-semibold truncate text-accent-secondary">
-                                {newCourseData?.organization?.name}
+                                {organizationName?.data?.name}
                             </p>
                         </div>
+                        {/* // TODO: Need to work after Program Organizer field done  */}
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Program Organizer</p>
                             <p className="font-semibold truncate text-accent-secondary">-</p>
