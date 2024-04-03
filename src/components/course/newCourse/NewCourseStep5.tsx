@@ -35,9 +35,9 @@ export default function CourseTable() {
   useEffect(() => {
     if (!formData?.accommodation || formData?.accommodation.length <= 0) {
       append({
-        accomodationFee: "",
-        accomodationSpots: "",
-        accomodationType: undefined,
+        [NewCourseStep5FormNames?.fee_per_person]: "",
+        [NewCourseStep5FormNames?.no_of_residential_spots]: "",
+        [NewCourseStep5FormNames?.accommodation_type_id]: undefined,
       });
     }
   }, []);

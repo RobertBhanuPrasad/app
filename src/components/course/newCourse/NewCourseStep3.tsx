@@ -260,14 +260,14 @@ const TimePicker = ({
       <div className="text-sm text-[#999999] font-normal">From</div>
       <div className="w-[233px]">
         <TimeSelector
-          name={`schedules[${index}].start`}
+          name={`${NewCourseStep3FormNames?.schedules}[${index}].start`}
           is12HourFormat={is12HourFormat}
         />
       </div>
       <div className="text-sm text-[#999999] font-normal">To</div>
       <div className="w-[233px]">
         <TimeSelector
-          name={`schedules[${index}].end`}
+          name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
           is12HourFormat={is12HourFormat}
         />
       </div>
@@ -279,7 +279,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   const {
     field: { value: dateValue, onChange },
   } = useController({
-    name: `schedules[${index}].date`,
+    name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
 
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date

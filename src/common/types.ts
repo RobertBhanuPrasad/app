@@ -1058,7 +1058,7 @@ interface UserRoles {
     role_id?: number;
 }
 
-interface Users {
+interface Users { 
     id?: number;
     created_at?: Date;
     contact_id?: number;

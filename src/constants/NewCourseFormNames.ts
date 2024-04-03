@@ -37,6 +37,9 @@ export const NewCourseStep4FormNames = {
 export const NewCourseStep5FormNames = {
   accommodation: "accommodation",
   is_residential_program: "is_residential_program",
+  fee_per_person: "fee_per_person",
+  no_of_residential_spots: "no_of_residential_spots",
+  accommodation_type_id: "accommodation_type_id",
 };
 
 export const NewCourseStep6FormNames = {
