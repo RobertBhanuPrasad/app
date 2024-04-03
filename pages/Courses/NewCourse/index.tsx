@@ -248,7 +248,8 @@ export default index;
 
 const Footer = ({ stepTitles }: any) => {
   const { currentStep } = stepStore();
-  const { setViewPreviewPage, setNewCourseData } = newCourseStore();
+  const { setViewPreviewPage, setNewCourseData, newCourseData } =
+    newCourseStore();
   const { handleClickNext, handleClickPrevious } =
     useValidateCurrentStepFields();
 
@@ -300,7 +301,7 @@ const Footer = ({ stepTitles }: any) => {
         </Button>
       )}
 
-      {currentStep == COURSE_DETAILS_STEP_NUMBER && (
+      {currentStep == CONTACT_INFO_STEP_NUMBER && (
         <Button
           className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
           onClick={handleClickReviewDetailsButton}
