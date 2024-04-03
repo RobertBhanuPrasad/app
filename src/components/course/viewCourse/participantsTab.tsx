@@ -44,8 +44,6 @@ function ParticipantsTab() {
     },
   });
 
-  console.log(participantData, "participantData");
-
   const genderObjects = _.countBy(
     participantData?.data,
     (obj) => obj.contact_id.gender_id?.value
