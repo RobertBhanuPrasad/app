@@ -1,6 +1,6 @@
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowDownIcon, ArrowUpIcon, MoreHorizontal } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, MoreHorizontal, MoreVertical } from "lucide-react";
 import { Button } from "src/ui/button";
 import {
   DropdownMenu,
@@ -81,19 +81,21 @@ export const columns: ColumnDef<Program>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Copy course</DropdownMenuItem>
-            <DropdownMenuItem>Edit Course</DropdownMenuItem>
-            <DropdownMenuItem>View Course</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex justify-center text-primary">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>Copy course</DropdownMenuItem>
+              <DropdownMenuItem>Edit Course</DropdownMenuItem>
+              <DropdownMenuItem>View Course</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     },
   },

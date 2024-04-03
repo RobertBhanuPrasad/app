@@ -480,7 +480,7 @@ export function BaseTable<TData, TValue>({
                           } ${
                             columnPinning &&
                             index === row.getVisibleCells().length - 1 &&
-                            `sticky right-0 top-0 bg-[#FFFFFF] z-10`
+                            `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[100px]`
                           } text-[#333333]`}
                           key={cell.id}
                         >
