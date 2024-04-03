@@ -229,7 +229,7 @@ export default function NewCourseReviewPage() {
                     </div>
                     {/* body */}
                     <div className="grid grid-cols-3 gap-4 mt-2">
-                        {newCourseData.accommodation.map((data) => {
+                        {newCourseData?.accommodation?.map((data: any) => {
                             const { data: accommodationType } = useOne({
                                 resource: "accomdation_types",
                                 id: data?.accomodationType,
@@ -264,7 +264,7 @@ export default function NewCourseReviewPage() {
                         <EditIcon />
                     </div>
                     {/* body */}
-                    {newCourseData?.contact?.map((data) => {
+                    {newCourseData?.contact?.map((data: any) => {
                         return (
                             <div className="grid grid-cols-3 gap-4 pb-4 mt-2 border-b">
                                 <div className=" min-w-72">
