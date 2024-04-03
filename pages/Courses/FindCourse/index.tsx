@@ -76,12 +76,14 @@ const TableSection = () => {
     },
   });
 
-  console.log("hey table data", programData);
+  const [rowSelection, setRowSelection] = React.useState({});
 
   return (
     <div>
       <BaseTable
         current={current}
+        rowSelection={rowSelection}
+        setRowSelection={setRowSelection}
         checkboxSelection={true}
         setCurrent={setCurrent}
         pageCount={pageCount}
@@ -90,7 +92,7 @@ const TableSection = () => {
         setPageSize={setPageSize}
         pagination={true}
         tableStyles={{
-          table: "border border-[1px] w-[1000px]",
+          table: "",
           rowStyles: "",
         }}
         columns={columns as ColumnDef<any>[]}

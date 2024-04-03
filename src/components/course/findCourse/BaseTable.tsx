@@ -3,6 +3,7 @@
 import {
   AccessorColumnDef,
   ColumnDef,
+  RowSelectionState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -20,7 +21,7 @@ import {
 
 import ClearAll from "@public/assets/ClearAll";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import {
@@ -108,7 +109,20 @@ interface IBaseTable<TData, TValue> {
    */
   columnPinning?: boolean;
 
+  /**
+   * It is used to send the default columns to be selected
+   */
   defaultColumns?: string[];
+
+  /**
+   * Row selection state
+   */
+  rowSelection?: RowSelectionState;
+
+  /**
+   * Function to update the row selection state to track the selected rows
+   */
+  setRowSelection?: (value: React.SetStateAction<RowSelectionState>) => void;
 }
 
 export function BaseTable<TData, TValue>({
@@ -125,6 +139,8 @@ export function BaseTable<TData, TValue>({
   checkboxSelection,
   columnPinning = false,
   defaultColumns = [],
+  rowSelection,
+  setRowSelection,
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
@@ -157,7 +173,6 @@ export function BaseTable<TData, TValue>({
 
   const [selectAll, setSelectAll] = useState(initialSelectAll);
 
-  const [rowSelection, setRowSelection] = React.useState({});
   const getRowId = (originalRow: any) => originalRow.id.toString();
   // table hook
   const table = useReactTable({
@@ -357,13 +372,13 @@ export function BaseTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div>
-        <Table className={`${tableStyles?.table}`}>
-          <div
-            ref={tableRef}
-            className={`max-w-[1000px] overflow-x-auto scrollbar`}
-          >
-            <TableHeader className="bg-[#7677F41B]">
+      <div className="border border-[1px]">
+        <div
+          ref={tableRef}
+          className={`max-w-[100vw] overflow-x-auto scrollbar`}
+        >
+          <Table className={`${tableStyles?.table}`}>
+            <TableHeader className="bg-[#7677F41B] w-full">
               {table &&
                 table?.getHeaderGroups()?.map((headerGroup) => (
                   <TableRow
@@ -488,8 +503,8 @@ export function BaseTable<TData, TValue>({
                 </TableRow>
               )}
             </TableBody>
-          </div>
-        </Table>
+          </Table>
+        </div>
         <div className="flex justify-between">
           {pagination && (
             <DataPagination
