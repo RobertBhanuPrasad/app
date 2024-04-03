@@ -1,11 +1,24 @@
 import EditIcon from "@public/assets/EditIcon";
+import { useOne, useSelect } from "@refinedev/core";
+import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { Button } from "src/ui/button";
+import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 export default function NewCourseReviewPage() {
     const { newCourseData, setViewPreviewPage } = newCourseStore();
-    const newCourseFormData = newCourseData as any;
-    console.log("form data", newCourseFormData);
+
+    const creator =
+        newCourseData?.program_created_by &&
+        getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by);
+    // Get the organization data
+    const { options, onSearch, queryResult } = useSelect({
+        resource: "organizations",
+        optionLabel: "name",
+        optionValue: "id",
+    });
+
+    console.log("data is", options, queryResult, newCourseData);
 
     return (
         <div className="pb-12">
@@ -23,7 +36,7 @@ export default function NewCourseReviewPage() {
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light ">Creator</p>
                             <p className="font-semibold truncate text-accent-secondary">
-                                {newCourseData?.program_creator?.user_name}
+                                {creator ? creator?.value : "-"}
                             </p>
                         </div>
                         <div className=" min-w-72">
@@ -36,15 +49,12 @@ export default function NewCourseReviewPage() {
                             <p className="text-sm font-normal text-accent-light">Program Organizer</p>
                             <p className="font-semibold truncate text-accent-secondary">-</p>
                         </div>
-                        <div className=" min-w-72">
-                            <p className="text-sm font-normal text-accent-light">
-                                Is geo restriction applicable for registrations
-                            </p>
-                            <p className="font-semibold truncate text-accent-secondary">{true ? "yes" : "No"}</p>
-                        </div>
+
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Registration via 3rd party gateway</p>
-                            <p className="font-semibold truncate text-accent-secondary">{true ? "yes" : "No"}</p>
+                            <p className="font-semibold truncate text-accent-secondary">
+                                {newCourseData?.is_registration_via_3rd_party ? "yes" : "No"}
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -77,11 +87,15 @@ export default function NewCourseReviewPage() {
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Max Capacity</p>
-                            <p className="font-semibold truncate text-accent-secondary">850</p>
+                            <p className="font-semibold truncate text-accent-secondary">
+                                {newCourseData?.max_capacity ? newCourseData?.max_capacity : "-"}
+                            </p>
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Program Visibility</p>
-                            <p className="font-semibold truncate text-accent-secondary">Public</p>
+                            <p className="font-semibold truncate text-accent-secondary">
+                                {newCourseData?.visibility_id}
+                            </p>
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Online zoom URL</p>
@@ -99,11 +113,14 @@ export default function NewCourseReviewPage() {
                             <p className="text-sm font-normal text-accent-light">
                                 Is geo restriction applicable for registrations
                             </p>
-                            <p className="font-semibold truncate text-accent-secondary">Yes</p>
+                            <p className="font-semibold truncate text-accent-secondary">
+                                {newCourseData?.is_geo_restriction_applicable ? "yes" : "No"}
+                            </p>
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Course Description</p>
                             <p className="font-semibold truncate text-accent-secondary">
+                                {/* {newCourseData} */}
                                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
                                 consequuntur ma
                             </p>
@@ -212,21 +229,30 @@ export default function NewCourseReviewPage() {
                     </div>
                     {/* body */}
                     <div className="grid grid-cols-3 gap-4 mt-2">
-                        <div className=" min-w-72">
-                            <p className="text-sm font-normal text-accent-light ">Single Accomodation</p>
-                            <p className="font-semibold truncate text-accent-secondary">MYR 100.00</p>
-                        </div>
-                        <div className=" min-w-72">
-                            <p className="text-sm font-normal text-accent-light ">2 Person Sharing (Men)</p>
-                            <p className="font-semibold truncate text-accent-secondary">MYR 100.00</p>
-                        </div>
-                        <div className=" min-w-72">
-                            <p className="text-sm font-normal text-accent-light ">3 Person Sharing (Men)</p>
-                            <p className="font-semibold truncate text-accent-secondary">MYR 100.00</p>
-                        </div>
+                        {newCourseData.accommodation.map((data) => {
+                            const { data: accommodationType } = useOne({
+                                resource: "accomdation_types",
+                                id: data?.accomodationType,
+                            });
+                            console.log("accommodationType", accommodationType);
+
+                            return (
+                                <div className=" min-w-72">
+                                    <p className="text-sm font-normal text-accent-light ">
+                                        {accommodationType?.data?.name}
+                                    </p>
+                                    <p className="font-semibold truncate text-accent-secondary">
+                                        MYR {data?.accomodationFee}
+                                    </p>
+                                </div>
+                            );
+                        })}
+
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light ">Accommodation fee payment mode</p>
-                            <p className="font-semibold truncate text-accent-secondary">MYR 100.00</p>
+                            <p className="font-semibold truncate text-accent-secondary">
+                                {newCourseData?.accommodationPaymentMode}
+                            </p>
                         </div>
                     </div>
                 </section>

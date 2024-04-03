@@ -42,9 +42,9 @@ function index() {
 
     const { viewPreviewPage } = newCourseStore();
 
-    if (!loginUserData?.userData) {
-        return <div>Loading...</div>;
-    }
+    // if (!loginUserData?.userData) {
+    //     return <div>Loading...</div>;
+    // }
 
     if (viewPreviewPage) {
         return <NewCourseReviewPage />;
@@ -203,6 +203,8 @@ const Footer = ({ stepTitles }: any) => {
     const { watch } = useFormContext();
 
     const formData = watch();
+
+    console.log("form data is", formData);
 
     const validationFieldsStepWise = [
         Object.values(NewCourseStep1FormNames),
