@@ -1218,7 +1218,7 @@ interface Program {
     max_capacity?: string;
     visibility_id?: string;
     is_geo_restriction_applicable?: string;
-    accommodationPaymentMode ?: string;
-    accommodation : any[]
-
+    accommodationPaymentMode?: string;
+    accommodation: any[];
+    contact?: any[];
 }

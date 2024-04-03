@@ -264,23 +264,36 @@ export default function NewCourseReviewPage() {
                         <EditIcon />
                     </div>
                     {/* body */}
-                    <div className="grid grid-cols-3 gap-4 mt-2">
-                        <div className=" min-w-72">
-                            <p className="text-sm font-normal text-accent-light ">Contact Email</p>
-                            <p className="font-semibold truncate text-accent-secondary">course123@aol.com</p>
-                        </div>
-                        <div className=" min-w-72">
-                            <p className="text-sm font-normal text-accent-light">Contact Phone</p>
-                            <p className="font-semibold truncate text-accent-secondary">+91 5248745985</p>
-                        </div>
-                        <div className=" min-w-72">
-                            <p className="text-sm font-normal text-accent-light">Contact Name</p>
-                            <p className="font-semibold truncate text-accent-secondary">Cameron Williamson</p>
-                        </div>
-                        <div className=" min-w-72">
-                            <p className="text-sm font-normal text-accent-light">BCC registration confirmation email</p>
-                            <p className="font-semibold truncate text-accent-secondary">course123@aol.com</p>
-                        </div>
+                    {newCourseData?.contact?.map((data) => {
+                        return (
+                            <div className="grid grid-cols-3 gap-4 pb-4 mt-2 border-b">
+                                <div className=" min-w-72">
+                                    <p className="text-sm font-normal text-accent-light ">Contact Email</p>
+                                    <p className="font-semibold truncate text-accent-secondary">
+                                        MYR {data?.contactEmail}
+                                    </p>
+                                </div>
+                                <div className=" min-w-72">
+                                    <p className="text-sm font-normal text-accent-light ">Contact Phone</p>
+                                    <p className="font-semibold truncate text-accent-secondary">
+                                        MYR {data?.contactMobile}
+                                    </p>
+                                </div>
+                                <div className=" min-w-72">
+                                    <p className="text-sm font-normal text-accent-light ">Contact Name</p>
+                                    <p className="font-semibold truncate text-accent-secondary">
+                                        MYR {data?.contactName}
+                                    </p>
+                                </div>
+                            </div>
+                        );
+                    })}
+
+                    <div className="mt-4 min-w-72">
+                        <p className="text-sm font-normal text-accent-light">BCC registration confirmation email</p>
+                        <p className="font-semibold truncate text-accent-secondary">
+                            {newCourseData?.contact?.courseEmails}
+                        </p>
                     </div>
                 </section>
                 <div className="flex items-center justify-center ">
