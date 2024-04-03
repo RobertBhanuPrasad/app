@@ -2,6 +2,7 @@ import EditIcon from "@public/assets/EditIcon";
 import { useOne, useSelect } from "@refinedev/core";
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { Button } from "src/ui/button";
+import { formatDateString } from "src/utility/DateFunctions";
 import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
@@ -162,10 +163,14 @@ export default function NewCourseReviewPage() {
                         </div>
                         <div className=" min-w-72">
                             <p className="text-sm font-normal text-accent-light">Sessions</p>
-                            <p className="font-semibold truncate text-accent-secondary">
-                                08 Feb, 2024 |09:00 am to 12:00 pm 08 Feb, 2024 |03:00 pm to 06:00 pm 09 Feb, 2024
-                                |09:00 am to 12:00 pm 09 Feb, 2024 |09:00 am to 12:00 pm
-                            </p>
+                            {newCourseData?.schedules?.map((data) => {
+                                const schedule = `${formatDateString(data.date)} | ${data?.startHour} : ${
+                                    data?.startMinute
+                                }  ${data?.startTimeFormat} to ${data?.endHour} : ${data?.endMinute}  ${
+                                    data?.endTimeFormat
+                                }`;
+                                return <p className="font-semibold truncate text-accent-secondary">{schedule}</p>;
+                            })}
                         </div>
                     </div>
                 </section>

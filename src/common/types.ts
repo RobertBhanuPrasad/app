@@ -1221,4 +1221,5 @@ interface Program {
     accommodationPaymentMode?: string;
     accommodation: any;
     contact?: any;
+    schedules?: any[];
 }
