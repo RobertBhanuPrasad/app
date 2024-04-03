@@ -356,84 +356,84 @@ export const CenterDropDown = () => {
   );
 };
 
-// export const MapComponent = () => {
-//   const {
-//     field: { value: stateValue },
-//   } = useController({
-//     name: "state_id",
-//   });
+export const MapComponent = () => {
+  const {
+    field: { value: stateValue },
+  } = useController({
+    name: "state_id",
+  });
 
-//   const {
-//     field: { value: cityValue },
-//   } = useController({
-//     name: "city_id",
-//   });
+  const {
+    field: { value: cityValue },
+  } = useController({
+    name: "city_id",
+  });
 
-//   const {
-//     field: {
-//       value: coordinates = { lat: 37.0902, lng: -95.7129 },
-//       onChange: setCoordinates,
-//     },
-//   }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
-//     useController({
-//       name: "address_line_coordinates",
-//     });
+  const {
+    field: {
+      value: coordinates = { lat: 37.0902, lng: -95.7129 },
+      onChange: setCoordinates,
+    },
+  }: { field: { value: { lat: number; lng: number }; onChange: Function } } =
+    useController({
+      name: "address_line_coordinates",
+    });
 
-//   useEffect(() => {
-//     loadInitialCoordinates();
-//   }, [stateValue, cityValue]);
+  useEffect(() => {
+    loadInitialCoordinates();
+  }, [stateValue, cityValue]);
 
-//   const { watch, setValue } = useFormContext();
+  const { watch, setValue } = useFormContext();
 
-//   const formData = watch();
+  const formData = watch();
 
-//   const loadInitialCoordinates = async () => {
-//     if (formData?.state_id && formData?.state?.name) {
-//       let location = formData?.state?.name;
+  const loadInitialCoordinates = async () => {
+    if (formData?.state_id && formData?.state?.name) {
+      let location = formData?.state?.name;
 
-//       if (formData?.city_id && formData?.city?.name) {
-//         location = `${formData?.state?.name}${" "}${formData?.city?.name}`;
-//       }
+      if (formData?.city_id && formData?.city?.name) {
+        location = `${formData?.state?.name}${" "}${formData?.city?.name}`;
+      }
 
-//       if (location) {
-//         const locationData = await fetchLongitudeLatitudeData(location);
-//         if (locationData?.length > 0) {
-//           setCoordinates({
-//             lat: locationData?.[0]?.y,
-//             lng: locationData?.[0]?.x,
-//           });
-//         }
-//       }
-//     }
-//   };
+      if (location) {
+        const locationData = await fetchLongitudeLatitudeData(location);
+        if (locationData?.length > 0) {
+          setCoordinates({
+            lat: locationData?.[0]?.y,
+            lng: locationData?.[0]?.x,
+          });
+        }
+      }
+    }
+  };
 
-//   const handleChangeCoOrdinates = async (val: any) => {
-//     setCoordinates(val);
+  const handleChangeCoOrdinates = async (val: any) => {
+    setCoordinates(val);
 
-//     const { data } = await supabaseClient.rpc(
-//       "get_cities_by_nearest_location",
-//       {
-//         reference_latitude: val.lat,
-//         reference_longitude: val.lng,
-//         limit_count: 1,
-//       }
-//     );
+    const { data } = await supabaseClient.rpc(
+      "get_cities_by_nearest_location",
+      {
+        reference_latitude: val.lat,
+        reference_longitude: val.lng,
+        limit_count: 1,
+      }
+    );
 
-//     if (data?.[0]?.distance < 50) {
-//       setValue("state_id", data?.[0]?.city_state_id);
-//       setValue("city_id", data?.[0]?.city_id);
-//     }
-//   };
+    if (data?.[0]?.distance < 50) {
+      setValue("state_id", data?.[0]?.city_state_id);
+      setValue("city_id", data?.[0]?.city_id);
+    }
+  };
 
-//   return (
-//     <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
-//       <MapPointer
-//         value={coordinates}
-//         onChange={handleChangeCoOrdinates}
-//         draggable={true}
-//         //If coordinates are [0,0] then display whole map
-//         zoom={5}
-//       />
-//     </div>
-//   );
-// };
+  return (
+    <div className=" flex w-[586px] h-[160px] rounded-[16px] border border-[#999999] my-5 text-center items-center justify-center">
+      <MapPointer
+        value={coordinates}
+        onChange={handleChangeCoOrdinates}
+        draggable={true}
+        //If coordinates are [0,0] then display whole map
+        zoom={5}
+      />
+    </div>
+  );
+};

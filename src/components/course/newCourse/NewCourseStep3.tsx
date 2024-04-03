@@ -50,6 +50,7 @@ import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import {
   CenterDropDown,
   CityDropDown,
+  MapComponent,
   PostalCodeComponent,
   StateDropDown,
   StreetAddressComponent,
@@ -941,7 +942,7 @@ export const AddOrEditVenue = ({
         </div>
       )}
 
-      {/* <MapComponent /> */}
+      <MapComponent />
       <div className="flex flex-row gap-[30px]">
         <div className="flex flex-col gap-5">
           <VenueNameComponent />

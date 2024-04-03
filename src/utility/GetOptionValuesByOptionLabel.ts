@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
-// import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
 
 
 /**
@@ -32,13 +32,13 @@ export const getOptionValueObjectByOptionOrder = (
     : undefined;
 };
 
-// export const fetchLongitudeLatitudeData = async (address: string) => {
-//   const provider = new OpenStreetMapProvider();
+export const fetchLongitudeLatitudeData = async (address: string) => {
+  const provider = new OpenStreetMapProvider();
 
-//   // Fetch location data using leaflet-geosearch package
-//   const response = await provider.search({
-//     query: address,
-//   });
+  // Fetch location data using leaflet-geosearch package
+  const response = await provider.search({
+    query: address,
+  });
 
-//   return response;
-// };
+  return response;
+};
