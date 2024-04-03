@@ -509,7 +509,7 @@ export const mapProgramModifiedDataStructure = (
       modifiedData.program_created_by = data.program_created_by;
     } else {
       modifiedData.program_created_by = data.program_created_by?.id;
-      modifiedData.program_creator = data.program_created_by as Users;
+      modifiedData.program_creator = data.program_created_by as OptionValues;
     }
   }
 
@@ -606,5 +606,5 @@ export const mapProgramModifiedDataStructure = (
     ) as number[];
   }
 
-  return modifiedData;
+  return { ...data, ...modifiedData } as Program;
 };

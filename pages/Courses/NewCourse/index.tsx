@@ -19,15 +19,22 @@ import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
+
+  const { viewPreviewPage } = newCourseStore();
 
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
   }
 
-  return <NewCourse />;
+  if (viewPreviewPage) {
+    return <div>Preview Page</div>;
+  } else {
+    return <NewCourse />;
+  }
 }
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -74,6 +81,7 @@ function NewCourse() {
     steps: { currentStep, gotoStep },
   } = methods;
   // Array of step titles, icons, and colors
+  console.log(currentStep, "aaaaaaaaa");
   const stepTitles = [
     {
       value: "0",
@@ -117,6 +125,12 @@ function NewCourse() {
     console.log(formData);
     // Call onFinish with the form data if needed
     onFinish(formData);
+  };
+
+  const { setViewPreviewPage } = newCourseStore();
+
+  const handleReviewPageOnClick = () => {
+    setViewPreviewPage(true);
   };
 
   // If the form is still loading, display a loading message
@@ -190,7 +204,7 @@ function NewCourse() {
                         Previous
                       </Button>
                     )}
-                    {currentStep < stepTitles.length - 1 && (
+                    {currentStep < stepTitles.length - 2 && (
                       <Button
                         className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
                         onClick={(e) => {
@@ -199,6 +213,17 @@ function NewCourse() {
                         }}
                       >
                         Next
+                      </Button>
+                    )}
+                    {currentStep == 5 && (
+                      <Button
+                        className="bg-[#7677F4] w-[165px] h-[46px] rounded-[12px] font-semibold"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleReviewPageOnClick();
+                        }}
+                      >
+                        Review Details
                       </Button>
                     )}
                     {currentStep === stepTitles.length - 1 && (
