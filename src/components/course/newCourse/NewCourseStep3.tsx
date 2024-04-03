@@ -23,6 +23,7 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { date } from "zod";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
+import { NewCourseStep3FormNames } from "src/constants/NewCourseFormNames";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -44,12 +45,24 @@ function NewCourseStep3() {
 export default NewCourseStep3;
 
 const OnlineProgram = () => {
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: NewCourseStep3FormNames?.online_url,
+  });
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
         <div className="">Online zoom URL </div>
         <div className="w-80">
-          <Input placeholder="URL" className="rounded-[12px]" />
+          <Input
+            placeholder="URL"
+            className="rounded-[12px]"
+            value={value}
+            onChange={(event) => {
+              onChange(event.target.value);
+            }}
+          />
           <div className="">
             Note: Participants will join your online course through your virtual
             venue
@@ -79,7 +92,7 @@ const Schedules = () => {
 const SchedulesHeader = () => {
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
-  } = useController({ name: "hoursFormat" });
+  } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
 
   let timeFormatOptions =
     getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
@@ -247,14 +260,14 @@ const TimePicker = ({
       <div className="text-sm text-[#999999] font-normal">From</div>
       <div className="w-[233px]">
         <TimeSelector
-          name={`schedules[${index}].start`}
+          name={`${NewCourseStep3FormNames?.schedules}[${index}].start`}
           is12HourFormat={is12HourFormat}
         />
       </div>
       <div className="text-sm text-[#999999] font-normal">To</div>
       <div className="w-[233px]">
         <TimeSelector
-          name={`schedules[${index}].end`}
+          name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
           is12HourFormat={is12HourFormat}
         />
       </div>
@@ -266,7 +279,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   const {
     field: { value: dateValue, onChange },
   } = useController({
-    name: `schedules[${index}].date`,
+    name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
 
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date

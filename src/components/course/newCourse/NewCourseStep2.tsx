@@ -5,6 +5,7 @@ import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { NewCourseStep2FormNames } from "src/constants/NewCourseFormNames";
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
@@ -189,7 +190,7 @@ export const CourseTypeDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "courseType",
+    name: NewCourseStep2FormNames?.program_type_id,
   });
 
   const selectQuery: any = {
@@ -227,7 +228,7 @@ export const CourseTypeDropDown = () => {
   const {
     field: { onChange: setCourseTypeSettings },
   } = useController({
-    name: "courseTypeSettings",
+    name: NewCourseStep2FormNames?.program_type,
   });
 
   const getCourseTypeSettings = async (val: any) => {
@@ -317,7 +318,7 @@ const CourseNameDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "courseName",
+    name: NewCourseStep2FormNames?.program_alias_name_id,
   });
 
   // Handler for bottom reached to load more options
@@ -407,7 +408,7 @@ const TeachersDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "teachers",
+    name: NewCourseStep2FormNames?.teacher_ids,
   });
 
   return (
@@ -503,7 +504,7 @@ const AssistantTeachersDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "assistantTeachers",
+    name: NewCourseStep2FormNames?.assistant_teacher_ids,
   });
 
   return (
@@ -527,7 +528,7 @@ const Visibility = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "visibility",
+    name: NewCourseStep2FormNames?.visibility_id,
   });
 
   return (
@@ -588,7 +589,7 @@ const DisplayLanguage = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "displayLanguage",
+    name: NewCourseStep2FormNames?.is_language_translation_for_participants,
   });
 
   return (
@@ -620,7 +621,7 @@ const GeoRestriction = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "isGeoRestriction",
+    name: NewCourseStep2FormNames?.is_geo_restriction_applicable,
   });
   const {
     formState: { errors },
@@ -677,7 +678,7 @@ const LanguageDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "languages",
+    name: NewCourseStep2FormNames?.language_ids,
   });
 
   const { options, onSearch, queryResult } = useSelect({
@@ -783,7 +784,7 @@ const LanguageTranslationDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "translationLanguages",
+    name: NewCourseStep2FormNames?.program_translation_language_ids,
   });
 
   const handleOnSearch = (value: any) => {
@@ -829,7 +830,7 @@ const AllowedCountriesDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "allowedCountries",
+    name: NewCourseStep2FormNames?.allowed_countries,
   });
 
   return (
@@ -863,7 +864,7 @@ const MaximumCapacity = () => {
 
   const {
     field: { value = maxAttendees, onChange },
-  } = useController({ name: "maxCapacity" });
+  } = useController({ name: NewCourseStep2FormNames?.max_capacity });
 
   return (
     <div className="flex gap-1 flex-col">

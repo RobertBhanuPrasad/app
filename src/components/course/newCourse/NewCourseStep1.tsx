@@ -1,10 +1,14 @@
 import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
-import { useGetIdentity, useList, useSelect } from "@refinedev/core";
+import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import React, { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import {
+  NewCourseStep1FormNames,
+  NewCourseStep2FormNames,
+} from "src/constants/NewCourseFormNames";
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import {
   I_AM_CO_TEACHING,
@@ -21,6 +25,15 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep1() {
+  const { data: courseData } = useOne({
+    resource: "program",
+    id: 10,
+    meta: {
+      select:
+        "*,program_fee_settings_id(*,program_fee_level_settings!inner(*,fee_level_id(*))),program_fee_level_settings(*,fee_level_id(*)),program_details_info(*,max_capacity,visibility_id(*)),program_organizers(*,user_id(*,contact_id(*))),program_translation_languages(*,language_id(*)),program_languages(*,language_id(*)),program_schedules(*),venue(*,center_id!inner(*),city_id!inner(*),state_id!inner(*)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(*)),program_type_id!inner(*),program_assistant_teachers!inner(*,user_id(*,contact_id(*))),program_teachers!inner(*,user_id(*,contact_id(*)))",
+    },
+  });
+  console.log(courseData, "courseData aaaaaaaaaaaa");
   return (
     <div>
       <RadioCards />
@@ -43,13 +56,13 @@ const RegistrationGateway = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "registration_via_third_party",
+    name: NewCourseStep1FormNames?.is_registration_via_3rd_party,
   });
 
   const {
     field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
   } = useController({
-    name: "site_url",
+    name: NewCourseStep1FormNames?.registration_via_3rd_party_url,
   });
 
   return (
@@ -85,7 +98,7 @@ const RadioCards = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "programOrganizedBy",
+    name: NewCourseStep1FormNames?.program_created_by,
   });
 
   const iAmTeachingId = getOptionValueObjectByOptionOrder(
@@ -131,7 +144,7 @@ const RadioCards = () => {
   const {
     field: { value: teachers, onChange: teachersOnChange },
   } = useController({
-    name: "teachers",
+    name: NewCourseStep2FormNames?.teacher_ids,
   });
 
   const handleOnChange = (val: string) => {
@@ -277,13 +290,13 @@ const OrganizationDropDown = () => {
     field: { value, onChange },
     fieldState: { error: organizationError },
   } = useController({
-    name: "organization",
+    name: NewCourseStep1FormNames?.organization_id,
   });
 
   const {
     field: { onChange: organizationDetailsOnChange },
   } = useController({
-    name: "organizationDetails",
+    name: NewCourseStep1FormNames?.organization,
   });
 
   const {
@@ -337,7 +350,7 @@ const ProgramOrganizerDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "programOrganizers",
+    name: NewCourseStep1FormNames?.organizer_ids,
   });
 
   const { queryResult, onSearch } = useSelect({
