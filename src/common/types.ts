@@ -1219,7 +1219,10 @@ interface Program {
     visibility_id?: string;
     is_geo_restriction_applicable?: string;
     accommodationPaymentMode?: string;
-    accommodation ?: any;
+    accommodation?: any;
     contact?: any;
     schedules?: any[];
+    language_ids?: any;
+    program_translation_language_ids?: any;
+    allowed_countries?: any;
 }
