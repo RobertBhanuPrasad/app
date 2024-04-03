@@ -3,13 +3,12 @@ import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { NewCourseStep2FormNames } from "src/constants/NewCourseFormNames";
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
-import CustomSelect from "src/ui/custom-select";
 import {
   HoverCard,
   HoverCardContent,
@@ -19,6 +18,14 @@ import { Input } from "src/ui/input";
 import { DataItem, MultiSelect } from "src/ui/multi-select";
 import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
@@ -38,58 +45,48 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <CourseTypeDropDown />
         </div>
-
         {/* Course Name drop will come from settings */}
-        {formData?.courseTypeSettings?.has_alias_name === true && (
-          <div className="w-80 h-20">
-            <CourseNameDropDown />
-          </div>
-        )}
-
+        {/* //TODO: Need to BussinessLayer for this with proper code */}
+        {/* {formData?.courseTypeSettings?.has_alias_name === true && ( */}
+        <div className="w-80 h-20">
+          <CourseNameDropDown />
+        </div>
+        {/* )} */}
         <div className="w-80 h-20">
           <TeachersDropDown />
         </div>
-
         <div className="w-80 h-20">
           <AssistantTeachersDropDown />
         </div>
-
         <div className="w-80 h-20">
           <LanguageDropDown />
         </div>
-
         {/* Allow only for super Admin */}
         {hasSuperAdminRole && (
           <div className="w-80 h-20">
             <DisplayLanguage />
           </div>
         )}
-
         {formData?.displayLanguage == "true" && (
           <div className="w-80 h-20">
             <LanguageTranslationDropDown />
           </div>
         )}
-
         {/* Allow only for super Admin */}
         {hasSuperAdminRole && (
           <div className="w-80 h-20 flex items-center">
             <RegistrationGateway />
           </div>
         )}
-
         <div className="w-80 h-20">
           <MaximumCapacity />
         </div>
-
         <div className="w-80 h-20">
           <Visibility />
         </div>
-
         <div className="w-80 h-20">
           <GeoRestriction />
         </div>
-
         {formData?.isGeoRestriction == "true" && (
           <div className="w-80 h-20">
             <AllowedCountriesDropDown />
@@ -152,40 +149,39 @@ export default function NewCourseStep2() {
 export const CourseTypeDropDown = () => {
   const { watch } = useFormContext();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const formData = watch();
 
-  const [selectOptions, setSelectOptions] = useState<any>();
-
   let filter: Array<CrudFilter> = [
-    {
-      field: "organization_id",
-      operator: "eq",
-      value: formData?.organization,
-    },
-    {
-      field: "program_category_id.value",
-      operator: "eq",
-      value: "Course",
-    },
+    //TODO: We need to filter the below but right now these columns arent existing in the API
+    // {
+    //   field: "organization_id",
+    //   operator: "eq",
+    //   value: formData?.organization_id,
+    // },
+    // {
+    //   field: "program_category_id.value",
+    //   operator: "eq",
+    //   value: "Course",
+    // },
   ];
 
-  if (formData?.teachers?.length > 0) {
-    const programTypeIds: number[] = [];
-    formData?.teachers?.map((val: any) => {
-      val?.value?.program_type_teachers?.map(
-        (val: { program_type_id: number }) =>
-          programTypeIds.push(val?.program_type_id)
-      );
-    });
+  // if (formData?.teachers?.length > 0) {
+  //   const programTypeIds: number[] = [];
+  //   formData?.teachers?.map((val: any) => {
+  //     val?.value?.program_type_teachers?.map(
+  //       (val: { program_type_id: number }) =>
+  //         programTypeIds.push(val?.program_type_id)
+  //     );
+  //   });
 
-    filter.push({
-      field: "id",
-      operator: "in",
-      value: programTypeIds,
-    });
-  }
+  //   filter.push({
+  //     field: "id",
+  //     operator: "in",
+  //     value: programTypeIds,
+  //   });
+  // }
 
   const {
     field: { value, onChange },
@@ -197,7 +193,7 @@ export const CourseTypeDropDown = () => {
     resource: "program_types",
     optionLabel: "name",
     optionValue: "id",
-    meta: { select: "*,program_category_id!inner(*)" },
+    // meta: { select: "*,program_category_id!inner(*)" },
     onSearch: (value: any) => [
       {
         field: "name",
@@ -205,9 +201,10 @@ export const CourseTypeDropDown = () => {
         value,
       },
     ],
-    filters: filter,
+    //TODO: Need to uncomment when we working on filters
+    // filters: filter,
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
   };
@@ -217,13 +214,6 @@ export const CourseTypeDropDown = () => {
   }
 
   const { options, onSearch, queryResult } = useSelect(selectQuery);
-
-  useEffect(() => {
-    if (options) {
-      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
-      else setSelectOptions(options);
-    }
-  }, [options]);
 
   const {
     field: { onChange: setCourseTypeSettings },
@@ -241,31 +231,52 @@ export const CourseTypeDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
-  if (queryResult.isLoading) {
-    return null;
-  }
+  // if (queryResult.isLoading) {
+  //   return null;
+  // }
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
         Course Type <div className="text-[#7677F4]"> *</div>
       </div>
-      <CustomSelect
+      <Select
         value={value}
-        placeholder="Select course type"
-        data={selectOptions}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          onSearch(val);
-        }}
-        onChange={(val) => {
-          getCourseTypeSettings(val);
+        onValueChange={(val: any) => {
+          console.log("value is", val);
           onChange(val);
+          getCourseTypeSettings(val);
         }}
-      />
+      >
+        <SelectTrigger className="w-[320px]">
+          <SelectValue placeholder="Select course type" />
+        </SelectTrigger>
+        <SelectContent>
+          <Input
+            onChange={(value: ChangeEvent<HTMLInputElement>) => {
+              onSearch(value.target.value);
+            }}
+          />
+          <SelectItems onBottomReached={handleOnBottomReached}>
+            {options.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
     </div>
   );
 };
@@ -289,7 +300,7 @@ const RegistrationGateway = () => {
 };
 
 const CourseNameDropDown = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "program_type_alias_names",
@@ -310,7 +321,7 @@ const CourseNameDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize,
       mode: "server",
     },
   });
@@ -323,8 +334,7 @@ const CourseNameDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
   return (
@@ -332,18 +342,40 @@ const CourseNameDropDown = () => {
       <div className="flex flex-row text-xs font-normal text-[#333333]">
         Course Name <div className="text-[#7677F4]">*</div>
       </div>
-      <CustomSelect
+
+      <Select
         value={value}
-        placeholder="Select course name"
-        data={options}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          onSearch(val);
-        }}
-        onChange={(val) => {
+        onValueChange={(val) => {
           onChange(val);
         }}
-      />
+      >
+        <SelectTrigger className="w-[320px]">
+          <SelectValue placeholder="Select course alias name" />
+        </SelectTrigger>
+        <SelectContent>
+          <Input
+            onChange={(value: ChangeEvent<HTMLInputElement>) =>
+              onSearch(value.target.value)
+            }
+          />
+          <SelectItems onBottomReached={handleOnBottomReached}>
+            {options.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
     </div>
   );
 };
@@ -682,7 +714,7 @@ const LanguageDropDown = () => {
   });
 
   const { options, onSearch, queryResult } = useSelect({
-    resource: "organization_languages",
+    resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
     defaultValue: value,
