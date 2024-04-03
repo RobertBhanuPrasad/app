@@ -35,8 +35,6 @@ export default function NewCourseReviewPage() {
 
     const programOrganizers = newCourseData?.organizer_ids
         ?.map((user_id: any) => {
-            console.log("user id", user_id);
-
             return getUserName(user_id)?.data?.user_name;
         })
         .join(",");
@@ -48,24 +46,18 @@ export default function NewCourseReviewPage() {
 
     const teachers = newCourseData?.teacher_ids
         ?.map((user_id: any) => {
-            console.log("user id", user_id);
-
             return getUserName(user_id)?.data?.user_name;
         })
         .join(",");
 
     const languages = newCourseData?.language_ids
         ?.map((id: any) => {
-            console.log("user id", id);
-
             return getLanguageName(id)?.data?.name;
         })
         .join(",");
 
     const languagesTranslations = newCourseData?.program_translation_language_ids
         ?.map((id: any) => {
-            console.log("user id", id);
-
             return getLanguageName(id)?.data?.name;
         })
         .join(",");
@@ -75,8 +67,6 @@ export default function NewCourseReviewPage() {
             return data.value;
         })
         .join(",");
-
-    console.log(courseType, "program");
 
     return (
         <div className="pb-12">
@@ -322,7 +312,6 @@ export default function NewCourseReviewPage() {
                                 resource: "accomdation_types",
                                 id: data?.accomodationType,
                             });
-                            console.log("accommodationType", accommodationType);
 
                             return (
                                 <div className=" min-w-72">

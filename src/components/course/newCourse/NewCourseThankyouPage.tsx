@@ -6,14 +6,18 @@ import facebookIcon from "@public/images/facebookIcon.png";
 import linkedInIcon from "@public/images/linkedInIcon.png";
 import twitterIcon from "@public/images/twitterIcon.png";
 import { CopyIcon } from "@radix-ui/react-icons";
+import { useOne } from "@refinedev/core";
 import { Circle } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "src/ui/button";
+import { formatDateString } from "src/utility/DateFunctions";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 const NewCourseThankyouPage = () => {
     const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
     const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
+    const { newCourseData } = newCourseStore();
 
     const copyText = async (text: any) => {
         try {
@@ -41,6 +45,25 @@ const NewCourseThankyouPage = () => {
         }, 1000);
     };
 
+    const getUserName = (user_id: number) => {
+        const { data: userName } = useOne({
+            resource: "users",
+            id: user_id,
+        });
+        return userName;
+    };
+
+    const { data: courseType } = useOne({
+        resource: "program_types",
+        id: newCourseData?.program_type_id,
+    });
+
+    const teachers = newCourseData?.teacher_ids
+        ?.map((user_id: any) => {
+            return getUserName(user_id)?.data?.user_name;
+        })
+        .join(",");
+
     return (
         <div className="relative pb-8 m-4 bg-white shadow-md rounded-3xl">
             {/* header : top buttons */}
@@ -66,12 +89,15 @@ const NewCourseThankyouPage = () => {
                 </div>
                 <div className="flex-[1.5] p-4 border-r border-light">
                     <p className="text-accent-secondary">Course Name</p>
-                    <p className="font-bold text-accent-primary">Happiness Program for Youth</p>
+                    <p className="font-bold text-accent-primary">
+                        {courseType?.data?.name ? courseType?.data?.name : "-"}
+                    </p>
                 </div>
                 <div className="flex-[1.5] p-4 border-r border-light">
                     <p className="text-accent-secondary">Teachers</p>
-                    <p className="font-bold text-accent-primary">Kathryn Murthy, cameron williamson</p>
+                    <p className="font-bold text-accent-primary">{teachers ? teachers : "-"}</p>
                 </div>
+                {/* // TODO need to do when the form filed is clear */}
                 <div className="flex-[2.5] p-4 border-r border-light">
                     <p className="text-accent-secondary">Venue</p>
                     <p className="font-bold text-accent-primary">
@@ -80,9 +106,12 @@ const NewCourseThankyouPage = () => {
                 </div>
                 <div className="flex-[2.5] p-4 ">
                     <p className="text-accent-secondary">Course Date (UTC 05:00)</p>
-                    <p className="font-bold">08 Feb,2024 | 0:00 am to 12:00 pm</p>
-                    <p className="font-bold">08 Feb,2024 | 03:00 am to 6:00 pm</p>
-                    <p className="font-bold">09 Feb,2024 | 09:00 am to 12:00 pm</p>
+                    {newCourseData?.schedules?.map((data) => {
+                        const schedule = `${formatDateString(data.date)} | ${data?.startHour} : ${data?.startMinute}  ${
+                            data?.startTimeFormat
+                        } to ${data?.endHour} : ${data?.endMinute}  ${data?.endTimeFormat}`;
+                        return <p className="font-semibold truncate text-accent-secondary">{schedule}</p>;
+                    })}
                 </div>
             </div>
 
@@ -107,6 +136,7 @@ const NewCourseThankyouPage = () => {
                             Registration link
                         </p>
                         <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
+                            {/* // TODO : need to add the course registration link */}
                             <h4 id="textToCopy" className="">
                                 register.artofliving.com/cource1
                             </h4>
@@ -132,6 +162,8 @@ const NewCourseThankyouPage = () => {
                             Details page link
                         </p>
                         <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
+                            {/* // TODO : need to add the details page link */}
+
                             <h4 id="textToCopy1" className="">
                                 artofliving.com/cource1
                             </h4>
