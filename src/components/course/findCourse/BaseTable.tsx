@@ -3,6 +3,7 @@
 import {
   AccessorColumnDef,
   ColumnDef,
+  ColumnDefResolved,
   RowSelectionState,
   VisibilityState,
   flexRender,
@@ -372,148 +373,150 @@ export function BaseTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div className="border border-[1px]">
-        <div
-          ref={tableRef}
-          className={`max-w-[100vw] overflow-x-auto scrollbar`}
-        >
-          <Table className={`${tableStyles?.table}`}>
-            <TableHeader className="bg-[#7677F41B] w-full">
-              {table &&
-                table?.getHeaderGroups()?.map((headerGroup) => (
-                  <TableRow
-                    className=" border-none text-[16px] font-bold w-full"
-                    key={headerGroup?.id}
-                  >
-                    {/* If the checkboxSelection is true then we need to show checkboxes  */}
-                    {checkboxSelection && (
-                      <TableHead
-                        className={`${
-                          columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
-                        }`}
-                      >
-                        <Checkbox
-                          checked={table.getIsAllPageRowsSelected()}
-                          onCheckedChange={(value: boolean) => {
-                            table.toggleAllPageRowsSelected(value);
-                          }}
-                          aria-label="Select all"
-                        />
-                      </TableHead>
-                    )}
-                    {headerGroup?.headers?.map((header, index) => {
-                      return (
+      <div>
+        <div className="border border-[1px]">
+          <div ref={tableRef} className={`w-full overflow-x-auto scrollbar`}>
+            <Table className={`${tableStyles?.table}`}>
+              <TableHeader className="bg-[#7677F41B] w-full">
+                {table &&
+                  table?.getHeaderGroups()?.map((headerGroup) => (
+                    <TableRow
+                      className=" border-none text-[16px] font-bold w-full"
+                      key={headerGroup?.id}
+                    >
+                      {/* If the checkboxSelection is true then we need to show checkboxes  */}
+                      {checkboxSelection && (
                         <TableHead
-                          //If we have column pinning true then we have to make the first and last column sticky
                           className={`${
+                            columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
+                          }`}
+                        >
+                          <Checkbox
+                            checked={table.getIsAllPageRowsSelected()}
+                            onCheckedChange={(value: boolean) => {
+                              table.toggleAllPageRowsSelected(value);
+                            }}
+                            aria-label="Select all"
+                          />
+                        </TableHead>
+                      )}
+                      {headerGroup?.headers?.map((header, index) => {
+                        return (
+                          <TableHead
+                            //If we have column pinning true then we have to make the first and last column sticky
+                            className={`${
+                              columnPinning &&
+                              index === 0 &&
+                              `sticky ${
+                                checkboxSelection ? "left-8" : "left-0"
+                              } z-10 bg-[#E9E9F5]`
+                            } ${
+                              columnPinning &&
+                              index === headerGroup.headers.length - 1 &&
+                              `sticky right-0 z-10 bg-[#E9E9F5]`
+                            } text-[#333333] `}
+                            key={header?.id}
+                          >
+                            {header?.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header?.column?.columnDef?.header,
+                                  header?.getContext()
+                                )}
+
+                            {index === headerGroup.headers.length - 1 &&
+                              columnPinning && (
+                                <div className="flex flex-row gap-2">
+                                  <ChevronLeft
+                                    onClick={handlePrevButtonClick}
+                                    className="size-6 cursor-pointer mr-2 bg-[white] text-[#7677F4] rounded-full"
+                                  />
+                                  <ChevronRight
+                                    onClick={handleNextButtonClick}
+                                    className="size-6 cursor-pointer bg-[#7677F4] text-[white] rounded-full"
+                                  />
+                                </div>
+                              )}
+                          </TableHead>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+              </TableHeader>
+              <TableBody>
+                {table && table?.getRowModel()?.rows?.length ? (
+                  table?.getRowModel()?.rows?.map((row) => (
+                    <TableRow
+                      className={`{${tableStyles?.rowStyles} `}
+                      key={row?.id}
+                      data-state={row?.getIsSelected() && "selected"}
+                    >
+                      {/* If the checkboxSelection is true then we need to show checkboxes  */}
+                      {checkboxSelection && (
+                        <TableCell
+                          className={`${
+                            columnPinning && "sticky left-0 z-10 bg-[#FFFFFF]"
+                          }`}
+                        >
+                          <Checkbox
+                            checked={row.getIsSelected()}
+                            onCheckedChange={(value) =>
+                              row.toggleSelected(!!value)
+                            }
+                            aria-label="Select row"
+                          />
+                        </TableCell>
+                      )}
+
+                      {row?.getVisibleCells().map((cell, index) => (
+                        //If we have column pinning true then we have to make the first and last column sticky
+                        <TableCell
+                          className={` ${
                             columnPinning &&
                             index === 0 &&
                             `sticky ${
                               checkboxSelection ? "left-8" : "left-0"
-                            } z-10 bg-[#E9E9F5]`
+                            }  top-0 z-10 bg-[#FFFFFF]`
                           } ${
                             columnPinning &&
-                            index === headerGroup.headers.length - 1 &&
-                            `sticky right-0 z-10 bg-[#E9E9F5]`
-                          } text-[#333333] `}
-                          key={header?.id}
+                            index === row.getVisibleCells().length - 1 &&
+                            `sticky right-0 top-0 bg-[#FFFFFF] z-10`
+                          } text-[#333333]`}
+                          key={cell.id}
                         >
-                          {header?.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header?.column?.columnDef?.header,
-                                header?.getContext()
-                              )}
-
-                          {index === headerGroup.headers.length - 1 && (
-                            <div className="flex flex-row gap-2">
-                              <ChevronLeft
-                                onClick={handlePrevButtonClick}
-                                className="size-6 cursor-pointer mr-2 bg-[white] text-[#7677F4] rounded-full"
-                              />
-                              <ChevronRight
-                                onClick={handleNextButtonClick}
-                                className="size-6 cursor-pointer bg-[#7677F4] text-[white] rounded-full"
-                              />
-                            </div>
+                          {flexRender(
+                            cell?.column?.columnDef?.cell,
+                            cell?.getContext()
                           )}
-                        </TableHead>
-                      );
-                    })}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns?.length}
+                      className="h-24 text-center"
+                    >
+                      No results.
+                    </TableCell>
                   </TableRow>
-                ))}
-            </TableHeader>
-            <TableBody>
-              {table && table?.getRowModel()?.rows?.length ? (
-                table?.getRowModel()?.rows?.map((row) => (
-                  <TableRow
-                    className={`{${tableStyles?.rowStyles} `}
-                    key={row?.id}
-                    data-state={row?.getIsSelected() && "selected"}
-                  >
-                    {/* If the checkboxSelection is true then we need to show checkboxes  */}
-                    {checkboxSelection && (
-                      <TableCell
-                        className={`${
-                          columnPinning && "sticky left-0 z-10 bg-[#FFFFFF]"
-                        }`}
-                      >
-                        <Checkbox
-                          checked={row.getIsSelected()}
-                          onCheckedChange={(value) =>
-                            row.toggleSelected(!!value)
-                          }
-                          aria-label="Select row"
-                        />
-                      </TableCell>
-                    )}
-
-                    {row?.getVisibleCells().map((cell, index) => (
-                      //If we have column pinning true then we have to make the first and last column sticky
-                      <TableCell
-                        className={` ${
-                          columnPinning &&
-                          index === 0 &&
-                          `sticky ${
-                            checkboxSelection ? "left-8" : "left-0"
-                          }  top-0 z-10 bg-[#FFFFFF]`
-                        } ${
-                          columnPinning &&
-                          index === row.getVisibleCells().length - 1 &&
-                          `sticky right-0 top-0 bg-[#FFFFFF] z-10`
-                        } text-[#333333]`}
-                        key={cell.id}
-                      >
-                        {flexRender(
-                          cell?.column?.columnDef?.cell,
-                          cell?.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns?.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-center">
           {pagination && (
+            // <div className="mx-auto">
             <DataPagination
               setCurrent={setCurrent}
               current={current}
               pageCount={pageCount}
             />
+            // </div>
           )}
-          <div className="flex items-center space-x-2">
+          <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
             <Select
               value={`${pageSize}`}
               onValueChange={(value) => {
