@@ -19,6 +19,7 @@ import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { Badge } from "src/ui/badge";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
+import { DateCalendar } from "src/ui/DateCalendar";
 import CustomSelect from "src/ui/custom-select";
 import {
   Dialog,
@@ -33,10 +34,8 @@ import {
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { format, setDate } from "date-fns";
 import { X } from "lucide-react";
-import { Calendar } from "src/ui/calendar";
 import { Input } from "src/ui/input";
 import { supabaseClient } from "src/utility";
-import { fetchLongitudeLatitudeData } from "src/utility/GetOptionValuesByOptionLabel";
 
 import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
@@ -535,12 +534,13 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     {
       field: "start_time",
       operator: "gte",
-      value: new Date(date.setHours(0, 0, 0, 0)).toISOString(),
+      value: date && new Date(date?.setHours(0, 0, 0, 0))?.toISOString(),
     },
     {
       field: "end_time",
       operator: "lt",
-      value: new Date(date.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+      value:
+        date && new Date(date?.getTime() + 24 * 60 * 60 * 1000)?.toISOString(),
     },
   ];
 
@@ -600,7 +600,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       <div className="h-[401px] flex flex-row gap-4">
         {/* Calendar component */}
         <div className="flex-[1]">
-          <Calendar
+          <DateCalendar
             mode="single"
             selected={date}
             onSelect={handleOnSelect}
