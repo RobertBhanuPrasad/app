@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { PieChart } from "react-minimal-pie-chart";
 import { Circle } from "lucide-react";
 import {
+  FEE_LEVEL,
   GENDER,
   PARTICIPANT_ATTENDANCE_STATUS,
 } from "src/constants/OptionLabels";
 import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 import { generateColors } from "src/utility/GenerateColours";
-import { useOne } from "@refinedev/core";
+import { useList, useOne } from "@refinedev/core";
 import _ from "lodash";
 
 function ParticipantsTab() {
@@ -20,39 +21,53 @@ function ParticipantsTab() {
     PARTICIPANT_ATTENDANCE_STATUS
   )?.[0]?.option_values;
 
-  console.log(
-    participantAttendanceStatusOptions,
-    "participantAttendanceStatusOptions"
-  );
+  const participantFeeStatusOptions =
+    getOptionValuesByOptionLabel(FEE_LEVEL)?.[0]?.option_values;
 
   const baseColor = "#7677F4";
   const numColors = genderOptions.length; // Use the length of genderOptions for the number of colors
 
-  const Id = 10;
-  const { data: courseData } = useOne({
-    resource: "program",
-    id: Id,
+  const Id = 1;
+
+  const { data: participantData } = useList({
+    resource: "participant_registration",
+    filters: [
+      {
+        field: "program_id",
+        operator: "eq",
+        value: Id,
+      },
+    ],
     meta: {
       select:
-        "*,participant_registration(*,contact_id(gender_id(id,value)),participant_attendence_status_id(id,value))",
+        "id,contact_id(gender_id(id,value)),participant_attendence_status_id(id,value),price_category_id(fee_level_id(id,value))",
     },
   });
 
-  console.log(courseData, "courseData");
+  console.log(participantData, "participantData");
+
   const genderObjects = _.countBy(
-    courseData?.data?.participant_registration,
+    participantData?.data,
     (obj) => obj.contact_id.gender_id?.value
   );
 
   const participantAttendanceObjects = _.countBy(
-    courseData?.data?.participant_registration,
+    participantData?.data,
     (obj) => obj.participant_attendence_status_id?.value
   );
 
-  console.log(
-    courseData?.data?.participant_registration,
-    "participantAttendanceObjectsF"
+  const participantFeeLevelObjects = _.countBy(
+    participantData?.data,
+    (obj) => obj.price_category_id?.fee_level_id?.value
   );
+
+  const participantFeeLevelOptionsWithCounts = participantFeeStatusOptions.map(
+    (option: any) => ({
+      ...option,
+      count: participantFeeLevelObjects[option.value] || 0, // Add count from genderCounts object or default to 0 if not found
+    })
+  );
+
   const participantAttendanceOptionsWithCounts =
     participantAttendanceStatusOptions.map((option: any) => ({
       ...option,
@@ -80,8 +95,20 @@ function ParticipantsTab() {
       )[index], // Use the index to get the color from the generated colors
     })
   );
+
+  const participantFeeLevelData = participantFeeLevelOptionsWithCounts.map(
+    (item: any, index: number) => ({
+      title: item.value,
+      value: item.count,
+      color: generateColors(
+        baseColor,
+        participantAttendanceStatusOptions.length
+      )[index], // Use the index to get the color from the generated colors
+    })
+  );
+
   return (
-    <div className="my-[31px]">
+    <div className="my-[31px] mb-6 overscroll ">
       <div className="flex justify-between">
         <div className="text-[23px] font-semibold">Overall Participants</div>
         <div className="flex gap-4">
@@ -94,64 +121,101 @@ function ParticipantsTab() {
         </div>
       </div>
       <div className="mt-6 flex flex-row  gap-[30px]">
-        <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
-          <div>
-            <div className="text-[18px] font-semibold mt-4 ml-6">
-              Attendance Status
-            </div>
-            <div className="">
-              <PieChart
-                data={[
-                  {
-                    title: "One",
-                    value: 1,
-                    color: "#3637b4",
-                  },
-                  { title: "Two", value: 2, color: "#CCCCFF" },
-                  { title: "Three", value: 3, color: "#AFB0FF" },
-                  { title: "four", value: 3, color: "#7677F4" },
-                ]}
-                rounded
-                lineWidth={20}
-                paddingAngle={18}
-                radius={20}
-              />
-            </div>
-          </div>
-        </Card>
-        <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
-          <div>
-            <div className="text-[18px] font-semibold mt-4 ml-6">
-              Fee Level Breakup
-            </div>
+        <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
+          <CardHeader>
+            <CardTitle>
+              <div className="text-[18px] font-semibold">Attendance Status</div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-6">
             <div className="relative">
               <PieChart
                 data={participantAttendanceData}
                 rounded
                 style={{ position: "relative" }}
                 lineWidth={20}
-                paddingAngle={16}
-                radius={30}
+                paddingAngle={20}
+                radius={25}
                 center={[50, 30]}
                 viewBoxSize={[100, 60]}
-                totalValue={
-                  courseData?.data?.participant_registration
-                    ?.participant_attendence_status_id?.length
-                }
+                totalValue={participantData?.total}
               />
+              <div className="chart-inner-text flex flex-col">
+                <p>Total Participants</p>
+                <p className="chart-inner-value">{participantData?.total}</p>
+              </div>
             </div>
-            <div className="chart-inner-text flex flex-col">
-              <p>Total Participants</p>
-              <p className="chart-inner-value">
-                {
-                  courseData?.data?.participant_registration
-                    ?.participant_attendence_status_id?.length
-                }
-              </p>
+            <div className="flex flex-col mt-6">
+              <div className="">
+                {participantAttendanceOptionsWithCounts?.map(
+                  (item: any, index: number) => {
+                    return (
+                      <div className="flex flex-row items-center justify-center justify-between">
+                        <div className="flex items-center gap-2 py-[2px]">
+                          <Circle
+                            size={6}
+                            fill={generateColors(baseColor, numColors)[index]}
+                            color={generateColors(baseColor, numColors)[index]}
+                          />
+                          <div className="text-[#999999]">{item?.value}</div>
+                        </div>
+                        <div className="font-semibold">{item?.count}</div>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
             </div>
-          </div>
+          </CardContent>
         </Card>
-        <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
+          <CardHeader>
+            <CardTitle>
+              <div className="text-[18px] font-semibold">Fee Level Breakup</div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-6">
+            <div className="relative">
+              <PieChart
+                data={participantFeeLevelData}
+                rounded
+                style={{ position: "relative" }}
+                lineWidth={20}
+                paddingAngle={20}
+                radius={25}
+                center={[50, 30]}
+                viewBoxSize={[100, 60]}
+                totalValue={participantData?.total}
+              />
+              <div className="chart-inner-text flex flex-col">
+                <p>Total Participants</p>
+                <p className="chart-inner-value">{participantData?.total}</p>
+              </div>
+            </div>
+            <div className="flex flex-col mt-6">
+              <div className="">
+                {participantFeeLevelOptionsWithCounts?.map(
+                  (item: any, index: number) => {
+                    return (
+                      <div className="flex flex-row items-center justify-center justify-between">
+                        <div className="flex items-center gap-2 py-[2px]">
+                          <Circle
+                            size={6}
+                            fill={generateColors(baseColor, numColors)[index]}
+                            color={generateColors(baseColor, numColors)[index]}
+                          />
+                          <div className="text-[#999999]">{item?.value}</div>
+                        </div>
+                        <div className="font-semibold">{item?.count}</div>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
           <CardHeader>
             <CardTitle>
               <div className="text-[18px] font-semibold">Gender Breakdown</div>
@@ -164,17 +228,15 @@ function ParticipantsTab() {
                 rounded
                 style={{ position: "relative" }}
                 lineWidth={20}
-                paddingAngle={16}
-                radius={30}
+                paddingAngle={20}
+                radius={25}
                 center={[50, 30]}
                 viewBoxSize={[100, 60]}
-                totalValue={courseData?.data?.participant_registration?.length}
+                totalValue={participantData?.total}
               />
               <div className="chart-inner-text flex flex-col">
                 <p>Total Participants</p>
-                <p className="chart-inner-value">
-                  {courseData?.data?.participant_registration?.length}
-                </p>
+                <p className="chart-inner-value">{participantData?.total}</p>
               </div>
             </div>
             <div className="flex flex-col mt-6">
@@ -182,7 +244,7 @@ function ParticipantsTab() {
                 {genderOptionsWithCounts?.map((item: any, index: number) => {
                   return (
                     <div className="flex flex-row items-center justify-center justify-between">
-                      <div className="flex items-center gap-2 py-[6px]">
+                      <div className="flex items-center gap-2 py-[2px]">
                         <Circle
                           size={6}
                           fill={generateColors(baseColor, numColors)[index]}
