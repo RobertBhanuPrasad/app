@@ -700,6 +700,7 @@ const LanguageDropDown = () => {
   });
 
   useEffect(() => {
+    console.log('We are getting re rendering here')
     if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
     else setSelectOptions(options);
   }, [options]);
