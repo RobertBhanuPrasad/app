@@ -358,7 +358,7 @@ export function BaseTable<TData, TValue>({
 
       {/* Table */}
       <div>
-        <Table className={tableStyles?.table}>
+        <Table className={`${tableStyles?.table}`}>
           <div
             ref={tableRef}
             className={`max-w-[1000px] overflow-x-auto scrollbar`}
@@ -367,20 +367,19 @@ export function BaseTable<TData, TValue>({
               {table &&
                 table?.getHeaderGroups()?.map((headerGroup) => (
                   <TableRow
-                    className="flex items-center border-none text-[16px] font-bold w-full"
+                    className=" border-none text-[16px] font-bold w-full"
                     key={headerGroup?.id}
                   >
                     {/* If the checkboxSelection is true then we need to show checkboxes  */}
                     {checkboxSelection && (
                       <TableHead
-                        className={`flex justify-center items-center w-full flex-[0.1] ${
+                        className={`${
                           columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
                         }`}
                       >
                         <Checkbox
                           checked={table.getIsAllPageRowsSelected()}
                           onCheckedChange={(value: boolean) => {
-                            console.log("heyy value", value);
                             table.toggleAllPageRowsSelected(value);
                           }}
                           aria-label="Select all"
@@ -401,7 +400,7 @@ export function BaseTable<TData, TValue>({
                             columnPinning &&
                             index === headerGroup.headers.length - 1 &&
                             `sticky right-0 z-10 bg-[#E9E9F5]`
-                          } text-[#333333] flex justify-center items-center w-full`}
+                          } text-[#333333] `}
                           key={header?.id}
                         >
                           {header?.isPlaceholder
@@ -429,18 +428,18 @@ export function BaseTable<TData, TValue>({
                   </TableRow>
                 ))}
             </TableHeader>
-            <TableBody className="w-full">
+            <TableBody>
               {table && table?.getRowModel()?.rows?.length ? (
                 table?.getRowModel()?.rows?.map((row) => (
                   <TableRow
-                    className={`{${tableStyles?.rowStyles} flex item-center w-full`}
+                    className={`{${tableStyles?.rowStyles} `}
                     key={row?.id}
                     data-state={row?.getIsSelected() && "selected"}
                   >
                     {/* If the checkboxSelection is true then we need to show checkboxes  */}
                     {checkboxSelection && (
                       <TableCell
-                        className={`flex justify-center w-full items-center flex-[0.1] ${
+                        className={`${
                           columnPinning && "sticky left-0 z-10 bg-[#FFFFFF]"
                         }`}
                       >
@@ -457,7 +456,7 @@ export function BaseTable<TData, TValue>({
                     {row?.getVisibleCells().map((cell, index) => (
                       //If we have column pinning true then we have to make the first and last column sticky
                       <TableCell
-                        className={`flex justify-center w-full items-center ${
+                        className={` ${
                           columnPinning &&
                           index === 0 &&
                           `sticky ${
