@@ -3,7 +3,7 @@ import CurrencyIcon from "@public/assets/CurrencyIcon";
 import Important from "@public/assets/Important";
 import LocationIcon from "@public/assets/LocationIcon";
 import ParticipantsIcon from "@public/assets/ParticipantsIcon";
-import { useList, useOne } from "@refinedev/core";
+import { CrudFilter, useList, useOne, useSelect } from "@refinedev/core";
 import { Circle } from "lucide-react";
 import React, { useState } from "react";
 import {
@@ -43,13 +43,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import CustomSelect from "src/ui/custom-select";
 
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectTrigger,
-  SelectValue,
-} from "src/ui/select";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -69,23 +62,36 @@ import {
   AlertDialogTrigger,
 } from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
-import { FiAlertCircle } from "react-icons/fi";
-import { FcOk } from "react-icons/fc";
-import { IoCloseSharp } from "react-icons/io5";
-import { FaWindowClose } from "react-icons/fa";
+import ShareIcon from "@public/assets/ShareIcon";
+import CopyIcon from "@public/assets/CopyIcon";
+import WhatsappIcon from "@public/assets/WhatsappIcon";
+import FaceBookIcon from "@public/assets/FaceBookIcon";
+import TwitterIcon from "@public/assets/TwitterIcon";
+import Instagram from "@public/assets/Instagram";
+import LinkedInIcon from "@public/assets/LinkedInIcon";
+// import { FiAlertCircle } from "react-icons/fi";
+// import { FcOk } from "react-icons/fc";
+// import { IoCloseSharp } from "react-icons/io5";
+// import { FaWindowClose } from "react-icons/fa";
 
 function index() {
-  const Id: number = 3;
+  const Id: number = 1;
 
   const { data: courseData } = useOne({
     resource: "program",
     id: Id,
     meta: {
       select:
-        "*,program_alias_name_id!inner(id,alias_name),program_schedules!inner(*),venue(*,city_id!inner(id ,name),state_id!inner(id ,name))",
+        "*,participant_registration!inner(id),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
     },
   });
 
+  const { data: courseDataa } = useOne({
+    resource: "program",
+    id: Id,
+  });
+
+  console.log(courseDataa, "courseDataa");
   const participantSuccessPaymentId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_SUCCESS_PAYMENT_STATUS
@@ -111,46 +117,64 @@ function index() {
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
 
+  const dfilter: any = [
+    {
+      operator: "or",
+      value: [
+        {
+          field: "payment_status_id",
+          operator: "eq",
+          value: participantSuccessPaymentId,
+        },
+        {
+          field: "payment_status_id",
+          operator: "eq",
+          value: participantPendingPaymentId,
+        },
+      ],
+    },
+    {
+      operator: "or",
+      value: [
+        {
+          field: "participant_attendence_status_id",
+          operator: "eq",
+          value: completedAttendanceStatusId,
+        },
+        {
+          field: "participant_attendence_status_id",
+          operator: "eq",
+          value: dropoutAttendanceStatusId,
+        },
+        {
+          field: "participant_attendence_status_id",
+          operator: "eq",
+          value: pendingAttendanceStatusId,
+        },
+      ],
+    },
+    {
+      field: "program_id",
+      operator: "eq",
+      value: Id,
+    },
+    ,
+    {
+      field: "is_payment_refunded",
+      operator: "eq",
+      value: false,
+    },
+  ];
+
   const { data: participantData } = useList<any>({
     resource: "participant_registration",
-    // filters: [
-    //   {
-    //     field: "program_id",
-    //     operator: "eq",
-    //     value: Id,
-    //   },
-    //   {
-    //     field: "payment_status",
-    //     operator: "eq",
-    //     value: participantSuccessPaymentId,
-    //   },
-    //   {
-    //     field: "payment_status",
-    //     operator: "eq",
-    //     value: participantPendingPaymentId,
-    //   },
-    //   {
-    //     field: "is_payment_refunded",
-    //     operator: "eq",
-    //     value: false,
-    //   },
-    //   {
-    //     field: "participant_attendence_status_id",
-    //     operator: "eq",
-    //     value: completedAttendanceStatusId,
-    //   },
-    //   {
-    //     field: "participant_attendence_status_id",
-    //     operator: "eq",
-    //     value: dropoutAttendanceStatusId,
-    //   },
-    //   {
-    //     field: "participant_attendence_status_id",
-    //     operator: "eq",
-    //     value: pendingAttendanceStatusId,
-    //   },
-    // ],
+    filters: dfilter,
+    meta: {
+      select: "*,participant_payment_history(*)",
+    },
   });
+
+  
 
   console.log(participantData, "participantData");
 
@@ -199,28 +223,27 @@ function index() {
         <div className="text-[32px] font-semibold">
           {courseData?.data?.program_alias_name_id?.alias_name}
         </div>
-        <div className="w-[70px] h-6 bg-[#15AF530D] rounded-[15px] text-[#15AF53] text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] ">
-          <Circle className="fill-[#15AF53] size-2" />
-          Active
-        </div>
-        <div className="w-[135px] h-[27px] bg-[#FFB9001A] rounded-[15px] text-[#FFB900] text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] ">
-          <Circle className="fill-[#FFB900] size-2" />
-          Pending Review
+        <div className="flex items-center gap-4">
+          <DisplayingCourseStatus
+            statusId={courseData?.data?.status_id?.value}
+          />
+          <ShareButton courseData={courseData} />
         </div>
       </div>
       <div className="flex flex-row gap-2 items-center mt-3">
         <CalenderIcon color="#7677F4" />
         {startDate} to {endDate}
-        <ParticipantsIcon /> {216}
+        <ParticipantsIcon /> {participantData?.total}
         <HoverCard>
           <HoverCardTrigger>
             <Important />
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              1 Participants with: Transaction status = Confirmed / Pending
-              Attendance status = Confirmed / Pending / Dropout Total
-              participants records:2{" "}
+              {participantData?.total} Participants with: Transaction status =
+              Confirmed / Pending Attendance status = Confirmed / Pending /
+              Dropout Total participants records:
+              {courseData?.data?.participant_registration?.length}
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -240,11 +263,12 @@ function index() {
       </div>
       <div className="flex flex-row gap-2 items-center mt-3">
         <LocationIcon />
-        {courseData?.data?.venue?.address},
-        {courseData?.data?.venue?.city_id?.name},
-        {courseData?.data?.venue?.state_id?.name},{countryName},
-        {courseData?.data?.venue?.postal_code}
+        {courseData?.data?.venue_id?.address},
+        {courseData?.data?.venue_id?.city_id?.name},
+        {courseData?.data?.venue_id?.state_id?.name},{countryName},
+        {courseData?.data?.venue_id?.postal_code}
       </div>
+
       <div className="flex flex-row items-center gap-2 w-full justify-end">
         Announced by: National Admin{" "}
         <HoverCard>
@@ -260,9 +284,8 @@ function index() {
           </HoverCardContent>
         </HoverCard>
       </div>
-      
 
-      <div className="w-full ">
+      <div className="w-full mt-6 ">
         <Tabs
           onValueChange={(val: any) => {
             setSelectedValue(val);
@@ -288,95 +311,9 @@ function index() {
                 </div>
               </TabsTrigger>
             ))}
-
-            {/* ----------------------------------------------------- */}
-            <Select>
-            <SelectTrigger className="w-[180px] ">
-                <SelectValue placeholder="Providing Course" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectGroup className="flex flex-col">
-                    <Dialog>
-                        <DialogTrigger className="text-sm text-center">Approve Course</DialogTrigger>
-                        <DialogContent className="flex flex-col items-center">
-                            <DialogHeader className="text-center">
-                                <FiAlertCircle className={'text-yellow-300 w-12 h-12 mx-auto'} /><br />
-                                <DialogDescription className="font-bold text-black text-lg">Are you sure you want to approve this course?</DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter>
-                                <DialogTrigger>
-                                    <Button type="button" variant="outline" className="text-blue-500">No</Button>
-                                </DialogTrigger>
-                                <AlertDialog className="w-full max-w-xs">
-                                    <AlertDialogTrigger>
-                                        <Button type="button" className="bg-blue-500 text-white px-4 py-2">Yes</Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent className="w-50">
-                                        <AlertDialogHeader className="text-center">
-                                            <AlertDialogTrigger>
-                                                <IoCloseSharp className="absolute top-3 right-3 cursor-pointer " />
-                                            </AlertDialogTrigger>
-                                            <FcOk className="w-11 h-11 mx-auto" />
-                                            <AlertDialogTitle className="font-bold text-center">Course approved Successfully</AlertDialogTitle>
-                                            <AlertDialogDescription className="text-center">
-                                                Thank you for contribution in the course<br /> approval process.
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter className="flex items-center justify-center">
-                                            <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">Close</AlertDialogCancel>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                    <Dialog>
-                        <DialogTrigger className="text-sm">Reject Course</DialogTrigger>
-                        <DialogContent className="flex flex-col items-center">
-                            <DialogHeader className="text-center">
-                                <FaWindowClose className="w-11 h-11 mx-auto text-red-500" />
-                                <DialogTitle className="text-gray-500 text-sm"> Describe your rejection reason<span className="text-blue-500">(optional)</span></DialogTitle>
-                                <DialogDescription>
-                                    <p className="box-border h-32 w-80 p-4 border-[2px] text-gray-400 rounded-lg">Comment.</p>
-                                </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter>
-                                <DialogTrigger>
-                                <Button type="button" variant="outline" className="text-blue-500">No</Button>
-                                </DialogTrigger>
-                                <AlertDialog className="w-full max-w-xs">
-                                    <AlertDialogTrigger>
-                                        <Button type="button" className="bg-blue-500 text-white px-4 py-2">Reject</Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent className="w-50">
-                                        <AlertDialogHeader className="text-center">
-                                            <AlertDialogTrigger>
-                                                <IoCloseSharp className="absolute top-3 right-3 cursor-pointer " />
-                                            </AlertDialogTrigger>
-                                            <FaWindowClose className="w-11 h-11 mx-auto text-red-500" />
-                                            <AlertDialogTitle className="font-bold text-center">Course Rejected</AlertDialogTitle>
-                                            <AlertDialogDescription className="text-center">
-                                                The Course got rejected successfully
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter className="flex items-center justify-center">
-                                            <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">Close</AlertDialogCancel>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                </SelectGroup>
-            </SelectContent>
-        </Select>
-
-        {/* ---------------------------------------------- */}
-
-
-            
-        
-
+            <div className="ml-auto mb-6 ">
+              <PendingApprovalDropDown />
+            </div>
           </TabsList>
           <div className="w-full border-b -mt-2"></div>
           <TabsContent value={COURSE_DETAILS_TAB}>
@@ -391,7 +328,6 @@ function index() {
           <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>
             Place Course Accounting Form tab here
           </TabsContent>
-          
         </Tabs>
       </div>
     </div>
@@ -428,56 +364,311 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   };
 };
 
-const CourseNameDropDown = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const { options, onSearch, queryResult } = useSelect({
-    resource: "program_type_alias_names",
-    optionLabel: "alias_name",
-    optionValue: "id",
-    onSearch: (value) => [
-      {
-        field: "alias_name",
-        operator: "contains",
-        value,
-      },
-    ],
-    filters: [
-      {
-        field: "program_type_id",
-        operator: "eq",
-        value: 1,
-      },
-    ],
-    pagination: {
-      current: currentPage,
-      mode: "server",
+const PendingApprovalDropDown = () => {
+  const options = [
+    {
+      label: "Approve Course",
+      value: 1,
     },
-  });
-
-  // Handler for bottom reached to load more options
-  const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
-  };
+    {
+      label: "Reject Course",
+      value: 2,
+    },
+  ];
+  const [approveModalOpen, setApproveModalOpen] = useState(false);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
 
   return (
-    <div className="flex gap-1 flex-col">
-      <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Course Name <div className="text-[#7677F4]">*</div>
-      </div>
+    <div>
       <CustomSelect
-        value={value}
-        placeholder="Select course name"
+        placeholder="Pending Approval"
         data={options}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          onSearch(val);
+        onBottomReached={() => {}}
+        onSearch={() => {}}
+        onChange={(val: any) => {
+          if (val == 1) {
+            setApproveModalOpen(true);
+          } else {
+            setRejectModalOpen(true);
+          }
         }}
-        onChange={(val) => {
-          onChange(val);
+        value={undefined}
+        selectBoxStyles={{
+          header: "w-[192px] ",
+          dropdown: "w-[192px]",
         }}
       />
+      <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
+        <DialogContent className="flex flex-col items-center">
+          <DialogHeader className="text-center">
+            {/* <FiAlertCircle className={'text-yellow-300 w-12 h-12 mx-auto'} /><br /> */}
+            <DialogDescription className="font-bold text-black text-lg">
+              Are you sure you want to approve this course?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              className="text-blue-500"
+              onClick={() => {
+                setApproveModalOpen(false);
+              }}
+            >
+              No
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Button
+                  type="button"
+                  className="bg-blue-500 text-white px-4 py-2"
+                >
+                  Yes
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-50">
+                <AlertDialogHeader className="text-center">
+                  <AlertDialogTrigger>
+                    {/* <IoCloseSharp className="absolute top-3 right-3 cursor-pointer " /> */}
+                  </AlertDialogTrigger>
+                  {/* <FcOk className="w-11 h-11 mx-auto" /> */}
+                  <AlertDialogTitle className="font-bold text-center">
+                    Course approved Successfully
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-center">
+                    Thank you for contribution in the course
+                    <br /> approval process.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex items-center justify-center">
+                  <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">
+                    Close
+                  </AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
+        <DialogContent className="flex flex-col items-center">
+          <DialogHeader className="text-center">
+            {/* <FaWindowClose className="w-11 h-11 mx-auto text-red-500" /> */}
+            <DialogTitle className="text-gray-500 text-sm">
+              {" "}
+              Describe your rejection reason
+              <span className="text-blue-500">(optional)</span>
+            </DialogTitle>
+            <DialogDescription>
+              <p className="box-border h-32 w-80 p-4 border-[2px] text-gray-400 rounded-lg">
+                Comment.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogTrigger>
+              <Button
+                type="button"
+                variant="outline"
+                className="text-blue-500"
+                onClick={() => {
+                  setRejectModalOpen(false);
+                }}
+              >
+                No
+              </Button>
+            </DialogTrigger>
+            <AlertDialog className="w-full max-w-xs">
+              <AlertDialogTrigger>
+                <Button
+                  type="button"
+                  className="bg-blue-500 text-white px-4 py-2"
+                >
+                  Reject
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-50">
+                <AlertDialogHeader className="text-center">
+                  <AlertDialogTrigger>
+                    {/* <IoCloseSharp className="absolute top-3 right-3 cursor-pointer " /> */}
+                  </AlertDialogTrigger>
+                  {/* <FaWindowClose className="w-11 h-11 mx-auto text-red-500" /> */}
+                  <AlertDialogTitle className="font-bold text-center">
+                    Course Rejected
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-center">
+                    The Course got rejected successfully
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex items-center justify-center">
+                  <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">
+                    Close
+                  </AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+};
+
+const DisplayingCourseStatus = ({ statusId }: any) => {
+  let statusText;
+  let statusColor;
+  switch (statusId) {
+    case "Active":
+      statusText = "Active";
+      statusColor = "red";
+      break;
+    case "Pending Review":
+      statusText = "Pending Review";
+      statusColor = "#FFB900";
+      break;
+    case "Cancelled":
+      statusText = "Cancelled";
+      statusColor = "#FFB900";
+      break;
+    case "Declined":
+      statusText = "Declined";
+      statusColor = "#FFB900";
+      break;
+    case "Completed":
+      statusText = "Completed";
+      statusColor = "#FFB900";
+      break;
+    case "Full":
+      statusText = "Full";
+      statusColor = "#FFB900";
+      break;
+  }
+
+  return (
+    <div>
+      <div
+        className={`w-[70px] h-6 bg-[${statusColor}0D] rounded-[15px] text-[${statusColor}] text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] `}
+      >
+        <Circle className={`fill-[${statusColor}] size-2`} />
+        {statusText}
+      </div>
+    </div>
+  );
+};
+
+const ShareButton = (courseData: any) => {
+  const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
+  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
+
+  const copyText = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
+
+  const handleCopyDetailsPageLink = () => {
+    copyText(courseData?.data?.details_page_link);
+    setCopiedDetailsPageLink(true);
+
+    setTimeout(() => {
+      setCopiedDetailsPageLink(false);
+    }, 1000);
+  };
+
+  const handleCopyRegistrationLink = () => {
+    copyText(courseData?.data?.registration_link);
+    setCopiedRegistrationLink(true);
+
+    setTimeout(() => {
+      setCopiedRegistrationLink(false);
+    }, 1000);
+  };
+  return (
+    <Dialog>
+      <DialogTrigger>
+        <Button className="border border-primary text-primary w-[93px] bg-[white] rounded-[12px] flex gap-2 ">
+          Share <ShareIcon />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md w-[414px] h-[310px]">
+        <DialogHeader>
+          <DialogTitle>
+            <center className="font-open-sans text-2xl font-semibold leading-8 relative bottom-2">
+              Share in Social
+            </center>
+          </DialogTitle>
+          <DialogDescription>
+            <center>
+              <div className="flex w-auto h-auto max-w-[336px] max-h-[48px] gap-x-6 ">
+                <WhatsappIcon />
+                <FaceBookIcon />
+                <TwitterIcon />
+                <Instagram />
+                <LinkedInIcon />
+              </div>
+              <br />
+              <p className="text-gray-600">Or</p>
+            </center>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <center className="">
+            <div className="w-[366px] h-[36px] px-3 relative bottom-12">
+              <span className="text-gray-600 relative bg-white top-[10px] right-[100px] text-[13px] ">
+                &nbsp;&nbsp; Registration link &nbsp;&nbsp;
+              </span>
+              <div className="flex border rounded-2xl p-3 justify-between">
+                <h4 id="textToCopy" className="">
+                  register.artofliving.com/cource1
+                </h4>
+                <div
+                  onClick={() => {
+                    handleCopyDetailsPageLink();
+                  }}
+                  className="relative mt-1"
+                >
+                  <CopyIcon />
+                  {copiedDetailsPageLink ? (
+                    <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                      copied
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="w-[366px] h-[36px] px-3 relative bottom-3">
+              <span className="text-gray-600 relative bg-white top-[10px] right-[100px] text-[13px] ">
+                &nbsp;&nbsp; Details page link &nbsp;&nbsp;
+              </span>
+              <div className="flex border rounded-2xl p-3 justify-between">
+                <h4 id="textToCopy1" className="">
+                  artofliving.com/cource1
+                </h4>
+                <div
+                  onClick={() => {
+                    handleCopyRegistrationLink();
+                  }}
+                  className="relative mt-1"
+                >
+                  <CopyIcon />
+                  {copiedRegistrationLink ? (
+                    <div className="absolute -left-8 bottom-12 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                      copied
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            </div>
+          </center>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
