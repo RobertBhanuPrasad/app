@@ -566,12 +566,13 @@ export const mapProgramModifiedDataStructure = (
         mapProgramFeeLevelSettingsModifiedDataStructure
       );
 
-  if (data.program_schedules !== undefined)
+  if (data.program_schedules !== undefined) {
     modifiedData.program_schedules =
       TransformDataStructureWithHigherOrderConversion(
         data?.program_schedules,
         mapProgramSchedulesModifiedDataStructure
       );
+  }
 
   if (data.program_teachers !== undefined) {
     modifiedData.program_teachers =

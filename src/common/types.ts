@@ -1062,7 +1062,7 @@ interface Users {
   id?: number;
   created_at?: Date;
   contact_id?: number;
-  contact?: Contact
+  contact?: Contact;
   user_identifier?: string;
   user_name?: string;
 }
