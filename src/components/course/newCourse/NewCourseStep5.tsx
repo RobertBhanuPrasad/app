@@ -16,6 +16,7 @@ import { useSelect } from "@refinedev/core";
 import Add from "@public/assets/Add";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { RadioGroup } from "src/ui/radio-group";
+import { NewCourseStep5FormNames } from "src/constants/NewCourseFormNames";
 
 export default function CourseTable() {
   // Hook to manage dynamically added fields in the form
@@ -34,9 +35,9 @@ export default function CourseTable() {
   useEffect(() => {
     if (!formData?.accommodation || formData?.accommodation.length <= 0) {
       append({
-        accomodationFee: "",
-        accomodationSpots: "",
-        accomodationType: undefined,
+        [NewCourseStep5FormNames?.fee_per_person]: "",
+        [NewCourseStep5FormNames?.no_of_residential_spots]: "",
+        [NewCourseStep5FormNames?.accommodation_type_id]: undefined,
       });
     }
   }, []);
@@ -215,7 +216,7 @@ export const ResidentialCourse = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "isResidentialCourse",
+    name: NewCourseStep5FormNames?.is_residential_program,
   });
 
   return (

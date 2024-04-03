@@ -1,0 +1,7 @@
+export const BASIC_DETAILS_STEP_NUMBER = 1;
+export const COURSE_DETAILS_STEP_NUMBER = 2;
+export const TIME_AND_VENUE_STEP_NUMBER = 3;
+export const FEE_STEP_NUMBER = 4;
+export const ACCOMMODATION_STEP_NUMBER = 5;
+export const CONTACT_INFO_STEP_NUMBER = 6;
+export const REVIEW_PAGE_STEP_NUMBER = 7;
