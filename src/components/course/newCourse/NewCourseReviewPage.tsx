@@ -1,21 +1,21 @@
 import { DataTable } from '@components/DataTable'
 import EditIcon from '@public/assets/EditIcon'
+import Important from '@public/assets/Important'
 import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { PROGRAM_ORGANIZER_TYPE } from 'src/constants/OptionLabels'
 import { Button } from 'src/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'src/ui/dialog'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card'
 import { getOptionValueObjectById } from 'src/utility/GetOptionValuesByOptionLabel'
 import { OrganizationDropDown, ProgramOrganizerDropDown, RadioCards, RegistrationGateway } from './NewCourseStep1'
 import {
   AllowedCountriesDropDown,
   AssistantTeachersDropDown,
-  CourseNameDropDown,
   CourseTypeDropDown,
   GeoRestriction,
   LanguageDropDown,
-  LanguageTranslationDropDown,
   MaximumCapacity,
   TeachersDropDown,
   Visibility
@@ -72,6 +72,12 @@ export default function NewCourseReviewPage() {
                 <RegistrationGateway />
               </div>
               <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
+                <Button
+                  onClick={() => setOpenBasicDetails(false)}
+                  className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+                >
+                  Cancel
+                </Button>
                 <Button onClick={() => setOpenBasicDetails(false)} className="w-[100px]">
                   Save
                 </Button>
@@ -117,13 +123,9 @@ export default function NewCourseReviewPage() {
               </div>
             </DialogTrigger>
             <DialogContent className="w-[1070px]">
-              <div className="flex flex-wrap gap-x-7 gap-y-3">
+              <div className="flex flex-wrap gap-x-7 gap-y-3 ">
                 <div className="w-80 h-20">
                   <CourseTypeDropDown />
-                </div>
-
-                <div className="w-80 h-20">
-                  <CourseNameDropDown />
                 </div>
 
                 <div className="w-80 h-20">
@@ -131,6 +133,12 @@ export default function NewCourseReviewPage() {
                 </div>
                 <div className="w-80 h-20">
                   <AssistantTeachersDropDown />
+                </div>
+                <div className="w-80 h-20">
+                  <LanguageDropDown />
+                </div>
+                <div className="w-80 h-20">
+                  <MaximumCapacity />
                 </div>
 
                 <div className="w-80 h-20">
@@ -140,23 +148,77 @@ export default function NewCourseReviewPage() {
                 <div className="w-80 h-20">
                   <GeoRestriction />
                 </div>
-                <div className="w-80 h-20">
-                  <GeoRestriction />
-                </div>
-                <div className="w-80 h-20">
-                  <LanguageDropDown />
-                </div>
-                <div className="w-80 h-20">
-                  <LanguageTranslationDropDown />
-                </div>
+
                 <div className="w-80 h-20">
                   <AllowedCountriesDropDown />
                 </div>
-                <div className="w-80 h-20">
-                  <MaximumCapacity />
+              </div>
+              <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
+                <div className="w-80 h-10 flex flex-row gap-1 items-center ">
+                  Course Description *
+                  <HoverCard>
+                    <HoverCardTrigger>
+                      <Important />
+                    </HoverCardTrigger>
+                    <HoverCardContent>
+                      <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                        Course Description text is managed by National Admin. If the National Admin has allowed
+                        Organizers / Teachers to edit Course description then only this field will be editable. If you
+                        want to change the course description and this field is not editable kindly contact your
+                        National Admin.
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                  <div className="pl-20 cursor-pointer">
+                    <EditIcon />
+                  </div>
+                  <div className="text-[#7677F4] font-normal cursor-pointer">Edit</div>
+                </div>
+                <div className="w-80 h-10 flex flex-row gap-1 items-center">
+                  Course Notes *
+                  <HoverCard>
+                    <HoverCardTrigger>
+                      <Important />
+                    </HoverCardTrigger>
+                    <HoverCardContent>
+                      <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                        Text entered in the 'Course Notes' field will be shown only on the Art of Living Website course
+                        details page.
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                  <div className="pl-20 cursor-pointer">
+                    <EditIcon />
+                  </div>
+                  <div className="text-[#7677F4] font-normal cursor-pointer">Edit</div>
+                </div>
+                <div className="w-80 h-10 flex flex-row gap-1 items-center">
+                  Course Description *
+                  <HoverCard>
+                    <HoverCardTrigger>
+                      <Important />
+                    </HoverCardTrigger>
+                    <HoverCardContent>
+                      <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                        Text entered in the 'Email Notes' field will be included in the registration confirmation email
+                        only irrespective of the transaction status (Email notes will not be shown on the Art of Living
+                        Website)
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                  <div className="pl-20 cursor-pointer">
+                    <EditIcon />
+                  </div>
+                  <div className="text-[#7677F4] font-normal cursor-pointer">Edit</div>
                 </div>
               </div>
               <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
+                <Button
+                  onClick={() => setOpenCourseDetails(false)}
+                  className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+                >
+                  Cancel
+                </Button>
                 <Button onClick={() => setOpenCourseDetails(false)} className="w-[100px]">
                   Save
                 </Button>
@@ -249,6 +311,12 @@ export default function NewCourseReviewPage() {
               </div>
               <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
                 <Button
+                  onClick={() => setOpenVenueDetails(false)}
+                  className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+                >
+                  Cancel
+                </Button>
+                <Button
                   onClick={() => {
                     setOpenVenueDetails(false)
                   }}
@@ -299,6 +367,12 @@ export default function NewCourseReviewPage() {
                 <CourseTable />
               </div>
               <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
+                <Button
+                  onClick={() => setOpenFeesDetails(false)}
+                  className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+                >
+                  Cancel
+                </Button>
                 <Button onClick={() => setOpenFeesDetails(false)} className="w-[100px]">
                   Save
                 </Button>
@@ -384,6 +458,14 @@ export default function NewCourseReviewPage() {
                   onClick={() => {
                     setOpenAccomidationDetails(false)
                   }}
+                  className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    setOpenAccomidationDetails(false)
+                  }}
                   className="w-[100px]"
                 >
                   Save
@@ -434,6 +516,14 @@ export default function NewCourseReviewPage() {
             <DialogContent className="w-[1000px]">
               <NewCourseStep6 />
               <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
+                <Button
+                  onClick={() => {
+                    setOpenContactDetails(false)
+                  }}
+                  className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+                >
+                  Cancel
+                </Button>
                 <Button
                   onClick={() => {
                     setOpenContactDetails(false)
