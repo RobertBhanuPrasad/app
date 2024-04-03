@@ -6,6 +6,7 @@ import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
 import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
@@ -42,12 +43,16 @@ function index() {
 
     const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
-    if (!loginUserData?.userData) {
-        return <div>Loading...</div>;
-    }
+    // if (!loginUserData?.userData) {
+    //     return <div>Loading...</div>;
+    // }
 
     if (viewThankyouPage) {
-        return <div>thank you page</div>;
+        return (
+            <div className="mb-8">
+                <NewCourseThankyouPage />;
+            </div>
+        );
     }
 
     if (viewPreviewPage) {
