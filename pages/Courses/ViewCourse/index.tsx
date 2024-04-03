@@ -3,7 +3,13 @@ import CurrencyIcon from "@public/assets/CurrencyIcon";
 import Important from "@public/assets/Important";
 import LocationIcon from "@public/assets/LocationIcon";
 import ParticipantsIcon from "@public/assets/ParticipantsIcon";
-import { CrudFilter, useList, useOne, useSelect } from "@refinedev/core";
+import {
+  CrudFilter,
+  CrudFilters,
+  useList,
+  useOne,
+  useSelect,
+} from "@refinedev/core";
 import { Circle } from "lucide-react";
 import React, { useState } from "react";
 import {
@@ -69,6 +75,10 @@ import FaceBookIcon from "@public/assets/FaceBookIcon";
 import TwitterIcon from "@public/assets/TwitterIcon";
 import Instagram from "@public/assets/Instagram";
 import LinkedInIcon from "@public/assets/LinkedInIcon";
+import _ from "lodash";
+import Exclamation from "@public/assets/Exclamation";
+import Cross from "@public/assets/Cross";
+import Tick from "@public/assets/Tick";
 // import { FiAlertCircle } from "react-icons/fi";
 // import { FcOk } from "react-icons/fc";
 // import { IoCloseSharp } from "react-icons/io5";
@@ -174,7 +184,38 @@ function index() {
     },
   });
 
-  
+  // Define filters based on the selected date
+  const paymentFilters: any = [
+    {
+      field: "program_id",
+      operator: "eq",
+      value: Id,
+    },
+    {
+      field: "transaction_status_id",
+      operator: "eq",
+      value: participantSuccessPaymentId,
+    },
+    {
+      field: "participant_id.is_payment_refunded",
+      operator: "eq",
+      value: false,
+    },
+  ];
+
+  const { data: participantPaymentData } = useList<any>({
+    resource: "participant_payment_history",
+    meta: {
+      select: "*,participant_id(*)",
+    },
+    filters: paymentFilters,
+  });
+
+  const totalRevenue = _.sumBy(participantPaymentData?.data, "total_amount");
+
+  console.log(participantPaymentData, "participantPaymentData");
+
+  // console.log(totalAmount, "totalAmount");
 
   console.log(participantData, "participantData");
 
@@ -245,10 +286,10 @@ function index() {
               Dropout Total participants records:
               {courseData?.data?.participant_registration?.length}
             </div>
-          </HoverCardContent>
+          </HoverCardContent> 
         </HoverCard>
         <CurrencyIcon />
-        EUR 1,960.00
+        EUR {totalRevenue}
         <HoverCard>
           <HoverCardTrigger>
             <Important />
@@ -256,7 +297,7 @@ function index() {
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
               Revenue from confirmed pending transaction participants revenue:
-              EUR 10.00
+              EUR {totalRevenue}
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -399,54 +440,60 @@ const PendingApprovalDropDown = () => {
         }}
       />
       <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
-        <DialogContent className="flex flex-col items-center">
-          <DialogHeader className="text-center">
-            {/* <FiAlertCircle className={'text-yellow-300 w-12 h-12 mx-auto'} /><br /> */}
-            <DialogDescription className="font-bold text-black text-lg">
+        <DialogContent className="flex flex-col h-[248px] w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center w-full justify-center">
+              <Exclamation />
+            </div>
+            <DialogDescription className="font-bold text-black text-lg items-center text-center">
               Are you sure you want to approve this course?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              className="text-blue-500"
-              onClick={() => {
-                setApproveModalOpen(false);
-              }}
-            >
-              No
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger>
+            <div className="w-full flex justify-center items-center gap-5">
+              <div>
                 <Button
                   type="button"
-                  className="bg-blue-500 text-white px-4 py-2"
+                  variant="outline"
+                  className="text-blue-500 w-[71px] h-[46px]"
+                  onClick={() => {
+                    setApproveModalOpen(false);
+                  }}
                 >
-                  Yes
+                  No
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="w-50">
-                <AlertDialogHeader className="text-center">
+              </div>
+              <div>
+                <AlertDialog>
                   <AlertDialogTrigger>
-                    {/* <IoCloseSharp className="absolute top-3 right-3 cursor-pointer " /> */}
+                    <Button
+                      type="button"
+                      className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                    >
+                      Yes
+                    </Button>
                   </AlertDialogTrigger>
-                  {/* <FcOk className="w-11 h-11 mx-auto" /> */}
-                  <AlertDialogTitle className="font-bold text-center">
-                    Course approved Successfully
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-center">
-                    Thank you for contribution in the course
-                    <br /> approval process.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="flex items-center justify-center">
-                  <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">
-                    Close
-                  </AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                  <AlertDialogContent className="w-50">
+                    <AlertDialogHeader className="text-center">
+                      <AlertDialogTrigger></AlertDialogTrigger>
+                      <Tick />
+                      <AlertDialogTitle className="font-bold text-center">
+                        Course approved Successfully
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="text-center">
+                        Thank you for contribution in the course
+                        <br /> approval process.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex items-center justify-center">
+                      <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">
+                        Close
+                      </AlertDialogCancel>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -454,7 +501,9 @@ const PendingApprovalDropDown = () => {
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
         <DialogContent className="flex flex-col items-center">
           <DialogHeader className="text-center">
-            {/* <FaWindowClose className="w-11 h-11 mx-auto text-red-500" /> */}
+            <div className="flex items-center w-full justify-center">
+              <Cross />{" "}
+            </div>
             <DialogTitle className="text-gray-500 text-sm">
               {" "}
               Describe your rejection reason
@@ -479,7 +528,7 @@ const PendingApprovalDropDown = () => {
                 No
               </Button>
             </DialogTrigger>
-            <AlertDialog className="w-full max-w-xs">
+            <AlertDialog>
               <AlertDialogTrigger>
                 <Button
                   type="button"
@@ -488,12 +537,12 @@ const PendingApprovalDropDown = () => {
                   Reject
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="w-50">
+              <AlertDialogContent className="w-[414px] h-[279px]">
                 <AlertDialogHeader className="text-center">
-                  <AlertDialogTrigger>
-                    {/* <IoCloseSharp className="absolute top-3 right-3 cursor-pointer " /> */}
-                  </AlertDialogTrigger>
-                  {/* <FaWindowClose className="w-11 h-11 mx-auto text-red-500" /> */}
+                  <AlertDialogTrigger></AlertDialogTrigger>
+                  <div className="flex items-center w-full justify-center">
+                    <Cross />{" "}
+                  </div>
                   <AlertDialogTitle className="font-bold text-center">
                     Course Rejected
                   </AlertDialogTitle>
@@ -521,13 +570,13 @@ const DisplayingCourseStatus = ({ statusId }: any) => {
   switch (statusId) {
     case "Active":
       statusText = "Active";
-      statusColor = "red";
+      statusColor = "#15AF53";
       break;
     case "Pending Review":
       statusText = "Pending Review";
       statusColor = "#FFB900";
       break;
-    case "Cancelled":
+    case "Canceled":
       statusText = "Cancelled";
       statusColor = "#FFB900";
       break;
@@ -548,9 +597,11 @@ const DisplayingCourseStatus = ({ statusId }: any) => {
   return (
     <div>
       <div
-        className={`w-[70px] h-6 bg-[${statusColor}0D] rounded-[15px] text-[${statusColor}] text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] `}
+        className={`w-[70px] h-6 bg-[${statusColor}] rounded-[15px] text-[${statusColor}] text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] `}
       >
-        <Circle className={`fill-[${statusColor}] size-2`} />
+        <Circle
+          className={`fill-[${statusColor}] size-2 color-[${statusColor}]`}
+        />
         {statusText}
       </div>
     </div>
