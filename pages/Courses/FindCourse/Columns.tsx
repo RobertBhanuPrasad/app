@@ -182,7 +182,7 @@ export const columns: ColumnDef<Program>[] = [
         <div>
           {row?.original?.course_accounting_status
             ? row?.original?.course_accounting_status
-            : ""}
+            : "-"}
         </div>
       );
     },
@@ -190,7 +190,7 @@ export const columns: ColumnDef<Program>[] = [
   {
     accessorKey: "Course Accounting Closure Date",
     header: () => {
-      return <div>Course Accounting Status</div>;
+      return <div>Course Accounting Closure Date</div>;
     },
     cell: ({ row }: any) => {
       return <div>-</div>;
