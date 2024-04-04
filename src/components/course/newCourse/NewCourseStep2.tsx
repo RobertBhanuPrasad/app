@@ -5,7 +5,7 @@ import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import { NewCourseStep2FormNames } from "src/constants/NewCourseFormNames";
+import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";

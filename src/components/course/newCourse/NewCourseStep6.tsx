@@ -3,6 +3,7 @@ import Delete from "@public/assets/Delete";
 import React from "react";
 import { useEffect } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
+import { NewCourseStep6FormNames } from "src/constants/NewCourseFormNames";
 import { Input } from "src/ui/input";
 import { Textarea } from "src/ui/textarea";
 
@@ -15,7 +16,9 @@ function NewCourseStep6() {
 
   const {
     field: { value: courseEmails, onChange: courseEmailOnChange },
-  } = useController({ name: "contact.courseEmails" });
+  } = useController({
+    name: NewCourseStep6FormNames?.bcc_registration_confirmation_email,
+  });
 
   const formData = getValues();
 
@@ -24,13 +27,13 @@ function NewCourseStep6() {
   // useEffect to add an initial contact field if none exists
   useEffect(() => {
     if (fields.length === 0) {
-      append({ contactName: "", contactEmail: "", contactMobile: "" });
+      append({ contact_name: "", contact_email: "", contact_number: "" });
     }
   }, []);
 
   // Function to handle adding a new contact item
   const handleAddItem = () => {
-    append({ contactName: "", contactEmail: "", contactMobile: "" });
+    append({ contact_name: "", contact_email: "", contact_number: "" });
   };
 
   // Function to handle deleting a contact item based on index
@@ -126,7 +129,7 @@ export default NewCourseStep6;
 export const ContactName = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController({ name: `contact[${index}].contactName` });
+  } = useController({ name: `contact[${index}].contact_name` });
   return (
     <Input
       placeholder="Enter contact name"
@@ -140,7 +143,7 @@ export const ContactName = ({ index }: any) => {
 export const ContactEmail = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController({ name: `contact[${index}].contactEmail` });
+  } = useController({ name: `contact[${index}].contact_email` });
   return (
     <Input
       placeholder="Enter contact email"
@@ -155,7 +158,7 @@ export const ContactEmail = ({ index }: any) => {
 export const ContactMobile = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController({ name: `contact[${index}].contactMobile` });
+  } = useController({ name: `contact[${index}].contact_number` });
   return (
     <Input
       placeholder="Enter contact mobile"

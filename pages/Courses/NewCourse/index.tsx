@@ -35,7 +35,7 @@ import {
   COURSE_DETAILS_STEP_NUMBER,
   FEE_STEP_NUMBER,
   TIME_AND_VENUE_STEP_NUMBER,
-} from "src/constants/NewCourseConstants";
+} from "src/constants/CourseConstants";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -55,18 +55,11 @@ function index() {
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
 
-  const loggedUserData = {
-    value: loginUserData?.userData?.id,
-    label:
-      loginUserData?.userData?.contact_id?.first_name +
-      " " +
-      loginUserData?.userData?.contact_id?.last_name,
-  };
+  const loggedUserData = loginUserData?.userData?.id;
 
   const { currentStep, setCurrentStep } = stepStore();
 
   // Array of step titles, icons, and colors
-  console.log(currentStep, "aaaaaaaaa");
   const stepTitles = [
     {
       value: BASIC_DETAILS_STEP_NUMBER,
@@ -139,12 +132,12 @@ function NewCourse() {
   };
 
   const defaultValues = {
-    visibility: "public",
-    displayLanguage: "true",
-    isGeoRestriction: "true",
-    isResidentialCourse: "No",
-    accommodationPaymentMode: "Pay Online",
-    programOrganizers: [loggedUserData],
+    [NewCourseStep2FormNames?.visibility_id]: "public",
+    [NewCourseStep2FormNames?.is_language_translation_for_participants]: "true",
+    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: "true",
+    [NewCourseStep5FormNames?.is_residential_program]: "No",
+    [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: "Pay Online",
+    [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
   };
 
   const schema = z.object({

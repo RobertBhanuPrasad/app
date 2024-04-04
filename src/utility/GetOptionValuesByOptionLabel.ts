@@ -14,10 +14,16 @@ export const getOptionValuesByOptionLabel = (optionLabelKey: string): any[] => {
   );
 };
 
+/**
+ * @function getOptionValueObjectByOptionOrder function is used to get object of option_values with option_labels KEY and option_values order.
+ * @param {string} optionLabel - The Key of the option label to search for.optionLabel.
+ * @param {number} optionOrder - order of option value
+ * @returns {object} An array of option values matching the provided option label key.
+ */
 export const getOptionValueObjectByOptionOrder = (
   optionLabel: string,
   optionOrder: number
-): any => {
+): object => {
   const { optionLabelValue } = optionLabelValueStore();
 
   const foundOptionValue = _.find(
