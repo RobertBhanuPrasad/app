@@ -144,8 +144,8 @@ const SchedulesHeader = () => {
               hoursFormatOnChange(val);
             }}
           >
-            <SelectTrigger className="w-[320px]">
-              <SelectValue placeholder="Select Time Format" />
+            <SelectTrigger className="w-[161px]">
+              <SelectValue placeholder="Select Format" />
             </SelectTrigger>
             <SelectContent>
               {timeFormatOptions?.map((option: any) => (
