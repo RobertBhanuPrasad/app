@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
 
-export const columns: ColumnDef<Program>[] = [
+export const columns: ColumnDef<ProgramDataBaseType>[] = [
   {
     accessorKey: "state_id",
     enableHiding: false,
@@ -43,7 +43,10 @@ export const columns: ColumnDef<Program>[] = [
     cell: ({ row }) => {
       return (
         <div>
-          <div>{row?.original?.state?.name}</div>
+          <div>
+            {typeof row?.original?.state_id !== "number" &&
+              row?.original?.state_id?.name}
+          </div>
         </div>
       );
     },
@@ -57,7 +60,8 @@ export const columns: ColumnDef<Program>[] = [
     cell: ({ row }) => {
       return (
         <div className="lowercase text-center">
-          {row?.original?.program_type?.name}
+          {typeof row?.original?.program_type_id !== "number" &&
+            row?.original?.program_type_id?.name}
         </div>
       );
     },

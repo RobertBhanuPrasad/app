@@ -77,6 +77,15 @@ const TableSection = () => {
     },
   });
 
+  // const { tableQueryResult: Data } = useTable({
+  //   resource: "program",
+  //   meta: {
+  //     select: "*,program_type_id!inner(name) , state_id!inner(name)",
+  //   },
+  // });
+
+  // console.log("heyy program", Data);
+
   const modifiedData = Object.values(
     mapProgramModifiedDataStructure(
       programData?.data?.data as ProgramDataBaseType
