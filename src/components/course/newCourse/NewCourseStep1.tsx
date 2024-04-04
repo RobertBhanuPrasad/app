@@ -8,7 +8,7 @@ import { useController, useFormContext } from "react-hook-form";
 import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
-} from "src/constants/NewCourseFormNames";
+} from "src/constants/CourseConstants";
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import {
   I_AM_CO_TEACHING,
@@ -32,15 +32,6 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep1() {
-  const { data: courseData } = useOne({
-    resource: "program",
-    id: 10,
-    meta: {
-      select:
-        "*,program_fee_settings_id(*,program_fee_level_settings!inner(*,fee_level_id(*))),program_fee_level_settings(*,fee_level_id(*)),program_details_info(*,max_capacity,visibility_id(*)),program_organizers(*,user_id(*,contact_id(*))),program_translation_languages(*,language_id(*)),program_languages(*,language_id(*)),program_schedules(*),venue(*,center_id!inner(*),city_id!inner(*),state_id!inner(*)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(*)),program_type_id!inner(*),program_assistant_teachers!inner(*,user_id(*,contact_id(*))),program_teachers!inner(*,user_id(*,contact_id(*)))",
-    },
-  });
-  console.log(courseData, "courseData aaaaaaaaaaaa");
   return (
     <div>
       <RadioCards />
@@ -264,6 +255,8 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
+  const [searchValue, setSearchValue] = useState<string>("");
+
   const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
     optionLabel: "name",
@@ -284,6 +277,11 @@ const OrganizationDropDown = () => {
     name: NewCourseStep1FormNames?.organization_id,
   });
 
+  const handleSearch = (val: { target: { value: string } }) => {
+    onSearch(val.target.value);
+    setSearchValue(val.target.value);
+  };
+
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
@@ -298,14 +296,21 @@ const OrganizationDropDown = () => {
             <SelectValue placeholder="Select Organization" />
           </SelectTrigger>
           <SelectContent>
-            <Input onChange={(val) => onSearch(val.target.value)} />
+            <Input onChange={handleSearch} />
             <SelectItems onBottomReached={() => {}}>
-              {options?.map((organization) => {
+              {options?.map((option, index) => {
                 return (
                   <div>
-                    <SelectItem value={organization?.value}>
-                      {organization?.label}
+                    <SelectItem
+                      key={option.value}
+                      value={option.value}
+                      className="h-[44px]"
+                    >
+                      {option.label}
                     </SelectItem>
+                    {index < options?.length - 1 && (
+                      <hr className="border-[#D6D7D8]" />
+                    )}
                   </div>
                 );
               })}

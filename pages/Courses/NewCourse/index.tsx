@@ -35,7 +35,7 @@ import {
   COURSE_DETAILS_STEP_NUMBER,
   FEE_STEP_NUMBER,
   TIME_AND_VENUE_STEP_NUMBER,
-} from "src/constants/NewCourseConstants";
+} from "src/constants/CourseConstants";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();

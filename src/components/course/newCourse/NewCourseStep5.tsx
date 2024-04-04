@@ -16,7 +16,7 @@ import { useSelect } from "@refinedev/core";
 import Add from "@public/assets/Add";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { RadioGroup } from "src/ui/radio-group";
-import { NewCourseStep5FormNames } from "src/constants/NewCourseFormNames";
+import { NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
   Select,
   SelectContent,
@@ -117,12 +117,19 @@ const columns = (append: any, remove: any, formData: any) => [
             <SelectContent>
               <Input onChange={(val) => onSearch(val.target.value)} />
               <SelectItems onBottomReached={() => {}}>
-                {filteredOptions?.map((accommodation) => {
+                {filteredOptions?.map((option, index) => {
                   return (
                     <div>
-                      <SelectItem value={accommodation?.value}>
-                        {accommodation?.label}
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className="h-[44px]"
+                      >
+                        {option.label}
                       </SelectItem>
+                      {index < options?.length - 1 && (
+                        <hr className="border-[#D6D7D8]" />
+                      )}
                     </div>
                   );
                 })}

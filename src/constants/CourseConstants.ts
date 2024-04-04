@@ -1,4 +1,24 @@
-export const NewCourseStep1FormNames = {
+export const BASIC_DETAILS_STEP_NUMBER = 1;
+export const COURSE_DETAILS_STEP_NUMBER = 2;
+export const TIME_AND_VENUE_STEP_NUMBER = 3;
+export const FEE_STEP_NUMBER = 4;
+export const ACCOMMODATION_STEP_NUMBER = 5;
+export const CONTACT_INFO_STEP_NUMBER = 6;
+export const REVIEW_PAGE_STEP_NUMBER = 7;
+
+//Course details page tabs constant
+export const COURSE_DETAILS_TAB = "1";
+export const PARTICIPANTS_TAB = "2";
+export const REVENUE_SUMMARY_TAB = "3";
+export const COURSE_ACCOUNTING_FORM_TAB = "4";
+
+type ProgramKeys = keyof Program;
+
+type NewCourseFormNames = {
+  [key in ProgramKeys]?: string;
+};
+
+export const NewCourseStep1FormNames: NewCourseFormNames = {
   organization_id: "organization_id",
   organization: "organization",
   organizer_ids: "organizer_ids",
@@ -7,13 +27,12 @@ export const NewCourseStep1FormNames = {
   program_created_by: "program_created_by",
 };
 
-export const NewCourseStep2FormNames = {
+export const NewCourseStep2FormNames: NewCourseFormNames = {
   program_type_id: "program_type_id",
   program_type: "program_type",
   teacher_ids: "teacher_ids",
   assistant_teacher_ids: "assistant_teacher_ids",
   visibility_id: "visibility_id",
-  teachers: "teachers",
   is_language_translation_for_participants:
     "is_language_translation_for_participants",
   program_alias_name_id: "program_alias_name_id",
@@ -24,18 +43,18 @@ export const NewCourseStep2FormNames = {
   max_capacity: "max_capacity",
 };
 
-export const NewCourseStep3FormNames = {
+export const NewCourseStep3FormNames: NewCourseFormNames = {
   online_url: "online_url",
   hour_format_id: "hour_format_id",
+  time_zone_id: "time_zone_id",
   schedules: "schedules",
-  time_zone_id:"time_zone_id"
 };
 
-export const NewCourseStep4FormNames = {
+export const NewCourseStep4FormNames: NewCourseFormNames = {
   is_early_bird_enabled: "is_early_bird_enabled",
 };
 
-export const NewCourseStep5FormNames = {
+export const NewCourseStep5FormNames: NewCourseFormNames = {
   accommodation: "accommodation",
   is_residential_program: "is_residential_program",
   fee_per_person: "fee_per_person",
@@ -44,7 +63,7 @@ export const NewCourseStep5FormNames = {
   accommodation_fee_payment_mode: "accommodation_fee_payment_mode",
 };
 
-export const NewCourseStep6FormNames = {
+export const NewCourseStep6FormNames: NewCourseFormNames = {
   contact: "contact",
   contact_name: "contact_name",
   contact_email: "contact_email",

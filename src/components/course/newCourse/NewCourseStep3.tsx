@@ -23,7 +23,7 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { date } from "zod";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
-import { NewCourseStep3FormNames } from "src/constants/NewCourseFormNames";
+import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import {
   Select,
   SelectContent,
@@ -168,12 +168,19 @@ const SchedulesHeader = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItems onBottomReached={() => {}}>
-                {options?.map((timeZone) => {
+                {options?.map((option,index) => {
                   return (
                     <div>
-                      <SelectItem value={timeZone?.value}>
-                        {timeZone?.label}
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className="h-[44px]"
+                      >
+                        {option.label}
                       </SelectItem>
+                      {index < options?.length - 1 && (
+                        <hr className="border-[#D6D7D8]" />
+                      )}
                     </div>
                   );
                 })}

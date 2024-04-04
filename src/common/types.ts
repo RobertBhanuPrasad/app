@@ -213,6 +213,16 @@ interface ProgramDetailsInfoDataBaseType {
   online_url?: string;
   visibility_id?: number | OptionValuesDataBaseType;
   early_bird_cut_off_period?: number;
+  hour_format_id?: number | OptionValuesDataBaseType;
+  time_zone_id?: number | TimeZone;
+}
+
+interface TimeZoneDataBaseType {
+  id?: number;
+  created_at?: string;
+  name?: string;
+  utc_off_set?: string;
+  country_config_id?: number;
 }
 
 interface ProgramFeeLevelSettingsDataBaseType {
@@ -571,11 +581,12 @@ interface ProgramDataBaseType {
   program_accommodations?: AccommodationTypesDataBaseType[];
   program_assistant_teachers?: ProgramAssistantTeachersDataBaseType[];
   program_contact_details?: ProgramContactDetailsDataBaseType[];
-  program_details_info?: ProgramDetailsInfoDataBaseType[];
+  program_details_info?: ProgramDetailsInfoDataBaseType;
   program_fee_level_settings?: ProgramFeeLevelSettingsDataBaseType[];
   program_schedules?: ProgramSchedulesDataBaseType[];
   program_teachers?: ProgramTeachersDataBaseType[];
   program_translation_languages?: ProgramTranslationLanguagesDataBaseType[];
+  program_languages?: ProgramLanguages[];
   program_organizers?: ProgramOrganizersDataBaseType[];
 }
 
@@ -808,6 +819,10 @@ interface ProgramDetailsInfo {
   visibility_id?: number;
   visibility?: OptionValues;
   early_bird_cut_off_period?: number;
+  hour_format_id?: number;
+  hour_format?: OptionValues;
+  time_zone_id?: number;
+  time_zone?: TimeZone;
 }
 
 interface ProgramFeeLevelSettings {
@@ -1171,6 +1186,14 @@ interface ParticipantRegistration {
   payment_status_id?: number;
 }
 
+interface TimeZone {
+  id?: number;
+  created_at?: string;
+  name?: string;
+  utc_off_set?: string;
+  country_config_id?: number;
+}
+
 interface Program {
   id?: number;
   created_at?: Date;
@@ -1216,6 +1239,11 @@ interface Program {
   visibility_id?: number;
   visibility?: OptionValues;
   early_bird_cut_off_period?: number;
+  hour_format_id?: number;
+  hour_format?: OptionValues;
+  time_zone_id?: number;
+  time_zone?: TimeZone;
+  bcc_registration_confirmation_email?: string;
   program_accommodations?: AccommodationTypes[];
   program_assistant_teachers?: ProgramAssistantTeachers[];
   assistant_teacher_ids?: number[];
@@ -1230,5 +1258,7 @@ interface Program {
   program_organizers?: ProgramOrganizers[];
   organizer_ids?: number[];
   program_languages?: ProgramLanguages[];
-  languages_ids?: number[];
+  language_ids?: number[];
+  accommodation?: ProgramAccommodations[];
+  schedules?: ProgramSchedules[];
 }
