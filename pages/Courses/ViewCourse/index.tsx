@@ -18,6 +18,7 @@ import {
   TIME_FORMAT,
 } from "src/constants/OptionLabels";
 import {
+  CANCELED_ATTENDANCE_STATUS,
   COMPLETED_ATTENDANCE_STATUS,
   DROPOUT_ATTENDANCE_STATUS,
   PARTICIPANT_PENDING_PAYMENT_STATUS,
@@ -79,6 +80,7 @@ import _ from "lodash";
 import Exclamation from "@public/assets/Exclamation";
 import Cross from "@public/assets/Cross";
 import Tick from "@public/assets/Tick";
+import { useRouter } from "next/router";
 // import { FiAlertCircle } from "react-icons/fi";
 // import { FcOk } from "react-icons/fc";
 // import { IoCloseSharp } from "react-icons/io5";
@@ -110,6 +112,11 @@ function index() {
   const pendingAttendanceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     PENDING_ATTENDANCE_STATUS
+  )?.id;
+
+  const canceledAttendanceStatusId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_ATTENDANCE_STATUS,
+    CANCELED_ATTENDANCE_STATUS
   )?.id;
 
   const completedAttendanceStatusId = getOptionValueObjectByOptionOrder(
@@ -191,15 +198,31 @@ function index() {
       operator: "eq",
       value: Id,
     },
+
     {
-      field: "transaction_status_id",
-      operator: "eq",
-      value: participantSuccessPaymentId,
+      operator: "or",
+      value: [
+        {
+          field: "payment_status_id",
+          operator: "eq",
+          value: participantSuccessPaymentId,
+        },
+        {
+          field: "payment_status_id",
+          operator: "eq",
+          value: participantPendingPaymentId,
+        },
+      ],
     },
     {
       field: "participant_id.is_payment_refunded",
       operator: "eq",
       value: false,
+    },
+    {
+      field: "participant_attendence_status_id",
+      operator: "neq",
+      value: canceledAttendanceStatusId,
     },
   ];
 
@@ -258,6 +281,8 @@ function index() {
     },
   ];
 
+  const router = useRouter();
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between">
@@ -274,7 +299,14 @@ function index() {
       <div className="flex flex-row gap-2 items-center mt-3">
         <CalenderIcon color="#7677F4" />
         {startDate} to {endDate}
-        <ParticipantsIcon /> {participantData?.total}
+        <div
+          onClick={() => {
+            router.push("/");
+          }}
+        >
+          <ParticipantsIcon />
+        </div>
+        {participantData?.total}
         <HoverCard>
           <HoverCardTrigger>
             <Important />
@@ -286,9 +318,15 @@ function index() {
               Dropout Total participants records:
               {courseData?.data?.participant_registration?.length}
             </div>
-          </HoverCardContent> 
+          </HoverCardContent>
         </HoverCard>
-        <CurrencyIcon />
+        <div
+          onClick={() => {
+            router.push("/");
+          }}
+        >
+          <CurrencyIcon />
+        </div>
         EUR {totalRevenue}
         <HoverCard>
           <HoverCardTrigger>
