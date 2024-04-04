@@ -592,6 +592,11 @@ export const mapProgramModifiedDataStructure = (
         data?.program_translation_languages,
         mapProgramTranslationLanguagesModifiedDataStructure
       );
+
+    modifiedData.translation_language_ids = _.map(
+      modifiedData?.program_translation_languages,
+      "language_id"
+    ) as number[];
   }
 
   if (data.program_organizers !== undefined) {

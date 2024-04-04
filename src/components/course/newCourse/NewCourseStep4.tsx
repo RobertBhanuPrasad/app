@@ -20,16 +20,17 @@ export default function CourseTable() {
   const formData = watch();
 
   const fetchFeeData = async () => {
+    //TODO: Need to integrate with form Data
     const { data, error } = await supabaseClient.functions.invoke(
       "course-fee",
       {
         method: "POST",
         body: {
-          state_id: "1",
-          city_id: "1",
+          state_id: "3",
+          city_id: "3",
           center_id: "1",
           start_date: "2024-03-18T07:00:00-00:00",
-          program_type_id: "1",
+          program_type_id: formData?.program_type_id,
         },
       }
     );

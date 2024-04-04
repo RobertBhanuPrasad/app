@@ -16,11 +16,18 @@ import {
   I_AM_TEACHING,
 } from "src/constants/OptionValueOrder";
 import { Card } from "src/ui/card";
-import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
 import { Label } from "src/ui/label";
 import { MultiSelect } from "src/ui/multi-select";
 import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
@@ -123,23 +130,7 @@ const RadioCards = () => {
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.value === "Teacher");
 
-  const loginInTeacherData = {
-    value: {
-      id: loginUserData?.userData?.id,
-      contact_id: {
-        first_name: loginUserData?.userData?.contact_id?.first_name,
-        last_name: loginUserData?.userData?.contact_id?.last_name,
-      },
-      created_at: loginUserData?.userData?.created_at,
-      program_type_teachers: loginUserData?.userData?.program_type_teachers,
-      user_identifier: loginUserData?.userData?.user_identifier,
-      user_name: loginUserData?.userData?.user_name,
-    },
-    label:
-      loginUserData?.userData?.contact_id?.first_name +
-      " " +
-      loginUserData?.userData?.contact_id?.last_name,
-  };
+  const loginInTeacherData = loginUserData?.userData?.id;
 
   const {
     field: { value: teachers, onChange: teachersOnChange },
@@ -293,46 +284,36 @@ const OrganizationDropDown = () => {
     name: NewCourseStep1FormNames?.organization_id,
   });
 
-  const {
-    field: { onChange: organizationDetailsOnChange },
-  } = useController({
-    name: NewCourseStep1FormNames?.organization,
-  });
-
-  const {
-    resetField,
-    setValue,
-    formState: { errors },
-  } = useFormContext();
-
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
         <div className="text-xs font-normal text-[#333333]">Organization *</div>
-
-        <CustomSelect
-          error={organizationError}
+        <Select
           value={value}
-          placeholder="Select Organization"
-          data={options}
-          onBottomReached={() => {}}
-          onSearch={(val: string) => {
-            onSearch(val);
+          onValueChange={(value: any) => {
+            onChange(value);
           }}
-          onChange={(val) => {
-            onChange(val);
-            resetField("organization");
-            setValue("organization", val);
-            organizationDetailsOnChange(
-              queryResult?.data?.data?.filter(
-                //Need to change val?.value to val in future.
-                (value) => value?.id == val?.value
-              )?.[0]
-            );
-          }}
-        />
+        >
+          <SelectTrigger className="w-[320px]">
+            <SelectValue placeholder="Select Organization" />
+          </SelectTrigger>
+          <SelectContent>
+            <Input onChange={(val) => onSearch(val.target.value)} />
+            <SelectItems onBottomReached={() => {}}>
+              {options?.map((organization) => {
+                return (
+                  <div>
+                    <SelectItem value={organization?.value}>
+                      {organization?.label}
+                    </SelectItem>
+                  </div>
+                );
+              })}
+            </SelectItems>
+          </SelectContent>
+        </Select>
 
-        {errors.organization && (
+        {organizationError && (
           <span className="text-[#FF6D6D] text-[12px]">
             Select Organizer Name.
           </span>

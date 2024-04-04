@@ -19,7 +19,7 @@ export const NewCourseStep2FormNames = {
   program_alias_name_id: "program_alias_name_id",
   is_geo_restriction_applicable: "is_geo_restriction_applicable",
   language_ids: "language_ids",
-  program_translation_language_ids: "program_translation_language_ids",
+  translation_language_ids: "translation_language_ids",
   allowed_countries: "allowed_countries",
   max_capacity: "max_capacity",
 };
@@ -28,6 +28,7 @@ export const NewCourseStep3FormNames = {
   online_url: "online_url",
   hour_format_id: "hour_format_id",
   schedules: "schedules",
+  time_zone_id:"time_zone_id"
 };
 
 export const NewCourseStep4FormNames = {
@@ -40,8 +41,13 @@ export const NewCourseStep5FormNames = {
   fee_per_person: "fee_per_person",
   no_of_residential_spots: "no_of_residential_spots",
   accommodation_type_id: "accommodation_type_id",
+  accommodation_fee_payment_mode: "accommodation_fee_payment_mode",
 };
 
 export const NewCourseStep6FormNames = {
   contact: "contact",
+  contact_name: "contact_name",
+  contact_email: "contact_email",
+  contact_number: "contact_number",
+  bcc_registration_confirmation_email: "bcc_registration_confirmation_email",
 };

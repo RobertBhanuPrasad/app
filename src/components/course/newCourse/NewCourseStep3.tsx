@@ -24,6 +24,14 @@ import {
 import { date } from "zod";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { NewCourseStep3FormNames } from "src/constants/NewCourseFormNames";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -94,6 +102,10 @@ const SchedulesHeader = () => {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
   } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
 
+  const {
+    field: { value: timeZones, onChange: timeZonesOnChange },
+  } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
+
   let timeFormatOptions =
     getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
 
@@ -105,6 +117,20 @@ const SchedulesHeader = () => {
       };
     }
   );
+
+  const { options } = useSelect({
+    resource: "time_zones",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+ 
   return (
     <div className="h-9 flex justify-between">
       <div className="font-semibold text-[#333333] flex items-center">
@@ -124,14 +150,29 @@ const SchedulesHeader = () => {
           />
         </div>
         <div className="w-[257px]">
-          <CustomSelect
-            value={""}
-            placeholder="Select time format"
-            data={timeFormatOptions}
-            onBottomReached={() => {}}
-            onSearch={() => {}}
-            onChange={() => {}}
-          />
+          <Select
+            value={timeZones}
+            onValueChange={(value: any) => {
+              timeZonesOnChange(value);
+            }}
+          >
+            <SelectTrigger className="w-[257px]">
+              <SelectValue placeholder="Select Time Zone" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItems onBottomReached={() => {}}>
+                {options?.map((timeZone) => {
+                  return (
+                    <div>
+                      <SelectItem value={timeZone?.value}>
+                        {timeZone?.label}
+                      </SelectItem>
+                    </div>
+                  );
+                })}
+              </SelectItems>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
