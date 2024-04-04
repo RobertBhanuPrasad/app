@@ -1,10 +1,14 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
+import FilterIcon from "@public/assets/FilterIcon";
+import SearchIcon from "@public/assets/Search";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { Input } from "src/ui/input";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "src/ui/select";
 
 function index() {
   return (
@@ -22,8 +26,20 @@ const HeaderSection = () => {
 
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
-      <div>All filters</div>
-      <div>Search</div>
+      <div>
+        <Button className="flex flex-row gap-2 !rounded-xl" variant="outline">
+          <FilterIcon />
+          <div>All Filters</div>
+        </Button>
+      </div>
+      <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
+        <SearchIcon />
+        <Input
+          type="text"
+          className="border-none focus:outline-none"
+          placeholder={`Search by Course ID`}
+        />
+      </div>
       <div>
         {" "}
         <Dialog open={open}>
@@ -44,7 +60,28 @@ const HeaderSection = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <div>course type</div>
+      <div>
+        {/* <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Accommodation" />
+          </SelectTrigger>
+          <SelectContent>
+            <Input onChange={(val) => onSearch(val.target.value)} />
+            <SelectItems onBottomReached={() => {}}>
+              {filteredOptions?.map((accommodation) => {
+                return (
+                  <div>
+                    <SelectItem value={accommodation?.value}>
+                      {accommodation?.label}
+                    </SelectItem>
+                  </div>
+                );
+              })}
+            </SelectItems>
+          </SelectContent>
+        </Select> */}
+      </div>
+
       <div className="flex flex-row gap-4 items-center">
         <div className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4]">
           <ClearAll />
