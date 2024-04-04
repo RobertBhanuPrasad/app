@@ -189,6 +189,7 @@ export const CourseTypeDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: courseTypeError },
   } = useController({
     name: NewCourseStep2FormNames?.program_type_id,
   });
@@ -265,7 +266,11 @@ export const CourseTypeDropDown = () => {
           getCourseTypeSettings(val);
           onChange(val);
         }}
+        error={courseTypeError}
       />
+      {courseTypeError && (
+        <span className="text-[#FF6D6D] text-[12px]">Select course type</span>
+      )}
     </div>
   );
 };
@@ -407,6 +412,7 @@ const TeachersDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: teachersErrors },
   } = useController({
     name: NewCourseStep2FormNames?.teacher_ids,
   });
@@ -440,8 +446,12 @@ const TeachersDropDown = () => {
             };
           }
         }}
+        error={teachersErrors}
       />
-    </div>
+      {teachersErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">Select Teacher</span>
+      )}
+    </div>  
   );
 };
 
@@ -503,6 +513,7 @@ const AssistantTeachersDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: assistantTeachersErrors },
   } = useController({
     name: NewCourseStep2FormNames?.assistant_teacher_ids,
   });
@@ -519,7 +530,11 @@ const AssistantTeachersDropDown = () => {
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={onChange}
+        error={assistantTeachersErrors}
       />
+      {assistantTeachersErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">Select Assistant Teacher</span>
+      )}
     </div>
   );
 };
@@ -677,6 +692,7 @@ const LanguageDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: languageError },
   } = useController({
     name: NewCourseStep2FormNames?.language_ids,
   });
@@ -739,7 +755,11 @@ const LanguageDropDown = () => {
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
         onChange={onChange}
+        error={languageError}
       />
+      {languageError && (
+        <span className="text-[#FF6D6D] text-[12px]">Select Language</span>
+      )}
     </div>
   );
 };
@@ -783,6 +803,7 @@ const LanguageTranslationDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: languageTranslationError },
   } = useController({
     name: NewCourseStep2FormNames?.program_translation_language_ids,
   });
@@ -804,7 +825,11 @@ const LanguageTranslationDropDown = () => {
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
         onChange={onChange}
+        error={languageTranslationError}
       />
+      {languageTranslationError && (
+        <span className="text-[#FF6D6D] text-[12px]">Select Language Translation</span>
+      )}
     </div>
   );
 };
@@ -829,6 +854,7 @@ const AllowedCountriesDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: allowedCountriesErrors },
   } = useController({
     name: NewCourseStep2FormNames?.allowed_countries,
   });
@@ -846,7 +872,11 @@ const AllowedCountriesDropDown = () => {
         onBottomReached={() => {}}
         onSearch={() => {}}
         onChange={onChange}
+        error={allowedCountriesErrors}
       />
+      {allowedCountriesErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">Select Allowed Countries </span>
+      )}
     </div>
   );
 };
@@ -864,6 +894,7 @@ const MaximumCapacity = () => {
 
   const {
     field: { value = maxAttendees, onChange },
+    fieldState:{error}
   } = useController({ name: NewCourseStep2FormNames?.max_capacity });
 
   return (
@@ -876,7 +907,11 @@ const MaximumCapacity = () => {
           onChange(val?.target?.value);
         }}
         className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
+        error={error ? true : false}
       />
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px]">Give No.of Attend</span>
+      )}
     </div>
   );
 };

@@ -9,7 +9,7 @@ import { CrudFilters, useList, useSelect } from "@refinedev/core";
 import { format, setDate } from "date-fns";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useController, useFieldArray, useFormContext } from "react-hook-form";
+import { useController, useFieldArray, useFormContext, useFormState } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { Button } from "src/ui/button";
 import { DateCalendar } from "src/ui/DateCalendar";
@@ -92,6 +92,7 @@ const Schedules = () => {
 const SchedulesHeader = () => {
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
+    fieldState:{error: schedulesHeaderErrors}
   } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
 
   let timeFormatOptions =
@@ -121,6 +122,7 @@ const SchedulesHeader = () => {
             onChange={(val) => {
               hoursFormatOnChange(val);
             }}
+            error={schedulesHeaderErrors}
           />
         </div>
         <div className="w-[257px]">
@@ -143,6 +145,7 @@ const Sessions = () => {
   });
 
   const { watch } = useFormContext();
+  const { errors } = useFormState()
 
   const [open, setOpen] = useState(false);
 
@@ -194,7 +197,8 @@ const Sessions = () => {
                 <DialogTrigger asChild>
                   <Button
                     onClick={() => setOpen(true)}
-                    className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
+                    className={`w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 ${errors?.schedules && "border-[#FF6D6D]"}`}
+                    
                     variant="outline"
                   >
                     <div>
@@ -255,6 +259,8 @@ const TimePicker = ({
   index: number;
   is12HourFormat: Boolean;
 }) => {
+  const { errors } = useFormState()
+
   return (
     <div className="flex items-center gap-6">
       <div className="text-sm text-[#999999] font-normal">From</div>
@@ -262,6 +268,7 @@ const TimePicker = ({
         <TimeSelector
           name={`${NewCourseStep3FormNames?.schedules}[${index}].start`}
           is12HourFormat={is12HourFormat}
+          error={errors?.schedules ? true : false}
         />
       </div>
       <div className="text-sm text-[#999999] font-normal">To</div>
@@ -269,6 +276,8 @@ const TimePicker = ({
         <TimeSelector
           name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
           is12HourFormat={is12HourFormat}
+          error={errors?.schedules ? true : false}
+
         />
       </div>
     </div>
@@ -428,9 +437,11 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 const TimeSelector = ({
   name, // Name of the time selector
   is12HourFormat, // Boolean indicating whether to display time in 12-hour format
+  error
 }: {
   name: string;
   is12HourFormat: Boolean;
+  error : boolean
 }) => {
   // Maximum hours depending on the time format
   const maximumHours = is12HourFormat ? 12 : 23;
@@ -549,7 +560,7 @@ const TimeSelector = ({
   return (
     <Popover>
       <PopoverTrigger name={`TimeSelector ${name}`}>
-        <div className="border border-1 py-[10px] px-[14px] flex justify-between items-center rounded-xl cursor-pointer w-[233px]">
+        <div className={`border border-1 py-[10px] px-[14px] flex justify-between items-center rounded-xl cursor-pointer w-[233px] ${error && "border-[red]"}`}>
           <div className="flex gap-2 items-center">
             <Clock />
             <div>

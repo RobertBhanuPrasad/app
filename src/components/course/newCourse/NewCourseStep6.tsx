@@ -15,7 +15,8 @@ function NewCourseStep6() {
 
   const {
     field: { value: courseEmails, onChange: courseEmailOnChange },
-  } = useController({ name: "contact.courseEmails" });
+    fieldState:{error:emailErrors}
+  } = useController({ name: "contactCourseEmails" });
 
   const formData = getValues();
 
@@ -109,6 +110,7 @@ function NewCourseStep6() {
           }}
           placeholder="Enter course emails"
           className="!w-58"
+          error={emailErrors ? true : false}
         />
         <div className="flex flex-row gap-1 text-[#666666] text-[12px] italic">
           <span className="font-semibold">Note:</span>{" "}
@@ -126,6 +128,7 @@ export default NewCourseStep6;
 export const ContactName = ({ index }: any) => {
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({ name: `contact[${index}].contactName` });
   return (
     <Input
@@ -134,12 +137,14 @@ export const ContactName = ({ index }: any) => {
       onChange={(val) => {
         onChange(val?.target?.value);
       }}
+      error={error ? true : false}
     />
   );
 };
 export const ContactEmail = ({ index }: any) => {
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({ name: `contact[${index}].contactEmail` });
   return (
     <Input
@@ -148,6 +153,7 @@ export const ContactEmail = ({ index }: any) => {
       onChange={(val) => {
         onChange(val?.target?.value);
       }}
+      error={error ? true : false}
     />
   );
 };
@@ -155,6 +161,7 @@ export const ContactEmail = ({ index }: any) => {
 export const ContactMobile = ({ index }: any) => {
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({ name: `contact[${index}].contactMobile` });
   return (
     <Input
@@ -163,6 +170,7 @@ export const ContactMobile = ({ index }: any) => {
       onChange={(val) => {
         onChange(val?.target?.value);
       }}
+      error={error ? true : false}
     />
   );
 };

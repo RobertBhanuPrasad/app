@@ -33,7 +33,6 @@ function NewCourseStep1() {
         "*,program_fee_settings_id(*,program_fee_level_settings!inner(*,fee_level_id(*))),program_fee_level_settings(*,fee_level_id(*)),program_details_info(*,max_capacity,visibility_id(*)),program_organizers(*,user_id(*,contact_id(*))),program_translation_languages(*,language_id(*)),program_languages(*,language_id(*)),program_schedules(*),venue(*,center_id!inner(*),city_id!inner(*),state_id!inner(*)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(*)),program_type_id!inner(*),program_assistant_teachers!inner(*,user_id(*,contact_id(*))),program_teachers!inner(*,user_id(*,contact_id(*)))",
     },
   });
-  console.log(courseData, "courseData aaaaaaaaaaaa");
   return (
     <div>
       <RadioCards />
@@ -97,6 +96,7 @@ const RegistrationGateway = () => {
 const RadioCards = () => {
   const {
     field: { value, onChange },
+    fieldState: {error: radioError}
   } = useController({
     name: NewCourseStep1FormNames?.program_created_by,
   });
@@ -268,6 +268,9 @@ const RadioCards = () => {
           </div>
         </Card>
       </div>
+      <div className="text-[#FF6D6D] text-[14px]">
+        {radioError && 'Select who is going to teach the course'}
+      </div>
     </RadioGroup>
   );
 };
@@ -332,7 +335,7 @@ const OrganizationDropDown = () => {
           }}
         />
 
-        {errors.organization && (
+        {organizationError && (
           <span className="text-[#FF6D6D] text-[12px]">
             Select Organizer Name.
           </span>
@@ -349,6 +352,7 @@ const ProgramOrganizerDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState:{error:programOrganizerError}
   } = useController({
     name: NewCourseStep1FormNames?.organizer_ids,
   });
@@ -440,7 +444,13 @@ const ProgramOrganizerDropDown = () => {
             };
           }
         }}
+        error={programOrganizerError}
       />
+      {programOrganizerError && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            Select Organizer Name.
+          </span>
+        )}
     </div>
   );
 };

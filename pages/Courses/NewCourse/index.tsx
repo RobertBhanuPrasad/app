@@ -36,6 +36,7 @@ import {
   FEE_STEP_NUMBER,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/NewCourseConstants";
+import { validationSchema } from "./NewCourseValidations";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -147,15 +148,6 @@ function NewCourse() {
     programOrganizers: [loggedUserData],
   };
 
-  const schema = z.object({
-    organization_id: z
-      .number()
-      .refine((value) => value !== null && value !== 0, {
-        message: "SelectOrganizerName",
-        path: ["organization_id"],
-      }),
-  });
-
   // If the form is still loading, display a loading message
   // if (formLoading) {
   //   return <div>Loading...</div>;
@@ -192,7 +184,7 @@ function NewCourse() {
             <Form
               onSubmit={onSubmit}
               defaultValues={defaultValues}
-              schema={schema}
+              schema={validationSchema()}
             >
               <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
                 <div>
@@ -248,14 +240,8 @@ export default index;
 
 const Footer = ({ stepTitles }: any) => {
   const { currentStep } = stepStore();
-  const { setViewPreviewPage, setNewCourseData, newCourseData } =
-    newCourseStore();
-  const { handleClickNext, handleClickPrevious } =
+  const { handleClickNext, handleClickPrevious, handleClickReviewDetailsButton } =
     useValidateCurrentStepFields();
-
-  const { watch } = useFormContext();
-
-  const formData = watch();
 
   const validationFieldsStepWise = [
     Object.values(NewCourseStep1FormNames),
@@ -266,18 +252,9 @@ const Footer = ({ stepTitles }: any) => {
     Object.values(NewCourseStep6FormNames),
   ];
 
-  const onSubmit = () => {
-    console.log("heyy on submitttt");
-  };
-
-  const handleClickReviewDetailsButton = () => {
-    setViewPreviewPage(true);
-    setNewCourseData(formData);
-  };
-
   return (
     <div className="flex self-end justify-center gap-4 w-full mt-2">
-      {currentStep > 0 && (
+      {currentStep > 1 && (
         <Button
           onClick={(e) => {
             e.preventDefault();
@@ -289,7 +266,7 @@ const Footer = ({ stepTitles }: any) => {
         </Button>
       )}
 
-      {currentStep < stepTitles.length - 2 && (
+      {currentStep < stepTitles.length && (
         <Button
           className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
           onClick={async (e) => {
@@ -304,7 +281,7 @@ const Footer = ({ stepTitles }: any) => {
       {currentStep == CONTACT_INFO_STEP_NUMBER && (
         <Button
           className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-          onClick={handleClickReviewDetailsButton}
+          onClick={async () => {handleClickReviewDetailsButton(validationFieldsStepWise[currentStep - 1])} }
         >
           Review Details
         </Button>

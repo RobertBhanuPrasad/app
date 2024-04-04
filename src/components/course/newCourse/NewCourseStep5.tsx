@@ -7,6 +7,7 @@ import {
   useController,
   FieldValues,
   useWatch,
+  useFormState,
 } from "react-hook-form";
 import { Checkbox } from "src/ui/checkbox";
 import { Input } from "src/ui/input";
@@ -23,7 +24,6 @@ export default function CourseTable() {
   const { append, remove } = useFieldArray({
     name: "accommodation",
   });
-
 
   // const formData = useWatch({ name: "accommodation" });
 
@@ -65,6 +65,8 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodation",
     header: () => <div>Accommodation Type</div>,
     cell: ({ row }: any) => {
+      const { errors } = useFormState();
+
       const existingAccommodationValues = formData
         ?.map((field: any) => field?.accomodationType?.value)
         .filter((value: any) => value !== undefined);
@@ -98,7 +100,7 @@ const columns = (append: any, remove: any, formData: any) => [
         <div className="w-72 ">
           {/* Custom select input */}
           <CustomSelect
-            error={error}
+            error={errors?.accommodation ? true : false}
             value={value}
             placeholder="Select Accommodation"
             data={filteredOptions}
@@ -120,6 +122,8 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodationFee",
     header: () => <div>Fees Per Person inc VAT</div>,
     cell: ({ row }: any) => {
+      const { errors } = useFormState();
+
       const {
         field: { value, onChange },
       } = useController({
@@ -134,6 +138,7 @@ const columns = (append: any, remove: any, formData: any) => [
             onChange={(val) => {
               onChange(val?.target?.value);
             }}
+            error={errors?.accommodation ? true : false}
           />
         </div>
       );
@@ -144,6 +149,8 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodationspots",
     header: () => <div>Number of spots available</div>,
     cell: ({ row }: any) => {
+      const { errors } = useFormState();
+
       const {
         field: { value, onChange },
       } = useController({
@@ -158,6 +165,7 @@ const columns = (append: any, remove: any, formData: any) => [
             onChange={(val) => {
               onChange(val?.target?.value);
             }}
+            error={errors?.accommodation ? true : false}
           />
         </div>
       );
