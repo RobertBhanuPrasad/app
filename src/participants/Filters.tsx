@@ -1,99 +1,127 @@
-import CalenderIcon from '@public/assets/CalenderIcon'
-import ClearAllIcon from '@public/assets/ClearAllIcon'
-import CrossIcon from '@public/assets/CrossIcon'
-import { useSelect } from '@refinedev/core'
-import { DateRangePickerComponent } from 'pages/Courses/FindCourse'
-import { useState } from 'react'
-import { useController, useFormContext } from 'react-hook-form'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'src/ui/accordion'
-import { Button } from 'src/ui/button'
-import CustomSelect from 'src/ui/custom-select'
-import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
-import { Input } from 'src/ui/input'
-import { Label } from 'src/ui/label'
-import { RadioGroup, RadioGroupItem } from 'src/ui/radio-group'
-import { ScrollArea } from 'src/ui/scroll-area'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from 'src/ui/select'
-import { Separator } from 'src/ui/separator'
+import CalenderIcon from "@public/assets/CalenderIcon";
+import ClearAllIcon from "@public/assets/ClearAllIcon";
+import CrossIcon from "@public/assets/CrossIcon";
+import { useSelect } from "@refinedev/core";
+import { DateRangePickerComponent } from "pages/Courses/FindCourse";
+import { useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "src/ui/accordion";
+import { Button } from "src/ui/button";
+import CustomSelect from "src/ui/custom-select";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { Input } from "src/ui/input";
+import { Label } from "src/ui/label";
+import { RadioGroup, RadioGroupItem } from "src/ui/radio-group";
+import { ScrollArea } from "src/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import { Separator } from "src/ui/separator";
 
 const Filters = () => {
-  const [open, setOpen] = useState(false)
-  const [isClicked, setIsClicked] = useState(false)
-  const [courseStatusTab, setCourseStatusTab] = useState<number[]>([])
-  const [accountingStatusTab, setAccountingStatusTab] = useState<number[]>([])
-  const [centerTab, setCenterTab] = useState<number[]>([])
-  const [cityTab, setCityTab] = useState<number[]>([])
-  const [stateTab, setStateTab] = useState<number[]>([])
-  const [residentialTab, setResidentialTab] = useState<number[]>([])
-  const [courseFeeTab, setCourseFeeTab] = useState<number[]>([])
-  const [checked, setChecked] = useState(0)
-  const [selectItem, setSelectItem] = useState()
+  const [open, setOpen] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+  const [courseStatusTab, setCourseStatusTab] = useState<number[]>([]);
+  const [accountingStatusTab, setAccountingStatusTab] = useState<number[]>([]);
+  const [centerTab, setCenterTab] = useState<number[]>([]);
+  const [cityTab, setCityTab] = useState<number[]>([]);
+  const [stateTab, setStateTab] = useState<number[]>([]);
+  const [residentialTab, setResidentialTab] = useState<number[]>([]);
+  const [courseFeeTab, setCourseFeeTab] = useState<number[]>([]);
+  const [checked, setChecked] = useState(0);
+  const [selectItem, setSelectItem] = useState();
 
   // Function to handle Course Status Tab click
   const handleCourseStatusTabClick = (tab: any) => {
-    if (!courseStatusTab.includes(tab)) setCourseStatusTab([...courseStatusTab, tab])
+    if (!courseStatusTab.includes(tab))
+      setCourseStatusTab([...courseStatusTab, tab]);
     else {
-      setCourseStatusTab(courseStatusTab.filter(t => t !== tab))
+      setCourseStatusTab(courseStatusTab.filter((t) => t !== tab));
     }
-  }
+  };
 
   // Function to handle Residential Tab click
   const handleResidentialTabClick = (tab: any) => {
-    if (!residentialTab.includes(tab)) setResidentialTab([...residentialTab, tab])
+    if (!residentialTab.includes(tab))
+      setResidentialTab([...residentialTab, tab]);
     else {
-      setResidentialTab(residentialTab.filter(t => t !== tab))
+      setResidentialTab(residentialTab.filter((t) => t !== tab));
     }
-  }
+  };
 
   // Function to handle Course Accounting Status Tab click
   const handleAccountingStatusTabClick = (tab: any) => {
-    if (!accountingStatusTab.includes(tab)) setAccountingStatusTab([...accountingStatusTab, tab])
+    if (!accountingStatusTab.includes(tab))
+      setAccountingStatusTab([...accountingStatusTab, tab]);
     else {
-      setAccountingStatusTab(accountingStatusTab.filter(t => t !== tab))
+      setAccountingStatusTab(accountingStatusTab.filter((t) => t !== tab));
     }
-  }
+  };
 
   // Function to handle Active Center Tab click
   const handleCenterTabClick = (tab: any) => {
-    if (!centerTab.includes(tab)) setCenterTab([...centerTab, tab])
+    if (!centerTab.includes(tab)) setCenterTab([...centerTab, tab]);
     else {
-      setCenterTab(centerTab.filter(t => t !== tab))
+      setCenterTab(centerTab.filter((t) => t !== tab));
     }
-  }
+  };
 
   // Function to handle Active State Tab click
   const handleStateTabClick = (tab: any) => {
-    if (!stateTab.includes(tab)) setStateTab([...stateTab, tab])
+    if (!stateTab.includes(tab)) setStateTab([...stateTab, tab]);
     else {
-      setStateTab(stateTab.filter(t => t !== tab))
+      setStateTab(stateTab.filter((t) => t !== tab));
     }
-  }
+  };
 
   // Function to handle Active City Tab click
   const handleCityTabClick = (tab: any) => {
-    if (!cityTab.includes(tab)) setCityTab([...cityTab, tab])
+    if (!cityTab.includes(tab)) setCityTab([...cityTab, tab]);
     else {
-      setCityTab(cityTab.filter(t => t !== tab))
+      setCityTab(cityTab.filter((t) => t !== tab));
     }
-  }
+  };
 
   // Function to handle Course Fee Tab click
   const handleCourseFeeTabClick = (tab: any) => {
-    if (!courseFeeTab.includes(tab)) setCourseFeeTab([...courseFeeTab, tab])
+    if (!courseFeeTab.includes(tab)) setCourseFeeTab([...courseFeeTab, tab]);
     else {
-      setCourseFeeTab(courseFeeTab.filter(t => t !== tab))
+      setCourseFeeTab(courseFeeTab.filter((t) => t !== tab));
     }
-  }
+  };
 
   {
     /*Course Status Data*/
   }
-  const courseStatusData = ['Active', 'Canceled', 'Full', 'Completed', 'Pending Review', 'Declined']
+  const courseStatusData = [
+    "Active",
+    "Canceled",
+    "Full",
+    "Completed",
+    "Pending Review",
+    "Declined",
+  ];
 
   {
     /*Course Accounting Status Data*/
   }
-  const courseAccountingStatusData = ['Not Submitted', 'Rejected', 'Closed', 'Pending Review']
+  const courseAccountingStatusData = [
+    "Not Submitted",
+    "Rejected",
+    "Closed",
+    "Pending Review",
+  ];
 
   {
     /*State Data*/
@@ -101,42 +129,93 @@ const Filters = () => {
   const stateData = [
     {
       value: 1,
-      key: 'State 1'
+      key: "State 1",
     },
     {
       value: 1,
-      key: 'State 2'
+      key: "State 2",
     },
     {
       value: 2,
-      key: 'State 3'
-    }
-  ]
+      key: "State 3",
+    },
+  ];
 
   {
     /*City Data*/
   }
-  const cityData = ['City 1', 'City 2', 'City 3']
+  const cityData = ["City 1", "City 2", "City 3"];
 
   {
     /*Center Data*/
   }
-  const centerData = ['Center 1', 'Center 2', 'Center 3']
+  const centerData = ["Center 1", "Center 2", "Center 3"];
 
   {
     /* Course Fees Data*/
   }
-  const courseFeesData = ['is default', 'Custom']
+  const courseFeesData = ["is default", "Custom"];
 
   {
     /*Course Visibility Data*/
   }
-  const courseVisibilityData = ['Public', 'Private']
+  const courseVisibilityData = ["Public", "Private"];
 
   {
     /*Residential Course Data*/
   }
-  const residentialCourseData = ['Yes', 'No']
+  const residentialCourseData = ["Yes", "No"];
+
+  const { options, onSearch } = useSelect({
+    resource: "program_type_alias_name",
+    optionLabel: "alias_name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+
+  const { options: stateOptions, onSearch : stateOnSerach } = useSelect({
+    resource: "state",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+   const { options: cityOptions, onSearch: cityOnSerach } = useSelect({
+     resource: "city",
+     optionLabel: "name",
+     optionValue: "id",
+     onSearch: (value) => [
+       {
+         field: "name",
+         operator: "contains",
+         value,
+       },
+     ],
+   });
+
+    const { options: centerOptions, onSearch: centerOnSerach } = useSelect({
+      resource: "center",
+      optionLabel: "name",
+      optionValue: "id",
+      onSearch: (value) => [
+        {
+          field: "name",
+          operator: "contains",
+          value,
+        },
+      ],
+    });
 
   return (
     <div className="flex flex-col gap-5">
@@ -149,58 +228,74 @@ const Filters = () => {
         <Accordion
           type="multiple"
           defaultValue={[
-            'item-1',
-            'item-2',
-            'item-3',
-            'item-4',
-            'item-5',
-            'item-6',
-            'item-7',
-            'item-8',
-            'item-9',
-            'item-10',
-            'item-11',
-            'item-12',
-            'item-13'
+            "item-1",
+            "item-2",
+            "item-3",
+            "item-4",
+            "item-5",
+            "item-6",
+            "item-7",
+            "item-8",
+            "item-9",
+            "item-10",
+            "item-11",
+            "item-12",
+            "item-13",
           ]}
         >
           {/* Course Name Accordion */}
           <AccordionItem value="item-1" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-0 font-semibold pr-3">Course Name</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-0 font-semibold pr-3">
+              Course Name
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <Label className="text-xs font-normal">Name</Label>
-                  <Input placeholder="Sumit Test" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <Label className="text-xs font-normal">Email</Label>
-                  <Input placeholder="sumiittest@gmail.com" type="email" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <Label className="text-xs font-normal">Phone</Label>
-                  <Input placeholder="+916789376838" type="number" />
-                </div>
-              </div>
+              <Select>
+                <SelectTrigger className="w-80">
+                  <SelectValue placeholder="Select Course Name" />
+                </SelectTrigger>
+                <SelectContent>
+                  <Input onChange={(val) => onSearch(val.target.value)} />
+                  <SelectItems onBottomReached={() => {}}>
+                    {options.map((option: any, index: number) => (
+                      <>
+                        <SelectItem
+                          key={option.value}
+                          value={option.value}
+                          className="h-[44px]"
+                        >
+                          {option.label}
+                        </SelectItem>
+                        {index < options?.length - 1 && (
+                          <hr className="border-[#D6D7D8]" />
+                        )}
+                      </>
+                    ))}
+                  </SelectItems>
+                </SelectContent>
+              </Select>
             </AccordionContent>
           </AccordionItem>
           <Separator />
 
           {/* Course Status Accordion */}
           <AccordionItem value="item-2" className="border-none ">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">Course Status</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              Course Status
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div className="flex gap-2 flex-wrap">
                 {courseStatusData.map((status, index) => (
                   <div key={index}>
                     <Button
                       className={`rounded-full text-sm font-normal ${
-                        courseStatusTab.includes(index) ? 'bg-primary text-white' : 'bg-white'
+                        courseStatusTab.includes(index)
+                          ? "bg-primary text-white"
+                          : "bg-white"
                       }`}
                       variant="outline"
                       onClick={() => {
-                        handleCourseStatusTabClick(index)
-                        setIsClicked(!isClicked)
+                        handleCourseStatusTabClick(index);
+                        setIsClicked(!isClicked);
                       }}
                     >
                       {status}
@@ -222,12 +317,14 @@ const Filters = () => {
                 {courseAccountingStatusData.map((status, index) => (
                   <Button
                     className={`rounded-full text-sm font-normal ${
-                      accountingStatusTab.includes(index) ? 'bg-primary text-white' : 'bg-white'
+                      accountingStatusTab.includes(index)
+                        ? "bg-primary text-white"
+                        : "bg-white"
                     }`}
                     variant="outline"
                     onClick={() => {
-                      handleAccountingStatusTabClick(index)
-                      setIsClicked(!isClicked)
+                      handleAccountingStatusTabClick(index);
+                      setIsClicked(!isClicked);
                     }}
                   >
                     {status}
@@ -247,7 +344,11 @@ const Filters = () => {
               <Dialog open={open}>
                 <p>Date Range</p>
                 <DialogTrigger asChild>
-                  <Button onClick={() => setOpen(true)} className="w-full  gap-2 justify-start mt-2" variant="outline">
+                  <Button
+                    onClick={() => setOpen(true)}
+                    className="w-full  gap-2 justify-start mt-2"
+                    variant="outline"
+                  >
                     <div>
                       <CalenderIcon />
                     </div>
@@ -264,16 +365,20 @@ const Filters = () => {
 
           {/* Course Visibility Accordion */}
           <AccordionItem value="item-5" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">Course Visibility</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              Course Visibility
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <RadioGroup defaultValue="Public">
                 <div className="flex gap-2">
                   {courseVisibilityData.map((type, index) => (
                     <Button
-                      className={`rounded-lg flex gap-2 ${checked === index && 'text-primary'}`}
+                      className={`rounded-lg flex gap-2 ${
+                        checked === index && "text-primary"
+                      }`}
                       variant="outline"
                       onClick={() => {
-                        setChecked(index)
+                        setChecked(index);
                       }}
                     >
                       <RadioGroupItem value={type} />
@@ -288,19 +393,35 @@ const Filters = () => {
 
           {/* State Accordion */}
           <AccordionItem value="item-6" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">State</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              State
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div>
                 <Select>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-80">
                     <SelectValue placeholder="Select State" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectGroup>
-                      {stateData.map(level => (
-                        <SelectItem value={level.key}>{level.key}</SelectItem>
+                    <Input
+                      onChange={(val) => stateOnSerach(val.target.value)}
+                    />
+                    <SelectItems onBottomReached={() => {}}>
+                      {stateOptions.map((option: any, index: number) => (
+                        <>
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            className="h-[44px]"
+                          >
+                            {option.label}
+                          </SelectItem>
+                          {index < options?.length - 1 && (
+                            <hr className="border-[#D6D7D8]" />
+                          )}
+                        </>
                       ))}
-                    </SelectGroup>
+                    </SelectItems>
                   </SelectContent>
                 </Select>
               </div>
@@ -308,12 +429,14 @@ const Filters = () => {
                 {stateData.map((type, index) => (
                   <Button
                     className={`rounded-full text-sm font-normal ${
-                      stateTab.includes(index) ? 'bg-primary text-white' : 'bg-white'
+                      stateTab.includes(index)
+                        ? "bg-primary text-white"
+                        : "bg-white"
                     }`}
                     variant="outline"
                     onClick={() => {
-                      handleStateTabClick(index)
-                      setIsClicked(!isClicked)
+                      handleStateTabClick(index);
+                      setIsClicked(!isClicked);
                     }}
                   >
                     {type.key}
@@ -326,19 +449,33 @@ const Filters = () => {
 
           {/* City Accordion */}
           <AccordionItem value="item-7" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">City</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              City
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div>
                 <Select>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-80">
                     <SelectValue placeholder="Select City" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectGroup>
-                      {cityData.map(level => (
-                        <SelectItem value={level}>{level}</SelectItem>
+                    <Input onChange={(val) => cityOnSerach(val.target.value)} />
+                    <SelectItems onBottomReached={() => {}}>
+                      {cityOptions.map((option: any, index: number) => (
+                        <>
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            className="h-[44px]"
+                          >
+                            {option.label}
+                          </SelectItem>
+                          {index < options?.length - 1 && (
+                            <hr className="border-[#D6D7D8]" />
+                          )}
+                        </>
                       ))}
-                    </SelectGroup>
+                    </SelectItems>
                   </SelectContent>
                 </Select>
               </div>
@@ -346,12 +483,14 @@ const Filters = () => {
                 {cityData.map((type, index) => (
                   <Button
                     className={`rounded-full text-sm font-normal ${
-                      cityTab.includes(index) ? 'bg-primary text-white' : 'bg-white'
+                      cityTab.includes(index)
+                        ? "bg-primary text-white"
+                        : "bg-white"
                     }`}
                     variant="outline"
                     onClick={() => {
-                      handleCityTabClick(index)
-                      setIsClicked(!isClicked)
+                      handleCityTabClick(index);
+                      setIsClicked(!isClicked);
                     }}
                   >
                     {type}
@@ -360,22 +499,39 @@ const Filters = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
+          <Separator />
 
           {/* Center Accordion */}
           <AccordionItem value="item-8" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">Center</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              Center
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div>
                 <Select>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-80">
                     <SelectValue placeholder="Select Center" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectGroup>
-                      {centerData.map(level => (
-                        <SelectItem value={level}>{level}</SelectItem>
+                    <Input
+                      onChange={(val) => centerOnSerach(val.target.value)}
+                    />
+                    <SelectItems onBottomReached={() => {}}>
+                      {centerOptions.map((option: any, index: number) => (
+                        <>
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            className="h-[44px]"
+                          >
+                            {option.label}
+                          </SelectItem>
+                          {index < options?.length - 1 && (
+                            <hr className="border-[#D6D7D8]" />
+                          )}
+                        </>
                       ))}
-                    </SelectGroup>
+                    </SelectItems>
                   </SelectContent>
                 </Select>
               </div>
@@ -383,12 +539,14 @@ const Filters = () => {
                 {centerData.map((type, index) => (
                   <Button
                     className={`rounded-full text-sm font-normal ${
-                      centerTab.includes(index) ? 'bg-primary text-white' : 'bg-white'
+                      centerTab.includes(index)
+                        ? "bg-primary text-white"
+                        : "bg-white"
                     }`}
                     variant="outline"
                     onClick={() => {
-                      handleCenterTabClick(index)
-                      setIsClicked(!isClicked)
+                      handleCenterTabClick(index);
+                      setIsClicked(!isClicked);
                     }}
                   >
                     {type}
@@ -397,21 +555,26 @@ const Filters = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
+          <Separator />
 
           {/* Residential Course Accordion */}
           <AccordionItem value="item-9" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">Residential Course</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              Residential Course
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div className="flex gap-2 flex-wrap">
                 {residentialCourseData.map((type, index) => (
                   <Button
                     className={`rounded-full text-sm font-normal ${
-                      residentialTab.includes(index) ? 'bg-primary text-white' : 'bg-white'
+                      residentialTab.includes(index)
+                        ? "bg-primary text-white"
+                        : "bg-white"
                     }`}
                     variant="outline"
                     onClick={() => {
-                      handleResidentialTabClick(index)
-                      setIsClicked(!isClicked)
+                      handleResidentialTabClick(index);
+                      setIsClicked(!isClicked);
                     }}
                   >
                     {type}
@@ -420,10 +583,13 @@ const Filters = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
+          <Separator />
 
           {/* Program Organizer Accordion */}
           <AccordionItem value="item-10" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">Program Organizer</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              Program Organizer
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div>
                 <Select>
@@ -432,7 +598,7 @@ const Filters = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {centerData.map(level => (
+                      {centerData.map((level) => (
                         <SelectItem value={level}>{level}</SelectItem>
                       ))}
                     </SelectGroup>
@@ -441,10 +607,13 @@ const Filters = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
+          <Separator />
 
           {/* Teacher Name Accordion */}
           <AccordionItem value="item-11" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">Teacher Name</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              Teacher Name
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div>
                 <Select>
@@ -453,7 +622,7 @@ const Filters = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {centerData.map(level => (
+                      {centerData.map((level) => (
                         <SelectItem value={level}>{level}</SelectItem>
                       ))}
                     </SelectGroup>
@@ -462,21 +631,26 @@ const Filters = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
+          <Separator />
 
           {/* Course Fees Accordion */}
           <AccordionItem value="item-12" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">Course Fees</AccordionTrigger>
+            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+              Course Fees
+            </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div className="flex gap-2 flex-wrap">
                 {courseFeesData.map((status, index) => (
                   <Button
                     className={`rounded-full text-sm font-normal ${
-                      courseFeeTab.includes(index) ? 'bg-primary text-white' : 'bg-white'
+                      courseFeeTab.includes(index)
+                        ? "bg-primary text-white"
+                        : "bg-white"
                     }`}
                     variant="outline"
                     onClick={() => {
-                      handleCourseFeeTabClick(index)
-                      setIsClicked(!isClicked)
+                      handleCourseFeeTabClick(index);
+                      setIsClicked(!isClicked);
                     }}
                   >
                     {status}
@@ -485,6 +659,8 @@ const Filters = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
+
+          <Separator />
 
           {/* Reconciliation Status Accordion */}
           <AccordionItem value="item-13" className=" border-none">
@@ -503,7 +679,7 @@ const Filters = () => {
         <Button>Apply</Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Filters
+export default Filters;
