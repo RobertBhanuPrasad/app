@@ -8,6 +8,7 @@ import { useGetIdentity } from "@refinedev/core";
 import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { Input } from "src/ui/input";
+import { NewCourseStep4FormNames } from "src/constants/NewCourseFormNames";
 
 // Define CourseTable component
 
@@ -91,7 +92,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       value: showEarlyBirdColumns = false,
       onChange: setShowEarlyBirdColumns,
     },
-  } = useController({ name: "showEarlyBirdColumns" });
+  } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
 
   // Data for the table
   const courseFeeData: FeeLevelType[] =
