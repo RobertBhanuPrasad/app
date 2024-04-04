@@ -12,3 +12,11 @@ export const SUPER_ADMIN = 4;
 //Time format
 export const TIME_FORMAT_12_HOURS = 1;
 export const TIME_FORMAT_24_HOURS = 2;
+
+
+//Time format
+export const MALE = 1;
+export const FEMALE = 2;
+export const OTHER = 3;
+
+

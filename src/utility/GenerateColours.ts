@@ -10,7 +10,7 @@ export const generateColors = (baseColor: string, numColors: number) => {
     const decreaseFactor = 25
     // Generate colors
     const colors = [];
-    
+
     // Include the base color as the first color
     colors.push(baseColor);
 
@@ -29,4 +29,26 @@ export const generateColors = (baseColor: string, numColors: number) => {
     }
 
     return colors;
+}
+
+
+export const getColorWithDecreasedOpacity = (baseColor: any, position: any, maxPosition: any) => {
+    // Ensure position is between 1 and maxPosition
+    position = Math.max(1, Math.min(maxPosition, position));
+
+    // Convert position to a value between 0 and 1
+    position /= maxPosition;
+
+    // Convert hex color to RGB
+    const hexToRgb = (hex: { match: (arg0: RegExp) => any[]; }) => hex.match(/\w\w/g).map((x) => parseInt(x, 16));
+    const rgbToHex = (r: number, g: number, b: number) => '#' + [r, g, b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join('');
+
+    // Extract RGB values from the base color
+    let [r, g, b] = hexToRgb(baseColor.substr(1));
+
+    // Decrease opacity based on position
+    const decreasedOpacity = Math.round(255 * Math.pow((1 - position), 2)); 
+
+    // Return color with decreased opacity
+    return rgbToHex(r, g, b) + (decreasedOpacity.toString(16).padStart(2, '0'));
 }
