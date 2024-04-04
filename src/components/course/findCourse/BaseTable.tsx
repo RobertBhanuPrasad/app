@@ -388,7 +388,8 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableHead
                           className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
+                            columnPinning &&
+                            "sticky left-0 z-10 bg-[#E9E9F5]"
                           }`}
                         >
                           <Checkbox
@@ -409,11 +410,11 @@ export function BaseTable<TData, TValue>({
                               index === 0 &&
                               `sticky ${
                                 checkboxSelection ? "left-8" : "left-0"
-                              } z-10 bg-[#E9E9F5]`
+                              } z-10 bg-[#E9E9F5] drop-shadow-right`
                             } ${
                               columnPinning &&
                               index === headerGroup.headers.length - 1 &&
-                              `sticky right-0 z-10 bg-[#E9E9F5]`
+                              `sticky right-0 z-10 bg-[#E9E9F5] drop-shadow-left w-[50px]`
                             } text-[#333333] `}
                             key={header?.id}
                           >
@@ -455,7 +456,8 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableCell
                           className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#FFFFFF]"
+                            columnPinning &&
+                            "sticky left-0 z-10 bg-[#FFFFFF] "
                           }`}
                         >
                           <Checkbox
@@ -473,14 +475,14 @@ export function BaseTable<TData, TValue>({
                         <TableCell
                           className={` ${
                             columnPinning &&
-                            index === 0 ?
+                            index === 0 &&
                             `sticky ${
                               checkboxSelection ? "left-8" : "left-0"
-                            }  top-0 z-10 bg-[#FFFFFF]` :"shadow-inner-left"
+                            }  top-0 z-10 bg-[#FFFFFF] drop-shadow-right`
                           } ${
                             columnPinning &&
-                            index === row.getVisibleCells().length - 1 ?
-                            `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[100px] `:"shadow-inner-left"
+                            index === row.getVisibleCells().length - 1 &&
+                            `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[50px] drop-shadow-left`
                           } text-[#333333]`}
                           key={cell.id}
                         >
