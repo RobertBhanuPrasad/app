@@ -42,9 +42,9 @@ function index() {
 
   const { viewPreviewPage } = newCourseStore();
 
-  if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
-  }
+  // if (!loginUserData?.userData) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (viewPreviewPage) {
     return <div> Render Preview Page</div>;

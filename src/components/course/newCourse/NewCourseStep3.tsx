@@ -24,6 +24,14 @@ import {
 import { date } from "zod";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { NewCourseStep3FormNames } from "src/constants/NewCourseFormNames";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -112,16 +120,23 @@ const SchedulesHeader = () => {
       </div>
       <div className="flex gap-4">
         <div className="w-[161px]">
-          <CustomSelect
+          <Select
             value={hoursFormat}
-            placeholder="Select time format"
-            data={timeFormatOptions}
-            onBottomReached={() => {}}
-            onSearch={() => {}}
-            onChange={(val) => {
+            onValueChange={(val: any) => {
               hoursFormatOnChange(val);
             }}
-          />
+          >
+            <SelectTrigger className="w-[320px]">
+              <SelectValue placeholder="Select Time Format" />
+            </SelectTrigger>
+            <SelectContent>
+              {timeFormatOptions?.map((option: any) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="w-[257px]">
           <CustomSelect
