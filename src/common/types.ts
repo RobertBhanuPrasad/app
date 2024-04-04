@@ -882,7 +882,7 @@ interface ProgramOrganizers {
   created_at?: Date;
   program_id?: number;
   user_id?: number;
-  user?: Users;
+  users?: Users;
 }
 
 interface ProgramSchedules {
@@ -902,7 +902,7 @@ interface ProgramTeachers {
   program_id?: number;
   program?: Program;
   user_id?: number;
-  user?: Users;
+  users?: Users;
 }
 
 interface ProgramTranslationLanguages {
@@ -1054,7 +1054,7 @@ interface UserRoles {
   id?: number;
   created_at?: Date;
   user_id?: number;
-  user?: Users;
+  users?: Users;
   role_id?: number;
 }
 
@@ -1183,7 +1183,7 @@ interface Program {
   program_fee_settings_id?: number;
   program_fee_setting?: ProgramFeeSettings;
   program_type_id?: number;
-  program_type?: ProgramTypes;
+  program_types?: ProgramTypes;
   status_id?: number;
   status?: OptionValues;
   accommodation_fee_payment_mode?: number;
@@ -1195,7 +1195,7 @@ interface Program {
   is_early_bird_enabled?: boolean;
   is_residential_program?: boolean;
   program_alias_name_id?: number;
-  program_alias_name?: ProgramTypeAliasNames;
+  program_type_alias_names?: ProgramTypeAliasNames;
   program_created_by?: number;
   program_creator?: Users;
   state_id?: number;

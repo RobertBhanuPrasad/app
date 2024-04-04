@@ -14,59 +14,197 @@ import {
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
 
-export const columns: ColumnDef<ProgramDataBaseType>[] = [
+export const columns: ColumnDef<Program>[] = [
   {
-    accessorKey: "state_id",
+    accessorKey: "program_code",
     enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            State
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
+    header: () => {
+      return <div>Course ID</div>;
     },
-
-    // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }) => {
       return (
         <div>
-          <div>
-            {typeof row?.original?.state_id !== "number" &&
-              row?.original?.state_id?.name}
-          </div>
+          <div>{row.original.program_code}</div>
         </div>
       );
     },
   },
   {
-    accessorKey: "program_type_id",
+    accessorKey: "program_types",
     header: () => {
-      return <div className=" text-center">Course</div>;
+      return <div>Course Type Name</div>;
     },
 
     cell: ({ row }) => {
+      return <div>{row?.original?.program_types?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "program_type_alias_names",
+    header: () => {
+      return <div>Course Name</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div>{row?.original?.program_type_alias_names?.alias_name}</div>;
+    },
+  },
+  {
+    accessorKey: "status",
+    header: () => {
+      return <div>Course Status</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div>{row?.original?.status_id}</div>;
+    },
+  },
+  {
+    accessorKey: "state",
+    header: () => {
+      return <div>State</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div>{row?.original?.state?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "city",
+    header: () => {
+      return <div>City</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div>{row?.original?.city?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "center",
+    header: () => {
+      return <div>Center</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div>{row?.original?.center?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "program_teachers",
+    header: () => {
+      return <div>Teachers</div>;
+    },
+    cell: ({ row }) => {
+      const teachers = row?.original?.program_teachers?.map(
+        (teacher: ProgramTeachers) => teacher?.users?.user_name
+      );
       return (
-        <div className="lowercase text-center">
-          {typeof row?.original?.program_type_id !== "number" &&
-            row?.original?.program_type_id?.name}
+        <div>
+          <div>{teachers && teachers.join(", ")}</div>
         </div>
       );
     },
   },
+  {
+    accessorKey: "program_organizers",
+    header: () => {
+      return <div>Organizers</div>;
+    },
+    cell: ({ row }) => {
+      const organizers = row?.original?.program_organizers?.map(
+        (Organizer: ProgramOrganizers) => Organizer?.users?.user_name
+      );
+      return <div>{organizers && organizers.join(",")}</div>;
+    },
+  },
+  {
+    accessorKey: "participant_registration",
+    header: () => {
+      return <div>Attendees</div>;
+    },
+    cell: ({ row }: any) => {
+      return <div>{row?.original?.participant_registration?.length}</div>;
+    },
+  },
+  {
+    accessorKey: "visibility_id",
+    header: () => {
+      return <div>Visibility</div>;
+    },
+    cell: ({ row }: any) => {
+      // const visibility: any = row?.original?.program_details_info?.map(
+      //   (details: any) => details?.visibility_id?.value
+      // );
+      return (
+        <div>
+          {row?.original?.program_details_info[0]?.visibility_id?.value}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "program_schedules",
+    header: () => {
+      return <div>Start Date</div>;
+    },
+    cell: ({ row }: any) => {
+      // Check if program_schedules exists and has at least one record
+      if (
+        row?.original?.program_schedules &&
+        row.original.program_schedules.length > 0
+      ) {
+        // Get the record with order 1 (assuming order starts from 1)
+        const record = row.original.program_schedules.find(
+          (schedule: any) => schedule.order === 1
+        );
 
+        // Check if record with order 1 exists
+        if (record) {
+          // Extract date from the timestamp (assuming it's stored in a property called 'timestamp')
+          const startDate = new Date(record.start_time).toLocaleDateString();
+
+          return <div>{startDate}</div>;
+        }
+      }
+
+      // Return empty if no record found or if program_schedules is not available
+      return <div>No start date available</div>;
+    },
+  },
+  {
+    accessorKey: "course_accounting_status",
+    header: () => {
+      return <div>Course Accounting Status</div>;
+    },
+    cell: ({ row }: any) => {
+      return (
+        <div>
+          {row?.original?.course_accounting_status
+            ? row?.original?.course_accounting_status
+            : ""}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Course Accounting Closure Date",
+    header: () => {
+      return <div>Course Accounting Status</div>;
+    },
+    cell: ({ row }: any) => {
+      return <div>-</div>;
+    },
+  },
+  {
+    accessorKey: "revenue",
+    header: () => {
+      return <div>Revenue</div>;
+    },
+    cell: ({ row }: any) => {
+      return <div>-</div>;
+    },
+  },
   {
     id: "actions",
     enableHiding: false,

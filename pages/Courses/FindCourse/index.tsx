@@ -73,18 +73,12 @@ const TableSection = () => {
   } = useTable({
     resource: "program",
     meta: {
-      select: "*,program_type_id!inner(name) , state_id!inner(name)",
+      select:
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , program_details_info(visibility_id(id,value)) , participant_registration(*),program_schedules(*)",
     },
   });
 
-  // const { tableQueryResult: Data } = useTable({
-  //   resource: "program",
-  //   meta: {
-  //     select: "*,program_type_id!inner(name) , state_id!inner(name)",
-  //   },
-  // });
-
-  // console.log("heyy program", Data);
+  console.log("heyy data", programData);
 
   const modifiedData = Object.values(
     mapProgramModifiedDataStructure(
