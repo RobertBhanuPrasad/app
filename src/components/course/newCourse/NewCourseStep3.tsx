@@ -28,8 +28,8 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectItems,
   SelectTrigger,
+  SelectItems,
   SelectValue,
 } from "src/ui/select";
 
@@ -130,7 +130,7 @@ const SchedulesHeader = () => {
       },
     ],
   });
- 
+
   return (
     <div className="h-9 flex justify-between">
       <div className="font-semibold text-[#333333] flex items-center">
@@ -138,16 +138,23 @@ const SchedulesHeader = () => {
       </div>
       <div className="flex gap-4">
         <div className="w-[161px]">
-          <CustomSelect
+          <Select
             value={hoursFormat}
-            placeholder="Select time format"
-            data={timeFormatOptions}
-            onBottomReached={() => {}}
-            onSearch={() => {}}
-            onChange={(val) => {
+            onValueChange={(val: any) => {
               hoursFormatOnChange(val);
             }}
-          />
+          >
+            <SelectTrigger className="w-[320px]">
+              <SelectValue placeholder="Select Time Format" />
+            </SelectTrigger>
+            <SelectContent>
+              {timeFormatOptions?.map((option: any) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="w-[257px]">
           <Select
