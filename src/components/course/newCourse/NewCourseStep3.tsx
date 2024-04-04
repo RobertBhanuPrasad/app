@@ -940,8 +940,9 @@ export const AddOrEditVenue = ({
           Edit Venue
         </div>
       )}
-
+      {/* TODO : Integrated after solving the error }
       {/* <MapComponent /> */}
+      <div className="w-[586px] h-[160px] border my-5"></div>
       <div className="flex flex-row gap-[30px]">
         <div className="flex flex-col gap-5">
           <VenueNameComponent />

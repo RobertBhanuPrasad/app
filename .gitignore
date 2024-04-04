@@ -6,9 +6,4 @@ node_modules
 .env
 .env.*
 !.env.local
-<<<<<<< HEAD
-#package-lock
-=======
-
->>>>>>> 875663470e73d464c2bdea8f2fffcaaf88e33ff5
 package-lock.json
