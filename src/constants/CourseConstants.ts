@@ -12,15 +12,13 @@ export const PARTICIPANTS_TAB = "2";
 export const REVENUE_SUMMARY_TAB = "3";
 export const COURSE_ACCOUNTING_FORM_TAB = "4";
 
-// type ProgramKeys = keyof Program;
+//course status IDs
 
-// typ = {
-//   [key in ProgramKeys]: string;
-// };
+export const COURSE_PENDING_REVIEW_STATUS_ID = 15;
+export const COURSE_ACTIVE_STATUS_ID = 11;
 
 export const NewCourseStep1FormNames = {
   organization_id: "organization_id",
-  organization: "organization",
   organizer_ids: "organizer_ids",
   is_registration_via_3rd_party: "is_registration_via_3rd_party",
   registration_via_3rd_party_url: "registration_via_3rd_party_url",
@@ -48,6 +46,9 @@ export const NewCourseStep3FormNames = {
   hour_format_id: "hour_format_id",
   time_zone_id: "time_zone_id",
   schedules: "schedules",
+  state_id: "state_id",
+  city_id: "city_id",
+  center_id: "center_id",
 };
 
 export const NewCourseStep4FormNames = {

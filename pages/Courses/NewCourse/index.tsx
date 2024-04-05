@@ -36,16 +36,16 @@ import {
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/CourseConstants";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
-import { Button } from "react-day-picker";
+import { Button } from "src/ui/button";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
-  // if (!loginUserData?.userData) {
-  //     return <div>Loading...</div>;
-  // }
+  if (!loginUserData?.userData) {
+    return <div>Loading...</div>;
+  }
 
   if (viewThankyouPage) {
     return (
