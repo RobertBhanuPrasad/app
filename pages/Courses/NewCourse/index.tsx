@@ -15,14 +15,6 @@ import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import {
-  NewCourseStep1FormNames,
-  NewCourseStep2FormNames,
-  NewCourseStep3FormNames,
-  NewCourseStep4FormNames,
-  NewCourseStep5FormNames,
-  NewCourseStep6FormNames,
-} from "src/constants/NewCourseFormNames";
 import Form from "@components/Formfield";
 import { useFormContext } from "react-hook-form";
 import {
@@ -31,8 +23,14 @@ import {
   CONTACT_INFO_STEP_NUMBER,
   COURSE_DETAILS_STEP_NUMBER,
   FEE_STEP_NUMBER,
+  NewCourseStep1FormNames,
+  NewCourseStep2FormNames,
+  NewCourseStep3FormNames,
+  NewCourseStep4FormNames,
+  NewCourseStep5FormNames,
+  NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
-} from "src/constants/NewCourseConstants";
+} from "src/constants/CourseConstants";
 import { validationSchema } from "./NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 
@@ -41,9 +39,9 @@ function index() {
 
   const { viewPreviewPage } = newCourseStore();
 
-  if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
-  }
+  // if (!loginUserData?.userData) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (viewPreviewPage) {
     return <div> Render Preview Page</div>;
@@ -55,17 +53,10 @@ function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
   const { currentStep, setCurrentStep } = newCourseStore();
 
-  const loggedUserData = {
-    value: loginUserData?.userData?.id,
-    label:
-      loginUserData?.userData?.contact_id?.first_name +
-      " " +
-      loginUserData?.userData?.contact_id?.last_name,
-  };
+  const loggedUserData = loginUserData?.userData?.id;
 
 
   // Array of step titles, icons, and colors
-  console.log(currentStep, "aaaaaaaaa");
   const stepTitles = [
     {
       value: BASIC_DETAILS_STEP_NUMBER,
@@ -138,12 +129,12 @@ function NewCourse() {
   };
 
   const defaultValues = {
-    visibility: "public",
-    displayLanguage: "true",
-    isGeoRestriction: "true",
-    isResidentialCourse: "No",
-    accommodationPaymentMode: "Pay Online",
-    programOrganizers: [loggedUserData],
+    [NewCourseStep2FormNames?.visibility_id]: "public",
+    [NewCourseStep2FormNames?.is_language_translation_for_participants]: "true",
+    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: "true",
+    [NewCourseStep5FormNames?.is_residential_program]: "No",
+    [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: "Pay Online",
+    [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
   };
 
   // If the form is still loading, display a loading message

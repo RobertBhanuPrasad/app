@@ -361,6 +361,26 @@ export const mapProgramTranslationLanguagesModifiedDataStructure = (
   return modifiedData;
 };
 
+export const mapProgramLanguagesModifiedDataStructure = (
+  data: ProgramLanguagesDataBaseType
+): ProgramLanguages => {
+  const modifiedData: ProgramLanguages = {};
+
+  if (data.id !== undefined) modifiedData.id = data.id;
+  if (data.created_at !== undefined) modifiedData.created_at = data.created_at;
+  if (data.language_id !== undefined) {
+    if (typeof data.language_id === "number") {
+      modifiedData.language_id = data.language_id;
+    } else {
+      modifiedData.language = data.language_id as Languages;
+      modifiedData.language_id = data.language_id.id;
+    }
+  }
+  if (data.program_id !== undefined) modifiedData.program_id = data.program_id;
+
+  return modifiedData;
+};
+
 export const mapProgramOrganizersModifiedDataStructure = (
   data: ProgramOrganizersDataBaseType
 ): ProgramOrganizers => {
@@ -531,6 +551,12 @@ export const mapProgramModifiedDataStructure = (
         data.program_accommodations,
         mapProgramAccommodationsModifiedDataStructure
       );
+
+    modifiedData.accommodation = modifiedData.program_accommodations =
+      TransformDataStructureWithHigherOrderConversion(
+        data.program_accommodations,
+        mapProgramAccommodationsModifiedDataStructure
+      );
   }
 
   if (data.program_assistant_teachers !== undefined) {
@@ -572,6 +598,11 @@ export const mapProgramModifiedDataStructure = (
         data?.program_schedules,
         mapProgramSchedulesModifiedDataStructure
       );
+
+    modifiedData.schedules = TransformDataStructureWithHigherOrderConversion(
+      data?.program_schedules,
+      mapProgramSchedulesModifiedDataStructure
+    );
   }
 
   if (data.program_teachers !== undefined) {
@@ -592,6 +623,24 @@ export const mapProgramModifiedDataStructure = (
         data?.program_translation_languages,
         mapProgramTranslationLanguagesModifiedDataStructure
       );
+
+    modifiedData.translation_language_ids = _.map(
+      modifiedData?.program_translation_languages,
+      "language_id"
+    ) as number[];
+  }
+
+  if (data.program_languages !== undefined) {
+    modifiedData.program_languages =
+      TransformDataStructureWithHigherOrderConversion(
+        data?.program_languages,
+        mapProgramLanguagesModifiedDataStructure
+      );
+
+    modifiedData.language_ids = _.map(
+      modifiedData?.program_languages,
+      "language_id"
+    ) as number[];
   }
 
   if (data.program_organizers !== undefined) {
@@ -605,6 +654,68 @@ export const mapProgramModifiedDataStructure = (
       data.program_organizers,
       "user_id"
     ) as number[];
+  }
+
+  if (data?.program_details_info?.registration_via_3rd_party_url) {
+    modifiedData.registration_via_3rd_party_url =
+      data?.program_details_info?.registration_via_3rd_party_url;
+  }
+
+  if (data?.program_details_info?.is_registration_via_3rd_party) {
+    modifiedData.is_registration_via_3rd_party =
+      data?.program_details_info?.is_registration_via_3rd_party;
+  }
+
+  if (data?.program_details_info?.visibility_id) {
+    if (typeof data?.program_details_info?.visibility_id === "number") {
+      modifiedData.visibility_id = data.program_details_info?.visibility_id;
+    } else {
+      modifiedData.visibility_id = data.program_details_info?.visibility_id?.id;
+      modifiedData.visibility = data.program_details_info
+        ?.visibility_id as OptionValues;
+    }
+  }
+
+  if (data?.program_details_info?.is_language_translation_for_participants) {
+    modifiedData.is_language_translation_for_participants =
+      data?.program_details_info?.is_language_translation_for_participants;
+  }
+
+  if (data?.program_details_info?.is_geo_restriction_applicable) {
+    modifiedData.is_geo_restriction_applicable =
+      data?.program_details_info?.is_geo_restriction_applicable;
+  }
+
+  if (data?.program_details_info?.allowed_countries) {
+    modifiedData.allowed_countries =
+      data?.program_details_info?.allowed_countries;
+  }
+
+  if (data?.program_details_info?.max_capacity) {
+    modifiedData.max_capacity = data?.program_details_info?.max_capacity;
+  }
+
+  if (data?.program_details_info?.online_url) {
+    modifiedData.online_url = data?.program_details_info?.online_url;
+  }
+
+  if (data?.program_details_info?.hour_format_id) {
+    if (typeof data?.program_details_info?.hour_format_id == "number") {
+      modifiedData.hour_format_id = data?.program_details_info?.hour_format_id;
+    } else {
+      modifiedData.hour_format_id =
+        data?.program_details_info?.hour_format_id?.id;
+      modifiedData.hour_format = data?.program_details_info?.hour_format_id;
+    }
+  }
+
+  if (data?.program_details_info?.time_zone_id) {
+    if (typeof data?.program_details_info?.time_zone_id == "number") {
+      modifiedData.time_zone_id = data?.program_details_info?.time_zone_id;
+    } else {
+      modifiedData.time_zone_id = data?.program_details_info?.time_zone_id?.id;
+      modifiedData.time_zone = data?.program_details_info?.time_zone_id;
+    }
   }
 
   return { ...data, ...modifiedData } as Program;

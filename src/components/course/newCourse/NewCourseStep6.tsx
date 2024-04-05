@@ -3,6 +3,7 @@ import Delete from "@public/assets/Delete";
 import React from "react";
 import { useEffect } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
+import { NewCourseStep6FormNames } from "src/constants/CourseConstants";
 import { Input } from "src/ui/input";
 import { Textarea } from "src/ui/textarea";
 
@@ -15,8 +16,9 @@ function NewCourseStep6() {
 
   const {
     field: { value: courseEmails, onChange: courseEmailOnChange },
-    fieldState:{error:emailErrors}
-  } = useController({ name: "contactCourseEmails" });
+  } = useController({
+    name: NewCourseStep6FormNames?.bcc_registration_confirmation_email,
+  });
 
   const formData = getValues();
 
@@ -110,7 +112,7 @@ function NewCourseStep6() {
           }}
           placeholder="Enter course emails"
           className="!w-58"
-          error={emailErrors ? true : false}
+          error={false} // TODO need to change after integrating the form names
         />
         <div className="flex flex-row gap-1 text-[#666666] text-[12px] italic">
           <span className="font-semibold">Note:</span>{" "}
@@ -129,7 +131,7 @@ export const ContactName = ({ index }: any) => {
   const {
     field: { value, onChange },
     fieldState:{error}
-  } = useController({ name: `contact[${index}].contactName` });
+  } = useController({ name: `contact[${index}].contact_name` });
   return (
     <div>
 
@@ -154,7 +156,7 @@ export const ContactEmail = ({ index }: any) => {
   const {
     field: { value, onChange },
     fieldState:{error}
-  } = useController({ name: `contact[${index}].contactEmail` });
+  } = useController({ name: `contact[${index}].contact_email` });
   
   return (
     <div>
@@ -181,7 +183,7 @@ export const ContactMobile = ({ index }: any) => {
   const {
     field: { value, onChange },
     fieldState:{error}
-  } = useController({ name: `contact[${index}].contactMobile` });
+  } = useController({ name: `contact[${index}].contact_number` });
   return (
     <div>
 

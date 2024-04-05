@@ -1,44 +1,46 @@
+import { NewCourseStep1FormNames, NewCourseStep2FormNames, NewCourseStep3FormNames, NewCourseStep4FormNames, NewCourseStep5FormNames, NewCourseStep6FormNames } from "src/constants/CourseConstants";
 import { z } from "zod";
 export const validationSchema = () => {
   return z.object({
     // Step 1 Schema
-    organization_id: z
+    [NewCourseStep1FormNames?.organization_id]: z
     .number({
       required_error: "Select Organization Name."
     }),
-    organizer_ids: z.array(z.number(),{required_error:"Select Organizer Name"}),
-    program_created_by: z.number({required_error:"Select who is going to teach the course"}),
+    [NewCourseStep1FormNames?.organizer_ids]: z.array(z.number(),{required_error:"Select Organizer Name"}),
+    [NewCourseStep1FormNames?.program_created_by]: z.number({required_error:"Select who is going to teach the course"}),
 
     // Step 2 Schema
-    program_type_id: z.number({ required_error: "Course type is a required field"}),
-    teacher_ids: z.array(z.number(),{required_error: 'Please enter at least one teacher'}),
-    assistant_teacher_ids: z.array(z.number(),{required_error: 'Please enter at least one associate teacher'}).optional(),
-    visibility_id: z.number().optional(),
-    is_language_translation_for_participants: z.boolean().optional(),
-    program_alias_name_id: z.number({ required_error: "Course Name is a required field"}),
-    is_geo_restriction_applicable: z.boolean().optional(),
-    language_ids: z.array(z.number(),{ required_error: "Please select atleast one Language"}),
-    program_translation_language_ids: z.array(z.number(),{ required_error: "Please select atleast one Language translation"}).optional(),
-    allowed_countries: z.array(z.number(),{required_error:"Country is is a required fields"}),
-    max_capacity: z.string({required_error:"Maximum capacity should be between 1 and %1 - which is the allowed limit set for this course type by Program / National Admin."}).regex(/^\d+$/ , {message : 'Maximum Capacity can accept only integers'}).refine(val => parseInt(val) > 50, {message:'Maximum capacity exceeds the allowed limit %1 for this course type by Program / National Admin'}),
+    [NewCourseStep2FormNames?.program_type_id]: z.number({ required_error: "Course type is a required field"}),
+    [NewCourseStep2FormNames?.teacher_ids]: z.array(z.number(),{required_error: 'Please enter at least one teacher'}),
+    [NewCourseStep2FormNames?.assistant_teacher_ids]: z.array(z.number(),{required_error: 'Please enter at least one associate teacher'}).optional(),
+    [NewCourseStep2FormNames?.visibility_id]: z.number().optional(),
+    [NewCourseStep2FormNames?.is_language_translation_for_participants]: z.boolean().optional(),
+    [NewCourseStep2FormNames?.program_alias_name_id]: z.number({ required_error: "Course Name is a required field"}),
+    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: z.boolean().optional(),
+    [NewCourseStep2FormNames?.language_ids]: z.array(z.number(),{ required_error: "Please select atleast one Language"}),
+    [NewCourseStep2FormNames?.translation_language_ids]: z.array(z.number(),{ required_error: "Please select atleast one Language translation"}).optional(),
+    [NewCourseStep2FormNames?.allowed_countries]: z.array(z.number(),{required_error:"Country is is a required fields"}),
+    [NewCourseStep2FormNames?.max_capacity]: z.string({required_error:"Maximum capacity should be between 1 and %1 - which is the allowed limit set for this course type by Program / National Admin."}).regex(/^\d+$/ , {message : 'Maximum Capacity can accept only integers'}).refine(val => parseInt(val) > 50, {message:'Maximum capacity exceeds the allowed limit %1 for this course type by Program / National Admin'}),
 
     // Step 3 Schema
-    online_url: z.string({required_error:" Online meeting URL is a required fields"}).url(),
-    hour_format_id: z.number(),
-    schedules: scheduleValidationSchema,
+    [NewCourseStep3FormNames?.online_url]: z.string({required_error:" Online meeting URL is a required fields"}).url(),
+    [NewCourseStep3FormNames?.hour_format_id]: z.number(),
+    [NewCourseStep3FormNames?.time_zone_id]: z.number(),
+    [NewCourseStep3FormNames?.schedules]: scheduleValidationSchema,
 
     // Step 4 Schema
-    is_early_bird_enabled:z.boolean().optional(),
+    [NewCourseStep4FormNames?.is_early_bird_enabled]:z.boolean().optional(),
     feeLevels: feelLevelsValidationSchema,
 
     // Step 5 Schema
-    accommodation: accommodationValidationSchema,
-    is_residential_program: z.boolean().optional(),
-    accommodationPaymentMode: z.boolean().optional(),
+    [NewCourseStep5FormNames?.accommodation]: accommodationValidationSchema,
+    [NewCourseStep5FormNames?.is_residential_program]: z.boolean().optional(),
+    [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: z.boolean().optional(),
 
     // Step 6 Schema
-    contact: contactValidationSchema,
-    contactCourseEmails: z.string(),
+    [NewCourseStep6FormNames?.contact]: contactValidationSchema,
+    [NewCourseStep6FormNames?.bcc_registration_confirmation_email]: z.string(),
   });
 };
 
@@ -53,16 +55,16 @@ const feelLevelsValidationSchema = z.array(
 
 const contactValidationSchema = z.array(
   z.object({
-    contactName: z.string().regex(/^[a-zA-Z\s]+$/ ,{message : 'Contact Name is a required field.'}),
-    contactEmail: z.string({required_error:"Contact email is a required field."}).email({message:"Please enter correct Email"}),
-    contactMobile: z.string({required_error:"Contact mobile is a required field."}).regex(/^\d+$/),
+    [NewCourseStep6FormNames?.contact_name]: z.string().regex(/^[a-zA-Z\s]+$/ ,{message : 'Contact Name is a required field.'}),
+    [NewCourseStep6FormNames?.contact_email]: z.string({required_error:"Contact email is a required field."}).email({message:"Please enter correct Email"}),
+    [NewCourseStep6FormNames?.contact_number]: z.string({required_error:"Contact mobile is a required field."}).regex(/^\d+$/),
   })
 );
 const accommodationValidationSchema = z.array(
   z.object({
-    accomodationType: z.number({required_error:"Accommodation type is required field."}),
-    accomodationFee: z.string({required_error:"Please enter a valid money value for fee per person."}),
-    accomodationSpots: z.string({required_error:"Please enter a valid money value for fee per person."}),
+    [NewCourseStep5FormNames?.accommodation_type_id]: z.number({required_error:"Accommodation type is required field."}),
+    [NewCourseStep5FormNames?.fee_per_person]: z.string({required_error:"Please enter a valid money value for fee per person."}),
+    [NewCourseStep5FormNames?.no_of_residential_spots]: z.string({required_error:"Please enter a valid money value for fee per person."}),
   })
 );
 

@@ -213,6 +213,16 @@ interface ProgramDetailsInfoDataBaseType {
   online_url?: string;
   visibility_id?: number | OptionValuesDataBaseType;
   early_bird_cut_off_period?: number;
+  hour_format_id?: number | OptionValuesDataBaseType;
+  time_zone_id?: number | TimeZone;
+}
+
+interface TimeZoneDataBaseType {
+  id?: number;
+  created_at?: string;
+  name?: string;
+  utc_off_set?: string;
+  country_config_id?: number;
 }
 
 interface ProgramFeeLevelSettingsDataBaseType {
@@ -571,11 +581,12 @@ interface ProgramDataBaseType {
   program_accommodations?: AccommodationTypesDataBaseType[];
   program_assistant_teachers?: ProgramAssistantTeachersDataBaseType[];
   program_contact_details?: ProgramContactDetailsDataBaseType[];
-  program_details_info?: ProgramDetailsInfoDataBaseType[];
+  program_details_info?: ProgramDetailsInfoDataBaseType;
   program_fee_level_settings?: ProgramFeeLevelSettingsDataBaseType[];
   program_schedules?: ProgramSchedulesDataBaseType[];
   program_teachers?: ProgramTeachersDataBaseType[];
   program_translation_languages?: ProgramTranslationLanguagesDataBaseType[];
+  program_languages?: ProgramLanguages[];
   program_organizers?: ProgramOrganizersDataBaseType[];
 }
 
@@ -808,6 +819,10 @@ interface ProgramDetailsInfo {
   visibility_id?: number;
   visibility?: OptionValues;
   early_bird_cut_off_period?: number;
+  hour_format_id?: number;
+  hour_format?: OptionValues;
+  time_zone_id?: number;
+  time_zone?: TimeZone;
 }
 
 interface ProgramFeeLevelSettings {
@@ -1171,6 +1186,14 @@ interface ParticipantRegistration {
   payment_status_id?: number;
 }
 
+interface TimeZone {
+  id?: number;
+  created_at?: string;
+  name?: string;
+  utc_off_set?: string;
+  country_config_id?: number;
+}
+
 interface Program {
   id?: number;
   created_at?: Date;
@@ -1201,16 +1224,41 @@ interface Program {
   state_id?: number;
   state?: State;
   use_default_fee?: boolean;
+  is_registration_required?: boolean;
+  disable_bank_transfer_paylater?: boolean;
+  is_registration_via_3rd_party?: boolean;
+  registration_via_3rd_party_url?: string;
+  notes?: string;
+  allowed_countries?: string[];
+  description?: string;
+  email_notes?: string;
+  is_geo_restriction_applicable?: boolean;
+  is_language_translation_for_participants?: boolean;
+  max_capacity?: number;
+  online_url?: string;
+  visibility_id?: number;
+  visibility?: OptionValues;
+  early_bird_cut_off_period?: number;
+  hour_format_id?: number;
+  hour_format?: OptionValues;
+  time_zone_id?: number;
+  time_zone?: TimeZone;
+  bcc_registration_confirmation_email?: string;
   program_accommodations?: AccommodationTypes[];
   program_assistant_teachers?: ProgramAssistantTeachers[];
   assistant_teacher_ids?: number[];
   program_contact_details?: ProgramContactDetails[];
-  program_details_info?: ProgramDetailsInfo[];
+  program_details_info?: ProgramDetailsInfo;
   program_fee_level_settings?: ProgramFeeLevelSettings[];
   program_schedules?: ProgramSchedules[];
   program_teachers?: ProgramTeachers[];
   teacher_ids?: number[];
   program_translation_languages?: ProgramTranslationLanguages[];
+  translation_language_ids?: number[];
   program_organizers?: ProgramOrganizers[];
   organizer_ids?: number[];
+  program_languages?: ProgramLanguages[];
+  language_ids?: number[];
+  accommodation?: ProgramAccommodations[];
+  schedules?: ProgramSchedules[];
 }

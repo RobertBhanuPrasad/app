@@ -13,7 +13,7 @@ import {
   useFormState,
 } from "react-hook-form";
 import { Input } from "src/ui/input";
-import { NewCourseStep4FormNames } from "src/constants/NewCourseFormNames";
+import { NewCourseStep4FormNames } from "src/constants/CourseConstants";
 
 // Define CourseTable component
 
@@ -25,50 +25,21 @@ export default function CourseTable() {
   const formData = watch();
 
   const fetchFeeData = async () => {
-    // const { data, error } = await supabaseClient.functions.invoke(
-    //   "course-fee",
-    //   {
-    //     method: "POST",
-    //     body: {
-    //       state_id: "3",
-    //       city_id: "3",
-    //       center_id: "1",
-    //       start_date: "2024-03-18T07:00:00-00:00",
-    //       program_type_id: "10",
-    //     },
-    //   }
-    // );
-    const data: any = [
+    //TODO: Need to integrate with form Data
+    const { data, error } = await supabaseClient.functions.invoke(
+      "course-fee",
       {
-        is_program_fee_editable: true,
-        is_early_bird_fee_enabled: true,
-        program_fee_level_settings: [
-          {
-            early_bird_sub_total: 100,
-            early_brid_tax: 10,
-            early_brid_total: 110,
-            fee_level_id: { id: 1 },
-            custom_fee_label: "Fee Level 1",
-            is_enable: true,
-            sub_total: 120,
-            tax: 12,
-            total: 132,
-          },
-          {
-            early_bird_sub_total: 150,
-            early_brid_tax: 15,
-            early_brid_total: 165,
-            fee_level_id: { id: 2 },
-            custom_fee_label: "Fee Level 2",
-            is_enable: false,
-            sub_total: 180,
-            tax: 18,
-            total: 198,
-          },
-          // Add more dummy data as needed
-        ],
-      },
-    ];
+        method: "POST",
+        body: {
+          state_id: "3",
+          city_id: "3",
+          center_id: "1",
+          start_date: "2024-03-18T07:00:00-00:00",
+          program_type_id: formData?.program_type_id,
+        },
+      }
+    );
+
     setCourseFeeSettings(data);
   };
 

@@ -17,7 +17,15 @@ import { useSelect } from "@refinedev/core";
 import Add from "@public/assets/Add";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { RadioGroup } from "src/ui/radio-group";
-import { NewCourseStep5FormNames } from "src/constants/NewCourseFormNames";
+import { NewCourseStep5FormNames } from "src/constants/CourseConstants";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
 
 export default function CourseTable() {
   // Hook to manage dynamically added fields in the form
@@ -71,7 +79,7 @@ const columns = (append: any, remove: any, formData: any) => [
         field: { value, onChange },
         fieldState: { error },
       } = useController({
-        name: `accommodation[${row.index}].accomodationType`,
+        name: `accommodation[${row.index}].accommodation_type_id`,
       });
 
       // Hook to fetch and manage options for a select input
@@ -94,24 +102,41 @@ const columns = (append: any, remove: any, formData: any) => [
       return (
         <div className="w-72 ">
           {/* Custom select input */}
-          <CustomSelect
-            error={error ? true : false}
-            value={value}
-            placeholder="Select Accommodation"
-            data={filteredOptions}
-            onBottomReached={() => {}}
-            onSearch={(val: string) => {
-              onSearch(val);
-            }}
-            onChange={(val) => {
-              onChange(val);
-            }}
-          />
 
-{error && (
+          <Select
+            value={value}
+            onValueChange={(value: any) => {
+              onChange(value);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Accommodation" />
+            </SelectTrigger>
+            <SelectContent>
+              <Input onChange={(val) => onSearch(val.target.value)} />
+              <SelectItems onBottomReached={() => {}}>
+                {filteredOptions?.map((option, index) => {
+                  return (
+                    <div>
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className="h-[44px]"
+                      >
+                        {option.label}
+                      </SelectItem>
+                      {index < options?.length - 1 && (
+                        <hr className="border-[#D6D7D8]" />
+                      )}
+                    </div>
+                  );
+                })}
+              </SelectItems>
+            </SelectContent>
+          </Select>
+          {error && (
         <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
       )}
-
         </div>
       );
     },
@@ -127,7 +152,7 @@ const columns = (append: any, remove: any, formData: any) => [
         field: { value, onChange },
         fieldState:{error}
       } = useController({
-        name: `accommodation[${row.index}].accomodationFee`,
+        name: `accommodation[${row.index}].fee_per_person`,
       });
 
       return (
@@ -157,7 +182,7 @@ const columns = (append: any, remove: any, formData: any) => [
         field: { value, onChange },
         fieldState:{error}
       } = useController({
-        name: `accommodation[${row.index}].accomodationSpots`,
+        name: `accommodation[${row.index}].no_of_residential_spots`,
       });
 
       return (
@@ -258,7 +283,7 @@ export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "accommodationPaymentMode",
+    name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
   return (
     <div className="flex gap-1 flex-col">
