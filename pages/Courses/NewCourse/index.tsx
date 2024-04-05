@@ -36,6 +36,7 @@ import {
   FEE_STEP_NUMBER,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/NewCourseConstants";
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -47,7 +48,7 @@ function index() {
   }
 
   if (viewPreviewPage) {
-    return <div> Render Preview Page</div>;
+    return <div><NewCourseReviewPage/></div>;
   } else {
     return <NewCourse />;
   }

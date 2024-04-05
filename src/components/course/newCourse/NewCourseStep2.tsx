@@ -784,7 +784,7 @@ const LanguageTranslationDropDown = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: NewCourseStep2FormNames?.program_translation_language_ids,
+    name: NewCourseStep2FormNames?.translation_language_ids,
   });
 
   const handleOnSearch = (value: any) => {

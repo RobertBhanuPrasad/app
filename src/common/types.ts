@@ -1230,5 +1230,12 @@ interface Program {
   program_organizers?: ProgramOrganizers[];
   organizer_ids?: number[];
   program_languages?: ProgramLanguages[];
-  languages_ids?: number[];
+  language_ids?: number[];
+  schedules?: any[];
+  accommodation?: any[];
+  contact?: any;
+  hour_format_id?: number;
+  time_zone_id?: number
+ 
+
 }
