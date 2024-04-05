@@ -57,6 +57,7 @@ function NewCourse() {
       action: "create",
       resource: "event",
     },
+
     // resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
@@ -72,7 +73,9 @@ function NewCourse() {
     refineCore: { onFinish, formLoading },
     handleSubmit,
     steps: { currentStep, gotoStep },
+    formState: { errors },
   } = methods;
+
   // Array of step titles, icons, and colors
   const stepTitles = [
     {

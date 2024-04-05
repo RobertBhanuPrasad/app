@@ -1,5 +1,7 @@
 import _ from "lodash";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+// import { OpenStreetMapProvider } from "leaflet-geosearch";
+
 
 /**
  * @function GetOptionValuesByOptionLabel function is used to get array of option_values with option_labels KEY.
@@ -29,3 +31,14 @@ export const getOptionValueObjectByOptionOrder = (
     ? _.find(foundOptionValue.option_values, { order: optionOrder })
     : undefined;
 };
+
+// export const fetchLongitudeLatitudeData = async (address: string) => {
+//   const provider = new OpenStreetMapProvider();
+
+//   // Fetch location data using leaflet-geosearch package
+//   const response = await provider.search({
+//     query: address,
+//   });
+
+//   return response;
+// };

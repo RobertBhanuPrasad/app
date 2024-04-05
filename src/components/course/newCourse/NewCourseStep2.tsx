@@ -524,11 +524,11 @@ const AssistantTeachersDropDown = () => {
 };
 
 const Visibility = () => {
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "visibility",
-  });
+    const {
+      field: { value, onChange },
+    } = useController({
+      name: "visibility",
+    });
 
   return (
     <div className="flex gap-1 flex-col">
