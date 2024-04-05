@@ -7,6 +7,7 @@ import { Button } from "src/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import Filters from "src/participants/Filters";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
+import Form from "@components/Formfield";
 
 function index() {
   return (
@@ -34,7 +35,9 @@ const HeaderSection = () => {
             <Button variant="outline">All Filters</Button>
           </SheetTrigger>
           <SheetContent className="w-[446px] rounded-l-xl">
-            <Filters />
+            <Form onSubmit={() => {}} defaultValues={{}}>
+              <Filters />
+            </Form>
           </SheetContent>
         </Sheet>
       </div>
@@ -98,7 +101,7 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
       <div className="flex flex-row gap-4 justify-center items-center fixed p-2 rounded-b-3xl bottom-0 left-0 w-full shadow-[rgba(0,_0,_0,_0.24)_0px_2px_8px]">
         <Button
           onClick={() =>
-          onSelect({
+            onSelect({
               from: new Date(),
               to: new Date(),
             })
