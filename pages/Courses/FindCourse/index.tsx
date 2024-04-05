@@ -1,5 +1,8 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
+import FilterIcon from "@public/assets/FilterIcon";
+import SearchIcon from "@public/assets/Search";
+import { useSelect } from "@refinedev/core";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
@@ -9,6 +12,15 @@ import Filters from "src/participants/Filters";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import Form from "@components/Formfield";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { Input } from "src/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
 
 function index() {
   return (
@@ -34,6 +46,31 @@ const HeaderSection = () => {
 
   console.log("redux", newAdvanceFilterData);
 
+  const [selectType, setSelectType] = useState();
+  const [pageSize, setPageSize] = useState(10);
+
+  const { options, onSearch } = useSelect({
+    resource: "program_types",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value: any) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+
+    pagination: {
+      pageSize: pageSize,
+      mode: "server",
+    },
+  });
+
+  const handleOnBottomReached = () => {
+    setPageSize((previousLimit: number) => previousLimit + 10);
+  };
+
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
       <div>
@@ -43,9 +80,10 @@ const HeaderSection = () => {
               onClick={() => {
                 setAdvanceFilterOpen(true);
               }}
+              className="flex flex-row gap-2 !rounded-xl"
               variant="outline"
             >
-              All Filters
+              <FilterIcon />
             </Button>
           </SheetTrigger>
           <SheetContent className="w-[446px] rounded-l-xl">
@@ -59,7 +97,15 @@ const HeaderSection = () => {
           </SheetContent>
         </Sheet>
       </div>
-      <div>Search</div>
+
+      <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
+        <SearchIcon />
+        <Input
+          type="text"
+          className="border-none focus:outline-none"
+          placeholder={`Search by Course ID`}
+        />
+      </div>
       <div>
         {" "}
         <Dialog open={open}>
@@ -84,7 +130,37 @@ const HeaderSection = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <div>course type</div>
+      <div>
+        <Select
+          value={selectType}
+          onValueChange={(val: any) => {
+            setSelectType(val);
+          }}
+        >
+          <SelectTrigger className="w-80">
+            <SelectValue placeholder="Select Course Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <Input onChange={(val) => onSearch(val.target.value)} />
+            <SelectItems onBottomReached={handleOnBottomReached}>
+              {options.map((option: any, index: number) => (
+                <>
+                  <SelectItem
+                    key={option.value}
+                    value={option.value}
+                    className="h-[44px]"
+                  >
+                    {option.label}
+                  </SelectItem>
+                  {index < options?.length - 1 && (
+                    <hr className="border-[#D6D7D8]" />
+                  )}
+                </>
+              ))}
+            </SelectItems>
+          </SelectContent>
+        </Select>
+      </div>
       <div className="flex flex-row gap-4 items-center">
         <div className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4]">
           <ClearAll />
