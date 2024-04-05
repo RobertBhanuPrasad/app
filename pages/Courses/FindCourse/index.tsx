@@ -2,7 +2,7 @@ import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
-import { useSelect } from "@refinedev/core";
+import { CrudFilters, useSelect, useTable } from "@refinedev/core";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
@@ -21,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "src/ui/select";
+import { format } from "date-fns";
+import CrossIcon from "@public/assets/CrossIcon";
 
 function index() {
   return (
@@ -35,10 +37,7 @@ export default index;
 
 const HeaderSection = () => {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: new Date(),
-  });
+  const [date, setDate] = React.useState<DateRange | undefined>();
 
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
 
@@ -48,6 +47,23 @@ const HeaderSection = () => {
     Object.keys(newAdvanceFilterData).filter(
       (key) => newAdvanceFilterData[key] !== undefined
     ).length || 0;
+
+  const {
+    tableQueryResult: programData,
+    // pageCount,
+    // pageSize,
+    // setPageSize,
+    // current,
+    // setCurrent,
+  } = useTable({
+    resource: "program",
+    meta: {
+      select:
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name), participant_registration(*),program_schedules(*)",
+    },
+  });
+
+  console.log("hey table data", programData);
 
   console.log("heyy redux data", newAdvanceFilterData);
 
@@ -97,10 +113,26 @@ const HeaderSection = () => {
               className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
               variant="outline"
             >
-              <div>
-                <CalenderIcon />
-              </div>
-              <div></div>
+              <CalenderIcon />
+              {date?.from ? (
+                date?.to ? (
+                  <>
+                    {format(date.from, "MM/dd/yyyy")} -{" "}
+                    {format(date.to, "MM/dd/yyyy")}
+                    <div
+                      onClick={() => {
+                        setDate(undefined);
+                      }}
+                    ></div>
+                  </>
+                ) : (
+                  format(date.from, "MM/dd/yyyy")
+                )
+              ) : (
+                <div className="flex gap-2 font-normal">
+                  Select the Date Range
+                </div>
+              )}
             </Button>
           </DialogTrigger>
           <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
@@ -128,6 +160,7 @@ const HeaderSection = () => {
     </div>
   );
 };
+
 const TableSection = () => {
   return (
     <div>

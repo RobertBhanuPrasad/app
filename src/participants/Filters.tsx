@@ -638,11 +638,11 @@ export const CourseAccountingClosureDate = () => {
           {value?.from ? (
             value?.to ? (
               <>
-                {format(value.from, "dd MMM, yyyy")} -{" "}
-                {format(value.to, "dd MMM, yyyy")}
+                {format(value.from, "MM/dd/yyyy")} -{" "}
+                {format(value.to, "MM/dd/yyyy")}
               </>
             ) : (
-              format(value.from, "dd MMM, yyyy")
+              format(value.from, "MM/dd/yyyy")
             )
           ) : (
             <div className="flex gap-2 font-normal">
