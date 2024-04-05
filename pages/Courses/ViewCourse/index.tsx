@@ -91,16 +91,18 @@ function index() {
     id: Id,
     meta: {
       select:
-        "*,participant_registration!inner(id),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
+        "*,program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
     },
   });
 
+  console.log(courseData, "hello");
+
   const { data: courseDataa } = useOne({
     resource: "program",
-    id: Id,
+    id: 1,
   });
 
-  console.log(courseDataa, "courseDataa");
+  console.log(courseDataa, "hii");
   const participantSuccessPaymentId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_SUCCESS_PAYMENT_STATUS
@@ -607,7 +609,7 @@ const DisplayingCourseStatus = ({ statusId }: any) => {
   switch (statusId) {
     case "Active":
       statusText = "Active";
-      statusColor = "#15AF53";
+      statusColor = " text-green-500";
       break;
     case "Pending Review":
       statusText = "Pending Review";
@@ -634,7 +636,7 @@ const DisplayingCourseStatus = ({ statusId }: any) => {
   return (
     <div>
       <div
-        className={`w-[70px] h-6 bg-[${statusColor}] rounded-[15px] text-[${statusColor}] text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] `}
+        className={`w-[70px] h-6 ${statusColor} rounded-[15px]  text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] `}
       >
         <Circle
           className={`fill-[${statusColor}] size-2 color-[${statusColor}]`}
