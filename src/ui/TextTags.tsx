@@ -4,24 +4,24 @@ import React, { HTMLAttributes } from 'react';
  * 
  * @param Example  "Happiness Program for Youth"
  */
-const MainHeading: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
-  return <h1 className="text-[32px] font-semibold text-[#333333]" {...props}>{children}</h1>;
+const MainHeader: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children, ...props }) => {
+  return <p className="text-[32px] font-semibold text-[#333333]" {...props}>{children}</p>;
 }
 
 /** Component for a level 2 heading with a font size of 24px and semibold font weight
  *
  * @param Example "Happiness Program for Youth"
  */
-const SubHeading: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
-  return <h2 className="text-2xl font-semibold text-[#333333]" {...props}>{children}</h2>;
+const SubHeader: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children, ...props }) => {
+  return <p className="text-2xl font-semibold text-[#333333]" {...props}>{children}</p>;
 }
 
 /** Component for a level 3 heading with a font size of 18px and semibold font weight
  *
  * @param Example "Course Information"
  */
-const Heading: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
-  return <h3 className="text-lg font-semibold text-[#333333]" {...props}>{children}</h3>;
+const Header: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children, ...props }) => {
+  return <p className="text-lg font-semibold text-[#333333]" {...props}>{children}</p>;
 }
 
 /** Component for an item label with a font size of 14px and normal font weight, and light gray color
@@ -58,4 +58,4 @@ const Text: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children, ...pro
   return <p className="text-sm font-normal text-[#333333]" {...props}>{children}</p>;
 }
 
-export { MainHeading, SubHeading, Heading, CardLabel, CardValue, TableHeader, Text };
+export { MainHeader, SubHeader, Header, CardLabel, CardValue, TableHeader, Text };
