@@ -27,8 +27,7 @@ function index() {
   if (!loginUserData?.userData) {
     return <div>Loading...</div>
   }
-
-  return <NewCourse />
+  return <NewCourse />;
 }
 function NewCourse() {
   const { t } = useTranslation("common")
@@ -56,6 +55,7 @@ function NewCourse() {
       action: "create",
       resource: "event",
     },
+
     // resolver: zodResolver(schema),
     defaultValues: {
       visibility: "public",
@@ -71,7 +71,9 @@ function NewCourse() {
     refineCore: { onFinish, formLoading },
     handleSubmit,
     steps: { currentStep, gotoStep },
+    formState: { errors },
   } = methods
+
   // Array of step titles, icons, and colors
   const stepTitles = [
     {

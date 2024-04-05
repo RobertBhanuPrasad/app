@@ -132,72 +132,106 @@ const RadioCards = () => {
     <RadioGroup value={value} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
         {hasTeacherRole && (
-          <Card
-            className={` p-2 w-80 h-[106px] flex flex-row ${
-              value === iAmTeachingId ? "border-[#7677F4] shadow-md shadow-[#7677F450]  " : ""
+          <Label
+            htmlFor={iAmTeachingId}
+            className={`text-[#999999] font-normal ${
+              value === iAmTeachingId ? "text-[#7677F4]" : ""
             }`}
           >
-            <div>
-              <RadioGroupCheckItem
-                value={iAmTeachingId}
-                id={iAmTeachingId}
-                className={value === iAmTeachingId ? "!bg-[#7677F4] !border-none " : "!border-[#D6D7D8] !shadow-none "}
-              />
-            </div>
-            <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
-              <Teacher color={` ${value === iAmTeachingId ? "#7677F4" : "#999999"}`} />
-              <Label
-                htmlFor={iAmTeachingId}
-                className={`text-[#999999] font-normal ${value === iAmTeachingId ? "text-[#7677F4]" : ""}`}
-              >
-                {t("teaching")}
-              </Label>
-            </div>
-          </Card>
+            <Card
+              className={` p-2 w-80 h-[106px] flex flex-row ${
+                value === iAmTeachingId
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                  : ""
+              }`}
+            >
+              <div>
+                <RadioGroupCheckItem
+                  value={iAmTeachingId}
+                  id={iAmTeachingId}
+                  className={
+                    value === iAmTeachingId
+                      ? "!bg-[#7677F4] !border-none "
+                      : "!border-[#D6D7D8] !shadow-none "
+                  }
+                />
+              </div>
+              <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
+                <Teacher
+                  color={` ${value === iAmTeachingId ? "#7677F4" : "#999999"}`}
+                />
+                I am teaching this course
+              </div>
+            </Card>
+          </Label>
         )}
         {hasTeacherRole && (
+          <Label
+            htmlFor={iAmCoTeachingId}
+            className={`text-[#999999] font-normal ${
+              value === iAmCoTeachingId ? "text-[#7677F4]" : ""
+            }`}
+          >
+            <Card
+              className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
+                value === iAmCoTeachingId
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                  : ""
+              }`}
+            >
+              <RadioGroupCheckItem
+                value={iAmCoTeachingId}
+                id={iAmCoTeachingId}
+                className={
+                  value === iAmCoTeachingId
+                    ? "!bg-[#7677F4] !border-none "
+                    : "!border-[#D6D7D8] !shadow-none "
+                }
+              />
+              <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
+                <Coteacher
+                  color={` ${
+                    value === iAmCoTeachingId ? "#7677F4" : "#999999"
+                  }`}
+                />
+                I am co-teaching this course
+              </div>
+            </Card>
+          </Label>
+        )}
+        <Label
+          htmlFor={iAmOrganizerId}
+          className={`text-[#999999] font-normal ${
+            value === iAmOrganizerId ? "text-[#7677F4]" : ""
+          }`}
+        >
           <Card
-            className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
-              value === iAmCoTeachingId ? "border-[#7677F4] shadow-md shadow-[#7677F450] " : ""
+            className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
+              value === iAmOrganizerId
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                : ""
             }`}
           >
             <RadioGroupCheckItem
-              value={iAmCoTeachingId}
-              id={iAmCoTeachingId}
-              className={value === iAmCoTeachingId ? "!bg-[#7677F4] !border-none " : "!border-[#D6D7D8] !shadow-none "}
+              value={iAmOrganizerId}
+              id={iAmOrganizerId}
+              className={
+                value === iAmOrganizerId
+                  ? "!bg-[#7677F4] !border-none "
+                  : "!border-[#D6D7D8] !shadow-none "
+              }
             />
-            <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
-              <Coteacher color={` ${value === iAmCoTeachingId ? "#7677F4" : "#999999"}`} />
-              <Label
-                htmlFor={iAmCoTeachingId}
-                className={`text-[#999999] font-normal ${value === iAmCoTeachingId ? "text-[#7677F4]" : ""}`}
-              >
-                {t("coTeaching")}
-              </Label>
+            <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
+              <Organizer
+                color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
+              />
+
+              <div className="w-[240px] text-wrap text-center justify-center">
+                I am organizing this course for another teacher
+              </div>
             </div>
           </Card>
-        )}
-
-        <Card
-          className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
-            value === iAmOrganizerId ? "border-[#7677F4] shadow-md shadow-[#7677F450] " : ""
-          }`}
-        >
-          <RadioGroupCheckItem
-            value={iAmOrganizerId}
-            id={iAmOrganizerId}
-            className={value === iAmOrganizerId ? "!bg-[#7677F4] !border-none " : "!border-[#D6D7D8] !shadow-none "}
-          />
-          <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
-            <Organizer color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`} />
-            <Label
-              htmlFor={iAmOrganizerId}
-              className={`text-[#999999] font-normal ${value === iAmOrganizerId ? "text-[#7677F4]" : ""}`}
-            >
-              <div className="w-[240px] text-wrap text-center justify-center">{t("organizingThisCourse")}</div>
-            </Label>
-          </div>
-        </Card>
+        </Label>
       </div>
     </RadioGroup>
   )
@@ -258,7 +292,7 @@ const OrganizationDropDown = () => {
             organizationDetailsOnChange(
               queryResult?.data?.data?.filter(
                 //Need to change val?.value to val in future.
-                (value) => value?.id == val?.value
+                (value) => value?.id == val
               )?.[0]
             )
           }}

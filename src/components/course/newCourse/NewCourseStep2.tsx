@@ -502,11 +502,11 @@ const AssistantTeachersDropDown = () => {
 
 const Visibility = () => {
   const { t } = useTranslation("common")
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "visibility",
-  })
+    const {
+      field: { value, onChange },
+    } = useController({
+      name: "visibility",
+    })
 
   return (
     <div className="flex gap-1 flex-col">
