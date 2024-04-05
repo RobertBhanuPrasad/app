@@ -1,7 +1,7 @@
 "use client";
 import CopyIcon from "@public/assets/CopyIcon";
 import { useList, useOne } from "@refinedev/core";
-import { NextRouter, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { Header2, ItemValue } from "src/commonComponents";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
@@ -57,7 +57,7 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,organization_id(id,name),program_fee_settings_id(program_fee_level_settings!inner(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),program_details_info(max_capacity,visibility_id(value)),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_schedules(*),venue(*,center_id!inner(id ,name),city_id!inner(id ,name),state_id!inner(id ,name)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(id,name)),program_type_id!inner(id,name),program_assistant_teachers!inner(*,user_id(contact_id(id,full_name))),program_teachers!inner(*,user_id(contact_id(id,full_name)))",
+        "*,program_accommodations!inner(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers!inner(*,user_id(contact_id(id,full_name))),program_teachers!inner(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,value),program_type_id!inner(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings!inner(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),program_details_info(max_capacity,visibility_id(value))",
     },
   });
 
@@ -125,7 +125,12 @@ function CourseDetailsTab() {
               <Header2>Course type</Header2>
               <ItemValue>{courseData?.data?.program_type_id?.name}</ItemValue>
             </div>
-            <Header2>Course Accounting Status</Header2>
+            <div>
+              <Header2>Course Accounting Status</Header2>
+              <ItemValue>
+                {courseData?.data?.program_accounting_status_id?.value}
+              </ItemValue>
+            </div>
             <div>
               <Header2>Teachers</Header2>
               <ItemValue>
@@ -244,11 +249,11 @@ function CourseDetailsTab() {
             <div>
               <Header2>Venue Address</Header2>
               <ItemValue>
-                {courseData?.data?.venue?.address},
-                {courseData?.data?.venue?.center_id?.name},
-                {courseData?.data?.venue?.city_id?.name},
-                {courseData?.data?.venue?.state_id?.name}{" "}
-                {courseData?.data?.venue?.postal_code}
+                {courseData?.data?.venue_id?.address},
+                {courseData?.data?.venue_id?.center_id?.name},
+                {courseData?.data?.venue_id?.city_id?.name},
+                {courseData?.data?.venue_id?.state_id?.name}{" "}
+                {courseData?.data?.venue_id?.postal_code}
               </ItemValue>
             </div>
             <Header2>
@@ -289,21 +294,23 @@ function CourseDetailsTab() {
                     <div className="w-[90%] break-words">
                       {courseData?.data?.details_page_link}
                     </div>
-                    <div
-                      onClick={() => {
-                        handleCopyDetailsPageLink();
-                      }}
-                      className="relative mt-1"
-                    >
-                      <CopyIcon />
-                      {copiedDetailsPageLink ? (
-                        <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                          copied
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                    </div>
+                    {courseData?.data?.details_page_link && (
+                      <div
+                        onClick={() => {
+                          handleCopyDetailsPageLink();
+                        }}
+                        className="relative mt-1"
+                      >
+                        <CopyIcon />
+                        {copiedDetailsPageLink ? (
+                          <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                            copied
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    )}
                   </div>
                 </ItemValue>
               </div>
@@ -313,21 +320,23 @@ function CourseDetailsTab() {
                   <div className="text-[16px] font-semibold w-[90%] break-words">
                     {courseData?.data?.registration_link}
                   </div>
-                  <div
-                    onClick={() => {
-                      handleCopyRegistrationLink();
-                    }}
-                    className="relative mt-1"
-                  >
-                    <CopyIcon />
-                    {copiedRegistrationLink ? (
-                      <div className="absolute -left-8 bottom-12 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                        copied
-                      </div>
-                    ) : (
-                      ""
-                    )}
-                  </div>
+                  {courseData?.data?.registration_link && (
+                    <div
+                      onClick={() => {
+                        handleCopyRegistrationLink();
+                      }}
+                      className="relative mt-1"
+                    >
+                      <CopyIcon />
+                      {copiedRegistrationLink ? (
+                        <div className="absolute -left-8 bottom-12 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                          copied
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
