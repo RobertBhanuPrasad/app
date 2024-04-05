@@ -79,12 +79,9 @@ import LinkedInIcon from "@public/assets/LinkedInIcon";
 import _ from "lodash";
 import Exclamation from "@public/assets/Exclamation";
 import Cross from "@public/assets/Cross";
-import Tick from "@public/assets/Tick";
+import Tick from "@public/assets/Tick.png";
 import { useRouter } from "next/router";
-// import { FiAlertCircle } from "react-icons/fi";
-// import { FcOk } from "react-icons/fc";
-// import { IoCloseSharp } from "react-icons/io5";
-// import { FaWindowClose } from "react-icons/fa";
+import Image from "next/image";
 
 function index() {
   const Id: number = 1;
@@ -514,7 +511,9 @@ const PendingApprovalDropDown = () => {
                   <AlertDialogContent className="w-50">
                     <AlertDialogHeader className="text-center">
                       <AlertDialogTrigger></AlertDialogTrigger>
-                      <Tick />
+                      <div className="flex justify-center">
+                        <Image src={Tick} alt="tick" />
+                      </div>
                       <AlertDialogTitle className="font-bold text-center">
                         Course approved Successfully
                       </AlertDialogTitle>
