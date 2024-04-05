@@ -22,7 +22,15 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
  * @returns {JSX.Element} - EditModalDialog component
  */
 
-export const EditModalDialog = ({ title, content, onClose, open, openEdit }: any) => {
+interface EditModalDialogProps {
+  title: string
+  content: any
+  onClose: () => void
+  open: boolean
+  openEdit: () => void
+}
+
+export const EditModalDialog = ({ title, content, onClose, open, openEdit }: EditModalDialogProps) => {
   const { newCourseData, setNewCourseData } = newCourseStore()
 
   /**
