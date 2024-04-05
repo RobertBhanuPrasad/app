@@ -1,8 +1,6 @@
 import { BaseTable } from "@components/course/findCourse/BaseTable";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
-import { CaretSortIcon } from "@radix-ui/react-icons";
-import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
@@ -78,7 +76,6 @@ const TableSection = () => {
     },
   });
 
-  console.log("heyy data", programData);
 
   const modifiedData = Object.values(
     mapProgramModifiedDataStructure(
