@@ -3,7 +3,7 @@ import Delete from "@public/assets/Delete";
 import React from "react";
 import { useEffect } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
-import { NewCourseStep6FormNames } from "src/constants/NewCourseFormNames";
+import { NewCourseStep6FormNames } from "src/constants/CourseConstants";
 import { Input } from "src/ui/input";
 import { Textarea } from "src/ui/textarea";
 
@@ -16,7 +16,7 @@ function NewCourseStep6() {
 
   const {
     field: { value: courseEmails, onChange: courseEmailOnChange },
-  } = useController({
+  } = useController<Program>({
     name: NewCourseStep6FormNames?.bcc_registration_confirmation_email,
   });
 
@@ -129,7 +129,7 @@ export default NewCourseStep6;
 export const ContactName = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController({ name: `contact[${index}].contact_name` });
+  } = useController<Program>({ name: `contact[${index}].contact_name` });
   return (
     <Input
       placeholder="Enter contact name"
@@ -143,7 +143,7 @@ export const ContactName = ({ index }: any) => {
 export const ContactEmail = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController({ name: `contact[${index}].contact_email` });
+  } = useController<Program>({ name: `contact[${index}].contact_email` });
   return (
     <Input
       placeholder="Enter contact email"
@@ -158,7 +158,7 @@ export const ContactEmail = ({ index }: any) => {
 export const ContactMobile = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController({ name: `contact[${index}].contact_number` });
+  } = useController<Program>({ name: `contact[${index}].contact_number` });
   return (
     <Input
       placeholder="Enter contact mobile"

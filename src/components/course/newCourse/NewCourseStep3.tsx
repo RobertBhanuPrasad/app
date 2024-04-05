@@ -55,7 +55,7 @@ export default NewCourseStep3;
 const OnlineProgram = () => {
   const {
     field: { value, onChange },
-  } = useController({
+  } = useController<Program>({
     name: NewCourseStep3FormNames?.online_url,
   });
   return (
@@ -100,11 +100,11 @@ const Schedules = () => {
 const SchedulesHeader = () => {
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
-  } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
+  } = useController<Program>({ name: NewCourseStep3FormNames?.hour_format_id });
 
   const {
     field: { value: timeZones, onChange: timeZonesOnChange },
-  } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
+  } = useController<Program>({ name: NewCourseStep3FormNames?.time_zone_id });
 
   let timeFormatOptions =
     getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
@@ -333,7 +333,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },
-  } = useController({
+  } = useController<Program>({
     name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
 
@@ -493,17 +493,17 @@ const TimeSelector = ({
   // Extracting hour value and onChange function using useController hook
   const {
     field: { value: hourValue = "00", onChange: hourOnChange },
-  } = useController({ name: `${name}Hour` });
+  } = useController<Program>({ name: `${name}Hour` });
 
   // Extracting minute value and onChange function using useController hook
   const {
     field: { value: minuteValue = "00", onChange: minuteOnChange },
-  } = useController({ name: `${name}Minute` });
+  } = useController<Program>({ name: `${name}Minute` });
 
   // Extracting time format value and onChange function using useController hook
   const {
     field: { value: timeFormat = "AM", onChange: timeFormatOnChange },
-  } = useController({ name: `${name}TimeFormat` });
+  } = useController<Program>({ name: `${name}TimeFormat` });
 
   // Function to preprocess input value (add leading zeros and remove non-numeric characters)
   const preProcessInputValue = (value: string): string => {

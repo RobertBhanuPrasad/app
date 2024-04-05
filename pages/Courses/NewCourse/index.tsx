@@ -22,7 +22,7 @@ import {
   NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
-} from "src/constants/NewCourseFormNames";
+} from "src/constants/CourseConstants";
 import Form from "@components/Formfield";
 import { stepStore } from "src/zustandStore/StepStore";
 import { useValidateCurrentStepFields } from "./ValidateCurrentStep";
