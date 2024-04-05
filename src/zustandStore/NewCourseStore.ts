@@ -5,6 +5,8 @@ interface NewCourseStore {
   setViewPreviewPage: (by: boolean) => void;
   newCourseData: any;
   setNewCourseData: (by: any) => void;
+  viewThankyouPage: boolean;
+  setViewThankyouPage: (by: boolean) => void;
 }
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
@@ -18,6 +20,13 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   setNewCourseData: (data: any) => {
     set(() => ({
       newCourseData: data,
+    }));
+  },
+
+  viewThankyouPage: false,
+  setViewThankyouPage: (data: boolean) => {
+    set(() => ({
+      viewPreviewPage: data,
     }));
   },
 }));
