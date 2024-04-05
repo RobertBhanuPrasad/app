@@ -1,6 +1,6 @@
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowDownIcon, ArrowUpIcon, MoreHorizontal } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
 import { Button } from "src/ui/button";
 // import { Checkbox } from "src/ui/checkbox";
 import {
@@ -42,15 +42,20 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   {
     accessorKey: "Registration ID",
     enablePinning: true,
+    enableHiding: false,
     header: ({ column }) => {
-      return <div className="min-w-[150px] text-center">Registration ID</div>;
+      return <div className="min-w-[150px] text-left">Registration ID</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
       return (
-        <div className="min-w-[150px] text-center">{row?.original?.id}</div>
+        <a className="cursor-pointer">
+          <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
+            {row?.original?.id}
+          </div>
+        </a>
       );
     },
   },
@@ -78,14 +83,26 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="lowercase min-w-[50px] text-center">
-          {row?.original?.created_at}
-        </div>
+        <div className="text-left">{row?.original?.registration_date}</div>
       );
     },
   },
   {
+    accessorKey: "NIF",
+    header: ({ column }) => {
+      return <div className="text-left">NIF</div>;
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return <div className="text-left">{row?.original?.contact_id?.nif}</div>;
+    },
+  },
+  {
     accessorKey: "Name",
+    enableHiding: false,
+    enableSorting: true,
     header: ({ column }) => {
       return (
         <div>
@@ -108,9 +125,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="lowercase min-w-[100px] text-center">
-          {row?.original?.contact_id?.full_name}
-        </div>
+        <div className="text-left">{row?.original?.contact_id?.full_name}</div>
       );
     },
   },
@@ -138,7 +153,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="lowercase min-w-[100px] text-center">
+        <div className="text-left">
           {row?.original?.contact_id?.date_of_birth}
         </div>
       );
@@ -146,6 +161,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Phone",
+    enableHiding: false,
     header: ({ column }) => {
       return (
         <div>
@@ -168,14 +184,13 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="lowercase min-w-[100px] text-center">
-          {row?.original?.contact_id?.mobile}
-        </div>
+        <div className="text-left">{row?.original?.contact_id?.mobile}</div>
       );
     },
   },
   {
     accessorKey: "Email",
+    enableHiding: false,
     header: ({ column }) => {
       return (
         <div>
@@ -198,7 +213,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="lowercase min-w-[100px] text-center">
+        <div className="lowercase text-left">
           {row?.original?.contact_id?.email}
         </div>
       );
@@ -206,6 +221,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Fee Level",
+    enableHiding: false,
     header: ({ column }) => {
       return (
         <div>
@@ -228,19 +244,231 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="lowercase min-w-[150px] text-center">
+        <div className="titlecase text-left">
           {row?.original?.price_category_id?.fee_level_id?.value}
         </div>
       );
     },
   },
   {
-    accessorKey: "Program Agreement Version",
-    enablePinning: true,
+    accessorKey: "Amount",
+    enableHiding: false,
     header: ({ column }) => {
       return (
-        <div className="min-w-[150px] text-center">
-          Program Agreement Version
+        <div>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Amount
+            {column.getIsSorted() === "desc" ? (
+              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : (
+              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+            )}
+          </Button>
+        </div>
+      );
+    },
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="text-left">
+          {row?.original?.price_category_id?.amount}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Transaction Type",
+    header: ({ column }) => {
+      return <div className="min-w-[150px] text-left">Transaction Type</div>;
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="text-left">
+          {row?.original?.payment_status?.transaction_type}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Transaction ID",
+    header: ({ column }) => {
+      return <div className="text-left">Transaction ID</div>;
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="text-left">
+          {row?.original?.payment_status?.transaction_id}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Payment Method",
+    header: ({ column }) => {
+      return <div className="min-w-[200px] text-left">Payment Method</div>;
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="text-left">
+          {row?.original?.payment_status?.payment_method}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Balance",
+    header: ({ column }) => {
+      return <div className="text-left">Balance</div>;
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="text-left">
+          {row?.original?.payment_status?.balance}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Transaction Status",
+    enableHiding: false,
+    header: ({ column }) => {
+      return <div className="min-w-[150px] text-left">Transaction Status</div>;
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="text-left">
+          {row?.original?.payment_status?.transaction_status}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Attendance Status",
+    enableHiding: false,
+    header: ({ column }) => {
+      return (
+        <div>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Attendance Status
+            {column.getIsSorted() === "desc" ? (
+              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : (
+              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+            )}
+          </Button>
+        </div>
+      );
+    },
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="text-left">
+          {row?.original?.participant_attendence_status_id?.value}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Program Agreement Version",
+    header: ({ column }) => {
+      return <div className="text-left">Program Agreement Version</div>;
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="min-w-[150px] text-left">
+          {row?.original?.legal_agreement_version}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Program Agreement Status",
+    header: ({ column }) => {
+      return (
+        <div className="min-w-[150px] text-left">Program Agreement Status</div>
+      );
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="min-w-[150px] text-left">
+          {row?.original?.program_agreement_status}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Program Agreement Date",
+    header: ({ column }) => {
+      return (
+        <div className="min-w-[150px] text-left">Program Agreement Date</div>
+      );
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="min-w-[150px] text-left">
+          {row?.original?.program_agreement_date}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Health Declaration Status",
+    header: ({ column }) => {
+      return (
+        <div className="min-w-[150px] text-left">Health Declaration Status</div>
+      );
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="min-w-[150px] text-left">
+          {row?.original?.health_declaration_status}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Health Declaration Consent Date",
+    header: ({ column }) => {
+      return (
+        <div className="min-w-[150px] text-left">
+          Health Declaration Consent Date
         </div>
       );
     },
@@ -249,13 +477,12 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="min-w-[150px] text-center">
-          {row?.original?.legal_agreement_version}
+        <div className="min-w-[150px] text-left">
+          {row?.original?.health_declaration_date}
         </div>
       );
     },
   },
-
   {
     id: "actions",
     enableHiding: false,
@@ -274,15 +501,17 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="h-8 w-8 p-0 text-[#7677F4]">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {optionsValues.map((value) => (
-              <DropdownMenuItem>{value}</DropdownMenuItem>
-            ))}
+            <div className="flex flex-col gap-4 p-3 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+              {optionsValues.map((value) => (
+                <DropdownMenuItem>{value}</DropdownMenuItem>
+              ))}
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       );
