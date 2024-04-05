@@ -44,32 +44,12 @@ const HeaderSection = () => {
 
   const { newAdvanceFilterData, setNewAdvanceFilterData } = newCourseStore();
 
-  console.log("redux", newAdvanceFilterData);
+  const count =
+    Object.keys(newAdvanceFilterData).filter(
+      (key) => newAdvanceFilterData[key] !== undefined
+    ).length || 0;
 
-  const [selectType, setSelectType] = useState();
-  const [pageSize, setPageSize] = useState(10);
-
-  const { options, onSearch } = useSelect({
-    resource: "program_types",
-    optionLabel: "name",
-    optionValue: "id",
-    onSearch: (value: any) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-
-    pagination: {
-      pageSize: pageSize,
-      mode: "server",
-    },
-  });
-
-  const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10);
-  };
+  console.log("heyy redux data", newAdvanceFilterData);
 
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
@@ -83,7 +63,9 @@ const HeaderSection = () => {
               className="flex flex-row gap-2 !rounded-xl"
               variant="outline"
             >
+              All Filters
               <FilterIcon />
+              {count > 0 && <CountComponent count={count} />}
             </Button>
           </SheetTrigger>
           <SheetContent className="w-[446px] rounded-l-xl">
@@ -131,35 +113,10 @@ const HeaderSection = () => {
         </Dialog>
       </div>
       <div>
-        <Select
-          value={selectType}
-          onValueChange={(val: any) => {
-            setSelectType(val);
-          }}
-        >
-          <SelectTrigger className="w-80">
-            <SelectValue placeholder="Select Course Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <Input onChange={(val) => onSearch(val.target.value)} />
-            <SelectItems onBottomReached={handleOnBottomReached}>
-              {options.map((option: any, index: number) => (
-                <>
-                  <SelectItem
-                    key={option.value}
-                    value={option.value}
-                    className="h-[44px]"
-                  >
-                    {option.label}
-                  </SelectItem>
-                  {index < options?.length - 1 && (
-                    <hr className="border-[#D6D7D8]" />
-                  )}
-                </>
-              ))}
-            </SelectItems>
-          </SelectContent>
-        </Select>
+        <CourseTypeComponent
+          newAdvanceFilterData={newAdvanceFilterData}
+          setNewAdvanceFilterData={setNewAdvanceFilterData}
+        />
       </div>
       <div className="flex flex-row gap-4 items-center">
         <div className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4]">
@@ -212,5 +169,76 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
         </Button>
       </div>
     </div>
+  );
+};
+
+export const CountComponent = ({ count }: any) => {
+  return (
+    <div className="flex justify-center items-center w-5 h-5 !rounded-full bg-[#7677F4]/10">
+      <div className="text-xs text-[#7677F4]">{count}</div>
+    </div>
+  );
+};
+
+export const CourseTypeComponent = ({
+  newAdvanceFilterData,
+  setNewAdvanceFilterData,
+}: any) => {
+  const [pageSize, setPageSize] = useState(10);
+
+  const { options, onSearch } = useSelect({
+    resource: "program_types",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value: any) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+
+    pagination: {
+      pageSize: pageSize,
+      mode: "server",
+    },
+  });
+
+  const handleOnBottomReached = () => {
+    setPageSize((previousLimit: number) => previousLimit + 10);
+  };
+  return (
+    <Select
+      value={newAdvanceFilterData?.course_type}
+      onValueChange={(val: any) => {
+        setNewAdvanceFilterData({
+          ...newAdvanceFilterData,
+          course_type: val,
+        });
+      }}
+    >
+      <SelectTrigger className="w-80">
+        <SelectValue placeholder="Select Course Type" />
+      </SelectTrigger>
+      <SelectContent>
+        <Input onChange={(val) => onSearch(val.target.value)} />
+        <SelectItems onBottomReached={handleOnBottomReached}>
+          {options.map((option: any, index: number) => (
+            <>
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
+                {option.label}
+              </SelectItem>
+              {index < options?.length - 1 && (
+                <hr className="border-[#D6D7D8]" />
+              )}
+            </>
+          ))}
+        </SelectItems>
+      </SelectContent>
+    </Select>
   );
 };

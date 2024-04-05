@@ -305,3 +305,5 @@ const Footer = ({ stepTitles }: any) => {
     </div>
   );
 };
+
+
