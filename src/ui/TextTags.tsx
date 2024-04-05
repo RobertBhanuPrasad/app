@@ -4,7 +4,7 @@ import React, { HTMLAttributes } from 'react';
  * 
  * @param Example  "Happiness Program for Youth"
  */
-const Heading1: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
+const MainHeading: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
   return <h1 className="text-[32px] font-semibold text-[#333333]" {...props}>{children}</h1>;
 }
 
@@ -12,7 +12,7 @@ const Heading1: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...p
  *
  * @param Example "Happiness Program for Youth"
  */
-const Heading2: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
+const SubHeading: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
   return <h2 className="text-2xl font-semibold text-[#333333]" {...props}>{children}</h2>;
 }
 
@@ -20,7 +20,7 @@ const Heading2: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...p
  *
  * @param Example "Course Information"
  */
-const Heading3: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
+const Heading: React.FC<HTMLAttributes<HTMLHeadingElement>> = ({ children, ...props }) => {
   return <h3 className="text-lg font-semibold text-[#333333]" {...props}>{children}</h3>;
 }
 
@@ -58,4 +58,4 @@ const Text: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children, ...pro
   return <p className="text-sm font-normal text-[#333333]" {...props}>{children}</p>;
 }
 
-export { Heading1, Heading2, Heading3, CardLabel, CardValue, TableHeader, Text };
+export { MainHeading, SubHeading, Heading, CardLabel, CardValue, TableHeader, Text };
