@@ -8,7 +8,7 @@ import { useGetIdentity } from "@refinedev/core";
 import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { Input } from "src/ui/input";
-import { NewCourseStep4FormNames } from "src/constants/NewCourseFormNames";
+import { NewCourseStep4FormNames } from "src/constants/CourseConstants";
 
 // Define CourseTable component
 
@@ -20,16 +20,17 @@ export default function CourseTable() {
   const formData = watch();
 
   const fetchFeeData = async () => {
+    //TODO: Need to integrate with form Data
     const { data, error } = await supabaseClient.functions.invoke(
       "course-fee",
       {
         method: "POST",
         body: {
-          state_id: "1",
-          city_id: "1",
+          state_id: "3",
+          city_id: "3",
           center_id: "1",
           start_date: "2024-03-18T07:00:00-00:00",
-          program_type_id: "1",
+          program_type_id: formData?.program_type_id,
         },
       }
     );
