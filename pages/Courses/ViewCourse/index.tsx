@@ -1,3 +1,9 @@
+import {
+  DisplayOptions,
+  handleTabsBasedOnStatus,
+  showOptions,
+} from "@components/courseBusinessLogic";
+import { useGetIdentity, useOne } from "@refinedev/core";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -10,8 +16,31 @@ import {
   REVENUE_SUMMARY_TAB,
 } from "src/constants/Tabs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-
 function index() {
+  const { data: loginUserData }: any = useGetIdentity();
+  const { data, isLoading } = useOne({
+    resource: "program",
+    id: 1,
+  });
+  if (!loginUserData?.userData) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="">
+      {!isLoading ? (
+        <div className="pl-[1px]">
+          <ViewCourse data={data} />
+        </div>
+      ) : (
+        <div className="flex items-center justify-center">
+          <div>Loading...</div>;
+        </div>
+      )}
+    </div>
+  );
+}
+function ViewCourse({ data }: any) {
   const { t } = useTranslation("common");
   const [selectedValue, setSelectedValue] = useState();
   const tabTriggers: any = [
@@ -37,6 +66,17 @@ function index() {
     },
   ];
 
+  const { data: loginUserData }: any = useGetIdentity();
+
+  console.log(
+    DisplayOptions(
+      data?.data?.status_id,
+      data?.data?.program_accounting_status_id,
+      loginUserData?.userData?.user_roles[0]?.role_id?.id
+    ),
+    "show options"
+  );
+
   return (
     <div className="w-full ">
       <Tabs
@@ -50,7 +90,10 @@ function index() {
               key={index}
               value={trigger.value}
               className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
-              disabled={trigger.disabled}
+              disabled={handleTabsBasedOnStatus(
+                data?.data?.status_id,
+                trigger.value
+              )}
             >
               <div className="flex flex-col gap-1">
                 {trigger.label}

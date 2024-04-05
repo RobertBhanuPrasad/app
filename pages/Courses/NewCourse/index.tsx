@@ -45,12 +45,7 @@ function index() {
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
   }
-
-  if (viewPreviewPage) {
-    return <div> Render Preview Page</div>;
-  } else {
-    return <NewCourse />;
-  }
+  return <NewCourse />;
 }
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
