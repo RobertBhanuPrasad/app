@@ -6,13 +6,18 @@ import {
   MoreHorizontal,
   MoreVertical,
 } from "lucide-react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { Button } from "src/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
+import { Input } from "src/ui/input";
+import { Label } from "src/ui/label";
 
 export const columns: ColumnDef<Program>[] = [
   {
@@ -209,6 +214,40 @@ export const columns: ColumnDef<Program>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const router = useRouter()
+      const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+      const dropDownMenuData=["View Participants",
+        "Register Participant",
+        "Edit Course",
+        "Copy Course",
+        "Cancel Course",
+        "Submit/Edit Course Accounting Form"]
+
+        const handleSelected = (value:string) => {
+         switch(value){
+          case 'View Participants':
+            {
+              // TODO - Navigate to Participants Listing page
+              router.push('/')
+              break;
+            }
+          case 'Register Participant':
+            {
+              // TODO - Navigate to Register Participant page
+              router.push('/Courses/FindCourse')
+              break;
+            }
+          case 'Cancel Course':
+            {
+              setIsDialogOpen(true)
+            }
+          default :
+          {
+            console.log("other options")
+          }
+         }
+        }
       return (
         <div className="flex justify-center text-primary">
           <DropdownMenu>
@@ -218,12 +257,48 @@ export const columns: ColumnDef<Program>[] = [
                 <MoreVertical className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Copy course</DropdownMenuItem>
-              <DropdownMenuItem>Edit Course</DropdownMenuItem>
-              <DropdownMenuItem>View Course</DropdownMenuItem>
+            <DropdownMenuContent align="end">{
+              dropDownMenuData.map((data)=> <DropdownMenuItem onClick={()=>handleSelected(data)}>{data}</DropdownMenuItem> )
+            }
             </DropdownMenuContent>
           </DropdownMenu>
+          {isDialogOpen && (
+              <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Edit profile</DialogTitle>
+                  <DialogDescription>
+                    Make changes to your profile here. Click save when you're done.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Name
+                    </Label>
+                    <Input
+                      id="name"
+                      defaultValue="Pedro Duarte"
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="username" className="text-right">
+                      Username
+                    </Label>
+                    <Input
+                      id="username"
+                      defaultValue="@peduarte"
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit">Save changes</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       );
     },

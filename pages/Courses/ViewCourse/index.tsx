@@ -1,7 +1,6 @@
 import {
   DisplayOptions,
   handleTabsBasedOnStatus,
-  showOptions,
 } from "@components/courseBusinessLogic";
 import { useGetIdentity, useOne } from "@refinedev/core";
 import { GetServerSideProps } from "next";
