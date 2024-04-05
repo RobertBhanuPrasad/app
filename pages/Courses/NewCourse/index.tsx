@@ -1,18 +1,18 @@
+import Form from "@components/Formfield";
+import NewCourseReviewPage from "@components/course/newCourse/NewCourseReviewPage";
 import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
 import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
+import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
-import { Button } from "src/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import Fees from "@public/assets/Fees";
-import _ from "lodash";
-import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
-import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import {
@@ -23,7 +23,6 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
-import Form from "@components/Formfield";
 import { stepStore } from "src/zustandStore/StepStore";
 import { useValidateCurrentStepFields } from "./ValidateCurrentStep";
 import { z } from "zod";
@@ -36,23 +35,28 @@ import {
   FEE_STEP_NUMBER,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/CourseConstants";
-import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
+import { Button } from "react-day-picker";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { viewPreviewPage } = newCourseStore();
+  const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
   // if (!loginUserData?.userData) {
-  //   return <div>Loading...</div>;
+  //     return <div>Loading...</div>;
   // }
 
-  if (viewPreviewPage) {
+  if (viewThankyouPage) {
     return (
-      <div>
-        <NewCourseReviewPage />
+      <div className="mb-8">
+        <NewCourseThankyouPage />;
       </div>
     );
+  }
+
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />;
   } else {
     return <NewCourse />;
   }
@@ -154,11 +158,6 @@ function NewCourse() {
       }),
   });
 
-  // If the form is still loading, display a loading message
-  // if (formLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
   return (
@@ -166,7 +165,7 @@ function NewCourse() {
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
           <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
-            <div className="flex flex-col  h-full gap-4 ">
+            <div className="flex flex-col h-full gap-4 ">
               {stepTitles.map((tab, index) => (
                 <TabsTrigger
                   key={index}
@@ -274,7 +273,7 @@ const Footer = ({ stepTitles }: any) => {
   };
 
   return (
-    <div className="flex self-end justify-center gap-4 w-full mt-2">
+    <div className="flex self-end justify-center w-full gap-4 mt-2">
       {currentStep > 0 && (
         <Button
           onClick={(e) => {

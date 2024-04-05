@@ -10,11 +10,11 @@
  * formatDateString(inputDate) returns "08 Feb, 2024"
  */
 export const formatDateString = (date: Date): string => {
-    // Extract day, month, and year components from the Date object
-    const day = date.getDate();
-    const month = date?.toLocaleString("default", { month: "long" }).slice(0, 3);
-    const year = date.getFullYear();
+  // Extract day, month, and year components from the Date object
+  const day = date.getDate();
+  const month = date?.toLocaleString("default", { month: "long" }).slice(0, 3);
+  const year = date.getFullYear();
 
-    // Return the formatted date string in the format "DD MMM, YYYY"
-    return `${day.toString().padStart(2, "0")} ${month}, ${year}`;
+  // Return the formatted date string in the format "DD MMM, YYYY"
+  return `${day.toString().padStart(2, "0")} ${month}, ${year}`;
 };

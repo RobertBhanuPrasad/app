@@ -2,31 +2,30 @@ import { create } from "zustand";
 
 interface NewCourseStore {
   viewPreviewPage: boolean;
+  viewThankyouPage: boolean;
   setViewPreviewPage: (by: boolean) => void;
+  setViewThankyouPage: (by: boolean) => void;
   newCourseData: any;
   setNewCourseData: (by: any) => void;
-  viewThankyouPage: boolean;
-  setViewThankyouPage: (by: boolean) => void;
 }
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
   viewPreviewPage: false,
+  viewThankyouPage: false,
+  newCourseData: {},
   setViewPreviewPage: (data: boolean) => {
     set(() => ({
       viewPreviewPage: data,
     }));
   },
-  newCourseData: {},
+  setViewThankyouPage: (data: boolean) => {
+    set(() => ({
+      viewThankyouPage: data,
+    }));
+  },
   setNewCourseData: (data: any) => {
     set(() => ({
       newCourseData: data,
-    }));
-  },
-
-  viewThankyouPage: false,
-  setViewThankyouPage: (data: boolean) => {
-    set(() => ({
-      viewPreviewPage: data,
     }));
   },
 }));
