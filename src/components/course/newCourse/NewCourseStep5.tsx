@@ -34,11 +34,7 @@ export default function CourseTable() {
   // Effect to add initial data if no fees are present
   useEffect(() => {
     if (!formData?.accommodation || formData?.accommodation.length <= 0) {
-      append({
-        [NewCourseStep5FormNames?.fee_per_person]: "",
-        [NewCourseStep5FormNames?.no_of_residential_spots]: "",
-        [NewCourseStep5FormNames?.accommodation_type_id]: undefined,
-      });
+      append(null);
     }
   }, []);
 
@@ -65,7 +61,6 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodation",
     header: () => <div>Accommodation Type</div>,
     cell: ({ row }: any) => {
-      const { errors } = useFormState();
 
       const existingAccommodationValues = formData
         ?.map((field: any) => field?.accomodationType?.value)
@@ -100,7 +95,7 @@ const columns = (append: any, remove: any, formData: any) => [
         <div className="w-72 ">
           {/* Custom select input */}
           <CustomSelect
-            error={errors?.accommodation ? true : false}
+            error={error ? true : false}
             value={value}
             placeholder="Select Accommodation"
             data={filteredOptions}
@@ -112,6 +107,11 @@ const columns = (append: any, remove: any, formData: any) => [
               onChange(val);
             }}
           />
+
+{error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
+
         </div>
       );
     },
@@ -122,10 +122,10 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodationFee",
     header: () => <div>Fees Per Person inc VAT</div>,
     cell: ({ row }: any) => {
-      const { errors } = useFormState();
 
       const {
         field: { value, onChange },
+        fieldState:{error}
       } = useController({
         name: `accommodation[${row.index}].accomodationFee`,
       });
@@ -138,8 +138,11 @@ const columns = (append: any, remove: any, formData: any) => [
             onChange={(val) => {
               onChange(val?.target?.value);
             }}
-            error={errors?.accommodation ? true : false}
+            error={error ? true : false}
           />
+          {error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
         </div>
       );
     },
@@ -149,10 +152,10 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodationspots",
     header: () => <div>Number of spots available</div>,
     cell: ({ row }: any) => {
-      const { errors } = useFormState();
 
       const {
         field: { value, onChange },
+        fieldState:{error}
       } = useController({
         name: `accommodation[${row.index}].accomodationSpots`,
       });
@@ -165,8 +168,11 @@ const columns = (append: any, remove: any, formData: any) => [
             onChange={(val) => {
               onChange(val?.target?.value);
             }}
-            error={errors?.accommodation ? true : false}
+            error={error ? true : false}
           />
+          {error && (
+        <span className="text-[#FF6D6D] text-[12px] break-words">{error?.message}</span>
+      )}
         </div>
       );
     },
@@ -181,11 +187,7 @@ const columns = (append: any, remove: any, formData: any) => [
 
       // Function to add a new row
       const handleAddRow = () => {
-        append({
-          accomodationFee: "",
-          accomodationSpots: "",
-          accomodationType: undefined,
-        });
+        append(null);
       };
 
       // Function to delete a row

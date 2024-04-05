@@ -6,7 +6,12 @@ import { supabaseClient } from "src/utility";
 import LoadingIcon from "@public/assets/LoadingIcon";
 import { useGetIdentity } from "@refinedev/core";
 import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
-import { useController, useFieldArray, useFormContext, useFormState } from "react-hook-form";
+import {
+  useController,
+  useFieldArray,
+  useFormContext,
+  useFormState,
+} from "react-hook-form";
 import { Input } from "src/ui/input";
 import { NewCourseStep4FormNames } from "src/constants/NewCourseFormNames";
 
@@ -20,19 +25,50 @@ export default function CourseTable() {
   const formData = watch();
 
   const fetchFeeData = async () => {
-    const { data, error } = await supabaseClient.functions.invoke(
-      "course-fee",
+    // const { data, error } = await supabaseClient.functions.invoke(
+    //   "course-fee",
+    //   {
+    //     method: "POST",
+    //     body: {
+    //       state_id: "3",
+    //       city_id: "3",
+    //       center_id: "1",
+    //       start_date: "2024-03-18T07:00:00-00:00",
+    //       program_type_id: "10",
+    //     },
+    //   }
+    // );
+    const data: any = [
       {
-        method: "POST",
-        body: {
-          state_id: "3",
-          city_id: "3",
-          center_id: "1",
-          start_date: "2024-03-18T07:00:00-00:00",
-          program_type_id: "10",
-        },
-      }
-    );
+        is_program_fee_editable: true,
+        is_early_bird_fee_enabled: true,
+        program_fee_level_settings: [
+          {
+            early_bird_sub_total: 100,
+            early_brid_tax: 10,
+            early_brid_total: 110,
+            fee_level_id: { id: 1 },
+            custom_fee_label: "Fee Level 1",
+            is_enable: true,
+            sub_total: 120,
+            tax: 12,
+            total: 132,
+          },
+          {
+            early_bird_sub_total: 150,
+            early_brid_tax: 15,
+            early_brid_total: 165,
+            fee_level_id: { id: 2 },
+            custom_fee_label: "Fee Level 2",
+            is_enable: false,
+            sub_total: 180,
+            tax: 18,
+            total: 198,
+          },
+          // Add more dummy data as needed
+        ],
+      },
+    ];
     setCourseFeeSettings(data);
   };
 
@@ -125,6 +161,8 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   const feeLevels = formData?.feeLevels;
   const { errors } = useFormState()
 
+  console.log(errors,'errors')
+
 
   //Normal Fee Columns
   let normalFeeColumns: ColumnDef<FeeLevelType>[] = [
@@ -211,7 +249,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         const normalFee = feeAmount - (feeAmount * taxRate) / 100;
 
         const handleTotalChange = () => {
-          onChange(feeAmount || 0);
+          onChange(feeAmount);
           setValue(`feeLevels[${row?.index}][subTotal]`, normalFee);
           setValue(
             `feeLevels[${row?.index}][tax]`,
@@ -224,9 +262,14 @@ function CourseFeeTable({ courseFeeSettings }: any) {
             <Input
               value={feeAmount}
               onChange={(val) => {
-                setFeeAmount(parseFloat(val.target.value || "0"));
+                if (val.target.value) {
+                  setFeeAmount(parseFloat(val.target.value));
+                } else {
+                  setFeeAmount(null);
+                }
               }}
               onBlur={handleTotalChange}
+              error={errors?.feeLevels ? true : false}
             />
           </div>
         );
@@ -313,7 +356,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         const normalEarlyBirdFee = feeAmount - (feeAmount * taxRate) / 100;
 
         const handleTotalChange = () => {
-          onChange(feeAmount || 0);
+          onChange(feeAmount);
           setValue(
             `feeLevels[${row?.index}][earlyBirdSubTotal]`,
             normalEarlyBirdFee
@@ -324,13 +367,22 @@ function CourseFeeTable({ courseFeeSettings }: any) {
           );
         };
 
+        console.log(errors?.feeLevels,'errors?.feeLevels')
+
         return (
           <div className="w-[75px]">
             <Input
               value={feeAmount}
               onChange={(val) => {
-                setFeeAmount(parseFloat(val.target.value || "0"));
+                if(val.target.value){
+
+                  setFeeAmount(parseFloat(val.target.value));
+                } else{
+                  setFeeAmount(null);
+
+                }
               }}
+              error={errors?.feeLevels ? true : false}
               onBlur={handleTotalChange}
             />
           </div>
@@ -391,6 +443,11 @@ function CourseFeeTable({ courseFeeSettings }: any) {
 
   feeColumns = feeColumns.filter(Boolean);
 
+  console.log(
+    courseFeeSettings?.[0]?.is_early_bird_fee_enabled,
+    "courseFeeSettings?.[0]?.is_early_bird_fee_enabled"
+  );
+
   return (
     <div className="flex flex-col justify-center">
       {/* Enable Early Bird fee if it is enabled in settings */}
@@ -398,10 +455,9 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         <div className="flex justify-end items-center gap-2 py-4">
           <Checkbox
             checked={showEarlyBirdColumns}
-            onCheckedChange={(val) =>{
-              setShowEarlyBirdColumns(val)
-            }
-            }
+            onCheckedChange={(val) => {
+              setShowEarlyBirdColumns(val);
+            }}
             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
           />
           <div>Enable early bird fees?</div>

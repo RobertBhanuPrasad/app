@@ -25,13 +25,13 @@ function NewCourseStep6() {
   // useEffect to add an initial contact field if none exists
   useEffect(() => {
     if (fields.length === 0) {
-      append({ contactName: "", contactEmail: "", contactMobile: "" });
+      append(null);
     }
   }, []);
 
   // Function to handle adding a new contact item
   const handleAddItem = () => {
-    append({ contactName: "", contactEmail: "", contactMobile: "" });
+    append(null);
   };
 
   // Function to handle deleting a contact item based on index
@@ -131,6 +131,8 @@ export const ContactName = ({ index }: any) => {
     fieldState:{error}
   } = useController({ name: `contact[${index}].contactName` });
   return (
+    <div>
+
     <Input
       placeholder="Enter contact name"
       value={value}
@@ -138,7 +140,14 @@ export const ContactName = ({ index }: any) => {
         onChange(val?.target?.value);
       }}
       error={error ? true : false}
-    />
+      />
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {error?.message}
+          </span>
+      )}
+      </div>
+    
   );
 };
 export const ContactEmail = ({ index }: any) => {
@@ -146,7 +155,10 @@ export const ContactEmail = ({ index }: any) => {
     field: { value, onChange },
     fieldState:{error}
   } = useController({ name: `contact[${index}].contactEmail` });
+  
   return (
+    <div>
+
     <Input
       placeholder="Enter contact email"
       value={value}
@@ -154,7 +166,14 @@ export const ContactEmail = ({ index }: any) => {
         onChange(val?.target?.value);
       }}
       error={error ? true : false}
-    />
+      />
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px]">
+           {error?.message}
+
+          </span>
+      )}
+      </div>
   );
 };
 
@@ -164,6 +183,8 @@ export const ContactMobile = ({ index }: any) => {
     fieldState:{error}
   } = useController({ name: `contact[${index}].contactMobile` });
   return (
+    <div>
+
     <Input
       placeholder="Enter contact mobile"
       value={value}
@@ -171,6 +192,12 @@ export const ContactMobile = ({ index }: any) => {
         onChange(val?.target?.value);
       }}
       error={error ? true : false}
-    />
+      />
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {error?.message}
+          </span>
+      )}
+      </div>
   );
 };

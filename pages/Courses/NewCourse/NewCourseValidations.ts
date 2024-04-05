@@ -3,35 +3,33 @@ export const validationSchema = () => {
   return z.object({
     // Step 1 Schema
     organization_id: z
-      .number()
-      .refine((value) => value !== null && value !== 0, {
-        message: "SelectOrganizerName",
-        path: ["organization_id"],
-      }),
-    organizer_ids: z.array(z.number()),
-    program_created_by: z.number(),
+    .number({
+      required_error: "Select Organization Name."
+    }),
+    organizer_ids: z.array(z.number(),{required_error:"Select Organizer Name"}),
+    program_created_by: z.number({required_error:"Select who is going to teach the course"}),
 
     // Step 2 Schema
-    program_type_id: z.number(),
-    teacher_ids: z.array(z.number()),
-    assistant_teacher_ids: z.array(z.number()),
+    program_type_id: z.number({ required_error: "Course type is a required field"}),
+    teacher_ids: z.array(z.number(),{required_error: 'Please enter at least one teacher'}),
+    assistant_teacher_ids: z.array(z.number(),{required_error: 'Please enter at least one associate teacher'}).optional(),
     visibility_id: z.number().optional(),
     is_language_translation_for_participants: z.boolean().optional(),
-    program_alias_name_id: z.number(),
+    program_alias_name_id: z.number({ required_error: "Course Name is a required field"}),
     is_geo_restriction_applicable: z.boolean().optional(),
-    language_ids: z.array(z.number()),
-    program_translation_language_ids: z.array(z.number()),
-    allowed_countries: z.array(z.number()),
-    max_capacity: z.string(),
+    language_ids: z.array(z.number(),{ required_error: "Please select atleast one Language"}),
+    program_translation_language_ids: z.array(z.number(),{ required_error: "Please select atleast one Language translation"}).optional(),
+    allowed_countries: z.array(z.number(),{required_error:"Country is is a required fields"}),
+    max_capacity: z.string({required_error:"Maximum capacity should be between 1 and %1 - which is the allowed limit set for this course type by Program / National Admin."}).regex(/^\d+$/ , {message : 'Maximum Capacity can accept only integers'}).refine(val => parseInt(val) > 50, {message:'Maximum capacity exceeds the allowed limit %1 for this course type by Program / National Admin'}),
 
     // Step 3 Schema
-    online_url: z.string().url().optional(),
+    online_url: z.string({required_error:" Online meeting URL is a required fields"}).url(),
     hour_format_id: z.number(),
     schedules: scheduleValidationSchema,
 
     // Step 4 Schema
     is_early_bird_enabled:z.boolean().optional(),
-    // feeLevels: feelLevelsValidationSchema,
+    feeLevels: feelLevelsValidationSchema,
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
@@ -44,26 +42,27 @@ export const validationSchema = () => {
   });
 };
 
-// const feelLevelsValidationSchema = z.array(
-//   z.object({
-//     total: z.number(),
-//     earlyBirdTotal: z.number(),
-//   }).refine((value) => {
-//   })
-// );
+
+const feelLevelsValidationSchema = z.array(
+  z.object({
+    total: z.number(),
+    earlyBirdTotal: z.number(),
+  }).refine(() => {
+  })
+);
 
 const contactValidationSchema = z.array(
   z.object({
-    contactName: z.string().regex(/^[a-zA-Z\s]+$/),
-    contactEmail: z.string().email(),
-    contactMobile: z.string().regex(/^\d+$/),
+    contactName: z.string().regex(/^[a-zA-Z\s]+$/ ,{message : 'Contact Name is a required field.'}),
+    contactEmail: z.string({required_error:"Contact email is a required field."}).email({message:"Please enter correct Email"}),
+    contactMobile: z.string({required_error:"Contact mobile is a required field."}).regex(/^\d+$/),
   })
 );
 const accommodationValidationSchema = z.array(
   z.object({
-    accomodationType: z.number(),
-    accomodationFee: z.string(),
-    accomodationSpots: z.string(),
+    accomodationType: z.number({required_error:"Accommodation type is required field."}),
+    accomodationFee: z.string({required_error:"Please enter a valid money value for fee per person."}),
+    accomodationSpots: z.string({required_error:"Please enter a valid money value for fee per person."}),
   })
 );
 
@@ -141,7 +140,7 @@ const scheduleValidationSchema = z
         }
         return true; // Passes validation if there is only one schedule or none
       } else {
-        for (let i = 1; i < value.length; i++) {
+        for (let i = 0; i < value.length; i++) {
           const prev = value[i - 1];
           const current = value[i];
 
@@ -169,7 +168,6 @@ const scheduleValidationSchema = z
         "Start hour of the second day must be greater than end hour of the first day",
     }
   )
-
   .refine((value: any[]) => value.every((item) => item.date instanceof Date), {
     message: "Invalid date format",
   })

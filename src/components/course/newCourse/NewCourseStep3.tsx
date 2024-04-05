@@ -47,6 +47,7 @@ export default NewCourseStep3;
 const OnlineProgram = () => {
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep3FormNames?.online_url,
   });
@@ -62,7 +63,12 @@ const OnlineProgram = () => {
             onChange={(event) => {
               onChange(event.target.value);
             }}
+            error = {error ? true : false}
           />
+          {error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
+
           <div className="">
             Note: Participants will join your online course through your virtual
             venue
@@ -81,10 +87,16 @@ const OnlineProgram = () => {
 };
 
 const Schedules = () => {
+  const { errors } = useFormState()
   return (
     <div className="flex flex-col gap-4 w-[1016px]">
       <SchedulesHeader />
       <Sessions />
+      {errors?.schedules && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {errors?.schedules?.message as string}
+          </span>
+      )}
     </div>
   );
 };
@@ -124,6 +136,9 @@ const SchedulesHeader = () => {
             }}
             error={schedulesHeaderErrors}
           />
+          {schedulesHeaderErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">{schedulesHeaderErrors?.message}</span>
+      )}
         </div>
         <div className="w-[257px]">
           <CustomSelect

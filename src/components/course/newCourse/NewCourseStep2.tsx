@@ -40,11 +40,11 @@ export default function NewCourseStep2() {
         </div>
 
         {/* Course Name drop will come from settings */}
-        {formData?.courseTypeSettings?.has_alias_name === true && (
+        {/* {formData?.courseTypeSettings?.has_alias_name === true && ( */}
           <div className="w-80 h-20">
             <CourseNameDropDown />
           </div>
-        )}
+        {/* )} */}
 
         <div className="w-80 h-20">
           <TeachersDropDown />
@@ -269,7 +269,7 @@ export const CourseTypeDropDown = () => {
         error={courseTypeError}
       />
       {courseTypeError && (
-        <span className="text-[#FF6D6D] text-[12px]">Select course type</span>
+        <span className="text-[#FF6D6D] text-[12px]">{courseTypeError?.message}</span>
       )}
     </div>
   );
@@ -322,6 +322,7 @@ const CourseNameDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep2FormNames?.program_alias_name_id,
   });
@@ -348,7 +349,11 @@ const CourseNameDropDown = () => {
         onChange={(val) => {
           onChange(val);
         }}
+        error={error}
       />
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
     </div>
   );
 };
@@ -449,7 +454,7 @@ const TeachersDropDown = () => {
         error={teachersErrors}
       />
       {teachersErrors && (
-        <span className="text-[#FF6D6D] text-[12px]">Select Teacher</span>
+        <span className="text-[#FF6D6D] text-[12px]">{teachersErrors?.message}</span>
       )}
     </div>  
   );
@@ -533,7 +538,7 @@ const AssistantTeachersDropDown = () => {
         error={assistantTeachersErrors}
       />
       {assistantTeachersErrors && (
-        <span className="text-[#FF6D6D] text-[12px]">Select Assistant Teacher</span>
+        <span className="text-[#FF6D6D] text-[12px]">Please enter at least one associate teacher.</span>
       )}
     </div>
   );
@@ -758,7 +763,7 @@ const LanguageDropDown = () => {
         error={languageError}
       />
       {languageError && (
-        <span className="text-[#FF6D6D] text-[12px]">Select Language</span>
+        <span className="text-[#FF6D6D] text-[12px]">{languageError?.message}</span>
       )}
     </div>
   );
@@ -827,9 +832,6 @@ const LanguageTranslationDropDown = () => {
         onChange={onChange}
         error={languageTranslationError}
       />
-      {languageTranslationError && (
-        <span className="text-[#FF6D6D] text-[12px]">Select Language Translation</span>
-      )}
     </div>
   );
 };
@@ -875,7 +877,7 @@ const AllowedCountriesDropDown = () => {
         error={allowedCountriesErrors}
       />
       {allowedCountriesErrors && (
-        <span className="text-[#FF6D6D] text-[12px]">Select Allowed Countries </span>
+        <span className="text-[#FF6D6D] text-[12px]">{allowedCountriesErrors?.message} </span>
       )}
     </div>
   );
@@ -887,10 +889,6 @@ const MaximumCapacity = () => {
   const formData = watch();
 
   const maxAttendees = formData?.courseTypeSettings?.maximum_capacity;
-
-  useEffect(() => {
-    onChange(formData?.courseTypeSettings?.max_capacity);
-  }, [formData?.courseTypeSettings?.max_capacity]);
 
   const {
     field: { value = maxAttendees, onChange },
@@ -910,8 +908,9 @@ const MaximumCapacity = () => {
         error={error ? true : false}
       />
       {error && (
-        <span className="text-[#FF6D6D] text-[12px]">Give No.of Attend</span>
-      )}
+        <span className="text-[#FF6D6D] text-[12px] !w-[320px] break-all">{error?.message}</span>
+      ) 
+    }
     </div>
   );
 };

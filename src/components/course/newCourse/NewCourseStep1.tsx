@@ -4,7 +4,7 @@ import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import React, { useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
+import { useController, useFormContext, useFormState } from "react-hook-form";
 import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
@@ -269,7 +269,7 @@ const RadioCards = () => {
         </Card>
       </div>
       <div className="text-[#FF6D6D] text-[14px]">
-        {radioError && 'Select who is going to teach the course'}
+        {radioError && radioError?.message}
       </div>
     </RadioGroup>
   );
@@ -337,7 +337,7 @@ const OrganizationDropDown = () => {
 
         {organizationError && (
           <span className="text-[#FF6D6D] text-[12px]">
-            Select Organizer Name.
+            {organizationError?.message}
           </span>
         )}
       </div>
@@ -448,7 +448,7 @@ const ProgramOrganizerDropDown = () => {
       />
       {programOrganizerError && (
           <span className="text-[#FF6D6D] text-[12px]">
-            Select Organizer Name.
+            {programOrganizerError?.message}
           </span>
         )}
     </div>

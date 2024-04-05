@@ -24,9 +24,6 @@ import {
   NewCourseStep6FormNames,
 } from "src/constants/NewCourseFormNames";
 import Form from "@components/Formfield";
-import { stepStore } from "src/zustandStore/StepStore";
-import { useValidateCurrentStepFields } from "./ValidateCurrentStep";
-import { z } from "zod";
 import { useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
@@ -37,6 +34,7 @@ import {
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/NewCourseConstants";
 import { validationSchema } from "./NewCourseValidations";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -55,6 +53,7 @@ function index() {
 }
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
+  const { currentStep, setCurrentStep } = newCourseStore();
 
   const loggedUserData = {
     value: loginUserData?.userData?.id,
@@ -64,7 +63,6 @@ function NewCourse() {
       loginUserData?.userData?.contact_id?.last_name,
   };
 
-  const { currentStep, setCurrentStep } = stepStore();
 
   // Array of step titles, icons, and colors
   console.log(currentStep, "aaaaaaaaa");
@@ -239,9 +237,9 @@ function NewCourse() {
 export default index;
 
 const Footer = ({ stepTitles }: any) => {
-  const { currentStep } = stepStore();
-  const { handleClickNext, handleClickPrevious, handleClickReviewDetailsButton } =
-    useValidateCurrentStepFields();
+  const { trigger, watch } = useFormContext();
+  const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
+    newCourseStore();
 
   const validationFieldsStepWise = [
     Object.values(NewCourseStep1FormNames),
@@ -251,6 +249,38 @@ const Footer = ({ stepTitles }: any) => {
     Object.values(NewCourseStep5FormNames),
     Object.values(NewCourseStep6FormNames),
   ];
+
+  const {ValidateCurrentStepFields} = useValidateCurrentStepFields()
+
+
+
+  const handleClickReviewDetailsButton = async (
+    currentStepFormNames: any[]
+  ) => {
+    const formData = watch();
+
+    const isAllFieldsFilled = await ValidateCurrentStepFields(
+      currentStepFormNames
+    );
+    if (isAllFieldsFilled) {
+      setViewPreviewPage(true);
+      setNewCourseData(formData);
+    }
+  };
+
+  const handleClickNext = async (currentStepFormNames: any[]) => {
+    const isAllFieldsFilled = await ValidateCurrentStepFields(
+      currentStepFormNames
+    );
+    if (isAllFieldsFilled) {
+      setCurrentStep(currentStep + 1);
+    }
+    return isAllFieldsFilled;
+  };
+
+  const handleClickPrevious = () => {
+    setCurrentStep(currentStep - 1);
+  };
 
   return (
     <div className="flex self-end justify-center gap-4 w-full mt-2">
@@ -281,7 +311,7 @@ const Footer = ({ stepTitles }: any) => {
       {currentStep == CONTACT_INFO_STEP_NUMBER && (
         <Button
           className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-          onClick={async () => {handleClickReviewDetailsButton(validationFieldsStepWise[currentStep - 1])} }
+          onClick={async () => { await handleClickReviewDetailsButton(validationFieldsStepWise[currentStep - 1])} }
         >
           Review Details
         </Button>
@@ -289,3 +319,6 @@ const Footer = ({ stepTitles }: any) => {
     </div>
   );
 };
+
+
+
