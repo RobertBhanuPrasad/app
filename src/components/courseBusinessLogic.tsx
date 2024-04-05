@@ -36,14 +36,14 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
  *
  * @param {any} courseStatusId - The ID representing the course status.
  * @param {any} courseAccountingStatusId - The ID representing the accounting status of the course.
- * @param {any} role_id - The ID representing the role of the user.
+ * @param {any} roleId - The ID representing the role of the user.
  * @returns {Array} Array of options available based on the provided conditions and user roles.
  */
 
 export const DisplayOptions = (
   courseStatusId: any,
   courseAccountingStatusId: any,
-  role_id: any
+  roleId: any
 ) => {
   // Getting all the course status ID's
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
@@ -106,7 +106,7 @@ export const DisplayOptions = (
     TEACHER
   )?.id;
 
-  //Getting role_id id
+  //Getting roleId id
   const programOrganizerRoleId = getOptionValueObjectByOptionOrder(
     USER_ROLE,
     PROGRAM_ORGANIZER
@@ -131,11 +131,11 @@ export const DisplayOptions = (
   if (courseStatusId === courseActiveStatusId) {
     if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId ||
-        role_id === teacherRoleId ||
-        role_id === programOrganizerRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId ||
+        roleId === teacherRoleId ||
+        roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -147,7 +147,7 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
-      (role_id === teacherRoleId || role_id === programOrganizerRoleId)
+      (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -164,11 +164,11 @@ export const DisplayOptions = (
   else if (courseStatusId === courseCompletedStatusId) {
     if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId ||
-        role_id === teacherRoleId ||
-        role_id === programOrganizerRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId ||
+        roleId === teacherRoleId ||
+        roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -180,9 +180,9 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId)
     ) {
       return [
         "View Participants",
@@ -194,7 +194,7 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
-      (role_id === teacherRoleId || role_id === programOrganizerRoleId)
+      (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -204,9 +204,9 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId)
     ) {
       return [
         "View Participants",
@@ -218,7 +218,7 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
-      (role_id === teacherRoleId || role_id === programOrganizerRoleId)
+      (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -230,9 +230,9 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId)
     ) {
       return [
         "View Participants",
@@ -242,7 +242,7 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
-      (role_id === teacherRoleId || role_id === programOrganizerRoleId)
+      (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -257,11 +257,11 @@ export const DisplayOptions = (
   else if (courseStatusId === courseFullStatusId) {
     if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId ||
-        role_id === teacherRoleId ||
-        role_id === programOrganizerRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId ||
+        roleId === teacherRoleId ||
+        roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -273,9 +273,9 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId)
     ) {
       return [
         "View Participants",
@@ -287,7 +287,7 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
-      (role_id === teacherRoleId || role_id === programOrganizerRoleId)
+      (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -297,11 +297,11 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId ||
-        role_id === teacherRoleId ||
-        role_id === programOrganizerRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId ||
+        roleId === teacherRoleId ||
+        roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -312,10 +312,10 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId ||
-        role_id === programOrganizerRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId ||
+        roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -325,7 +325,7 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
-      (role_id === teacherRoleId || role_id === programOrganizerRoleId)
+      (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
       return [
         "View Participants",
@@ -342,11 +342,11 @@ export const DisplayOptions = (
       (courseAccountingStatusId === accountingNotSubmittedStatusId ||
         courseAccountingStatusId === accountingClosedStatusId ||
         courseAccountingStatusId === accountingCanceledStatusId) &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId ||
-        role_id === teacherRoleId ||
-        role_id === programOrganizerRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId ||
+        roleId === teacherRoleId ||
+        roleId === programOrganizerRoleId)
     ) {
       return ["View Participants", "undo cancellation"];
     } else {
@@ -358,7 +358,7 @@ export const DisplayOptions = (
     if (
       (courseAccountingStatusId === accountingNotSubmittedStatusId ||
         courseAccountingStatusId == accountingPendingStatusId) &&
-      (role_id === superAdminRoleId || role_id === nationalAdminRoleId)
+      (roleId === superAdminRoleId || roleId === nationalAdminRoleId)
     ) {
       return [
         "Edit course",
@@ -369,14 +369,14 @@ export const DisplayOptions = (
       ];
     } else if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
-      (role_id === financeAdminRoleId ||
-        role_id === teacherRoleId ||
-        role_id === programOrganizerRoleId)
+      (roleId === financeAdminRoleId ||
+        roleId === teacherRoleId ||
+        roleId === programOrganizerRoleId)
     ) {
       return ["Cancel course"];
     } else if (
       courseAccountingStatusId == accountingPendingStatusId &&
-      role_id === financeAdminRoleId
+      roleId === financeAdminRoleId
     ) {
       return ["Edit course", "Cancel course"];
     } else {
@@ -387,11 +387,11 @@ export const DisplayOptions = (
   else if (courseStatusId === courseDeclinedStatusId) {
     if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
-      (role_id === superAdminRoleId ||
-        role_id === nationalAdminRoleId ||
-        role_id === financeAdminRoleId ||
-        role_id === teacherRoleId ||
-        role_id === programOrganizerRoleId)
+      (roleId === superAdminRoleId ||
+        roleId === nationalAdminRoleId ||
+        roleId === financeAdminRoleId ||
+        roleId === teacherRoleId ||
+        roleId === programOrganizerRoleId)
     ) {
       return ["Edit course", "Cancel course"];
     } else {
