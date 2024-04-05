@@ -113,7 +113,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       };
     });
 
-  const { fields, append } = useFieldArray({ name: "feeLevels" });
+  const { fields, append } = useFieldArray({ name: "program_fee_level_settings" });
 
   useEffect(() => {
     //Initializing setting data into form if fee is editable.Appending only if we have no data present in field
@@ -176,7 +176,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value },
-        } = useController({ name: `feeLevels[${row?.index}][subTotal]` });
+        } = useController({ name: `program_fee_level_settings[${row?.index}][subTotal]` });
 
         return <div className="">{value}</div>;
       },
@@ -188,7 +188,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value },
-        } = useController({ name: `feeLevels[${row?.index}][tax]` });
+        } = useController({ name: `program_fee_level_settings[${row?.index}][tax]` });
         return <div className="">{value}</div>;
       },
       enableSorting: false,
@@ -199,7 +199,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value, onChange },
-        } = useController({ name: `feeLevels[${row?.index}][total]` });
+        } = useController({ name: `program_fee_level_settings[${row?.index}][total]` });
 
         const taxRate = organizationData?.tax_rate;
 
@@ -212,9 +212,9 @@ function CourseFeeTable({ courseFeeSettings }: any) {
 
         const handleTotalChange = () => {
           onChange(feeAmount || 0);
-          setValue(`feeLevels[${row?.index}][subTotal]`, normalFee);
+          setValue(`program_fee_level_settings[${row?.index}][subTotal]`, normalFee);
           setValue(
-            `feeLevels[${row?.index}][tax]`,
+            `program_fee_level_settings[${row?.index}][tax]`,
             (feeAmount * taxRate) / 100
           );
         };
@@ -273,7 +273,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
 
         const {
           field: { value: feeLevel },
-        } = useController({ name: `feeLevels[${row?.index}]` });
+        } = useController({ name: `program_fee_level_settings[${row?.index}]` });
 
         if (taxEnable == false) {
           return <div>{feeLevel?.earlyBirdTotal}</div>;
@@ -289,7 +289,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value },
-        } = useController({ name: `feeLevels[${row?.index}]` });
+        } = useController({ name: `program_fee_level_settings[${row?.index}]` });
 
         return <div className="">{value?.earlyBirdTax}</div>;
       },
@@ -301,7 +301,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value, onChange },
-        } = useController({ name: `feeLevels[${row?.index}][earlyBirdTotal]` });
+        } = useController({ name: `program_fee_level_settings[${row?.index}][earlyBirdTotal]` });
 
         const { setValue } = useFormContext();
 
@@ -315,11 +315,11 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         const handleTotalChange = () => {
           onChange(feeAmount || 0);
           setValue(
-            `feeLevels[${row?.index}][earlyBirdSubTotal]`,
+            `program_fee_level_settings[${row?.index}][earlyBirdSubTotal]`,
             normalEarlyBirdFee
           );
           setValue(
-            `feeLevels[${row?.index}][earlyBirdTax]`,
+            `program_fee_level_settings[${row?.index}][earlyBirdTax]`,
             (feeAmount * taxRate) / 100
           );
         };
@@ -367,7 +367,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         cell: ({ row }) => {
           const {
             field: { value, onChange },
-          } = useController({ name: `feeLevels[${row?.index}][isEnable]` });
+          } = useController({ name: `program_fee_level_settings[${row?.index}][isEnable]` });
 
           return (
             <Checkbox

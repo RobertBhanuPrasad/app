@@ -60,7 +60,7 @@ const RegistrationGateway = () => {
   const {
     field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
   } = useController({
-    name: "registration_via_3rd_party_url",
+    name: NewCourseStep1FormNames?.registration_via_3rd_party_url,
   });
 
   return (
