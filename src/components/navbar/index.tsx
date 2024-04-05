@@ -1,10 +1,10 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
-import React from "react";
-import Logo from "@public/assets/Logo";
-import Bell from "@public/assets/Bell";
-import TableMenu from "@public/assets/TableMenu";
-import { Avatar, AvatarFallback, AvatarImage } from "src/ui/avatar";
+import Bell from "@public/assets/Bell"
+import Logo from "@public/assets/Logo"
+import TableMenu from "@public/assets/TableMenu"
+import { useTranslation } from "next-i18next"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import { Avatar, AvatarFallback, AvatarImage } from "src/ui/avatar"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -13,9 +13,9 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "src/ui/navigation-menu";
-
+} from "src/ui/navigation-menu"
 function Navbar() {
+  const { t } = useTranslation("common")
   // Define navigation components and their respective routes
   const components = [
     {
@@ -30,16 +30,16 @@ function Navbar() {
       title: "Discount Codes",
       href: "/Courses/DiscountCodes",
     },
-  ];
+  ]
 
   // Get the current pathname using the useRouter hook
-  const { pathname } = useRouter();
+  const { pathname } = useRouter()
 
   // Split the pathname into segments
-  const pathSegments = pathname.split("/");
+  const pathSegments = pathname.split("/")
 
   // Extract the first segment of the pathname
-  const firstRouteName = pathSegments.find((segment) => segment !== "");
+  const firstRouteName = pathSegments.find((segment) => segment !== "")
 
   return (
     <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
@@ -51,7 +51,7 @@ function Navbar() {
           <NavigationMenuList>
             {/* Home Navigation */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Home</NavigationMenuTrigger>
+              <NavigationMenuTrigger>{t("home")}</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[160px] gap-3 py-4 px-2 ">
                   {components.map((component) => (
@@ -65,29 +65,19 @@ function Navbar() {
             {/* Administer Navigation */}
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Administer
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>{t("administer")}</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Contacts Navigation */}
             <NavigationMenuItem>
               <Link href="/Contacts" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Contacts
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>{t("contacts")}</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Courses Navigation */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger
-                className={
-                  firstRouteName === "Courses"
-                    ? "!text-[#7677F4] font-semibold"
-                    : ""
-                }
-              >
-                Courses
+              <NavigationMenuTrigger className={firstRouteName === "Courses" ? "!text-[#7677F4] font-semibold" : ""}>
+                {t("courses")}
               </NavigationMenuTrigger>
               <NavigationMenuContent className="NavigationMenuViewport">
                 <ul className="grid w-[160px] gap-3 py-4 px-2 ">
@@ -102,25 +92,19 @@ function Navbar() {
             {/* Events Navigation */}
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Events
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>{t("events")}</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Teachers Navigation */}
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Teachers
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>{t("teachers")}</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Mailings Navigation */}
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Mailings
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>{t("mailings")}</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Menu Navigation */}
@@ -128,7 +112,7 @@ function Navbar() {
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   <div className=" flex flex-row items-center gap-2">
-                    Menu
+                    {t("menu")}
                     <div className="mt-[2px]">
                       <TableMenu />
                     </div>
@@ -148,10 +132,10 @@ function Navbar() {
         </Avatar>
       </div>
     </div>
-  );
+  )
 }
 
-export default Navbar;
+export default Navbar
 
 // Component to render each menu item
 const MenuList = ({ Name, route }: any) => {
@@ -163,5 +147,5 @@ const MenuList = ({ Name, route }: any) => {
         </NavigationMenuLink>
       </Link>
     </div>
-  );
-};
+  )
+}

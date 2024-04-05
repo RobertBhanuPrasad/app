@@ -1,36 +1,38 @@
-import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
-import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Car from "@public/assets/Car";
-import Group from "@public/assets/Group";
-import Info from "@public/assets/Info";
-import Profile from "@public/assets/Profile";
-import Venue from "@public/assets/Venue";
-import { useStepsForm } from "@refinedev/react-hook-form";
-import { Button } from "src/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import { z } from "zod";
-import { FormProvider } from "react-hook-form";
-import Review from "@public/assets/Review";
-import Fees from "@public/assets/Fees";
-import _ from "lodash";
-import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
-import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
-import { useGetIdentity } from "@refinedev/core";
+import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1"
+import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2"
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3"
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4"
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5"
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6"
+import Car from "@public/assets/Car"
+import Fees from "@public/assets/Fees"
+import Group from "@public/assets/Group"
+import Info from "@public/assets/Info"
+import Profile from "@public/assets/Profile"
+import Review from "@public/assets/Review"
+import Venue from "@public/assets/Venue"
+import { useGetIdentity } from "@refinedev/core"
+import { useStepsForm } from "@refinedev/react-hook-form"
+import { GetServerSideProps } from "next"
+import { useTranslation } from "next-i18next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import { FormProvider } from "react-hook-form"
+import { authProvider } from "src/authProvider"
+import { Button } from "src/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs"
 
 function index() {
-  const { data: loginUserData }: any = useGetIdentity();
+  const { data: loginUserData }: any = useGetIdentity()
 
   if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
-  return <NewCourse />;
+  return <NewCourse />
 }
 function NewCourse() {
-  const { data: loginUserData }: any = useGetIdentity();
+  const { t } = useTranslation("common")
+  const { data: loginUserData }: any = useGetIdentity()
 
   // Schema definition for form validation
   // const schema = z.object({
@@ -45,11 +47,8 @@ function NewCourse() {
 
   const loggedUserData = {
     value: loginUserData?.userData?.id,
-    label:
-      loginUserData?.userData?.contact_id?.first_name +
-      " " +
-      loginUserData?.userData?.contact_id?.last_name,
-  };
+    label: loginUserData?.userData?.contact_id?.first_name + " " + loginUserData?.userData?.contact_id?.last_name,
+  }
 
   // Destructuring values from useStepsForm hook
   const methods = useStepsForm({
@@ -66,65 +65,65 @@ function NewCourse() {
       accommodationPaymentMode: "Pay Online",
       programOrganizers: [loggedUserData],
     },
-  });
+  })
 
   const {
     refineCore: { onFinish, formLoading },
     handleSubmit,
     steps: { currentStep, gotoStep },
-  } = methods;
+  } = methods
   // Array of step titles, icons, and colors
   const stepTitles = [
     {
       value: "0",
-      label: "Basic Details",
+      label: t("basicDetails"),
       icon: <Profile color={` ${currentStep == 0 ? "#7677F4" : "#999999"}`} />,
     },
     {
       value: "1",
-      label: "Course Details",
+      label: t("courseDetails"),
       icon: <Group color={` ${currentStep == 1 ? "#7677F4" : "#999999"}`} />,
     },
     {
       value: "2",
-      label: "Time and Venue",
+      label: t("timeAndVenue"),
       icon: <Venue color={` ${currentStep == 2 ? "#7677F4" : "#999999"}`} />,
     },
     {
       value: "3",
-      label: "Fees",
+      label: t("fees"),
       icon: <Fees color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
     },
     {
       value: "4",
-      label: "Accommodation",
+      label: t("accommodation"),
       icon: <Car color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
     },
     {
       value: "5",
-      label: "Contact Info",
+      label: t("contactInfo"),
       icon: <Info color={` ${currentStep == 5 ? "#7677F4" : "#999999"}`} />,
     },
 
     {
       value: "6",
-      label: "Review",
+      label: t("review"),
       icon: <Review color={` ${currentStep == 6 ? "#7677F4" : "#999999"}`} />,
     },
-  ];
+  ]
 
   const onSubmit = (formData: any) => {
-    console.log(formData);
+    console.log(formData)
     // Call onFinish with the form data if needed
-    onFinish(formData);
-  };
+    onFinish(formData)
+  }
 
   // If the form is still loading, display a loading message
   if (formLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
   const contentStylings =
-    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
+    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background "
   return (
     <div className="bg-[white]  ">
       <Tabs value={JSON.stringify(currentStep)}>
@@ -174,7 +173,7 @@ function NewCourse() {
                       <NewCourseStep6 />
                     </TabsContent>
                     <TabsContent value="6" className={contentStylings}>
-                      Change your accommodation details
+                      {t("accommodationDetails")}
                     </TabsContent>
                   </div>
 
@@ -182,23 +181,23 @@ function NewCourse() {
                     {currentStep > 0 && (
                       <Button
                         onClick={(e) => {
-                          e.preventDefault();
-                          gotoStep(currentStep - 1);
+                          e.preventDefault()
+                          gotoStep(currentStep - 1)
                         }}
                         className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
                       >
-                        Previous
+                        {t("previous")}
                       </Button>
                     )}
                     {currentStep < stepTitles.length - 1 && (
                       <Button
                         className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
                         onClick={(e) => {
-                          e.preventDefault();
-                          gotoStep(currentStep + 1);
+                          e.preventDefault()
+                          gotoStep(currentStep + 1)
                         }}
                       >
-                        Next
+                        {t("next")}
                       </Button>
                     )}
                     {currentStep === stepTitles.length - 1 && (
@@ -206,7 +205,7 @@ function NewCourse() {
                         className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
                         onClick={handleSubmit(onSubmit)}
                       >
-                        Save
+                        {t("save")}
                       </Button>
                     )}
                   </div>
@@ -217,7 +216,32 @@ function NewCourse() {
         </div>
       </Tabs>
     </div>
-  );
+  )
 }
 
-export default index;
+export default index
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common"])
+
+  if (!authenticated) {
+    3
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || "/")}`,
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  }
+}
