@@ -2,7 +2,7 @@ import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
-import { CrudFilters, useSelect, useTable } from "@refinedev/core";
+import { CrudFilter, CrudFilters, useSelect, useTable } from "@refinedev/core";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
@@ -43,11 +43,84 @@ const HeaderSection = () => {
 
   const { newAdvanceFilterData, setNewAdvanceFilterData } = newCourseStore();
 
+  console.log("hey redux data", newAdvanceFilterData);
+
   const count =
     Object.keys(newAdvanceFilterData).filter(
       (key) => newAdvanceFilterData[key] !== undefined
     ).length || 0;
 
+  const filters: any = { permanent: [] };
+
+  if (newAdvanceFilterData?.course_name) {
+    filters.permanent.push({
+      field: "program_alias_name_id",
+      operator: "eq",
+      value: newAdvanceFilterData.course_name,
+    });
+  }
+
+  if (newAdvanceFilterData?.course_type) {
+    filters.permanent.push({
+      field: "program_type_id",
+      operator: "eq",
+      value: newAdvanceFilterData?.course_type,
+    });
+  }
+
+  if (newAdvanceFilterData?.state) {
+    filters.permanent.push({
+      field: "state_id",
+      operator: "eq",
+      value: newAdvanceFilterData?.state,
+    });
+  }
+
+  if (newAdvanceFilterData?.city) {
+    filters.permanent.push({
+      field: "city_id",
+      operator: "eq",
+      value: newAdvanceFilterData?.city,
+    });
+  }
+
+  if (newAdvanceFilterData?.center) {
+    filters.permanent.push({
+      field: "center_id",
+      operator: "eq",
+      value: newAdvanceFilterData?.center,
+    });
+  }
+
+  if (newAdvanceFilterData?.course_teacher) {
+    filters.permanent.push({
+      field: "program_teachers.user_id",
+      operator: "eq",
+      value: newAdvanceFilterData.course_teacher,
+    });
+  }
+
+  if (newAdvanceFilterData?.program_organiser) {
+    filters.permanent.push({
+      field: "program_organizers.user_id",
+      operator: "in",
+      value: newAdvanceFilterData?.program_organiser,
+    });
+  }
+  if (newAdvanceFilterData?.visibility) {
+    filters.permanent.push({
+      field: "visibility_id",
+      operator: "eq",
+      value: newAdvanceFilterData?.visibility,
+    });
+  }
+  if (newAdvanceFilterData?.course_status) {
+    filters.permanent.push({
+      field: "status_id",
+      operator: "in",
+      value: newAdvanceFilterData?.course_status,
+    });
+  }
   const {
     tableQueryResult: programData,
     // pageCount,
@@ -59,7 +132,7 @@ const HeaderSection = () => {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name), participant_registration(*),program_schedules(*)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) ,program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name), participant_registration(*),program_schedules(*)",
     },
   });
 

@@ -814,7 +814,7 @@ export const FormCourseTypeComponent = () => {
 
 export const ProgramOrganiser = () => {
   const {
-    field: { value, onChange },
+    field: { value = [4], onChange },
   } = useController({
     name: "program_organiser",
   });
