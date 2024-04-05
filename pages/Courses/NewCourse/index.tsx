@@ -25,7 +25,7 @@ function index() {
 
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
-  }
+  } 
 
   return <NewCourse />;
 }
