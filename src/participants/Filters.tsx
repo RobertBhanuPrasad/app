@@ -178,7 +178,7 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>City</div>
-                {formData?.state && <CountComponent count={1} />}
+                {formData?.city && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -236,7 +236,10 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
           {/* Teacher Name Accordion */}
           <AccordionItem value="item-11" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
-              Teacher Name
+              <div className="flex flex-row gap-2 items-center">
+                <div>Teacher Name</div>
+                {formData?.course_teacher && <CountComponent count={1} />}
+              </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <div>
@@ -249,7 +252,10 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
           {/* Course Fees Accordion */}
           <AccordionItem value="item-12" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
-              Course Fees
+              <div className="flex flex-row gap-2 items-center">
+                <div>Course Fees</div>
+                {formData?.course_fee && <CountComponent count={1} />}
+              </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <CourseFees />
@@ -536,7 +542,6 @@ export const CourseStatus = () => {
   let courseStatusData =
     getOptionValuesByOptionLabel(PROGRAM_STATUS)?.[0]?.option_values;
 
-  console.log("heyy status data", courseStatusData);
 
   const {
     field: { value = [], onChange },
@@ -544,7 +549,6 @@ export const CourseStatus = () => {
     name: "course_status",
   });
 
-  console.log("heyy status", value);
 
   const toggleCourseStatus = (id: number) => {
     const updatedValue = value.includes(id)
@@ -586,6 +590,7 @@ export const CourseAccordingStatus = () => {
   } = useController({
     name: "course_accounting_status",
   });
+
 
   const toggleCourseStatus = (index: number) => {
     const updatedValue = value.includes(index)
@@ -727,15 +732,15 @@ export const CourseFees = () => {
       <RadioGroup value={value} onValueChange={onChange}>
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="Default fee"
+            value="Default"
             selectedRadioValue={value}
-            label="Default fee"
+            label="Default"
             className="p-2 h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
-            value="Custom Fee"
+            value="Custom"
             selectedRadioValue={value}
-            label="Custom Fee"
+            label="Custom"
             className="p-2 h-[40px] rounded-[12px]"
           />
         </div>
@@ -851,7 +856,6 @@ export const ProgramOrganiser = () => {
         value: item.id,
       };
     }) ?? [];
-
 
   return (
     <MultiSelect
