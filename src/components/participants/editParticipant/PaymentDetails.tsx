@@ -6,10 +6,16 @@ import { Textarea } from "src/ui/textarea";
 export default function PaymentDetails() {
     const {
         field: { value: specialCode, onChange: specialCodeChange },
-    } = useController({ name: "roomPreference3" });
+    } = useController({ name: "specialCode" });
     const {
         field: { value: paymentDetails, onChange: paymentDetailsChange },
-    } = useController({ name: "roomPreference3" });
+    } = useController({ name: "paymentDetails" });
+    const attendanceStatus = [
+        { label: "pending", value: 1 },
+        { label: "confirmed", value: 2 },
+        { label: "dropout", value: 3 },
+        { label: "cancelled", value: 4 },
+    ];
     return (
         <div className="flex-row" id="Payment">
             <div className="font-semibold text-[18px] py-[25px]">
@@ -55,7 +61,7 @@ export default function PaymentDetails() {
                     <div className="text-[#999999] ">Attendance Status</div>
                     <div>
                         <CustomSelect
-                            data={undefined}
+                            data={attendanceStatus}
                             onSearch={() => {}}
                             onBottomReached={() => {}}
                             onChange={(value) => paymentDetailsChange(value)}

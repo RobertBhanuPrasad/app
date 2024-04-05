@@ -16,7 +16,27 @@ export default function AccomodationDetails() {
     } = useController({ name: "roomPreference3" });
     const {
         field: { value: accommodationType, onChange: accommodationTypeChange },
-    } = useController({ name: "roomPreference3" });
+    } = useController({ name: "accommodationType" });
+    const {
+        field: { value: snore, onChange: snoreChange },
+    } = useController({ name: "snore" });
+    const {
+        field: { value: roomateSnore, onChange: roomateSnoreChange },
+    } = useController({ name: "roomatesnore" });
+    const accommodationOptions = [
+        {
+            label: "single sharing",
+            value: 1,
+        },
+        {
+            label: "double sharing(men)",
+            value: 2,
+        },
+        {
+            label: "double sharing(women)",
+            value: 3,
+        },
+    ];
     return (
         <div id="Accomodation">
             <div className="font-semibold text-[18px] py-[25px]">
@@ -27,7 +47,7 @@ export default function AccomodationDetails() {
                     <div>Accomodation Type</div>
                     <div className="">
                         <CustomSelect
-                            data={undefined}
+                            data={accommodationOptions}
                             onSearch={() => {}}
                             onBottomReached={() => {}}
                             onChange={(value) => accommodationTypeChange(value)}
@@ -83,17 +103,20 @@ export default function AccomodationDetails() {
                 </div>
                 <div className="text-[#999999] ">
                     <div>Do you snore?</div>
-                    <RadioGroup value={""} onValueChange={() => {}}>
+                    <RadioGroup
+                        value={snore}
+                        onValueChange={(value) => snoreChange(value)}
+                    >
                         <div className="flex flex-row gap-6 ">
                             <RadioButtonCard
                                 value="true"
-                                selectedRadioValue={""}
+                                selectedRadioValue={snore}
                                 label="Yes"
                                 className="w-[112px] !h-[40px] rounded-[12px]"
                             />
                             <RadioButtonCard
                                 value="false"
-                                selectedRadioValue={""}
+                                selectedRadioValue={snore}
                                 label="No"
                                 className="w-[112px] !h-[40px] rounded-[12px]"
                             />
@@ -103,17 +126,20 @@ export default function AccomodationDetails() {
             </div>
             <div className="text-[#999999] py-[10px]">
                 <div>Would you object to having room mate who snores?</div>
-                <RadioGroup value={""} onValueChange={() => {}}>
+                <RadioGroup
+                    value={roomateSnore}
+                    onValueChange={(value) => roomateSnoreChange(value)}
+                >
                     <div className="flex flex-row gap-6 ">
                         <RadioButtonCard
                             value="true"
-                            selectedRadioValue={""}
+                            selectedRadioValue={roomateSnore}
                             label="Yes"
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
                         <RadioButtonCard
                             value="false"
-                            selectedRadioValue={""}
+                            selectedRadioValue={roomateSnore}
                             label="No"
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />

@@ -7,7 +7,7 @@ export default function ParticipnatInformation() {
     console.log(participantMemo)
     return (
         <div id="participants">
-            <div className="font-semibold text-[18px] pt-[25px]">
+            <div className="font-semibold text-[18px] pt-[25px] ">
                 Participant Details
             </div>
             <div className="flex gap-4 py-[20px]">

@@ -3,21 +3,15 @@ import CourseFee from "@components/participants/editParticipant/CourseFee";
 import ParticipnatInformation from "@components/participants/editParticipant/ParticipantInformation";
 import PaymentDetails from "@components/participants/editParticipant/PaymentDetails";
 import { TabsContent, TabsList } from "@radix-ui/react-tabs";
-import { useGetIdentity } from "@refinedev/core";
-import { useStepsForm } from "@refinedev/react-hook-form";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 import { FormProvider } from "react-hook-form";
+import { Button } from "src/ui/button";
 import { Tabs, TabsTrigger } from "src/ui/tabs";
+import { useForm } from "@refinedev/react-hook-form";
 export default function index() {
-    const { data: loginUserData }: any = useGetIdentity();
-    const loggedUserData = {
-        value: loginUserData?.userData?.id,
-        label:
-          loginUserData?.userData?.contact_id?.first_name +
-          " " +
-          loginUserData?.userData?.contact_id?.last_name,
-      };
-    
+ 
+
     const [selectedValue, setSelectedValue] = useState(
         "Participants Information"
     );
@@ -60,6 +54,22 @@ export default function index() {
             id: "UTM",
         },
     ];
+    const methods=useForm({
+        refineCoreProps: {
+          action: "edit", // or clone
+          resource: "categories",
+          id: 1, // <BASE_URL_FROM_DATA_PROVIDER>/categories/1
+        },
+      });
+      const onSubmit = (formData: any) => {
+        console.log(formData);
+        // Call onFinish with the form data if needed
+        onFinish(formData);
+      };
+    const {
+        refineCore: { onFinish, formLoading },
+        handleSubmit,
+      } = methods;
     const handleTabClick = (value) => {
         setSelectedTab(value);
         const section = document.getElementById(
@@ -69,21 +79,21 @@ export default function index() {
             section.scrollIntoView({ behavior: "smooth" });
         }
     };
-    const methods = useStepsForm({
-        refineCoreProps: {
-          action: "create",
-          resource: "event",
-        },
-        // resolver: zodResolver(schema),
-        defaultValues: {
-          visibility: "public",
-          displayLanguage: "true",
-          isGeoRestriction: "true",
-          isResidentialCourse: "No",
-          accommodationPaymentMode: "Pay Online",
-          programOrganizers: [loggedUserData],
-        },
-      });
+    // const methods = useStepsForm({
+    //     refineCoreProps: {
+    //         action: "edit",
+    //         resource: "posts",
+    //     },
+    //     // resolver: zodResolver(schema),
+    //     defaultValues: {
+    //         visibility: "public",
+    //         displayLanguage: "true",
+    //         isGeoRestriction: "true",
+    //         isResidentialCourse: "No",
+    //         accommodationPaymentMode: "Pay Online",
+    //         programOrganizers: [loggedUserData],
+    //     },
+    // });
     // const isInView = (elem) => {
     //     const rect = elem.getBoundingClientRect();
     //     return (
@@ -145,38 +155,56 @@ export default function index() {
                 </TabsList>
                 <div className="w-full border-b -mt-1"></div>
                 <FormProvider {...methods}>
-              <form autoComplete="off">
-                <TabsContent value="Participants Information">
-                    <ParticipnatInformation />
-                    <CourseFee />
-                    <AccomodationDetails />
-                    <PaymentDetails />
-                </TabsContent>
-                <TabsContent value="Course Fees">
-                    <ParticipnatInformation />
-                    <CourseFee />
-                    <AccomodationDetails />
-                    <PaymentDetails />
-                </TabsContent>
-                <TabsContent value="Accomodation Details">
-                    <ParticipnatInformation />
-                    <CourseFee />
-                    <AccomodationDetails />
-                    <PaymentDetails />
-                </TabsContent>
-                <TabsContent value="Payment Details">
-                    <ParticipnatInformation />
-                    <CourseFee />
-                    <AccomodationDetails />
-                    <PaymentDetails />
-                </TabsContent>
-                <TabsContent value="Transaction Details">
-                    Place Transaction Details tab here
-                </TabsContent>
-                <TabsContent value="UTM Parameters">
-                    Place UTM Parameters tab here
-                </TabsContent>
-                </form>
+                    <form autoComplete="off">
+                        <TabsContent value="Participants Information">
+                            <ParticipnatInformation />
+                            <CourseFee />
+                            <AccomodationDetails />
+                            <PaymentDetails />
+                        </TabsContent>
+                        <TabsContent value="Course Fees">
+                            <ParticipnatInformation />
+                            <CourseFee />
+                            <AccomodationDetails />
+                            <PaymentDetails />
+                        </TabsContent>
+                        <TabsContent value="Accomodation Details">
+                            <ParticipnatInformation />
+                            <CourseFee />
+                            <AccomodationDetails />
+                            <PaymentDetails />
+                        </TabsContent>
+                        <TabsContent value="Payment Details">
+                            <ParticipnatInformation />
+                            <CourseFee />
+                            <AccomodationDetails />
+                            <PaymentDetails />
+                        </TabsContent>
+                        <TabsContent value="Transaction Details">
+                            Place Transaction Details tab here
+                        </TabsContent>
+                        <TabsContent value="UTM Parameters">
+                            Place UTM Parameters tab here
+                        </TabsContent>
+                    </form>
+                    <div className="flex justify-center gap-4">
+                        <div>
+                            <Button
+                                className="border border-[#7677F4] bg-[white] w-[101px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]"
+                                // onClick={handleSubmit(onSubmit)}
+                            >
+                                Cancel
+                            </Button>
+                        </div>
+                        <div>
+                            <Button
+                                className="bg-[#7677F4] w-[86px] h-[46px] rounded-[12px] "
+                                onClick={handleSubmit(onSubmit)}
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </div>
                 </FormProvider>
             </Tabs>
         </div>
