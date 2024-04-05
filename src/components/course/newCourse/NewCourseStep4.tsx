@@ -93,7 +93,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       value: showEarlyBirdColumns = false,
       onChange: setShowEarlyBirdColumns,
     },
-  } = useController<Program>({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
+  } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
 
   // Data for the table
   const courseFeeData: FeeLevelType[] =
@@ -176,7 +176,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value },
-        } = useController<Program>({ name: `feeLevels[${row?.index}][subTotal]` });
+        } = useController({ name: `feeLevels[${row?.index}][subTotal]` });
 
         return <div className="">{value}</div>;
       },
@@ -188,7 +188,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value },
-        } = useController<Program>({ name: `feeLevels[${row?.index}][tax]` });
+        } = useController({ name: `feeLevels[${row?.index}][tax]` });
         return <div className="">{value}</div>;
       },
       enableSorting: false,
@@ -199,7 +199,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value, onChange },
-        } = useController<Program>({ name: `feeLevels[${row?.index}][total]` });
+        } = useController({ name: `feeLevels[${row?.index}][total]` });
 
         const taxRate = organizationData?.tax_rate;
 
@@ -273,7 +273,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
 
         const {
           field: { value: feeLevel },
-        } = useController<Program>({ name: `feeLevels[${row?.index}]` });
+        } = useController({ name: `feeLevels[${row?.index}]` });
 
         if (taxEnable == false) {
           return <div>{feeLevel?.earlyBirdTotal}</div>;
@@ -289,7 +289,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value },
-        } = useController<Program>({ name: `feeLevels[${row?.index}]` });
+        } = useController({ name: `feeLevels[${row?.index}]` });
 
         return <div className="">{value?.earlyBirdTax}</div>;
       },
@@ -301,7 +301,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value, onChange },
-        } = useController<Program>({ name: `feeLevels[${row?.index}][earlyBirdTotal]` });
+        } = useController({ name: `feeLevels[${row?.index}][earlyBirdTotal]` });
 
         const { setValue } = useFormContext();
 
@@ -367,7 +367,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         cell: ({ row }) => {
           const {
             field: { value, onChange },
-          } = useController<Program>({ name: `feeLevels[${row?.index}][isEnable]` });
+          } = useController({ name: `feeLevels[${row?.index}][isEnable]` });
 
           return (
             <Checkbox

@@ -185,7 +185,7 @@ export const CourseTypeDropDown = () => {
 
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.program_type_id,
   });
 
@@ -217,7 +217,7 @@ export const CourseTypeDropDown = () => {
 
   const {
     field: { onChange: setCourseTypeSettings },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.program_type,
   });
 
@@ -328,7 +328,7 @@ const CourseNameDropDown = () => {
 
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.program_alias_name_id,
   });
 
@@ -439,7 +439,7 @@ const TeachersDropDown = () => {
 
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.teacher_ids,
   });
 
@@ -535,7 +535,7 @@ const AssistantTeachersDropDown = () => {
 
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.assistant_teacher_ids,
   });
 
@@ -559,7 +559,7 @@ const AssistantTeachersDropDown = () => {
 const Visibility = () => {
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.visibility_id,
   });
 
@@ -620,7 +620,7 @@ const Visibility = () => {
 const DisplayLanguage = () => {
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.is_language_translation_for_participants,
   });
 
@@ -652,7 +652,7 @@ const DisplayLanguage = () => {
 const GeoRestriction = () => {
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.is_geo_restriction_applicable,
   });
   const {
@@ -709,7 +709,7 @@ const LanguageDropDown = () => {
 
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.language_ids,
   });
 
@@ -815,7 +815,7 @@ const LanguageTranslationDropDown = () => {
 
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.program_translation_language_ids,
   });
 
@@ -861,7 +861,7 @@ const AllowedCountriesDropDown = () => {
 
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.allowed_countries,
   });
 
@@ -896,7 +896,7 @@ const MaximumCapacity = () => {
 
   const {
     field: { value = maxAttendees, onChange },
-  } = useController<Program>({ name: NewCourseStep2FormNames?.max_capacity });
+  } = useController({ name: NewCourseStep2FormNames?.max_capacity });
 
   return (
     <div className="flex gap-1 flex-col">

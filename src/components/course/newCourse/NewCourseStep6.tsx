@@ -16,7 +16,7 @@ function NewCourseStep6() {
 
   const {
     field: { value: courseEmails, onChange: courseEmailOnChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep6FormNames?.bcc_registration_confirmation_email,
   });
 
@@ -129,7 +129,7 @@ export default NewCourseStep6;
 export const ContactName = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController<Program>({ name: `contact[${index}].contact_name` });
+  } = useController({ name: `contact[${index}].contact_name` });
   return (
     <Input
       placeholder="Enter contact name"
@@ -143,7 +143,7 @@ export const ContactName = ({ index }: any) => {
 export const ContactEmail = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController<Program>({ name: `contact[${index}].contact_email` });
+  } = useController({ name: `contact[${index}].contact_email` });
   return (
     <Input
       placeholder="Enter contact email"
@@ -158,7 +158,7 @@ export const ContactEmail = ({ index }: any) => {
 export const ContactMobile = ({ index }: any) => {
   const {
     field: { value, onChange },
-  } = useController<Program>({ name: `contact[${index}].contact_number` });
+  } = useController({ name: `contact[${index}].contact_number` });
   return (
     <Input
       placeholder="Enter contact mobile"

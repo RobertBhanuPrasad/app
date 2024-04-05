@@ -80,7 +80,7 @@ const columns = (append: any, remove: any, formData: any) => [
       const {
         field: { value, onChange },
         fieldState: { error },
-      } = useController<Program>({
+      } = useController({
         name: `accommodation[${row.index}].accommodation_type_id`,
       });
 
@@ -148,7 +148,7 @@ const columns = (append: any, remove: any, formData: any) => [
     cell: ({ row }: any) => {
       const {
         field: { value, onChange },
-      } = useController<Program>({
+      } = useController({
         name: `accommodation[${row.index}].fee_per_person`,
       });
 
@@ -172,7 +172,7 @@ const columns = (append: any, remove: any, formData: any) => [
     cell: ({ row }: any) => {
       const {
         field: { value, onChange },
-      } = useController<Program>({
+      } = useController({
         name: `accommodation[${row.index}].no_of_residential_spots`,
       });
 
@@ -241,7 +241,7 @@ const columns = (append: any, remove: any, formData: any) => [
 export const ResidentialCourse = () => {
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep5FormNames?.is_residential_program,
   });
 
@@ -273,7 +273,7 @@ export const ResidentialCourse = () => {
 export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
   return (

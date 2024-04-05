@@ -53,14 +53,14 @@ export default NewCourseStep1;
 const RegistrationGateway = () => {
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep1FormNames?.is_registration_via_3rd_party,
   });
 
   const {
     field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
-  } = useController<Program>({
-    name: NewCourseStep1FormNames?.registration_via_3rd_party_url,
+  } = useController({
+    name: "registration_via_3rd_party_url",
   });
 
   return (
@@ -95,7 +95,7 @@ const RegistrationGateway = () => {
 const RadioCards = () => {
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep1FormNames?.program_created_by,
   });
 
@@ -125,7 +125,7 @@ const RadioCards = () => {
 
   const {
     field: { value: teachers, onChange: teachersOnChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep2FormNames?.teacher_ids,
   });
 
@@ -273,7 +273,7 @@ const OrganizationDropDown = () => {
   const {
     field: { value, onChange },
     fieldState: { error: organizationError },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep1FormNames?.organization_id,
   });
 
@@ -335,7 +335,7 @@ const ProgramOrganizerDropDown = () => {
 
   const {
     field: { value, onChange },
-  } = useController<Program>({
+  } = useController({
     name: NewCourseStep1FormNames?.organizer_ids,
   });
 
