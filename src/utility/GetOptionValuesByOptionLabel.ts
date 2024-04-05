@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+// import { OpenStreetMapProvider } from "leaflet-geosearch";
 
 /**
  * @function GetOptionValuesByOptionLabel function is used to get array of option_values with option_labels KEY.
@@ -33,5 +34,19 @@ export const getOptionValueObjectByOptionOrder = (
 
   return foundOptionValue
     ? _.find(foundOptionValue.option_values, { order: optionOrder })
+    : undefined;
+};
+
+export const getOptionValueObjectById = (
+  optionLabel: string,
+  id: number
+): any => {
+  const { optionLabelValue } = optionLabelValueStore();
+  const foundOptionValue = _.find(
+    optionLabelValue,
+    (val) => val.id === optionLabel
+  );
+  return foundOptionValue
+    ? _.find(foundOptionValue.option_values, { id: id })
     : undefined;
 };

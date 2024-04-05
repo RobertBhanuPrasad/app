@@ -1,21 +1,22 @@
+import Form from "@components/Formfield";
+import NewCourseReviewPage from "@components/course/newCourse/NewCourseReviewPage";
 import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
 import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
+import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
-import { Button } from "src/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import Fees from "@public/assets/Fees";
-import _ from "lodash";
-import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
-import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import Form from "@components/Formfield";
+
+import { z } from "zod";
 import { useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
@@ -33,18 +34,28 @@ import {
 } from "src/constants/CourseConstants";
 import { validationSchema } from "./NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
+import { Button } from "src/ui/button";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { viewPreviewPage } = newCourseStore();
+  const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
-  // if (!loginUserData?.userData) {
-  //   return <div>Loading...</div>;
-  // }
+  if (!loginUserData?.userData) {
+    return <div>Loading...</div>;
+  }
+
+  if (viewThankyouPage) {
+    return (
+      <div className="mb-8">
+        <NewCourseThankyouPage />;
+      </div>
+    );
+  }
 
   if (viewPreviewPage) {
-    return <div> Render Preview Page</div>;
+    return <NewCourseReviewPage />;
   } else {
     return <NewCourse />;
   }
@@ -54,7 +65,6 @@ function NewCourse() {
   const { currentStep, setCurrentStep } = newCourseStore();
 
   const loggedUserData = loginUserData?.userData?.id;
-
 
   // Array of step titles, icons, and colors
   const stepTitles = [
@@ -149,7 +159,7 @@ function NewCourse() {
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
           <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
-            <div className="flex flex-col  h-full gap-4 ">
+            <div className="flex flex-col h-full gap-4 ">
               {stepTitles.map((tab, index) => (
                 <TabsTrigger
                   key={index}
@@ -241,9 +251,7 @@ const Footer = ({ stepTitles }: any) => {
     Object.values(NewCourseStep6FormNames),
   ];
 
-  const {ValidateCurrentStepFields} = useValidateCurrentStepFields()
-
-
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
 
   const handleClickReviewDetailsButton = async (
     currentStepFormNames: any[]
@@ -302,7 +310,11 @@ const Footer = ({ stepTitles }: any) => {
       {currentStep == CONTACT_INFO_STEP_NUMBER && (
         <Button
           className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-          onClick={async () => { await handleClickReviewDetailsButton(validationFieldsStepWise[currentStep - 1])} }
+          onClick={async () => {
+            await handleClickReviewDetailsButton(
+              validationFieldsStepWise[currentStep - 1]
+            );
+          }}
         >
           Review Details
         </Button>
@@ -310,6 +322,3 @@ const Footer = ({ stepTitles }: any) => {
     </div>
   );
 };
-
-
-
