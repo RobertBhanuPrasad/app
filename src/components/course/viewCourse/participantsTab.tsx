@@ -42,10 +42,10 @@ function ParticipantsTab() {
       select:
         "id,contact_id(gender_id(id,value)),participant_attendence_status_id(id,value),price_category_id(fee_level_id(id,value))",
     },
-  });
+  }); 
 
   const genderObjects = _.countBy(
-    participantData?.data,
+    participantData?.data,  
     (obj) => obj.contact_id.gender_id?.value
   );
 
