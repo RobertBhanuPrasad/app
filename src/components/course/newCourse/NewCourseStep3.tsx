@@ -23,6 +23,15 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { date } from "zod";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
+import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectItems,
+  SelectValue,
+} from "src/ui/select";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -44,12 +53,24 @@ function NewCourseStep3() {
 export default NewCourseStep3;
 
 const OnlineProgram = () => {
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: NewCourseStep3FormNames?.online_url,
+  });
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
         <div className="">Online zoom URL </div>
         <div className="w-80">
-          <Input placeholder="URL" className="rounded-[12px]" />
+          <Input
+            placeholder="URL"
+            className="rounded-[12px]"
+            value={value}
+            onChange={(event) => {
+              onChange(event.target.value);
+            }}
+          />
           <div className="">
             Note: Participants will join your online course through your virtual
             venue
@@ -79,7 +100,11 @@ const Schedules = () => {
 const SchedulesHeader = () => {
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
-  } = useController({ name: "hoursFormat" });
+  } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
+
+  const {
+    field: { value: timeZones, onChange: timeZonesOnChange },
+  } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
 
   let timeFormatOptions =
     getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
@@ -92,6 +117,20 @@ const SchedulesHeader = () => {
       };
     }
   );
+
+  const { options } = useSelect({
+    resource: "time_zones",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+
   return (
     <div className="h-9 flex justify-between">
       <div className="font-semibold text-[#333333] flex items-center">
@@ -99,26 +138,55 @@ const SchedulesHeader = () => {
       </div>
       <div className="flex gap-4">
         <div className="w-[161px]">
-          <CustomSelect
+          <Select
             value={hoursFormat}
-            placeholder="Select time format"
-            data={timeFormatOptions}
-            onBottomReached={() => {}}
-            onSearch={() => {}}
-            onChange={(val) => {
+            onValueChange={(val: any) => {
               hoursFormatOnChange(val);
             }}
-          />
+          >
+            <SelectTrigger className="w-[161px]">
+              <SelectValue placeholder="Select Format" />
+            </SelectTrigger>
+            <SelectContent>
+              {timeFormatOptions?.map((option: any) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="w-[257px]">
-          <CustomSelect
-            value={""}
-            placeholder="Select time format"
-            data={timeFormatOptions}
-            onBottomReached={() => {}}
-            onSearch={() => {}}
-            onChange={() => {}}
-          />
+          <Select
+            value={timeZones}
+            onValueChange={(value: any) => {
+              timeZonesOnChange(value);
+            }}
+          >
+            <SelectTrigger className="w-[257px]">
+              <SelectValue placeholder="Select Time Zone" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItems onBottomReached={() => {}}>
+                {options?.map((option,index) => {
+                  return (
+                    <div>
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className="h-[44px]"
+                      >
+                        {option.label}
+                      </SelectItem>
+                      {index < options?.length - 1 && (
+                        <hr className="border-[#D6D7D8]" />
+                      )}
+                    </div>
+                  );
+                })}
+              </SelectItems>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
@@ -247,14 +315,14 @@ const TimePicker = ({
       <div className="text-sm text-[#999999] font-normal">From</div>
       <div className="w-[233px]">
         <TimeSelector
-          name={`schedules[${index}].start`}
+          name={`${NewCourseStep3FormNames?.schedules}[${index}].start`}
           is12HourFormat={is12HourFormat}
         />
       </div>
       <div className="text-sm text-[#999999] font-normal">To</div>
       <div className="w-[233px]">
         <TimeSelector
-          name={`schedules[${index}].end`}
+          name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
           is12HourFormat={is12HourFormat}
         />
       </div>
@@ -266,7 +334,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   const {
     field: { value: dateValue, onChange },
   } = useController({
-    name: `schedules[${index}].date`,
+    name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
 
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date
