@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import Filters from "src/participants/Filters";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import Form from "@components/Formfield";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
   return (
@@ -27,16 +28,33 @@ const HeaderSection = () => {
     to: new Date(),
   });
 
+  const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+
+  const { newAdvanceFilterData, setNewAdvanceFilterData } = newCourseStore();
+
+  console.log("redux", newAdvanceFilterData);
+
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
       <div>
-        <Sheet>
+        <Sheet open={advanceFilterOpen}>
           <SheetTrigger className="p-0">
-            <Button variant="outline">All Filters</Button>
+            <Button
+              onClick={() => {
+                setAdvanceFilterOpen(true);
+              }}
+              variant="outline"
+            >
+              All Filters
+            </Button>
           </SheetTrigger>
           <SheetContent className="w-[446px] rounded-l-xl">
-            <Form onSubmit={() => {}} defaultValues={{}}>
-              <Filters />
+            <Form onSubmit={() => {}} defaultValues={newAdvanceFilterData}>
+              <Filters
+                setAdvanceFilterOpen={setAdvanceFilterOpen}
+                // newAdvanceFilterData={newAdvanceFilterData}
+                setNewAdvanceFilterData={setNewAdvanceFilterData}
+              />
             </Form>
           </SheetContent>
         </Sheet>

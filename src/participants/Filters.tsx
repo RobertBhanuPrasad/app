@@ -28,7 +28,7 @@ import {
 } from "src/ui/select";
 import { Separator } from "src/ui/separator";
 
-const Filters = () => {
+const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
   const { getValues } = useFormContext();
 
   const formData = getValues();
@@ -237,7 +237,14 @@ const Filters = () => {
           <ClearAllIcon />
           <p className="text-primary"> Clear All</p>
         </div>
-        <Button>Apply</Button>
+        <Button
+          onClick={() => {
+            setNewAdvanceFilterData(formData);
+            setAdvanceFilterOpen(false);
+          }}
+        >
+          Apply
+        </Button>
       </div>
     </div>
   );
@@ -464,6 +471,8 @@ export const CourseStatus = () => {
   } = useController({
     name: "course_status",
   });
+
+  console.log("heyy status", value);
 
   const toggleCourseStatus = (index: number) => {
     const updatedValue = value.includes(index)
