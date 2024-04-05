@@ -24,8 +24,6 @@ const HeaderSection = () => {
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
       <div>All filters</div>
-      <Header className="text-[red] font-bold text-xs">Header</Header>
-      <CardLabel className="text-[green] ">cardlabel</CardLabel>
       <div>Search</div>
       <div>
         {" "}
