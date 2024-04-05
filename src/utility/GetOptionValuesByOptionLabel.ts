@@ -38,13 +38,18 @@ export const getOptionValueObjectByOptionOrder = (
     : undefined;
 };
 
-
-
-
-export const getOptionValueObjectById = (optionLabel: string, id: number): any => {
+export const getOptionValueObjectById = (
+  optionLabel: string,
+  id: number
+): any => {
   const { optionLabelValue } = optionLabelValueStore();
-  const foundOptionValue = _.find(optionLabelValue, (val) => (val.id = optionLabel));
-  return foundOptionValue ? _.find(foundOptionValue.option_values, { id: id }) : undefined;
+  const foundOptionValue = _.find(
+    optionLabelValue,
+    (val) => val.id === optionLabel
+  );
+  return foundOptionValue
+    ? _.find(foundOptionValue.option_values, { id: id })
+    : undefined;
 };
 // export const fetchLongitudeLatitudeData = async (address: string) => {
 //   const provider = new OpenStreetMapProvider();
