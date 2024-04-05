@@ -3,12 +3,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useState } from "react";
 import { authProvider } from "src/authProvider";
-import {
-  COURSE_ACCOUNTING_FORM_TAB,
-  COURSE_DETAILS_TAB,
-  PARTICIPANTS_TAB,
-  REVENUE_SUMMARY_TAB,
-} from "src/constants/Tabs";
+import { COURSE_ACCOUNTING_FORM_TAB, COURSE_DETAILS_TAB, PARTICIPANTS_TAB, REVENUE_SUMMARY_TAB } from "src/constants/CourseConstants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 
 function index() {
