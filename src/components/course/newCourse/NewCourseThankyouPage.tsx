@@ -32,8 +32,8 @@ const NewCourseThankyouPage = () => {
         }
     };
 
-    const handleCopyDetailsPageLink = () => {
-        copyText("details_page_link");
+    const handleCopyDetailsPageLink = (textToCopy: string) => {
+        copyText(textToCopy);
         setCopiedDetailsPageLink(true);
 
         setTimeout(() => {
@@ -41,8 +41,8 @@ const NewCourseThankyouPage = () => {
         }, 1000);
     };
 
-    const handleCopyRegistrationLink = () => {
-        copyText("registration_link");
+    const handleCopyRegistrationLink = (textToCopy: string) => {
+        copyText(textToCopy);
         setCopiedRegistrationLink(true);
 
         setTimeout(() => {
@@ -178,15 +178,14 @@ const NewCourseThankyouPage = () => {
                                         Registration link
                                     </p>
                                     <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
-                                        {/* // TODO : need to add the course registration link */}
                                         <h4 id="textToCopy" className="">
                                             {data?.data?.registration_link}
                                         </h4>
                                         <div
                                             onClick={() => {
-                                                handleCopyDetailsPageLink();
+                                                handleCopyDetailsPageLink(data?.data?.registration_link);
                                             }}
-                                            className="relative mt-1"
+                                            className="relative mt-1 cursor-pointer"
                                         >
                                             <CopyIcon />
                                             {copiedDetailsPageLink ? (
@@ -204,16 +203,14 @@ const NewCourseThankyouPage = () => {
                                         Details page link
                                     </p>
                                     <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
-                                        {/* // TODO : need to add the details page link */}
-
                                         <h4 id="textToCopy1" className="">
                                             {data?.data?.details_page_link}
                                         </h4>
                                         <div
                                             onClick={() => {
-                                                handleCopyRegistrationLink();
+                                                handleCopyRegistrationLink(data?.data?.details_page_link);
                                             }}
-                                            className="relative mt-1"
+                                            className="relative mt-1 cursor-pointer"
                                         >
                                             <CopyIcon />
                                             {copiedRegistrationLink ? (
@@ -229,8 +226,11 @@ const NewCourseThankyouPage = () => {
                                 <div className="pl-5">
                                     <Button
                                         onClick={() => {
-                                            handleCopyDetailsPageLink();
-                                            handleCopyRegistrationLink();
+                                            handleCopyDetailsPageLink(data?.data?.details_page_link);
+                                            handleCopyRegistrationLink(data?.data?.registration_link);
+                                            copyText(
+                                                data?.data?.registration_link + "," + data?.data?.details_page_link
+                                            );
                                         }}
                                         variant="outline"
                                         className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
