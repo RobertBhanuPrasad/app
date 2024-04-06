@@ -305,7 +305,7 @@ export function BaseTable<TData, TValue>({
                 <DropDown />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
+            <DropdownMenuContent className="w-[192px]" align="start">
               <div>
                 <div className="flex flex-col gap-4 p-3 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
                   <div className="flex flex-row gap-4 items-center">
@@ -321,7 +321,7 @@ export function BaseTable<TData, TValue>({
                     .getAllColumns()
                     .filter((column) => column?.accessorFn)
                     // Here we are filtering the columns which have accessorKey
-                    .map((column) => {
+                    .map((column: any) => {
                       return (
                         <div className="flex flex-row gap-4 items-center">
                           <Checkbox
@@ -334,7 +334,7 @@ export function BaseTable<TData, TValue>({
                               handleColumnVisibilityChange(column.id, value);
                             }}
                           />
-                          {column.id}
+                          {column?.columnDef?.column_name}
                         </div>
                       );
                     })}
@@ -388,8 +388,7 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableHead
                           className={`${
-                            columnPinning &&
-                            "sticky left-0 z-10 bg-[#E9E9F5]"
+                            columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
                           }`}
                         >
                           <Checkbox
@@ -456,8 +455,7 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableCell
                           className={`${
-                            columnPinning &&
-                            "sticky left-0 z-10 bg-[#FFFFFF] "
+                            columnPinning && "sticky left-0 z-10 bg-[#FFFFFF] "
                           }`}
                         >
                           <Checkbox

@@ -1,8 +1,6 @@
 import { BaseTable } from "@components/course/findCourse/BaseTable";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
-import { CaretSortIcon } from "@radix-ui/react-icons";
-import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
@@ -73,18 +71,11 @@ const TableSection = () => {
   } = useTable({
     resource: "program",
     meta: {
-      select: "*,program_type_id!inner(name) , state_id!inner(name)",
+      select:
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*),program_schedules(*)",
     },
   });
 
-  // const { tableQueryResult: Data } = useTable({
-  //   resource: "program",
-  //   meta: {
-  //     select: "*,program_type_id!inner(name) , state_id!inner(name)",
-  //   },
-  // });
-
-  // console.log("heyy program", Data);
 
   const modifiedData = Object.values(
     mapProgramModifiedDataStructure(
