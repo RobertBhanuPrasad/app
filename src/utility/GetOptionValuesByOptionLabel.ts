@@ -1,7 +1,6 @@
-import _ from "lodash";
-import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+import _ from 'lodash'
+import { optionLabelValueStore } from 'src/zustandStore/OptionLabelValueStore'
 // import { OpenStreetMapProvider } from "leaflet-geosearch";
-
 
 /**
  * @function GetOptionValuesByOptionLabel function is used to get array of option_values with option_labels KEY.
@@ -9,12 +8,10 @@ import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
  * @returns {Array} An array of option values matching the provided option label key.
  */
 export const getOptionValuesByOptionLabel = (optionLabelKey: string): any[] => {
-  const { optionLabelValue } = optionLabelValueStore();
+  const { optionLabelValue } = optionLabelValueStore()
 
-  return optionLabelValue.filter(
-    (val: { key: string }) => val.key == optionLabelKey
-  );
-};
+  return optionLabelValue.filter((val: { key: string }) => val.key == optionLabelKey)
+}
 
 /**
  * @function getOptionValueObjectByOptionOrder function is used to get object of option_values with option_labels KEY and option_values order.
@@ -22,35 +19,19 @@ export const getOptionValuesByOptionLabel = (optionLabelKey: string): any[] => {
  * @param {number} optionOrder - order of option value
  * @returns {object} An array of option values matching the provided option label key.
  */
-export const getOptionValueObjectByOptionOrder = (
-  optionLabel: string,
-  optionOrder: number
-): object => {
-  const { optionLabelValue } = optionLabelValueStore();
+export const getOptionValueObjectByOptionOrder = (optionLabel: string, optionOrder: number): object => {
+  const { optionLabelValue } = optionLabelValueStore()
 
-  const foundOptionValue = _.find(
-    optionLabelValue,
-    (val) => val.key === optionLabel
-  );
+  const foundOptionValue = _.find(optionLabelValue, val => val.key === optionLabel)
 
-  return foundOptionValue
-    ? _.find(foundOptionValue.option_values, { order: optionOrder })
-    : undefined;
-};
+  return foundOptionValue ? _.find(foundOptionValue.option_values, { order: optionOrder }) : undefined
+}
 
-export const getOptionValueObjectById = (
-  optionLabel: string,
-  id: number
-): any => {
-  const { optionLabelValue } = optionLabelValueStore();
-  const foundOptionValue = _.find(
-    optionLabelValue,
-    (val) => val.id === optionLabel
-  );
-  return foundOptionValue
-    ? _.find(foundOptionValue.option_values, { id: id })
-    : undefined;
-};
+export const getOptionValueObjectById = (optionLabel: string, id: number): any => {
+  const { optionLabelValue } = optionLabelValueStore()
+  const foundOptionValue = _.find(optionLabelValue, val => val.key === optionLabel)
+  return foundOptionValue ? _.find(foundOptionValue.option_values, val => val.id === id) : undefined
+}
 // export const fetchLongitudeLatitudeData = async (address: string) => {
 //   const provider = new OpenStreetMapProvider();
 
