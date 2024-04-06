@@ -1,14 +1,15 @@
-import {
-  DisplayOptions,
-  handleTabsBasedOnStatus,
-} from "@components/courseBusinessLogic";
-import { useGetIdentity, useOne } from "@refinedev/core";
+import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useState } from "react";
 import { authProvider } from "src/authProvider";
-import { COURSE_ACCOUNTING_FORM_TAB, COURSE_DETAILS_TAB, PARTICIPANTS_TAB, REVENUE_SUMMARY_TAB } from "src/constants/CourseConstants";
+import {
+  COURSE_ACCOUNTING_FORM_TAB,
+  COURSE_DETAILS_TAB,
+  PARTICIPANTS_TAB,
+  REVENUE_SUMMARY_TAB,
+} from "src/constants/CourseConstants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 
 function index() {
@@ -38,7 +39,7 @@ function index() {
   ];
 
   return (
-    <div className="w-full ">
+    <div>
       <Tabs
         onValueChange={(val: any) => {
           setSelectedValue(val);
@@ -67,7 +68,7 @@ function index() {
         </TabsList>
         <div className="w-full border-b -mt-2"></div>
         <TabsContent value={COURSE_DETAILS_TAB}>
-          Place course details tab here
+          <CourseDetailsTab />
         </TabsContent>
         <TabsContent value={PARTICIPANTS_TAB}>
           Place participant tab here
