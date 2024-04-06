@@ -151,6 +151,8 @@ export const handlePostProgramData = async (
     return false;
   } else {
     programId = programData[0].id;
+    //call zustand function to store created programId
+    // so that it can be helpful in thankyou page
   }
 
   //   await handlePostProgramInfoData(body, programId);
