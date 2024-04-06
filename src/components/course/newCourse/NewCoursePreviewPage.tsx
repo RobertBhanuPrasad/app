@@ -16,7 +16,7 @@ import NewCourseStep6 from './NewCourseStep6'
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
-
+  
   const creator =
     newCourseData?.program_created_by &&
     getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by)
@@ -60,39 +60,32 @@ export default function NewCourseReviewPage() {
   const courseAccomodationNames = CourseAccomidation?.data?.map((accomdation: any) => {
     return accomdation?.name
   })
-  console.log(courseAccomodationNames, 'CourseAccomidation')
 
-  // const contactNames = newCourseData?.contact?.map((contactDetails: any) => {
-  //   return contactDetails
-  // })
-  // const { data: CourseTranslation } = useMany({
-  //   resource: 'program_translation_languages',
-  //   ids: newCourseData?.translation_language_ids,
-  //   meta: { select: 'language_name' }
-  // })
+  const { data: CourseTranslation } = useMany({
+    resource: 'languages',
+    ids: newCourseData?.translation_language_ids,
+    meta: { select: 'language_name' }
+  })
+  const languagesTranslations = CourseTranslation?.data
+    ?.map((CourseTranslation: any) => {
+      return CourseTranslation?.language_name
+    })
+    .join(', ')
 
-  // TODO After completion karthik work need to update
+  const { data: CourseTeachers } = useMany({
+    resource: 'users',
+    ids: newCourseData?.teacher_ids,
+    meta: { select: 'contact_id(full_name)' }
+  })
 
-  // const { data: CourseTeachers } = useMany({
-  //   resource: 'users',
-  //   ids: newCourseData?.teacher_ids,
-  //   meta: { select: 'contact_id(full_name)' }
-  // })
-
-  // const CourseTeachersNames = CourseTeachers?.data?.map(teacher_id => {
-  //   if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
-  // })
+  const CourseTeachersNames = CourseTeachers?.data?.map(teacher_id => {
+    if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
+  })
 
   const { data: courseType } = useOne({
     resource: 'program_types',
     id: newCourseData?.program_type_id
   })
-
-  const languagesTranslations = newCourseData?.translation_language_ids
-    ?.map((id: any) => {
-      return getLanguageName(id)?.data?.name
-    })
-    .join(', ')
 
   const allowedCountries = newCourseData?.allowed_countries
     ?.map((data: any) => {
@@ -199,7 +192,9 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Teacher</p>
-              <p className="font-semibold truncate text-accent-secondary">{'teachers' ? 'teachers' : '-'}</p>
+              <p className="font-semibold truncate text-accent-secondary">
+                {CourseTeachersNames ? CourseTeachersNames : '-'}
+              </p>
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Language(s) course is taught in</p>
