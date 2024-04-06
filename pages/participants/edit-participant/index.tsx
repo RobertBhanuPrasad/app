@@ -4,26 +4,26 @@ import ParticipnatInformation from "@components/participants/editParticipant/Par
 import PaymentDetails from "@components/participants/editParticipant/PaymentDetails";
 import { TabsContent, TabsList } from "@radix-ui/react-tabs";
 
+import { useSelect } from "@refinedev/core";
+import { useForm } from "@refinedev/react-hook-form";
 import { useState } from "react";
 import { FormProvider } from "react-hook-form";
 import { Button } from "src/ui/button";
 import { Tabs, TabsTrigger } from "src/ui/tabs";
-import { useForm } from "@refinedev/react-hook-form";
-import { useSelect } from "@refinedev/core";
 export default function index() {
- 
-
     const [selectedValue, setSelectedValue] = useState(
         "Participants Information"
     );
-    const selectQuery:any={
-        resource:"participant_registration",
-        optionLabel:"edit_participant",
-        optionvalue:"id",
-        meta:{select:"*,created_at,total_amount,contact_id!inner(full_name),price_category_id!inner(option_values(value))"}
-    }
-    const {options,queryResult}=useSelect(selectQuery)
-    console.log(options,queryResult,"query result")
+    const selectQuery: any = {
+        resource: "participant_registration",
+        optionLabel: "edit_participant",
+        optionvalue: "id",
+        meta: {
+            select: "*,created_at,total_amount,contact_id!inner(full_name),price_category_id!inner(option_values(value)),program_id!inner(*)",
+        },
+    };
+    const { options, queryResult } = useSelect(selectQuery);
+    console.log(options, queryResult, "query result");
     const [selectedTab, setSelectedTab] = useState("Participants Information");
     const tabTriggers = [
         {
@@ -63,22 +63,22 @@ export default function index() {
             id: "UTM",
         },
     ];
-    const methods=useForm({
+    const methods = useForm({
         refineCoreProps: {
-          action: "edit", // or clone
-          resource: "categories",
-          id: 1, // <BASE_URL_FROM_DATA_PROVIDER>/categories/1
+            action: "edit", // or clone
+            resource: "categories",
+            id: 1, // <BASE_URL_FROM_DATA_PROVIDER>/categories/1
         },
-      });
-      const onSubmit = (formData: any) => {
+    });
+    const onSubmit = (formData: any) => {
         console.log(formData);
         // Call onFinish with the form data if needed
         onFinish(formData);
-      };
+    };
     const {
         refineCore: { onFinish, formLoading },
         handleSubmit,
-      } = methods;
+    } = methods;
     const handleTabClick = (value) => {
         setSelectedTab(value);
         const section = document.getElementById(
@@ -166,26 +166,26 @@ export default function index() {
                 <FormProvider {...methods}>
                     <form autoComplete="off">
                         <TabsContent value="Participants Information">
-                            <ParticipnatInformation data={queryResult?.data}/>
-                            <CourseFee data={queryResult?.data}/>
+                            <ParticipnatInformation data={queryResult?.data} />
+                            <CourseFee data={queryResult?.data} />
                             <AccomodationDetails />
                             <PaymentDetails />
                         </TabsContent>
                         <TabsContent value="Course Fees">
-                            <ParticipnatInformation />
-                            <CourseFee />
+                            <ParticipnatInformation data={queryResult?.data} />
+                            <CourseFee data={queryResult?.data} />
                             <AccomodationDetails />
                             <PaymentDetails />
                         </TabsContent>
                         <TabsContent value="Accomodation Details">
-                            <ParticipnatInformation />
-                            <CourseFee />
+                            <ParticipnatInformation data={queryResult?.data} />
+                            <CourseFee data={queryResult?.data} />
                             <AccomodationDetails />
                             <PaymentDetails />
                         </TabsContent>
                         <TabsContent value="Payment Details">
-                            <ParticipnatInformation />
-                            <CourseFee />
+                            <ParticipnatInformation data={queryResult?.data} />
+                            <CourseFee data={queryResult?.data} />
                             <AccomodationDetails />
                             <PaymentDetails />
                         </TabsContent>
