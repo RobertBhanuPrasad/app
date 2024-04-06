@@ -19,11 +19,6 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card
 import { formatDate } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 
-import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
-import { GetServerSideProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { authProvider } from "src/authProvider";
 import CopyIcon from '@public/assets/CopyIcon'
 import Cross from '@public/assets/Cross'
 import Exclamation from '@public/assets/Exclamation'
@@ -35,11 +30,21 @@ import Tick from '@public/assets/Tick.png'
 import TwitterIcon from '@public/assets/TwitterIcon'
 import WhatsappIcon from '@public/assets/WhatsappIcon'
 import _ from 'lodash'
+import { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import CustomSelect from "src/ui/custom-select";
+import { authProvider } from 'src/authProvider'
+import CustomSelect from 'src/ui/custom-select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 
+import {
+  COURSE_ACCOUNTING_FORM_TAB,
+  COURSE_DETAILS_TAB,
+  PARTICIPANTS_TAB,
+  REVENUE_SUMMARY_TAB
+} from 'src/constants/CourseConstants'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -61,7 +66,6 @@ import {
   DialogTrigger
 } from 'src/ui/dialog'
 import { Textarea } from 'src/ui/textarea'
-import { COURSE_ACCOUNTING_FORM_TAB, COURSE_DETAILS_TAB, PARTICIPANTS_TAB, REVENUE_SUMMARY_TAB } from 'src/constants/CourseConstants'
 
 function index() {
   const Id: number = 1
@@ -561,39 +565,38 @@ const PendingApprovalDropDown = () => {
 }
 
 const ActionsDropDown = () => {
+
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false)
+
+  const router = useRouter()
+
   const options = [
     {
-      label: 'View Course Details',
+      label: 'View Participants',
       value: 1
     },
     {
-      label: 'View Participants',
+      label: 'Register Participants',
       value: 2
     },
     {
-      label: 'Register Participants',
+      label: 'Edit Course',
       value: 3
     },
     {
-      label: 'Edit Course',
+      label: 'Copy Course',
       value: 4
     },
     {
-      label: 'Copy Course',
+      label: 'Cancel Course',
       value: 5
     },
     {
-      label: 'Cancel Course',
-      value: 6
-    },
-    {
       label: 'Submit Course Accounting Form',
-      value: 7
+      value: 6
     }
   ]
 
-  const router = useRouter()
   return (
     <div>
       <CustomSelect
@@ -604,35 +607,30 @@ const ActionsDropDown = () => {
         onChange={(val: any) => {
           switch (val) {
             case 1: {
-              // TODO - navigate to view course details page
-              router.push('/')
-              break
-            }
-            case 2: {
               // TODO - navigate to view participants page
               router.push('/')
               break
             }
-            case 3: {
+            case 2: {
               // TODO - navigate to register participants page
               router.push('/')
               break
             }
+            case 3: {
+              // TODO - navigate to preview page
+              router.push('/')
+              break
+            }
             case 4: {
-              // TODO - navigate to edit course page
+              // TODO - navigate to new course page
               router.push('/')
               break
             }
             case 5: {
-              // TODO - navigate to copy course page
-              router.push('/')
-              break
-            }
-            case 6: {
               setCancelCourseModalOpen(true)
               break
             }
-            case 7: {
+            case 6: {
               // TODO - navigate to course accounting form
               router.push('/')
               break
