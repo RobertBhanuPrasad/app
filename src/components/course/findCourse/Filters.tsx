@@ -35,7 +35,7 @@ import { Separator } from "src/ui/separator";
 import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 
 const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
-  const { getValues } = useFormContext();
+  const { getValues, reset } = useFormContext();
 
   const formData = getValues();
 
@@ -89,7 +89,7 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
-              <FormCourseTypeComponent />
+              <CourseTypeComponent />
             </AccordionContent>
           </AccordionItem>
           <Separator />
@@ -273,7 +273,13 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
         </Accordion>
       </div>
       <div className="flex left-0 items-center  gap-4 absolute bottom-0 h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end pr-6">
-        <div className="flex gap-1 items-center cursor-pointer">
+        <div
+          onClick={() => {
+            reset()
+            setNewAdvanceFilterData(undefined);
+          }}
+          className="flex gap-1 items-center cursor-pointer"
+        >
           <ClearAllIcon />
           <p className="text-primary"> Clear All</p>
         </div>
@@ -745,72 +751,9 @@ export const CourseFees = () => {
   );
 };
 
-export const FormCourseTypeComponent = () => {
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "course_type",
-  });
-
-  const [pageSize, setPageSize] = useState(10);
-
-  const { options, onSearch } = useSelect({
-    resource: "program_types",
-    optionLabel: "name",
-    optionValue: "id",
-    onSearch: (value: any) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-
-    pagination: {
-      pageSize: pageSize,
-      mode: "server",
-    },
-  });
-
-  const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10);
-  };
-  return (
-    <Select
-      value={value}
-      onValueChange={(val: any) => {
-        onChange(val);
-      }}
-    >
-      <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select Course Type" />
-      </SelectTrigger>
-      <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
-        <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
-            <>
-              <SelectItem
-                key={option.value}
-                value={option.value}
-                className="h-[44px]"
-              >
-                {option.label}
-              </SelectItem>
-              {index < options?.length - 1 && (
-                <hr className="border-[#D6D7D8]" />
-              )}
-            </>
-          ))}
-        </SelectItems>
-      </SelectContent>
-    </Select>
-  );
-};
-
 export const ProgramOrganiser = () => {
   const {
-    field: { value = [4], onChange },
+    field: { value, onChange },
   } = useController({
     name: "program_organiser",
   });

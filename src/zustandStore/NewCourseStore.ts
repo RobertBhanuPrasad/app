@@ -11,6 +11,8 @@ interface NewCourseStore {
   setViewThankyouPage: (by: boolean) => void;
   currentStep: number; // Corrected the type to number
   setCurrentStep: (by: number) => void;
+  AllFilterData: any;
+  setAllFilterData: (by: any) => void;
 }
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
@@ -42,6 +44,12 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   setCurrentStep: (data: number) => {
     set(() => ({
       currentStep: data,
+    }));
+  },
+  AllFilterData: {},
+  setAllFilterData: (data: any) => {
+    set(() => ({
+      AllFilterData: data,
     }));
   },
 }));
