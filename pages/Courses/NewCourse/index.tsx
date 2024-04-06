@@ -124,7 +124,12 @@ export const NewCourseTabs = () => {
   const [isAllFieldsValid5, setIsAllFieldsValid5] = useState(undefined);
   const [isAllFieldsValid6, setIsAllFieldsValid6] = useState(undefined);
 
-  const handelIcon = (isAllFieldsFilled: any) => {
+  /**
+   * @function handelIsAllFieldsFilled
+   * @description this function is used to set that is all fields are filled or not in particular step
+   * @param isAllFieldsFilled 
+   */
+  const handelIsAllFieldsFilled = (isAllFieldsFilled: any) => {
     if (currentStep == 1) {
       setIsAllFieldsValid1(isAllFieldsFilled);
     } else if (currentStep == 2) {
@@ -193,19 +198,33 @@ export const NewCourseTabs = () => {
 
   let isAllFieldsFilled = false;
 
+  /**
+   * @function handleClickTab
+   * @description this function is used to click tabs based on the validations of present step
+   * @param currentStepFormNames 
+   * @param tab 
+   */
   const handleClickTab = async (
     currentStepFormNames: any[],
     tab: { value: any }
   ) => {
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
+    //if the clicked tab is lessthan current step then we can navigate to the clicked tab
     if (tab.value < currentStep) {
       setCurrentStep(tab.value);
     } else if (isAllFieldsFilled && tab.value == currentStep + 1) {
+      // if all the fields filled in the current step then we can only able to go to next step
       setCurrentStep(tab.value);
     }
-    handelIcon(isAllFieldsFilled);
+    // This function is used to handle to update that all the fields in particular step is filled or not
+    handelIsAllFieldsFilled(isAllFieldsFilled);
   };
 
+  /**
+   * @function handleClickReviewDetailsButton
+   * @description This function is used to send to the review page if all the fields are field
+   * @param currentStepFormNames 
+   */
   const handleClickReviewDetailsButton = async (
     currentStepFormNames: any[]
   ) => {
@@ -216,18 +235,26 @@ export const NewCourseTabs = () => {
       setViewPreviewPage(true);
       setNewCourseData(formData);
     }
-    handelIcon(isAllFieldsFilled);
+    handelIsAllFieldsFilled(isAllFieldsFilled);
   };
 
+  /**
+   * @function handleClickNext
+   * @description this function is used to navigate to next step if all the fields of the current step is all filled
+   * @param currentStepFormNames
+   */
   const handleClickNext = async (currentStepFormNames: any[]) => {
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
       setCurrentStep(currentStep + 1);
     }
-    handelIcon(isAllFieldsFilled);
-    return isAllFieldsFilled;
+    handelIsAllFieldsFilled(isAllFieldsFilled);
   };
 
+  /**
+   * @function handleClickPrevious
+   * @description this function is used to click on the previous button and able to move to a step befor from the present step
+   */
   const handleClickPrevious = () => {
     setCurrentStep(currentStep - 1);
   };
