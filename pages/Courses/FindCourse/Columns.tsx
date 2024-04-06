@@ -15,7 +15,7 @@ import {
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-export const columns: ExtendedColumnDef<Program>[] = [
+export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "program_code",
     column_name: "Course ID",
@@ -145,7 +145,7 @@ export const columns: ExtendedColumnDef<Program>[] = [
     },
     cell: ({ row }) => {
       const teachers = row?.original?.program_teachers?.map(
-        (teacher: ProgramTeachers) => teacher?.users?.user_name
+        (teacher: any) => teacher?.users?.user_name
       );
       return (
         <div className="min-w-[150px]">{teachers && teachers.join(", ")}</div>
@@ -160,7 +160,7 @@ export const columns: ExtendedColumnDef<Program>[] = [
     },
     cell: ({ row }) => {
       const organizers = row?.original?.program_organizers?.map(
-        (Organizer: ProgramOrganizers) => Organizer?.users?.user_name
+        (Organizer: any) => Organizer?.users?.user_name
       );
       return (
         <div className="min-w-[150px]">
