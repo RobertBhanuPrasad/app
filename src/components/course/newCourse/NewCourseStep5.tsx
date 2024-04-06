@@ -218,7 +218,7 @@ const columns = (append: any, remove: any, formData: any) => [
 
       // Function to add a new row
       const handleAddRow = () => {
-        append(null);
+        append(undefined);
       };
 
       // Function to delete a row
