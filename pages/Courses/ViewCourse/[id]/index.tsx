@@ -36,6 +36,7 @@ import {
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
 
+import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
