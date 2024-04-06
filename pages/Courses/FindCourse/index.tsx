@@ -9,7 +9,6 @@ import { Checkbox } from "src/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { columns } from "./Columns";
 import { HttpError, useTable } from "@refinedev/core";
-import { mapProgramModifiedDataStructure } from "src/api/MappingFunctions";
 
 function index() {
   return (
@@ -76,12 +75,7 @@ const TableSection = () => {
     },
   });
 
-
-  const modifiedData = Object.values(
-    mapProgramModifiedDataStructure(
-      programData?.data?.data as ProgramDataBaseType
-    )
-  );
+  const modifiedData = programData?.data?.data || [];
 
   const [rowSelection, setRowSelection] = React.useState({});
 
