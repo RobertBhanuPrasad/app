@@ -190,7 +190,9 @@ export const NewCourseTabs = () => {
   ];
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+
   let isAllFieldsFilled = false;
+
   const handleClickTab = async (
     currentStepFormNames: any[],
     tab: { value: any }
