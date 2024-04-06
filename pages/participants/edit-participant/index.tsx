@@ -167,7 +167,7 @@ export default function index() {
                     <form autoComplete="off">
                         <TabsContent value="Participants Information">
                             <ParticipnatInformation data={queryResult?.data}/>
-                            <CourseFee />
+                            <CourseFee data={queryResult?.data}/>
                             <AccomodationDetails />
                             <PaymentDetails />
                         </TabsContent>

@@ -1,4 +1,4 @@
-export default function CourseFee() {
+export default function CourseFee({data}) {
     return (
         <div className="" id="Course">
             <div className="font-semibold text-[18px] pt-[25px]">
@@ -12,7 +12,7 @@ export default function CourseFee() {
                 </div>
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Fee Level</div>
-                    <div className="font-semibold">Regular</div>
+                    <div className="font-semibold">{data?.data[0]?.price_category_id?.option_values?.value}</div>
                 </div>
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Course Fee</div>
