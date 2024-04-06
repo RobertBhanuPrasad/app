@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import Form from "@components/Formfield";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { Input } from "src/ui/input";
+import { Checkbox } from "src/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -152,30 +153,41 @@ function index() {
   });
 
   console.log("hey table data", programData);
+  
 
   return (
-    <div className="flex flex-col gap-4">
-      <HeaderSection />
-      <div>
-        <BaseTable
-          current={current}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
-          checkboxSelection={true}
-          setCurrent={setCurrent}
-          pageCount={pageCount}
-          total={programData?.data?.total || 0}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          pagination={true}
-          tableStyles={{
-            table: "",
-            rowStyles: "!important border-none",
-          }}
-          columns={columns}
-          data={programData?.data?.data || []}
-          columnPinning={true}
-        />
+    <div className="relative">
+      <div className="mx-8 flex flex-col gap-4">
+        <HeaderSection />
+        <div className="w-full">
+          <BaseTable
+            current={current}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+            checkboxSelection={true}
+            setCurrent={setCurrent}
+            pageCount={pageCount}
+            total={programData?.data?.total || 0}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            pagination={true}
+            tableStyles={{
+              table: "",
+              rowStyles: "!important border-none",
+            }}
+            columns={columns}
+            data={programData?.data?.data || []}
+            columnPinning={true}
+          />
+        </div>
+      </div>
+      <div className="sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center bottom-0 h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end pr-6">
+        <div className="flex flex-row items-center gap-2">
+          <Checkbox className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg" />
+          <div>Select All</div>
+          <div className="font-semibold">{programData?.data?.total || 0}</div>
+        </div>
+        <div>export</div>
       </div>
     </div>
   );
@@ -199,7 +211,7 @@ const HeaderSection = () => {
     0;
 
   return (
-    <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
+    <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
       <div className="flex-[0.25]">
         <Sheet open={advanceFilterOpen}>
           <SheetTrigger className="p-0">

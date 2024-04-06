@@ -310,7 +310,7 @@ export function BaseTable<TData, TValue>({
                 <div className="flex flex-col gap-4 p-3 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
                   <div className="flex flex-row gap-4 items-center">
                     <Checkbox
-                      className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+                      className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                       checked={selectAll}
                       onCheckedChange={handleSelectAllChange}
                     />
@@ -328,7 +328,7 @@ export function BaseTable<TData, TValue>({
                             key={column.id}
                             disabled={!column.getCanHide()}
                             //Disabling the checkbox if the column cannot be hidden
-                            className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+                            className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                             checked={columnVisibilityChanges[column.id]}
                             onCheckedChange={(value: boolean) => {
                               handleColumnVisibilityChange(column.id, value);
@@ -392,6 +392,7 @@ export function BaseTable<TData, TValue>({
                           }`}
                         >
                           <Checkbox
+                            className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                             checked={table.getIsAllPageRowsSelected()}
                             onCheckedChange={(value: boolean) => {
                               table.toggleAllPageRowsSelected(value);
@@ -459,6 +460,7 @@ export function BaseTable<TData, TValue>({
                           }`}
                         >
                           <Checkbox
+                            className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
                             checked={row.getIsSelected()}
                             onCheckedChange={(value) =>
                               row.toggleSelected(!!value)

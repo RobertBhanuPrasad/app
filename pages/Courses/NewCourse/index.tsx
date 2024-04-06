@@ -167,7 +167,7 @@ function NewCourse() {
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
   return (
-    <div className="bg-[white]  ">
+    <div className="bg-[white] mx-8 ">
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
           <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
