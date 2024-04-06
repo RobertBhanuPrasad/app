@@ -1,3 +1,4 @@
+import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import { DisplayOptions } from "@components/courseBusinessLogic";
 import { useGetIdentity, useOne } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
@@ -12,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
@@ -240,13 +242,17 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const { setViewPreviewPage, setNewCourseData } = newCourseStore();
+
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
       const { data: loginUserData }: any = useGetIdentity();
+
+      //TODO: Need to use row only instead of this below api call
       const { data, isLoading } = useOne({
         resource: "program",
-        id: 1,
+        id: row.original.id,
       });
 
       const dropDownMenuData = DisplayOptions(
@@ -255,7 +261,21 @@ export const columns: ExtendedColumnDef<any>[] = [
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
 
+      const handleEditCourse = async () => {
+        console.log("clicking on edit course");
+
+        /**
+         * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
+         */
+        const defaultValues = await handleCourseDefaultValues(row.original.id);
+        setNewCourseData(defaultValues);
+
+        setViewPreviewPage(true);
+      };
+
       const handleSelected = (value: string) => {
+        console.log("clicked on", value);
+
         switch (value) {
           case "View Participants": {
             // TODO - Navigate to Participants Listing page
@@ -269,6 +289,9 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
           case "Cancel Course": {
             setIsDialogOpen(true);
+          }
+          case "Edit course": {
+            handleEditCourse();
           }
           default: {
             console.log("other options");

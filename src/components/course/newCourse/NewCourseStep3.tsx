@@ -9,7 +9,12 @@ import { CrudFilters, useList, useSelect } from "@refinedev/core";
 import { format, setDate } from "date-fns";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useController, useFieldArray, useFormContext, useFormState } from "react-hook-form";
+import {
+  useController,
+  useFieldArray,
+  useFormContext,
+  useFormState,
+} from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { Button } from "src/ui/button";
 import { DateCalendar } from "src/ui/DateCalendar";
@@ -63,7 +68,7 @@ export default NewCourseStep3;
 const OnlineProgram = () => {
   const {
     field: { value, onChange },
-    fieldState:{error}
+    fieldState: { error },
   } = useController({
     name: NewCourseStep3FormNames?.online_url,
   });
@@ -79,11 +84,11 @@ const OnlineProgram = () => {
             onChange={(event) => {
               onChange(event.target.value);
             }}
-            error = {error ? true : false}
+            error={error ? true : false}
           />
           {error && (
-        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
-      )}
+            <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+          )}
 
           <div className="">
             Note: Participants will join your online course through your virtual
@@ -103,7 +108,7 @@ const OnlineProgram = () => {
 };
 
 const Schedules = () => {
-  const { errors } = useFormState()
+  const { errors } = useFormState();
   return (
     <div className="flex flex-col gap-4 w-[1016px]">
       <SchedulesHeader />
@@ -111,7 +116,7 @@ const Schedules = () => {
       {errors?.schedules && (
         <span className="text-[#FF6D6D] text-[12px]">
           {errors?.schedules?.message as string}
-          </span>
+        </span>
       )}
     </div>
   );
@@ -120,12 +125,12 @@ const Schedules = () => {
 const SchedulesHeader = () => {
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
-    fieldState:{error: schedulesHeaderErrors}
+    fieldState: { error: schedulesHeaderErrors },
   } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
 
   const {
     field: { value: timeZones, onChange: timeZonesOnChange },
-    fieldState:{error:timeZoneError}
+    fieldState: { error: timeZoneError },
   } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
 
   let timeFormatOptions =
@@ -166,7 +171,10 @@ const SchedulesHeader = () => {
               hoursFormatOnChange(val);
             }}
           >
-            <SelectTrigger className="w-[161px]" error={schedulesHeaderErrors ? true : false}>
+            <SelectTrigger
+              className="w-[161px]"
+              error={schedulesHeaderErrors ? true : false}
+            >
               <SelectValue placeholder="Select Format" />
             </SelectTrigger>
             <SelectContent>
@@ -179,8 +187,10 @@ const SchedulesHeader = () => {
           </Select>
 
           {schedulesHeaderErrors && (
-        <span className="text-[#FF6D6D] text-[12px]">{schedulesHeaderErrors?.message}</span>
-      )}
+            <span className="text-[#FF6D6D] text-[12px]">
+              {schedulesHeaderErrors?.message}
+            </span>
+          )}
         </div>
         <div className="w-[257px]">
           <Select
@@ -189,7 +199,10 @@ const SchedulesHeader = () => {
               timeZonesOnChange(value);
             }}
           >
-            <SelectTrigger className="w-[257px]" error = {timeZoneError ? true : false}>
+            <SelectTrigger
+              className="w-[257px]"
+              error={timeZoneError ? true : false}
+            >
               <SelectValue placeholder="Select Time Zone" />
             </SelectTrigger>
             <SelectContent>
@@ -214,8 +227,10 @@ const SchedulesHeader = () => {
             </SelectContent>
           </Select>
           {timeZoneError && (
-        <span className="text-[#FF6D6D] text-[12px]">{timeZoneError?.message}</span>
-      )}
+            <span className="text-[#FF6D6D] text-[12px]">
+              {timeZoneError?.message}
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -227,7 +242,7 @@ const Sessions = () => {
   });
 
   const { watch } = useFormContext();
-  const { errors } = useFormState()
+  const { errors } = useFormState();
 
   const [open, setOpen] = useState(false);
 
@@ -271,15 +286,17 @@ const Sessions = () => {
                 <DialogTrigger asChild>
                   <Button
                     onClick={() => setOpen(true)}
-                    className={`w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 ${errors?.schedules && "border-[#FF6D6D]"}`}
-                    
+                    className={`w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 ${
+                      errors?.schedules && "border-[#FF6D6D]"
+                    }`}
                     variant="outline"
                   >
                     <div>
                       <CalenderIcon color="#999999" />
                     </div>
                     <div>
-                    {schedule?.date && format(new Date(schedule.date), "dd MMM, yyyy")}
+                      {schedule?.date &&
+                        format(new Date(schedule.date), "dd MMM, yyyy")}
                     </div>
                   </Button>
                 </DialogTrigger>
@@ -333,7 +350,7 @@ const TimePicker = ({
   index: number;
   is12HourFormat: Boolean;
 }) => {
-  const { errors } = useFormState()
+  const { errors } = useFormState();
 
   return (
     <div className="flex items-center gap-6">
@@ -351,7 +368,6 @@ const TimePicker = ({
           name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
           is12HourFormat={is12HourFormat}
           error={errors?.schedules ? true : false}
-
         />
       </div>
     </div>
@@ -511,11 +527,11 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 const TimeSelector = ({
   name, // Name of the time selector
   is12HourFormat, // Boolean indicating whether to display time in 12-hour format
-  error
+  error,
 }: {
   name: string;
   is12HourFormat: Boolean;
-  error : boolean
+  error: boolean;
 }) => {
   // Maximum hours depending on the time format
   const maximumHours = is12HourFormat ? 12 : 23;
@@ -634,7 +650,11 @@ const TimeSelector = ({
   return (
     <Popover>
       <PopoverTrigger name={`TimeSelector ${name}`}>
-        <div className={`border border-1 py-[10px] px-[14px] flex justify-between items-center rounded-xl cursor-pointer w-[233px] ${error && "border-[red]"}`}>
+        <div
+          className={`border border-1 py-[10px] px-[14px] flex justify-between items-center rounded-xl cursor-pointer w-[233px] ${
+            error && "border-[red]"
+          }`}
+        >
           <div className="flex gap-2 items-center">
             <Clock />
             <div>
