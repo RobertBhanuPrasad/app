@@ -1,63 +1,50 @@
-import CalenderIcon from "@public/assets/CalenderIcon";
-import CurrencyIcon from "@public/assets/CurrencyIcon";
-import Important from "@public/assets/Important";
-import LocationIcon from "@public/assets/LocationIcon";
-import ParticipantsIcon from "@public/assets/ParticipantsIcon";
-import {
-  CrudFilter,
-  CrudFilters,
-  useList,
-  useOne,
-  useSelect,
-} from "@refinedev/core";
-import { Circle } from "lucide-react";
-import React, { useState } from "react";
-import {
-  PARTICIPANT_ATTENDANCE_STATUS,
-  PARTICIPANT_PAYMENT_STATUS,
-  TIME_FORMAT,
-} from "src/constants/OptionLabels";
+import CalenderIcon from '@public/assets/CalenderIcon'
+import CurrencyIcon from '@public/assets/CurrencyIcon'
+import Important from '@public/assets/Important'
+import LocationIcon from '@public/assets/LocationIcon'
+import ParticipantsIcon from '@public/assets/ParticipantsIcon'
+import { useList, useOne } from '@refinedev/core'
+import { Circle } from 'lucide-react'
+import { useState } from 'react'
+import { PARTICIPANT_ATTENDANCE_STATUS, PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
 import {
   CANCELED_ATTENDANCE_STATUS,
   COMPLETED_ATTENDANCE_STATUS,
   DROPOUT_ATTENDANCE_STATUS,
   PARTICIPANT_PENDING_PAYMENT_STATUS,
   PARTICIPANT_SUCCESS_PAYMENT_STATUS,
-  PENDING_ATTENDANCE_STATUS,
-} from "src/constants/OptionValueOrder";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "src/ui/hover-card";
-import { formatDate } from "src/utility/DateFunctions";
-import {
-  getOptionValueObjectByOptionOrder,
-  getOptionValuesByOptionLabel,
-} from "src/utility/GetOptionValuesByOptionLabel";
+  PENDING_ATTENDANCE_STATUS
+} from 'src/constants/OptionValueOrder'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card'
+import { formatDate } from 'src/utility/DateFunctions'
+import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 
-import { GetServerSideProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { authProvider } from "src/authProvider";
+import { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { authProvider } from 'src/authProvider'
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
   PARTICIPANTS_TAB,
-  REVENUE_SUMMARY_TAB,
-} from "src/constants/Tabs";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import CustomSelect from "src/ui/custom-select";
+  REVENUE_SUMMARY_TAB
+} from 'src/constants/Tabs'
+import CustomSelect from 'src/ui/custom-select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogFooter,
-  DialogTrigger,
-  DialogTitle,
-} from "src/ui/dialog";
+import CopyIcon from '@public/assets/CopyIcon'
+import Cross from '@public/assets/Cross'
+import Exclamation from '@public/assets/Exclamation'
+import FaceBookIcon from '@public/assets/FaceBookIcon'
+import Instagram from '@public/assets/Instagram'
+import LinkedInIcon from '@public/assets/LinkedInIcon'
+import ShareIcon from '@public/assets/ShareIcon'
+import Tick from '@public/assets/Tick.png'
+import TwitterIcon from '@public/assets/TwitterIcon'
+import WhatsappIcon from '@public/assets/WhatsappIcon'
+import _ from 'lodash'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -66,232 +53,221 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
-} from "src/ui/alert-dialog";
-import { Button } from "src/ui/button";
-import ShareIcon from "@public/assets/ShareIcon";
-import CopyIcon from "@public/assets/CopyIcon";
-import WhatsappIcon from "@public/assets/WhatsappIcon";
-import FaceBookIcon from "@public/assets/FaceBookIcon";
-import TwitterIcon from "@public/assets/TwitterIcon";
-import Instagram from "@public/assets/Instagram";
-import LinkedInIcon from "@public/assets/LinkedInIcon";
-import _ from "lodash";
-import Exclamation from "@public/assets/Exclamation";
-import Cross from "@public/assets/Cross";
-import Tick from "@public/assets/Tick.png";
-import { useRouter } from "next/router";
-import Image from "next/image";
+  AlertDialogTrigger
+} from 'src/ui/alert-dialog'
+import { Button } from 'src/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from 'src/ui/dialog'
+import { Textarea } from 'src/ui/textarea'
 
 function index() {
-  const Id: number = 1;
+  const Id: number = 1
 
   const { data: courseData } = useOne({
-    resource: "program",
+    resource: 'program',
     id: Id,
     meta: {
       select:
-        "*,program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
-    },
-  });
+        '*,program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)'
+    }
+  })
 
-  console.log(courseData, "hello");
+  console.log(courseData, 'hello')
 
   const { data: courseDataa } = useOne({
-    resource: "program",
-    id: 1,
-  });
+    resource: 'program',
+    id: 1
+  })
 
-  console.log(courseDataa, "hii");
+  console.log(courseDataa, 'hii')
   const participantSuccessPaymentId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_SUCCESS_PAYMENT_STATUS
-  )?.id;
+  )?.id
 
   const pendingAttendanceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     PENDING_ATTENDANCE_STATUS
-  )?.id;
+  )?.id
 
   const canceledAttendanceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     CANCELED_ATTENDANCE_STATUS
-  )?.id;
+  )?.id
 
   const completedAttendanceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     COMPLETED_ATTENDANCE_STATUS
-  )?.id;
+  )?.id
 
   const dropoutAttendanceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     DROPOUT_ATTENDANCE_STATUS
-  )?.id;
+  )?.id
 
   const participantPendingPaymentId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_PENDING_PAYMENT_STATUS
-  )?.id;
+  )?.id
 
   const dfilter: any = [
     {
-      operator: "or",
+      operator: 'or',
       value: [
         {
-          field: "payment_status_id",
-          operator: "eq",
-          value: participantSuccessPaymentId,
+          field: 'payment_status_id',
+          operator: 'eq',
+          value: participantSuccessPaymentId
         },
         {
-          field: "payment_status_id",
-          operator: "eq",
-          value: participantPendingPaymentId,
-        },
-      ],
+          field: 'payment_status_id',
+          operator: 'eq',
+          value: participantPendingPaymentId
+        }
+      ]
     },
     {
-      operator: "or",
+      operator: 'or',
       value: [
         {
-          field: "participant_attendence_status_id",
-          operator: "eq",
-          value: completedAttendanceStatusId,
+          field: 'participant_attendence_status_id',
+          operator: 'eq',
+          value: completedAttendanceStatusId
         },
         {
-          field: "participant_attendence_status_id",
-          operator: "eq",
-          value: dropoutAttendanceStatusId,
+          field: 'participant_attendence_status_id',
+          operator: 'eq',
+          value: dropoutAttendanceStatusId
         },
         {
-          field: "participant_attendence_status_id",
-          operator: "eq",
-          value: pendingAttendanceStatusId,
-        },
-      ],
+          field: 'participant_attendence_status_id',
+          operator: 'eq',
+          value: pendingAttendanceStatusId
+        }
+      ]
     },
     {
-      field: "program_id",
-      operator: "eq",
-      value: Id,
+      field: 'program_id',
+      operator: 'eq',
+      value: Id
     },
     ,
     {
-      field: "is_payment_refunded",
-      operator: "eq",
-      value: false,
-    },
-  ];
+      field: 'is_payment_refunded',
+      operator: 'eq',
+      value: false
+    }
+  ]
 
   const { data: participantData } = useList<any>({
-    resource: "participant_registration",
+    resource: 'participant_registration',
     filters: dfilter,
     meta: {
-      select: "*,participant_payment_history(*)",
-    },
-  });
+      select: '*,participant_payment_history(*)'
+    }
+  })
 
   // Define filters based on the selected date
   const paymentFilters: any = [
     {
-      field: "program_id",
-      operator: "eq",
-      value: Id,
+      field: 'program_id',
+      operator: 'eq',
+      value: Id
     },
 
     {
-      operator: "or",
+      operator: 'or',
       value: [
         {
-          field: "payment_status_id",
-          operator: "eq",
-          value: participantSuccessPaymentId,
+          field: 'payment_status_id',
+          operator: 'eq',
+          value: participantSuccessPaymentId
         },
         {
-          field: "payment_status_id",
-          operator: "eq",
-          value: participantPendingPaymentId,
-        },
-      ],
+          field: 'payment_status_id',
+          operator: 'eq',
+          value: participantPendingPaymentId
+        }
+      ]
     },
     {
-      field: "participant_id.is_payment_refunded",
-      operator: "eq",
-      value: false,
+      field: 'participant_id.is_payment_refunded',
+      operator: 'eq',
+      value: false
     },
     {
-      field: "participant_attendence_status_id",
-      operator: "neq",
-      value: canceledAttendanceStatusId,
-    },
-  ];
+      field: 'participant_attendence_status_id',
+      operator: 'neq',
+      value: canceledAttendanceStatusId
+    }
+  ]
 
   const { data: participantPaymentData } = useList<any>({
-    resource: "participant_payment_history",
+    resource: 'participant_payment_history',
     meta: {
-      select: "*,participant_id(*)",
+      select: '*,participant_id(*)'
     },
-    filters: paymentFilters,
-  });
+    filters: paymentFilters
+  })
 
-  const totalRevenue = _.sumBy(participantPaymentData?.data, "total_amount");
+  const totalRevenue = _.sumBy(participantPaymentData?.data, 'total_amount')
 
-  console.log(participantPaymentData, "participantPaymentData");
+  console.log(participantPaymentData, 'participantPaymentData')
 
   // console.log(totalAmount, "totalAmount");
 
-  console.log(participantData, "participantData");
+  console.log(participantData, 'participantData')
 
-  const startDate = formatDate(
-    courseData?.data?.program_schedules[0]?.start_time
-  );
+  const startDate = formatDate(courseData?.data?.program_schedules[0]?.start_time)
 
   const endDate = formatDate(
-    courseData?.data?.program_schedules[
-      courseData?.data?.program_schedules?.length - 1
-    ]?.end_time
-  );
+    courseData?.data?.program_schedules[courseData?.data?.program_schedules?.length - 1]?.end_time
+  )
 
-  const countryName = "India";
+  const countryName = 'India'
 
-  console.log(courseData, "courseData");
+  console.log(courseData, 'courseData')
 
-  const { t } = useTranslation("common");
-  const [selectedValue, setSelectedValue] = useState();
+  const { t } = useTranslation('common')
+  const [selectedValue, setSelectedValue] = useState()
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
-      label: t("pages.Tabs.CourseDetailsTab"),
-      disabled: false,
+      label: t('pages.Tabs.CourseDetailsTab'),
+      disabled: false
     },
     {
       value: PARTICIPANTS_TAB,
-      label: t("pages.Tabs.participantTab"),
-      disabled: false,
+      label: t('pages.Tabs.participantTab'),
+      disabled: false
     },
     {
       value: REVENUE_SUMMARY_TAB,
-      label: t("pages.Tabs.revenueSummaryTab"),
-      disabled: false,
+      label: t('pages.Tabs.revenueSummaryTab'),
+      disabled: false
     },
     {
       value: COURSE_ACCOUNTING_FORM_TAB,
-      label: t("pages.Tabs.courseAccountingFormTab"),
-      disabled: true,
-    },
-  ];
+      label: t('pages.Tabs.courseAccountingFormTab'),
+      disabled: true
+    }
+  ]
 
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between">
-        <div className="text-[32px] font-semibold">
-          {courseData?.data?.program_alias_name_id?.alias_name}
-        </div>
+        <div className="text-[32px] font-semibold">{courseData?.data?.program_alias_name_id?.alias_name}</div>
         <div className="flex items-center gap-4">
-          <DisplayingCourseStatus
-            statusId={courseData?.data?.status_id?.value}
-          />
+          <DisplayingCourseStatus statusId={courseData?.data?.status_id?.value} />
           <ShareButton courseData={courseData} />
         </div>
       </div>
@@ -300,7 +276,7 @@ function index() {
         {startDate} to {endDate}
         <div
           onClick={() => {
-            router.push("/");
+            router.push('/')
           }}
         >
           <ParticipantsIcon />
@@ -312,16 +288,15 @@ function index() {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              {participantData?.total} Participants with: Transaction status =
-              Confirmed / Pending Attendance status = Confirmed / Pending /
-              Dropout Total participants records:
+              {participantData?.total} Participants with: Transaction status = Confirmed / Pending Attendance status =
+              Confirmed / Pending / Dropout Total participants records:
               {courseData?.data?.participant_registration?.length}
             </div>
           </HoverCardContent>
         </HoverCard>
         <div
           onClick={() => {
-            router.push("/");
+            router.push('/')
           }}
         >
           <CurrencyIcon />
@@ -333,22 +308,19 @@ function index() {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Revenue from confirmed pending transaction participants revenue:
-              EUR {totalRevenue}
+              Revenue from confirmed pending transaction participants revenue: EUR {totalRevenue}
             </div>
           </HoverCardContent>
         </HoverCard>
       </div>
       <div className="flex flex-row gap-2 items-center mt-3">
         <LocationIcon />
-        {courseData?.data?.venue_id?.address},
-        {courseData?.data?.venue_id?.city_id?.name},
-        {courseData?.data?.venue_id?.state_id?.name},{countryName},
-        {courseData?.data?.venue_id?.postal_code}
+        {courseData?.data?.venue_id?.address},{courseData?.data?.venue_id?.city_id?.name},
+        {courseData?.data?.venue_id?.state_id?.name},{countryName},{courseData?.data?.venue_id?.postal_code}
       </div>
 
       <div className="flex flex-row items-center gap-2 w-full justify-end">
-        Announced by: National Admin{" "}
+        Announced by: National Admin{' '}
         <HoverCard>
           <HoverCardTrigger>
             <Important />
@@ -366,95 +338,88 @@ function index() {
       <div className="w-full mt-6 ">
         <Tabs
           onValueChange={(val: any) => {
-            setSelectedValue(val);
+            setSelectedValue(val)
           }}
         >
-          <TabsList className="flex flex-row gap-10 !flex-start !justify-start !bg-[white] !rounded-none">
-            {tabTriggers.map((trigger: any, index: any) => (
-              <TabsTrigger
-                key={index}
-                value={trigger.value}
-                className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
-                disabled={trigger.disabled}
-              >
-                <div className="flex flex-col gap-1">
-                  {trigger.label}
-                  <div
-                    className={`${
-                      selectedValue === trigger.value
-                        ? "bg-[#7677F4] rounded w-full h-[2px]"
-                        : "w-full h-[2px]"
-                    }`}
-                  />
-                </div>
-              </TabsTrigger>
-            ))}
-            <div className="ml-auto mb-6 ">
-              <PendingApprovalDropDown />
+          <TabsList className="flex flex-row  justify-between !bg-[white] !rounded-none">
+            <div className="flex gap-10 !flex-start">
+              {tabTriggers.map((trigger: any, index: any) => (
+                <TabsTrigger
+                  key={index}
+                  value={trigger.value}
+                  className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
+                  disabled={trigger.disabled}
+                >
+                  <div className="flex flex-col gap-1">
+                    {trigger.label}
+                    <div
+                      className={`${
+                        selectedValue === trigger.value ? 'bg-[#7677F4] rounded w-full h-[2px]' : 'w-full h-[2px]'
+                      }`}
+                    />
+                  </div>
+                </TabsTrigger>
+              ))}
+            </div>
+            <div className="flex gap-5">
+              <div className="mb-6 ">
+                <PendingApprovalDropDown />
+              </div>
+              <div className="mb-6 ">
+                <ActionsDropDown />
+              </div>
             </div>
           </TabsList>
           <div className="w-full border-b -mt-2"></div>
-          <TabsContent value={COURSE_DETAILS_TAB}>
-            Place course details tab here
-          </TabsContent>
-          <TabsContent value={PARTICIPANTS_TAB}>
-            Place participant tab here
-          </TabsContent>
-          <TabsContent value={REVENUE_SUMMARY_TAB}>
-            Place Revenue Summary tab here
-          </TabsContent>
-          <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>
-            Place Course Accounting Form tab here
-          </TabsContent>
+          <TabsContent value={COURSE_DETAILS_TAB}>Place course details tab here</TabsContent>
+          <TabsContent value={PARTICIPANTS_TAB}>Place participant tab here</TabsContent>
+          <TabsContent value={REVENUE_SUMMARY_TAB}>Place Revenue Summary tab here</TabsContent>
+          <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>Place Course Accounting Form tab here</TabsContent>
         </Tabs>
       </div>
     </div>
-  );
+  )
 }
 
-export default index;
+export default index
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const { authenticated, redirectTo } = await authProvider.check(context);
+export const getServerSideProps: GetServerSideProps<{}> = async context => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
 
-  const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-  ]);
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
 
   if (!authenticated) {
     return {
       props: {
-        ...translateProps,
+        ...translateProps
       },
       redirect: {
-        destination: `${redirectTo}?to=${encodeURIComponent(
-          context.req.url || "/"
-        )}`,
-        permanent: false,
-      },
-    };
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
+        permanent: false
+      }
+    }
   }
 
   return {
     props: {
-      ...translateProps,
-    },
-  };
-};
+      ...translateProps
+    }
+  }
+}
 
 const PendingApprovalDropDown = () => {
   const options = [
     {
-      label: "Approve Course",
-      value: 1,
+      label: 'Approve Course',
+      value: 1
     },
     {
-      label: "Reject Course",
-      value: 2,
-    },
-  ];
-  const [approveModalOpen, setApproveModalOpen] = useState(false);
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+      label: 'Reject Course',
+      value: 2
+    }
+  ]
+  const [approveModalOpen, setApproveModalOpen] = useState(false)
+  const [rejectModalOpen, setRejectModalOpen] = useState(false)
 
   return (
     <div>
@@ -465,15 +430,15 @@ const PendingApprovalDropDown = () => {
         onSearch={() => {}}
         onChange={(val: any) => {
           if (val == 1) {
-            setApproveModalOpen(true);
+            setApproveModalOpen(true)
           } else {
-            setRejectModalOpen(true);
+            setRejectModalOpen(true)
           }
         }}
         value={undefined}
         selectBoxStyles={{
-          header: "w-[192px] ",
-          dropdown: "w-[192px]",
+          header: 'w-[192px] ',
+          dropdown: 'w-[192px]'
         }}
       />
       <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
@@ -494,7 +459,7 @@ const PendingApprovalDropDown = () => {
                   variant="outline"
                   className="text-blue-500 w-[71px] h-[46px]"
                   onClick={() => {
-                    setApproveModalOpen(false);
+                    setApproveModalOpen(false)
                   }}
                 >
                   No
@@ -503,10 +468,7 @@ const PendingApprovalDropDown = () => {
               <div>
                 <AlertDialog>
                   <AlertDialogTrigger>
-                    <Button
-                      type="button"
-                      className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
-                    >
+                    <Button type="button" className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]">
                       Yes
                     </Button>
                   </AlertDialogTrigger>
@@ -525,7 +487,10 @@ const PendingApprovalDropDown = () => {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex items-center justify-center">
-                      <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">
+                      <AlertDialogCancel
+                        className=" bg-blue-500 mx-auto text-white"
+                        onClick={() => setApproveModalOpen(false)}
+                      >
                         Close
                       </AlertDialogCancel>
                     </AlertDialogFooter>
@@ -538,20 +503,18 @@ const PendingApprovalDropDown = () => {
       </Dialog>
 
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
-        <DialogContent className="flex flex-col items-center">
+        <DialogContent className="flex flex-col items-center px-6 w-[415px] ">
           <DialogHeader className="text-center">
             <div className="flex items-center w-full justify-center">
-              <Cross />{" "}
+              <Cross />{' '}
             </div>
-            <DialogTitle className="text-gray-500 text-sm">
-              {" "}
+            <DialogTitle className="text-gray-500 text-sm font-normal pt-5">
+              {' '}
               Describe your rejection reason
               <span className="text-blue-500">(optional)</span>
             </DialogTitle>
             <DialogDescription>
-              <p className="box-border h-32 w-80 p-4 border-[2px] text-gray-400 rounded-lg">
-                Comment.
-              </p>
+              <Textarea placeholder="Comment" className="border-[#E1E1E1] resize-none h-[112px] w-[366px]" />
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -559,9 +522,9 @@ const PendingApprovalDropDown = () => {
               <Button
                 type="button"
                 variant="outline"
-                className="text-blue-500"
+                className="text-blue-500 mt-5"
                 onClick={() => {
-                  setRejectModalOpen(false);
+                  setRejectModalOpen(false)
                 }}
               >
                 No
@@ -569,10 +532,7 @@ const PendingApprovalDropDown = () => {
             </DialogTrigger>
             <AlertDialog>
               <AlertDialogTrigger>
-                <Button
-                  type="button"
-                  className="bg-blue-500 text-white px-4 py-2"
-                >
+                <Button type="button" className="bg-blue-500 text-white px-4 py-2 mt-5">
                   Reject
                 </Button>
               </AlertDialogTrigger>
@@ -580,17 +540,18 @@ const PendingApprovalDropDown = () => {
                 <AlertDialogHeader className="text-center">
                   <AlertDialogTrigger></AlertDialogTrigger>
                   <div className="flex items-center w-full justify-center">
-                    <Cross />{" "}
+                    <Cross />{' '}
                   </div>
-                  <AlertDialogTitle className="font-bold text-center">
-                    Course Rejected
-                  </AlertDialogTitle>
+                  <AlertDialogTitle className="font-bold text-center">Course Rejected</AlertDialogTitle>
                   <AlertDialogDescription className="text-center">
                     The Course got rejected successfully
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex items-center justify-center">
-                  <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">
+                  <AlertDialogCancel
+                    className=" bg-blue-500 mx-auto text-white"
+                    onClick={() => setRejectModalOpen(false)}
+                  >
                     Close
                   </AlertDialogCancel>
                 </AlertDialogFooter>
@@ -600,37 +561,185 @@ const PendingApprovalDropDown = () => {
         </DialogContent>
       </Dialog>
     </div>
-  );
-};
+  )
+}
+
+const ActionsDropDown = () => {
+  const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false)
+  const options = [
+    {
+      label: 'View Course Details',
+      value: 1
+    },
+    {
+      label: 'View Participants',
+      value: 2
+    },
+    {
+      label: 'Register Participants',
+      value: 3
+    },
+    {
+      label: 'Edit Course',
+      value: 4
+    },
+    {
+      label: 'Copy Course',
+      value: 5
+    },
+    {
+      label: 'Cancel Course',
+      value: 6
+    },
+    {
+      label: 'Submit Course Accounting Form',
+      value: 7
+    }
+  ]
+
+  const router = useRouter()
+  return (
+    <div>
+      <CustomSelect
+        placeholder="Actions"
+        data={options}
+        onBottomReached={() => {}}
+        onSearch={() => {}}
+        onChange={(val: any) => {
+          switch (val) {
+            case 1: {
+              // TODO - navigate to view course details page
+              router.push('/')
+              break
+            }
+            case 2: {
+              // TODO - navigate to view participants page
+              router.push('/')
+              break
+            }
+            case 3: {
+              // TODO - navigate to register participants page
+              router.push('/')
+              break
+            }
+            case 4: {
+              // TODO - navigate to edit course page
+              router.push('/')
+              break
+            }
+            case 5: {
+              // TODO - navigate to copy course page
+              router.push('/')
+              break
+            }
+            case 6: {
+              setCancelCourseModalOpen(true)
+              break
+            }
+            case 7: {
+              // TODO - navigate to course accounting form
+              router.push('/')
+              break
+            }
+            default: {
+              router.push('/')
+            }
+          }
+        }}
+        value={undefined}
+        selectBoxStyles={{
+          header: 'w-[192px] ',
+          dropdown: 'w-[192px]'
+        }}
+      />
+      <Dialog open={cancelCourseModalOpen} onOpenChange={setCancelCourseModalOpen}>
+        <DialogContent className="flex flex-col h-[248px] w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center w-full justify-center">
+              <Exclamation />
+            </div>
+            <DialogDescription className="font-bold text-black text-lg items-center text-center">
+              Are you sure you want to cancel this course?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="w-full flex justify-center items-center gap-5">
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-blue-500 w-[71px] h-[46px]"
+                  onClick={() => {
+                    setCancelCourseModalOpen(false)
+                  }}
+                >
+                  No
+                </Button>
+              </div>
+              <div>
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    <Button type="button" className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]">
+                      Yes
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="w-50">
+                    <AlertDialogHeader className="text-center">
+                      <AlertDialogTrigger></AlertDialogTrigger>
+                      <div className="flex justify-center">
+                        <Image src={Tick} alt="tick" />
+                      </div>
+                      <AlertDialogTitle className="font-bold text-center">
+                        Course cancelled Successfully
+                      </AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex items-center justify-center">
+                      <AlertDialogCancel
+                        className=" bg-blue-500 mx-auto text-white"
+                        onClick={() => setCancelCourseModalOpen(false)}
+                      >
+                        Close
+                      </AlertDialogCancel>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
 
 const DisplayingCourseStatus = ({ statusId }: any) => {
-  let statusText;
-  let statusColor;
+  let statusText
+  let statusColor
   switch (statusId) {
-    case "Active":
-      statusText = "Active";
-      statusColor = " text-green-500";
-      break;
-    case "Pending Review":
-      statusText = "Pending Review";
-      statusColor = "#FFB900";
-      break;
-    case "Canceled":
-      statusText = "Cancelled";
-      statusColor = "#FFB900";
-      break;
-    case "Declined":
-      statusText = "Declined";
-      statusColor = "#FFB900";
-      break;
-    case "Completed":
-      statusText = "Completed";
-      statusColor = "#FFB900";
-      break;
-    case "Full":
-      statusText = "Full";
-      statusColor = "#FFB900";
-      break;
+    case 'Active':
+      statusText = 'Active'
+      statusColor = ' text-green-500'
+      break
+    case 'Pending Review':
+      statusText = 'Pending Review'
+      statusColor = '#FFB900'
+      break
+    case 'Canceled':
+      statusText = 'Cancelled'
+      statusColor = '#FFB900'
+      break
+    case 'Declined':
+      statusText = 'Declined'
+      statusColor = '#FFB900'
+      break
+    case 'Completed':
+      statusText = 'Completed'
+      statusColor = '#FFB900'
+      break
+    case 'Full':
+      statusText = 'Full'
+      statusColor = '#FFB900'
+      break
   }
 
   return (
@@ -638,44 +747,42 @@ const DisplayingCourseStatus = ({ statusId }: any) => {
       <div
         className={`w-[70px] h-6 ${statusColor} rounded-[15px]  text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] `}
       >
-        <Circle
-          className={`fill-[${statusColor}] size-2 color-[${statusColor}]`}
-        />
+        <Circle className={`fill-[${statusColor}] size-2 color-[${statusColor}]`} />
         {statusText}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const ShareButton = (courseData: any) => {
-  const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
-  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
+  const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false)
+  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
 
   const copyText = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(text)
     } catch (err) {
-      console.error("Failed to copy: ", err);
+      console.error('Failed to copy: ', err)
     }
-  };
+  }
 
   const handleCopyDetailsPageLink = () => {
-    copyText(courseData?.data?.details_page_link);
-    setCopiedDetailsPageLink(true);
+    copyText(courseData?.data?.details_page_link)
+    setCopiedDetailsPageLink(true)
 
     setTimeout(() => {
-      setCopiedDetailsPageLink(false);
-    }, 1000);
-  };
+      setCopiedDetailsPageLink(false)
+    }, 1000)
+  }
 
   const handleCopyRegistrationLink = () => {
-    copyText(courseData?.data?.registration_link);
-    setCopiedRegistrationLink(true);
+    copyText(courseData?.data?.registration_link)
+    setCopiedRegistrationLink(true)
 
     setTimeout(() => {
-      setCopiedRegistrationLink(false);
-    }, 1000);
-  };
+      setCopiedRegistrationLink(false)
+    }, 1000)
+  }
   return (
     <Dialog>
       <DialogTrigger>
@@ -716,7 +823,7 @@ const ShareButton = (courseData: any) => {
                 </h4>
                 <div
                   onClick={() => {
-                    handleCopyDetailsPageLink();
+                    handleCopyDetailsPageLink()
                   }}
                   className="relative mt-1"
                 >
@@ -726,7 +833,7 @@ const ShareButton = (courseData: any) => {
                       copied
                     </div>
                   ) : (
-                    ""
+                    ''
                   )}
                 </div>
               </div>
@@ -741,7 +848,7 @@ const ShareButton = (courseData: any) => {
                 </h4>
                 <div
                   onClick={() => {
-                    handleCopyRegistrationLink();
+                    handleCopyRegistrationLink()
                   }}
                   className="relative mt-1"
                 >
@@ -751,7 +858,7 @@ const ShareButton = (courseData: any) => {
                       copied
                     </div>
                   ) : (
-                    ""
+                    ''
                   )}
                 </div>
               </div>
@@ -760,5 +867,5 @@ const ShareButton = (courseData: any) => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
