@@ -39,6 +39,7 @@ export const NewCourseStep2FormNames = {
   translation_language_ids: "translation_language_ids",
   allowed_countries: "allowed_countries",
   max_capacity: "max_capacity",
+  is_registration_required:"is_registration_required"
 };
 
 export const NewCourseStep3FormNames = {
