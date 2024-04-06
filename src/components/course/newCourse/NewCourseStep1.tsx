@@ -259,6 +259,8 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
+  const [pageSize, setPageSize] = useState<number>(1);
+
   const [searchValue, setSearchValue] = useState<string>("");
 
   const { options, onSearch, queryResult } = useSelect({
@@ -286,6 +288,12 @@ const OrganizationDropDown = () => {
     setSearchValue(val.target.value);
   };
 
+  const handleOnBottomReached = () => {
+    if (queryResult?.data?.data && queryResult?.data?.total >= pageSize) {
+      setPageSize((previousLimit: number) => previousLimit + 10);
+    }
+  };
+
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
@@ -300,8 +308,8 @@ const OrganizationDropDown = () => {
             <SelectValue placeholder="Select Organization" />
           </SelectTrigger>
           <SelectContent>
-            <Input onChange={handleSearch} />
-            <SelectItems onBottomReached={() => {}}>
+            <Input value={searchValue} onChange={handleSearch} />
+            <SelectItems onBottomReached={handleOnBottomReached}>
               {options?.map((option, index) => {
                 return (
                   <div>
