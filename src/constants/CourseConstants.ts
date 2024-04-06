@@ -1,3 +1,23 @@
+export const BASIC_DETAILS_STEP_NUMBER = 1;
+export const COURSE_DETAILS_STEP_NUMBER = 2;
+export const TIME_AND_VENUE_STEP_NUMBER = 3;
+export const FEE_STEP_NUMBER = 4;
+export const ACCOMMODATION_STEP_NUMBER = 5;
+export const CONTACT_INFO_STEP_NUMBER = 6;
+export const REVIEW_PAGE_STEP_NUMBER = 7;
+
+//Course details page tabs constant
+export const COURSE_DETAILS_TAB = "1";
+export const PARTICIPANTS_TAB = "2";
+export const REVENUE_SUMMARY_TAB = "3";
+export const COURSE_ACCOUNTING_FORM_TAB = "4";
+
+// type ProgramKeys = keyof Program;
+
+// typ = {
+//   [key in ProgramKeys]: string;
+// };
+
 export const NewCourseStep1FormNames = {
   organization_id: "organization_id",
   organization: "organization",
@@ -13,7 +33,6 @@ export const NewCourseStep2FormNames = {
   teacher_ids: "teacher_ids",
   assistant_teacher_ids: "assistant_teacher_ids",
   visibility_id: "visibility_id",
-  teachers: "teachers",
   is_language_translation_for_participants:
     "is_language_translation_for_participants",
   program_alias_name_id: "program_alias_name_id",
@@ -27,8 +46,8 @@ export const NewCourseStep2FormNames = {
 export const NewCourseStep3FormNames = {
   online_url: "online_url",
   hour_format_id: "hour_format_id",
+  time_zone_id: "time_zone_id",
   schedules: "schedules",
-  time_zone_id:"time_zone_id"
 };
 
 export const NewCourseStep4FormNames = {

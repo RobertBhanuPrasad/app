@@ -3,7 +3,7 @@ import Delete from "@public/assets/Delete";
 import React from "react";
 import { useEffect } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
-import { NewCourseStep6FormNames } from "src/constants/NewCourseFormNames";
+import { NewCourseStep6FormNames } from "src/constants/CourseConstants";
 import { Input } from "src/ui/input";
 import { Textarea } from "src/ui/textarea";
 
