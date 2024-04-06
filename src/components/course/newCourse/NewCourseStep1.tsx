@@ -60,13 +60,14 @@ export default NewCourseStep1;
 
 const RegistrationGateway = () => {
   const {
-    field: { value, onChange },
+    field: { value = false, onChange },
   } = useController({
     name: NewCourseStep1FormNames?.is_registration_via_3rd_party,
   });
 
   const {
     field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep1FormNames?.registration_via_3rd_party_url,
   });
@@ -92,7 +93,13 @@ const RegistrationGateway = () => {
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
               className="placeholder:text-[#999999]"
+              error={error ? true : false}
             />
+            {error && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            {error?.message}
+          </span>
+        )}
           </div>
         </div>
       )}
@@ -259,9 +266,11 @@ const RadioCards = () => {
           </div>
         </Card>
       </div>
-      <div className="text-[#FF6D6D] text-[14px]">
-        {radioError && radioError?.message}
-      </div>
+      {radioError && (
+          <span className="text-[#FF6D6D] text-[14px]">
+            {radioError?.message}
+          </span>
+        )}
     </RadioGroup>
   );
 };
@@ -304,7 +313,7 @@ const OrganizationDropDown = () => {
             onChange(value);
           }}
         >
-          <SelectTrigger className="w-[320px]">
+          <SelectTrigger className="w-[320px]" error={organizationError ? true : false}>
             <SelectValue placeholder="Select Organization" />
           </SelectTrigger>
           <SelectContent>

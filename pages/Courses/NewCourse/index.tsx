@@ -16,7 +16,7 @@ import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import Form from "@components/Formfield";
-import { useFormContext } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,
@@ -33,6 +33,7 @@ import {
 } from "src/constants/CourseConstants";
 import { validationSchema } from "./NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -54,7 +55,6 @@ function NewCourse() {
   const { currentStep, setCurrentStep } = newCourseStore();
 
   const loggedUserData = loginUserData?.userData?.id;
-
 
   // Array of step titles, icons, and colors
   const stepTitles = [
@@ -228,22 +228,58 @@ function NewCourse() {
 export default index;
 
 const Footer = ({ stepTitles }: any) => {
-  const { trigger, watch } = useFormContext();
+  const { watch, getValues } = useFormContext();
   const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
     newCourseStore();
 
+  const { data: loginUserData }: any = useGetIdentity();
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  );
+
+  const formData = getValues();
+
+  let RequiredNewCourseStep1FormNames = _.omit(
+    NewCourseStep1FormNames,
+    formData?.is_registration_via_3rd_party
+      ? []
+      : ["registration_via_3rd_party_url"]
+  );
+
+  let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
+    ...(formData?.program_type?.has_alias_name
+      ? []
+      : ["program_alias_name_id"]),
+    ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
+    ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
+  ]);
+
+  let RequiredNewCourseStep3FormNames = _.omit(
+    NewCourseStep3FormNames,
+    formData?.program_type?.is_online_program ? [] : ["online_url"]
+  );
+
+  let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
+    ...(formData?.is_residential_program == "No" ? ["accommodation"] : []),
+    ...(formData?.is_residential_program == "No" ? ["fee_per_person"] : []),
+    ...(formData?.is_residential_program == "No"
+      ? ["no_of_residential_spots"]
+      : []),
+    ...(formData?.is_residential_program == "No"
+      ? ["accommodation_type_id"]
+      : []),
+  ]);
+
   const validationFieldsStepWise = [
-    Object.values(NewCourseStep1FormNames),
-    Object.values(NewCourseStep2FormNames),
-    Object.values(NewCourseStep3FormNames),
+    Object.values(RequiredNewCourseStep1FormNames),
+    Object.values(RequiredNewCourseStep2FormNames),
+    Object.values(RequiredNewCourseStep3FormNames),
     Object.values(NewCourseStep4FormNames),
-    Object.values(NewCourseStep5FormNames),
+    Object.values(RequiredNewCourseStep5FormNames),
     Object.values(NewCourseStep6FormNames),
   ];
 
-  const {ValidateCurrentStepFields} = useValidateCurrentStepFields()
-
-
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
 
   const handleClickReviewDetailsButton = async (
     currentStepFormNames: any[]
@@ -302,7 +338,11 @@ const Footer = ({ stepTitles }: any) => {
       {currentStep == CONTACT_INFO_STEP_NUMBER && (
         <Button
           className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-          onClick={async () => { await handleClickReviewDetailsButton(validationFieldsStepWise[currentStep - 1])} }
+          onClick={async () => {
+            await handleClickReviewDetailsButton(
+              validationFieldsStepWise[currentStep - 1]
+            );
+          }}
         >
           Review Details
         </Button>
@@ -310,6 +350,3 @@ const Footer = ({ stepTitles }: any) => {
     </div>
   );
 };
-
-
-

@@ -42,19 +42,25 @@ export default function CourseTable() {
   // Effect to add initial data if no fees are present
   useEffect(() => {
     if (!formData?.accommodation || formData?.accommodation.length <= 0) {
-      append(null);
+      append(undefined);
     }
   }, []);
 
   return (
     <div className="flex flex-col gap-8">
       <ResidentialCourse />
-      <DataTable
-        tableStyles="w-[1072px]"
-        columns={columns(append, remove, formData?.accommodation)}
-        data={formData?.accommodation || []}
-      />
-      <AccommodationFeeMode />
+      {formData?.is_residential_program == "Yes"  && (
+        <div>
+
+         <DataTable
+         tableStyles="w-[1072px]"
+         columns={columns(append, remove, formData?.accommodation)}
+         data={formData?.accommodation || []}
+       />
+       <AccommodationFeeMode />
+       </div>
+        ) }
+      
     </div>
   );
 }
@@ -109,7 +115,7 @@ const columns = (append: any, remove: any, formData: any) => [
               onChange(value);
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger error={error ? true : false}>
               <SelectValue placeholder="Select Accommodation" />
             </SelectTrigger>
             <SelectContent>

@@ -16,6 +16,7 @@ function NewCourseStep6() {
 
   const {
     field: { value: courseEmails, onChange: courseEmailOnChange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep6FormNames?.bcc_registration_confirmation_email,
   });
@@ -112,8 +113,11 @@ function NewCourseStep6() {
           }}
           placeholder="Enter course emails"
           className="!w-58"
-          error={false} // TODO need to change after integrating the form names
+          error={error ? true : false} // TODO need to change after integrating the form names
         />
+        {error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
         <div className="flex flex-row gap-1 text-[#666666] text-[12px] italic">
           <span className="font-semibold">Note:</span>{" "}
           <div className="font-[400]">

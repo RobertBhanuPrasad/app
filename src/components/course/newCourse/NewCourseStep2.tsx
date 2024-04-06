@@ -45,12 +45,12 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <CourseTypeDropDown />
         </div>
-        {/* Course Name drop will come from settings */}
-        {/* //TODO: Need to BussinessLayer for this with proper code */}
-        {/* {formData?.courseTypeSettings?.has_alias_name === true && ( */}
-        <div className="w-80 h-20">
-          <CourseNameDropDown />
-        </div>
+        {formData?.program_type?.has_alias_name && (
+          <div className="w-80 h-20">
+            <CourseNameDropDown />
+          </div>
+        )}
+
         {/* )} */}
         <div className="w-80 h-20">
           <TeachersDropDown />
@@ -67,7 +67,7 @@ export default function NewCourseStep2() {
             <DisplayLanguage />
           </div>
         )}
-        {formData?.displayLanguage == "true" && (
+        {formData?.is_language_translation_for_participants == "true" && (
           <div className="w-80 h-20">
             <LanguageTranslationDropDown />
           </div>
@@ -87,7 +87,7 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <GeoRestriction />
         </div>
-        {formData?.isGeoRestriction == "true" && (
+        {formData?.is_geo_restriction_applicable == "true" && (
           <div className="w-80 h-20">
             <AllowedCountriesDropDown />
           </div>
@@ -222,9 +222,15 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.program_type,
   });
 
+  /**
+   * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
+   * @function getCourseTypeSettings
+   * @param val 
+   * This functions sets the data which is came from program_types table usign the id we have  in the setCourseTypeSettings redux variable
+   */
   const getCourseTypeSettings = async (val: any) => {
     const courseSettings = queryResult?.data?.data.filter(
-      (data) => data.id == val.value
+      (data) => data.id == val
     );
 
     setCourseTypeSettings(courseSettings?.[0]);
@@ -246,12 +252,11 @@ export const CourseTypeDropDown = () => {
       <Select
         value={value}
         onValueChange={(val: any) => {
-          console.log("value is", val);
           onChange(val);
           getCourseTypeSettings(val);
         }}
       >
-        <SelectTrigger className="w-[320px]">
+        <SelectTrigger className="w-[320px]" error={courseTypeError ? true : false}>
           <SelectValue placeholder="Select course type" />
         </SelectTrigger>
         <SelectContent>
@@ -280,7 +285,9 @@ export const CourseTypeDropDown = () => {
       </Select>
 
       {courseTypeError && (
-        <span className="text-[#FF6D6D] text-[12px]">{courseTypeError?.message}</span>
+        <span className="text-[#FF6D6D] text-[12px]">
+          {courseTypeError?.message}
+        </span>
       )}
     </div>
   );
@@ -333,7 +340,7 @@ const CourseNameDropDown = () => {
 
   const {
     field: { value, onChange },
-    fieldState:{error}
+    fieldState: { error },
   } = useController({
     name: NewCourseStep2FormNames?.program_alias_name_id,
   });
@@ -355,7 +362,8 @@ const CourseNameDropDown = () => {
           onChange(val);
         }}
       >
-        <SelectTrigger className="w-[320px]">
+        <SelectTrigger className="w-[320px]" error = {error ? true : false}
+>
           <SelectValue placeholder="Select course alias name" />
         </SelectTrigger>
         <SelectContent>
@@ -486,9 +494,11 @@ const TeachersDropDown = () => {
         error={teachersErrors}
       />
       {teachersErrors && (
-        <span className="text-[#FF6D6D] text-[12px]">{teachersErrors?.message}</span>
+        <span className="text-[#FF6D6D] text-[12px]">
+          {teachersErrors?.message}
+        </span>
       )}
-    </div>  
+    </div>
   );
 };
 
@@ -570,7 +580,9 @@ const AssistantTeachersDropDown = () => {
         error={assistantTeachersErrors}
       />
       {assistantTeachersErrors && (
-        <span className="text-[#FF6D6D] text-[12px]">Please enter at least one associate teacher.</span>
+        <span className="text-[#FF6D6D] text-[12px]">
+          {assistantTeachersErrors?.message}
+        </span>
       )}
     </div>
   );
@@ -795,7 +807,9 @@ const LanguageDropDown = () => {
         error={languageError}
       />
       {languageError && (
-        <span className="text-[#FF6D6D] text-[12px]">{languageError?.message}</span>
+        <span className="text-[#FF6D6D] text-[12px]">
+          {languageError?.message}
+        </span>
       )}
     </div>
   );
@@ -842,7 +856,7 @@ const LanguageTranslationDropDown = () => {
     field: { value, onChange },
     fieldState: { error: languageTranslationError },
   } = useController({
-    name: NewCourseStep2FormNames?.program_translation_language_ids,
+    name: NewCourseStep2FormNames?.translation_language_ids,
   });
 
   const handleOnSearch = (value: any) => {
@@ -909,7 +923,9 @@ const AllowedCountriesDropDown = () => {
         error={allowedCountriesErrors}
       />
       {allowedCountriesErrors && (
-        <span className="text-[#FF6D6D] text-[12px]">{allowedCountriesErrors?.message} </span>
+        <span className="text-[#FF6D6D] text-[12px]">
+          {allowedCountriesErrors?.message}{" "}
+        </span>
       )}
     </div>
   );
@@ -924,7 +940,7 @@ const MaximumCapacity = () => {
 
   const {
     field: { value = maxAttendees, onChange },
-    fieldState:{error}
+    fieldState: { error },
   } = useController({ name: NewCourseStep2FormNames?.max_capacity });
 
   return (
@@ -940,9 +956,10 @@ const MaximumCapacity = () => {
         error={error ? true : false}
       />
       {error && (
-        <span className="text-[#FF6D6D] text-[12px] !w-[320px] break-all">{error?.message}</span>
-      ) 
-    }
+        <span className="text-[#FF6D6D] text-[12px] !w-[320px] break-all">
+          {error?.message}
+        </span>
+      )}
     </div>
   );
 };

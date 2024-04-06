@@ -39,7 +39,7 @@ function NewCourseStep3() {
   return (
     <div>
       <div>
-        {formData?.courseTypeSettings?.is_online_program ? (
+        {formData?.program_type?.is_online_program ? (
           <OnlineProgram />
         ) : (
           <div>Render Venue</div>
@@ -117,6 +117,7 @@ const SchedulesHeader = () => {
 
   const {
     field: { value: timeZones, onChange: timeZonesOnChange },
+    fieldState:{error:timeZoneError}
   } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
 
   let timeFormatOptions =
@@ -157,7 +158,7 @@ const SchedulesHeader = () => {
               hoursFormatOnChange(val);
             }}
           >
-            <SelectTrigger className="w-[161px]">
+            <SelectTrigger className="w-[161px]" error={schedulesHeaderErrors ? true : false}>
               <SelectValue placeholder="Select Format" />
             </SelectTrigger>
             <SelectContent>
@@ -180,7 +181,7 @@ const SchedulesHeader = () => {
               timeZonesOnChange(value);
             }}
           >
-            <SelectTrigger className="w-[257px]">
+            <SelectTrigger className="w-[257px]" error = {timeZoneError ? true : false}>
               <SelectValue placeholder="Select Time Zone" />
             </SelectTrigger>
             <SelectContent>
@@ -204,6 +205,9 @@ const SchedulesHeader = () => {
               </SelectItems>
             </SelectContent>
           </Select>
+          {timeZoneError && (
+        <span className="text-[#FF6D6D] text-[12px]">{timeZoneError?.message}</span>
+      )}
         </div>
       </div>
     </div>
@@ -224,15 +228,7 @@ const Sessions = () => {
   const schedules = formData?.schedules;
 
   const handleAddSession = () => {
-    append({
-      startHour: "00",
-      startMinute: "00",
-      endHour: "00",
-      endMinute: "00",
-      startTimeFormat: "AM",
-      endTimeFormat: "AM",
-      date: new Date(),
-    });
+    append(undefined);
   };
 
   useEffect(() => {
@@ -275,7 +271,7 @@ const Sessions = () => {
                       <CalenderIcon />
                     </div>
                     <div>
-                      {format(new Date(schedule?.date), "dd MMM, yyyy")}
+                    {schedule?.date && format(new Date(schedule.date), "dd MMM, yyyy")}
                     </div>
                   </Button>
                 </DialogTrigger>
