@@ -1,4 +1,5 @@
 import { useMany, useOne } from '@refinedev/core'
+import _ from 'lodash'
 import { useState } from 'react'
 import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT } from 'src/constants/OptionLabels'
 import { Button } from 'src/ui/button'
@@ -51,9 +52,19 @@ export default function NewCourseReviewPage() {
     })
     .join(', ')
 
-  const contactNames = newCourseData?.contact?.map((contactDetails: any) => {
-    return contactDetails
+  const { data: CourseAccomidation } = useMany({
+    resource: 'accomdation_types',
+    ids: _.map(newCourseData?.accommodation, 'accommodation_type_id')
   })
+
+  const courseAccomodationNames = CourseAccomidation?.data?.map((accomdation: any) => {
+    return accomdation?.name
+  })
+  console.log(courseAccomodationNames, 'CourseAccomidation')
+
+  // const contactNames = newCourseData?.contact?.map((contactDetails: any) => {
+  //   return contactDetails
+  // })
   // const { data: CourseTranslation } = useMany({
   //   resource: 'program_translation_languages',
   //   ids: newCourseData?.translation_language_ids,
@@ -381,16 +392,10 @@ export default function NewCourseReviewPage() {
           {/* body */}
           <div className="grid grid-cols-3 gap-4 mt-2">
             {newCourseData?.accommodation?.map((data: any) => {
-              const { data: accommodationType } = useOne({
-                resource: 'accomdation_types',
-                id: data?.accomodationType
-              })
-              console.log('accommodationType', accommodationType)
-
               return (
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">{accommodationType?.data?.name}</p>
-                  <p className="font-semibold truncate text-accent-secondary">MYR {data?.accomodationFee}</p>
+                  <p className="text-sm font-normal text-accent-light "> {courseAccomodationNames}</p>
+                  <p className="font-semibold truncate text-accent-secondary"> {data?.fee_per_person}</p>
                 </div>
               )
             })}
