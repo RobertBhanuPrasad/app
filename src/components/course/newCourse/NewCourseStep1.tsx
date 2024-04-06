@@ -4,7 +4,7 @@ import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import React, { useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
+import { useController, useFormContext, useFormState } from "react-hook-form";
 import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
@@ -34,6 +34,14 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep1() {
+  const { data: courseData } = useOne({
+    resource: "program",
+    id: 10,
+    meta: {
+      select:
+        "*,program_fee_settings_id(*,program_fee_level_settings!inner(*,fee_level_id(*))),program_fee_level_settings(*,fee_level_id(*)),program_details_info(*,max_capacity,visibility_id(*)),program_organizers(*,user_id(*,contact_id(*))),program_translation_languages(*,language_id(*)),program_languages(*,language_id(*)),program_schedules(*),venue(*,center_id!inner(*),city_id!inner(*),state_id!inner(*)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(*)),program_type_id!inner(*),program_assistant_teachers!inner(*,user_id(*,contact_id(*))),program_teachers!inner(*,user_id(*,contact_id(*)))",
+    },
+  });
   return (
     <div>
       <RadioCards />
@@ -54,13 +62,14 @@ export default NewCourseStep1;
 
 const RegistrationGateway = () => {
   const {
-    field: { value, onChange },
+    field: { value = false, onChange },
   } = useController({
     name: NewCourseStep1FormNames?.is_registration_via_3rd_party,
   });
 
   const {
     field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep1FormNames?.registration_via_3rd_party_url,
   });
@@ -86,7 +95,13 @@ const RegistrationGateway = () => {
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
               className="placeholder:text-[#999999]"
+              error={error ? true : false}
             />
+            {error && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            {error?.message}
+          </span>
+        )}
           </div>
         </div>
       )}
@@ -96,6 +111,7 @@ const RegistrationGateway = () => {
 const RadioCards = () => {
   const {
     field: { value, onChange },
+    fieldState: {error: radioError}
   } = useController({
     name: NewCourseStep1FormNames?.program_created_by,
   });
@@ -241,6 +257,11 @@ const RadioCards = () => {
           </Card>
         </Label>
       </div>
+      {radioError && (
+          <span className="text-[#FF6D6D] text-[14px]">
+            {radioError?.message}
+          </span>
+        )}
     </RadioGroup>
   );
 };
@@ -291,7 +312,7 @@ const OrganizationDropDown = () => {
             onChange(value);
           }}
         >
-          <SelectTrigger className="w-[320px]">
+          <SelectTrigger className="w-[320px]" error={organizationError ? true : false}>
             <SelectValue placeholder="Select Organization" />
           </SelectTrigger>
           <SelectContent>
@@ -319,7 +340,7 @@ const OrganizationDropDown = () => {
 
         {organizationError && (
           <span className="text-[#FF6D6D] text-[12px]">
-            Select Organizer Name.
+            {organizationError?.message}
           </span>
         )}
       </div>
@@ -334,6 +355,7 @@ const ProgramOrganizerDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState:{error:programOrganizerError}
   } = useController({
     name: NewCourseStep1FormNames?.organizer_ids,
   });
@@ -409,7 +431,13 @@ const ProgramOrganizerDropDown = () => {
             };
           }
         }}
+        error={programOrganizerError}
       />
+      {programOrganizerError && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            {programOrganizerError?.message}
+          </span>
+        )}
     </div>
   );
 };

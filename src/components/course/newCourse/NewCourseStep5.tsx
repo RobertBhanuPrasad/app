@@ -7,6 +7,7 @@ import {
   useController,
   FieldValues,
   useWatch,
+  useFormState,
 } from "react-hook-form";
 import { Checkbox } from "src/ui/checkbox";
 import { Input } from "src/ui/input";
@@ -41,23 +42,25 @@ export default function CourseTable() {
   // Effect to add initial data if no fees are present
   useEffect(() => {
     if (!formData?.accommodation || formData?.accommodation.length <= 0) {
-      append({
-        [NewCourseStep5FormNames?.fee_per_person]: "",
-        [NewCourseStep5FormNames?.no_of_residential_spots]: "",
-        [NewCourseStep5FormNames?.accommodation_type_id]: undefined,
-      });
+      append(undefined);
     }
   }, []);
 
   return (
     <div className="flex flex-col gap-8">
       <ResidentialCourse />
-      <DataTable
-        tableStyles="w-[1072px]"
-        columns={columns(append, remove, formData?.accommodation)}
-        data={formData?.accommodation || []}
-      />
-      <AccommodationFeeMode />
+      {formData?.is_residential_program == "Yes"  && (
+        <div>
+
+         <DataTable
+         tableStyles="w-[1072px]"
+         columns={columns(append, remove, formData?.accommodation)}
+         data={formData?.accommodation || []}
+       />
+       <AccommodationFeeMode />
+       </div>
+        ) }
+      
     </div>
   );
 }
@@ -72,6 +75,7 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodation",
     header: () => <div>Accommodation Type</div>,
     cell: ({ row }: any) => {
+
       const existingAccommodationValues = formData
         ?.map((field: any) => field?.accomodationType?.value)
         .filter((value: any) => value !== undefined);
@@ -111,7 +115,7 @@ const columns = (append: any, remove: any, formData: any) => [
               onChange(value);
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger error={error ? true : false}>
               <SelectValue placeholder="Select Accommodation" />
             </SelectTrigger>
             <SelectContent>
@@ -136,6 +140,9 @@ const columns = (append: any, remove: any, formData: any) => [
               </SelectItems>
             </SelectContent>
           </Select>
+          {error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
         </div>
       );
     },
@@ -146,8 +153,10 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodationFee",
     header: () => <div>Fees Per Person inc VAT</div>,
     cell: ({ row }: any) => {
+
       const {
         field: { value, onChange },
+        fieldState:{error}
       } = useController({
         name: `accommodation[${row.index}].fee_per_person`,
       });
@@ -160,7 +169,11 @@ const columns = (append: any, remove: any, formData: any) => [
             onChange={(val) => {
               onChange(val?.target?.value);
             }}
+            error={error ? true : false}
           />
+          {error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
         </div>
       );
     },
@@ -170,8 +183,10 @@ const columns = (append: any, remove: any, formData: any) => [
     id: "accommodationspots",
     header: () => <div>Number of spots available</div>,
     cell: ({ row }: any) => {
+
       const {
         field: { value, onChange },
+        fieldState:{error}
       } = useController({
         name: `accommodation[${row.index}].no_of_residential_spots`,
       });
@@ -184,7 +199,11 @@ const columns = (append: any, remove: any, formData: any) => [
             onChange={(val) => {
               onChange(val?.target?.value);
             }}
+            error={error ? true : false}
           />
+          {error && (
+        <span className="text-[#FF6D6D] text-[12px] break-words">{error?.message}</span>
+      )}
         </div>
       );
     },
@@ -199,11 +218,7 @@ const columns = (append: any, remove: any, formData: any) => [
 
       // Function to add a new row
       const handleAddRow = () => {
-        append({
-          fee_per_person: "",
-          no_of_residential_spots: "",
-          accommodation_type_id: undefined,
-        });
+        append(null);
       };
 
       // Function to delete a row
