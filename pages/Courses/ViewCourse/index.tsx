@@ -45,19 +45,11 @@ import {
   COURSE_DETAILS_TAB,
   PARTICIPANTS_TAB,
   REVENUE_SUMMARY_TAB,
-} from "src/constants/Tabs";
+} from "src/constants/CourseConstants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import CustomSelect from "src/ui/custom-select";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogFooter,
-  DialogTrigger,
-  DialogTitle,
-} from "src/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
 import {
   AlertDialog,
   AlertDialogCancel,
