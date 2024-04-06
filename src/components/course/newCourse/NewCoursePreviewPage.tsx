@@ -1,7 +1,7 @@
 import { useMany, useOne } from '@refinedev/core'
 import _ from 'lodash'
 import { useState } from 'react'
-import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT } from 'src/constants/OptionLabels'
+import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
 import { Button } from 'src/ui/button'
 import { formatDateString } from 'src/utility/DateFunctions'
 import { getOptionValueObjectById } from 'src/utility/GetOptionValuesByOptionLabel'
@@ -16,12 +16,14 @@ import NewCourseStep6 from './NewCourseStep6'
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
+
   const creator =
     newCourseData?.program_created_by &&
     getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by)
   const timeFormat =
     newCourseData?.hour_format_id && getOptionValueObjectById(TIME_FORMAT, newCourseData?.hour_format_id)
 
+  const visibility = newCourseData?.visibility_id && getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id)
   const { data: organizationName } = useOne({
     resource: 'organizations',
     id: newCourseData?.organization_id
@@ -76,9 +78,11 @@ export default function NewCourseReviewPage() {
     meta: { select: 'contact_id(full_name)' }
   })
 
-  const CourseTeachersNames = CourseTeachers?.data?.map(teacher_id => {
-    if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
-  })
+  const CourseTeachersNames = CourseTeachers?.data
+    ?.map(teacher_id => {
+      if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
+    })
+    .join(', ')
 
   const { data: courseType } = useOne({
     resource: 'program_types',
@@ -106,7 +110,7 @@ export default function NewCourseReviewPage() {
 
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold">Review Your Details Right Here</div>
+      <div className="text-[24px] my-4 font-semibold">Review Course Details </div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -126,7 +130,7 @@ export default function NewCourseReviewPage() {
             />{' '}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light ">Creator</p>
               <p className="font-semibold truncate text-accent-secondary">{creator ? creator?.value : '-'}</p>
@@ -181,7 +185,7 @@ export default function NewCourseReviewPage() {
             />{' '}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light ">Course Type</p>
               <p className="font-semibold truncate text-accent-secondary">
@@ -214,7 +218,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Program Visibility</p>
-              <p className="font-semibold truncate text-accent-secondary">{newCourseData?.visibility_id}</p>
+              <p className="font-semibold truncate text-accent-secondary">{visibility?.value}</p>
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Online zoom URL</p>
@@ -276,7 +280,7 @@ export default function NewCourseReviewPage() {
             />{' '}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-4 gap-4 mt-2">
             {/* // TODO need to do when the form filed is clear */}
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light ">Venue Address</p>
@@ -323,7 +327,7 @@ export default function NewCourseReviewPage() {
             />{' '}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light ">Regular</p>
               <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
@@ -384,7 +388,7 @@ export default function NewCourseReviewPage() {
             />{' '}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-4 gap-4 mt-2">
             {newCourseData?.accommodation?.map((data: any) => {
               return (
                 <div className=" min-w-72">
@@ -422,7 +426,7 @@ export default function NewCourseReviewPage() {
           {/* body */}
           {newCourseData?.contact?.map((data: any) => {
             return (
-              <div className="grid grid-cols-3 gap-4 pb-4 mt-2 border-b">
+              <div className="grid grid-cols-4 gap-3 pb-4 mt-2 border-b">
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light ">Contact Email</p>
                   <p className="font-semibold truncate text-accent-secondary">{data?.contact_email}</p>
