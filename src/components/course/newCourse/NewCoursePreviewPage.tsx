@@ -37,7 +37,7 @@ export default function NewCourseReviewPage() {
     ?.map(user_id => {
       if (user_id?.contact_id?.full_name) return user_id?.contact_id?.full_name
     })
-    .join(',')
+    .join(', ')
 
   const { data: CourseLanguages } = useMany({
     resource: 'languages',
@@ -49,8 +49,11 @@ export default function NewCourseReviewPage() {
     ?.map((language: any) => {
       if (language?.language_name) return language?.language_name
     })
-    .join(',')
+    .join(', ')
 
+  const contactNames = newCourseData?.contact?.map((contactDetails: any) => {
+    return contactDetails
+  })
   // const { data: CourseTranslation } = useMany({
   //   resource: 'program_translation_languages',
   //   ids: newCourseData?.translation_language_ids,
@@ -78,13 +81,13 @@ export default function NewCourseReviewPage() {
     ?.map((id: any) => {
       return getLanguageName(id)?.data?.name
     })
-    .join(',')
+    .join(', ')
 
   const allowedCountries = newCourseData?.allowed_countries
     ?.map((data: any) => {
       return data.value
     })
-    .join(',')
+    .join(', ')
 
   const { data: timeZone } = useOne({
     resource: 'time_zones',
@@ -423,15 +426,15 @@ export default function NewCourseReviewPage() {
               <div className="grid grid-cols-3 gap-4 pb-4 mt-2 border-b">
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light ">Contact Email</p>
-                  <p className="font-semibold truncate text-accent-secondary">MYR {data?.contactEmail}</p>
+                  <p className="font-semibold truncate text-accent-secondary">{data?.contact_email}</p>
                 </div>
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light ">Contact Phone</p>
-                  <p className="font-semibold truncate text-accent-secondary">MYR {data?.contactMobile}</p>
+                  <p className="font-semibold truncate text-accent-secondary">{data?.contact_number}</p>
                 </div>
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light ">Contact Name</p>
-                  <p className="font-semibold truncate text-accent-secondary">MYR {data?.contactName}</p>
+                  <p className="font-semibold truncate text-accent-secondary">{data?.contact_name}</p>
                 </div>
               </div>
             )
@@ -440,7 +443,9 @@ export default function NewCourseReviewPage() {
           <div className="mt-4 min-w-72">
             <p className="text-sm font-normal text-accent-light">BCC registration confirmation email</p>
             <p className="font-semibold truncate text-accent-secondary">
-              {newCourseData?.contact?.courseEmails ? newCourseData?.contact?.courseEmails : '-'}
+              {newCourseData?.bcc_registration_confirmation_email
+                ? newCourseData?.bcc_registration_confirmation_email
+                : '-'}
             </p>
           </div>
         </section>
