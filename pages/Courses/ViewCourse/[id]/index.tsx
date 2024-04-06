@@ -19,19 +19,11 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card
 import { formatDate } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 
-import { GetServerSideProps } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { authProvider } from 'src/authProvider'
-import {
-  COURSE_ACCOUNTING_FORM_TAB,
-  COURSE_DETAILS_TAB,
-  PARTICIPANTS_TAB,
-  REVENUE_SUMMARY_TAB
-} from 'src/constants/Tabs'
-import CustomSelect from 'src/ui/custom-select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
-
+import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
+import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
 import CopyIcon from '@public/assets/CopyIcon'
 import Cross from '@public/assets/Cross'
 import Exclamation from '@public/assets/Exclamation'
@@ -45,6 +37,9 @@ import WhatsappIcon from '@public/assets/WhatsappIcon'
 import _ from 'lodash'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
+import CustomSelect from "src/ui/custom-select";
+
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -66,6 +61,7 @@ import {
   DialogTrigger
 } from 'src/ui/dialog'
 import { Textarea } from 'src/ui/textarea'
+import { COURSE_ACCOUNTING_FORM_TAB, COURSE_DETAILS_TAB, PARTICIPANTS_TAB, REVENUE_SUMMARY_TAB } from 'src/constants/CourseConstants'
 
 function index() {
   const Id: number = 1
