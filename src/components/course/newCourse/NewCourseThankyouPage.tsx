@@ -18,12 +18,12 @@ import { ACTIVE } from "src/constants/OptionValueOrder";
 import { Button } from "src/ui/button";
 import { formatDateTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 const NewCourseThankyouPage = () => {
     const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
     const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
-    // Todo : need to get from the redux
-    const programId = 1;
+    const { programId } = newCourseStore();
     const copyText = async (text: any) => {
         try {
             await navigator.clipboard.writeText(text);
