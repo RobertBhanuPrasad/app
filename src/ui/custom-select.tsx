@@ -11,7 +11,6 @@ import { Button } from "src/ui/button";
 import { Input } from "./input";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
 import Image from "next/image";
-import { uniqBy } from "lodash";
 
 // Define the shape of each option
 interface Option {
@@ -24,7 +23,7 @@ interface CustomSelectProps {
   data: any;
   onSearch: (searchQuery: string) => void;
   onBottomReached: () => void;
-  onChange: (selectedOption: number) => void;
+  onChange: (selectedOption: Option) => void;
   placeholder: string;
   value: any;
   error?: any;
@@ -41,8 +40,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   error,
   selectBoxStyles,
 }: CustomSelectProps) => {
-  const filteredData: any = uniqBy(data, "value");
-
   // State to manage whether the dropdown is open or closed
   const [open, setOpen] = React.useState<boolean>(false);
 
@@ -50,7 +47,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const headerStyles = selectBoxStyles?.header || "";
   const dropdownStyles = selectBoxStyles?.dropdown || "";
 
-  const requiredOption = filteredData?.filter(
+  const requiredOption = data?.filter(
     (val: { value: any }) => val.value === propValue
   );
 
@@ -69,7 +66,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     } else {
       setSelectedValue(null);
     }
-  }, [propValue, filteredData]);
+  }, [propValue, data]);
 
   // Handle the selection of an option
   const handleSelect = (value: any) => {
@@ -152,9 +149,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               >
                 <CommandGroup
                   id={"options"}
-                  className="max-h-[300px]  text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
+                  className="max-h-[300px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
                 >
-                  {filteredData?.map((option: any, index: number) => {
+                  {data?.map((option: any, index: number) => {
                     return (
                       <div key={option.value}>
                         <CommandItem
@@ -168,7 +165,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                         >
                           {option.label}
                         </CommandItem>
-                        {index < filteredData?.length - 1 && (
+                        {index < data?.length - 1 && (
                           <hr className="border-[#D6D7D8]" />
                         )}
                       </div>
