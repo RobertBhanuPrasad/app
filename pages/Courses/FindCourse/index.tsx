@@ -8,7 +8,7 @@ import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import Filters from "src/participants/Filters";
+import Filters from "@components/course/findCourse/Filters";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import Form from "@components/Formfield";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";

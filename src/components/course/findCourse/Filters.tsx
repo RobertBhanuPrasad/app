@@ -26,7 +26,6 @@ import { RadioButtonCard } from "src/ui/radioButtonCard";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -542,13 +541,11 @@ export const CourseStatus = () => {
   let courseStatusData =
     getOptionValuesByOptionLabel(PROGRAM_STATUS)?.[0]?.option_values;
 
-
   const {
     field: { value = [], onChange },
   } = useController({
     name: "course_status",
   });
-
 
   const toggleCourseStatus = (id: number) => {
     const updatedValue = value.includes(id)
@@ -590,7 +587,6 @@ export const CourseAccordingStatus = () => {
   } = useController({
     name: "course_accounting_status",
   });
-
 
   const toggleCourseStatus = (index: number) => {
     const updatedValue = value.includes(index)
