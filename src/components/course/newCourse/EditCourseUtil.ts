@@ -5,7 +5,7 @@ export const handleCourseDefaultValues = async (programId: number) => {
   const { data, error } = await supabaseClient
     .from("program")
     .select(
-      "*,program_organizers(*),program_teachers(*),program_assistant_teachers(*),program_languages(*),program_translation_languages(*),schedules(*),program_accommodations(*),contact(*)"
+      "*,program_organizers(*),program_teachers(*),program_assistant_teachers(*),program_languages(*),program_translation_languages(*),program_schedules(*),program_accommodations(*),contact(*)"
     )
     .eq("id", programId);
 
