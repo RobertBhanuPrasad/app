@@ -26,7 +26,7 @@ import {
   COURSE_DETAILS_TAB,
   PARTICIPANTS_TAB,
   REVENUE_SUMMARY_TAB,
-} from "src/constants/Tabs";
+} from "src/constants/CourseConstants";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 /**
