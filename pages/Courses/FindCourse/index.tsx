@@ -1,8 +1,9 @@
+import { BaseTable } from "@components/course/findCourse/BaseTable";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
-import { CrudFilter, CrudFilters, useSelect, useTable } from "@refinedev/core";
+import { useSelect } from "@refinedev/core";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
@@ -22,33 +23,11 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { format } from "date-fns";
-import CrossIcon from "@public/assets/CrossIcon";
+import { columns } from "./Columns";
+import { useTable } from "@refinedev/core";
 
 function index() {
-  return (
-    <div className="flex flex-col gap-4">
-      <HeaderSection />
-      <TableSection />
-    </div>
-  );
-}
-
-export default index;
-
-const HeaderSection = () => {
-  const [open, setOpen] = useState(false);
-  const [date, setDate] = React.useState<DateRange | undefined>();
-
-  const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
-
-  const { newAdvanceFilterData, setNewAdvanceFilterData } = newCourseStore();
-
-  console.log("hey redux data", newAdvanceFilterData);
-
-  const count =
-    Object.keys(newAdvanceFilterData).filter(
-      (key) => newAdvanceFilterData[key] !== undefined
-    ).length || 0;
+  const { newAdvanceFilterData } = newCourseStore();
 
   const filters: any = { permanent: [] };
 
@@ -121,13 +100,16 @@ const HeaderSection = () => {
       value: newAdvanceFilterData?.course_status,
     });
   }
+
+  const [rowSelection, setRowSelection] = React.useState({});
+
   const {
     tableQueryResult: programData,
-    // pageCount,
-    // pageSize,
-    // setPageSize,
-    // current,
-    // setCurrent,
+    pageCount,
+    pageSize,
+    setPageSize,
+    current,
+    setCurrent,
   } = useTable({
     resource: "program",
     meta: {
@@ -137,6 +119,52 @@ const HeaderSection = () => {
   });
 
   console.log("hey table data", programData);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <HeaderSection />
+
+      <div>
+        <BaseTable
+          current={current}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
+          checkboxSelection={true}
+          setCurrent={setCurrent}
+          pageCount={pageCount}
+          total={programData?.data?.total || 0}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+          pagination={true}
+          tableStyles={{
+            table: "",
+            rowStyles: "!important border-none",
+          }}
+          columns={columns}
+          data={programData?.data?.data || []}
+          columnPinning={true}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default index;
+
+const HeaderSection = () => {
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = React.useState<DateRange | undefined>();
+
+  const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+
+  const { newAdvanceFilterData, setNewAdvanceFilterData } = newCourseStore();
+
+  console.log("hey redux data", newAdvanceFilterData);
+
+  const count =
+    Object.keys(newAdvanceFilterData).filter(
+      (key) => newAdvanceFilterData[key] !== undefined
+    ).length || 0;
 
   console.log("heyy redux data", newAdvanceFilterData);
 
@@ -230,14 +258,6 @@ const HeaderSection = () => {
         </div>
         <Button className="h-9 w-18 rounded-xl">Apply</Button>
       </div>
-    </div>
-  );
-};
-
-const TableSection = () => {
-  return (
-    <div>
-      <div>Table section</div>
     </div>
   );
 };

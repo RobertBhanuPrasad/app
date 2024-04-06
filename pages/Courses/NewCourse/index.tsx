@@ -1,32 +1,19 @@
+import Form from "@components/Formfield";
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
 import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
+import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
-import { Button } from "src/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import Fees from "@public/assets/Fees";
-import _ from "lodash";
-import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
-import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import {
-  NewCourseStep1FormNames,
-  NewCourseStep2FormNames,
-  NewCourseStep3FormNames,
-  NewCourseStep4FormNames,
-  NewCourseStep5FormNames,
-  NewCourseStep6FormNames,
-} from "src/constants/CourseConstants";
-import Form from "@components/Formfield";
-import { stepStore } from "src/zustandStore/StepStore";
-import { useValidateCurrentStepFields } from "./ValidateCurrentStep";
-import { z } from "zod";
 import { useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
@@ -34,30 +21,56 @@ import {
   CONTACT_INFO_STEP_NUMBER,
   COURSE_DETAILS_STEP_NUMBER,
   FEE_STEP_NUMBER,
+  NewCourseStep1FormNames,
+  NewCourseStep2FormNames,
+  NewCourseStep3FormNames,
+  NewCourseStep4FormNames,
+  NewCourseStep5FormNames,
+  NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/CourseConstants";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
+import { Button } from "src/ui/button";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { VISIBILITY } from "src/constants/OptionLabels";
+import { PUBLIC } from "src/constants/OptionValueOrder";
+
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { z } from "zod";
+import { validationSchema } from "./NewCourseValidations";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import _ from "lodash";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { viewPreviewPage } = newCourseStore();
+  const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
-  // if (!loginUserData?.userData) {
-  //   return <div>Loading...</div>;
-  // }
+  console.log(loginUserData);
+  if (!loginUserData?.userData) {
+    return <div>Loading...</div>;
+  }
+
+  if (viewThankyouPage) {
+    return (
+      <div className="mb-8">
+        <NewCourseThankyouPage />;
+      </div>
+    );
+  }
 
   if (viewPreviewPage) {
-    return <div> Render Preview Page</div>;
+    return <NewCourseReviewPage />;
   } else {
     return <NewCourse />;
   }
 }
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
+  const { currentStep, setCurrentStep } = newCourseStore();
 
   const loggedUserData = loginUserData?.userData?.id;
-
-  const { currentStep, setCurrentStep } = stepStore();
 
   // Array of step titles, icons, and colors
   const stepTitles = [
@@ -131,23 +144,20 @@ function NewCourse() {
     console.log(formData);
   };
 
+  //Finding program Organizer role id
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
+
   const defaultValues = {
-    [NewCourseStep2FormNames?.visibility_id]: "public",
-    [NewCourseStep2FormNames?.is_language_translation_for_participants]: "true",
-    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: "true",
+    [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
+    [NewCourseStep2FormNames?.is_language_translation_for_participants]: true,
+    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
     [NewCourseStep5FormNames?.is_residential_program]: "No",
     [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: "Pay Online",
     [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
   };
-
-  const schema = z.object({
-    organization_id: z
-      .number()
-      .refine((value) => value !== null && value !== 0, {
-        message: "SelectOrganizerName",
-        path: ["organization_id"],
-      }),
-  });
 
   // If the form is still loading, display a loading message
   // if (formLoading) {
@@ -161,7 +171,7 @@ function NewCourse() {
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
           <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
-            <div className="flex flex-col  h-full gap-4 ">
+            <div className="flex flex-col h-full gap-4 ">
               {stepTitles.map((tab, index) => (
                 <TabsTrigger
                   key={index}
@@ -185,7 +195,7 @@ function NewCourse() {
             <Form
               onSubmit={onSubmit}
               defaultValues={defaultValues}
-              schema={schema}
+              schema={validationSchema()}
             >
               <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
                 <div>
@@ -240,37 +250,90 @@ function NewCourse() {
 export default index;
 
 const Footer = ({ stepTitles }: any) => {
-  const { currentStep } = stepStore();
-  const { setViewPreviewPage, setNewCourseData, newCourseData } =
+  const { watch, getValues } = useFormContext();
+  const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
     newCourseStore();
-  const { handleClickNext, handleClickPrevious } =
-    useValidateCurrentStepFields();
 
-  const { watch } = useFormContext();
+  const { data: loginUserData }: any = useGetIdentity();
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  );
 
-  const formData = watch();
+  const formData = getValues();
+
+  let RequiredNewCourseStep1FormNames = _.omit(
+    NewCourseStep1FormNames,
+    formData?.is_registration_via_3rd_party
+      ? []
+      : ["registration_via_3rd_party_url"]
+  );
+
+  let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
+    ...(formData?.program_type?.has_alias_name
+      ? []
+      : ["program_alias_name_id"]),
+    ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
+    ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
+  ]);
+
+  let RequiredNewCourseStep3FormNames = _.omit(
+    NewCourseStep3FormNames,
+    formData?.program_type?.is_online_program ? [] : ["online_url"]
+  );
+
+  let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
+    ...(formData?.is_residential_program == "No" ? ["accommodation"] : []),
+    ...(formData?.is_residential_program == "No" ? ["fee_per_person"] : []),
+    ...(formData?.is_residential_program == "No"
+      ? ["no_of_residential_spots"]
+      : []),
+    ...(formData?.is_residential_program == "No"
+      ? ["accommodation_type_id"]
+      : []),
+  ]);
 
   const validationFieldsStepWise = [
-    Object.values(NewCourseStep1FormNames),
-    Object.values(NewCourseStep2FormNames),
-    Object.values(NewCourseStep3FormNames),
+    Object.values(RequiredNewCourseStep1FormNames),
+    Object.values(RequiredNewCourseStep2FormNames),
+    Object.values(RequiredNewCourseStep3FormNames),
     Object.values(NewCourseStep4FormNames),
-    Object.values(NewCourseStep5FormNames),
+    Object.values(RequiredNewCourseStep5FormNames),
     Object.values(NewCourseStep6FormNames),
   ];
 
-  const onSubmit = () => {
-    console.log("heyy on submitttt");
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+
+  const handleClickReviewDetailsButton = async (
+    currentStepFormNames: any[]
+  ) => {
+    const formData = watch();
+
+    const isAllFieldsFilled = await ValidateCurrentStepFields(
+      currentStepFormNames
+    );
+    if (isAllFieldsFilled) {
+      setViewPreviewPage(true);
+      setNewCourseData(formData);
+    }
   };
 
-  const handleClickReviewDetailsButton = () => {
-    setViewPreviewPage(true);
-    setNewCourseData(formData);
+  const handleClickNext = async (currentStepFormNames: any[]) => {
+    const isAllFieldsFilled = await ValidateCurrentStepFields(
+      currentStepFormNames
+    );
+    if (isAllFieldsFilled) {
+      setCurrentStep(currentStep + 1);
+    }
+    return isAllFieldsFilled;
+  };
+
+  const handleClickPrevious = () => {
+    setCurrentStep(currentStep - 1);
   };
 
   return (
     <div className="flex self-end justify-center gap-4 w-full mt-2">
-      {currentStep > 0 && (
+      {currentStep > 1 && (
         <Button
           onClick={(e) => {
             e.preventDefault();
@@ -282,7 +345,7 @@ const Footer = ({ stepTitles }: any) => {
         </Button>
       )}
 
-      {currentStep < stepTitles.length - 2 && (
+      {currentStep < stepTitles.length && (
         <Button
           className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
           onClick={async (e) => {
@@ -297,7 +360,11 @@ const Footer = ({ stepTitles }: any) => {
       {currentStep == CONTACT_INFO_STEP_NUMBER && (
         <Button
           className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-          onClick={handleClickReviewDetailsButton}
+          onClick={async () => {
+            await handleClickReviewDetailsButton(
+              validationFieldsStepWise[currentStep - 1]
+            );
+          }}
         >
           Review Details
         </Button>

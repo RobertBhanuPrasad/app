@@ -204,7 +204,6 @@ interface ProgramDetailsInfoDataBaseType {
   is_registration_via_3rd_party?: boolean;
   registration_via_3rd_party_url?: string;
   notes?: string;
-  allowed_countries?: string[];
   description?: string;
   email_notes?: string;
   is_geo_restriction_applicable?: boolean;
@@ -567,7 +566,19 @@ interface ProgramDataBaseType {
   program_code?: string;
   program_fee_settings_id?: number | ProgramFeeSettingsDataBaseType;
   program_type_id?: number | ProgramTypesDataBaseType;
+  visibility_id?: number | OptionValuesDataBaseType;
   status_id?: number | OptionValuesDataBaseType;
+  is_registration_via_3rd_party?: boolean;
+  registration_via_3rd_party_url?: string;
+  hour_format_id?: number | OptionValuesDataBaseType;
+  time_zone_id?: number | OptionValuesDataBaseType;
+  disable_bank_transfer_paylater?: boolean;
+  early_bird_cut_off_period?: number;
+  is_geo_restriction_applicable?: boolean;
+  is_language_translation_for_participants?: boolean;
+  is_registration_required?: boolean;
+  max_capacity?: number;
+  online_url?: string;
   accommodation_fee_payment_mode?: number;
   center_id?: number | CenterDataBaseType;
   city_id?: number | CityDataBaseType;
@@ -588,4 +599,7 @@ interface ProgramDataBaseType {
   program_translation_languages?: ProgramTranslationLanguagesDataBaseType[];
   program_languages?: ProgramLanguagesDataBaseType[];
   program_organizers?: ProgramOrganizersDataBaseType[];
+  last_modified_by_user_id?: number | UsersDataBaseType;
+  allowed_countries?: string[];
+  bcc_registration_confirmation_email?: string;
 }
