@@ -20,7 +20,7 @@ export default function index() {
         resource:"participant_registration",
         optionLabel:"edit_participant",
         optionvalue:"id",
-        meta:{select:"*,contact_id!inner(full_name),price_category_id!inner(*)"}
+        meta:{select:"*,created_at,total_amount,contact_id!inner(full_name),price_category_id!inner(option_values(value))"}
     }
     const {options,queryResult}=useSelect(selectQuery)
     console.log(options,queryResult,"query result")
@@ -166,7 +166,7 @@ export default function index() {
                 <FormProvider {...methods}>
                     <form autoComplete="off">
                         <TabsContent value="Participants Information">
-                            <ParticipnatInformation />
+                            <ParticipnatInformation data={queryResult?.data}/>
                             <CourseFee />
                             <AccomodationDetails />
                             <PaymentDetails />
