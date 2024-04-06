@@ -31,7 +31,7 @@ export const getOptionValueObjectByOptionOrder = (
     optionLabelValue,
     (val) => val.key === optionLabel
   );
-
+ 
   return foundOptionValue
     ? _.find(foundOptionValue.option_values, { order: optionOrder })
     : undefined;
@@ -44,12 +44,14 @@ export const getOptionValueObjectById = (
   const { optionLabelValue } = optionLabelValueStore();
   const foundOptionValue = _.find(
     optionLabelValue,
-    (val) => val.key === optionLabel
+    (val) => val.id === optionLabel
   );
   return foundOptionValue
-    ? _.find(foundOptionValue.option_values, (val) => val.id === id)
+    ? _.find(foundOptionValue.option_values, { id: id })
     : undefined;
 };
+
+//TODO: Will use this function after completion of MAP Component
 // export const fetchLongitudeLatitudeData = async (address: string) => {
 //   const provider = new OpenStreetMapProvider();
 
