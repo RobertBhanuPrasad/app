@@ -16,7 +16,6 @@ import NewCourseStep6 from './NewCourseStep6'
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
-  
   const creator =
     newCourseData?.program_created_by &&
     getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by)
@@ -60,7 +59,6 @@ export default function NewCourseReviewPage() {
   const courseAccomodationNames = CourseAccomidation?.data?.map((accomdation: any) => {
     return accomdation?.name
   })
-
   const { data: CourseTranslation } = useMany({
     resource: 'languages',
     ids: newCourseData?.translation_language_ids,
@@ -296,10 +294,11 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Sessions</p>
-              {newCourseData?.schedules?.map(data => {
+              {newCourseData?.schedules?.map((data: any) => {
                 const schedule = `${formatDateString(data.date)} | ${data?.startHour} : ${data?.startMinute}  ${
                   data?.startTimeFormat
                 } to ${data?.endHour} : ${data?.endMinute}  ${data?.endTimeFormat}`
+
                 return <p className="font-semibold truncate text-accent-secondary">{schedule}</p>
               })}
             </div>
