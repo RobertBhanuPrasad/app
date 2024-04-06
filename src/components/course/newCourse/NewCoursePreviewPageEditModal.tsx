@@ -68,11 +68,11 @@ export const EditModalDialog = ({ title, content, onClose, open, openEdit }: Edi
   return (
     <Dialog open={open}>
       <DialogTrigger asChild>
-        <div className="w-16 h-18 ml-4 text-blue-600 ">
-          <div onClick={openEdit} className="cursor-pointer">
-            <EditIcon />
-          </div>
+      <div className="w-16 h-18 ml-4 text-blue-600 ">
+        <div onClick={openEdit} className="cursor-pointer">
+          <EditIcon />
         </div>
+      </div>
       </DialogTrigger>
       <DialogContent className="w-auto">
         <Form defaultValues={newCourseData}>

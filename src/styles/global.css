@@ -55,6 +55,24 @@
   scrollbar-width: none; /* Firefox */
 }
 
+.chart-inner-text{
+  position: absolute;
+  top: 7;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  padding-bottom: 20%;
+  text-align: center;
+  font-size: 13px;
+}
+
+.chart-inner-value{
+  font-weight: bold;
+  font-style: normal;
+  font-size: 15px;
+  color: black;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -200,27 +218,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 5px;
-  display: block;
-
-}
-
-::-webkit-scrollbar-track {
- background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
- border-radius: 5px;
- height:83px
-}
-
-::-webkit-scrollbar-button {
-  width: 5px; 
-  height: 150px; 
-}
-
-
-

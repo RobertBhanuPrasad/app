@@ -1,39 +1,47 @@
 import { create } from "zustand";
 
 interface NewCourseStore {
-    newCourseData: any;
-    viewPreviewPage: boolean;
-    viewThankyouPage: boolean;
-    programId: number;
-    setViewPreviewPage: (by: boolean) => void;
-    setProgramId: (by: number) => void;
-    setViewThankyouPage: (by: boolean) => void;
-    setNewCourseData: (by: any) => void;
+  viewPreviewPage: boolean;
+  viewThankyouPage: boolean;
+  setViewPreviewPage: (by: boolean) => void;
+  setViewThankyouPage: (by: boolean) => void;
+  newCourseData: any;
+  setNewCourseData: (by: any) => void;
+  currentStep: number; // Corrected the type to number
+  setCurrentStep: (by: number) => void;
+  programId: number;
+  setProgramId: (by: number) => void;
 }
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
-    viewPreviewPage: false,
-    viewThankyouPage: false,
-    programId: 1,
-    newCourseData: {},
-    setViewPreviewPage: (data: boolean) => {
-        set(() => ({
-            viewPreviewPage: data,
-        }));
-    },
-    setViewThankyouPage: (data: boolean) => {
-        set(() => ({
-            viewThankyouPage: data,
-        }));
-    },
-    setNewCourseData: (data: any) => {
-        set(() => ({
-            newCourseData: data,
-        }));
-    },
-    setProgramId: (data: number) => {
-        set(() => ({
-            programId: data,
-        }));
-    },
+  viewPreviewPage: false,
+  viewThankyouPage: false,
+  newCourseData: {},
+  programId:1,
+  setViewPreviewPage: (data: boolean) => {
+    set(() => ({
+      viewPreviewPage: data,
+    }));
+  },
+  setViewThankyouPage: (data: boolean) => {
+    set(() => ({
+      viewThankyouPage: data,
+    }));
+  },
+  setNewCourseData: (data: any) => {
+    set(() => ({
+      newCourseData: data,
+    }));
+  },
+  currentStep: 1,
+  setCurrentStep: (data: number) => {
+    set(() => ({
+      currentStep: data,
+    }));
+  },
+  setProgramId: (data: number) => {
+    set(() => ({
+        programId: data,
+    }));
+},
 }));

@@ -1,11 +1,14 @@
+import { BaseTable } from "@components/course/findCourse/BaseTable";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
-import { CardLabel, Header } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
+import { Checkbox } from "src/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { columns } from "./Columns";
+import { HttpError, useTable } from "@refinedev/core";
 
 function index() {
   return (
@@ -57,9 +60,46 @@ const HeaderSection = () => {
   );
 };
 const TableSection = () => {
+  const {
+    tableQueryResult: programData,
+    pageCount,
+    pageSize,
+    setPageSize,
+    current,
+    setCurrent,
+  } = useTable({
+    resource: "program",
+    meta: {
+      select:
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*),program_schedules(*)",
+    },
+  });
+
+  const modifiedData = programData?.data?.data || [];
+
+  const [rowSelection, setRowSelection] = React.useState({});
+
   return (
     <div>
-      <div>Table section</div>
+      <BaseTable
+        current={current}
+        rowSelection={rowSelection}
+        setRowSelection={setRowSelection}
+        checkboxSelection={true}
+        setCurrent={setCurrent}
+        pageCount={pageCount}
+        total={programData?.data?.total || 0}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        pagination={true}
+        tableStyles={{
+          table: "",
+          rowStyles: "!important border-none",
+        }}
+        columns={columns}
+        data={modifiedData}
+        columnPinning={true}
+      />
     </div>
   );
 };
