@@ -77,9 +77,9 @@ export default function NewCourseStep2() {
         </div>
         {/* Allow only for super Admin */}
         {hasSuperAdminRole && (
-        <div className="w-80 h-20">
-          <DisplayLanguage />
-        </div>
+          <div className="w-80 h-20">
+            <DisplayLanguage />
+          </div>
         )}
         {formData?.is_language_translation_for_participants == true && (
           <div className="w-80 h-20">

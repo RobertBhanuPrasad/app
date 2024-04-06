@@ -31,7 +31,7 @@ export const getOptionValueObjectByOptionOrder = (
     optionLabelValue,
     (val) => val.key === optionLabel
   );
- 
+
   return foundOptionValue
     ? _.find(foundOptionValue.option_values, { order: optionOrder })
     : undefined;
