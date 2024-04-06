@@ -72,7 +72,7 @@ const TableSection = () => {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , program_details_info(visibility_id(id,value)) , participant_registration(*),program_schedules(*)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*),program_schedules(*)",
     },
   });
 

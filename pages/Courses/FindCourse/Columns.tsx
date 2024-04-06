@@ -1,156 +1,81 @@
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  MoreHorizontal,
-  MoreVertical,
-} from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Button } from "src/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
+import { Dialog, DialogContent } from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
-import { Input } from "src/ui/input";
-import { Label } from "src/ui/label";
 
-export const columns: ColumnDef<Program>[] = [
+type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
+
+export const columns: ExtendedColumnDef<Program>[] = [
   {
     accessorKey: "program_code",
+    column_name: "Course ID",
     enableHiding: false,
     header: () => {
-      return <div>Course ID</div>;
+      return <div className="w-[100px]">Course ID</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div className="w-[100px]">{row.original.program_code}</div>;
+    },
+  },
+
+  {
+    accessorKey: "program_types",
+    column_name: "Course Type Name",
+    enableHiding: false,
+    header: () => {
+      return <div className="w-[150px]">Course Type Name</div>;
     },
 
     cell: ({ row }) => {
       return (
-        <div>
-          <div>{row.original.program_code}</div>
-        </div>
+        <div className="w-[150px]">{row?.original?.program_types?.name}</div>
       );
-    },
-  },
-  {
-    accessorKey: "program_types",
-    header: () => {
-      return <div>Course Type Name</div>;
-    },
-
-    cell: ({ row }) => {
-      return <div>{row?.original?.program_types?.name}</div>;
     },
   },
   {
     accessorKey: "program_type_alias_names",
+    column_name: "Course Name",
+    enableHiding: false,
     header: () => {
-      return <div>Course Name</div>;
+      return <div className="min-w-[150px]">Course Name</div>;
     },
 
     cell: ({ row }) => {
-      return <div>{row?.original?.program_type_alias_names?.alias_name}</div>;
+      return (
+        <div className="min-w-[150px]">
+          {row?.original?.program_type_alias_names?.alias_name}
+        </div>
+      );
     },
   },
   {
     accessorKey: "status",
+    column_name: "Course Status",
+    enableHiding: false,
     header: () => {
-      return <div>Course Status</div>;
+      return <div className="min-w-[150px]">Course Status</div>;
     },
 
     cell: ({ row }) => {
-      return <div>{row?.original?.status_id}</div>;
+      return <div className="min-w-[150px]">{row?.original?.status_id}</div>;
     },
   },
-  {
-    accessorKey: "state",
-    header: () => {
-      return <div>State</div>;
-    },
 
-    cell: ({ row }) => {
-      return <div>{row?.original?.state?.name}</div>;
-    },
-  },
-  {
-    accessorKey: "city",
-    header: () => {
-      return <div>City</div>;
-    },
-
-    cell: ({ row }) => {
-      return <div>{row?.original?.city?.name}</div>;
-    },
-  },
-  {
-    accessorKey: "center",
-    header: () => {
-      return <div>Center</div>;
-    },
-
-    cell: ({ row }) => {
-      return <div>{row?.original?.center?.name}</div>;
-    },
-  },
-  {
-    accessorKey: "program_teachers",
-    header: () => {
-      return <div>Teachers</div>;
-    },
-    cell: ({ row }) => {
-      const teachers = row?.original?.program_teachers?.map(
-        (teacher: ProgramTeachers) => teacher?.users?.user_name
-      );
-      return (
-        <div>
-          <div>{teachers && teachers.join(", ")}</div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "program_organizers",
-    header: () => {
-      return <div>Organizers</div>;
-    },
-    cell: ({ row }) => {
-      const organizers = row?.original?.program_organizers?.map(
-        (Organizer: ProgramOrganizers) => Organizer?.users?.user_name
-      );
-      return <div>{organizers && organizers.join(",")}</div>;
-    },
-  },
-  {
-    accessorKey: "participant_registration",
-    header: () => {
-      return <div>Attendees</div>;
-    },
-    cell: ({ row }: any) => {
-      return <div>{row?.original?.participant_registration?.length}</div>;
-    },
-  },
-  {
-    accessorKey: "visibility_id",
-    header: () => {
-      return <div>Visibility</div>;
-    },
-    cell: ({ row }: any) => {
-      // const visibility: any = row?.original?.program_details_info?.map(
-      //   (details: any) => details?.visibility_id?.value
-      // );
-      return (
-        <div>
-          {row?.original?.program_details_info[0]?.visibility_id?.value}
-        </div>
-      );
-    },
-  },
   {
     accessorKey: "program_schedules",
+    enableHiding: false,
+    column_name: "Start Date",
     header: () => {
-      return <div>Start Date</div>;
+      return <div className="min-w-[150px]">Start Date</div>;
     },
     cell: ({ row }: any) => {
       // Check if program_schedules exists and has at least one record
@@ -168,22 +93,109 @@ export const columns: ColumnDef<Program>[] = [
           // Extract date from the timestamp (assuming it's stored in a property called 'timestamp')
           const startDate = new Date(record.start_time).toLocaleDateString();
 
-          return <div>{startDate}</div>;
+          return <div className="min-w-[150px]">{startDate}</div>;
         }
       }
 
       // Return empty if no record found or if program_schedules is not available
-      return <div>No start date available</div>;
+      return <div className="min-w-[150px]">-</div>;
+    },
+  },
+  {
+    accessorKey: "state",
+    column_name: "State",
+    header: () => {
+      return <div className="min-w-[150px]">State</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "city",
+    column_name: "City",
+    header: () => {
+      return <div className="min-w-[150px]">City</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "center",
+    column_name: "Center",
+    header: () => {
+      return <div className="min-w-[150px]">Center</div>;
+    },
+
+    cell: ({ row }) => {
+      return <div className="min-w-[150px]">{row?.original?.center?.name}</div>;
+    },
+  },
+  {
+    accessorKey: "program_teachers",
+    enableHiding: false,
+    column_name: "Teachers",
+    header: () => {
+      return <div className="min-w-[150px]">Teachers</div>;
+    },
+    cell: ({ row }) => {
+      const teachers = row?.original?.program_teachers?.map(
+        (teacher: ProgramTeachers) => teacher?.users?.user_name
+      );
+      return (
+        <div className="min-w-[150px]">{teachers && teachers.join(", ")}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "program_organizers",
+    column_name: "Organizers",
+    header: () => {
+      return <div className="min-w-[150px]">Organizers</div>;
+    },
+    cell: ({ row }) => {
+      const organizers = row?.original?.program_organizers?.map(
+        (Organizer: ProgramOrganizers) => Organizer?.users?.user_name
+      );
+      return (
+        <div className="min-w-[150px]">
+          {organizers && organizers.join(",")}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "participant_registration",
+    column_name: "Attendees",
+    header: () => {
+      return <div>Attendees</div>;
+    },
+    cell: ({ row }: any) => {
+      return <div className="min-w-[150px]">{row?.original?.participant_registration?.length}</div>;
+    },
+  },
+  {
+    accessorKey: "visibility_id",
+    column_name: "Visibility",
+    header: () => {
+      return <div>Visibility</div>;
+    },
+    cell: ({ row }: any) => {
+      return <div className="min-w-[150px]">{row?.original?.visibility_id?.value}</div>;
     },
   },
   {
     accessorKey: "course_accounting_status",
+    column_name: "Course Accounting Status",
     header: () => {
-      return <div>Course Accounting Status</div>;
+      return <div className="min-w-[150px]">Course Accounting Status</div>;
     },
     cell: ({ row }: any) => {
       return (
-        <div>
+        <div className="min-w-[150px]">
           {row?.original?.course_accounting_status
             ? row?.original?.course_accounting_status
             : "-"}
@@ -193,63 +205,65 @@ export const columns: ColumnDef<Program>[] = [
   },
   {
     accessorKey: "Course Accounting Closure Date",
+    column_name: "Course Accounting Closure Date",
     header: () => {
-      return <div>Course Accounting Closure Date</div>;
+      return (
+        <div className="min-w-[150px]">Course Accounting Closure Date</div>
+      );
     },
     cell: ({ row }: any) => {
-      return <div>-</div>;
+      return <div className="min-w-[150px]">-</div>;
     },
   },
   {
     accessorKey: "revenue",
+    column_name: "Revenue",
+    enableHiding: false,
     header: () => {
-      return <div>Revenue</div>;
+      return <div className="min-w-[150px]">Revenue</div>;
     },
     cell: ({ row }: any) => {
-      return <div>-</div>;
+      return <div className="min-w-[150px]">-</div>;
     },
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const router = useRouter()
+      const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-      const dropDownMenuData=["View Participants",
+      const dropDownMenuData = [
+        "View Participants",
         "Register Participant",
         "Edit Course",
         "Copy Course",
         "Cancel Course",
-        "Submit/Edit Course Accounting Form"]
+        "Submit/Edit Course Accounting Form",
+      ];
 
-        const handleSelected = (value:string) => {
-         switch(value){
-          case 'View Participants':
-            {
-              // TODO - Navigate to Participants Listing page
-              router.push('/')
-              break;
-            }
-          case 'Register Participant':
-            {
-              // TODO - Navigate to Register Participant page
-              router.push('/Courses/FindCourse')
-              break;
-            }
-          case 'Cancel Course':
-            {
-              setIsDialogOpen(true)
-            }
-          default :
-          {
-            console.log("other options")
+      const handleSelected = (value: string) => {
+        switch (value) {
+          case "View Participants": {
+            // TODO - Navigate to Participants Listing page
+            router.push("/");
+            break;
           }
-         }
+          case "Register Participant": {
+            // TODO - Navigate to Register Participant page
+            router.push("/Courses/FindCourse");
+            break;
+          }
+          case "Cancel Course": {
+            setIsDialogOpen(true);
+          }
+          default: {
+            console.log("other options");
+          }
         }
+      };
       return (
         <div className="flex justify-center text-primary">
-        
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -257,13 +271,16 @@ export const columns: ColumnDef<Program>[] = [
                 <MoreVertical className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">{
-              dropDownMenuData.map((data)=> <DropdownMenuItem onClick={()=>handleSelected(data)}>{data}</DropdownMenuItem> )
-            }
+            <DropdownMenuContent align="end">
+              {dropDownMenuData.map((data) => (
+                <DropdownMenuItem onClick={() => handleSelected(data)}>
+                  {data}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
           {isDialogOpen && (
-              <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
+            <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
               <DialogContent className="sm:max-w-[425px]">
                 <Button>Yes</Button>
                 <Button>No</Button>
