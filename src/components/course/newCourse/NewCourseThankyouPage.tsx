@@ -24,6 +24,7 @@ const NewCourseThankyouPage = () => {
     const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
     const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
     const { programId } = newCourseStore();
+    
     const copyText = async (text: any) => {
         try {
             await navigator.clipboard.writeText(text);
@@ -57,14 +58,6 @@ const NewCourseThankyouPage = () => {
             select: "program_code,program_type_id,venue_id,registration_link,details_page_link,status_id,time_zone_id,program_type_id!inner(name),venue_id!inner(*,center_id!inner(name),state_id!inner(name),city_id!inner(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value)",
         },
     });
-
-    console.log("program data is", data);
-    // if (isThankyouPageDataIsLoading)
-    //     return (
-    //         <div className="flex items-center justify-center h-16 bg-white shadow-md rounded-3xl">
-    //             <LoadingIcon />
-    //         </div>
-    //     );
 
     // Formatting teacher string
     const teachers = data?.data?.program_teachers
