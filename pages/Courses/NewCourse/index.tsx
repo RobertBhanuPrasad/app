@@ -37,6 +37,9 @@ import {
 } from "src/constants/CourseConstants";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
 import { Button } from "src/ui/button";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { VISIBILITY } from "src/constants/OptionLabels";
+import { PUBLIC } from "src/constants/OptionValueOrder";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -140,10 +143,16 @@ function NewCourse() {
     console.log(formData);
   };
 
+  //Finding program Organizer role id
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
+
   const defaultValues = {
-    [NewCourseStep2FormNames?.visibility_id]: "public",
-    [NewCourseStep2FormNames?.is_language_translation_for_participants]: "true",
-    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: "true",
+    [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
+    [NewCourseStep2FormNames?.is_language_translation_for_participants]: true,
+    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
     [NewCourseStep5FormNames?.is_residential_program]: "No",
     [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: "Pay Online",
     [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
