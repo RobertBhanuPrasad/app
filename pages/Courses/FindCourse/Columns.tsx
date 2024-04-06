@@ -1,3 +1,5 @@
+import { DisplayOptions } from "@components/courseBusinessLogic";
+import { useGetIdentity, useOne } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
@@ -174,7 +176,11 @@ export const columns: ExtendedColumnDef<Program>[] = [
       return <div>Attendees</div>;
     },
     cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">{row?.original?.participant_registration?.length}</div>;
+      return (
+        <div className="min-w-[150px]">
+          {row?.original?.participant_registration?.length}
+        </div>
+      );
     },
   },
   {
@@ -184,7 +190,11 @@ export const columns: ExtendedColumnDef<Program>[] = [
       return <div>Visibility</div>;
     },
     cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">{row?.original?.visibility_id?.value}</div>;
+      return (
+        <div className="min-w-[150px]">
+          {row?.original?.visibility_id?.value}
+        </div>
+      );
     },
   },
   {
@@ -233,14 +243,17 @@ export const columns: ExtendedColumnDef<Program>[] = [
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-      const dropDownMenuData = [
-        "View Participants",
-        "Register Participant",
-        "Edit Course",
-        "Copy Course",
-        "Cancel Course",
-        "Submit/Edit Course Accounting Form",
-      ];
+      const { data: loginUserData }: any = useGetIdentity();
+      const { data, isLoading } = useOne({
+        resource: "program",
+        id: 1,
+      });
+
+      const dropDownMenuData = DisplayOptions(
+        data?.data?.status_id,
+        data?.data?.program_accounting_status_id,
+        loginUserData?.userData?.user_roles[0]?.role_id?.id
+      );
 
       const handleSelected = (value: string) => {
         switch (value) {
@@ -262,31 +275,57 @@ export const columns: ExtendedColumnDef<Program>[] = [
           }
         }
       };
+
+      const roughData = [
+        {
+          status_id: 1,
+          data: ["View participants", "registration participant"],
+        },
+        {
+          status_id: 2,
+          data: ["view course", "edit course"],
+        },
+      ];
       return (
-        <div className="flex justify-center text-primary">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreVertical className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {dropDownMenuData.map((data) => (
-                <DropdownMenuItem onClick={() => handleSelected(data)}>
-                  {data}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {isDialogOpen && (
-            <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
-              <DialogContent className="sm:max-w-[425px]">
-                <Button>Yes</Button>
-                <Button>No</Button>
-              </DialogContent>
-            </Dialog>
-          )}
+        <div className="">
+          <div className="pl-[1px]">
+            <div className="flex justify-center text-primary">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {!isLoading ? (
+                    <p>
+                      {dropDownMenuData &&
+                        dropDownMenuData.map((data) => (
+                          <DropdownMenuItem
+                            onClick={() => handleSelected(data)}
+                          >
+                            {data}
+                          </DropdownMenuItem>
+                        ))}
+                    </p>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <div>Loading...</div>
+                    </div>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              {isDialogOpen && (
+                <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <Button>Yes</Button>
+                    <Button>No</Button>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
+          </div>
         </div>
       );
     },
