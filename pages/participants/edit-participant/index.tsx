@@ -9,12 +9,21 @@ import { FormProvider } from "react-hook-form";
 import { Button } from "src/ui/button";
 import { Tabs, TabsTrigger } from "src/ui/tabs";
 import { useForm } from "@refinedev/react-hook-form";
+import { useSelect } from "@refinedev/core";
 export default function index() {
  
 
     const [selectedValue, setSelectedValue] = useState(
         "Participants Information"
     );
+    const selectQuery:any={
+        resource:"participant_registration",
+        optionLabel:"edit_participant",
+        optionvalue:"id",
+        meta:{select:"*,contact_id!inner(full_name),price_category_id!inner(*)"}
+    }
+    const {options,queryResult}=useSelect(selectQuery)
+    console.log(options,queryResult,"query result")
     const [selectedTab, setSelectedTab] = useState("Participants Information");
     const tabTriggers = [
         {
