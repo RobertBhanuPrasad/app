@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
@@ -244,9 +245,11 @@ export const columns: ExtendedColumnDef<any>[] = [
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
       const { data: loginUserData }: any = useGetIdentity();
+
+      //TODO: Need to use row only instead of this below api call
       const { data, isLoading } = useOne({
         resource: "program",
-        id: 1,
+        id: row.id,
       });
 
       const dropDownMenuData = DisplayOptions(
@@ -256,6 +259,8 @@ export const columns: ExtendedColumnDef<any>[] = [
       );
 
       const handleSelected = (value: string) => {
+        console.log("clicked on", value);
+
         switch (value) {
           case "View Participants": {
             // TODO - Navigate to Participants Listing page
@@ -269,6 +274,12 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
           case "Cancel Course": {
             setIsDialogOpen(true);
+          }
+          case "Edit course": {
+            console.log("clicking on edit course");
+            const { setViewPreviewPage } = newCourseStore();
+            setViewPreviewPage(true);
+          
           }
           default: {
             console.log("other options");
