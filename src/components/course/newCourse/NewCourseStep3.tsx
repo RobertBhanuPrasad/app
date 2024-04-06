@@ -1,51 +1,27 @@
-"use client";
-import Delete from "@public/assets/Delete";
-import EditIcon from "@public/assets/EditIcon";
-import SearchIcon from "@public/assets/SearchIcon";
-import {
-  CrudFilter,
-  useList,
-  useSelect,
-  CrudFilters,
-  useGetIdentity,
-} from "@refinedev/core";
-import _ from "lodash";
 import Add from "@public/assets/Add";
+import Arrow from "@public/assets/Arrow";
 import Clock from "@public/assets/Clock";
+import Delete from "@public/assets/Delete";
 import DropDown from "@public/assets/DropDown";
+import CalenderIcon from "@public/assets/CalenderIcon";
+import Calender from "@public/assets/CalenderIcon";
+import { CrudFilters, useList, useSelect } from "@refinedev/core";
+import { format, setDate } from "date-fns";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
-import { Badge } from "src/ui/badge";
 import { Button } from "src/ui/button";
-import { Checkbox } from "src/ui/checkbox";
 import { DateCalendar } from "src/ui/DateCalendar";
 import CustomSelect from "src/ui/custom-select";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "src/ui/dialog";
-import CalenderIcon from "@public/assets/CalenderIcon";
-import { format, setDate } from "date-fns";
-import { X } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Input } from "src/ui/input";
-import { supabaseClient } from "src/utility";
-
-import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
-import { Label } from "src/ui/label";
-import useDebounce from "src/utility/useDebounceHook";
-import GetScrollTypesAlert from "@components/GetScrollAlert";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import { date } from "zod";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import {
@@ -69,14 +45,12 @@ function NewCourseStep3() {
   const { watch } = useFormContext();
   const formData = watch();
   return (
-    <div className="flex flex-col gap-8">
+    <div>
       <div>
         {formData?.courseTypeSettings?.is_online_program ? (
           <OnlineProgram />
         ) : (
-          <div className="mb-8">
-            <Venue />
-          </div>
+          <div>Render Venue</div>
         )}
       </div>
       <Schedules />
@@ -116,17 +90,7 @@ const OnlineProgram = () => {
           Please associate your course with a specific location for reporting
           purposes
         </div>
-        <div className="flex gap-7">
-          <div className="w-80">
-            <StateDropDown />
-          </div>
-          <div className="w-80">
-            <CityDropDown />
-          </div>
-          <div className="w-80">
-            <CenterDropDown />
-          </div>
-        </div>
+        <div>Location drop downs</div>
       </div>
     </div>
   );
@@ -347,205 +311,6 @@ const Sessions = () => {
   );
 };
 
-const Venue = () => {
-  const { watch, setValue, resetField } = useFormContext();
-
-  const removeVenue = () => {
-    setValue("newVenue", null);
-  };
-
-  const formData = watch();
-
-  const {
-    field: { onChange: isNewVenueOnchange },
-  } = useController({
-    name: "isNewVenue",
-  });
-
-  const { data } = useList({
-    resource: "venue",
-  });
-
-  const {
-    field: { value: existingVenue },
-  } = useController({
-    name: "existingVenue",
-  });
-
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "isNewVenueSelected",
-  });
-
-  const handleAddNewVenue = () => {
-    setValue("newVenue", {
-      city_id: formData?.city_id,
-      city: formData?.city,
-      state_id: formData?.state_id,
-      state: formData?.state,
-      center_id: formData?.center_id,
-      center: formData?.center,
-      postal_code: formData?.postal_code,
-      address: formData?.address,
-      name: formData?.name,
-    });
-  };
-
-  const handleOpenEditNewVenue = () => {
-    setValue("name", formData?.newVenue?.name);
-    setValue("address", formData?.newVenue?.address);
-    setValue("state_id", formData?.newVenue?.state_id);
-    setValue("state", formData?.newVenue?.state);
-    setValue("city_id", formData?.newVenue?.city_id);
-    setValue("city", formData?.newVenue?.city);
-    setValue("center_id", formData?.newVenue?.center_id);
-    setValue("center", formData?.newVenue?.center);
-    setValue("postal_code", formData?.newVenue?.postal_code);
-    isNewVenueOnchange(true);
-  };
-
-  const handleOpenAddNewVenue = () => {
-    resetField("center_id");
-    resetField("state_id");
-    resetField("address");
-    resetField("postal_code");
-    resetField("city_id");
-    resetField("name");
-    isNewVenueOnchange(true);
-  };
-
-  return (
-    <div>
-      <RadioGroup
-        className="flex flex-row gap-7"
-        onValueChange={onChange}
-        value={value}
-      >
-        <Label htmlFor="existing-venue">
-          <div
-            className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
-              value === "existing-venue"
-                ? "border border-[#7677F4]"
-                : "border border-[#D6D7D8]"
-            }`}
-          >
-            <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
-              <RadioGroupCircleItem
-                value="existing-venue"
-                id="existing-venue"
-                className={` ${
-                  value == "existing-venue"
-                    ? "!bg-[#7677F4] "
-                    : "border !border-[#D6D7D8] border-[1.5px] "
-                }`}
-              />
-              <div>Existing Venue</div>
-            </div>
-            {data ? (
-              <div>
-                {existingVenue ? (
-                  <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                    {formData?.existingVenue?.address},
-                    {formData?.existingVenue?.postal_code}
-                  </div>
-                ) : (
-                  <div className="pl-[30px] leading-6 font-normal">
-                    Select a venue by clicking “View All” button
-                  </div>
-                )}
-                {!(value === "new-venue") && (
-                  <Dialog>
-                    <DialogTrigger>
-                      <Badge
-                        variant="outline"
-                        className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
-                      >
-                        View All
-                      </Badge>
-                    </DialogTrigger>
-                    <DialogContent className="w-[858px] h-[585px] rounded-[24px] ">
-                      <ExistingVenueList />
-                    </DialogContent>
-                  </Dialog>
-                )}
-              </div>
-            ) : (
-              <div className="px-[30px] leading-6 font-normal">
-                No existing venue found
-              </div>
-            )}
-          </div>
-        </Label>
-        {formData?.newVenue ? (
-          <Label htmlFor="new-venue">
-            <div
-              className={`w-[494px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
-                value === "new-venue"
-                  ? "border border-[#7677F4]"
-                  : "border border-[#D6D7D8]"
-              }`}
-            >
-              <div className=" flex flex-row justify-between">
-                <div className="text-[16px] font-semibold text-[#7677F4] gap-3 flex flex-row">
-                  <RadioGroupCircleItem
-                    value="new-venue"
-                    id="new-venue"
-                    className={` ${
-                      value == "new-venue"
-                        ? "!bg-[#7677F4] "
-                        : "border !border-[#D6D7D8] border-[1.5px] "
-                    }`}
-                  />
-                  <div>New Venue</div>
-                </div>
-                <div className="flex flex-row gap-3">
-                  <Dialog>
-                    <DialogTrigger onClick={handleOpenEditNewVenue}>
-                      <EditIcon />
-                    </DialogTrigger>
-                    <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-                      <AddOrEditVenue handleSubmit={handleAddNewVenue} />
-                    </DialogContent>
-                  </Dialog>
-
-                  <Dialog>
-                    <DialogTrigger>
-                      <Delete />
-                    </DialogTrigger>
-                    <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                      <DeleteVenueComponent
-                        handleDeleteVenue={() => {
-                          removeVenue();
-                        }}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </div>
-              <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                {formData?.newVenue?.address},{formData?.newVenue?.city?.name},
-                {formData?.newVenue?.postal_code}
-              </div>
-            </div>
-          </Label>
-        ) : (
-          <Dialog>
-            <DialogTrigger onClick={handleOpenAddNewVenue}>
-              <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
-                + Add New Venue
-              </div>
-            </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-              <AddOrEditVenue handleSubmit={handleAddNewVenue} />
-            </DialogContent>
-          </Dialog>
-        )}
-      </RadioGroup>
-    </div>
-  );
-};
-
 const TimePicker = ({
   index,
   is12HourFormat,
@@ -718,317 +483,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
           Submit
         </Button>
       </div>
-    </div>
-  );
-};
-
-const ExistingVenueList = () => {
-  const { setValue, watch } = useFormContext();
-
-  const formData = watch();
-
-  const [searchValue, searchOnChange] = useState<string>("");
-
-  const debouncedSearchValue = useDebounce(searchValue, 500);
-
-  const [otherVenueSkip, setOtherVenueSkip] = useState<number>(0);
-
-  const [venueData, setVenueData] = useState<any[]>([]);
-
-  const {
-    field: { value: deletedVenueIds = [], onChange: deleteVenueIdOnChange },
-  } = useController({
-    name: "deletedVenueID",
-  });
-
-  const {
-    field: { onChange: setIsNewVenue },
-  } = useController({
-    name: "isNewVenue",
-  });
-
-  const {
-    field: { onChange: isNewVenueSelectedOnchange },
-  } = useController({
-    name: "isNewVenueSelected",
-  });
-
-  const fetchLoginUserVenue = async () => {
-    const { data } = await supabaseClient
-      .from("venue_view_with_names")
-      .select("*")
-      .eq("created_by_user_id", "1")
-      .or(
-        `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
-      );
-
-    return data;
-  };
-
-  const fetchOtherVenues = async () => {
-    const { data } = await supabaseClient
-      .from("venue_view_with_names")
-      .select("*")
-      // .neq("created_by_user_id", "1")
-      .or(
-        `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
-      )
-      .range(otherVenueSkip, otherVenueSkip + 5);
-
-    return data;
-  };
-
-  const fetchVenueData = async () => {
-    const loginUserVenues = ((await fetchLoginUserVenue()) as any[]) ?? [];
-    const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
-    let modifiedVenueData = [...loginUserVenues, ...otherVenueData];
-    if (existingVenue) {
-      modifiedVenueData = [existingVenue, ...modifiedVenueData];
-      modifiedVenueData = _.uniqBy(modifiedVenueData, "id");
-    }
-    setVenueData(modifiedVenueData);
-  };
-
-  //Fetching initial Data of venues
-  useEffect(() => {
-    if (venueData?.length == 0) fetchVenueData();
-  }, []);
-
-  //Fetching venue data after search
-  useEffect(() => {
-    setVenueData([]);
-    setOtherVenueSkip(0);
-
-    fetchVenueData();
-  }, [debouncedSearchValue]);
-
-  let filteredVenueData = venueData.filter(
-    (obj: { id: number }) => !deletedVenueIds.includes(obj.id)
-  );
-
-  const deleteVenue = (id: any) => {
-    deleteVenueIdOnChange([...deletedVenueIds, id]);
-  };
-
-  //fetching other venue data after scrolling
-  useEffect(() => {
-    const fetchOtherVenueDataAfterScroll = async () => {
-      const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
-      setVenueData([...filteredVenueData, ...otherVenueData]);
-    };
-    fetchOtherVenueDataAfterScroll();
-  }, [otherVenueSkip]);
-
-  const onBottomReached = () => {
-    if (filteredVenueData && filteredVenueData?.length >= 6)
-      setOtherVenueSkip((previousLimit: number) => previousLimit + 6);
-  };
-
-  const handleCheckboxChange = (item: any) => {
-    setValue("venueId", item.id);
-  };
-  const {
-    field: { value: existingVenue, onChange: existingVenueOnChange },
-  } = useController({
-    name: "existingVenue",
-  });
-
-  const handleSubmitVenueList = () => {
-    const existingVenueObject = venueData.filter(
-      (venue) => venue.id == formData?.venueId
-    );
-    existingVenueOnChange(existingVenueObject?.[0]);
-  };
-
-  const { data: loginUserData }: any = useGetIdentity();
-
-  const user_roles: any[] = loginUserData?.userData?.user_roles;
-
-  const isUserNationAdminOrSuperAdmin = user_roles?.find(
-    (role) =>
-      role.role_id.value == "National Admin" ||
-      role.role_id.value == "Super Admin"
-  );
-
-  const handleOpenExistingVenue = (item: any) => {
-    setIsNewVenue(false);
-    setValue("name", item?.name);
-    setValue("address", item?.address);
-    setValue("state_id", item?.state_id);
-    setValue("city_id", item?.city_id);
-    setValue("center_id", item?.center_id);
-    setValue("postal_code", item?.postal_code);
-  };
-
-  const handleSubmitExistingVenue = (index: number) => {
-    const allVenuesData = [...venueData];
-    (allVenuesData[index] = {
-      ...allVenuesData[index],
-      name: formData?.name,
-      address: formData?.address,
-      state_id: formData?.state_id,
-      city_id: formData?.city_id,
-      center_id: formData?.center_id,
-      postal_code: formData?.postal_code,
-    }),
-      setVenueData(allVenuesData);
-  };
-
-  return (
-    <div>
-      <div className="w-[858px]  rounded-[24px]  pt-6 !pl-4 !pr-4 ">
-        <div className="flex justify-center text-[24px] font-semibold">
-          Existing Venues
-        </div>
-        <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto mt-4">
-          <Input
-            placeholder="Search by Venue Name, City or state"
-            className="border border-gray-400 rounded-lg pl-10"
-            value={searchValue}
-            onChange={(val) => {
-              searchOnChange(val.target.value);
-            }}
-          />
-          <div className="absolute left-0 top-0 m-2.5 h-4 w-4 text-muted-foreground">
-            <SearchIcon />
-          </div>
-        </div>
-        <GetScrollTypesAlert
-          id={"options"}
-          onBottom={() => {
-            onBottomReached();
-          }}
-        >
-          <div
-            className=" h-[344px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
-            id={"options"}
-          >
-            {/* <div className="flex flex-row flex-wrap gap-6 "> */}
-            {filteredVenueData?.map((item: any, index: number) => {
-              return (
-                <div className="flex  flex-row !w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <Checkbox
-                    id={item.id}
-                    value={item.id}
-                    onCheckedChange={() => handleCheckboxChange(item)}
-                    checked={formData?.venueId == item.id ? true : false}
-                  />
-                  <div className="space-y-1 leading-none w-full">
-                    <div className="flex justify-between">
-                      <div className="font-semibold">{item.name}</div>
-                      <div className="flex flex-row gap-3">
-                        {true && (
-                          // isUserNationAdminOrSuperAdmin ||
-                          // item?.created_by_user_id ==
-                          //   loginUserData?.userData?.id
-                          <Dialog>
-                            <DialogTrigger
-                              onClick={() => {
-                                handleOpenExistingVenue(item);
-                              }}
-                            >
-                              <EditIcon />
-                            </DialogTrigger>
-                            <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-                              <AddOrEditVenue
-                                handleSubmit={() => {
-                                  handleSubmitExistingVenue(index);
-                                }}
-                              />
-                            </DialogContent>
-                          </Dialog>
-                        )}
-                        {true && (
-                          // isUserNationAdminOrSuperAdmin
-                          <Dialog>
-                            <DialogTrigger>
-                              <Delete />
-                            </DialogTrigger>
-                            <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                              <DeleteVenueComponent
-                                handleDeleteVenue={() => {
-                                  deleteVenue(item?.id);
-                                }}
-                              />
-                            </DialogContent>
-                          </Dialog>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="leading-tight">
-                      {item.address} {item.postal_code}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-            {/* </div> */}
-          </div>
-        </GetScrollTypesAlert>
-      </div>
-      <div className="w-full flex items-center justify-center mt-8">
-        <DialogClose>
-          <Button
-            type="submit"
-            onClick={() => {
-              isNewVenueSelectedOnchange("existing-venue");
-              handleSubmitVenueList();
-            }}
-          >
-            Submit
-          </Button>
-        </DialogClose>
-      </div>
-    </div>
-  );
-};
-
-export const AddOrEditVenue = ({
-  handleSubmit,
-}: {
-  handleSubmit: () => void;
-}) => {
-  const { watch } = useFormContext();
-
-  const formData = watch();
-
-  const isNewVenue = formData?.isNewVenue;
-
-  return (
-    <div>
-      {isNewVenue ? (
-        <div className="flex justify-center text-[24px] font-semibold">
-          New Venue
-        </div>
-      ) : (
-        <div className="flex justify-center text-[24px] font-semibold">
-          Edit Venue
-        </div>
-      )}
-      {/* TODO : Integrated after solving the error }
-      {/* <MapComponent /> */}
-      <div className="w-[586px] h-[160px] border my-5"></div>
-      <div className="flex flex-row gap-[30px]">
-        <div className="flex flex-col gap-5">
-          <VenueNameComponent />
-          <PostalCodeComponent />
-          <CityDropDown />
-        </div>
-
-        <div className="flex flex-col gap-5">
-          <StreetAddressComponent />
-          <StateDropDown />
-          <CenterDropDown />
-        </div>
-      </div>
-      <DialogFooter>
-        <div className="w-full flex items-center justify-center mt-5">
-          <DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
-          </DialogClose>
-        </div>
-      </DialogFooter>
     </div>
   );
 };
@@ -1251,37 +705,5 @@ const TimeSelector = ({
         </div>
       </PopoverContent>
     </Popover>
-  );
-};
-
-const DeleteVenueComponent = ({
-  handleDeleteVenue,
-}: {
-  handleDeleteVenue: () => void;
-}) => {
-  return (
-    <div>
-      <DialogHeader>
-        <DialogTitle className="flex justify-center">Delete</DialogTitle>
-        <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-          Are you sure you want to delete the address
-        </DialogDescription>
-      </DialogHeader>
-      <DialogFooter className="w-full flex !justify-center gap-6">
-        <DialogClose>
-          <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-            No
-          </Button>
-        </DialogClose>
-        <DialogClose>
-          <Button
-            className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
-            onClick={handleDeleteVenue}
-          >
-            Yes
-          </Button>
-        </DialogClose>
-      </DialogFooter>
-    </div>
   );
 };

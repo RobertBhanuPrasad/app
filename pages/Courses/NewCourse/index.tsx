@@ -1,5 +1,5 @@
 import Form from "@components/Formfield";
-import NewCourseReviewPage from "@components/course/newCourse/NewCourseReviewPage";
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
 import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
 import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
@@ -14,18 +14,6 @@ import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import { useGetIdentity } from "@refinedev/core";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import {
-  NewCourseStep1FormNames,
-  NewCourseStep2FormNames,
-  NewCourseStep3FormNames,
-  NewCourseStep4FormNames,
-  NewCourseStep5FormNames,
-  NewCourseStep6FormNames,
-} from "src/constants/CourseConstants";
-import { stepStore } from "src/zustandStore/StepStore";
-import { useValidateCurrentStepFields } from "./ValidateCurrentStep";
-import { z } from "zod";
 import { useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
@@ -34,6 +22,12 @@ import {
   COURSE_DETAILS_STEP_NUMBER,
   FEE_STEP_NUMBER,
   TIME_AND_VENUE_STEP_NUMBER,
+  NewCourseStep1FormNames,
+  NewCourseStep2FormNames,
+  NewCourseStep3FormNames,
+  NewCourseStep4FormNames,
+  NewCourseStep5FormNames,
+  NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
 import { Button } from "src/ui/button";
@@ -41,11 +35,17 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { VISIBILITY } from "src/constants/OptionLabels";
 import { PUBLIC } from "src/constants/OptionValueOrder";
 
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { stepStore } from "src/zustandStore/StepStore";
+import { z } from "zod";
+import { useValidateCurrentStepFields } from "./ValidateCurrentStep";
+
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
+  console.log(loginUserData);
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
   }

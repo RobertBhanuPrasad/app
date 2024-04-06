@@ -93,47 +93,36 @@ const RegistrationGateway = () => {
     </div>
   );
 };
-
 const RadioCards = () => {
   const {
     field: { value, onChange },
   } = useController({
     name: NewCourseStep1FormNames?.program_created_by,
   });
-
   const iAmTeachingId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_TEACHING
   )?.id;
-
   const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_CO_TEACHING
   )?.id;
-
   const iAmOrganizerId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_ORGANIZER
   )?.id;
-
   const { data: loginUserData }: any = useGetIdentity();
-
   const user_roles: any[] = loginUserData?.userData?.user_roles;
-
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
-
   const loginInTeacherData = loginUserData?.userData?.id;
-
   const {
     field: { value: teachers, onChange: teachersOnChange },
   } = useController({
     name: NewCourseStep2FormNames?.teacher_ids,
   });
-
   const handleOnChange = (val: string) => {
     onChange(parseInt(val));
-
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
     if (parseInt(val) != iAmOrganizerId) {
       //If teachers does not exist prefill with login user
@@ -148,7 +137,6 @@ const RadioCards = () => {
       }
     }
   };
-
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
@@ -246,7 +234,6 @@ const RadioCards = () => {
               <Organizer
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
-
               <div className="w-[240px] text-wrap text-center justify-center">
                 I am organizing this course for another teacher
               </div>

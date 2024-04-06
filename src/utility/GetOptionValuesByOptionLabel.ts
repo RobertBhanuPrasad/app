@@ -44,14 +44,12 @@ export const getOptionValueObjectById = (
   const { optionLabelValue } = optionLabelValueStore();
   const foundOptionValue = _.find(
     optionLabelValue,
-    (val) => val.id === optionLabel
+    (val) => val.key === optionLabel
   );
   return foundOptionValue
-    ? _.find(foundOptionValue.option_values, { id: id })
+    ? _.find(foundOptionValue.option_values, (val) => val.id === id)
     : undefined;
 };
-
-//TODO: Will use this function after completion of MAP Component
 // export const fetchLongitudeLatitudeData = async (address: string) => {
 //   const provider = new OpenStreetMapProvider();
 

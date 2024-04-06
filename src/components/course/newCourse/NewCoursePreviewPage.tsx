@@ -1,4 +1,4 @@
-import { useOne } from '@refinedev/core'
+import { useMany, useOne } from '@refinedev/core'
 import { useState } from 'react'
 import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT } from 'src/constants/OptionLabels'
 import { Button } from 'src/ui/button'
@@ -19,7 +19,6 @@ export default function NewCourseReviewPage() {
   const creator =
     newCourseData?.program_created_by &&
     getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by)
-
   const timeFormat =
     newCourseData?.hour_format_id && getOptionValueObjectById(TIME_FORMAT, newCourseData?.hour_format_id)
 
@@ -28,70 +27,72 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.organization_id
   })
 
-  const getUserName = (user_id: number) => {
-    const { data: userName } = useOne({
-      resource: 'users',
-      id: user_id
-    })
-    return userName
-  }
-  const getLanguageName = (id: number) => {
-    const { data: userName } = useOne({
-      resource: 'languages',
-      id: id
-    })
-    return userName
-  }
+  const { data: ProgramOrganizer } = useMany({
+    resource: 'users',
+    ids: newCourseData?.organizer_ids,
+    meta: { select: 'contact_id(full_name)' }
+  })
 
-  const programOrganizers = newCourseData?.organizer_ids
-    ?.map((user_id: any) => {
-      return getUserName(user_id)?.data?.user_name
+  const programOrganizersNames = ProgramOrganizer?.data
+    ?.map(user_id => {
+      if (user_id?.contact_id?.full_name) return user_id?.contact_id?.full_name
     })
-    .join(',')
+    .join(', ')
+
+  const { data: CourseLanguages } = useMany({
+    resource: 'languages',
+    ids: newCourseData?.language_ids,
+    meta: { select: 'language_name' }
+  })
+
+  const courselLanguageName = CourseLanguages?.data
+    ?.map((language: any) => {
+      if (language?.language_name) return language?.language_name
+    })
+    .join(', ')
+
+  const contactNames = newCourseData?.contact?.map((contactDetails: any) => {
+    return contactDetails
+  })
+  // const { data: CourseTranslation } = useMany({
+  //   resource: 'program_translation_languages',
+  //   ids: newCourseData?.translation_language_ids,
+  //   meta: { select: 'language_name' }
+  // })
+
+  // TODO After completion karthik work need to update
+
+  // const { data: CourseTeachers } = useMany({
+  //   resource: 'users',
+  //   ids: newCourseData?.teacher_ids,
+  //   meta: { select: 'contact_id(full_name)' }
+  // })
+
+  // const CourseTeachersNames = CourseTeachers?.data?.map(teacher_id => {
+  //   if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
+  // })
 
   const { data: courseType } = useOne({
     resource: 'program_types',
     id: newCourseData?.program_type_id
   })
 
-  const teachers = newCourseData?.teacher_ids
-    ?.map((user_id: any) => {
-      console.log('user id', user_id)
-
-      return getUserName(user_id)?.data?.user_name
-    })
-    .join(',')
-
-  const languages = newCourseData?.language_ids
-    ?.map((id: any) => {
-      console.log('user id', id)
-
-      return getLanguageName(id)?.data?.name
-    })
-    .join(',')
-
   const languagesTranslations = newCourseData?.translation_language_ids
     ?.map((id: any) => {
-      console.log('user id', id)
-
       return getLanguageName(id)?.data?.name
     })
-    .join(',')
+    .join(', ')
 
   const allowedCountries = newCourseData?.allowed_countries
     ?.map((data: any) => {
       return data.value
     })
-    .join(',')
-
-  console.log(courseType, 'program')
+    .join(', ')
 
   const { data: timeZone } = useOne({
     resource: 'time_zones',
     id: newCourseData?.time_zone_id
   })
-
-  console.log(timeZone, 'time')
 
   const [openBasicDetails, setOpenBasicDetails] = useState(false)
   const [openCourseDetails, setOpenCourseDetails] = useState(false)
@@ -135,7 +136,7 @@ export default function NewCourseReviewPage() {
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Program Organizer</p>
               <p className="font-semibold truncate text-accent-secondary">
-                {programOrganizers ? programOrganizers : '-'}
+                {programOrganizersNames ? programOrganizersNames : '-'}
               </p>
             </div>
             <div className=" min-w-72">
@@ -187,11 +188,13 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Teacher</p>
-              <p className="font-semibold truncate text-accent-secondary">{teachers ? teachers : '-'}</p>
+              <p className="font-semibold truncate text-accent-secondary">{'teachers' ? 'teachers' : '-'}</p>
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Language(s) course is taught in</p>
-              <p className="font-semibold truncate text-accent-secondary">{languages ? languages : '-'}</p>
+              <p className="font-semibold truncate text-accent-secondary">
+                {courselLanguageName ? courselLanguageName : '-'}
+              </p>
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Available language(s) for translation</p>
@@ -423,15 +426,15 @@ export default function NewCourseReviewPage() {
               <div className="grid grid-cols-3 gap-4 pb-4 mt-2 border-b">
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light ">Contact Email</p>
-                  <p className="font-semibold truncate text-accent-secondary">MYR {data?.contactEmail}</p>
+                  <p className="font-semibold truncate text-accent-secondary">{data?.contact_email}</p>
                 </div>
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light ">Contact Phone</p>
-                  <p className="font-semibold truncate text-accent-secondary">MYR {data?.contactMobile}</p>
+                  <p className="font-semibold truncate text-accent-secondary">{data?.contact_number}</p>
                 </div>
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light ">Contact Name</p>
-                  <p className="font-semibold truncate text-accent-secondary">MYR {data?.contactName}</p>
+                  <p className="font-semibold truncate text-accent-secondary">{data?.contact_name}</p>
                 </div>
               </div>
             )
@@ -440,7 +443,9 @@ export default function NewCourseReviewPage() {
           <div className="mt-4 min-w-72">
             <p className="text-sm font-normal text-accent-light">BCC registration confirmation email</p>
             <p className="font-semibold truncate text-accent-secondary">
-              {newCourseData?.contact?.courseEmails ? newCourseData?.contact?.courseEmails : '-'}
+              {newCourseData?.bcc_registration_confirmation_email
+                ? newCourseData?.bcc_registration_confirmation_email
+                : '-'}
             </p>
           </div>
         </section>
