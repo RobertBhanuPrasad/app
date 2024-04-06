@@ -1,3 +1,4 @@
+import ParticipantsTab from "@components/course/viewCourse/participantsTab";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -65,7 +66,7 @@ function index() {
           Place course details tab here
         </TabsContent>
         <TabsContent value={PARTICIPANTS_TAB}>
-          Place participant tab here
+          <ParticipantsTab />
         </TabsContent>
         <TabsContent value={REVENUE_SUMMARY_TAB}>
           Place Revenue Summary tab here

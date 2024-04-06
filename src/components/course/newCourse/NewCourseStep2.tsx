@@ -6,8 +6,20 @@ import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
-import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
-import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import {
+  CERTIFICATION_TYPE,
+  PROGRAM_CATEGORY,
+  PROGRAM_ORGANIZER_TYPE,
+  VISIBILITY,
+} from "src/constants/OptionLabels";
+import {
+  ASSIST,
+  COURSE,
+  I_AM_ORGANIZER,
+  PRIVATE,
+  PUBLIC,
+  SUPER_ADMIN,
+} from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import {
   HoverCard,
@@ -35,6 +47,8 @@ export default function NewCourseStep2() {
   const formData = watch();
 
   const { data: loginUserData }: any = useGetIdentity();
+
+  // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
@@ -45,13 +59,13 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <CourseTypeDropDown />
         </div>
-        {formData?.program_type?.has_alias_name && (
+        {/* Course Name drop will come from settings */}
+        {/* //TODO: Need to BussinessLayer for this with proper code */}
+        {formData?.program_type?.has_alias_name === true && (
           <div className="w-80 h-20">
             <CourseNameDropDown />
           </div>
         )}
-
-        {/* )} */}
         <div className="w-80 h-20">
           <TeachersDropDown />
         </div>
@@ -67,7 +81,7 @@ export default function NewCourseStep2() {
             <DisplayLanguage />
           </div>
         )}
-        {formData?.is_language_translation_for_participants == "true" && (
+        {formData?.is_language_translation_for_participants == true && (
           <div className="w-80 h-20">
             <LanguageTranslationDropDown />
           </div>
@@ -87,7 +101,7 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <GeoRestriction />
         </div>
-        {formData?.is_geo_restriction_applicable == "true" && (
+        {formData?.is_geo_restriction_applicable && (
           <div className="w-80 h-20">
             <AllowedCountriesDropDown />
           </div>
@@ -151,37 +165,50 @@ export const CourseTypeDropDown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
+  const [searchValue, searchOnChange] = useState("");
+
   const formData = watch();
 
+  const courseCategoryId = getOptionValueObjectByOptionOrder(
+    PROGRAM_CATEGORY,
+    COURSE
+  )?.id;
+
+  //Requirement: Fetch only the course types of organization selected in Step-1
   let filter: Array<CrudFilter> = [
-    //TODO: We need to filter the below but right now these columns arent existing in the API
-    // {
-    //   field: "organization_id",
-    //   operator: "eq",
-    //   value: formData?.organization_id,
-    // },
-    // {
-    //   field: "program_category_id.value",
-    //   operator: "eq",
-    //   value: "Course",
-    // },
+    {
+      field: "organization_id",
+      operator: "eq",
+      value: formData?.organization_id,
+    },
+    {
+      field: "program_category_id",
+      operator: "eq",
+      value: courseCategoryId,
+    },
   ];
 
-  // if (formData?.teachers?.length > 0) {
-  //   const programTypeIds: number[] = [];
-  //   formData?.teachers?.map((val: any) => {
-  //     val?.value?.program_type_teachers?.map(
-  //       (val: { program_type_id: number }) =>
-  //         programTypeIds.push(val?.program_type_id)
-  //     );
-  //   });
+  //Need to filter course types based on teacher and assistant teacher
+  if (
+    formData?.teacher_ids?.length > 0 ||
+    formData?.assistant_teacher_ids?.length > 0
+  ) {
+    let userIds: number[] = [];
 
-  //   filter.push({
-  //     field: "id",
-  //     operator: "in",
-  //     value: programTypeIds,
-  //   });
-  // }
+    if (formData?.teacher_ids?.length > 0) {
+      userIds = [...userIds, ...formData?.teacher_ids];
+    }
+
+    if (formData?.assistant_teacher_ids?.length > 0) {
+      userIds = [...userIds, ...formData?.assistant_teacher_ids];
+    }
+
+    filter.push({
+      field: "program_type_teachers.user_id",
+      operator: "in",
+      value: userIds,
+    });
+  }
 
   const {
     field: { value, onChange },
@@ -192,9 +219,9 @@ export const CourseTypeDropDown = () => {
 
   const selectQuery: any = {
     resource: "program_types",
-    optionLabel: "name",
-    optionValue: "id",
-    // meta: { select: "*,program_category_id!inner(*)" },
+    meta: {
+      select: "*,program_type_teachers!inner(user_id)",
+    },
     onSearch: (value: any) => [
       {
         field: "name",
@@ -202,8 +229,7 @@ export const CourseTypeDropDown = () => {
         value,
       },
     ],
-    //TODO: Need to uncomment when we working on filters
-    // filters: filter,
+    filters: filter,
     pagination: {
       pageSize: pageSize,
       mode: "server",
@@ -214,7 +240,15 @@ export const CourseTypeDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { options, onSearch, queryResult } = useSelect(selectQuery);
+  const { onSearch, queryResult } = useSelect(selectQuery);
+
+  const options: { label: string; value: number }[] =
+    queryResult?.data?.data?.map((programType) => {
+      return {
+        label: programType?.name,
+        value: programType?.id,
+      };
+    }) as { label: string; value: number }[];
 
   const {
     field: { onChange: setCourseTypeSettings },
@@ -225,7 +259,7 @@ export const CourseTypeDropDown = () => {
   /**
    * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
    * @function getCourseTypeSettings
-   * @param val 
+   * @param val
    * This functions sets the data which is came from program_types table usign the id we have  in the setCourseTypeSettings redux variable
    */
   const getCourseTypeSettings = async (val: any) => {
@@ -238,12 +272,10 @@ export const CourseTypeDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10);
+    if (queryResult?.data?.data && queryResult?.data?.total >= pageSize) {
+      setPageSize((previousLimit: number) => previousLimit + 10);
+    }
   };
-
-  // if (queryResult.isLoading) {
-  //   return null;
-  // }
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
@@ -256,17 +288,22 @@ export const CourseTypeDropDown = () => {
           getCourseTypeSettings(val);
         }}
       >
-        <SelectTrigger className="w-[320px]" error={courseTypeError ? true : false}>
+        <SelectTrigger
+          className="w-[320px]"
+          error={courseTypeError ? true : false}
+        >
           <SelectValue placeholder="Select course type" />
         </SelectTrigger>
         <SelectContent>
           <Input
+            value={searchValue}
             onChange={(value: ChangeEvent<HTMLInputElement>) => {
+              searchOnChange(value.target.value);
               onSearch(value.target.value);
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
-            {options.map((option: any, index: number) => (
+            {options?.map((option: any, index: number) => (
               <>
                 <SelectItem
                   key={option.value}
@@ -314,6 +351,10 @@ const RegistrationGateway = () => {
 const CourseNameDropDown = () => {
   const [pageSize, setPageSize] = useState(10);
 
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
   const { options, onSearch, queryResult } = useSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
@@ -326,10 +367,11 @@ const CourseNameDropDown = () => {
       },
     ],
     filters: [
+      //Need to fetch alias names of program_types
       {
         field: "program_type_id",
         operator: "eq",
-        value: 1,
+        value: formData?.program_type_id,
       },
     ],
     pagination: {
@@ -347,7 +389,9 @@ const CourseNameDropDown = () => {
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10);
+    if (queryResult?.data?.data && queryResult?.data?.total >= pageSize) {
+      setPageSize((previousLimit: number) => previousLimit + 10);
+    }
   };
 
   return (
@@ -362,8 +406,7 @@ const CourseNameDropDown = () => {
           onChange(val);
         }}
       >
-        <SelectTrigger className="w-[320px]" error = {error ? true : false}
->
+        <SelectTrigger className="w-[320px]" error={error ? true : false}>
           <SelectValue placeholder="Select course alias name" />
         </SelectTrigger>
         <SelectContent>
@@ -405,6 +448,13 @@ const TeachersDropDown = () => {
 
   const formData = watch();
 
+  const {
+    field: { value, onChange },
+    fieldState: { error: teachersErrors },
+  } = useController({
+    name: NewCourseStep2FormNames?.teacher_ids,
+  });
+
   const iAmOrganizerId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_ORGANIZER
@@ -412,24 +462,24 @@ const TeachersDropDown = () => {
 
   let filter: Array<CrudFilter> = [];
 
-  if (formData?.courseType?.value) {
+  if (formData?.program_type_id) {
     filter.push({
       field: "program_type_teachers.program_type_id",
       operator: "eq",
-      value: formData?.courseType?.value,
+      value: formData?.program_type_id,
     });
   }
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const { queryResult, onSearch } = useSelect({
+  const selectQuery: any = {
     resource: "users",
     meta: {
       select:
         "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
     },
     filters: filter,
-    onSearch: (value) => [
+    onSearch: (value: any) => [
       {
         field: "contact_id.full_name",
         operator: "contains",
@@ -437,29 +487,29 @@ const TeachersDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
-  });
+  };
+
+  if (value) {
+    selectQuery.defaultValue = value;
+  }
+
+  const { queryResult, onSearch } = useSelect(selectQuery);
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (queryResult && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    if (queryResult && (queryResult?.data?.total as number) >= pageSize) {
+      setPageSize((previousLimit: number) => previousLimit + 10);
+    }
   };
 
   const teachers: any = queryResult.data?.data?.map((val) => {
     return {
       label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
-      value: val,
+      value: val?.id,
     };
-  });
-
-  const {
-    field: { value, onChange },
-    fieldState: { error: teachersErrors },
-  } = useController({
-    name: NewCourseStep2FormNames?.teacher_ids,
   });
 
   return (
@@ -479,7 +529,7 @@ const TeachersDropDown = () => {
         getOptionProps={(option: { value: { id: number } }) => {
           //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
           if (
-            option.value?.id === loginUserData?.userData?.id &&
+            option.value === loginUserData?.userData?.id &&
             formData?.programOrganizedBy != iAmOrganizerId
           ) {
             return {
@@ -505,23 +555,29 @@ const TeachersDropDown = () => {
 const AssistantTeachersDropDown = () => {
   const { watch } = useFormContext();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const formData = watch();
+
+  //Finding program Organizer role id
+  const certificationLevelId = getOptionValueObjectByOptionOrder(
+    CERTIFICATION_TYPE,
+    ASSIST
+  )?.id;
 
   let filter: Array<CrudFilter> = [
     {
       field: "program_type_teachers.certification_level_id",
       operator: "eq",
-      value: "38",
+      value: certificationLevelId,
     },
   ];
 
-  if (formData?.courseType?.value) {
+  if (formData?.program_type_id) {
     filter.push({
       field: "program_type_teachers.program_type_id",
       operator: "eq",
-      value: formData?.courseType?.value,
+      value: formData?.program_type_id,
     });
   }
 
@@ -540,21 +596,21 @@ const AssistantTeachersDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
   });
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (queryResult && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    if (queryResult && (queryResult?.data?.total as number) >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
   const teachers: any = queryResult.data?.data?.map((val) => {
     return {
       label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
-      value: val,
+      value: val?.id,
     };
   });
 
@@ -595,6 +651,17 @@ const Visibility = () => {
     name: NewCourseStep2FormNames?.visibility_id,
   });
 
+  //Finding program Organizer role id
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
+
+  const privateVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PRIVATE
+  )?.id;
+
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
@@ -629,17 +696,22 @@ const Visibility = () => {
         </HoverCard>
       </div>
 
-      <RadioGroup defaultValue="public" onValueChange={onChange} value={value}>
+      <RadioGroup
+        onValueChange={(val: string) => {
+          onChange(parseInt(val));
+        }}
+        value={JSON.stringify(value)}
+      >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="public"
-            selectedRadioValue={value}
+            value={JSON.stringify(publicVisibilityId)}
+            selectedRadioValue={JSON.stringify(value)}
             label="Public"
             className="w-[112px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
-            value="private"
-            selectedRadioValue={value}
+            value={JSON.stringify(privateVisibilityId)}
+            selectedRadioValue={JSON.stringify(value)}
             label="Private"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
@@ -661,17 +733,22 @@ const DisplayLanguage = () => {
       <div className="text-xs font-normal text-[#333333]">
         Display language translation option for participants *
       </div>
-      <RadioGroup value={value} onValueChange={onChange}>
+      <RadioGroup
+        value={JSON.stringify(value)}
+        onValueChange={(value) => {
+          value === "true" ? onChange(true) : onChange(false);
+        }}
+      >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
             value="true"
-            selectedRadioValue={value}
+            selectedRadioValue={JSON.stringify(value)}
             label="Yes"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
-            selectedRadioValue={value}
+            selectedRadioValue={JSON.stringify(value)}
             label="No"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
@@ -687,9 +764,6 @@ const GeoRestriction = () => {
   } = useController({
     name: NewCourseStep2FormNames?.is_geo_restriction_applicable,
   });
-  const {
-    formState: { errors },
-  } = useFormContext();
 
   return (
     <div className="flex gap-1 flex-col">
@@ -711,17 +785,22 @@ const GeoRestriction = () => {
         </HoverCard>
       </div>
 
-      <RadioGroup value={value} onValueChange={onChange}>
+      <RadioGroup
+        value={value}
+        onValueChange={(val: string) => {
+          val == "true" ? onChange(true) : onChange(false);
+        }}
+      >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
             value="true"
-            selectedRadioValue={value}
+            selectedRadioValue={JSON.stringify(value)}
             label="Yes"
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
-            selectedRadioValue={value}
+            selectedRadioValue={JSON.stringify(value)}
             label="No"
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
@@ -735,9 +814,7 @@ const LanguageDropDown = () => {
 
   const formData = watch();
 
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [selectOptions, setSelectOptions] = useState<any>();
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     field: { value, onChange },
@@ -751,6 +828,13 @@ const LanguageDropDown = () => {
     optionLabel: "language_name",
     optionValue: "id",
     defaultValue: value,
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: formData?.organization_id,
+      },
+    ],
     onSearch: (value) => [
       {
         field: "language_name",
@@ -759,35 +843,23 @@ const LanguageDropDown = () => {
       },
     ],
     pagination: {
-      pageSize: 20,
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
   });
 
-  useEffect(() => {
-    if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
-    else setSelectOptions(options);
-  }, [options]);
-
-  const filteredOptions = selectOptions?.filter((val: any) => {
-    if (
-      _.some(formData?.translationLanguages, (obj) => obj.value === val.value)
-    )
-      return false;
+  const filteredOptions = options?.filter((val: any) => {
+    if (formData?.translation_language_ids?.includes(val?.value)) return false;
     return true;
   });
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 20)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    if (options && (queryResult?.data?.total as number) >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
   const handleOnSearch = (value: any) => {
-    // For resetting the data to the first page which coming from the API
-    setCurrentPage(1);
-
     onSearch(value);
   };
 
@@ -820,12 +892,19 @@ const LanguageTranslationDropDown = () => {
 
   const formData = watch();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch, queryResult } = useSelect({
-    resource: "organization_languages",
+    resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: formData?.organization_id,
+      },
+    ],
     onSearch: (value) => [
       {
         field: "language_name",
@@ -834,22 +913,21 @@ const LanguageTranslationDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
   });
 
   const filteredOptions = options?.filter((val) => {
-    if (_.some(formData?.languages, (obj) => obj.value === val.value))
-      return false;
+    if (formData?.language_ids?.includes(val.value)) return false;
 
     return true;
   });
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    if (options && (queryResult?.data?.total as number) >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
   const {
@@ -860,7 +938,6 @@ const LanguageTranslationDropDown = () => {
   });
 
   const handleOnSearch = (value: any) => {
-    setCurrentPage(1);
     onSearch(value);
   };
 
@@ -894,7 +971,7 @@ const AllowedCountriesDropDown = () => {
     })
   );
 
-  const allowedCountries = formData?.courseTypeSettings?.allowed_countries;
+  const allowedCountries = formData?.program_type?.allowed_countries;
 
   const allowedCountriesData = countryArray?.filter((val) =>
     allowedCountries?.includes(val?.value)

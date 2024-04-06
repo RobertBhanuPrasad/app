@@ -1,18 +1,17 @@
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
 import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
+import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
-import { Button } from "src/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import Fees from "@public/assets/Fees";
-import _ from "lodash";
-import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
-import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import { useGetIdentity } from "@refinedev/core";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import Form from "@components/Formfield";
@@ -31,24 +30,39 @@ import {
   NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/CourseConstants";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
+import { Button } from "src/ui/button";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { VISIBILITY } from "src/constants/OptionLabels";
+import { PUBLIC } from "src/constants/OptionValueOrder";
 import { validationSchema } from "./NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { JSX, SetStateAction, useState } from "react";
 import Success from "@public/assets/Success";
 import Error from "@public/assets/Error";
+import _ from "lodash";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { viewPreviewPage } = newCourseStore();
+  const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
-  // if (!loginUserData?.userData) {
-  //   return <div>Loading...</div>;
-  // }
+  console.log(loginUserData);
+  if (!loginUserData?.userData) {
+    return <div>Loading...</div>;
+  }
+
+  if (viewThankyouPage) {
+    return (
+      <div className="mb-8">
+        <NewCourseThankyouPage />;
+      </div>
+    );
+  }
 
   if (viewPreviewPage) {
-    return <div> Render Preview Page</div>;
+    return <NewCourseReviewPage />;
   } else {
     return <NewCourse />;
   }
@@ -63,10 +77,16 @@ function NewCourse() {
     // console.log(formData);
   };
 
+  //Finding program Organizer role id
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
+
   const defaultValues = {
-    [NewCourseStep2FormNames?.visibility_id]: "public",
-    [NewCourseStep2FormNames?.is_language_translation_for_participants]: "true",
-    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: "true",
+    [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
+    [NewCourseStep2FormNames?.is_language_translation_for_participants]: true,
+    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
     [NewCourseStep5FormNames?.is_residential_program]: "No",
     [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: "Pay Online",
     [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],

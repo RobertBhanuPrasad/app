@@ -32,6 +32,14 @@ import {
   SelectItems,
   SelectValue,
 } from "src/ui/select";
+import {
+  CenterDropDown,
+  CityDropDown,
+  PostalCodeComponent,
+  StateDropDown,
+  StreetAddressComponent,
+  VenueNameComponent,
+} from "@components/CommonComponents/DropDowns";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -83,8 +91,8 @@ const OnlineProgram = () => {
           </div>
         </div>
       </div>
-      <div>
-        <div className="">
+      <div className="flex gap-2 flex-col">
+        <div>
           Please associate your course with a specific location for reporting
           purposes
         </div>
@@ -186,7 +194,7 @@ const SchedulesHeader = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItems onBottomReached={() => {}}>
-                {options?.map((option,index) => {
+                {options?.map((option, index) => {
                   return (
                     <div>
                       <SelectItem
@@ -268,7 +276,7 @@ const Sessions = () => {
                     variant="outline"
                   >
                     <div>
-                      <CalenderIcon />
+                      <CalenderIcon color="#999999" />
                     </div>
                     <div>
                     {schedule?.date && format(new Date(schedule.date), "dd MMM, yyyy")}
