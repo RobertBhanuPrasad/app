@@ -7,6 +7,8 @@ interface NewCourseStore {
   setViewThankyouPage: (by: boolean) => void;
   newCourseData: any;
   setNewCourseData: (by: any) => void;
+  currentStep: number; // Corrected the type to number
+  setCurrentStep: (by: number) => void;
 }
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
@@ -26,6 +28,12 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   setNewCourseData: (data: any) => {
     set(() => ({
       newCourseData: data,
+    }));
+  },
+  currentStep: 1,
+  setCurrentStep: (data: number) => {
+    set(() => ({
+      currentStep: data,
     }));
   },
 }));

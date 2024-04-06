@@ -77,9 +77,9 @@ export default function NewCourseStep2() {
         </div>
         {/* Allow only for super Admin */}
         {hasSuperAdminRole && (
-        <div className="w-80 h-20">
-          <DisplayLanguage />
-        </div>
+          <div className="w-80 h-20">
+            <DisplayLanguage />
+          </div>
         )}
         {formData?.is_language_translation_for_participants == true && (
           <div className="w-80 h-20">
@@ -212,6 +212,7 @@ export const CourseTypeDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: courseTypeError },
   } = useController({
     name: NewCourseStep2FormNames?.program_type_id,
   });
@@ -255,6 +256,12 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.program_type,
   });
 
+  /**
+   * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
+   * @function getCourseTypeSettings
+   * @param val
+   * This functions sets the data which is came from program_types table usign the id we have  in the setCourseTypeSettings redux variable
+   */
   const getCourseTypeSettings = async (val: any) => {
     const courseSettings = queryResult?.data?.data.filter(
       (data) => data.id == val
@@ -281,7 +288,10 @@ export const CourseTypeDropDown = () => {
           getCourseTypeSettings(val);
         }}
       >
-        <SelectTrigger className="w-[320px]">
+        <SelectTrigger
+          className="w-[320px]"
+          error={courseTypeError ? true : false}
+        >
           <SelectValue placeholder="Select course type" />
         </SelectTrigger>
         <SelectContent>
@@ -310,6 +320,12 @@ export const CourseTypeDropDown = () => {
           </SelectItems>
         </SelectContent>
       </Select>
+
+      {courseTypeError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {courseTypeError?.message}
+        </span>
+      )}
     </div>
   );
 };
@@ -366,6 +382,7 @@ const CourseNameDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error },
   } = useController({
     name: NewCourseStep2FormNames?.program_alias_name_id,
   });
@@ -389,7 +406,7 @@ const CourseNameDropDown = () => {
           onChange(val);
         }}
       >
-        <SelectTrigger className="w-[320px]">
+        <SelectTrigger className="w-[320px]" error={error ? true : false}>
           <SelectValue placeholder="Select course alias name" />
         </SelectTrigger>
         <SelectContent>
@@ -416,6 +433,10 @@ const CourseNameDropDown = () => {
           </SelectItems>
         </SelectContent>
       </Select>
+
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
     </div>
   );
 };
@@ -427,16 +448,17 @@ const TeachersDropDown = () => {
 
   const formData = watch();
 
+  const {
+    field: { value, onChange },
+    fieldState: { error: teachersErrors },
+  } = useController({
+    name: NewCourseStep2FormNames?.teacher_ids,
+  });
+
   const iAmOrganizerId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_ORGANIZER
   )?.id;
-
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: NewCourseStep2FormNames?.teacher_ids,
-  });
 
   let filter: Array<CrudFilter> = [];
 
@@ -519,7 +541,13 @@ const TeachersDropDown = () => {
             };
           }
         }}
+        error={teachersErrors}
       />
+      {teachersErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {teachersErrors?.message}
+        </span>
+      )}
     </div>
   );
 };
@@ -588,6 +616,7 @@ const AssistantTeachersDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: assistantTeachersErrors },
   } = useController({
     name: NewCourseStep2FormNames?.assistant_teacher_ids,
   });
@@ -604,7 +633,13 @@ const AssistantTeachersDropDown = () => {
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={onChange}
+        error={assistantTeachersErrors}
       />
+      {assistantTeachersErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {assistantTeachersErrors?.message}
+        </span>
+      )}
     </div>
   );
 };
@@ -783,6 +818,7 @@ const LanguageDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: languageError },
   } = useController({
     name: NewCourseStep2FormNames?.language_ids,
   });
@@ -840,7 +876,13 @@ const LanguageDropDown = () => {
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
         onChange={onChange}
+        error={languageError}
       />
+      {languageError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {languageError?.message}
+        </span>
+      )}
     </div>
   );
 };
@@ -890,6 +932,7 @@ const LanguageTranslationDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: languageTranslationError },
   } = useController({
     name: NewCourseStep2FormNames?.translation_language_ids,
   });
@@ -910,6 +953,7 @@ const LanguageTranslationDropDown = () => {
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
         onChange={onChange}
+        error={languageTranslationError}
       />
     </div>
   );
@@ -935,6 +979,7 @@ const AllowedCountriesDropDown = () => {
 
   const {
     field: { value, onChange },
+    fieldState: { error: allowedCountriesErrors },
   } = useController({
     name: NewCourseStep2FormNames?.allowed_countries,
   });
@@ -952,7 +997,13 @@ const AllowedCountriesDropDown = () => {
         onBottomReached={() => {}}
         onSearch={() => {}}
         onChange={onChange}
+        error={allowedCountriesErrors}
       />
+      {allowedCountriesErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {allowedCountriesErrors?.message}{" "}
+        </span>
+      )}
     </div>
   );
 };
@@ -964,12 +1015,9 @@ const MaximumCapacity = () => {
 
   const maxAttendees = formData?.courseTypeSettings?.maximum_capacity;
 
-  useEffect(() => {
-    onChange(formData?.courseTypeSettings?.max_capacity);
-  }, [formData?.courseTypeSettings?.max_capacity]);
-
   const {
     field: { value = maxAttendees, onChange },
+    fieldState: { error },
   } = useController({ name: NewCourseStep2FormNames?.max_capacity });
 
   return (
@@ -982,7 +1030,13 @@ const MaximumCapacity = () => {
           onChange(val?.target?.value);
         }}
         className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
+        error={error ? true : false}
       />
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px] !w-[320px] break-all">
+          {error?.message}
+        </span>
+      )}
     </div>
   );
 };
