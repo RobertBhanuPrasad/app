@@ -1,29 +1,19 @@
-import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  MoreHorizontal,
-  MoreVertical,
-} from "lucide-react";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { Button } from "src/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "src/ui/dropdown-menu";
-import { Input } from "src/ui/input";
-import { Label } from "src/ui/label";
+import { DisplayOptions } from '@components/courseBusinessLogic'
+import { useGetIdentity, useOne } from '@refinedev/core'
+import { ColumnDef } from '@tanstack/react-table'
+import { MoreVertical } from 'lucide-react'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { Button } from 'src/ui/button'
+import { Dialog, DialogContent } from 'src/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
 
 export const columns: ColumnDef<Program>[] = [
   {
-    accessorKey: "program_code",
+    accessorKey: 'program_code',
     enableHiding: false,
     header: () => {
-      return <div>Course ID</div>;
+      return <div>Course ID</div>
     },
 
     cell: ({ row }) => {
@@ -31,247 +21,256 @@ export const columns: ColumnDef<Program>[] = [
         <div>
           <div>{row.original.program_code}</div>
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "program_types",
+    accessorKey: 'program_types',
     header: () => {
-      return <div>Course Type Name</div>;
+      return <div>Course Type Name</div>
     },
 
     cell: ({ row }) => {
-      return <div>{row?.original?.program_types?.name}</div>;
-    },
+      return <div>{row?.original?.program_types?.name}</div>
+    }
   },
   {
-    accessorKey: "program_type_alias_names",
+    accessorKey: 'program_type_alias_names',
     header: () => {
-      return <div>Course Name</div>;
+      return <div>Course Name</div>
     },
 
     cell: ({ row }) => {
-      return <div>{row?.original?.program_type_alias_names?.alias_name}</div>;
-    },
+      return <div>{row?.original?.program_type_alias_names?.alias_name}</div>
+    }
   },
   {
-    accessorKey: "status",
+    accessorKey: 'status',
     header: () => {
-      return <div>Course Status</div>;
+      return <div>Course Status</div>
     },
 
     cell: ({ row }) => {
-      return <div>{row?.original?.status_id}</div>;
-    },
+      return <div>{row?.original?.status_id}</div>
+    }
   },
   {
-    accessorKey: "state",
+    accessorKey: 'state',
     header: () => {
-      return <div>State</div>;
+      return <div>State</div>
     },
 
     cell: ({ row }) => {
-      return <div>{row?.original?.state?.name}</div>;
-    },
+      return <div>{row?.original?.state?.name}</div>
+    }
   },
   {
-    accessorKey: "city",
+    accessorKey: 'city',
     header: () => {
-      return <div>City</div>;
+      return <div>City</div>
     },
 
     cell: ({ row }) => {
-      return <div>{row?.original?.city?.name}</div>;
-    },
+      return <div>{row?.original?.city?.name}</div>
+    }
   },
   {
-    accessorKey: "center",
+    accessorKey: 'center',
     header: () => {
-      return <div>Center</div>;
+      return <div>Center</div>
     },
 
     cell: ({ row }) => {
-      return <div>{row?.original?.center?.name}</div>;
-    },
+      return <div>{row?.original?.center?.name}</div>
+    }
   },
   {
-    accessorKey: "program_teachers",
+    accessorKey: 'program_teachers',
     header: () => {
-      return <div>Teachers</div>;
+      return <div>Teachers</div>
     },
     cell: ({ row }) => {
-      const teachers = row?.original?.program_teachers?.map(
-        (teacher: ProgramTeachers) => teacher?.users?.user_name
-      );
+      const teachers = row?.original?.program_teachers?.map((teacher: ProgramTeachers) => teacher?.users?.user_name)
       return (
         <div>
-          <div>{teachers && teachers.join(", ")}</div>
+          <div>{teachers && teachers.join(', ')}</div>
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "program_organizers",
+    accessorKey: 'program_organizers',
     header: () => {
-      return <div>Organizers</div>;
+      return <div>Organizers</div>
     },
     cell: ({ row }) => {
       const organizers = row?.original?.program_organizers?.map(
         (Organizer: ProgramOrganizers) => Organizer?.users?.user_name
-      );
-      return <div>{organizers && organizers.join(",")}</div>;
-    },
+      )
+      return <div>{organizers && organizers.join(',')}</div>
+    }
   },
   {
-    accessorKey: "participant_registration",
+    accessorKey: 'participant_registration',
     header: () => {
-      return <div>Attendees</div>;
+      return <div>Attendees</div>
     },
     cell: ({ row }: any) => {
-      return <div>{row?.original?.participant_registration?.length}</div>;
-    },
+      return <div>{row?.original?.participant_registration?.length}</div>
+    }
   },
   {
-    accessorKey: "visibility_id",
+    accessorKey: 'visibility_id',
     header: () => {
-      return <div>Visibility</div>;
+      return <div>Visibility</div>
     },
     cell: ({ row }: any) => {
       // const visibility: any = row?.original?.program_details_info?.map(
       //   (details: any) => details?.visibility_id?.value
       // );
-      return (
-        <div>
-          {row?.original?.program_details_info[0]?.visibility_id?.value}
-        </div>
-      );
-    },
+      return <div>{row?.original?.visibility_id?.value}</div>
+    }
   },
   {
-    accessorKey: "program_schedules",
+    accessorKey: 'program_schedules',
     header: () => {
-      return <div>Start Date</div>;
+      return <div>Start Date</div>
     },
     cell: ({ row }: any) => {
       // Check if program_schedules exists and has at least one record
-      if (
-        row?.original?.program_schedules &&
-        row.original.program_schedules.length > 0
-      ) {
+      if (row?.original?.program_schedules && row.original.program_schedules.length > 0) {
         // Get the record with order 1 (assuming order starts from 1)
-        const record = row.original.program_schedules.find(
-          (schedule: any) => schedule.order === 1
-        );
+        const record = row.original.program_schedules.find((schedule: any) => schedule.order === 1)
 
         // Check if record with order 1 exists
         if (record) {
           // Extract date from the timestamp (assuming it's stored in a property called 'timestamp')
-          const startDate = new Date(record.start_time).toLocaleDateString();
+          const startDate = new Date(record.start_time).toLocaleDateString()
 
-          return <div>{startDate}</div>;
+          return <div>{startDate}</div>
         }
       }
 
       // Return empty if no record found or if program_schedules is not available
-      return <div>No start date available</div>;
-    },
+      return <div>No start date available</div>
+    }
   },
   {
-    accessorKey: "course_accounting_status",
+    accessorKey: 'course_accounting_status',
     header: () => {
-      return <div>Course Accounting Status</div>;
+      return <div>Course Accounting Status</div>
     },
     cell: ({ row }: any) => {
-      return (
-        <div>
-          {row?.original?.course_accounting_status
-            ? row?.original?.course_accounting_status
-            : "-"}
-        </div>
-      );
-    },
+      return <div>{row?.original?.course_accounting_status ? row?.original?.course_accounting_status : '-'}</div>
+    }
   },
   {
-    accessorKey: "Course Accounting Closure Date",
+    accessorKey: 'Course Accounting Closure Date',
     header: () => {
-      return <div>Course Accounting Closure Date</div>;
+      return <div>Course Accounting Closure Date</div>
     },
     cell: ({ row }: any) => {
-      return <div>-</div>;
-    },
+      return <div>-</div>
+    }
   },
   {
-    accessorKey: "revenue",
+    accessorKey: 'revenue',
     header: () => {
-      return <div>Revenue</div>;
+      return <div>Revenue</div>
     },
     cell: ({ row }: any) => {
-      return <div>-</div>;
-    },
+      return <div>-</div>
+    }
   },
   {
-    id: "actions",
+    id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
       const router = useRouter()
-      const [isDialogOpen, setIsDialogOpen] = useState(false);
+      const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-      const dropDownMenuData=["View Participants",
-        "Register Participant",
-        "Edit Course",
-        "Copy Course",
-        "Cancel Course",
-        "Submit/Edit Course Accounting Form"]
+      const { data: loginUserData }: any = useGetIdentity()
+      const { data, isLoading } = useOne({
+        resource: 'program',
+        id: 1
+      })
 
-        const handleSelected = (value:string) => {
-         switch(value){
-          case 'View Participants':
-            {
-              // TODO - Navigate to Participants Listing page
-              router.push('/')
-              break;
-            }
-          case 'Register Participant':
-            {
-              // TODO - Navigate to Register Participant page
-              router.push('/Courses/FindCourse')
-              break;
-            }
-          case 'Cancel Course':
-            {
-              setIsDialogOpen(true)
-            }
-          default :
-          {
-            console.log("other options")
+      const dropDownMenuData = DisplayOptions(
+        data?.data?.status_id,
+        data?.data?.program_accounting_status_id,
+        loginUserData?.userData?.user_roles[0]?.role_id?.id
+      )
+
+      const handleSelected = (value: string) => {
+        switch (value) {
+          case 'View Participants': {
+            // TODO - Navigate to Participants Listing page
+            router.push('/')
+            break
           }
-         }
+          case 'Register Participant': {
+            // TODO - Navigate to Register Participant page
+            router.push('/Courses/FindCourse')
+            break
+          }
+          case 'Cancel Course': {
+            setIsDialogOpen(true)
+          }
+          default: {
+            console.log('other options')
+          }
         }
+      }
+
+      const roughData=[
+        {
+          status_id:1,
+          data:['View participants','registration participant']
+        },
+        {
+          status_id:2,
+          data:['view course','edit course']
+        },
+      ]
       return (
-        <div className="flex justify-center text-primary">
-        
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreVertical className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">{
-              dropDownMenuData.map((data)=> <DropdownMenuItem onClick={()=>handleSelected(data)}>{data}</DropdownMenuItem> )
-            }
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {isDialogOpen && (
-              <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
-              <DialogContent className="sm:max-w-[425px]">
-                <Button>Yes</Button>
-                <Button>No</Button>
-              </DialogContent>
-            </Dialog>
-          )}
+        <div className="">
+          <div className="pl-[1px]">
+            <div className="flex justify-center text-primary">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {!isLoading ? (
+                    <p>
+                      {dropDownMenuData && 
+                        dropDownMenuData.map(data => (
+                          <DropdownMenuItem onClick={() => handleSelected(data)}>{data}</DropdownMenuItem>
+                        ))
+                       }
+                    </p>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <div>Loading...</div>
+                    </div>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              {isDialogOpen && (
+                <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <Button>Yes</Button>
+                    <Button>No</Button>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
+          </div>
         </div>
-      );
-    },
-  },
-];
+      )
+    }
+  }
+]
