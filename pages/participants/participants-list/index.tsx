@@ -8,7 +8,7 @@ import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { columns } from "./columns";
-import { HttpError, useTable } from "@refinedev/core";
+import { useTable } from "@refinedev/core";
 import { Input } from "src/ui/input";
 import { SearchIcon } from "lucide-react";
 import {
@@ -18,14 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
 import DropDown from "@public/assets/DropDown";
-import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "src/ui/sheet";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "src/ui/accordion";
-import { Label } from "src/ui/label";
+import { format } from "date-fns";
+import { ParticipantsAdvanceFilter } from "./ParticipantsListAdvanceFilters";
 
 function index() {
   return (
@@ -40,160 +34,19 @@ export default index;
 
 const HeaderSection = () => {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: new Date(),
-  });
+  const [date, setDate] = React.useState<DateRange | undefined>();
   const transactionStatusOptions = [
     "Confirmed",
     "Pending",
     "Failed",
     "Not Received",
   ];
-  const transactionTypeOptions = ["All", "Sale", "Partial Refund", "Refund"];
-  const attendanceStatusOptions = ["Completed", "Pending", "Canceled"];
-  const healthConsentStatusOptions = ["Completed", "Pending"];
 
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
       <div>
         {" "}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline">All Filters</Button>
-          </SheetTrigger>
-          <SheetContent className="w-[446px] rounded-l-xl">
-            <SheetHeader>Filter By</SheetHeader>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-1">
-                <AccordionTrigger>Contact Details</AccordionTrigger>
-                <AccordionContent>
-                  <div>
-                    <div>
-                      <Label>Name</Label>
-                      <Input></Input>
-                    </div>
-                    <div>
-                      <Label>Email</Label>
-                      <Input></Input>
-                    </div>
-                    <div>
-                      <Label>Phone</Label>
-                      <Input></Input>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-2">
-                <AccordionTrigger>Registration Date</AccordionTrigger>
-                <AccordionContent>
-                  <div>
-                    {" "}
-                    <Dialog open={open}>
-                      <DialogTrigger asChild>
-                        <Button
-                          onClick={() => setOpen(true)}
-                          className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
-                          variant="outline"
-                        >
-                          <div>
-                            <CalenderIcon />
-                          </div>
-                          <div></div>
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
-                        <DateRangePickerComponent setOpen={setOpen} />
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-3">
-                <AccordionTrigger>Transaction Status</AccordionTrigger>
-                <AccordionContent>
-                  <div className="flex flex-row gap-4 flex-wrap">
-                    {transactionStatusOptions.map((value) => {
-                      return (
-                        <div className="border-2 rounded-2xl px-3 py-1">
-                          {value}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-4">
-                <AccordionTrigger>Transaction Type</AccordionTrigger>
-                <AccordionContent>
-                  <div className="flex flex-row gap-4 flex-wrap">
-                    {transactionTypeOptions.map((value) => {
-                      return (
-                        <div className="border-2 rounded-2xl px-3 py-1">
-                          {value}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-5">
-                <AccordionTrigger>Attendance Status</AccordionTrigger>
-                <AccordionContent>
-                  <div className="flex flex-row gap-4 flex-wrap">
-                    {attendanceStatusOptions.map((value) => {
-                      return (
-                        <div className="border-2 rounded-2xl px-3 py-1">
-                          {value}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-6">
-                <AccordionTrigger>Health Consent Status</AccordionTrigger>
-                <AccordionContent>
-                  <div className="flex flex-row gap-4 flex-wrap">
-                    {healthConsentStatusOptions.map((value) => {
-                      return (
-                        <div className="border-2 rounded-2xl px-3 py-1">
-                          {value}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-6">
-                <AccordionTrigger>Program Agreement Status</AccordionTrigger>
-                <AccordionContent>
-                  <div className="flex flex-row gap-4 flex-wrap">
-                    {healthConsentStatusOptions.map((value) => {
-                      return (
-                        <div className="border-2 rounded-2xl px-3 py-1">
-                          {value}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </SheetContent>
-        </Sheet>
+        <ParticipantsAdvanceFilter />
       </div>
       <div className="flex flex-row items-center border-2 px-3 rounded-lg">
         <div>
@@ -212,13 +65,26 @@ const HeaderSection = () => {
           <DialogTrigger asChild>
             <Button
               onClick={() => setOpen(true)}
-              className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
+              className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 border-2 px-3 py-5 rounded-lg"
               variant="outline"
             >
               <div>
                 <CalenderIcon />
               </div>
-              <div></div>
+              <div>
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, "LLL dd, y")} -{" "}
+                      {format(date.to, "LLL dd, y")}
+                    </>
+                  ) : (
+                    format(date.from, "LLL dd, y")
+                  )
+                ) : (
+                  <span className="font-normal">Select Registration Date</span>
+                )}
+              </div>
             </Button>
           </DialogTrigger>
           <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
@@ -239,6 +105,48 @@ const HeaderSection = () => {
               className="flex flex-row justify-between w-[192px] h-10"
             >
               Transaction Status
+              <DropDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <div className="flex flex-col gap-4 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+              {transactionStatusOptions.map((value) => (
+                <DropdownMenuItem>{value}</DropdownMenuItem>
+              ))}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              onClick={() => setOpen(true)}
+              variant="outline"
+              className="flex flex-row justify-between w-[192px] h-10"
+            >
+              Records Selected
+              <DropDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <div className="flex flex-col gap-4 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+              {transactionStatusOptions.map((value) => (
+                <DropdownMenuItem>{value}</DropdownMenuItem>
+              ))}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              onClick={() => setOpen(true)}
+              variant="outline"
+              className="flex flex-row justify-between w-[192px] h-10"
+            >
+              Select Status
               <DropDown />
             </Button>
           </DropdownMenuTrigger>
@@ -279,7 +187,7 @@ const TableSection = () => {
   const testData = [
     {
       id: "ALTABC4512458",
-      registration_date: "17 Oct, 2020",
+      registration_date: "2024-04-06T12:38:42.587328+00:00",
       contact_id: {
         full_name: "Eleanor Pena",
         date_of_birth: "Jan. 22, 1994",
@@ -311,7 +219,7 @@ const TableSection = () => {
     },
     {
       id: "ALTABC4512458",
-      registration_date: "17 Oct, 2020",
+      registration_date: "2024-07-24T12:38:42.587328+00:00",
       contact_id: {
         full_name: "a",
         date_of_birth: "Jan. 22, 1994",
@@ -1444,12 +1352,7 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
       />
       <div className="flex flex-row gap-4 justify-center items-center fixed p-2 rounded-b-3xl bottom-0 left-0 w-full shadow-[rgba(0,_0,_0,_0.24)_0px_2px_8px]">
         <Button
-          onClick={() =>
-            onSelect({
-              from: new Date(),
-              to: new Date(),
-            })
-          }
+          onClick={() => onSelect({})}
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
           Reset

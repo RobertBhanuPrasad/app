@@ -82,9 +82,8 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     },
 
     cell: ({ row }: any) => {
-      return (
-        <div className="text-left">{row?.original?.registration_date}</div>
-      );
+      const db_date = formatDate(row?.original?.registration_date);
+      return <div className="text-left">{db_date}</div>;
     },
   },
   {
@@ -518,3 +517,12 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     },
   },
 ];
+
+export function formatDate(date: string): string {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+  return new Date(date).toLocaleDateString("en-US", options);
+}
