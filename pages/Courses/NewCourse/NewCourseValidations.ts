@@ -56,12 +56,12 @@ export const validationSchema = () => {
     max_capacity: z
       .string({
         required_error:
-          "Maximum capacity should be between 1 and %1 - which is the allowed limit set for this course type by Program / National Admin.",
+          "Maximum capacity is required fields",
       })
       .regex(/^\d+$/, { message: "Maximum Capacity can accept only integers" })
-      .refine((val) => parseInt(val) > 50, {
+      .refine((val) => parseInt(val) < 500, {
         message:
-          "Maximum capacity exceeds the allowed limit %1 for this course type by Program / National Admin",
+          "Maximum capacity exceeds the allowed limit",
       }),
 
     // Step 3 Schema

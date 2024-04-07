@@ -181,7 +181,7 @@ export function MultiSelect({
         </div>
 
         {/* Selected Items List (Popover) */}
-        <div className="relative mt-2" ref={popoverDropdownRef}>
+        <div className="relative" ref={popoverDropdownRef}>
           {popoverOpen ? (
             <CommandGroup
               className={`absolute w-full  rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in ${dropdownStyles}`}
@@ -221,7 +221,7 @@ export function MultiSelect({
         </div>
 
         {/* Items to be selected list (Dropdown) */}
-        <div className="relative mt-2 z-50" ref={dropdownRef}>
+        <div className="relative z-50" ref={dropdownRef}>
           {open && (
             <div className="absolute w-full rounded-md border bg-[#FFFFFF] text-popover-foreground shadow-md outline-none animate-in">
               {/* Search input */}

@@ -57,7 +57,7 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,program_accommodations!inner(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers!inner(*,user_id(contact_id(id,full_name))),program_teachers!inner(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,value),program_type_id!inner(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings!inner(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),program_details_info(max_capacity,visibility_id(value))",
+        "*,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,value),program_type_id(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),max_capacity,visibility_id(value)",
     },
   });
 
@@ -155,7 +155,9 @@ function CourseDetailsTab() {
               <Header2>Available language(s) for translation </Header2>
               <ItemValue>
                 {courseData?.data?.program_translation_languages
-                  .map((item: LanguageItem) => item?.language_id?.language_name)
+                  ?.map(
+                    (item: LanguageItem) => item?.language_id?.language_name
+                  )
                   .join(", ")}
               </ItemValue>
             </div>
@@ -163,30 +165,25 @@ function CourseDetailsTab() {
               <Header2>Language(s) course is taught in </Header2>
               <ItemValue>
                 {courseData?.data?.program_languages
-                  .map((item: LanguageItem) => item?.language_id?.language_name)
+                  ?.map(
+                    (item: LanguageItem) => item?.language_id?.language_name
+                  )
                   .join(", ")}
               </ItemValue>
             </div>
             <div>
               <Header2>Program Visibility</Header2>
-              <ItemValue>
-                {
-                  courseData?.data?.program_details_info?.[0]?.visibility_id
-                    ?.value
-                }
-              </ItemValue>
+              <ItemValue>{courseData?.data?.visibility_id?.value}</ItemValue>
             </div>
             <div>
               <Header2>Max Capacity</Header2>
-              <ItemValue>
-                {courseData?.data?.program_details_info?.[0]?.max_capacity}
-              </ItemValue>
+              <ItemValue>{courseData?.data?.max_capacity}</ItemValue>
             </div>
             <div>
               <Header2>Program organizer</Header2>
               <ItemValue>
                 {courseData?.data?.program_organizers
-                  .map(
+                  ?.map(
                     (item: fullNameObject) =>
                       item?.user_id?.contact_id?.full_name
                   )

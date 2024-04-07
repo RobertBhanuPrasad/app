@@ -37,18 +37,13 @@ export const getColorWithDecreasedOpacity = (baseColor: any, position: any, maxP
     position = Math.max(1, Math.min(maxPosition, position));
 
     // Convert position to a value between 0 and 1
-    position /= maxPosition;
-
-    // Convert hex color to RGB
-    const hexToRgb = (hex: { match: (arg0: RegExp) => any[]; }) => hex.match(/\w\w/g).map((x) => parseInt(x, 16));
-    const rgbToHex = (r: number, g: number, b: number) => '#' + [r, g, b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join('');
+    const alpha = position / maxPosition;
 
     // Extract RGB values from the base color
-    let [r, g, b] = hexToRgb(baseColor.substr(1));
-
-    // Decrease opacity based on position
-    const decreasedOpacity = Math.round(255 * Math.pow((1 - position), 2)); 
+    const hexToRgb = (hex: any) => hex.match(/\w\w/g).map((x: any) => parseInt(x, 16));
+    const rgbToHex = (r: any, g: any, b: any) => '#' + [r, g, b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join('');
+    const [r, g, b] = hexToRgb(baseColor.substr(1));
 
     // Return color with decreased opacity
-    return rgbToHex(r, g, b) + (decreasedOpacity.toString(16).padStart(2, '0'));
-}
+    return rgbToHex(r, g, b) + Math.round(alpha * 255).toString(16).padStart(2, '0');
+};

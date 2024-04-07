@@ -10,14 +10,14 @@ import {
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
 import { supabaseClient } from "src/utility";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
-  setProgramId: any
+  setProgramId: (by: number) => void
 ) => {
   console.log("i will post course data in this function", body);
+ 
   let programId = body.id;
   // we have to create course only when we dont have id
   //   if (!programId) {
