@@ -30,6 +30,39 @@ import {
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 /**
+ * Is course approved
+ */
+export const isApproved = (
+  isApprovalRequired: any,
+  courseStatusId: any,
+  roleId: any
+) => {
+  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    PENDING_REVIEW
+  )?.id;
+  const superAdminRoleId = getOptionValueObjectByOptionOrder(
+    USER_ROLE,
+    SUPER_ADMIN
+  )?.id;
+
+  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(
+    USER_ROLE,
+    NATIONAL_ADMIN
+  )?.id;
+
+  if (
+    isApprovalRequired &&
+    courseStatusId == coursePendingReviewStatusId &&
+    (roleId === superAdminRoleId || roleId === nationalAdminRoleId)
+  )
+    return true;
+  else {
+    return false;
+  }
+};
+
+/**
  * Function to determine options available based on course status, accounting status, and user role.
  *  It utilizes predefined IDs for course status, accounting status,
  * and user roles to fetch the necessary data.

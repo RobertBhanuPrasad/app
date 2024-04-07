@@ -3,38 +3,18 @@ import CurrencyIcon from "@public/assets/CurrencyIcon";
 import Important from "@public/assets/Important";
 import LocationIcon from "@public/assets/LocationIcon";
 import ParticipantsIcon from "@public/assets/ParticipantsIcon";
-import {
-  CrudFilter,
-  CrudFilters,
-  useList,
-  useOne,
-  useSelect,
-} from "@refinedev/core";
+import { useGetIdentity, useOne, useUpdate } from "@refinedev/core";
 import { Circle } from "lucide-react";
-import React, { useState } from "react";
-import {
-  PARTICIPANT_ATTENDANCE_STATUS,
-  PARTICIPANT_PAYMENT_STATUS,
-  TIME_FORMAT,
-} from "src/constants/OptionLabels";
-import {
-  CANCELED_ATTENDANCE_STATUS,
-  COMPLETED_ATTENDANCE_STATUS,
-  DROPOUT_ATTENDANCE_STATUS,
-  PARTICIPANT_PENDING_PAYMENT_STATUS,
-  PARTICIPANT_SUCCESS_PAYMENT_STATUS,
-  PENDING_ATTENDANCE_STATUS,
-} from "src/constants/OptionValueOrder";
+import React, { useEffect, useState } from "react";
+import { PROGRAM_STATUS } from "src/constants/OptionLabels";
+import { ACTIVE, DECLINED } from "src/constants/OptionValueOrder";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "src/ui/hover-card";
-import { formatDate } from "src/utility/DateFunctions";
-import {
-  getOptionValueObjectByOptionOrder,
-  getOptionValuesByOptionLabel,
-} from "src/utility/GetOptionValuesByOptionLabel";
+import { formatDate, formatDateString } from "src/utility/DateFunctions";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 import { GetServerSideProps } from "next";
@@ -48,9 +28,15 @@ import {
   REVENUE_SUMMARY_TAB,
 } from "src/constants/CourseConstants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import CustomSelect from "src/ui/custom-select";
-
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "src/ui/dialog";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -75,164 +61,61 @@ import Cross from "@public/assets/Cross";
 import Tick from "@public/assets/Tick.png";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import ParticipantsTab from "@components/course/viewCourse/participantsTab";
+import { supabaseClient } from "src/utility/supabaseClient";
+import {
+  handleTabsBasedOnStatus,
+  isApproved,
+} from "@components/courseBusinessLogic";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
 
 function index() {
-  const Id: number = 1;
+  const router = useRouter();
+
+  const Id: number | undefined = router?.query?.id
+    ? parseInt(router.query.id as string)
+    : undefined;
 
   const { data: courseData } = useOne({
     resource: "program",
     id: Id,
     meta: {
       select:
-        "*,program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
+        "*,program_type_id(is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
     },
   });
 
-  console.log(courseData, "hello");
+  const [participantDataa, setParticipantData] = useState<any>();
 
-  const { data: courseDataa } = useOne({
-    resource: "program",
-    id: 1,
-  });
-
-  console.log(courseDataa, "hii");
-  const participantSuccessPaymentId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_PAYMENT_STATUS,
-    PARTICIPANT_SUCCESS_PAYMENT_STATUS
-  )?.id;
-
-  const pendingAttendanceStatusId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_ATTENDANCE_STATUS,
-    PENDING_ATTENDANCE_STATUS
-  )?.id;
-
-  const canceledAttendanceStatusId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_ATTENDANCE_STATUS,
-    CANCELED_ATTENDANCE_STATUS
-  )?.id;
-
-  const completedAttendanceStatusId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_ATTENDANCE_STATUS,
-    COMPLETED_ATTENDANCE_STATUS
-  )?.id;
-
-  const dropoutAttendanceStatusId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_ATTENDANCE_STATUS,
-    DROPOUT_ATTENDANCE_STATUS
-  )?.id;
-
-  const participantPendingPaymentId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_PAYMENT_STATUS,
-    PARTICIPANT_PENDING_PAYMENT_STATUS
-  )?.id;
-
-  const dfilter: any = [
-    {
-      operator: "or",
-      value: [
+  const fetchData = async () => {
+    try {
+      const { data, error } = await supabaseClient.functions.invoke(
+        "get_program_participant_summary",
         {
-          field: "payment_status_id",
-          operator: "eq",
-          value: participantSuccessPaymentId,
-        },
-        {
-          field: "payment_status_id",
-          operator: "eq",
-          value: participantPendingPaymentId,
-        },
-      ],
-    },
-    {
-      operator: "or",
-      value: [
-        {
-          field: "participant_attendence_status_id",
-          operator: "eq",
-          value: completedAttendanceStatusId,
-        },
-        {
-          field: "participant_attendence_status_id",
-          operator: "eq",
-          value: dropoutAttendanceStatusId,
-        },
-        {
-          field: "participant_attendence_status_id",
-          operator: "eq",
-          value: pendingAttendanceStatusId,
-        },
-      ],
-    },
-    {
-      field: "program_id",
-      operator: "eq",
-      value: Id,
-    },
-    ,
-    {
-      field: "is_payment_refunded",
-      operator: "eq",
-      value: false,
-    },
-  ];
+          method: "POST",
+          body: {
+            program_id: Id,
+          },
+        }
+      );
+      setParticipantData(data);
+    } catch (error) {
+      console.error("Error fetching fee data:", error);
+    }
+  };
 
-  const { data: participantData } = useList<any>({
-    resource: "participant_registration",
-    filters: dfilter,
-    meta: {
-      select: "*,participant_payment_history(*)",
-    },
-  });
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  // Define filters based on the selected date
-  const paymentFilters: any = [
-    {
-      field: "program_id",
-      operator: "eq",
-      value: Id,
-    },
-
-    {
-      operator: "or",
-      value: [
-        {
-          field: "payment_status_id",
-          operator: "eq",
-          value: participantSuccessPaymentId,
-        },
-        {
-          field: "payment_status_id",
-          operator: "eq",
-          value: participantPendingPaymentId,
-        },
-      ],
-    },
-    {
-      field: "participant_id.is_payment_refunded",
-      operator: "eq",
-      value: false,
-    },
-    {
-      field: "participant_attendence_status_id",
-      operator: "neq",
-      value: canceledAttendanceStatusId,
-    },
-  ];
-
-  const { data: participantPaymentData } = useList<any>({
-    resource: "participant_payment_history",
-    meta: {
-      select: "*,participant_id(*)",
-    },
-    filters: paymentFilters,
-  });
-
-  const totalRevenue = _.sumBy(participantPaymentData?.data, "total_amount");
-
-  console.log(participantPaymentData, "participantPaymentData");
-
-  // console.log(totalAmount, "totalAmount");
-
-  console.log(participantData, "participantData");
+  const totalRevenue = participantDataa?.income;
 
   const startDate = formatDate(
     courseData?.data?.program_schedules[0]?.start_time
@@ -246,10 +129,8 @@ function index() {
 
   const countryName = "India";
 
-  console.log(courseData, "courseData");
-
   const { t } = useTranslation("common");
-  const [selectedValue, setSelectedValue] = useState();
+  const [selectedValue, setSelectedValue] = useState(COURSE_DETAILS_TAB);
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
@@ -273,7 +154,7 @@ function index() {
     },
   ];
 
-  const router = useRouter();
+  const { data: loginUserData }: any = useGetIdentity();
 
   return (
     <div className="flex flex-col">
@@ -291,35 +172,41 @@ function index() {
       <div className="flex flex-row gap-2 items-center mt-3">
         <CalenderIcon color="#7677F4" />
         {startDate} to {endDate}
+        <div>
+          <ParticipantsIcon />
+        </div>
         <div
           onClick={() => {
             router.push("/");
           }}
+          className="cursor-pointer"
         >
-          <ParticipantsIcon />
+          {participantDataa?.participantCount}
         </div>
-        {participantData?.total}
         <HoverCard>
           <HoverCardTrigger>
             <Important />
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              {participantData?.total} Participants with: Transaction status =
-              Confirmed / Pending Attendance status = Confirmed / Pending /
-              Dropout Total participants records:
-              {courseData?.data?.participant_registration?.length}
+              {participantDataa?.participantCount} Participants with:
+              Transaction status = Confirmed / Pending Attendance status =
+              Confirmed / Pending / Dropout Total participants records:
+              {participantDataa?.totalParticipantCount}
             </div>
           </HoverCardContent>
         </HoverCard>
+        <div>
+          <CurrencyIcon />
+        </div>
         <div
           onClick={() => {
             router.push("/");
           }}
+          className="cursor-pointer"
         >
-          <CurrencyIcon />
+          EUR {totalRevenue}
         </div>
-        EUR {totalRevenue}
         <HoverCard>
           <HoverCardTrigger>
             <Important />
@@ -336,7 +223,7 @@ function index() {
         <LocationIcon />
         {courseData?.data?.venue_id?.address},
         {courseData?.data?.venue_id?.city_id?.name},
-        {courseData?.data?.venue_id?.state_id?.name},{countryName},
+        {courseData?.data?.venue_id?.state_id?.name}, {countryName},
         {courseData?.data?.venue_id?.postal_code}
       </div>
 
@@ -348,19 +235,24 @@ function index() {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Approved by: National Admin(17 Mar, 2022)
-              <br></br>
+              Approved by:{" "}
+              {courseData?.data?.approved_by_user_id?.contact_id?.full_name} ({" "}
+              {formatDateString(
+                new Date(courseData?.data?.program_approved_date)
+              )}
+              )<br></br>
               Last Modified by: National Admin(17 Mar, 2022)
             </div>
           </HoverCardContent>
         </HoverCard>
       </div>
 
-      <div className="w-full mt-6 ">
+      <div className="w-full mt-6 sticky">
         <Tabs
           onValueChange={(val: any) => {
             setSelectedValue(val);
           }}
+          value={selectedValue}
         >
           <TabsList className="flex flex-row gap-10 !flex-start !justify-start !bg-[white] !rounded-none">
             {tabTriggers.map((trigger: any, index: any) => (
@@ -368,7 +260,10 @@ function index() {
                 key={index}
                 value={trigger.value}
                 className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
-                disabled={trigger.disabled}
+                disabled={handleTabsBasedOnStatus(
+                  courseData?.data?.status_id?.id,
+                  trigger.value
+                )}
               >
                 <div className="flex flex-col gap-1">
                   {trigger.label}
@@ -383,15 +278,19 @@ function index() {
               </TabsTrigger>
             ))}
             <div className="ml-auto mb-6 ">
-              <PendingApprovalDropDown />
+              {isApproved(
+                courseData?.data?.program_type_id?.is_approval_required,
+                courseData?.data?.status_id?.id,
+                loginUserData?.userData?.user_roles[0]?.role_id?.id
+              ) && <PendingApprovalDropDown courseId={Id} />}
             </div>
           </TabsList>
-          <div className="w-full border-b -mt-2"></div>
+          <div className="w-full border-b border-[#D6D7D8] -mt-2"></div>
           <TabsContent value={COURSE_DETAILS_TAB}>
-            Place course details tab here
+            <CourseDetailsTab />
           </TabsContent>
           <TabsContent value={PARTICIPANTS_TAB}>
-            Place participant tab here
+            <ParticipantsTab />
           </TabsContent>
           <TabsContent value={REVENUE_SUMMARY_TAB}>
             Place Revenue Summary tab here
@@ -407,35 +306,16 @@ function index() {
 
 export default index;
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const { authenticated, redirectTo } = await authProvider.check(context);
+const PendingApprovalDropDown = ({ courseId }: any) => {
+  const courseActiveStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    ACTIVE
+  )?.id;
 
-  const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-  ]);
-
-  if (!authenticated) {
-    return {
-      props: {
-        ...translateProps,
-      },
-      redirect: {
-        destination: `${redirectTo}?to=${encodeURIComponent(
-          context.req.url || "/"
-        )}`,
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      ...translateProps,
-    },
-  };
-};
-
-const PendingApprovalDropDown = () => {
+  const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    DECLINED
+  )?.id;
   const options = [
     {
       label: "Approve Course",
@@ -448,27 +328,56 @@ const PendingApprovalDropDown = () => {
   ];
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const { mutate } = useUpdate();
+  const approveCourse = () => {
+    mutate({
+      resource: "program",
+      values: {
+        status_id: courseActiveStatusId,
+      },
+      id: courseId,
+    });
+  };
 
+  const rejectCourse = () => {
+    mutate({
+      resource: "program",
+      values: {
+        status_id: courseDeclinedStatusId,
+      },
+      id: courseId,
+    });
+  };
   return (
     <div>
-      <CustomSelect
-        placeholder="Pending Approval"
-        data={options}
-        onBottomReached={() => {}}
-        onSearch={() => {}}
-        onChange={(val: any) => {
+      <Select
+        onValueChange={(val: any) => {
           if (val == 1) {
             setApproveModalOpen(true);
           } else {
             setRejectModalOpen(true);
           }
         }}
-        value={undefined}
-        selectBoxStyles={{
-          header: "w-[192px] ",
-          dropdown: "w-[192px]",
-        }}
-      />
+      >
+        <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
+          <SelectValue placeholder="Pending Approval" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItems>
+            {options?.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label}
+                </SelectItem>
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
       <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
         <DialogContent className="flex flex-col h-[248px] w-[425px]">
           <DialogHeader>
@@ -499,6 +408,7 @@ const PendingApprovalDropDown = () => {
                     <Button
                       type="button"
                       className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                      onClick={approveCourse}
                     >
                       Yes
                     </Button>
@@ -565,6 +475,7 @@ const PendingApprovalDropDown = () => {
                 <Button
                   type="button"
                   className="bg-blue-500 text-white px-4 py-2"
+                  onClick={rejectCourse}
                 >
                   Reject
                 </Button>
@@ -599,43 +510,48 @@ const PendingApprovalDropDown = () => {
 const DisplayingCourseStatus = ({ statusId }: any) => {
   let statusText;
   let statusColor;
+  let color;
   switch (statusId) {
     case "Active":
       statusText = "Active";
-      statusColor = " text-green-500";
+      statusColor = "text-[#15AF53] bg-[#15AF530D]";
+      color = "#15AF53";
       break;
     case "Pending Review":
       statusText = "Pending Review";
-      statusColor = "#FFB900";
+      statusColor = "text-[#FFB900] bg-[#FFB9000D]";
+      color = "#FFB900";
       break;
     case "Canceled":
       statusText = "Cancelled";
-      statusColor = "#FFB900";
+      statusColor = "text-[#FF5630] bg-[#FF56300D]";
+      color = "#FF5630";
       break;
     case "Declined":
       statusText = "Declined";
-      statusColor = "#FFB900";
+      statusColor = "text-[#FF5630] bg-[#FF56300D]";
+      color = "#FF5630";
       break;
     case "Completed":
       statusText = "Completed";
-      statusColor = "#FFB900";
+      statusColor = "text-[#36B37E] bg-[#36B37E0D]";
+      color = "#36B37E";
       break;
     case "Full":
       statusText = "Full";
-      statusColor = "#FFB900";
+      statusColor = "text-[#15AF53] bg-[#15AF530D]";
+      color = "#15AF53";
       break;
   }
 
   return (
-    <div>
-      <div
-        className={`w-[70px] h-6 ${statusColor} rounded-[15px]  text-[14px] font-semibold  flex flex-row justify-center items-center gap-[5px] `}
-      >
-        <Circle
-          className={`fill-[${statusColor}] size-2 color-[${statusColor}]`}
-        />
-        {statusText}
+    <div
+      className={`h-[24px] rounded-[15px]  font-semibold flex flex-row items-center gap-[5px] px-2  ${statusColor}`}
+    >
+      <div>
+        <Circle fill={color} size={4} />
       </div>
+      <div>{statusText}</div>
     </div>
   );
 };
@@ -754,4 +670,32 @@ const ShareButton = (courseData: any) => {
       </DialogContent>
     </Dialog>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
 };
