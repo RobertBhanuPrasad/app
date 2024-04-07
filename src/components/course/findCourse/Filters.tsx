@@ -45,13 +45,11 @@ import {
 const Filters = ({
   setNewAdvanceFilterData,
   setAdvanceFilterOpen,
-  setAllFilterData,
 }: any) => {
   const { getValues, reset } = useFormContext();
 
   const formData = getValues();
 
-  console.log("hey form data", formData);
 
   return (
     <div className="flex flex-col gap-5">
@@ -135,7 +133,7 @@ const Filters = ({
                 <div>Course Accounting Status</div>
                 {formData?.course_accounting_status && (
                   <CountComponent
-                    count={formData?.course_Accounting_status?.length}
+                    count={formData?.course_Accounting_status?.length }
                   />
                 )}
               </div>
@@ -605,11 +603,13 @@ export const CourseAccordingStatus = () => {
     COURSE_ACCOUNTING_STATUS
   )?.[0]?.option_values;
 
+
   const {
     field: { value = [], onChange },
   } = useController({
     name: "course_accounting_status",
   });
+
 
   const toggleCourseStatus = (id: number) => {
     const updatedValue = value.includes(id)
@@ -630,7 +630,7 @@ export const CourseAccordingStatus = () => {
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
-            {status}
+            {status?.value}
           </Button>
         </div>
       ))}
@@ -697,8 +697,6 @@ export const Visibility = () => {
     VISIBILITY,
     PRIVATE
   )?.id;
-
-  console.log("heyy ids", value);
 
   return (
     <div>

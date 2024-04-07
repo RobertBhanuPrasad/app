@@ -4,7 +4,6 @@ import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
 import { useList, useSelect } from "@refinedev/core";
 import React, { useEffect, useState } from "react";
-import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
@@ -38,9 +37,7 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { supabaseClient } from "src/utility/supabaseClient";
 
 function index() {
-  const { newAdvanceFilterData } = newCourseStore();
-
-  const { AllFilterData, setAllFilterData } = newCourseStore();
+  const { AllFilterData } = newCourseStore();
 
   const filters: any = { permanent: [] };
 
@@ -48,7 +45,7 @@ function index() {
     filters.permanent.push({
       field: "program_alias_name_id",
       operator: "eq",
-      value: newAdvanceFilterData.course_name,
+      value: AllFilterData?.newAdvanceFilterData?.course_name,
     });
   }
 
@@ -56,7 +53,7 @@ function index() {
     filters.permanent.push({
       field: "program_type_id",
       operator: "eq",
-      value: newAdvanceFilterData?.course_type,
+      value: AllFilterData?.newAdvanceFilterData?.course_type,
     });
   }
 
@@ -64,7 +61,7 @@ function index() {
     filters.permanent.push({
       field: "state_id",
       operator: "eq",
-      value: newAdvanceFilterData?.state,
+      value: AllFilterData?.newAdvanceFilterData?.state,
     });
   }
 
@@ -72,7 +69,7 @@ function index() {
     filters.permanent.push({
       field: "city_id",
       operator: "eq",
-      value: newAdvanceFilterData?.city,
+      value: AllFilterData?.newAdvanceFilterData?.city,
     });
   }
 
@@ -80,7 +77,7 @@ function index() {
     filters.permanent.push({
       field: "center_id",
       operator: "eq",
-      value: newAdvanceFilterData?.center,
+      value: AllFilterData?.newAdvanceFilterData?.center,
     });
   }
 
@@ -88,7 +85,7 @@ function index() {
     filters.permanent.push({
       field: "program_teachers.user_id",
       operator: "eq",
-      value: newAdvanceFilterData.course_teacher,
+      value: AllFilterData?.newAdvanceFilterData?.course_teacher,
     });
   }
 
@@ -96,14 +93,14 @@ function index() {
     filters.permanent.push({
       field: "program_organizers.user_id",
       operator: "in",
-      value: newAdvanceFilterData?.program_organiser,
+      value: AllFilterData?.newAdvanceFilterData?.program_organiser,
     });
   }
   if (AllFilterData?.newAdvanceFilterData?.visibility) {
     filters.permanent.push({
       field: "visibility_id",
       operator: "eq",
-      value: newAdvanceFilterData?.visibility,
+      value: AllFilterData?.newAdvanceFilterData?.visibility,
     });
   }
 
@@ -111,15 +108,19 @@ function index() {
     filters.permanent.push({
       field: "is_residential_program",
       operator: "eq",
-      value: newAdvanceFilterData?.is_residential_course,
+      value: AllFilterData?.newAdvanceFilterData?.is_residential_course,
     });
   }
 
   if (AllFilterData?.newAdvanceFilterData?.course_status) {
+    console.log(
+      "heyy filtered data",
+      AllFilterData?.newAdvanceFilterData?.course_status
+    );
     filters.permanent.push({
       field: "status_id",
       operator: "in",
-      value: newAdvanceFilterData?.course_status,
+      value: AllFilterData?.newAdvanceFilterData?.course_status,
     });
   }
   if (AllFilterData?.course_id) {
@@ -133,7 +134,7 @@ function index() {
     filters.permanent.push({
       field: "program_fee_level_settings.is_custom_fee",
       operator: "eq",
-      value: newAdvanceFilterData?.is_course_fee,
+      value: AllFilterData?.newAdvanceFilterData?.is_course_fee,
     });
   }
   if (AllFilterData?.course_date) {
@@ -178,8 +179,6 @@ function index() {
     },
     filters: filters,
   });
-
-  console.log("hey table data", programData);
 
   const [allSelected, setAllSelected] = useState();
 
@@ -316,7 +315,7 @@ function index() {
   };
 
   return (
-    <div className="flex flex-col justify-between relative h-screen h-[100vh]">
+    <div className="flex flex-col justify-between relative h-screen">
       <div className="mx-8 flex flex-col gap-4">
         <HeaderSection />
         <div className="w-full">
@@ -386,12 +385,10 @@ export default index;
 const HeaderSection = () => {
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
 
-  const {
-    newAdvanceFilterData,
-    setNewAdvanceFilterData,
-    AllFilterData,
-    setAllFilterData,
-  } = newCourseStore();
+  const { newAdvanceFilterData, setNewAdvanceFilterData, AllFilterData } =
+    newCourseStore();
+
+  console.log("hey advance filter data", newAdvanceFilterData, AllFilterData);
 
   const count =
     (newAdvanceFilterData &&
@@ -418,14 +415,10 @@ const HeaderSection = () => {
             </Button>
           </SheetTrigger>
           <SheetContent className="w-[446px] rounded-l-xl">
-            <Form
-              onSubmit={() => {}}
-              defaultValues={AllFilterData?.newAdvanceFilterData}
-            >
+            <Form onSubmit={() => {}} defaultValues={newAdvanceFilterData}>
               <Filters
                 setAdvanceFilterOpen={setAdvanceFilterOpen}
                 setNewAdvanceFilterData={setNewAdvanceFilterData}
-                setAllFilterData={setAllFilterData}
               />
             </Form>
           </SheetContent>
@@ -443,7 +436,7 @@ const HeaderSection = () => {
 
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
   return (
-    <div className="relative">
+    <div className="relative ml-[-12px] mt-[-12px]">
       <DateRangePicker
         mode="range"
         defaultMonth={value?.from}
@@ -510,10 +503,17 @@ export const CourseTypeComponent = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: "course_type",
+  });
+
   return (
     <Select
-      value={newAdvanceFilterData?.course_type}
+      value={value ? value : newAdvanceFilterData?.course_type}
       onValueChange={(val: any) => {
+        onChange(val);
         setNewAdvanceFilterData({
           ...newAdvanceFilterData,
           course_type: val,
@@ -547,31 +547,31 @@ export const CourseTypeComponent = () => {
 };
 
 export const BasicFilters = () => {
-  const { getValues, setValue, reset } = useFormContext();
+  const { getValues, setValue } = useFormContext();
   const formData = getValues();
+  
   const {
     field: { value, onChange },
   } = useController({
     name: "course_id",
   });
+
   const {
     field: { value: courseDate, onChange: courseDateOnChange },
   } = useController({
     name: "course_date",
   });
 
-  const {
-    newAdvanceFilterData,
-    AllFilterData,
-    setAllFilterData,
-    setNewAdvanceFilterData,
-  } = newCourseStore();
+  const { newAdvanceFilterData, setAllFilterData, setNewAdvanceFilterData } =
+    newCourseStore();
 
   const [open, setOpen] = useState(false);
 
   const handleClearAll = () => {
-    reset();
     setNewAdvanceFilterData(undefined);
+    setAllFilterData(undefined);
+    setValue("course_id", "");
+    setValue("course_date", "");
   };
 
   return (
