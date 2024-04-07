@@ -62,7 +62,7 @@ export const AccomdationComponent = () => {
   // Effect to add initial data if no fees are present
   useEffect(() => {
     if (!formData?.accommodation || formData?.accommodation.length <= 0) {
-      append(null);
+      append(undefined);
     }
   }, []);
 
