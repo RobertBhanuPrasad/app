@@ -262,7 +262,7 @@ export const NewCourseTabs = () => {
     {
       value: BASIC_DETAILS_STEP_NUMBER,
       label: "Basic Details",
-      text_color:  isAllFieldsValid1 == undefined && currentStep !== BASIC_DETAILS_STEP_NUMBER  ?  'text-[#999999]' : 'text-[#7677F4] !font-semibold',
+      textColor: currentStep === BASIC_DETAILS_STEP_NUMBER || isAllFieldsValid1 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
         currentStep == BASIC_DETAILS_STEP_NUMBER &&
         isAllFieldsValid1 == undefined ? (
@@ -280,7 +280,7 @@ export const NewCourseTabs = () => {
     {
       value: COURSE_DETAILS_STEP_NUMBER,
       label: "Course Details",
-      text_color:  isAllFieldsValid2 == undefined && currentStep !== COURSE_DETAILS_STEP_NUMBER  ?  'text-[#999999]' : 'text-[#7677F4] !font-semibold' ,
+      textColor: currentStep === COURSE_DETAILS_STEP_NUMBER || isAllFieldsValid2 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
         currentStep === COURSE_DETAILS_STEP_NUMBER &&
         isAllFieldsValid2 === undefined ? (
@@ -304,7 +304,7 @@ export const NewCourseTabs = () => {
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
       label: "Time and Venue",
-      text_color: isAllFieldsValid3 == undefined && currentStep !== TIME_AND_VENUE_STEP_NUMBER ?  'text-[#999999]' : 'text-[#7677F4] !font-semibold',
+      textColor: currentStep === TIME_AND_VENUE_STEP_NUMBER || isAllFieldsValid3 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',      
       icon:
         currentStep == TIME_AND_VENUE_STEP_NUMBER &&
         isAllFieldsValid3 == undefined ? (
@@ -328,7 +328,7 @@ export const NewCourseTabs = () => {
     {
       value: FEE_STEP_NUMBER,
       label: "Fees",
-      text_color: isAllFieldsValid4 == undefined && currentStep !== FEE_STEP_NUMBER ? 'text-[#999999]' : 'text-[#7677F4] !font-semibold',
+      textColor: currentStep === FEE_STEP_NUMBER || isAllFieldsValid4 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
         currentStep == FEE_STEP_NUMBER && isAllFieldsValid4 == undefined ? (
           <Fees
@@ -347,7 +347,7 @@ export const NewCourseTabs = () => {
     {
       value: ACCOMMODATION_STEP_NUMBER,
       label: "Accommodation",
-      text_color:  isAllFieldsValid5 == undefined && currentStep !== ACCOMMODATION_STEP_NUMBER ? 'text-[#999999]' : 'text-[#7677F4] !font-semibold',
+      textColor: currentStep === ACCOMMODATION_STEP_NUMBER || isAllFieldsValid5 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
         currentStep == ACCOMMODATION_STEP_NUMBER &&
         isAllFieldsValid5 == undefined ? (
@@ -371,7 +371,7 @@ export const NewCourseTabs = () => {
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: "Contact Info",
-      text_color: isAllFieldsValid6 == undefined && currentStep !== CONTACT_INFO_STEP_NUMBER ? 'text-[#999999]' : 'text-[#7677F4] !font-semibold',
+      textColor: currentStep === CONTACT_INFO_STEP_NUMBER || isAllFieldsValid6 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
         currentStep == CONTACT_INFO_STEP_NUMBER &&
         isAllFieldsValid6 == undefined ? (
@@ -415,7 +415,7 @@ export const NewCourseTabs = () => {
                   {currentStep === tab.value && (
                     <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
                   )}
-                  <div className={`flex flex-row gap-[10px] ml-[14px] items-center ${tab?.text_color}`}>
+                  <div className={`flex flex-row gap-[10px] ml-[14px] items-center ${tab?.textColor}`}>
                     {tab.icon}
                     {tab.label}
                   </div>
