@@ -1,12 +1,18 @@
-import { MapPointer } from "@components/MapComponent";
-import { CrudFilter, useSelect } from "@refinedev/core";
+import { BaseOption, CrudFilter, useSelect } from "@refinedev/core";
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
 import { supabaseClient } from "src/utility";
-import { fetchLongitudeLatitudeData } from "src/utility/GetOptionValuesByOptionLabel";
+
 export const VenueNameComponent = () => {
   const {
     field: { value: venueName, onChange: venueOnchange },
@@ -25,6 +31,7 @@ export const VenueNameComponent = () => {
           placeholder="Enter Venue Name"
           className="placeholder:text-[#999999]"
           onChange={venueOnchange}
+          error={venueError ? true : false}
         />
       </div>
     </div>
@@ -34,6 +41,7 @@ export const VenueNameComponent = () => {
 export const PostalCodeComponent = () => {
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
+    fieldState: { error },
   } = useController({
     name: "postal_code",
   });
@@ -63,7 +71,7 @@ export const PostalCodeComponent = () => {
           placeholder="Enter Postal Code"
           className="placeholder:text-[#999999]"
           onChange={postalCodeOnchange}
-          required
+          error={error ? true : false}
         />
       </div>
     </div>
@@ -73,6 +81,7 @@ export const PostalCodeComponent = () => {
 export const StreetAddressComponent = () => {
   const {
     field: { value: streetAddressValue, onChange: streetAddressOnchange },
+    fieldState: { error },
   } = useController({
     name: "address",
   });
@@ -85,30 +94,25 @@ export const StreetAddressComponent = () => {
           placeholder="Enter Street Address"
           className="placeholder:text-[#999999]"
           onChange={streetAddressOnchange}
+          error={error ? true : false}
         />
       </div>
     </div>
   );
 };
 
-export const CityDropDown = () => {
-  const { watch, setValue } = useFormContext();
-
-  const formData = watch();
-
-  const [selectOptions, setSelectOptions] = useState<any>([]);
-
-  const [currentPage, setCurrentPage] = useState(1);
+export const CityDropDown = ({ name }: { name: string }) => {
+  const [pageSize, setPageSize] = useState(10);
 
   const {
-    field: { value: cityValue, onChange: cityValueOnchange },
+    field: { value: cityValue, onChange: cityValueOnChange },
     fieldState: { error: cityValueError },
-  } = useController({
-    name: "city_id",
-  });
+  } = useController({ name });
+
+  const { watch, setValue } = useFormContext();
+  const formData = watch();
 
   let filter: Array<CrudFilter> = [];
-
   if (formData?.state_id) {
     filter.push({
       field: "state_id",
@@ -117,7 +121,7 @@ export const CityDropDown = () => {
     });
   }
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
@@ -131,71 +135,65 @@ export const CityDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
       mode: "server",
+      pageSize: pageSize,
     },
   });
 
-  useEffect(() => {
-    if (options) {
-      if (currentPage > 1) setSelectOptions([...selectOptions, ...options]);
-      else setSelectOptions(options);
-    }
-  }, [options, currentPage]);
-
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
-  const handleCityOnChange = async (val: number) => {
-    cityValueOnchange(val);
-    const { data: cityData }: any = await supabaseClient
-      .from("city")
-      .select("*,state_id(*)")
-      .eq("id", val);
-    setValue("city", cityData?.[0]);
-    setValue("state_id", cityData?.[0]?.state_id?.id);
-    setValue("state", cityData?.[0]?.state_id);
-    setValue("postal_code", cityData?.[0]?.postal_code);
-  };
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="text-xs font-normal text-[#333333]">City</div>
 
-      <CustomSelect
-        value={cityValue}
-        placeholder="Select City"
-        data={selectOptions}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          onSearch(val);
-        }}
-        onChange={handleCityOnChange}
-        error={cityValueError}
-      />
+      <Select value={cityValue} onValueChange={cityValueOnChange}>
+        <SelectTrigger className="w-full" error={cityValueError ? true : false}>
+          <SelectValue placeholder="Select City" />
+        </SelectTrigger>
+        <SelectContent>
+          <Input
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              const value = event.target.value;
+              onSearch(value);
+            }}
+          />
+          <SelectItems onBottomReached={handleOnBottomReached}>
+            {options.map((option: BaseOption) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+      {cityValueError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {cityValueError.message}
+        </span>
+      )}
     </div>
   );
 };
 
-export const StateDropDown = () => {
-  const { setValue } = useFormContext();
-
-  const [currentPage, setCurrentPage] = useState(1);
+export const StateDropDown = ({ name }: { name: string }) => {
+  const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
 
   const {
     field: { value: stateValue, onChange: stateValueOnchange },
+    fieldState: { error: stateValueError },
   } = useController({
-    name: "state_id",
+    name,
   });
 
-  const {
-    options: stateOptions,
-    onSearch: stateOnsearch,
-    queryResult,
-  } = useSelect({
+  const { options, onSearch: stateOnsearch } = useSelect({
     resource: "state",
     meta: { select: "*" },
     optionLabel: "name",
@@ -209,72 +207,78 @@ export const StateDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
       mode: "server",
+      pageSize: pageSize,
     },
   });
 
-  useEffect(() => {
-    if (stateOptions) {
-      if (currentPage > 1)
-        setSelectOptions([...selectOptions, ...stateOptions]);
-      else setSelectOptions(stateOptions);
-    }
-  }, [stateOptions, currentPage]);
-
   const handleOnBottomReached = () => {
-    if (
-      stateOptions &&
-      (queryResult?.data?.total as number) >= currentPage * 10
-    )
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    setPageSize((pageSize) => pageSize + 10);
   };
 
-  const handleStateOnChange = (val: number) => {
-    stateValueOnchange(val);
-    const stateObject = queryResult?.data?.data?.find(
-      (state) => state.id == val
-    );
-    setValue("state", stateObject);
-  };
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
       <div className="text-xs font-normal text-[#333333]">Province</div>
 
-      <CustomSelect
-        value={stateValue}
-        placeholder="Select Province"
-        data={selectOptions}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          stateOnsearch(val);
-        }}
-        onChange={handleStateOnChange}
-      />
+      <Select value={stateValue} onValueChange={stateValueOnchange}>
+        <SelectTrigger
+          className="w-full"
+          error={stateValueError ? true : false}
+        >
+          <SelectValue placeholder="Select Province" />
+        </SelectTrigger>
+        <SelectContent>
+          <Input
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              const value = event.target.value;
+              stateOnsearch(value);
+            }}
+          />
+          <SelectItems onBottomReached={handleOnBottomReached}>
+            {options?.map((option: BaseOption, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label}
+                </SelectItem>
+                {index < selectOptions.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+      {stateValueError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {stateValueError.message}
+        </span>
+      )}
     </div>
   );
 };
 
-export const CenterDropDown = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [selectOptions, setSelectOptions] = useState<any>([]);
+export const CenterDropDown = ({ name }: { name: string }) => {
+  const [pageSize, setPageSize] = useState(10);
 
   const {
-    field: { value: centerValue, onChange: centerValueOnchange },
-  } = useController({
-    name: "center_id",
-  });
-  const { watch, setValue } = useFormContext();
+    field: { value: centerValue, onChange: centerValueOnChange },
+    fieldState: { error: centerValueError },
+  } = useController({ name });
 
+  const { watch, setValue } = useFormContext();
   const formData = watch();
+
   let filter: Array<CrudFilter> = [];
 
   if (formData?.city_id) {
     filter.push({
       field: "city_id",
       operator: "eq",
-      value: formData?.city_id,
+      value: formData.city_id,
     });
   }
 
@@ -282,15 +286,11 @@ export const CenterDropDown = () => {
     filter.push({
       field: "state_id",
       operator: "eq",
-      value: formData?.state_id,
+      value: formData.state_id,
     });
   }
 
-  const {
-    options: centerOptions,
-    onSearch: centerOnsearch,
-    queryResult,
-  } = useSelect({
+  const { options, onSearch: centerOnSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
     optionValue: "id",
@@ -304,54 +304,50 @@ export const CenterDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
       mode: "server",
+      pageSize: pageSize,
     },
   });
 
-  useEffect(() => {
-    if (centerOptions) {
-      if (currentPage > 1)
-        setSelectOptions([...selectOptions, ...centerOptions]);
-      else setSelectOptions(centerOptions);
-    }
-  }, [centerOptions, currentPage]);
-
   const handleOnBottomReached = () => {
-    if (
-      centerOptions &&
-      (queryResult?.data?.total as number) >= currentPage * 10
-    )
-      setCurrentPage((previousLimit: number) => previousLimit + 1);
+    setPageSize((prevPageSize) => prevPageSize + 10);
   };
 
-  const handleCenterOnChange = async (val: number) => {
-    centerValueOnchange(val);
-    const { data: centerData } = await supabaseClient
-      .from("center")
-      .select("*,city_id(*),state_id(*)")
-      .eq("id", val);
-    setValue("center", centerData?.[0]);
-    setValue("state_id", centerData?.[0]?.state_id?.id);
-    setValue("state", centerData?.[0]?.state_id);
-    setValue("city_id", centerData?.[0]?.city_id?.id);
-    setValue("city", centerData?.[0]?.city_id);
-    setValue("postal_code", centerData?.[0]?.city_id?.postal_code);
-  };
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="text-xs font-normal text-[#333333]">Local Center</div>
-
-      <CustomSelect
-        value={centerValue}
-        placeholder="Select Local center"
-        data={selectOptions}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          centerOnsearch(val);
-        }}
-        onChange={handleCenterOnChange}
-      />
+      <Select value={centerValue} onValueChange={centerValueOnChange}>
+        <SelectTrigger
+          className="w-full"
+          error={centerValueError ? true : false}
+        >
+          <SelectValue placeholder="Select Local center" />
+        </SelectTrigger>
+        <SelectContent>
+          <Input
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              const value = event.target.value;
+              centerOnSearch(value);
+            }}
+          />
+          <SelectItems onBottomReached={handleOnBottomReached}>
+            {options.map((option: BaseOption) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+      {centerValueError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {centerValueError.message}
+        </span>
+      )}
     </div>
   );
 };

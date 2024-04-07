@@ -7,7 +7,7 @@ export const validationSchema = () => {
     }),
     organizer_ids: z.array(z.number(), {
       required_error: "Select Organizer Name",
-    }),
+    }).refine((val) => val.length <= 10 , {message:"Maximum number of organizer allowed is 10"}),
     program_created_by: z.number({
       required_error: "Select who is going to teach the course",
     }),
@@ -65,12 +65,22 @@ export const validationSchema = () => {
       }),
 
     // Step 3 Schema
+    isNewVenue:z.boolean({required_error:"Venue is a required fields"}),
     online_url: z
       .string({ required_error: " Online meeting URL is a required fields" })
       .url({ message: "Online meeting URL is not valid" }),
     hour_format_id: z.number({
       required_error: "Time format is a required field",
     }),
+    state_id : z.number({
+      required_error: "State is is a required fields",
+    }), 
+    city_id : z.number({
+      required_error: "City is is a required fields",
+    }), 
+    center_id: z.number({
+      required_error: "Center is is a required fields",
+    }), 
     time_zone_id: z.number({ required_error: "Time zone is a required field" }),
     schedules: scheduleValidationSchema,
 
@@ -91,6 +101,7 @@ export const validationSchema = () => {
         /^(?:[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
         { message: "One of the Bcc email you entered is not in correct format" }
       ),
+      
   });
 };
 
