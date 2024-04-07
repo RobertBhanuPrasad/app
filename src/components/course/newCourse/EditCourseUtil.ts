@@ -5,7 +5,7 @@ export const handleCourseDefaultValues = async (programId: number) => {
   const { data, error } = await supabaseClient
     .from("program")
     .select(
-      "*,program_organizers(*),program_teachers(*),program_assistant_teachers(*),program_languages(*),program_translation_languages(*),program_schedules(*),program_accommodations(*),contact(*)"
+      "*,program_organizers(*),program_teachers(*),program_assistant_teachers(*),program_languages(*),program_translation_languages(*),program_schedules(*),program_accommodations(*),program_contact_details(*)"
     )
     .eq("id", programId);
 
@@ -16,6 +16,7 @@ export const handleCourseDefaultValues = async (programId: number) => {
 
     return defaultValues;
   }
+
   return {};
 };
 
@@ -159,14 +160,21 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data?.program_schedules) {
     defaultValues.schedules = data.program_schedules.map(
       (schedule: ProgramSchedulesDataBaseType) => {
+        schedule.start_time = schedule.start_time
+          ? new Date(schedule.start_time)
+          : new Date();
+        schedule.end_time = schedule.end_time
+          ? new Date(schedule.end_time)
+          : new Date();
+
         const scheduleType: any = {
-          date: schedule.start_time || new Date(),
-          startHour: schedule.start_time ? schedule.start_time.getHours() : 0,
+          date: schedule.start_time,
+          startHour: schedule.start_time.getHours(),
           startMinute: schedule.start_time
             ? schedule.start_time.getMinutes()
             : 0,
-          endHour: schedule.end_time ? schedule.end_time.getHours() : 0,
-          endMinute: schedule.end_time ? schedule.end_time.getMinutes() : 0,
+          endHour: schedule.end_time.getHours(),
+          endMinute: schedule.end_time.getMinutes(),
         };
         return scheduleType;
       }

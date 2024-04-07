@@ -3,6 +3,18 @@ import CurrencyIcon from "@public/assets/CurrencyIcon";
 import Important from "@public/assets/Important";
 import LocationIcon from "@public/assets/LocationIcon";
 import ParticipantsIcon from "@public/assets/ParticipantsIcon";
+import {
+  PARTICIPANT_ATTENDANCE_STATUS,
+  PARTICIPANT_PAYMENT_STATUS,
+} from "src/constants/OptionLabels";
+import {
+  CANCELED_ATTENDANCE_STATUS,
+  COMPLETED_ATTENDANCE_STATUS,
+  DROPOUT_ATTENDANCE_STATUS,
+  PARTICIPANT_PENDING_PAYMENT_STATUS,
+  PARTICIPANT_SUCCESS_PAYMENT_STATUS,
+  PENDING_ATTENDANCE_STATUS,
+} from "src/constants/OptionValueOrder";
 import { useGetIdentity, useList, useOne, useUpdate } from "@refinedev/core";
 import { Circle } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -15,19 +27,24 @@ import {
 } from "src/ui/hover-card";
 import { formatDate, formatDateString } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-
-import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
+import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
+import CustomSelect from "src/ui/custom-select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
+
+import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
   PARTICIPANTS_TAB,
   REVENUE_SUMMARY_TAB,
 } from "src/constants/CourseConstants";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -48,6 +65,8 @@ import {
   AlertDialogTrigger,
 } from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
+import { Textarea } from "src/ui/textarea";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import ShareIcon from "@public/assets/ShareIcon";
 import CopyIcon from "@public/assets/CopyIcon";
 import WhatsappIcon from "@public/assets/WhatsappIcon";
@@ -55,12 +74,9 @@ import FaceBookIcon from "@public/assets/FaceBookIcon";
 import TwitterIcon from "@public/assets/TwitterIcon";
 import Instagram from "@public/assets/Instagram";
 import LinkedInIcon from "@public/assets/LinkedInIcon";
-import _ from "lodash";
 import Exclamation from "@public/assets/Exclamation";
 import Cross from "@public/assets/Cross";
 import Tick from "@public/assets/Tick.png";
-import { useRouter } from "next/router";
-import Image from "next/image";
 import ParticipantsTab from "@components/course/viewCourse/participantsTab";
 import { supabaseClient } from "src/utility/supabaseClient";
 import {
@@ -75,6 +91,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "src/ui/select";
+import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 
 function index() {
   const router = useRouter();
@@ -129,7 +146,11 @@ function index() {
 
   const countryName = "India";
 
+  console.log(courseData, "courseData");
+
   const { t } = useTranslation("common");
+  const { viewPreviewPage } = newCourseStore();
+
   const [selectedValue, setSelectedValue] = useState(
     JSON.stringify(COURSE_DETAILS_TAB)
   );
@@ -161,6 +182,9 @@ function index() {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />;
+  }
 
   return (
     <div className="flex flex-col">
@@ -284,12 +308,14 @@ function index() {
                 </div>
               </TabsTrigger>
             ))}
-            <div className="ml-auto mb-6 ">
+            <div className="ml-auto mb-6 flex gap-4 ">
               {isApproved(
                 courseData?.data?.program_type_id?.is_approval_required,
                 courseData?.data?.status_id?.id,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && <PendingApprovalDropDown courseId={Id} />}
+
+              <ActionsDropDown />
             </div>
           </TabsList>
           <div className="w-full border-b border-[#D6D7D8] -mt-2"></div>
@@ -435,7 +461,10 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex items-center justify-center">
-                      <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">
+                      <AlertDialogCancel
+                        className=" bg-blue-500 mx-auto text-white"
+                        onClick={() => setApproveModalOpen(false)}
+                      >
                         Close
                       </AlertDialogCancel>
                     </AlertDialogFooter>
@@ -448,20 +477,21 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
       </Dialog>
 
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
-        <DialogContent className="flex flex-col items-center">
+        <DialogContent className="flex flex-col items-center px-6 w-[415px] ">
           <DialogHeader className="text-center">
             <div className="flex items-center w-full justify-center">
               <Cross />{" "}
             </div>
-            <DialogTitle className="text-gray-500 text-sm">
+            <DialogTitle className="text-gray-500 text-sm font-normal pt-5">
               {" "}
               Describe your rejection reason
               <span className="text-blue-500">(optional)</span>
             </DialogTitle>
             <DialogDescription>
-              <p className="box-border h-32 w-80 p-4 border-[2px] text-gray-400 rounded-lg">
-                Comment.
-              </p>
+              <Textarea
+                placeholder="Comment"
+                className="border-[#E1E1E1] resize-none h-[112px] w-[366px]"
+              />
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -469,7 +499,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
               <Button
                 type="button"
                 variant="outline"
-                className="text-blue-500"
+                className="text-blue-500 mt-5"
                 onClick={() => {
                   setRejectModalOpen(false);
                 }}
@@ -501,12 +531,197 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex items-center justify-center">
-                  <AlertDialogCancel className=" bg-blue-500 mx-auto text-white">
+                  <AlertDialogCancel
+                    className=" bg-blue-500 mx-auto text-white"
+                    onClick={() => setRejectModalOpen(false)}
+                  >
                     Close
                   </AlertDialogCancel>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+const ActionsDropDown = () => {
+  const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false);
+
+  const { setNewCourseData, setViewPreviewPage } = newCourseStore();
+
+  const router = useRouter();
+
+  const Id: number | undefined = router?.query?.id
+    ? parseInt(router.query.id as string)
+    : undefined;
+
+  const options = [
+    {
+      label: "View Participants",
+      value: 1,
+    },
+    {
+      label: "Register Participants",
+      value: 2,
+    },
+    {
+      label: "Edit Course",
+      value: 3,
+    },
+    {
+      label: "Copy Course",
+      value: 4,
+    },
+    {
+      label: "Cancel Course",
+      value: 5,
+    },
+    {
+      label: "Submit Course Accounting Form",
+      value: 6,
+    },
+  ];
+
+  /**
+   * handle the Edit Course
+   * Retrieves default values for the course with the given ID,
+   * sets the retrieved values as the new course data, and
+   * switches the view to the preview page.
+   */
+  const handleEditCourse = async () => {
+    if (Id) {
+      const defaultValues = await handleCourseDefaultValues(Id);
+      setNewCourseData(defaultValues);
+      setViewPreviewPage(true);
+    }
+  };
+
+  /**
+   * Handles creating a new course.
+   * Retrieves default values for the course with the given ID,
+   * sets the retrieved values as the new course data, and
+   * switches the view to the new course page.
+   */
+  const handleCopyCourse = async () => {
+    if (Id) {
+      let defaultValues = await handleCourseDefaultValues(Id);
+
+      // we have to delete schedules when user click on cipy course and other we need to prefill
+
+      defaultValues = _.omit(defaultValues, ["schedules"]);
+      setNewCourseData(defaultValues);
+      router.push("/Course/NewCourse");
+    }
+  };
+  return (
+    <div>
+      <CustomSelect
+        placeholder="Actions"
+        data={options}
+        onBottomReached={() => {}}
+        onSearch={() => {}}
+        onChange={(val: any) => {
+          switch (val) {
+            case 1: {
+              // TODO - navigate to view participants page
+              router.push("/");
+              break;
+            }
+            case 2: {
+              // TODO - navigate to register participants page
+              router.push("/");
+              break;
+            }
+            case 3: {
+              handleEditCourse();
+              break;
+            }
+            case 4: {
+              handleCopyCourse();
+              break;
+            }
+            case 5: {
+              setCancelCourseModalOpen(true);
+              break;
+            }
+            case 6: {
+              // TODO - navigate to course accounting form
+              router.push("/");
+              break;
+            }
+            default: {
+              router.push("/");
+            }
+          }
+        }}
+        value={undefined}
+        selectBoxStyles={{
+          header: "w-[192px] ",
+          dropdown: "w-[192px]",
+        }}
+      />
+      <Dialog
+        open={cancelCourseModalOpen}
+        onOpenChange={setCancelCourseModalOpen}
+      >
+        <DialogContent className="flex flex-col h-[248px] w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center w-full justify-center">
+              <Exclamation />
+            </div>
+            <DialogDescription className="font-bold text-black text-lg items-center text-center">
+              Are you sure you want to cancel this course?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="w-full flex justify-center items-center gap-5">
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-blue-500 w-[71px] h-[46px]"
+                  onClick={() => {
+                    setCancelCourseModalOpen(false);
+                  }}
+                >
+                  No
+                </Button>
+              </div>
+              <div>
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    <Button
+                      type="button"
+                      className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                    >
+                      Yes
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="w-50">
+                    <AlertDialogHeader className="text-center">
+                      <AlertDialogTrigger></AlertDialogTrigger>
+                      <div className="flex justify-center">
+                        <Image src={Tick} alt="tick" />
+                      </div>
+                      <AlertDialogTitle className="font-bold text-center">
+                        Course cancelled Successfully
+                      </AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex items-center justify-center">
+                      <AlertDialogCancel
+                        className=" bg-blue-500 mx-auto text-white"
+                        onClick={() => setCancelCourseModalOpen(false)}
+                      >
+                        Close
+                      </AlertDialogCancel>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
