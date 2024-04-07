@@ -1,4 +1,3 @@
-import Form from "@components/Formfield";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
 import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
@@ -14,7 +13,9 @@ import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import { useGetIdentity } from "@refinedev/core";
-import { useFormContext } from "react-hook-form";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import Form from "@components/Formfield";
+import { useForm, useFormContext, useFormState } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,
@@ -34,12 +35,12 @@ import { Button } from "src/ui/button";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { VISIBILITY } from "src/constants/OptionLabels";
 import { PUBLIC } from "src/constants/OptionValueOrder";
-
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { z } from "zod";
 import { validationSchema } from "./NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { JSX, SetStateAction, useState } from "react";
+import Success from "@public/assets/Success";
+import Error from "@public/assets/Error";
 import _ from "lodash";
 
 function index() {
@@ -72,76 +73,8 @@ function NewCourse() {
 
   const loggedUserData = loginUserData?.userData?.id;
 
-  // Array of step titles, icons, and colors
-  const stepTitles = [
-    {
-      value: BASIC_DETAILS_STEP_NUMBER,
-      label: "Basic Details",
-      icon: (
-        <Profile
-          color={` ${
-            currentStep == BASIC_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
-    },
-    {
-      value: COURSE_DETAILS_STEP_NUMBER,
-      label: "Course Details",
-      icon: (
-        <Group
-          color={` ${
-            currentStep == COURSE_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
-    },
-    {
-      value: TIME_AND_VENUE_STEP_NUMBER,
-      label: "Time and Venue",
-      icon: (
-        <Venue
-          color={` ${
-            currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
-    },
-    {
-      value: FEE_STEP_NUMBER,
-      label: "Fees",
-      icon: (
-        <Fees
-          color={` ${currentStep == FEE_STEP_NUMBER ? "#7677F4" : "#999999"}`}
-        />
-      ),
-    },
-    {
-      value: ACCOMMODATION_STEP_NUMBER,
-      label: "Accommodation",
-      icon: (
-        <Car
-          color={` ${
-            currentStep == ACCOMMODATION_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
-    },
-    {
-      value: CONTACT_INFO_STEP_NUMBER,
-      label: "Contact Info",
-      icon: (
-        <Info
-          color={` ${
-            currentStep == CONTACT_INFO_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
-    },
-  ];
-
   const onSubmit = (formData: any) => {
-    console.log(formData);
+    // console.log(formData);
   };
 
   //Finding program Organizer role id
@@ -164,95 +97,53 @@ function NewCourse() {
   //   return <div>Loading...</div>;
   // }
 
-  const contentStylings =
-    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
   return (
     <div className="bg-[white]  ">
-      <Tabs value={JSON.stringify(currentStep)}>
-        <div className="flex flex-row">
-          <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
-            <div className="flex flex-col h-full gap-4 ">
-              {stepTitles.map((tab, index) => (
-                <TabsTrigger
-                  key={index}
-                  value={JSON.stringify(tab.value)}
-                  className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                  onClick={() => setCurrentStep(tab.value)}
-                >
-                  {currentStep === tab.value && (
-                    <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
-                  )}
-                  <div className="flex flex-row gap-[10px] ml-[14px] items-center">
-                    {tab.icon}
-                    {tab.label}
-                  </div>
-                </TabsTrigger>
-              ))}
-            </div>
-          </TabsList>
-
-          <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
-            <Form
-              onSubmit={onSubmit}
-              defaultValues={defaultValues}
-              schema={validationSchema()}
-            >
-              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
-                <div>
-                  <TabsContent
-                    value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep1 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(COURSE_DETAILS_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep2 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(TIME_AND_VENUE_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep3 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(FEE_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep4 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(ACCOMMODATION_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep5 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(CONTACT_INFO_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep6 />
-                  </TabsContent>
-                </div>
-
-                <Footer stepTitles={stepTitles} />
-              </div>
-            </Form>
-          </div>
-        </div>
-      </Tabs>
+      <Form
+        onSubmit={onSubmit}
+        defaultValues={defaultValues}
+        schema={validationSchema()}
+      >
+        <NewCourseTabs />
+      </Form>
     </div>
   );
 }
 
 export default index;
 
-const Footer = ({ stepTitles }: any) => {
+export const NewCourseTabs = () => {
   const { watch, getValues } = useFormContext();
   const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
     newCourseStore();
+
+  const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined);
+  const [isAllFieldsValid2, setIsAllFieldsValid2] = useState(undefined);
+  const [isAllFieldsValid3, setIsAllFieldsValid3] = useState(undefined);
+  const [isAllFieldsValid4, setIsAllFieldsValid4] = useState(undefined);
+  const [isAllFieldsValid5, setIsAllFieldsValid5] = useState(undefined);
+  const [isAllFieldsValid6, setIsAllFieldsValid6] = useState(undefined);
+
+  /**
+   * @function handelIsAllFieldsFilled
+   * @description this function is used to set that is all fields are filled or not in particular step
+   * @param isAllFieldsFilled 
+   */
+  const handelIsAllFieldsFilled = (isAllFieldsFilled: any) => {
+    if (currentStep == 1) {
+      setIsAllFieldsValid1(isAllFieldsFilled);
+    } else if (currentStep == 2) {
+      setIsAllFieldsValid2(isAllFieldsFilled);
+    } else if (currentStep == 3) {
+      setIsAllFieldsValid3(isAllFieldsFilled);
+    } else if (currentStep == 4) {
+      setIsAllFieldsValid4(isAllFieldsFilled);
+    } else if (currentStep == 5) {
+      setIsAllFieldsValid5(isAllFieldsFilled);
+    } else if (currentStep == 6) {
+      setIsAllFieldsValid6(isAllFieldsFilled);
+    }
+  };
 
   const { data: loginUserData }: any = useGetIdentity();
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
@@ -260,6 +151,8 @@ const Footer = ({ stepTitles }: any) => {
   );
 
   const formData = getValues();
+  const contentStylings =
+    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
 
   let RequiredNewCourseStep1FormNames = _.omit(
     NewCourseStep1FormNames,
@@ -303,72 +196,314 @@ const Footer = ({ stepTitles }: any) => {
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
 
+  let isAllFieldsFilled = false;
+
+  /**
+   * @function handleClickTab
+   * @description this function is used to click tabs based on the validations of present step
+   * @param currentStepFormNames 
+   * @param tab 
+   */
+  const handleClickTab = async (
+    currentStepFormNames: any[],
+    tab: { value: any }
+  ) => {
+    isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
+    //if the clicked tab is lessthan current step then we can navigate to the clicked tab
+    if (tab.value < currentStep) {
+      setCurrentStep(tab.value);
+    } else if (isAllFieldsFilled && tab.value == currentStep + 1) {
+      // if all the fields filled in the current step then we can only able to go to next step
+      setCurrentStep(tab.value);
+    }
+    // This function is used to handle to update that all the fields in particular step is filled or not
+    handelIsAllFieldsFilled(isAllFieldsFilled);
+  };
+
+  /**
+   * @function handleClickReviewDetailsButton
+   * @description This function is used to send to the review page if all the fields are field
+   * @param currentStepFormNames 
+   */
   const handleClickReviewDetailsButton = async (
     currentStepFormNames: any[]
   ) => {
     const formData = watch();
 
-    const isAllFieldsFilled = await ValidateCurrentStepFields(
-      currentStepFormNames
-    );
+    isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
       setViewPreviewPage(true);
       setNewCourseData(formData);
     }
+    handelIsAllFieldsFilled(isAllFieldsFilled);
   };
 
+  /**
+   * @function handleClickNext
+   * @description this function is used to navigate to next step if all the fields of the current step is all filled
+   * @param currentStepFormNames
+   */
   const handleClickNext = async (currentStepFormNames: any[]) => {
-    const isAllFieldsFilled = await ValidateCurrentStepFields(
-      currentStepFormNames
-    );
+    isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
       setCurrentStep(currentStep + 1);
     }
-    return isAllFieldsFilled;
+    handelIsAllFieldsFilled(isAllFieldsFilled);
   };
 
+  /**
+   * @function handleClickPrevious
+   * @description this function is used to click on the previous button and able to move to a step befor from the present step
+   */
   const handleClickPrevious = () => {
     setCurrentStep(currentStep - 1);
   };
 
+  // Array of step titles, icons, and colors
+  const stepTitles = [
+    {
+      value: BASIC_DETAILS_STEP_NUMBER,
+      label: "Basic Details",
+      icon:
+        currentStep == BASIC_DETAILS_STEP_NUMBER &&
+        isAllFieldsValid1 == undefined ? (
+          <Profile
+            color={` ${
+              currentStep == BASIC_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid1 ? (
+          <Success />
+        ) : (
+          <Error />
+        ),
+    },
+    {
+      value: COURSE_DETAILS_STEP_NUMBER,
+      label: "Course Details",
+      icon:
+        currentStep === COURSE_DETAILS_STEP_NUMBER &&
+        isAllFieldsValid2 === undefined ? (
+          <Group
+            color={` ${
+              currentStep == COURSE_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid2 == undefined ? (
+          <Group
+            color={` ${
+              currentStep == COURSE_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid2 ? (
+          <Success />
+        ) : (
+          <Error />
+        ),
+    },
+    {
+      value: TIME_AND_VENUE_STEP_NUMBER,
+      label: "Time and Venue",
+      icon:
+        currentStep == TIME_AND_VENUE_STEP_NUMBER &&
+        isAllFieldsValid3 == undefined ? (
+          <Venue
+            color={` ${
+              currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid3 == undefined ? (
+          <Venue
+            color={` ${
+              currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid3 ? (
+          <Success />
+        ) : (
+          <Error />
+        ),
+    },
+    {
+      value: FEE_STEP_NUMBER,
+      label: "Fees",
+      icon:
+        currentStep == FEE_STEP_NUMBER && isAllFieldsValid4 == undefined ? (
+          <Fees
+            color={` ${currentStep == FEE_STEP_NUMBER ? "#7677F4" : "#999999"}`}
+          />
+        ) : isAllFieldsValid4 == undefined ? (
+          <Fees
+            color={` ${currentStep == FEE_STEP_NUMBER ? "#7677F4" : "#999999"}`}
+          />
+        ) : isAllFieldsValid4 ? (
+          <Success />
+        ) : (
+          <Error />
+        ),
+    },
+    {
+      value: ACCOMMODATION_STEP_NUMBER,
+      label: "Accommodation",
+      icon:
+        currentStep == ACCOMMODATION_STEP_NUMBER &&
+        isAllFieldsValid5 == undefined ? (
+          <Car
+            color={` ${
+              currentStep == ACCOMMODATION_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid5 == undefined ? (
+          <Car
+            color={` ${
+              currentStep == ACCOMMODATION_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid5 ? (
+          <Success />
+        ) : (
+          <Error />
+        ),
+    },
+    {
+      value: CONTACT_INFO_STEP_NUMBER,
+      label: "Contact Info",
+      icon:
+        currentStep == CONTACT_INFO_STEP_NUMBER &&
+        isAllFieldsValid6 == undefined ? (
+          <Info
+            color={` ${
+              currentStep == CONTACT_INFO_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid6 == undefined ? (
+          <Info
+            color={` ${
+              currentStep == CONTACT_INFO_STEP_NUMBER ? "#7677F4" : "#999999"
+            }`}
+          />
+        ) : isAllFieldsValid6 ? (
+          <Success />
+        ) : (
+          <Error />
+        ),
+    },
+  ];
+
   return (
-    <div className="flex self-end justify-center gap-4 w-full mt-2">
-      {currentStep > 1 && (
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-            handleClickPrevious();
-          }}
-          className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
-        >
-          Previous
-        </Button>
-      )}
+    <div>
+      <Tabs value={JSON.stringify(currentStep)}>
+        <div className="flex flex-row">
+          <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
+            <div className="flex flex-col  h-full gap-4 ">
+              {stepTitles.map((tab, index) => (
+                <TabsTrigger
+                  key={index}
+                  value={JSON.stringify(tab.value)}
+                  className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                  onClick={async () =>
+                    await handleClickTab(
+                      validationFieldsStepWise[currentStep - 1],
+                      tab
+                    )
+                  }
+                >
+                  {currentStep === tab.value && (
+                    <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
+                  )}
+                  <div className="flex flex-row gap-[10px] ml-[14px] items-center">
+                    {tab.icon}
+                    {tab.label}
+                  </div>
+                </TabsTrigger>
+              ))}
+            </div>
+          </TabsList>
 
-      {currentStep < stepTitles.length && (
-        <Button
-          className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
-          onClick={async (e) => {
-            e.preventDefault();
-            await handleClickNext(validationFieldsStepWise[currentStep - 1]);
-          }}
-        >
-          Next
-        </Button>
-      )}
+          <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
+            <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
+              <div>
+                <TabsContent
+                  value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
+                  className={contentStylings}
+                >
+                  <NewCourseStep1 />
+                </TabsContent>
+                <TabsContent
+                  value={JSON.stringify(COURSE_DETAILS_STEP_NUMBER)}
+                  className={contentStylings}
+                >
+                  <NewCourseStep2 />
+                </TabsContent>
+                <TabsContent
+                  value={JSON.stringify(TIME_AND_VENUE_STEP_NUMBER)}
+                  className={contentStylings}
+                >
+                  <NewCourseStep3 />
+                </TabsContent>
+                <TabsContent
+                  value={JSON.stringify(FEE_STEP_NUMBER)}
+                  className={contentStylings}
+                >
+                  <NewCourseStep4 />
+                </TabsContent>
+                <TabsContent
+                  value={JSON.stringify(ACCOMMODATION_STEP_NUMBER)}
+                  className={contentStylings}
+                >
+                  <NewCourseStep5 />
+                </TabsContent>
+                <TabsContent
+                  value={JSON.stringify(CONTACT_INFO_STEP_NUMBER)}
+                  className={contentStylings}
+                >
+                  <NewCourseStep6 />
+                </TabsContent>
+              </div>
+              <div className="flex self-end justify-center gap-4 w-full mt-2">
+                {currentStep > 1 && (
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleClickPrevious();
+                    }}
+                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
+                  >
+                    Previous
+                  </Button>
+                )}
 
-      {currentStep == CONTACT_INFO_STEP_NUMBER && (
-        <Button
-          className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-          onClick={async () => {
-            await handleClickReviewDetailsButton(
-              validationFieldsStepWise[currentStep - 1]
-            );
-          }}
-        >
-          Review Details
-        </Button>
-      )}
+                {currentStep < stepTitles.length && (
+                  <Button
+                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      await handleClickNext(
+                        validationFieldsStepWise[currentStep - 1]
+                      );
+                    }}
+                  >
+                    Next
+                  </Button>
+                )}
+
+                {currentStep == CONTACT_INFO_STEP_NUMBER && (
+                  <Button
+                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
+                    onClick={async () => {
+                      await handleClickReviewDetailsButton(
+                        validationFieldsStepWise[currentStep - 1]
+                      );
+                    }}
+                  >
+                    Review Details
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Tabs>
     </div>
   );
 };
