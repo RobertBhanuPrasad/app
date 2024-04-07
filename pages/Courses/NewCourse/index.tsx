@@ -262,7 +262,7 @@ export const NewCourseTabs = () => {
     {
       value: BASIC_DETAILS_STEP_NUMBER,
       label: "Basic Details",
-      text_color: currentStep == BASIC_DETAILS_STEP_NUMBER || isAllFieldsValid1  || isAllFieldsValid1 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
+      text_color:  isAllFieldsValid1 == undefined && currentStep !== BASIC_DETAILS_STEP_NUMBER  ?  'text-[#999999]' : 'text-[#7677F4] !font-semibold',
       icon:
         currentStep == BASIC_DETAILS_STEP_NUMBER &&
         isAllFieldsValid1 == undefined ? (
@@ -280,7 +280,7 @@ export const NewCourseTabs = () => {
     {
       value: COURSE_DETAILS_STEP_NUMBER,
       label: "Course Details",
-      text_color: currentStep == COURSE_DETAILS_STEP_NUMBER || isAllFieldsValid2  || isAllFieldsValid2 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
+      text_color:  isAllFieldsValid2 == undefined && currentStep !== COURSE_DETAILS_STEP_NUMBER  ?  'text-[#999999]' : 'text-[#7677F4] !font-semibold' ,
       icon:
         currentStep === COURSE_DETAILS_STEP_NUMBER &&
         isAllFieldsValid2 === undefined ? (
@@ -304,7 +304,7 @@ export const NewCourseTabs = () => {
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
       label: "Time and Venue",
-      text_color: currentStep == TIME_AND_VENUE_STEP_NUMBER || isAllFieldsValid3  || isAllFieldsValid3 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
+      text_color: isAllFieldsValid3 == undefined && currentStep !== TIME_AND_VENUE_STEP_NUMBER ?  'text-[#999999]' : 'text-[#7677F4] !font-semibold',
       icon:
         currentStep == TIME_AND_VENUE_STEP_NUMBER &&
         isAllFieldsValid3 == undefined ? (
@@ -328,7 +328,7 @@ export const NewCourseTabs = () => {
     {
       value: FEE_STEP_NUMBER,
       label: "Fees",
-      text_color: currentStep == FEE_STEP_NUMBER || isAllFieldsValid4  || isAllFieldsValid4 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
+      text_color: isAllFieldsValid4 == undefined && currentStep !== FEE_STEP_NUMBER ? 'text-[#999999]' : 'text-[#7677F4] !font-semibold',
       icon:
         currentStep == FEE_STEP_NUMBER && isAllFieldsValid4 == undefined ? (
           <Fees
@@ -347,7 +347,7 @@ export const NewCourseTabs = () => {
     {
       value: ACCOMMODATION_STEP_NUMBER,
       label: "Accommodation",
-      text_color: currentStep == ACCOMMODATION_STEP_NUMBER || isAllFieldsValid5  || isAllFieldsValid5 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
+      text_color:  isAllFieldsValid5 == undefined && currentStep !== ACCOMMODATION_STEP_NUMBER ? 'text-[#999999]' : 'text-[#7677F4] !font-semibold',
       icon:
         currentStep == ACCOMMODATION_STEP_NUMBER &&
         isAllFieldsValid5 == undefined ? (
@@ -371,7 +371,7 @@ export const NewCourseTabs = () => {
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: "Contact Info",
-      text_color: currentStep == CONTACT_INFO_STEP_NUMBER || isAllFieldsValid6 || isAllFieldsValid6 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
+      text_color: isAllFieldsValid6 == undefined && currentStep !== CONTACT_INFO_STEP_NUMBER ? 'text-[#999999]' : 'text-[#7677F4] !font-semibold',
       icon:
         currentStep == CONTACT_INFO_STEP_NUMBER &&
         isAllFieldsValid6 == undefined ? (
@@ -398,7 +398,7 @@ export const NewCourseTabs = () => {
     <div>
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
-          <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
+          <TabsList className="h-[513px] bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
             <div className="flex flex-col  h-full gap-4 ">
               {stepTitles.map((tab, index) => (
                 <TabsTrigger
