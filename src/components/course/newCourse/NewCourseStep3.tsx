@@ -52,7 +52,11 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
-import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
+import {
+  NATIONAL_ADMIN,
+  SUPER_ADMIN,
+  TIME_FORMAT_12_HOURS,
+} from "src/constants/OptionValueOrder";
 import {
   CenterDropDown,
   CityDropDown,
@@ -390,7 +394,7 @@ const Venue = () => {
 
   const {
     field: { onChange: isNewVenueOnchange },
-    fieldState:{error:isVenueSelectedError}
+    fieldState: { error: isVenueSelectedError },
   } = useController({
     name: "isNewVenue",
   });
@@ -570,8 +574,10 @@ const Venue = () => {
         )}
       </RadioGroup>
       {isVenueSelectedError && (
-            <span className="text-[#FF6D6D] text-[14px]">{isVenueSelectedError?.message}</span>
-          )}
+        <span className="text-[#FF6D6D] text-[14px]">
+          {isVenueSelectedError?.message}
+        </span>
+      )}
     </div>
   );
 };
@@ -927,8 +933,7 @@ const ExistingVenueList = () => {
 
   const isUserNationAdminOrSuperAdmin = user_roles?.find(
     (role) =>
-      role.role_id.value == "National Admin" ||
-      role.role_id.value == "Super Admin"
+      role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
   );
 
   const handleOpenExistingVenue = (item: any) => {
@@ -1002,27 +1007,26 @@ const ExistingVenueList = () => {
                     <div className="flex justify-between">
                       <div className="font-semibold">{item.name}</div>
                       <div className="flex flex-row gap-3">
-                        {true && (
-                          // isUserNationAdminOrSuperAdmin ||
-                          // item?.created_by_user_id ==
-                          //   loginUserData?.userData?.id
-                          <Dialog>
-                            <DialogTrigger
-                              onClick={() => {
-                                handleOpenExistingVenue(item);
-                              }}
-                            >
-                              <EditIcon />
-                            </DialogTrigger>
-                            <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-                              <AddOrEditVenue
-                                handleSubmit={() => {
-                                  handleSubmitExistingVenue(index);
+                        {isUserNationAdminOrSuperAdmin ||
+                          (item?.created_by_user_id ==
+                            loginUserData?.userData?.id && (
+                            <Dialog>
+                              <DialogTrigger
+                                onClick={() => {
+                                  handleOpenExistingVenue(item);
                                 }}
-                              />
-                            </DialogContent>
-                          </Dialog>
-                        )}
+                              >
+                                <EditIcon />
+                              </DialogTrigger>
+                              <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                                <AddOrEditVenue
+                                  handleSubmit={() => {
+                                    handleSubmitExistingVenue(index);
+                                  }}
+                                />
+                              </DialogContent>
+                            </Dialog>
+                          ))}
                         {true && (
                           // isUserNationAdminOrSuperAdmin
                           <Dialog>
