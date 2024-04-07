@@ -30,6 +30,39 @@ import {
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 /**
+ * Is course approved
+ */
+export const isApproved = (
+  isApprovalRequired: any,
+  courseStatusId: any,
+  roleId: any
+) => {
+  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    PENDING_REVIEW
+  )?.id;
+  const superAdminRoleId = getOptionValueObjectByOptionOrder(
+    USER_ROLE,
+    SUPER_ADMIN
+  )?.id;
+
+  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(
+    USER_ROLE,
+    NATIONAL_ADMIN
+  )?.id;
+
+  if (
+    isApprovalRequired &&
+    courseStatusId == coursePendingReviewStatusId &&
+    (roleId === superAdminRoleId || roleId === nationalAdminRoleId)
+  )
+    return true;
+  else {
+    return false;
+  }
+};
+
+/**
  * Function to determine options available based on course status, accounting status, and user role.
  *  It utilizes predefined IDs for course status, accounting status,
  * and user roles to fetch the necessary data.
@@ -467,4 +500,27 @@ export const handleTabsBasedOnStatus = (courseStatusId: any, tabIndex: any) => {
     if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false;
     else return true;
   }
+};
+
+/**
+ * Determines the status color based on the provided status ID.
+ * @param statusId The status ID to determine the color for.
+ * @returns An object containing the color code and styles for the status.
+ */
+export const getCourseStatusColorBasedOnStatusId = (statusId: number) => {
+    const courseActiveStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, ACTIVE)?.id;
+    const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, PENDING_REVIEW)?.id;
+
+    // Check if the status ID matches the active status ID
+    if (statusId === courseActiveStatusId) {
+        // Return color code and styles for active status
+        return { colorCode: "#15AF53", styles: "text-[#15AF53] bg-[#15AF53]/10" };
+    }
+    // Check if the status ID matches the pending review status ID
+    if (statusId === coursePendingReviewStatusId) {
+        // Return color code and styles for pending review status
+        return { colorCode: "#FFB900", styles: "text-[#FFB900] bg-[#FFB900]/10" };
+    }
+    // If status ID does not match any known status, return undefined
+    // This may indicate an invalid or unknown status ID
 };

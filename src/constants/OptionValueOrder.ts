@@ -14,6 +14,13 @@ export const FINANCE_ADMIN = 5;
 export const TIME_FORMAT_12_HOURS = 1;
 export const TIME_FORMAT_24_HOURS = 2;
 
+
+//Time format
+export const MALE = 1;
+export const FEMALE = 2;
+export const OTHER = 3;
+
+
 //Participant Payment Status
 export const PARTICIPANT_SUCCESS_PAYMENT_STATUS = 1;
 export const PARTICIPANT_PENDING_PAYMENT_STATUS = 2;

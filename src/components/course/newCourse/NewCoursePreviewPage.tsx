@@ -1,4 +1,5 @@
-import { useMany, useOne } from '@refinedev/core'
+import { useGetIdentity, useMany, useOne } from '@refinedev/core'
+import _ from 'lodash'
 import { useState } from 'react'
 import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT } from 'src/constants/OptionLabels'
 import { Button } from 'src/ui/button'
@@ -12,10 +13,14 @@ import NewCourseStep3 from './NewCourseStep3'
 import NewCourseStep4 from './NewCourseStep4'
 import NewCourseStep5 from './NewCourseStep5'
 import NewCourseStep6 from './NewCourseStep6'
+import { handlePostProgramData } from './NewCourseUtil'
+import LoadingIcon from '@public/assets/LoadingIcon'
 
 export default function NewCourseReviewPage() {
-  const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
+  const { newCourseData, setViewPreviewPage, setViewThankyouPage,setProgramId } = newCourseStore()
 
+  const { data }: any = useGetIdentity();
+  
   const creator =
     newCourseData?.program_created_by &&
     getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by)
@@ -51,37 +56,40 @@ export default function NewCourseReviewPage() {
     })
     .join(', ')
 
-  const contactNames = newCourseData?.contact?.map((contactDetails: any) => {
-    return contactDetails
+  const { data: CourseAccomidation } = useMany({
+    resource: 'accomdation_types',
+    ids: _.map(newCourseData?.accommodation, 'accommodation_type_id')
   })
-  // const { data: CourseTranslation } = useMany({
-  //   resource: 'program_translation_languages',
-  //   ids: newCourseData?.translation_language_ids,
-  //   meta: { select: 'language_name' }
-  // })
 
-  // TODO After completion karthik work need to update
+  const courseAccomodationNames = CourseAccomidation?.data?.map((accomdation: any) => {
+    return accomdation?.name
+  })
 
-  // const { data: CourseTeachers } = useMany({
-  //   resource: 'users',
-  //   ids: newCourseData?.teacher_ids,
-  //   meta: { select: 'contact_id(full_name)' }
-  // })
+  const { data: CourseTranslation } = useMany({
+    resource: 'languages',
+    ids: newCourseData?.translation_language_ids,
+    meta: { select: 'language_name' }
+  })
+  const languagesTranslations = CourseTranslation?.data
+    ?.map((CourseTranslation: any) => {
+      return CourseTranslation?.language_name
+    })
+    .join(', ')
 
-  // const CourseTeachersNames = CourseTeachers?.data?.map(teacher_id => {
-  //   if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
-  // })
+  const { data: CourseTeachers } = useMany({
+    resource: 'users',
+    ids: newCourseData?.teacher_ids,
+    meta: { select: 'contact_id(full_name)' }
+  })
+
+  const CourseTeachersNames = CourseTeachers?.data?.map(teacher_id => {
+    if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
+  })
 
   const { data: courseType } = useOne({
     resource: 'program_types',
     id: newCourseData?.program_type_id
   })
-
-  const languagesTranslations = newCourseData?.translation_language_ids
-    ?.map((id: any) => {
-      return getLanguageName(id)?.data?.name
-    })
-    .join(', ')
 
   const allowedCountries = newCourseData?.allowed_countries
     ?.map((data: any) => {
@@ -101,6 +109,30 @@ export default function NewCourseReviewPage() {
   const [openContactDetails, setOpenContactDetails] = useState(false)
   const [openFeesDetails, setOpenFeesDetails] = useState(false)
   const [clickedButton, setClickedButton] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+ 
+
+  const handClickContinue = async () => {
+    setIsSubmitting(true);
+
+    /**
+     * This variable will retur true if all api calls has been successfully it will return false if any api call fails
+     */
+    const isPosted = await handlePostProgramData(
+      newCourseData,
+      data?.userData?.id,
+      setProgramId
+      
+    );
+
+    if (isPosted) {
+      setViewPreviewPage(false);
+      setViewThankyouPage(true);
+    } else {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="pb-12">
@@ -188,7 +220,9 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Teacher</p>
-              <p className="font-semibold truncate text-accent-secondary">{'teachers' ? 'teachers' : '-'}</p>
+              <p className="font-semibold truncate text-accent-secondary">
+                {CourseTeachersNames ? CourseTeachersNames : '-'}
+              </p>
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Language(s) course is taught in</p>
@@ -290,7 +324,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Sessions</p>
-              {newCourseData?.schedules?.map(data => {
+              {newCourseData?.schedules?.map((data: any) => {
                 const schedule = `${formatDateString(data.date)} | ${data?.startHour} : ${data?.startMinute}  ${
                   data?.startTimeFormat
                 } to ${data?.endHour} : ${data?.endMinute}  ${data?.endTimeFormat}`
@@ -381,16 +415,10 @@ export default function NewCourseReviewPage() {
           {/* body */}
           <div className="grid grid-cols-3 gap-4 mt-2">
             {newCourseData?.accommodation?.map((data: any) => {
-              const { data: accommodationType } = useOne({
-                resource: 'accomdation_types',
-                id: data?.accomodationType
-              })
-              console.log('accommodationType', accommodationType)
-
               return (
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">{accommodationType?.data?.name}</p>
-                  <p className="font-semibold truncate text-accent-secondary">MYR {data?.accomodationFee}</p>
+                  <p className="text-sm font-normal text-accent-light "> {courseAccomodationNames}</p>
+                  <p className="font-semibold truncate text-accent-secondary"> {data?.fee_per_person}</p>
                 </div>
               )
             })}
@@ -450,14 +478,13 @@ export default function NewCourseReviewPage() {
           </div>
         </section>
         <div className="flex items-center justify-center ">
-          <Button
-            onClick={() => {
-              setViewPreviewPage(false)
-              setViewThankyouPage(true)
-            }}
-          >
-            Continue
-          </Button>
+        {isSubmitting ? (
+            <Button disabled>
+              <LoadingIcon />
+            </Button>
+          ) : (
+            <Button onClick={handClickContinue}>Continue</Button>
+          )}
         </div>
       </div>
     </div>
