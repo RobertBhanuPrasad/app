@@ -124,7 +124,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         earlyBirdSubTotal:
           val?.early_bird_total - val?.early_bird_total * taxRate,
         earlyBirdTax: val?.early_bird_total * taxRate,
-        earlyBirdTotal: val?.early_bird_total,
+        earlyBirdTotal: JSON.stringify(val?.early_bird_total),
         feeLevelId: val?.fee_level_id?.id,
         feeLevelLabel: val?.is_custom_fee
           ? val?.custom_fee_label
@@ -132,7 +132,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         is_enable: val?.is_enable,
         subTotal: val?.total - val?.total * taxRate,
         tax: val?.total * taxRate,
-        total: val?.total,
+        total: JSON.stringify(val?.total),
       };
     });
 
@@ -239,6 +239,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       cell: ({ row }) => {
         const {
           field: { value, onChange },
+          fieldState: { error },
         } = useController({
           name: `program_fee_level_settings[${row?.index}][total]`,
         });
@@ -252,7 +253,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
               onChange={(val) => {
                 setTotal(val.target.value);
               }}
-              error={errors?.feeLevels ? true : false}
+              error={error ? true : false}
               onBlur={() => {
                 onChange(total);
               }}
@@ -333,6 +334,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       cell: ({ row }) => {
         const {
           field: { value, onChange },
+          fieldState: { error },
         } = useController({
           name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
         });
@@ -346,7 +348,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
               onChange={(val) => {
                 setEarlyBirdTotal(val.target.value);
               }}
-              error={errors?.feeLevels ? true : false}
+              error={error ? true : false}
               onBlur={() => {
                 onChange(earlyBirdTotal);
               }}

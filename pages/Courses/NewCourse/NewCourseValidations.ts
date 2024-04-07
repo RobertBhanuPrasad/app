@@ -74,7 +74,7 @@ export const validationSchema = () => {
 
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
-    feeLevels: feelLevelsValidationSchema,
+    program_fee_level_settings: feelLevelsValidationSchema,
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
@@ -94,9 +94,9 @@ export const validationSchema = () => {
 
 const feelLevelsValidationSchema = z.array(
   z.object({
-    total: z.number(),
-    earlyBirdTotal: z.number(),
-  }).refine(() => {
+    is_enable:z.boolean(),
+    total: z.string().regex(/^\d+$/),
+    early_bird_total: z.string().regex(/^\d+$/),
   })
 );
 
