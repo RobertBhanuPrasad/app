@@ -39,6 +39,8 @@ import { authProvider } from 'src/authProvider'
 import CustomSelect from 'src/ui/custom-select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 
+import { handleCourseDefaultValues } from '@components/course/newCourse/EditCourseUtil'
+import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
@@ -66,6 +68,7 @@ import {
   DialogTrigger
 } from 'src/ui/dialog'
 import { Textarea } from 'src/ui/textarea'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 function index() {
   const Id: number = 1
@@ -233,10 +236,13 @@ function index() {
 
   const countryName = 'India'
 
+  const router = useRouter()
+
   console.log(courseData, 'courseData')
 
   const { t } = useTranslation('common')
   const [selectedValue, setSelectedValue] = useState()
+  const { viewPreviewPage, viewNewCoursePage } = newCourseStore()
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
@@ -260,8 +266,12 @@ function index() {
     }
   ]
 
-  const router = useRouter()
-
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />
+  }
+  if (viewNewCoursePage) {
+    router.push('/Courses/NewCourse')
+  }
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between">
@@ -371,7 +381,7 @@ function index() {
             </div>
           </TabsList>
           <div className="w-full border-b -mt-2"></div>
-          <TabsContent value={COURSE_DETAILS_TAB}>Place course details tab here</TabsContent>
+          <TabsContent value={COURSE_DETAILS_TAB}>place course details tab here </TabsContent>
           <TabsContent value={PARTICIPANTS_TAB}>Place participant tab here</TabsContent>
           <TabsContent value={REVENUE_SUMMARY_TAB}>Place Revenue Summary tab here</TabsContent>
           <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>Place Course Accounting Form tab here</TabsContent>
@@ -565,10 +575,13 @@ const PendingApprovalDropDown = () => {
 }
 
 const ActionsDropDown = () => {
-
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false)
 
+  const { setNewCourseData, setViewPreviewPage, setViewNewCoursePage } = newCourseStore()
+
   const router = useRouter()
+
+  const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
   const options = [
     {
@@ -597,6 +610,33 @@ const ActionsDropDown = () => {
     }
   ]
 
+  /**
+   * handle the Edit Course
+   * Retrieves default values for the course with the given ID,
+   * sets the retrieved values as the new course data, and
+   * switches the view to the preview page.
+   */
+  const handleEditCourse = async () => {
+    if (Id) {
+      const defaultValues = await handleCourseDefaultValues(Id)
+      setNewCourseData(defaultValues)
+      setViewPreviewPage(true)
+    }
+  }
+
+  /**
+   * Handles creating a new course.
+   * Retrieves default values for the course with the given ID,
+   * sets the retrieved values as the new course data, and
+   * switches the view to the new course page.
+   */
+  const handleNewCourse = async () => {
+    if (Id) {
+      const defaultValues = await handleCourseDefaultValues(Id)
+      setNewCourseData(defaultValues)
+      setViewNewCoursePage(true)
+    }
+  }
   return (
     <div>
       <CustomSelect
@@ -617,13 +657,11 @@ const ActionsDropDown = () => {
               break
             }
             case 3: {
-              // TODO - navigate to preview page
-              router.push('/')
+              handleEditCourse()
               break
             }
             case 4: {
-              // TODO - navigate to new course page
-              router.push('/')
+              handleNewCourse()
               break
             }
             case 5: {
