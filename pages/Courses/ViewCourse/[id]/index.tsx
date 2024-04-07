@@ -276,7 +276,7 @@ function index() {
                   {trigger.label}
                   <div
                     className={`${
-                      selectedValue === trigger.value
+                      selectedValue === JSON.stringify(trigger.value)
                         ? "bg-[#7677F4] rounded w-full h-[2px]"
                         : "w-full h-[2px]"
                     }`}
@@ -313,7 +313,7 @@ function index() {
 
 export default index;
 
-const PendingApprovalDropDown = ({ courseId }: number) => {
+const PendingApprovalDropDown = ({ courseId }: any) => {
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
     ACTIVE
@@ -514,7 +514,7 @@ const PendingApprovalDropDown = ({ courseId }: number) => {
   );
 };
 
-const DisplayingCourseStatus = ({ statusId }: number) => {
+const DisplayingCourseStatus = ({ statusId }: any) => {
   let statusText;
   let statusColor;
   let color;
