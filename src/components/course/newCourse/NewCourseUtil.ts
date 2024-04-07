@@ -847,6 +847,25 @@ const handlePostVenueData = async (body: any) => {
     console.log("venue created successfully", data);
   }
 
+  // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
+  // we have to delete them from database
+
+  const deleteVenueIDs = body.deletedVenueID;
+  if (deleteVenueIDs && deleteVenueIDs.length > 0) {
+    const { data, error } = await supabaseClient
+      .from("venue")
+      .delete()
+      .in("id", deleteVenueIDs)
+      .select();
+
+    if (error) {
+      console.log("error while deleting venue", error);
+      return false;
+    } else {
+      console.log("venues deleted successfully", data);
+    }
+  }
+
   return data[0].id;
 };
 
