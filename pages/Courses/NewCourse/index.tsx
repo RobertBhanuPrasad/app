@@ -139,12 +139,19 @@ function NewCourse() {
   };
 
   const defaultValues = {
+<<<<<<< Updated upstream
     [NewCourseStep2FormNames?.visibility_id]: "public",
     [NewCourseStep2FormNames?.is_language_translation_for_participants]: "true",
     [NewCourseStep2FormNames?.is_geo_restriction_applicable]: "true",
     [NewCourseStep5FormNames?.is_residential_program]: "No",
+=======
+    [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
+    [NewCourseStep2FormNames?.is_language_translation_for_participants]: true,
+    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
+>>>>>>> Stashed changes
     [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: "Pay Online",
     [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
+    [NewCourseStep5FormNames?.is_residential_program]: false,
   };
 
   // If the form is still loading, display a loading message
