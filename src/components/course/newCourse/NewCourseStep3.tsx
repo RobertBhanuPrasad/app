@@ -382,8 +382,6 @@ const Venue = () => {
     name: "isNewVenue",
   });
 
-  console.log(isVenueSelectedError,'isVenueSelectedError')
-
   const { data } = useList({
     resource: "venue",
   });
