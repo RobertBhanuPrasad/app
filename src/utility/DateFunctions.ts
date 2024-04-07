@@ -86,5 +86,26 @@ export const formatDateString = (date: Date): string => {
 };
 
 
+/**
+ * Subtracts the specified number of days from the input date and formats the result as "DD MMM, YYYY".
+ * @param days The number of days to subtract.
+ * @param inputDate The input date.
+ * @returns A string representing the formatted result date like this 16 Feb, 2024.
+ */
+export function subtractDaysAndFormat(days: number, inputDate: Date): string {
+  // Clone the input date to avoid mutating it
+  const resultDate = new Date(inputDate);
+
+  // Subtract the specified number of days from the result date
+  resultDate.setDate(resultDate.getDate() - days);
+
+
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const day = resultDate.getDate();
+  const month = months[resultDate.getMonth()];
+  const year = resultDate.getFullYear();
+  return `${day} ${month}, ${year}`;
+}
+
 
 

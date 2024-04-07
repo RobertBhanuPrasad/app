@@ -50,7 +50,7 @@ export const validationSchema = () => {
         required_error: "Please select atleast one Language translation",
       })
       .optional(),
-    allowed_countries: z.array(z.number(), {
+    allowed_countries: z.array(z.string(), {
       required_error: "Country is is a required fields",
     }),
     max_capacity: z
@@ -72,7 +72,7 @@ export const validationSchema = () => {
       required_error: "Time format is a required field",
     }),
     time_zone_id: z.number({ required_error: "Time zone is a required field" }),
-    schedules: scheduleValidationSchema,
+    // schedules: scheduleValidationSchema,
 
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
@@ -80,7 +80,7 @@ export const validationSchema = () => {
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
-    is_residential_program: z.string().optional(),
+    is_residential_program: z.boolean().optional(),
     accommodation_fee_payment_mode: z.string().optional(),
 
     // Step 6 Schema

@@ -33,8 +33,8 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
 import { Button } from "src/ui/button";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import { VISIBILITY } from "src/constants/OptionLabels";
-import { PUBLIC } from "src/constants/OptionValueOrder";
+import { PAYMENT_MODE, VISIBILITY } from "src/constants/OptionLabels";
+import { PAY_ONLINE, PUBLIC } from "src/constants/OptionValueOrder";
 import { validationSchema } from "./NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
@@ -83,11 +83,16 @@ function NewCourse() {
     PUBLIC
   )?.id;
 
+  const payOnlineId = getOptionValueObjectByOptionOrder(
+    PAYMENT_MODE,
+    PAY_ONLINE
+  )?.id;
+
   const defaultValues = {
     [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
     [NewCourseStep2FormNames?.is_language_translation_for_participants]: true,
     [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
-    [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: true,
+    [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: payOnlineId,
     [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
     [NewCourseStep5FormNames?.is_residential_program]: false,
   };
@@ -127,7 +132,7 @@ export const NewCourseTabs = () => {
   /**
    * @function handelIsAllFieldsFilled
    * @description this function is used to set that is all fields are filled or not in particular step
-   * @param isAllFieldsFilled 
+   * @param isAllFieldsFilled
    */
   const handelIsAllFieldsFilled = (isAllFieldsFilled: any) => {
     if (currentStep == 1) {
@@ -175,13 +180,16 @@ export const NewCourseTabs = () => {
   );
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
-    ...(formData?.is_residential_program == "No" ? ["accommodation"] : []),
-    ...(formData?.is_residential_program == "No" ? ["fee_per_person"] : []),
-    ...(formData?.is_residential_program == "No"
+    ...(formData?.is_residential_program == false ? ["accommodation"] : []),
+    ...(formData?.is_residential_program == false ? ["fee_per_person"] : []),
+    ...(formData?.is_residential_program == false
       ? ["no_of_residential_spots"]
       : []),
-    ...(formData?.is_residential_program == "No"
+    ...(formData?.is_residential_program == false
       ? ["accommodation_type_id"]
+      : []),
+    ...(formData?.is_residential_program == false
+      ? ["accommodation_fee_payment_mode"]
       : []),
   ]);
 
@@ -201,8 +209,8 @@ export const NewCourseTabs = () => {
   /**
    * @function handleClickTab
    * @description this function is used to click tabs based on the validations of present step
-   * @param currentStepFormNames 
-   * @param tab 
+   * @param currentStepFormNames
+   * @param tab
    */
   const handleClickTab = async (
     currentStepFormNames: any[],
@@ -223,7 +231,7 @@ export const NewCourseTabs = () => {
   /**
    * @function handleClickReviewDetailsButton
    * @description This function is used to send to the review page if all the fields are field
-   * @param currentStepFormNames 
+   * @param currentStepFormNames
    */
   const handleClickReviewDetailsButton = async (
     currentStepFormNames: any[]

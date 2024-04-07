@@ -14,6 +14,11 @@ import {
 } from "react-hook-form";
 import { Input } from "src/ui/input";
 import { NewCourseStep4FormNames } from "src/constants/CourseConstants";
+import { DateCalendar } from "src/ui/DateCalendar";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { Button } from "src/ui/button";
+import CalenderIcon from "@public/assets/CalenderIcon";
+import { format } from "date-fns";
 
 // Define CourseTable component
 
@@ -149,6 +154,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           is_enable: false,
           total: fee?.total,
           early_bird_total: fee?.earlyBirdTotal,
+          fee_level_id: fee?.feeLevelId,
         };
       });
       append(feeData);
@@ -413,6 +419,22 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   feeColumns = feeColumns.filter(Boolean);
 
+  //Form variable to store the early_bird_cut_off_period
+  const {
+    field: { value: earlyBirdCutOff, onChange: setEarlyBirdCutOff },
+  } = useController({ name: "early_bird_cut_off_period" });
+
+  //Finding course start date 
+  const courseStartDate = formData?.schedules?.[0]?.date;
+
+  //calulation of early bird start date 
+  courseStartDate.setDate(
+    courseStartDate.getDate() -
+      courseFeeSettings?.[0]?.early_bird_cut_off_period
+  );
+
+  const [selectedDate, setSelectedData] = useState(courseStartDate);
+
   return (
     <div className="flex flex-col justify-center">
       {/* Enable Early Bird fee if it is enabled in settings */}
@@ -438,8 +460,53 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           <DataTable columns={feeColumns} data={courseFeeData} />
         )}
       </div>
+
+      <div>
+        {isFeeEditable &&
+          courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
+          courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
+            <div className="w-80">
+              <div className="flex justify-between">
+                <div className="font-normal text-base text-sm">
+                  Early bird cut-off period
+                </div>
+                <div className="font-normal italic text-base text-sm text-[#7677F4]">
+                  {courseFeeSettings?.[0]?.early_bird_cut_off_period} Days left
+                </div>
+              </div>
+              <div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      onClick={() => {}}
+                      className={`w-full h-[40px] flex flex-row items-center justify-start gap-2 ${
+                        errors?.schedules && "border-[#FF6D6D]"
+                      }`}
+                      variant="outline"
+                    >
+                      <div>
+                        <CalenderIcon color="#999999" />
+                      </div>
+                      <div>
+                        {format(new Date(selectedDate), "dd MMM, yyyy")}
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
+                    <DateCalendar
+                      mode="single"
+                      selected={new Date()}
+                      onSelect={() => {}}
+                      className="rounded-md"
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          )}
+      </div>
     </div>
-  );
+  )
 }
 
 // Property to prevent layout being removed during page transitions

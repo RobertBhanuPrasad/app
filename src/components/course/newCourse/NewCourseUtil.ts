@@ -14,10 +14,10 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 export const handlePostProgramData = async (
   body: any,
-  loggedInUserId: number
+  loggedInUserId: number,
+  setProgramId: any
 ) => {
   console.log("i will post course data in this function", body);
-  const { setProgramId } = newCourseStore();
   let programId = body.id;
   // we have to create course only when we dont have id
   //   if (!programId) {
@@ -126,7 +126,10 @@ export const handlePostProgramData = async (
   }
 
   //accommodation_fee_payment_mode
-  if (body[NewCourseStep5FormNames.accommodation_fee_payment_mode]) {
+  if (
+    body[NewCourseStep5FormNames.accommodation_fee_payment_mode] &&
+    body[NewCourseStep5FormNames?.is_residential_program]
+  ) {
     programBody.accommodation_fee_payment_mode =
       body[NewCourseStep5FormNames.accommodation_fee_payment_mode];
   }
@@ -177,8 +180,6 @@ export const handlePostProgramData = async (
 
   if (!(await handleProgramFeeLevelSettingsData(body, programId))) return false;
 
-  if (!(await handlePostProgramContactDetailsData(body, programId)))
-    return false;
   if (!(await handlePostProgramContactDetailsData(body, programId)))
     return false;
 
@@ -590,10 +591,10 @@ export const handleProgramSchedulesData = async (
     NewCourseStep3FormNames.schedules
   ].map((scheduleData: any, index: number) => {
     const {
-      startHour,
-      startMinute,
-      endHour,
-      endMinute,
+      startHour = "00",
+      startMinute = "00",
+      endHour = "00",
+      endMinute = "00",
       startTimeFormat,
       endTimeFormat,
       date,
@@ -822,9 +823,13 @@ export const handleProgramStatusUpdate = async (programId: number) => {
     console.log("program doesnt need approval which is auto approval");
     console.log("patching program status_id as active directley");
 
-    const { data, error } = await supabaseClient.from("program").update({
-      status_id: COURSE_ACTIVE_STATUS_ID,
-    });
+    const { data, error } = await supabaseClient
+      .from("program")
+      .update({
+        status_id: COURSE_ACTIVE_STATUS_ID,
+      })
+      .eq("id", programId)
+      .select();
 
     if (error) {
       console.log(
@@ -845,25 +850,28 @@ export const handleProgramFeeLevelSettingsData = async (
   programId: number
 ) => {
   // Fetching the existing fee level settings data
-  const { data: existingContactDetailsData } = await supabaseClient
+  const { data: existingFeeLevelSettingsData } = await supabaseClient
     .from("program_fee_level_settings")
     .select("id")
     .eq("program_id", programId);
 
   //Inserting ids of program fee level settings already exist
-  const modifiedProgramFeeLevel = body?.map((feeLevel: any, index: number) => {
-    if (existingContactDetailsData?.[index]?.id) {
-      return {
-        id: existingContactDetailsData?.[index]?.id,
-        ...feeLevel,
-      };
+  const modifiedProgramFeeLevel = body?.program_fee_level_settings?.map(
+    (feeLevel: any, index: number) => {
+      if (existingFeeLevelSettingsData?.[index]?.id) {
+        return {
+          id: existingFeeLevelSettingsData?.[index]?.id,
+          program_id: programId,
+          ...feeLevel,
+        };
+      }
+      return { program_id: programId, ...feeLevel };
     }
-    return feeLevel;
-  });
+  );
 
   //upsert operation for program feeLevel settings data
   const { data, error } = await supabaseClient
-    .from("program_contact_details")
+    .from("program_fee_level_settings")
     .upsert(modifiedProgramFeeLevel)
     .select();
 
@@ -873,4 +881,6 @@ export const handleProgramFeeLevelSettingsData = async (
   } else {
     console.log("Program fee level settings upsert complete", data);
   }
+
+  return true;
 };
