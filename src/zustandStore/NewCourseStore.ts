@@ -13,12 +13,15 @@ interface NewCourseStore {
   setCurrentStep: (by: number) => void;
   AllFilterData: any;
   setAllFilterData: (by: any) => void;
+  programId: number;
+  setProgramId: (by: number) => void;
 }
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
   viewPreviewPage: false,
   viewThankyouPage: false,
   newCourseData: {},
+  programId:1,
   setViewPreviewPage: (data: boolean) => {
     set(() => ({
       viewPreviewPage: data,
@@ -52,4 +55,9 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       AllFilterData: data,
     }));
   },
+  setProgramId: (data: number) => {
+    set(() => ({
+        programId: data,
+    }));
+},
 }));
