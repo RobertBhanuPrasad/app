@@ -170,8 +170,13 @@ export const NewCourseTabs = () => {
   ]);
 
   let RequiredNewCourseStep3FormNames = _.omit(
-    NewCourseStep3FormNames,
-    formData?.program_type?.is_online_program ? [] : ["online_url"]
+    NewCourseStep3FormNames,[
+     ...(formData?.courseTypeSettings?.is_online_program ? [] : ["online_url"]),
+     ...(formData?.courseTypeSettings?.is_online_program ? [] : ["state_id"]),
+     ...(formData?.courseTypeSettings?.is_online_program ? [] : ["city_id"]),
+     ...(formData?.courseTypeSettings?.is_online_program ? [] : ["center_id"]),
+
+    ]
   );
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [

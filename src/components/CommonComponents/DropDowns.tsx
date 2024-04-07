@@ -174,6 +174,9 @@ export const CityDropDown = () => {
         onChange={handleCityOnChange}
         error={cityValueError}
       />
+      {cityValueError && (
+            <span className="text-[#FF6D6D] text-[12px]">{cityValueError?.message}</span>
+          )}
     </div>
   );
 };
@@ -187,6 +190,7 @@ export const StateDropDown = () => {
 
   const {
     field: { value: stateValue, onChange: stateValueOnchange },
+    fieldState:{error}
   } = useController({
     name: "state_id",
   });
@@ -250,7 +254,11 @@ export const StateDropDown = () => {
           stateOnsearch(val);
         }}
         onChange={handleStateOnChange}
+        error={error}
       />
+      {error && (
+            <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+          )}
     </div>
   );
 };
@@ -262,6 +270,7 @@ export const CenterDropDown = () => {
 
   const {
     field: { value: centerValue, onChange: centerValueOnchange },
+    fieldState:{error}
   } = useController({
     name: "center_id",
   });
@@ -351,7 +360,11 @@ export const CenterDropDown = () => {
           centerOnsearch(val);
         }}
         onChange={handleCenterOnChange}
+        error={error}
       />
+      {error && (
+            <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+          )}
     </div>
   );
 };
