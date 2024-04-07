@@ -308,13 +308,14 @@ function index() {
                 </div>
               </TabsTrigger>
             ))}
-            <div className="ml-auto mb-6 ">
-              <ActionsDropDown />
+            <div className="ml-auto mb-6 flex gap-4 ">
               {isApproved(
                 courseData?.data?.program_type_id?.is_approval_required,
                 courseData?.data?.status_id?.id,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && <PendingApprovalDropDown courseId={Id} />}
+
+              <ActionsDropDown />
             </div>
           </TabsList>
           <div className="w-full border-b border-[#D6D7D8] -mt-2"></div>
