@@ -151,6 +151,7 @@ export const NewCourseTabs = () => {
   );
 
   const formData = getValues();
+  console.log(formData,'formData')
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
 
@@ -175,6 +176,7 @@ export const NewCourseTabs = () => {
      ...(formData?.courseTypeSettings?.is_online_program ? [] : ["state_id"]),
      ...(formData?.courseTypeSettings?.is_online_program ? [] : ["city_id"]),
      ...(formData?.courseTypeSettings?.is_online_program ? [] : ["center_id"]),
+     ...(formData?.courseTypeSettings?.is_online_program ? ["isNewVenue"] : []),
 
     ]
   );

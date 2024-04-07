@@ -7,7 +7,7 @@ export const validationSchema = () => {
     }),
     organizer_ids: z.array(z.number(), {
       required_error: "Select Organizer Name",
-    }),
+    }).refine((val) => val.length <= 10 , {message:"Maximum number of organizer allowed is 10"}),
     program_created_by: z.number({
       required_error: "Select who is going to teach the course",
     }),
@@ -65,6 +65,7 @@ export const validationSchema = () => {
       }),
 
     // Step 3 Schema
+    isNewVenue:z.boolean({required_error:"Venue is a required fields"}),
     online_url: z
       .string({ required_error: " Online meeting URL is a required fields" })
       .url({ message: "Online meeting URL is not valid" }),

@@ -49,6 +49,7 @@ export const NewCourseStep3FormNames = {
   state_id: "state_id",
   city_id: "city_id",
   center_id: "center_id",
+  isNewVenue: "isNewVenue"
 };
 
 export const NewCourseStep4FormNames = {
