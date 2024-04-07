@@ -74,11 +74,22 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
-  const formData = watch();
+
+  const { program_type_id } = watch();
+
+  const { data: programTypeData, isLoading } = useOne({
+    resource: "program_types",
+    id: program_type_id,
+  });
+
+  if (isLoading) {
+    return <LoadingIcon />;
+  }
+
   return (
     <div className="flex flex-col gap-8">
       <div>
-        {formData?.courseTypeSettings?.is_online_program ? (
+        {programTypeData?.data?.in_online_program === true ? (
           <OnlineProgram />
         ) : (
           <div className="mb-8">
@@ -396,7 +407,7 @@ const Venue = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "isNewVenueSelected",
+    name: "is_existing_venue",
   });
 
   const handleAddNewVenue = () => {
@@ -468,10 +479,6 @@ const Venue = () => {
                 {existingVenue ? (
                   <ExistingVenueDetails />
                 ) : (
-                  // <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                  //   {formData?.existingVenue?.address},
-                  //   {formData?.existingVenue?.postal_code}
-                  // </div>
                   <div className="pl-[30px] leading-6 font-normal">
                     Select a venue by clicking “View All” button
                   </div>
@@ -568,7 +575,7 @@ const Venue = () => {
 const NewVenueDetails = () => {
   const { getValues } = useFormContext();
   const {
-    newVenue: { center_id, address, postal_code },
+    newVenue: { center_id, address, postal_code, name },
   } = getValues();
 
   const { data, isLoading } = useOne({
@@ -587,8 +594,8 @@ const NewVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {address}, {data?.data?.state_id?.name}, {data?.data?.city_id?.name},{" "}
-      {data?.data?.name}, {postal_code}
+      {name}, {address}, {data?.data?.state_id?.name},{" "}
+      {data?.data?.city_id?.name}, {data?.data?.name}, {postal_code}
     </div>
   );
 };
@@ -596,7 +603,7 @@ const NewVenueDetails = () => {
 const ExistingVenueDetails = () => {
   const { getValues } = useFormContext();
   const {
-    existingVenue: { center_id, address, postal_code },
+    existingVenue: { center_id, address, postal_code, name },
   } = getValues();
 
   const { data, isLoading } = useOne({
@@ -615,8 +622,8 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {address}, {data?.data?.state_id?.name}, {data?.data?.city_id?.name},{" "}
-      {data?.data?.name}, {postal_code}
+      {name}, {address}, {data?.data?.state_id?.name},{" "}
+      {data?.data?.city_id?.name}, {data?.data?.name}, {postal_code}
     </div>
   );
 };
@@ -895,7 +902,7 @@ const ExistingVenueList = () => {
   };
 
   const handleCheckboxChange = (item: any) => {
-    setValue("venueId", item.id);
+    setValue(NewCourseStep3FormNames.venue_id, item.id);
   };
   const {
     field: { value: existingVenue, onChange: existingVenueOnChange },
@@ -905,7 +912,7 @@ const ExistingVenueList = () => {
 
   const handleSubmitVenueList = () => {
     const existingVenueObject = venueData.filter(
-      (venue) => venue.id == formData?.venueId
+      (venue) => venue.id == formData[NewCourseStep3FormNames.venue_id]
     );
     existingVenueOnChange(existingVenueObject?.[0]);
   };
@@ -981,7 +988,11 @@ const ExistingVenueList = () => {
                     id={item.id}
                     value={item.id}
                     onCheckedChange={() => handleCheckboxChange(item)}
-                    checked={formData?.venueId == item.id ? true : false}
+                    checked={
+                      formData[NewCourseStep3FormNames.venue_id] == item.id
+                        ? true
+                        : false
+                    }
                   />
                   <div className="space-y-1 leading-none w-full">
                     <div className="flex justify-between">

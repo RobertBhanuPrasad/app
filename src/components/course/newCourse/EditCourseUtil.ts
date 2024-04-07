@@ -12,14 +12,14 @@ export const handleCourseDefaultValues = async (programId: number) => {
   console.log("data was", data);
 
   if (!error) {
-    const defaultValues = getDefaultValues(data[0]);
+    const defaultValues = await getDefaultValues(data[0]);
 
     return defaultValues;
   }
   return {};
 };
 
-export const getDefaultValues = (data: ProgramDataBaseType) => {
+export const getDefaultValues = async (data: ProgramDataBaseType) => {
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
@@ -117,14 +117,43 @@ export const getDefaultValues = (data: ProgramDataBaseType) => {
     defaultValues.program_alias_name_id = data.program_alias_name_id as number;
 
   //Step 3
-  //online_url
-  if (data?.online_url) defaultValues.online_url = data.online_url;
 
-  if (data?.hour_format_id)
-    defaultValues.hour_format_id = data.hour_format_id as number;
+  // if the selected program_type contains is_online_program to true then load online_url, state_id,city_id and center_id
+  const { data: programTypeData }: any = await supabaseClient
+    .from("program_type")
+    .select("*")
+    .eq("id", data.program_type_id);
 
-  if (data?.time_zone_id)
-    defaultValues.time_zone_id = data.time_zone_id as number;
+  if (programTypeData && programTypeData[0]?.is_online_program === true) {
+    //online_url
+    if (data?.online_url) defaultValues.online_url = data.online_url;
+
+    if (data?.hour_format_id)
+      defaultValues.hour_format_id = data.hour_format_id as number;
+
+    if (data?.time_zone_id)
+      defaultValues.time_zone_id = data.time_zone_id as number;
+
+    if (data?.state_id) defaultValues.state_id = data.state_id as number;
+
+    if (data?.city_id) defaultValues.city_id = data.city_id as number;
+
+    if (data?.center_id) defaultValues.center_id = data.center_id as number;
+  } else {
+    defaultValues.is_existing_venue = "existing-venue";
+
+    // for form to match requirement we need to store venue data into existingVenue form name
+    if (data.venue_id) {
+      const { data: venueData }: any = await supabaseClient
+        .from("venue")
+        .select("*")
+        .eq("id", data.venue_id);
+
+      if (venueData && venueData[0]) {
+        defaultValues.existingVenue = venueData[0];
+      }
+    }
+  }
 
   //program_schedules
   if (data?.program_schedules) {
@@ -144,11 +173,6 @@ export const getDefaultValues = (data: ProgramDataBaseType) => {
     );
   }
 
-  if (data?.state_id) defaultValues.state_id = data.state_id as number;
-  if (data?.city_id) defaultValues.city_id = data.city_id as number;
-  if (data?.center_id) defaultValues.center_id = data.center_id as number;
-
-  //Need to store venue_id
   // Step 4
   if (data.is_early_bird_enabled)
     defaultValues.is_early_bird_enabled = data.is_early_bird_enabled;
