@@ -53,7 +53,11 @@ const Filters = ({
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
         <p className="text-2xl font-semibold">Filter By</p>
-        <div onClick={()=>{setAdvanceFilterOpen(false)}}>
+        <div
+          onClick={() => {
+            setAdvanceFilterOpen(false);
+          }}
+        >
           <CrossIcon width={16} height={16} fill="#333333" />
         </div>
       </div>
@@ -649,6 +653,8 @@ export const CourseAccountingClosureDate = () => {
           className="w-full gap-2 justify-start mt-2"
           variant="outline"
         >
+          <CalenderIcon color="#666666" />
+
           {value?.from ? (
             value?.to ? (
               <>
@@ -659,10 +665,7 @@ export const CourseAccountingClosureDate = () => {
               format(value.from, "MM/dd/yyyy")
             )
           ) : (
-            <div className="flex gap-2 font-normal">
-              <CalenderIcon />
-              Select the Date Range
-            </div>
+            <div className="flex gap-2 font-normal">Select the Date Range</div>
           )}
         </Button>
       </DialogTrigger>

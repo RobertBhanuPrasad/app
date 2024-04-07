@@ -1,9 +1,8 @@
 import { BaseTable } from "@components/course/findCourse/BaseTable";
-import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
-import { useList, useSaveButton, useSelect } from "@refinedev/core";
+import { useList, useSelect } from "@refinedev/core";
 import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
@@ -28,6 +27,7 @@ import { columns } from "./Columns";
 import { useTable } from "@refinedev/core";
 import { useController, useFormContext } from "react-hook-form";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import CalenderIcon from "@public/assets/CalenderIcon";
 
 function index() {
   const { newAdvanceFilterData } = newCourseStore();
@@ -121,7 +121,7 @@ function index() {
       value: AllFilterData?.course_id,
     });
   }
-   if (AllFilterData?.newAdvanceFilterData?.is_course_fee) {
+  if (AllFilterData?.newAdvanceFilterData?.is_course_fee) {
     filters.permanent.push({
       field: "program_fee_level_settings.is_custom_fee",
       operator: "eq",
@@ -445,7 +445,7 @@ export const BasicFilters = () => {
               className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
               variant="outline"
             >
-              <CalenderIcon />
+              <CalenderIcon color="#666666" />
               {courseDate?.from ? (
                 courseDate?.to ? (
                   <>
