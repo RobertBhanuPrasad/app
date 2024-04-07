@@ -8,6 +8,7 @@ import {
   useSelect,
   CrudFilters,
   useGetIdentity,
+  useOne,
 } from "@refinedev/core";
 import _ from "lodash";
 import Add from "@public/assets/Add";
@@ -69,6 +70,7 @@ import {
 } from "src/ui/select";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { SelectItems } from "src/ui/select";
+import LoadingIcon from "@public/assets/LoadingIcon";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -130,13 +132,13 @@ const OnlineProgram = () => {
         </div>
         <div className="flex gap-7">
           <div className="w-80">
-            <StateDropDown />
+            <StateDropDown name="state_id" />
           </div>
           <div className="w-80">
-            <CityDropDown />
+            <CityDropDown name="city_id" />
           </div>
           <div className="w-80">
-            <CenterDropDown />
+            <CenterDropDown name="center_id" />
           </div>
         </div>
       </div>
@@ -464,11 +466,12 @@ const Venue = () => {
             {data ? (
               <div>
                 {existingVenue ? (
-                  <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                    {formData?.existingVenue?.address},
-                    {formData?.existingVenue?.postal_code}
-                  </div>
+                  <ExistingVenueDetails />
                 ) : (
+                  // <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
+                  //   {formData?.existingVenue?.address},
+                  //   {formData?.existingVenue?.postal_code}
+                  // </div>
                   <div className="pl-[30px] leading-6 font-normal">
                     Select a venue by clicking “View All” button
                   </div>
@@ -542,10 +545,7 @@ const Venue = () => {
                   </Dialog>
                 </div>
               </div>
-              <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                {formData?.newVenue?.address},{formData?.newVenue?.city?.name},
-                {formData?.newVenue?.postal_code}
-              </div>
+              <NewVenueDetails />
             </div>
           </Label>
         ) : (
@@ -561,6 +561,62 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
+    </div>
+  );
+};
+
+const NewVenueDetails = () => {
+  const { getValues } = useFormContext();
+  const {
+    newVenue: { center_id, address, postal_code },
+  } = getValues();
+
+  const { data, isLoading } = useOne({
+    resource: "center",
+    id: center_id,
+    meta: {
+      select: "*,state_id(*),city_id(*)",
+    },
+  });
+
+  console.log("new venue data is", data);
+
+  if (isLoading) {
+    return <LoadingIcon />;
+  }
+
+  return (
+    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
+      {address}, {data?.data?.state_id?.name}, {data?.data?.city_id?.name},{" "}
+      {data?.data?.name}, {postal_code}
+    </div>
+  );
+};
+
+const ExistingVenueDetails = () => {
+  const { getValues } = useFormContext();
+  const {
+    existingVenue: { center_id, address, postal_code },
+  } = getValues();
+
+  const { data, isLoading } = useOne({
+    resource: "center",
+    id: center_id,
+    meta: {
+      select: "*,state_id(*),city_id(*)",
+    },
+  });
+
+  console.log("new venue data is", data);
+
+  if (isLoading) {
+    return <LoadingIcon />;
+  }
+
+  return (
+    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
+      {address}, {data?.data?.state_id?.name}, {data?.data?.city_id?.name},{" "}
+      {data?.data?.name}, {postal_code}
     </div>
   );
 };
@@ -890,7 +946,7 @@ const ExistingVenueList = () => {
 
   return (
     <div>
-      <div className="w-[858px]  rounded-[24px]  pt-6 !pl-4 !pr-4 ">
+      <div className="rounded-[24px] ">
         <div className="flex justify-center text-[24px] font-semibold">
           Existing Venues
         </div>
@@ -914,7 +970,7 @@ const ExistingVenueList = () => {
           }}
         >
           <div
-            className=" h-[344px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
+            className=" mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
             id={"options"}
           >
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
@@ -971,7 +1027,8 @@ const ExistingVenueList = () => {
                     </div>
 
                     <div className="leading-tight">
-                      {item.address} {item.postal_code}
+                      {item.address}, {item.state_name}, {item.city_name},{" "}
+                      {item.center_name} {item.postal_code}
                     </div>
                   </div>
                 </div>
@@ -1027,13 +1084,13 @@ export const AddOrEditVenue = ({
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />
-          <CityDropDown />
+          <CityDropDown name="city+id" />
         </div>
 
         <div className="flex flex-col gap-5">
           <StreetAddressComponent />
-          <StateDropDown />
-          <CenterDropDown />
+          <StateDropDown name="state_id" />
+          <CenterDropDown name="center_id" />
         </div>
       </div>
       <DialogFooter>
@@ -1266,7 +1323,7 @@ const DeleteVenueComponent = ({
           Are you sure you want to delete the address
         </DialogDescription>
       </DialogHeader>
-      <DialogFooter className="w-full flex !justify-center gap-6">
+      <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
             No
