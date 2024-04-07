@@ -1,7 +1,8 @@
 import { DisplayOptions } from "@components/courseBusinessLogic";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 import { useGetIdentity, useOne } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreVertical } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Button } from "src/ui/button";
@@ -20,12 +21,20 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "program_code",
     column_name: "Course ID",
     enableHiding: false,
-    header: () => {
-      return <div className="w-[100px]">Course ID</div>;
+    header: ({ header }) => {
+      return (
+        <div className="w-[100px] flex flex-row justify-center items-center">
+          Course ID
+        </div>
+      );
     },
 
     cell: ({ row }) => {
-      return <div className="w-[100px]">{row.original.program_code}</div>;
+      return (
+        <div className="w-[100px] text-[#7677F4] font-semibold">
+          {row.original.program_code}
+        </div>
+      );
     },
   },
 

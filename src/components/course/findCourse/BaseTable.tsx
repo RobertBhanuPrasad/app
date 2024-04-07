@@ -5,6 +5,7 @@ import {
   ColumnDef,
   ColumnDefResolved,
   RowSelectionState,
+  SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -160,6 +161,8 @@ export function BaseTable<TData, TValue>({
     {}
   );
 
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
@@ -175,6 +178,7 @@ export function BaseTable<TData, TValue>({
   const [selectAll, setSelectAll] = useState(initialSelectAll);
 
   const getRowId = (originalRow: any) => originalRow.id.toString();
+
   // table hook
   const table = useReactTable({
     data,
@@ -185,9 +189,11 @@ export function BaseTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     getRowId,
+    onSortingChange: setSorting,
     state: {
       columnVisibility,
       rowSelection,
+      sorting,
     },
   });
 
@@ -409,7 +415,7 @@ export function BaseTable<TData, TValue>({
                               columnPinning &&
                               index === 0 &&
                               `sticky ${
-                                checkboxSelection ? "left-8" : "left-0"
+                                checkboxSelection ? "left-10" : "left-0"
                               } z-10 bg-[#E9E9F5] drop-shadow-right`
                             } ${
                               columnPinning &&
@@ -477,7 +483,7 @@ export function BaseTable<TData, TValue>({
                             columnPinning &&
                             index === 0 &&
                             `sticky ${
-                              checkboxSelection ? "left-8" : "left-0"
+                              checkboxSelection ? "left-10" : "left-0"
                             }  top-0 z-10 bg-[#FFFFFF] drop-shadow-right`
                           } ${
                             columnPinning &&

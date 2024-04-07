@@ -3,8 +3,8 @@ import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
-import { useSelect } from "@refinedev/core";
-import React, { useState } from "react";
+import { useList, useSaveButton, useSelect } from "@refinedev/core";
+import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
@@ -27,6 +27,7 @@ import { format } from "date-fns";
 import { columns } from "./Columns";
 import { useTable } from "@refinedev/core";
 import { useController, useFormContext } from "react-hook-form";
+import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 
 function index() {
   const { newAdvanceFilterData } = newCourseStore();
@@ -112,24 +113,33 @@ function index() {
     });
   }
   if (AllFilterData?.course_date) {
+    console.log(
+      "heyy date",
+      new Date(AllFilterData.course_date.from?.setHours(0, 0, 0, 0))
+        ?.toISOString()
+        .replace("T", " ")
+        .slice(0, -5) + "+00"
+    );
     filters.permanent?.push(
       {
         field: "program_schedules.start_time",
         operator: "gte",
         value:
           AllFilterData.course_date.from &&
-          new Date(
-            AllFilterData.course_date.from?.setHours(0, 0, 0, 0)
-          )?.toISOString(),
+          new Date(AllFilterData.course_date.from?.setHours(0, 0, 0, 0))
+            ?.toISOString()
+            .replace("T", " ")
+            .slice(0, -5) + "+00",
       },
       {
-        field: "program_schedules.end_time",
+        field: "program_schedules.start_time",
         operator: "lt",
         value:
           AllFilterData.course_date.to &&
-          new Date(
-            AllFilterData.course_date.to?.setHours(0, 0, 0, 0)
-          )?.toISOString(),
+          new Date(AllFilterData.course_date.to?.setHours(0, 0, 0, 0))
+            ?.toISOString()
+            .replace("T", " ")
+            .slice(0, -5) + "+00",
       }
     );
   }
@@ -147,13 +157,28 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules(*)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules!inner(*)",
     },
-    // filters: filters,
+    filters: filters,
   });
 
   console.log("hey table data", programData);
-  
+
+  const [allSelected, setAllSelected] = useState();
+
+  useEffect(() => {
+    if (!programData?.data?.data) return;
+
+    const allRowSelection: any = {};
+    programData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = allSelected;
+    });
+    setRowSelection(allRowSelection);
+  }, [allSelected, programData?.data?.data]);
+
+  const handleSelectAll = (val: any) => {
+    setAllSelected(val);
+  };
 
   return (
     <div className="relative">
@@ -183,7 +208,11 @@ function index() {
       </div>
       <div className="sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center bottom-0 h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end pr-6">
         <div className="flex flex-row items-center gap-2">
-          <Checkbox className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg" />
+          <Checkbox
+            checked={allSelected}
+            onCheckedChange={handleSelectAll}
+            className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+          />
           <div>Select All</div>
           <div className="font-semibold">{programData?.data?.total || 0}</div>
         </div>
@@ -369,8 +398,6 @@ export const BasicFilters = () => {
   } = useController({
     name: "course_date",
   });
-
-  console.log("heyy course_date", courseDate);
 
   const {
     newAdvanceFilterData,
