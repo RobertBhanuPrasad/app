@@ -151,7 +151,6 @@ export const NewCourseTabs = () => {
   );
 
   const formData = getValues();
-  console.log(formData,'formData')
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
 
