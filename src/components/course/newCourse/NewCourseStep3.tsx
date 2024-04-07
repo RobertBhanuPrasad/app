@@ -563,7 +563,7 @@ const Venue = () => {
         )}
       </RadioGroup>
       {isVenueSelectedError && (
-            <span className="text-[#FF6D6D] text-[14px]">{isVenueSelectedError ?.message}</span>
+            <span className="text-[#FF6D6D] text-[14px]">{isVenueSelectedError?.message}</span>
           )}
     </div>
   );
