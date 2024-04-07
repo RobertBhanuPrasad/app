@@ -127,7 +127,7 @@ export const NewCourseTabs = () => {
   /**
    * @function handelIsAllFieldsFilled
    * @description this function is used to set that is all fields are filled or not in particular step
-   * @param isAllFieldsFilled 
+   * @param isAllFieldsFilled
    */
   const handelIsAllFieldsFilled = (isAllFieldsFilled: any) => {
     if (currentStep == 1) {
@@ -201,8 +201,8 @@ export const NewCourseTabs = () => {
   /**
    * @function handleClickTab
    * @description this function is used to click tabs based on the validations of present step
-   * @param currentStepFormNames 
-   * @param tab 
+   * @param currentStepFormNames
+   * @param tab
    */
   const handleClickTab = async (
     currentStepFormNames: any[],
@@ -223,7 +223,7 @@ export const NewCourseTabs = () => {
   /**
    * @function handleClickReviewDetailsButton
    * @description This function is used to send to the review page if all the fields are field
-   * @param currentStepFormNames 
+   * @param currentStepFormNames
    */
   const handleClickReviewDetailsButton = async (
     currentStepFormNames: any[]
