@@ -53,7 +53,9 @@ const Filters = ({
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
         <p className="text-2xl font-semibold">Filter By</p>
-        <CrossIcon width={16} height={16} fill="#333333" />
+        <div onClick={()=>{setAdvanceFilterOpen(false)}}>
+          <CrossIcon width={16} height={16} fill="#333333" />
+        </div>
       </div>
       <Separator />
       <div className="max-h-[75vh] overflow-y-auto scrollbar">
@@ -213,7 +215,9 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Residential Course</div>
-                {formData?.residential_course && <CountComponent count={1} />}
+                {formData?.is_residential_course && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -723,7 +727,7 @@ export const ResidentialCourse = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "residential_course",
+    name: "is_residential_course",
   });
 
   return (

@@ -157,7 +157,9 @@ export const columns: ExtendedColumnDef<any>[] = [
         (teacher: any) => teacher?.users?.user_name
       );
       return (
-        <div className="min-w-[150px]">{teachers && teachers.join(", ")}</div>
+        <div className="flex flex-wrap min-w-[150px]">
+          <div>{teachers && teachers.join(", ")}</div>
+        </div>
       );
     },
   },
@@ -172,8 +174,8 @@ export const columns: ExtendedColumnDef<any>[] = [
         (Organizer: any) => Organizer?.users?.user_name
       );
       return (
-        <div className="min-w-[150px]">
-          {organizers && organizers.join(",")}
+        <div className="flex flex-wrap min-w-[150px]">
+          <div>{organizers && organizers.join(",  ")}</div>
         </div>
       );
     },
