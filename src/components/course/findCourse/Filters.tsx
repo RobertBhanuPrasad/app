@@ -33,9 +33,16 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { Separator } from "src/ui/separator";
-import { getOptionValueObjectByOptionOrder, getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+import {
+  getOptionValueObjectByOptionOrder,
+  getOptionValuesByOptionLabel,
+} from "src/utility/GetOptionValuesByOptionLabel";
 
-const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
+const Filters = ({
+  setNewAdvanceFilterData,
+  setAdvanceFilterOpen,
+  setAllFilterData,
+}: any) => {
   const { getValues, reset } = useFormContext();
 
   const formData = getValues();
@@ -276,7 +283,7 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
       <div className="flex left-0 items-center  gap-4 absolute bottom-0 h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end pr-6">
         <div
           onClick={() => {
-            reset()
+            reset();
             setNewAdvanceFilterData(undefined);
           }}
           className="flex gap-1 items-center cursor-pointer"
@@ -673,18 +680,17 @@ export const Visibility = () => {
     name: "visibility",
   });
 
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
 
-   const publicVisibilityId = getOptionValueObjectByOptionOrder(
-     VISIBILITY,
-     PUBLIC
-   )?.id;
+  const privateVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PRIVATE
+  )?.id;
 
-   const privateVisibilityId = getOptionValueObjectByOptionOrder(
-     VISIBILITY,
-     PRIVATE
-   )?.id;
-
-   console.log("heyy ids", value);
+  console.log("heyy ids", value);
 
   return (
     <div>
@@ -725,13 +731,13 @@ export const ResidentialCourse = () => {
       <RadioGroup value={value} onValueChange={onChange}>
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="Yes"
+            value="TRUE"
             selectedRadioValue={value}
             label="Yes"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
-            value="No"
+            value="FALSE"
             selectedRadioValue={value}
             label="No"
             className="w-[112px] h-[40px] rounded-[12px]"

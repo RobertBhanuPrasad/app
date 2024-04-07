@@ -229,10 +229,12 @@ export default index;
 const HeaderSection = () => {
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
 
-  const { newAdvanceFilterData, setNewAdvanceFilterData, AllFilterData } =
-    newCourseStore();
-
-  console.log("hey redux data", AllFilterData);
+  const {
+    newAdvanceFilterData,
+    setNewAdvanceFilterData,
+    AllFilterData,
+    setAllFilterData,
+  } = newCourseStore();
 
   const count =
     (newAdvanceFilterData &&
@@ -265,8 +267,8 @@ const HeaderSection = () => {
             >
               <Filters
                 setAdvanceFilterOpen={setAdvanceFilterOpen}
-                // newAdvanceFilterData={newAdvanceFilterData}
                 setNewAdvanceFilterData={setNewAdvanceFilterData}
+                setAllFilterData={setAllFilterData}
               />
             </Form>
           </SheetContent>
