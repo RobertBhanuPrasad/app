@@ -98,6 +98,15 @@ function index() {
       value: newAdvanceFilterData?.visibility,
     });
   }
+
+  if (AllFilterData?.newAdvanceFilterData?.residential_course) {
+    filters.permanent.push({
+      field: "is_residential_program",
+      operator: "eq",
+      value: newAdvanceFilterData?.residential_course,
+    });
+  }
+
   if (AllFilterData?.newAdvanceFilterData?.course_status) {
     filters.permanent.push({
       field: "status_id",
@@ -113,13 +122,6 @@ function index() {
     });
   }
   if (AllFilterData?.course_date) {
-    console.log(
-      "heyy date",
-      new Date(AllFilterData.course_date.from?.setHours(0, 0, 0, 0))
-        ?.toISOString()
-        .replace("T", " ")
-        .slice(0, -5) + "+00"
-    );
     filters.permanent?.push(
       {
         field: "program_schedules.start_time",
@@ -157,7 +159,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules!inner(*)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(*)) ,program_organizers(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules(*)",
     },
     filters: filters,
   });

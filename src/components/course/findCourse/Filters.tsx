@@ -10,7 +10,8 @@ import {
 } from "pages/Courses/FindCourse";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import { PROGRAM_STATUS } from "src/constants/OptionLabels";
+import { PROGRAM_STATUS, VISIBILITY } from "src/constants/OptionLabels";
+import { PRIVATE, PUBLIC } from "src/constants/OptionValueOrder";
 import {
   Accordion,
   AccordionContent,
@@ -32,7 +33,7 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { Separator } from "src/ui/separator";
-import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+import { getOptionValueObjectByOptionOrder, getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 
 const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
   const { getValues, reset } = useFormContext();
@@ -671,19 +672,38 @@ export const Visibility = () => {
   } = useController({
     name: "visibility",
   });
+
+
+   const publicVisibilityId = getOptionValueObjectByOptionOrder(
+     VISIBILITY,
+     PUBLIC
+   )?.id;
+
+   const privateVisibilityId = getOptionValueObjectByOptionOrder(
+     VISIBILITY,
+     PRIVATE
+   )?.id;
+
+   console.log("heyy ids", value);
+
   return (
     <div>
-      <RadioGroup value={value} onValueChange={onChange}>
+      <RadioGroup
+        value={JSON.stringify(value)}
+        onValueChange={(val: string) => {
+          onChange(parseInt(val));
+        }}
+      >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="Public"
-            selectedRadioValue={value}
+            value={JSON.stringify(publicVisibilityId)}
+            selectedRadioValue={JSON.stringify(value)}
             label="Public"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
-            value="Private"
-            selectedRadioValue={value}
+            value={JSON.stringify(privateVisibilityId)}
+            selectedRadioValue={JSON.stringify(value)}
             label="Private"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
