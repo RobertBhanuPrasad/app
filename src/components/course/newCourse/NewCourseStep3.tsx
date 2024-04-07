@@ -379,6 +379,7 @@ const Venue = () => {
 
   const {
     field: { onChange: isNewVenueOnchange },
+    fieldState:{error:isVenueSelectedError}
   } = useController({
     name: "isNewVenue",
   });
@@ -561,6 +562,9 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
+      {isVenueSelectedError && (
+            <span className="text-[#FF6D6D] text-[14px]">{isVenueSelectedError?.message}</span>
+          )}
     </div>
   );
 };
