@@ -629,6 +629,10 @@ const TimePicker = ({
   is12HourFormat: Boolean;
 }) => {
   const { errors } = useFormState();
+<<<<<<< HEAD
+=======
+
+>>>>>>> d3db296ea07d3ae6b80dfcf4686cf437afbb7f45
   return (
     <div className="flex items-center gap-6">
       <div className="text-sm text-[#999999] font-normal">From</div>
