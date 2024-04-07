@@ -117,6 +117,33 @@ export const handlePostProgramData = async (
       body[NewCourseStep4FormNames.is_early_bird_enabled] || true;
   }
 
+  //Fetching fee level settings of course
+  const { data: feeData, error } = await supabaseClient.functions.invoke(
+    "course-fee",
+    {
+      method: "POST",
+      body: {
+        state_id: "3", //TODO Need to change with form data
+        city_id: "3",
+        center_id: "1",
+        start_date: "2024-03-18T07:00:00-00:00",
+        program_type_id: body?.program_type_id,
+      },
+    }
+  );
+
+  if (error) {
+    console.log("error while fetching fee data", error);
+  }
+
+  if (body[NewCourseStep4FormNames?.program_fee_level_settings]?.length == 0) {
+    programBody.program_fee_settings_id = feeData?.[0]?.id;
+  } else {
+    programBody.early_bird_cut_off_period = body["early_bird_cut_off_period"]
+      ? body["early_bird_cut_off_period"]
+      : feeData?.[0]?.early_bird_cut_off_period;
+  }
+
   // step 5
 
   //is_residential_program
@@ -849,6 +876,9 @@ export const handleProgramFeeLevelSettingsData = async (
   body: any,
   programId: number
 ) => {
+  if (body?.program_fee_level_settings?.length == 0) {
+    return true;
+  }
   // Fetching the existing fee level settings data
   const { data: existingFeeLevelSettingsData } = await supabaseClient
     .from("program_fee_level_settings")

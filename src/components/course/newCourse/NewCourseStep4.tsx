@@ -67,7 +67,6 @@ export default function CourseTable() {
         courseFeeSettings={courseFeeSettings}
         organizationData={organizationData?.data}
       />
-      ;
     </div>
   );
 }
@@ -421,19 +420,24 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   //Form variable to store the early_bird_cut_off_period
   const {
-    field: { value: earlyBirdCutOff, onChange: setEarlyBirdCutOff },
+    field: {
+      value: earlyBirdCutOff = courseFeeSettings?.[0]
+        ?.early_bird_cut_off_period,
+      onChange: setEarlyBirdCutOff,
+    },
   } = useController({ name: "early_bird_cut_off_period" });
 
-  //Finding course start date 
+  //Finding course start date
   const courseStartDate = formData?.schedules?.[0]?.date;
 
-  //calulation of early bird start date 
-  courseStartDate.setDate(
-    courseStartDate.getDate() -
+  const earlyBirdStartDate = new Date(courseStartDate);
+  //calculate of early bird start date
+  earlyBirdStartDate.setDate(
+    earlyBirdStartDate.getDate() -
       courseFeeSettings?.[0]?.early_bird_cut_off_period
   );
 
-  const [selectedDate, setSelectedData] = useState(courseStartDate);
+  const [selectedDate, setSelectedData] = useState(earlyBirdStartDate);
 
   return (
     <div className="flex flex-col justify-center">
@@ -471,7 +475,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
                   Early bird cut-off period
                 </div>
                 <div className="font-normal italic text-base text-sm text-[#7677F4]">
-                  {courseFeeSettings?.[0]?.early_bird_cut_off_period} Days left
+                  {earlyBirdCutOff} Days left
                 </div>
               </div>
               <div>
@@ -495,8 +499,22 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
                   <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
                     <DateCalendar
                       mode="single"
-                      selected={new Date()}
-                      onSelect={() => {}}
+                      selected={selectedDate}
+                      onSelect={(date: any) => {
+                        setSelectedData(date);
+                        const differenceInMilliseconds: number =
+                          courseStartDate.getTime() - date.getTime();
+
+                        // Convert milliseconds to days
+                        const oneDayInMilliseconds: number =
+                          1000 * 60 * 60 * 24;
+
+                        const differenceInDays: number = Math.floor(
+                          differenceInMilliseconds / oneDayInMilliseconds
+                        );
+
+                        setEarlyBirdCutOff(differenceInDays);
+                      }}
                       className="rounded-md"
                     />
                   </DialogContent>
@@ -506,7 +524,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           )}
       </div>
     </div>
-  )
+  );
 }
 
 // Property to prevent layout being removed during page transitions
