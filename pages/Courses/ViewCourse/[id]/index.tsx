@@ -3,7 +3,7 @@ import CurrencyIcon from "@public/assets/CurrencyIcon";
 import Important from "@public/assets/Important";
 import LocationIcon from "@public/assets/LocationIcon";
 import ParticipantsIcon from "@public/assets/ParticipantsIcon";
-import { useGetIdentity, useOne, useUpdate } from "@refinedev/core";
+import { useGetIdentity, useList, useOne, useUpdate } from "@refinedev/core";
 import { Circle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { PROGRAM_STATUS } from "src/constants/OptionLabels";
@@ -92,7 +92,7 @@ function index() {
     },
   });
 
-  const [participantDataa, setParticipantData] = useState<any>();
+  const [participantData, setParticipantData] = useState<any>();
 
   const fetchData = async () => {
     try {
@@ -115,7 +115,7 @@ function index() {
     fetchData();
   }, []);
 
-  const totalRevenue = participantDataa?.income;
+  const totalRevenue = participantData?.income;
 
   const startDate = formatDate(
     courseData?.data?.program_schedules[0]?.start_time
@@ -130,7 +130,9 @@ function index() {
   const countryName = "India";
 
   const { t } = useTranslation("common");
-  const [selectedValue, setSelectedValue] = useState(COURSE_DETAILS_TAB);
+  const [selectedValue, setSelectedValue] = useState(
+    JSON.stringify(COURSE_DETAILS_TAB)
+  );
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
@@ -155,6 +157,10 @@ function index() {
   ];
 
   const { data: loginUserData }: any = useGetIdentity();
+
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
 
   return (
     <div className="flex flex-col">
@@ -181,7 +187,7 @@ function index() {
           }}
           className="cursor-pointer"
         >
-          {participantDataa?.participantCount}
+          {participantData?.participantCount}
         </div>
         <HoverCard>
           <HoverCardTrigger>
@@ -189,10 +195,10 @@ function index() {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              {participantDataa?.participantCount} Participants with:
-              Transaction status = Confirmed / Pending Attendance status =
-              Confirmed / Pending / Dropout Total participants records:
-              {participantDataa?.totalParticipantCount}
+              {participantData?.participantCount} Participants with: Transaction
+              status = Confirmed / Pending Attendance status = Confirmed /
+              Pending / Dropout Total participants records:
+              {participantData?.totalParticipantCount}
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -205,7 +211,7 @@ function index() {
           }}
           className="cursor-pointer"
         >
-          EUR {totalRevenue}
+          {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
         </div>
         <HoverCard>
           <HoverCardTrigger>
@@ -214,7 +220,8 @@ function index() {
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
               Revenue from confirmed pending transaction participants revenue:
-              EUR {totalRevenue}
+              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+              {totalRevenue}
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -249,16 +256,16 @@ function index() {
 
       <div className="w-full mt-6 sticky">
         <Tabs
-          onValueChange={(val: any) => {
+          onValueChange={(val: string) => {
             setSelectedValue(val);
           }}
           value={selectedValue}
         >
           <TabsList className="flex flex-row gap-10 !flex-start !justify-start !bg-[white] !rounded-none">
-            {tabTriggers.map((trigger: any, index: any) => (
+            {tabTriggers.map((trigger: any, index: number) => (
               <TabsTrigger
                 key={index}
-                value={trigger.value}
+                value={JSON.stringify(trigger.value)}
                 className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
                 disabled={handleTabsBasedOnStatus(
                   courseData?.data?.status_id?.id,
@@ -286,16 +293,16 @@ function index() {
             </div>
           </TabsList>
           <div className="w-full border-b border-[#D6D7D8] -mt-2"></div>
-          <TabsContent value={COURSE_DETAILS_TAB}>
+          <TabsContent value={JSON.stringify(COURSE_DETAILS_TAB)}>
             <CourseDetailsTab />
           </TabsContent>
-          <TabsContent value={PARTICIPANTS_TAB}>
+          <TabsContent value={JSON.stringify(PARTICIPANTS_TAB)}>
             <ParticipantsTab />
           </TabsContent>
-          <TabsContent value={REVENUE_SUMMARY_TAB}>
+          <TabsContent value={JSON.stringify(REVENUE_SUMMARY_TAB)}>
             Place Revenue Summary tab here
           </TabsContent>
-          <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>
+          <TabsContent value={JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)}>
             Place Course Accounting Form tab here
           </TabsContent>
         </Tabs>
@@ -306,7 +313,7 @@ function index() {
 
 export default index;
 
-const PendingApprovalDropDown = ({ courseId }: any) => {
+const PendingApprovalDropDown = ({ courseId }: number) => {
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
     ACTIVE
@@ -351,7 +358,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
   return (
     <div>
       <Select
-        onValueChange={(val: any) => {
+        onValueChange={(val) => {
           if (val == 1) {
             setApproveModalOpen(true);
           } else {
@@ -507,7 +514,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
   );
 };
 
-const DisplayingCourseStatus = ({ statusId }: any) => {
+const DisplayingCourseStatus = ({ statusId }: number) => {
   let statusText;
   let statusColor;
   let color;
