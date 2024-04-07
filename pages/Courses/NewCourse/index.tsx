@@ -69,8 +69,6 @@ function index() {
 }
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
-  const { currentStep, setCurrentStep } = newCourseStore();
-
   const loggedUserData = loginUserData?.userData?.id;
 
   const onSubmit = (formData: any) => {
@@ -264,6 +262,7 @@ export const NewCourseTabs = () => {
     {
       value: BASIC_DETAILS_STEP_NUMBER,
       label: "Basic Details",
+      text_color: currentStep == BASIC_DETAILS_STEP_NUMBER || isAllFieldsValid1  || isAllFieldsValid1 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
       icon:
         currentStep == BASIC_DETAILS_STEP_NUMBER &&
         isAllFieldsValid1 == undefined ? (
@@ -281,6 +280,7 @@ export const NewCourseTabs = () => {
     {
       value: COURSE_DETAILS_STEP_NUMBER,
       label: "Course Details",
+      text_color: currentStep == COURSE_DETAILS_STEP_NUMBER || isAllFieldsValid2  || isAllFieldsValid2 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
       icon:
         currentStep === COURSE_DETAILS_STEP_NUMBER &&
         isAllFieldsValid2 === undefined ? (
@@ -304,6 +304,7 @@ export const NewCourseTabs = () => {
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
       label: "Time and Venue",
+      text_color: currentStep == TIME_AND_VENUE_STEP_NUMBER || isAllFieldsValid3  || isAllFieldsValid3 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
       icon:
         currentStep == TIME_AND_VENUE_STEP_NUMBER &&
         isAllFieldsValid3 == undefined ? (
@@ -327,6 +328,7 @@ export const NewCourseTabs = () => {
     {
       value: FEE_STEP_NUMBER,
       label: "Fees",
+      text_color: currentStep == FEE_STEP_NUMBER || isAllFieldsValid4  || isAllFieldsValid4 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
       icon:
         currentStep == FEE_STEP_NUMBER && isAllFieldsValid4 == undefined ? (
           <Fees
@@ -345,6 +347,7 @@ export const NewCourseTabs = () => {
     {
       value: ACCOMMODATION_STEP_NUMBER,
       label: "Accommodation",
+      text_color: currentStep == ACCOMMODATION_STEP_NUMBER || isAllFieldsValid5  || isAllFieldsValid5 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
       icon:
         currentStep == ACCOMMODATION_STEP_NUMBER &&
         isAllFieldsValid5 == undefined ? (
@@ -368,6 +371,7 @@ export const NewCourseTabs = () => {
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: "Contact Info",
+      text_color: currentStep == CONTACT_INFO_STEP_NUMBER || isAllFieldsValid6 || isAllFieldsValid6 == false  ? 'text-[#7677F4] !font-semibold' : 'text-[#999999]',
       icon:
         currentStep == CONTACT_INFO_STEP_NUMBER &&
         isAllFieldsValid6 == undefined ? (
@@ -411,7 +415,7 @@ export const NewCourseTabs = () => {
                   {currentStep === tab.value && (
                     <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
                   )}
-                  <div className="flex flex-row gap-[10px] ml-[14px] items-center">
+                  <div className={`flex flex-row gap-[10px] ml-[14px] items-center ${tab?.text_color}`}>
                     {tab.icon}
                     {tab.label}
                   </div>
