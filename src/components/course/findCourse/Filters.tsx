@@ -265,7 +265,7 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Fees</div>
-                {formData?.course_fee && <CountComponent count={1} />}
+                {formData?.is_course_fee && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -756,7 +756,7 @@ export const CourseFees = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "course_fee",
+    name: "is_course_fee",
   });
 
   return (
@@ -764,13 +764,13 @@ export const CourseFees = () => {
       <RadioGroup value={value} onValueChange={onChange}>
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="Default"
+            value="FALSE"
             selectedRadioValue={value}
             label="Default"
             className="p-2 h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
-            value="Custom"
+            value="TRUE"
             selectedRadioValue={value}
             label="Custom"
             className="p-2 h-[40px] rounded-[12px]"

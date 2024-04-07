@@ -21,7 +21,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "program_code",
     column_name: "Course ID",
     enableHiding: false,
-    header: ({ header }) => {
+    header: () => {
       return (
         <div className="w-[100px] flex flex-row justify-center items-center">
           Course ID
@@ -30,8 +30,14 @@ export const columns: ExtendedColumnDef<any>[] = [
     },
 
     cell: ({ row }) => {
+      const router = useRouter();
       return (
-        <div className="w-[100px] text-[#7677F4] font-semibold">
+        <div
+          onClick={() => {
+            router.push(`/Courses/ViewCourse/${row?.original?.id}`);
+          }}
+          className="w-[100px] text-[#7677F4] font-semibold"
+        >
           {row.original.program_code}
         </div>
       );
