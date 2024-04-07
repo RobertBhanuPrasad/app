@@ -17,7 +17,7 @@ export const handlePostProgramData = async (
   loggedInUserId: number
 ) => {
   console.log("i will post course data in this function", body);
-  const {setProgramId} = newCourseStore()
+  const { setProgramId } = newCourseStore();
   let programId = body.id;
   // we have to create course only when we dont have id
   //   if (!programId) {
@@ -117,7 +117,6 @@ export const handlePostProgramData = async (
       body[NewCourseStep4FormNames.is_early_bird_enabled] || true;
   }
 
-  //TODO: step 4 still not done we have to do it
   // step 5
 
   //is_residential_program
@@ -154,7 +153,7 @@ export const handlePostProgramData = async (
     programId = programData[0].id;
     //call zustand function to store created programId
     // so that it can be helpful in thankyou page
-    setProgramId(programId)
+    setProgramId(programId);
   }
 
   //   await handlePostProgramInfoData(body, programId);
@@ -175,6 +174,8 @@ export const handlePostProgramData = async (
     return false;
 
   if (!(await handleProgramSchedulesData(body, programId))) return false;
+
+  if (!(await handleProgramFeeLevelSettingsData(body, programId))) return false;
 
   if (!(await handlePostProgramContactDetailsData(body, programId)))
     return false;
@@ -837,4 +838,39 @@ export const handleProgramStatusUpdate = async (programId: number) => {
   }
 
   return true;
+};
+
+export const handleProgramFeeLevelSettingsData = async (
+  body: any,
+  programId: number
+) => {
+  // Fetching the existing fee level settings data
+  const { data: existingContactDetailsData } = await supabaseClient
+    .from("program_fee_level_settings")
+    .select("id")
+    .eq("program_id", programId);
+
+  //Inserting ids of program fee level settings already exist
+  const modifiedProgramFeeLevel = body?.map((feeLevel: any, index: number) => {
+    if (existingContactDetailsData?.[index]?.id) {
+      return {
+        id: existingContactDetailsData?.[index]?.id,
+        ...feeLevel,
+      };
+    }
+    return feeLevel;
+  });
+
+  //upsert operation for program feeLevel settings data
+  const { data, error } = await supabaseClient
+    .from("program_contact_details")
+    .upsert(modifiedProgramFeeLevel)
+    .select();
+
+  if (error) {
+    console.log("Error while posting program fee level settings data", error);
+    return false;
+  } else {
+    console.log("Program fee level settings upsert complete", data);
+  }
 };

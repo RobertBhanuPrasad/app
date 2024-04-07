@@ -37,7 +37,6 @@ export function MultiSelect({
 }) {
   const filteredData = uniqBy(data, "value");
 
-
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const popoverDropdownRef = React.useRef<HTMLDivElement>(null);
@@ -46,7 +45,7 @@ export function MultiSelect({
   const [open, setOpen] = React.useState(false);
   const [popoverOpen, setPopoverOpen] = React.useState(false);
 
-  const [selected, setSelected] = React.useState<number[]>(propValue);
+  const [selected, setSelected] = React.useState<any[]>(propValue);
 
   const headerStyles = selectBoxStyles?.header || "";
   const dropdownStyles = selectBoxStyles?.dropdown || "";
@@ -85,14 +84,14 @@ export function MultiSelect({
     };
   }, [open, popoverOpen]);
 
-  const findObjectById = (id: number): DataItem | undefined => {
+  const findObjectById = (id: any): DataItem | undefined => {
     // Find the object with the given id
-    return filteredData.find((obj) => parseInt(obj.value) === id);
+    return filteredData.find((obj) => obj.value === id);
   };
 
   // Filter out selected values from the dropdown
   const selectables = filteredData.filter(
-    (obj) => !selected.includes(parseInt(obj.value))
+    (obj) => !selected.includes(obj.value)
   );
 
   return (
