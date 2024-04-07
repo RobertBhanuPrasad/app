@@ -98,7 +98,7 @@ function NewCourse() {
   // }
 
   return (
-    <div className="bg-[white] ">
+    <div className="bg-[white] mx-8">
       <Form
         onSubmit={onSubmit}
         defaultValues={defaultValues}
