@@ -69,8 +69,6 @@ function index() {
 }
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
-  const { currentStep, setCurrentStep } = newCourseStore();
-
   const loggedUserData = loginUserData?.userData?.id;
 
   const onSubmit = (formData: any) => {
@@ -264,7 +262,13 @@ export const NewCourseTabs = () => {
     {
       value: BASIC_DETAILS_STEP_NUMBER,
       label: "Basic Details",
+            // If the current step is BASIC_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
+      textColor: currentStep === BASIC_DETAILS_STEP_NUMBER || isAllFieldsValid1 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
+      // If the current step is in BASIC_DETAILS_STEP then we show the Profile icon with the #7677F4 color
+      // else if the current step is not in the BASIC_DETAILS_STEP and we did not visited the step then we we need to show the Profile icon with #999999 color
+      // else if filled all the fields in that step then we will be showing the sucess icon 
+      // else Error icon
         currentStep == BASIC_DETAILS_STEP_NUMBER &&
         isAllFieldsValid1 == undefined ? (
           <Profile
@@ -281,7 +285,13 @@ export const NewCourseTabs = () => {
     {
       value: COURSE_DETAILS_STEP_NUMBER,
       label: "Course Details",
+            // If the current step is COURSE_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
+      textColor: currentStep === COURSE_DETAILS_STEP_NUMBER || isAllFieldsValid2 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
+      // If the current step is in COURSE_DETAILS_STEP then we show the Group icon with the #7677F4 color
+      // else if the current step is not in the COURSE_DETAILS_STEP and we did not visited the step then we we need to show the Group icon with #999999 color
+      // else if filled all the fields in that step then we will be showing the sucess icon 
+      // else Error icon
         currentStep === COURSE_DETAILS_STEP_NUMBER &&
         isAllFieldsValid2 === undefined ? (
           <Group
@@ -304,7 +314,13 @@ export const NewCourseTabs = () => {
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
       label: "Time and Venue",
+      // If the current step is TIME_AND_VENUE_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
+      textColor: currentStep === TIME_AND_VENUE_STEP_NUMBER || isAllFieldsValid3 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',      
       icon:
+      // If the current step is in TIME_AND_VENUE_STEP then we show the Venue icon with the #7677F4 color
+      // else if the current step is not in the TIME_AND_VENUE_STEP and we did not visited the step then we we need to show the Venue icon with #999999 color
+      // else if filled all the fields in that step then we will be showing the sucess icon 
+      // else Error icon
         currentStep == TIME_AND_VENUE_STEP_NUMBER &&
         isAllFieldsValid3 == undefined ? (
           <Venue
@@ -327,7 +343,13 @@ export const NewCourseTabs = () => {
     {
       value: FEE_STEP_NUMBER,
       label: "Fees",
+      // If the current step is FEE_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
+      textColor: currentStep === FEE_STEP_NUMBER || isAllFieldsValid4 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
+      // If the current step is in FEE_STEP then we show the Fees icon with the #7677F4 color
+      // else if the current step is not in the FEE_STEP and we did not visited the step then we we need to show the Fees icon with #999999 color
+      // else if filled all the fields in that step then we will be showing the sucess icon 
+      // else Error icon
         currentStep == FEE_STEP_NUMBER && isAllFieldsValid4 == undefined ? (
           <Fees
             color={` ${currentStep == FEE_STEP_NUMBER ? "#7677F4" : "#999999"}`}
@@ -345,7 +367,13 @@ export const NewCourseTabs = () => {
     {
       value: ACCOMMODATION_STEP_NUMBER,
       label: "Accommodation",
+            // If the current step is ACCOMMODATION_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
+      textColor: currentStep === ACCOMMODATION_STEP_NUMBER || isAllFieldsValid5 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
+            // If the current step is in ACCOMMODATION_STEP then we show the Car icon with the #7677F4 color
+      // else if the current step is not in the ACCOMMODATION_STEP and we did not visited the step then we we need to show the Car icon with #999999 color
+      // else if filled all the fields in that step then we will be showing the sucess icon 
+      // else Error icon
         currentStep == ACCOMMODATION_STEP_NUMBER &&
         isAllFieldsValid5 == undefined ? (
           <Car
@@ -368,7 +396,13 @@ export const NewCourseTabs = () => {
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: "Contact Info",
+      // If the current step is CONTACT_INFO_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
+      textColor: currentStep === CONTACT_INFO_STEP_NUMBER || isAllFieldsValid6 !== undefined ?  'text-[#7677F4] !font-semibold' :  'text-[#999999]',
       icon:
+      // If the current step is in CONTACT_INFO_STEP then we show the Info icon with the #7677F4 color
+      // else if the current step is not in the CONTACT_INFO_STEP and we did not visited the step then we we need to show the Info icon with #999999 color
+      // else if filled all the fields in that step then we will be showing the sucess icon 
+      // else Error icon
         currentStep == CONTACT_INFO_STEP_NUMBER &&
         isAllFieldsValid6 == undefined ? (
           <Info
@@ -394,7 +428,7 @@ export const NewCourseTabs = () => {
     <div>
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
-          <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
+          <TabsList className="h-[513px] bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
             <div className="flex flex-col  h-full gap-4 ">
               {stepTitles.map((tab, index) => (
                 <TabsTrigger
@@ -411,7 +445,7 @@ export const NewCourseTabs = () => {
                   {currentStep === tab.value && (
                     <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
                   )}
-                  <div className="flex flex-row gap-[10px] ml-[14px] items-center">
+                  <div className={`flex flex-row gap-[10px] ml-[14px] items-center ${tab?.textColor}`}>
                     {tab.icon}
                     {tab.label}
                   </div>
