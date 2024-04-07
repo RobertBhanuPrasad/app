@@ -602,4 +602,65 @@ interface ProgramDataBaseType {
   last_modified_by_user_id?: number | UsersDataBaseType;
   allowed_countries?: string[];
   bcc_registration_confirmation_email?: string;
+  program_contact_detials: {
+    prgram_id?: number;
+    id?: number;
+    contact_name?: string;
+    contact_email?: string;
+    contact_number?: number;
+  }[];
+}
+
+interface NewCourseFormFieldTypes {
+  id?: number;
+
+  //step 1
+  organization_id?: number;
+  organizer_ids?: number[];
+  is_registration_via_3rd_party?: boolean;
+  registration_via_3rd_party_url?: string;
+  program_created_by?: number;
+
+  //step 2
+  program_type_id?: number;
+  teacher_ids?: number[];
+  assistant_teacher_ids?: number[];
+  visibility_id?: number;
+  is_language_translation_for_participants?: boolean;
+  program_alias_name_id?: number;
+  is_geo_restriction_applicable?: boolean;
+  language_ids?: number[];
+  translation_language_ids?: number[];
+  allowed_countries?: string[];
+  max_capacity?: number;
+
+  // Step 3
+  online_url?: string;
+  hour_format_id?: number;
+  time_zone_id?: number;
+  schedules?: any[];
+  state_id?: number;
+  city_id?: number;
+  center_id?: number;
+
+  // Step 4
+  is_early_bird_enabled?: boolean;
+
+  // Step 5
+  accommodation?: any[];
+  is_residential_program?: boolean;
+  fee_per_person?: number;
+  no_of_residential_spots?: number;
+  accommodation_type_id?: number;
+  accommodation_fee_payment_mode?: number;
+
+  // Step 6
+  contact?: {
+    prgram_id?: number;
+    id?: number;
+    contact_name?: string;
+    contact_email?: string;
+    contact_number?: number;
+  }[];
+  bcc_registration_confirmation_email?: string;
 }

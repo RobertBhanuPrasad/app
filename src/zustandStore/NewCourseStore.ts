@@ -16,8 +16,8 @@ interface NewCourseStore {
 export const newCourseStore = create<NewCourseStore>((set) => ({
   viewPreviewPage: false,
   viewThankyouPage: false,
-  newCourseData: {},
-  programId:1,
+  newCourseData: null,
+  programId: 1,
   setViewPreviewPage: (data: boolean) => {
     set(() => ({
       viewPreviewPage: data,
@@ -41,7 +41,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   },
   setProgramId: (data: number) => {
     set(() => ({
-        programId: data,
+      programId: data,
     }));
-},
+  },
 }));
