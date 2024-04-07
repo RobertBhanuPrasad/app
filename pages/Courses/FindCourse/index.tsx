@@ -35,6 +35,7 @@ import {
 } from "src/ui/dropdown-menu";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { supabaseClient } from "src/utility/supabaseClient";
 
 function index() {
   const { newAdvanceFilterData } = newCourseStore();
@@ -173,7 +174,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(*)) ,program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
     filters: filters,
   });
@@ -196,8 +197,126 @@ function index() {
     setAllSelected(val);
   };
 
+  const handleExportExcel = async () => {
+    try {
+      const excelColumns = [
+        {
+          column_name: "Course ID",
+          path: ["program_code"],
+        },
+        {
+          column_name: "Course Type Name",
+          path: ["program_types", "name"],
+        },
+        {
+          column_name: "Course Name",
+          path: ["program_type_alias_names", "alias_name"],
+        },
+        {
+          column_name: "Course Status",
+          path: ["status_id", "value"],
+        },
+        {
+          column_name: "Start Date",
+          path: ["program_schedules", "start_time"],
+        },
+        {
+          column_name: "State",
+          path: ["state", "name"],
+        },
+        {
+          column_name: "City",
+          path: ["city", "name"],
+        },
+        {
+          column_name: "Center",
+          path: ["center", "name"],
+        },
+        {
+          column_name: "Attendes",
+          path: ["participant_registration", "length"],
+        },
+        {
+          column_name: "Visibility",
+          path: ["visibility_id", "value"],
+        },
+        {
+          column_name: "Course Accounting Status",
+          path: ["program_accounting_status_id", "value"],
+        },
+      ];
+
+      const params = new URLSearchParams({
+        table_name: "program",
+        select:
+          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+        columns: JSON.stringify(excelColumns),
+      });
+
+      const { data, error } = await supabaseClient.functions.invoke(
+        `export_to_file?${params}`,
+        {
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+          },
+        }
+      );
+
+      if (error) {
+        console.error("Error invoking export_to_file function:", error);
+        return;
+      }
+
+      if (
+        data &&
+        data.fileUrl &&
+        data.fileUrl.data &&
+        data.fileUrl.data.publicUrl
+      ) {
+        const fileUrl = data.fileUrl.data.publicUrl;
+        const fileName = fileUrl.split("/").pop();
+
+        const result = await supabaseClient.storage
+          .from("export_to_excel")
+          .download(fileName);
+
+        if (result.error) {
+          console.error("Error downloading file:", result.error);
+          return; // Exit the function early if there's an error
+        }
+
+        if (result.data) {
+          // Create a Blob object from the downloaded data
+          const blob = new Blob([result.data]);
+
+          // Create a URL for the Blob object
+          const url = URL.createObjectURL(blob);
+
+          // Create a temporary anchor element
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = fileName; // Specify the filename for the download
+          document.body.appendChild(link);
+
+          // Trigger the download by simulating a click event on the anchor element
+          link.click();
+
+          // Clean up by revoking the URL
+          URL.revokeObjectURL(url);
+        } else {
+          console.error("No data returned when downloading file");
+        }
+      } else {
+        console.error("File URL not found in the response.");
+      }
+    } catch (error) {
+      console.error("Error handling export:", error);
+    }
+  };
+
   return (
-    <div className="relative">
+    <div className="flex flex-col justify-between relative h-screen h-[100vh]">
       <div className="mx-8 flex flex-col gap-4">
         <HeaderSection />
         <div className="w-full">
@@ -222,7 +341,7 @@ function index() {
           />
         </div>
       </div>
-      <div className="bottom-0 mt-4  sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end">
+      <div className="bottom-0 sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
           <Checkbox
             checked={allSelected}
@@ -239,12 +358,16 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl"
+                disabled={!allSelected}
               >
                 Export <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
-              <DropdownMenuItem className="p-1 focus:outline-none cursor-pointer">
+              <DropdownMenuItem
+                onClick={handleExportExcel}
+                className="p-1 focus:outline-none cursor-pointer"
+              >
                 Excel
               </DropdownMenuItem>
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">

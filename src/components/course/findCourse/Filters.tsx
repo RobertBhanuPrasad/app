@@ -10,7 +10,11 @@ import {
 } from "pages/Courses/FindCourse";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import { PROGRAM_STATUS, VISIBILITY } from "src/constants/OptionLabels";
+import {
+  COURSE_ACCOUNTING_STATUS,
+  PROGRAM_STATUS,
+  VISIBILITY,
+} from "src/constants/OptionLabels";
 import { PRIVATE, PUBLIC } from "src/constants/OptionValueOrder";
 import {
   Accordion,
@@ -597,12 +601,9 @@ export const CourseStatus = () => {
 };
 
 export const CourseAccordingStatus = () => {
-  const courseAccountingStatusData = [
-    "Not Submitted",
-    "Rejected",
-    "Closed",
-    "Pending Review",
-  ];
+  const courseAccountingStatusData = getOptionValuesByOptionLabel(
+    COURSE_ACCOUNTING_STATUS
+  )?.[0]?.option_values;
 
   const {
     field: { value = [], onChange },
@@ -610,24 +611,24 @@ export const CourseAccordingStatus = () => {
     name: "course_accounting_status",
   });
 
-  const toggleCourseStatus = (index: number) => {
-    const updatedValue = value.includes(index)
-      ? value.filter((val: number) => val !== index)
-      : [...value, index];
+  const toggleCourseStatus = (id: number) => {
+    const updatedValue = value.includes(id)
+      ? value.filter((val: number) => val !== id)
+      : [...value, id];
     onChange(updatedValue);
   };
   return (
     <div className="flex gap-2 flex-wrap">
-      {courseAccountingStatusData.map((status, index) => (
+      {courseAccountingStatusData.map((status: any, index: any) => (
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              value?.includes(index)
+              value?.includes(status?.id)
                 ? "bg-primary text-white"
                 : "bg-white border border-[#D6D7D8]"
             }`}
             variant="outline"
-            onClick={() => toggleCourseStatus(index)}
+            onClick={() => toggleCourseStatus(status?.id)}
           >
             {status}
           </Button>

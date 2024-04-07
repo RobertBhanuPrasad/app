@@ -84,7 +84,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     },
 
     cell: ({ row }) => {
-      return <div className="min-w-[150px]">{row?.original?.status_id}</div>;
+      console.log("hey status", row?.original?.status_id);
+      return <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>;
     },
   },
 
@@ -219,13 +220,13 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "course_accounting_status",
     column_name: "Course Accounting Status",
     header: () => {
-      return <div className="min-w-[150px]">Course Accounting Status</div>;
+      return <div className="min-w-[200px]">Course Accounting Status</div>;
     },
     cell: ({ row }: any) => {
       return (
-        <div className="min-w-[150px]">
-          {row?.original?.course_accounting_status
-            ? row?.original?.course_accounting_status
+        <div className="min-w-[200px]">
+          {row?.original?.program_accounting_status_id?.value
+            ? row?.original?.program_accounting_status_id?.value
             : "-"}
         </div>
       );
@@ -236,11 +237,11 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Course Accounting Closure Date",
     header: () => {
       return (
-        <div className="min-w-[150px]">Course Accounting Closure Date</div>
+        <div className="min-w-[250px]">Course Accounting Closure Date</div>
       );
     },
     cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">-</div>;
+      return <div className="min-w-[250px]">-</div>;
     },
   },
   {
