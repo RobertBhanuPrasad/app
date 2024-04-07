@@ -17,7 +17,7 @@ export const handlePostProgramData = async (
   setProgramId: (by: number) => void
 ) => {
   console.log("i will post course data in this function", body);
- 
+
   let programId = body.id;
   // we have to create course only when we dont have id
   //   if (!programId) {
@@ -78,6 +78,16 @@ export const handlePostProgramData = async (
   if (body[NewCourseStep2FormNames.allowed_countries]) {
     programBody.allowed_countries =
       body[NewCourseStep2FormNames.allowed_countries];
+  }
+
+  //Step-3
+
+  const venuId = await handlePostVenueData(body);
+
+  if (venuId === false) {
+    return false;
+  } else {
+    programBody.venue_id = venuId;
   }
 
   //online_url
@@ -799,6 +809,93 @@ export const handlePostProgramContactDetailsData = async (
   }
 
   return true;
+};
+
+/**
+ * This is a function where we need first venue_id before creating a program
+ * We need to create a new venue and then add it to program table with created venue_id
+ * We need to update existing venue table if it is already present
+ * @param body formData
+ */
+const handlePostVenueData = async (body: any) => {
+  // if body.isNewVenue true then first we have to create a new venue and then add it to program table with created venue_id
+  // if user select and created new venue in step-3 then we have to create new venue and add it to program table
+  // if user sleect existed venue and updated the venue details by clicking edit icon in existed venue popup then we have to update existing venue table right
+
+  let venueData: any = {};
+
+  const venueBody: VenueDataBaseType = {};
+
+  if (body.isNewVenue) {
+    venueData = body?.newVenue;
+  } else {
+    const venueId = body.existingVenue.id;
+    venueData = body?.newVenue;
+
+    // if it is existing venue then we will insert the id and do upsert automatically it will work update or insert
+    if (venueId) {
+      venueBody.id = venueId;
+    }
+  }
+
+  if (venueData.name) {
+    venueBody.name = venueData.name;
+  }
+
+  if (venueData.address) {
+    venueBody.address = venueData.address;
+  }
+
+  if (venueData.state_id) {
+    venueBody.state_id = venueData.state_id;
+  }
+
+  if (venueData.city_id) {
+    venueBody.city_id = venueData.city_id;
+  }
+
+  if (venueData.center_id) {
+    venueBody.center_id = venueData.center_id;
+  }
+
+  if (venueData.postal_code) {
+    venueBody.postal_code = venueData.postal_code;
+  }
+
+  //TODO: Need to post latitude and longitude also when map component was done.
+
+  const { data, error } = await supabaseClient
+    .from("venue")
+    .upsert(venueBody)
+    .select();
+
+  if (error) {
+    console.log("error while creating venue", error);
+    return false;
+  } else {
+    console.log("venue created successfully", data);
+  }
+
+  // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
+  // we have to delete them from database
+
+  const deleteVenueIDs = body.deletedVenueID;
+  if (deleteVenueIDs && deleteVenueIDs.length > 0) {
+    const { data, error } = await supabaseClient
+      .from("venue")
+      .delete()
+      .in("id", deleteVenueIDs)
+      .select();
+
+    if (error) {
+      console.log("error while deleting venue", error);
+      return false;
+    } else {
+      console.log("venues deleted successfully", data);
+    }
+  }
+
+  return data[0].id;
 };
 
 export const handleProgramStatusUpdate = async (programId: number) => {

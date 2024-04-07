@@ -642,6 +642,9 @@ interface NewCourseFormFieldTypes {
   state_id?: number;
   city_id?: number;
   center_id?: number;
+  venue_id?: number;
+  is_existing_venue?: string;
+  existingVenue?: VenueDataBaseType;
 
   // Step 4
   is_early_bird_enabled?: boolean;

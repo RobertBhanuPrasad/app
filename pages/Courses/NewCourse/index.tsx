@@ -190,22 +190,14 @@ export const NewCourseTabs = () => {
   ]);
 
   let RequiredNewCourseStep3FormNames = _.omit(
-    NewCourseStep3FormNames,
-    formData?.program_type?.is_online_program ? [] : ["online_url"]
+    NewCourseStep3FormNames,[
+     ...(formData?.courseTypeSettings?.is_online_program ? [] : ["online_url", "state_id", "city_id", "center_id"]),
+     ...(formData?.courseTypeSettings?.is_online_program ? ["isNewVenue"] : []),
+    ]
   );
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
-    ...(formData?.is_residential_program == false ? ["accommodation"] : []),
-    ...(formData?.is_residential_program == false ? ["fee_per_person"] : []),
-    ...(formData?.is_residential_program == false
-      ? ["no_of_residential_spots"]
-      : []),
-    ...(formData?.is_residential_program == false
-      ? ["accommodation_type_id"]
-      : []),
-    ...(formData?.is_residential_program == false
-      ? ["accommodation_fee_payment_mode"]
-      : []),
+    ...(formData?.is_residential_program == false ? ["accommodation" , "fee_per_person" , "no_of_residential_spots" ,"accommodation_type_id","accommodation_fee_payment_mode" ] : [])
   ]);
 
   const validationFieldsStepWise = [
