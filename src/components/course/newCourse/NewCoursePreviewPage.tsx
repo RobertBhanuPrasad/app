@@ -1,4 +1,4 @@
-import { useMany, useOne } from '@refinedev/core'
+import { useGetIdentity, useMany, useOne } from '@refinedev/core'
 import _ from 'lodash'
 import { useState } from 'react'
 import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT } from 'src/constants/OptionLabels'
@@ -13,9 +13,13 @@ import NewCourseStep3 from './NewCourseStep3'
 import NewCourseStep4 from './NewCourseStep4'
 import NewCourseStep5 from './NewCourseStep5'
 import NewCourseStep6 from './NewCourseStep6'
+import { handlePostProgramData } from './NewCourseUtil'
+import LoadingIcon from '@public/assets/LoadingIcon'
 
 export default function NewCourseReviewPage() {
-  const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
+  const { newCourseData, setViewPreviewPage, setViewThankyouPage,setProgramId } = newCourseStore()
+
+  const { data }: any = useGetIdentity();
   
   const creator =
     newCourseData?.program_created_by &&
@@ -105,6 +109,30 @@ export default function NewCourseReviewPage() {
   const [openContactDetails, setOpenContactDetails] = useState(false)
   const [openFeesDetails, setOpenFeesDetails] = useState(false)
   const [clickedButton, setClickedButton] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+ 
+
+  const handClickContinue = async () => {
+    setIsSubmitting(true);
+
+    /**
+     * This variable will retur true if all api calls has been successfully it will return false if any api call fails
+     */
+    const isPosted = await handlePostProgramData(
+      newCourseData,
+      data?.userData?.id,
+      setProgramId
+      
+    );
+
+    if (isPosted) {
+      setViewPreviewPage(false);
+      setViewThankyouPage(true);
+    } else {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="pb-12">
@@ -296,7 +324,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Sessions</p>
-              {newCourseData?.schedules?.map(data => {
+              {newCourseData?.schedules?.map((data: any) => {
                 const schedule = `${formatDateString(data.date)} | ${data?.startHour} : ${data?.startMinute}  ${
                   data?.startTimeFormat
                 } to ${data?.endHour} : ${data?.endMinute}  ${data?.endTimeFormat}`
@@ -450,14 +478,13 @@ export default function NewCourseReviewPage() {
           </div>
         </section>
         <div className="flex items-center justify-center ">
-          <Button
-            onClick={() => {
-              setViewPreviewPage(false)
-              setViewThankyouPage(true)
-            }}
-          >
-            Continue
-          </Button>
+        {isSubmitting ? (
+            <Button disabled>
+              <LoadingIcon />
+            </Button>
+          ) : (
+            <Button onClick={handClickContinue}>Continue</Button>
+          )}
         </div>
       </div>
     </div>
