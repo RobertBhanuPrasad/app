@@ -42,14 +42,10 @@ import {
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
 
-const Filters = ({
-  setNewAdvanceFilterData,
-  setAdvanceFilterOpen,
-}: any) => {
+const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
   const { getValues, reset } = useFormContext();
 
   const formData = getValues();
-
 
   return (
     <div className="flex flex-col gap-5">
@@ -115,7 +111,7 @@ const Filters = ({
             <AccordionTrigger className="text-base font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Status</div>
-                {formData?.course_status && (
+                {formData?.course_status?.length > 0 && (
                   <CountComponent count={formData?.course_status?.length} />
                 )}
               </div>
@@ -131,9 +127,9 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Accounting Status</div>
-                {formData?.course_accounting_status && (
+                {formData?.course_accounting_status?.length > 0 && (
                   <CountComponent
-                    count={formData?.course_Accounting_status?.length }
+                    count={formData?.course_Accounting_status?.length}
                   />
                 )}
               </div>
@@ -293,6 +289,7 @@ const Filters = ({
       <div className="flex left-0 items-center  gap-4 absolute bottom-0 h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end pr-6">
         <div
           onClick={() => {
+            //clearing the form when we click on clear all
             reset();
             setNewAdvanceFilterData(undefined);
           }}
@@ -303,6 +300,7 @@ const Filters = ({
         </div>
         <Button
           onClick={() => {
+            //Setting the form data to newadvancefilterData and closing it
             setNewAdvanceFilterData(formData);
             setAdvanceFilterOpen(false);
           }}
@@ -603,13 +601,11 @@ export const CourseAccordingStatus = () => {
     COURSE_ACCOUNTING_STATUS
   )?.[0]?.option_values;
 
-
   const {
     field: { value = [], onChange },
   } = useController({
     name: "course_accounting_status",
   });
-
 
   const toggleCourseStatus = (id: number) => {
     const updatedValue = value.includes(id)
@@ -913,3 +909,5 @@ export const TeacherDropdown = () => {
     </Select>
   );
 };
+
+

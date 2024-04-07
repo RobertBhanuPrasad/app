@@ -161,7 +161,6 @@ export function BaseTable<TData, TValue>({
     {}
   );
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -189,11 +188,9 @@ export function BaseTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     getRowId,
-    onSortingChange: setSorting,
     state: {
       columnVisibility,
       rowSelection,
-      sorting,
     },
   });
 

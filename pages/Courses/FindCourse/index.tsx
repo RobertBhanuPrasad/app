@@ -113,10 +113,6 @@ function index() {
   }
 
   if (AllFilterData?.newAdvanceFilterData?.course_status) {
-    console.log(
-      "heyy filtered data",
-      AllFilterData?.newAdvanceFilterData?.course_status
-    );
     filters.permanent.push({
       field: "status_id",
       operator: "in",
@@ -182,9 +178,9 @@ function index() {
 
   const [allSelected, setAllSelected] = useState();
 
+  //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!programData?.data?.data) return;
-
     const allRowSelection: any = {};
     programData?.data?.data?.forEach((row: any) => {
       allRowSelection[row?.id] = allSelected;
@@ -196,6 +192,7 @@ function index() {
     setAllSelected(val);
   };
 
+  //function to handle exportexcel
   const handleExportExcel = async () => {
     try {
       const excelColumns = [
@@ -252,6 +249,7 @@ function index() {
         columns: JSON.stringify(excelColumns),
       });
 
+      //invoking the export_to_file function
       const { data, error } = await supabaseClient.functions.invoke(
         `export_to_file?${params}`,
         {
@@ -267,15 +265,12 @@ function index() {
         return;
       }
 
-      if (
-        data &&
-        data.fileUrl &&
-        data.fileUrl.data &&
-        data.fileUrl.data.publicUrl
-      ) {
+      if (data?.fileUrl?.data?.publicUrl) {
+        //getting file name from the url
         const fileUrl = data.fileUrl.data.publicUrl;
         const fileName = fileUrl.split("/").pop();
 
+        // passing the file name to download
         const result = await supabaseClient.storage
           .from("export_to_excel")
           .download(fileName);
@@ -369,6 +364,7 @@ function index() {
               >
                 Excel
               </DropdownMenuItem>
+              {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
                 Csv
               </DropdownMenuItem>
@@ -387,8 +383,6 @@ const HeaderSection = () => {
 
   const { newAdvanceFilterData, setNewAdvanceFilterData, AllFilterData } =
     newCourseStore();
-
-  console.log("hey advance filter data", newAdvanceFilterData, AllFilterData);
 
   const count =
     (newAdvanceFilterData &&
@@ -549,7 +543,7 @@ export const CourseTypeComponent = () => {
 export const BasicFilters = () => {
   const { getValues, setValue } = useFormContext();
   const formData = getValues();
-  
+
   const {
     field: { value, onChange },
   } = useController({
@@ -568,6 +562,7 @@ export const BasicFilters = () => {
   const [open, setOpen] = useState(false);
 
   const handleClearAll = () => {
+    //Clearing out allfilter data and advance filter data
     setNewAdvanceFilterData(undefined);
     setAllFilterData(undefined);
     setValue("course_id", "");
@@ -639,6 +634,7 @@ export const BasicFilters = () => {
         </div>
         <Button
           onClick={() => {
+            //Here when i click on overall apply moving advancefilter data to final variable
             setAllFilterData({
               ...formData,
               newAdvanceFilterData: newAdvanceFilterData,
