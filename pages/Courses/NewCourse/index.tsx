@@ -1,21 +1,20 @@
-import Form from '@components/Formfield'
-import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
-import NewCourseStep1 from '@components/course/newCourse/NewCourseStep1'
-import NewCourseStep2 from '@components/course/newCourse/NewCourseStep2'
-import NewCourseStep3 from '@components/course/newCourse/NewCourseStep3'
-import NewCourseStep4 from '@components/course/newCourse/NewCourseStep4'
-import NewCourseStep5 from '@components/course/newCourse/NewCourseStep5'
-import NewCourseStep6 from '@components/course/newCourse/NewCourseStep6'
-import NewCourseThankyouPage from '@components/course/newCourse/NewCourseThankyouPage'
-import Car from '@public/assets/Car'
-import Fees from '@public/assets/Fees'
-import Group from '@public/assets/Group'
-import Info from '@public/assets/Info'
-import Profile from '@public/assets/Profile'
-import Venue from '@public/assets/Venue'
-import { useGetIdentity } from '@refinedev/core'
-import { useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
+import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
+import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
+import Car from "@public/assets/Car";
+import Fees from "@public/assets/Fees";
+import Group from "@public/assets/Group";
+import Info from "@public/assets/Info";
+import Profile from "@public/assets/Profile";
+import Venue from "@public/assets/Venue";
+import { useGetIdentity, useList } from "@refinedev/core";
+import Form from "@components/Formfield";
+import { useForm, useFormContext, useFormState } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,
@@ -28,15 +27,22 @@ import {
   NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
-  TIME_AND_VENUE_STEP_NUMBER
-} from 'src/constants/CourseConstants'
-import { PAYMENT_MODE, VISIBILITY } from 'src/constants/OptionLabels'
-import { PAY_ONLINE, PUBLIC, SUPER_ADMIN } from 'src/constants/OptionValueOrder'
-import { Button } from 'src/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
-import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
-import { useValidateCurrentStepFields } from 'src/utility/ValidationSteps'
-import { validationSchema } from './NewCourseValidations'
+  TIME_AND_VENUE_STEP_NUMBER,
+} from "src/constants/CourseConstants";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
+import { Button } from "src/ui/button";
+import { PAYMENT_MODE, TIME_FORMAT } from "src/constants/OptionLabels";
+import {
+  PAY_ONLINE,
+  PUBLIC,
+  TIME_FORMAT_24_HOURS,
+} from "src/constants/OptionValueOrder";
+import { validationSchema } from "./NewCourseValidations";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { useState } from "react";
+import { VISIBILITY } from "src/constants/OptionLabels";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 import Error from '@public/assets/Error'
 import Success from '@public/assets/Success'
@@ -81,7 +87,12 @@ function NewCourse() {
 
   const payOnlineId = getOptionValueObjectByOptionOrder(PAYMENT_MODE, PAY_ONLINE)?.id
 
-  const { newCourseData } = newCourseStore()
+  const timeFormat24HoursId = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_24_HOURS
+  )?.id;
+
+  const { newCourseData } = newCourseStore();
 
   /**
    * default values are used to prefill the course data
@@ -98,7 +109,8 @@ function NewCourse() {
           [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
-          [NewCourseStep5FormNames?.is_residential_program]: false
+          [NewCourseStep5FormNames?.is_residential_program]: false,
+          [NewCourseStep3FormNames?.hour_format_id]: timeFormat24HoursId,
         }
       : newCourseData
 
@@ -150,7 +162,9 @@ export const NewCourseTabs = () => {
     }
   }
 
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
+
+  const { data:timeZoneData } = useList({ resource: "time_zones" });
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   )
@@ -171,21 +185,25 @@ export const NewCourseTabs = () => {
   ])
 
   let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
-    ...(formData?.courseTypeSettings?.is_online_program ? [] : ['online_url', 'state_id', 'city_id', 'center_id']),
-    ...(formData?.courseTypeSettings?.is_online_program ? ['isNewVenue'] : [])
-  ])
+    ...(formData?.courseTypeSettings?.is_online_program
+      ? []
+      : ["online_url", "state_id", "city_id", "center_id"]),
+    ...(formData?.courseTypeSettings?.is_online_program ? ["isNewVenue"] : []),
+    //If country does not have multiple time zones no need to validate time zone drop down 
+    ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
+  ]);
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false
       ? [
-          'accommodation',
-          'fee_per_person',
-          'no_of_residential_spots',
-          'accommodation_type_id',
-          'accommodation_fee_payment_mode'
+          "accommodation",
+          "fee_per_person",
+          "no_of_residential_spots",
+          "accommodation_type_id",
+          "accommodation_fee_payment_mode",
         ]
-      : [])
-  ])
+      : []),
+  ]);
 
   const validationFieldsStepWise = [
     Object.values(RequiredNewCourseStep1FormNames),
