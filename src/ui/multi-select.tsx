@@ -123,7 +123,7 @@ export function MultiSelect({
                   className="border flex items-center"
                 >
                   <div className="max-w-[60px] truncate">
-                    <abbr className="no-underline" title={item?.toString()}>
+                    <abbr className="no-underline" title={findObjectById(item)?.label}>
                       {findObjectById(item)?.label}
                     </abbr>
                   </div>

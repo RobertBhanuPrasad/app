@@ -58,5 +58,6 @@ export const ACCOUNTING_PENDING_REVIEW = 3;
 export const CLOSED = 4;
 export const ACCOUNTING_CANCELED = 5;
 
+//Payment mode
 export const PAY_ONLINE = 1;
 export const PAY_OFFLINE = 2;
