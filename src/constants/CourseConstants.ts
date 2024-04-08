@@ -7,10 +7,10 @@ export const CONTACT_INFO_STEP_NUMBER = 6;
 export const REVIEW_PAGE_STEP_NUMBER = 7;
 
 //Course details page tabs constant
-export const COURSE_DETAILS_TAB = "1";
-export const PARTICIPANTS_TAB = "2";
-export const REVENUE_SUMMARY_TAB = "3";
-export const COURSE_ACCOUNTING_FORM_TAB = "4";
+export const COURSE_DETAILS_TAB = 1;
+export const PARTICIPANTS_TAB = 2;
+export const REVENUE_SUMMARY_TAB = 3;
+export const COURSE_ACCOUNTING_FORM_TAB = 4;
 
 //course status IDs
 
@@ -39,6 +39,7 @@ export const NewCourseStep2FormNames = {
   translation_language_ids: "translation_language_ids",
   allowed_countries: "allowed_countries",
   max_capacity: "max_capacity",
+  is_registration_required: "is_registration_required",
 };
 
 export const NewCourseStep3FormNames = {
@@ -49,10 +50,13 @@ export const NewCourseStep3FormNames = {
   state_id: "state_id",
   city_id: "city_id",
   center_id: "center_id",
+  venue_id: "venue_id",
+  isNewVenue: "isNewVenue",
 };
 
 export const NewCourseStep4FormNames = {
   is_early_bird_enabled: "is_early_bird_enabled",
+  program_fee_level_settings: "program_fee_level_settings",
 };
 
 export const NewCourseStep5FormNames = {

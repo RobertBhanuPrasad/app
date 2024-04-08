@@ -34,14 +34,6 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep1() {
-  const { data: courseData } = useOne({
-    resource: "program",
-    id: 10,
-    meta: {
-      select:
-        "*,program_fee_settings_id(*,program_fee_level_settings!inner(*,fee_level_id(*))),program_fee_level_settings(*,fee_level_id(*)),program_details_info(*,max_capacity,visibility_id(*)),program_organizers(*,user_id(*,contact_id(*))),program_translation_languages(*,language_id(*)),program_languages(*,language_id(*)),program_schedules(*),venue(*,center_id!inner(*),city_id!inner(*),state_id!inner(*)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(*)),program_type_id!inner(*),program_assistant_teachers!inner(*,user_id(*,contact_id(*))),program_teachers!inner(*,user_id(*,contact_id(*)))",
-    },
-  });
   return (
     <div>
       <RadioCards />
@@ -69,7 +61,7 @@ const RegistrationGateway = () => {
 
   const {
     field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
-    fieldState:{error}
+    fieldState: { error },
   } = useController({
     name: NewCourseStep1FormNames?.registration_via_3rd_party_url,
   });
@@ -98,10 +90,10 @@ const RegistrationGateway = () => {
               error={error ? true : false}
             />
             {error && (
-          <span className="text-[#FF6D6D] text-[12px]">
-            {error?.message}
-          </span>
-        )}
+              <span className="text-[#FF6D6D] text-[12px]">
+                {error?.message}
+              </span>
+            )}
           </div>
         </div>
       )}
@@ -111,7 +103,7 @@ const RegistrationGateway = () => {
 const RadioCards = () => {
   const {
     field: { value, onChange },
-    fieldState: {error: radioError}
+    fieldState: { error: radioError },
   } = useController({
     name: NewCourseStep1FormNames?.program_created_by,
   });
@@ -258,10 +250,10 @@ const RadioCards = () => {
         </Label>
       </div>
       {radioError && (
-          <span className="text-[#FF6D6D] text-[14px]">
-            {radioError?.message}
-          </span>
-        )}
+        <span className="text-[#FF6D6D] text-[14px]">
+          {radioError?.message}
+        </span>
+      )}
     </RadioGroup>
   );
 };
@@ -312,7 +304,10 @@ const OrganizationDropDown = () => {
             onChange(value);
           }}
         >
-          <SelectTrigger className="w-[320px]" error={organizationError ? true : false}>
+          <SelectTrigger
+            className="w-[320px]"
+            error={organizationError ? true : false}
+          >
             <SelectValue placeholder="Select Organization" />
           </SelectTrigger>
           <SelectContent>
@@ -355,7 +350,7 @@ const ProgramOrganizerDropDown = () => {
 
   const {
     field: { value, onChange },
-    fieldState:{error:programOrganizerError}
+    fieldState: { error: programOrganizerError },
   } = useController({
     name: NewCourseStep1FormNames?.organizer_ids,
   });
@@ -366,11 +361,13 @@ const ProgramOrganizerDropDown = () => {
     PROGRAM_ORGANIZER
   )?.id;
 
-  const { queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useSelect({
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
     },
+    optionLabel: "contact_id.full_name",
+    optionValue: "id",
     filters: [
       //Fetch the users with Program Organizer role
       {
@@ -397,14 +394,6 @@ const ProgramOrganizerDropDown = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 10);
   };
-
-  const options: any =
-    queryResult?.data?.data?.map((item) => {
-      return {
-        label: item?.contact_id?.full_name,
-        value: item.id,
-      };
-    }) ?? [];
 
   return (
     <div className="w-80 flex gap-1 flex-col">
@@ -434,10 +423,10 @@ const ProgramOrganizerDropDown = () => {
         error={programOrganizerError}
       />
       {programOrganizerError && (
-          <span className="text-[#FF6D6D] text-[12px]">
-            {programOrganizerError?.message}
-          </span>
-        )}
+        <span className="text-[#FF6D6D] text-[12px]">
+          {programOrganizerError?.message}
+        </span>
+      )}
     </div>
   );
 };

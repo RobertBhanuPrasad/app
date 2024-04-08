@@ -35,10 +35,15 @@ import {
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { supabaseClient } from "src/utility/supabaseClient";
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 
 function index() {
-  const { AllFilterData } = newCourseStore();
+  const { viewPreviewPage, AllFilterData } = newCourseStore();
 
+  // If user click on edit course in menu option we have to open review page instead of table
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />;
+  }
 
   const filters: any = { permanent: [] };
 
@@ -638,7 +643,6 @@ const AdvanceFilter = () => {
         (key) => formData?.advanceFilter[key] !== undefined && ""
       ).length) ||
     0;
-
 
   return (
     <Sheet open={advanceFilterOpen}>

@@ -20,7 +20,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const formattedPthName = addGapsToPathname(pathname);
 
   return (
-    <div className="layout sticky top-0 bg-white z-50">
+    <div className="layout">
       <Image src={background} alt="bg" className="w-full -mt-1 !h-[227px]" />
       <div className="absolute top-0 left-0 w-full z-10 inset-0">
         <Navbar />

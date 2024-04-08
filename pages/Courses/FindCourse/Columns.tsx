@@ -1,3 +1,4 @@
+import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import { DisplayOptions } from "@components/courseBusinessLogic";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { useGetIdentity, useOne } from "@refinedev/core";
@@ -259,6 +260,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const { setViewPreviewPage, setNewCourseData } = newCourseStore();
+
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -267,7 +270,7 @@ export const columns: ExtendedColumnDef<any>[] = [
       //TODO: Need to use row only instead of this below api call
       const { data, isLoading } = useOne({
         resource: "program",
-        id: row.id,
+        id: row.original.id,
       });
 
       const dropDownMenuData = DisplayOptions(
@@ -275,6 +278,18 @@ export const columns: ExtendedColumnDef<any>[] = [
         data?.data?.program_accounting_status_id,
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
+
+      const handleEditCourse = async () => {
+        console.log("clicking on edit course");
+
+        /**
+         * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
+         */
+        const defaultValues = await handleCourseDefaultValues(row.original.id);
+        setNewCourseData(defaultValues);
+
+        setViewPreviewPage(true);
+      };
 
       const handleSelected = (value: string) => {
         console.log("clicked on", value);
@@ -293,11 +308,8 @@ export const columns: ExtendedColumnDef<any>[] = [
           case "Cancel Course": {
             setIsDialogOpen(true);
           }
-          case "Edit course": {
-            console.log("clicking on edit course");
-            const { setViewPreviewPage } = newCourseStore();
-            setViewPreviewPage(true);
-          
+          case "Edit Course": {
+            handleEditCourse();
           }
           default: {
             console.log("other options");
