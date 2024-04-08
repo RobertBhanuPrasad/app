@@ -1,8 +1,9 @@
 import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import { DisplayOptions } from "@components/courseBusinessLogic";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 import { useGetIdentity, useOne } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreVertical } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Button } from "src/ui/button";
@@ -23,11 +24,25 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Course ID",
     enableHiding: false,
     header: () => {
-      return <div className="w-[100px]">Course ID</div>;
+      return (
+        <div className="w-[100px]">
+          Course ID
+        </div>
+      );
     },
 
     cell: ({ row }) => {
-      return <div className="w-[100px]">{row.original.program_code}</div>;
+      const router = useRouter();
+      return (
+        <div
+          onClick={() => {
+            router.push(`/Courses/ViewCourse/${row?.original?.id}`);
+          }}
+          className="w-[100px] text-[#7677F4] font-semibold"
+        >
+          {row.original.program_code}
+        </div>
+      );
     },
   },
 
@@ -70,7 +85,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     },
 
     cell: ({ row }) => {
-      return <div className="min-w-[150px]">{row?.original?.status_id}</div>;
+      console.log("hey status", row?.original?.status_id);
+      return <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>;
     },
   },
 
@@ -150,7 +166,9 @@ export const columns: ExtendedColumnDef<any>[] = [
         (teacher: any) => teacher?.users?.user_name
       );
       return (
-        <div className="min-w-[150px]">{teachers && teachers.join(", ")}</div>
+        <div className="flex flex-wrap min-w-[150px]">
+          <div>{teachers && teachers.join(", ")}</div>
+        </div>
       );
     },
   },
@@ -165,8 +183,8 @@ export const columns: ExtendedColumnDef<any>[] = [
         (Organizer: any) => Organizer?.users?.user_name
       );
       return (
-        <div className="min-w-[150px]">
-          {organizers && organizers.join(",")}
+        <div className="flex flex-wrap min-w-[150px]">
+          <div>{organizers && organizers.join(",  ")}</div>
         </div>
       );
     },
@@ -203,13 +221,13 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "course_accounting_status",
     column_name: "Course Accounting Status",
     header: () => {
-      return <div className="min-w-[150px]">Course Accounting Status</div>;
+      return <div className="min-w-[200px]">Course Accounting Status</div>;
     },
     cell: ({ row }: any) => {
       return (
-        <div className="min-w-[150px]">
-          {row?.original?.course_accounting_status
-            ? row?.original?.course_accounting_status
+        <div className="min-w-[200px]">
+          {row?.original?.program_accounting_status_id?.value
+            ? row?.original?.program_accounting_status_id?.value
             : "-"}
         </div>
       );
@@ -220,11 +238,11 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Course Accounting Closure Date",
     header: () => {
       return (
-        <div className="min-w-[150px]">Course Accounting Closure Date</div>
+        <div className="min-w-[250px]">Course Accounting Closure Date</div>
       );
     },
     cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">-</div>;
+      return <div className="min-w-[250px]">-</div>;
     },
   },
   {
