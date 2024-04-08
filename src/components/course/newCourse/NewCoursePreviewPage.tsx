@@ -22,6 +22,7 @@ import NewCourseStep6 from "./NewCourseStep6";
 import LoadingIcon from "@public/assets/LoadingIcon";
 import { handlePostProgramData } from "./NewCourseUtil";
 import { supabaseClient } from "src/utility";
+import countryCodes from "src/data/CountryCodes";
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
@@ -139,8 +140,8 @@ export default function NewCourseReviewPage() {
   });
 
   const allowedCountries = newCourseData?.allowed_countries
-    ?.map((data: any) => {
-      return data.value;
+    ?.map((countryCode: string) => {
+      return countryCodes[countryCode];
     })
     .join(", ");
 
