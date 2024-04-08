@@ -615,7 +615,7 @@ export const CourseAccordingStatus = () => {
   };
   return (
     <div className="flex gap-2 flex-wrap">
-      {courseAccountingStatusData.map((status: any, index: any) => (
+      {courseAccountingStatusData?.map((status: any, index: any) => (
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${

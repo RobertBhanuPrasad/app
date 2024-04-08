@@ -192,6 +192,8 @@ function index() {
     setAllSelected(val);
   };
 
+  console.log("heyy row selection", rowSelection);
+
   //function to handle exportexcel
   const handleExportExcel = async () => {
     try {
@@ -337,13 +339,26 @@ function index() {
       </div>
       <div className="bottom-0 sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
-          <Checkbox
-            checked={allSelected}
-            onCheckedChange={handleSelectAll}
-            className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
-          />
-          <div>Select All</div>
-          <div className="font-semibold">{programData?.data?.total || 0}</div>
+          <div className="flex flex-row items-center gap-2">
+            <Checkbox
+              checked={allSelected}
+              onCheckedChange={handleSelectAll}
+              className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+            />
+            <div>Select All</div>
+            <div className="font-semibold">{programData?.data?.total || 0}</div>
+          </div>
+          <div>|</div>
+          {/*when select all is selected then all rows need to be selected  */}
+          <div className="flex flex-row gap-2">
+            selected :{" "}
+            {allSelected
+              ? programData?.data?.total
+              : Object.values(rowSelection).filter((value) => value === true)
+                  .length}{" "}
+            Out of{" "}
+            <div className="font-semibold">{programData?.data?.total || 0}</div>
+          </div>
         </div>
         <div>
           {" "}
