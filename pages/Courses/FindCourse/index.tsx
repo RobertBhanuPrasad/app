@@ -638,11 +638,10 @@ const AdvanceFilter = () => {
   const formData = watch();
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
   const count =
-    (formData?.advanceFilter &&
-      Object.keys(formData?.advanceFilter).filter(
-        (key) => formData?.advanceFilter[key] !== undefined && ""
-      ).length) ||
-    0;
+    formData?.advanceFilter &&
+    Object.keys(formData?.advanceFilter).filter(
+      (key) => formData?.advanceFilter[key] !== undefined || ""
+    ).length;
 
   return (
     <Sheet open={advanceFilterOpen}>
