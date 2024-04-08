@@ -1,25 +1,27 @@
 import { useState } from "react";
-import { FormProvider, useController, useForm } from "react-hook-form";
 import EditPaymentForm from "./editPaymentForm";
 import { Button } from "src/ui/button";
+import { useForm } from "@refinedev/react-hook-form";
 export default function EditPayment() {
+    
     
     const methods = useForm({
         refineCoreProps: {
             action: "edit", // or clone
-            resource: "categories",
-            id: 1, // <BASE_URL_FROM_DATA_PROVIDER>/categories/1
+            // resource: "categories",
+            // id: 1, // <BASE_URL_FROM_DATA_PROVIDER>/categories/1
         },
     });
+    const {
+        refineCore: { onFinish, formLoading },
+        handleSubmit,
+    } = methods;
     const onSubmit = (formData: any) => {
         console.log(formData);
         // Call onFinish with the form data if needed
         onFinish(formData);
     };
-    const {
-        refineCore: { onFinish, formLoading },
-        handleSubmit,
-    } = methods;
+   
     // const {
     //     refineCore: { onFinish },
     //     handleSubmit
