@@ -13,9 +13,8 @@ import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import { useGetIdentity, useList } from "@refinedev/core";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import Form from "@components/Formfield";
-import { useForm, useFormContext, useFormState } from "react-hook-form";
+import { useFormContext, useFormState } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,
@@ -45,9 +44,11 @@ import { useState } from "react";
 import { VISIBILITY } from "src/constants/OptionLabels";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
-import Success from "@public/assets/Success";
 import Error from "@public/assets/Error";
+import Success from "@public/assets/Success";
 import _ from "lodash";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import LoadingIcon from "@public/assets/LoadingIcon";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -55,9 +56,9 @@ function index() {
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
   console.log(loginUserData);
-  if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
-  }
+  // if (!loginUserData?.userData) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (viewThankyouPage) {
     return (
@@ -98,6 +99,8 @@ function NewCourse() {
     TIME_FORMAT_24_HOURS
   )?.id;
 
+  console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
+
   const { newCourseData } = newCourseStore();
 
   /**
@@ -123,12 +126,13 @@ function NewCourse() {
       : newCourseData;
 
   // If the form is still loading, display a loading message
-  // if (formLoading) {
-  //   return <div>Loading...</div>;
-  // }
+  // we have to display loading icon until the below variables will be get from database
+  if (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) {
+    return <LoadingIcon />;
+  }
 
   return (
-    <div className="bg-[white]  ">
+    <div className="bg-[white] mx-8">
       <Form
         onSubmit={onSubmit}
         defaultValues={defaultValues}
@@ -177,7 +181,7 @@ export const NewCourseTabs = () => {
 
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { data:timeZoneData } = useList({ resource: "time_zones" });
+  const { data: timeZoneData } = useList({ resource: "time_zones" });
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
@@ -205,8 +209,13 @@ export const NewCourseTabs = () => {
     ...(formData?.courseTypeSettings?.is_online_program
       ? []
       : ["online_url", "state_id", "city_id", "center_id"]),
-    ...(formData?.courseTypeSettings?.is_online_program ? ["isNewVenue"] : []),
-    //If country does not have multiple time zones no need to validate time zone drop down 
+    ...(formData?.courseTypeSettings?.is_online_program
+      ? ["is_existing_venue", "newVenue", "existingVenue"]
+      : []),
+    ...(formData?.is_existing_venue == "new_venue"
+      ? ["existingVenue"]
+      : ["newVenue"]),
+    //If country does not have multiple time zones no need to validate time zone drop down
     ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
   ]);
 
@@ -605,3 +614,5 @@ export const NewCourseTabs = () => {
     </div>
   );
 };
+
+
