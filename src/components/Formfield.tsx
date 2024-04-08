@@ -7,7 +7,7 @@ interface FormProps {
   children: ReactNode;
   onSubmit: (data: any) => void;
   defaultValues: Record<string, any>;
-  schema: ZodSchema<any, any, any>;
+  schema?: ZodSchema<any, any, any>;
   mode?: "all" | "onBlur" | "onChange" | "onSubmit" | "onTouched" | undefined;
   useFormMethodsRef?: React.MutableRefObject<any>; 
 }

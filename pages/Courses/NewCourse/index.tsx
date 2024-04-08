@@ -132,7 +132,7 @@ function NewCourse() {
   }
 
   return (
-    <div className="bg-[white]  ">
+    <div className="bg-[white] mx-8">
       <Form
         onSubmit={onSubmit}
         defaultValues={defaultValues}
@@ -210,7 +210,7 @@ export const NewCourseTabs = () => {
       ? []
       : ["online_url", "state_id", "city_id", "center_id"]),
     ...(formData?.courseTypeSettings?.is_online_program
-      ? ["is_existing_venue"]
+      ? ["is_existing_venue", "newVenue", "existingVenue"]
       : []),
     ...(formData?.is_existing_venue == "new_venue"
       ? ["existingVenue"]
@@ -614,3 +614,5 @@ export const NewCourseTabs = () => {
     </div>
   );
 };
+
+
