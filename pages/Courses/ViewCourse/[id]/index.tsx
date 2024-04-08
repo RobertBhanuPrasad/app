@@ -8,6 +8,7 @@ import {
   PARTICIPANT_PAYMENT_STATUS,
 } from "src/constants/OptionLabels";
 import {
+  CANCELED,
   CANCELED_ATTENDANCE_STATUS,
   COMPLETED_ATTENDANCE_STATUS,
   DROPOUT_ATTENDANCE_STATUS,
@@ -105,7 +106,7 @@ function index() {
     id: Id,
     meta: {
       select:
-        "*,program_type_id(is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
+        "*,created_by_user_id(contact_id(full_name)),program_type_id(is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
     },
   });
 
@@ -145,8 +146,6 @@ function index() {
   );
 
   const countryName = "India";
-
-  console.log(courseData, "courseData");
 
   const { t } = useTranslation("common");
   const { viewPreviewPage } = newCourseStore();
@@ -196,7 +195,7 @@ function index() {
           <DisplayingCourseStatus
             statusId={courseData?.data?.status_id?.value}
           />
-          <ShareButton courseData={courseData} />
+          <ShareButton />
         </div>
       </div>
       <div className="flex flex-row gap-2 items-center mt-3">
@@ -259,7 +258,8 @@ function index() {
       </div>
 
       <div className="flex flex-row items-center gap-2 w-full justify-end">
-        Announced by: National Admin{" "}
+        Announced by:{" "}
+        {courseData?.data?.created_by_user_id?.contact_id?.full_name}
         <HoverCard>
           <HoverCardTrigger>
             <Important />
@@ -315,7 +315,10 @@ function index() {
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && <PendingApprovalDropDown courseId={Id} />}
 
-              <ActionsDropDown />
+              <SuccessModalOpen />
+              <RejectedModalOpen />
+
+              <ActionsDropDown courseId={Id} />
             </div>
           </TabsList>
           <div className="w-full border-b border-[#D6D7D8] -mt-2"></div>
@@ -361,26 +364,37 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
   ];
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [rejectionFeedback, setRejectionFeedback] = useState(false);
+
+  const { data: loginUserData }: any = useGetIdentity();
+
   const { mutate } = useUpdate();
-  const approveCourse = () => {
-    mutate({
+  const approveCourse = async () => {
+    await mutate({
       resource: "program",
       values: {
         status_id: courseActiveStatusId,
+        approved_by_user_id: loginUserData?.userData?.id,
       },
       id: courseId,
     });
+    setViewSuccessModal(true);
   };
 
-  const rejectCourse = () => {
-    mutate({
+  const { setViewSuccessModal, setViewRejectedModal } = newCourseStore();
+
+  const rejectCourse = async () => {
+    await mutate({
       resource: "program",
       values: {
         status_id: courseDeclinedStatusId,
+        program_rejection_feedback: rejectionFeedback,
       },
       id: courseId,
     });
+    setViewRejectedModal(true);
   };
+
   return (
     <div>
       <Select
@@ -412,12 +426,12 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
         </SelectContent>
       </Select>
       <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
-        <DialogContent className="flex flex-col h-[248px] w-[425px]">
+        <DialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
           <DialogHeader>
             <div className="flex items-center w-full justify-center">
               <Exclamation />
             </div>
-            <DialogDescription className="font-bold text-black text-lg items-center text-center">
+            <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
               Are you sure you want to approve this course?
             </DialogDescription>
           </DialogHeader>
@@ -427,7 +441,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                 <Button
                   type="button"
                   variant="outline"
-                  className="text-blue-500 w-[71px] h-[46px]"
+                  className="text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px]"
                   onClick={() => {
                     setApproveModalOpen(false);
                   }}
@@ -436,40 +450,15 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                 </Button>
               </div>
               <div>
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    <Button
-                      type="button"
-                      className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
-                      onClick={approveCourse}
-                    >
-                      Yes
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="w-50">
-                    <AlertDialogHeader className="text-center">
-                      <AlertDialogTrigger></AlertDialogTrigger>
-                      <div className="flex justify-center">
-                        <Image src={Tick} alt="tick" />
-                      </div>
-                      <AlertDialogTitle className="font-bold text-center">
-                        Course approved Successfully
-                      </AlertDialogTitle>
-                      <AlertDialogDescription className="text-center">
-                        Thank you for contribution in the course
-                        <br /> approval process.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="flex items-center justify-center">
-                      <AlertDialogCancel
-                        className=" bg-blue-500 mx-auto text-white"
-                        onClick={() => setApproveModalOpen(false)}
-                      >
-                        Close
-                      </AlertDialogCancel>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <Button
+                  type="button"
+                  className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                  onClick={() => {
+                    approveCourse();
+                  }}
+                >
+                  Yes
+                </Button>
               </div>
             </div>
           </DialogFooter>
@@ -477,12 +466,12 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
       </Dialog>
 
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
-        <DialogContent className="flex flex-col items-center px-6 w-[415px] ">
+        <DialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6 ">
           <DialogHeader className="text-center">
             <div className="flex items-center w-full justify-center">
               <Cross />{" "}
             </div>
-            <DialogTitle className="text-gray-500 text-sm font-normal pt-5">
+            <DialogTitle className="text-gray-500 text-sm font-normal pt-2">
               {" "}
               Describe your rejection reason
               <span className="text-blue-500">(optional)</span>
@@ -490,56 +479,37 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
             <DialogDescription>
               <Textarea
                 placeholder="Comment"
-                className="border-[#E1E1E1] resize-none h-[112px] w-[366px]"
+                className="border-[#E1E1E1]  h-[132px] w-[366px]"
+                onChange={(e: any) => {
+                  setRejectionFeedback(e.target.value);
+                }}
               />
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <DialogTrigger>
-              <Button
-                type="button"
-                variant="outline"
-                className="text-blue-500 mt-5"
-                onClick={() => {
-                  setRejectModalOpen(false);
-                }}
-              >
-                No
-              </Button>
-            </DialogTrigger>
-            <AlertDialog>
-              <AlertDialogTrigger>
+          <DialogFooter className="flex justify-center items-center">
+            <div className="flex flex-row gap-5 items-center">
+              <div>
                 <Button
                   type="button"
-                  className="bg-blue-500 text-white px-4 py-2"
+                  variant="outline"
+                  className="text-[#7677F4] w-[71px] h-[46px] border border-[#7677F4] rounded-[12px] "
+                  onClick={() => {
+                    setRejectModalOpen(false);
+                  }}
+                >
+                  No
+                </Button>
+              </div>
+              <div>
+                <Button
+                  type="button"
+                  className="bg-[#7677F4] text-[white] w-[98px] h-[46px] rounded-[12px]"
                   onClick={rejectCourse}
                 >
                   Reject
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="w-[414px] h-[279px]">
-                <AlertDialogHeader className="text-center">
-                  <AlertDialogTrigger></AlertDialogTrigger>
-                  <div className="flex items-center w-full justify-center">
-                    <Cross />{" "}
-                  </div>
-                  <AlertDialogTitle className="font-bold text-center">
-                    Course Rejected
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-center">
-                    The Course got rejected successfully
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="flex items-center justify-center">
-                  <AlertDialogCancel
-                    className=" bg-blue-500 mx-auto text-white"
-                    onClick={() => setRejectModalOpen(false)}
-                  >
-                    Close
-                  </AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+              </div>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -547,16 +517,76 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
   );
 };
 
-const ActionsDropDown = () => {
+const RejectedModalOpen = () => {
+  const { viewRejectedModal, setViewRejectedModal } = newCourseStore();
+
+  return (
+    <Dialog open={viewRejectedModal}>
+      <DialogContent className="w-[414px] h-[279px]">
+        <DialogHeader className="text-center">
+          <div className="flex items-center w-full justify-center">
+            <Cross />{" "}
+          </div>
+          <DialogTitle className="font-bold text-center">
+            Course Rejected
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            The Course got rejected successfully
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <div className="flex w-full items-center justify-center">
+            <Button
+              className=" bg-[#7677F4] w-[91px] h-[46px] rounded-[12px] text-[white]"
+              onClick={() => setViewRejectedModal(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const SuccessModalOpen = () => {
+  const { viewSuccessModal, setViewSuccessModal } = newCourseStore();
+
+  return (
+    <Dialog open={viewSuccessModal}>
+      <DialogTrigger></DialogTrigger>
+      <DialogContent className="w-[414px] h-[301px]">
+        <div className="flex flex-col  items-center">
+          <div className="flex justify-center">
+            <Image src={Tick} alt="tick" />
+          </div>
+          <div className="font-semibold text-center mt-2">
+            Course approved Successfully
+          </div>
+          <div className="text-center my-4">
+            Thank you for contribution in the course approval process.
+          </div>
+          <Button
+            onClick={() => {
+              setViewSuccessModal(false);
+              // setApproveModalOpen(false);
+            }}
+            className="w-[91px] h-[46px] rounded-[12px]"
+          >
+            Close
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const ActionsDropDown = ({ courseId }: any) => {
+  const router = useRouter();
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false);
+  const [cancelSuccessModalOpen, setCancelSuccessModalOpen] = useState(false);
 
   const { setNewCourseData, setViewPreviewPage } = newCourseStore();
-
-  const router = useRouter();
-
-  const Id: number | undefined = router?.query?.id
-    ? parseInt(router.query.id as string)
-    : undefined;
 
   const options = [
     {
@@ -592,10 +622,10 @@ const ActionsDropDown = () => {
    * switches the view to the preview page.
    */
   const handleEditCourse = async () => {
-    if (Id) {
-      const defaultValues = await handleCourseDefaultValues(Id);
-      setNewCourseData(defaultValues);
+    if (courseId) {
       setViewPreviewPage(true);
+      const defaultValues = await handleCourseDefaultValues(courseId);
+      setNewCourseData(defaultValues);
     }
   };
 
@@ -606,24 +636,40 @@ const ActionsDropDown = () => {
    * switches the view to the new course page.
    */
   const handleCopyCourse = async () => {
-    if (Id) {
-      let defaultValues = await handleCourseDefaultValues(Id);
+    if (courseId) {
+      let defaultValues = await handleCourseDefaultValues(courseId);
 
-      // we have to delete schedules when user click on cipy course and other we need to prefill
+      // we have to delete schedules when user click on copy course and other we need to prefill
 
       defaultValues = _.omit(defaultValues, ["schedules"]);
       setNewCourseData(defaultValues);
-      router.push("/Course/NewCourse");
+      router.push("/Courses/NewCourse");
     }
   };
+
+  const courseCanceledStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    CANCELED
+  )?.id;
+
+  const { mutate } = useUpdate();
+
+  const cancelCourse = () => {
+    setCancelCourseModalOpen(false);
+    mutate({
+      resource: "program",
+      values: {
+        status_id: courseCanceledStatusId,
+      },
+      id: courseId,
+    });
+    setCancelSuccessModalOpen(true);
+  };
+
   return (
     <div>
-      <CustomSelect
-        placeholder="Actions"
-        data={options}
-        onBottomReached={() => {}}
-        onSearch={() => {}}
-        onChange={(val: any) => {
+      <Select
+        onValueChange={(val) => {
           switch (val) {
             case 1: {
               // TODO - navigate to view participants page
@@ -657,12 +703,27 @@ const ActionsDropDown = () => {
             }
           }
         }}
-        value={undefined}
-        selectBoxStyles={{
-          header: "w-[192px] ",
-          dropdown: "w-[192px]",
-        }}
-      />
+      >
+        <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
+          <SelectValue placeholder="Actions" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItems>
+            {options?.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[40px]"
+                >
+                  {option.label}
+                </SelectItem>
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+
       <Dialog
         open={cancelCourseModalOpen}
         onOpenChange={setCancelCourseModalOpen}
@@ -691,38 +752,42 @@ const ActionsDropDown = () => {
                 </Button>
               </div>
               <div>
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    <Button
-                      type="button"
-                      className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
-                    >
-                      Yes
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="w-50">
-                    <AlertDialogHeader className="text-center">
-                      <AlertDialogTrigger></AlertDialogTrigger>
-                      <div className="flex justify-center">
-                        <Image src={Tick} alt="tick" />
-                      </div>
-                      <AlertDialogTitle className="font-bold text-center">
-                        Course cancelled Successfully
-                      </AlertDialogTitle>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="flex items-center justify-center">
-                      <AlertDialogCancel
-                        className=" bg-blue-500 mx-auto text-white"
-                        onClick={() => setCancelCourseModalOpen(false)}
-                      >
-                        Close
-                      </AlertDialogCancel>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <Button
+                  type="button"
+                  className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                  onClick={() => {
+                    cancelCourse();
+                  }}
+                >
+                  Yes
+                </Button>
               </div>
             </div>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={cancelSuccessModalOpen}>
+        <DialogContent className="w-[414px] h-[279px]">
+          <div className="text-center">
+            <div className="flex justify-center">
+              <Cross />
+            </div>
+            <div className="font-bold text-center my-5">
+              Course canceled Successfully
+            </div>
+          </div>
+
+          <div className="w-full flex items-center justify-center">
+            <Button
+              className=" bg-[#7677F4] w-[91px] h-[46px] text-white"
+              onClick={() => {
+                setCancelCourseModalOpen(false);
+                setCancelSuccessModalOpen(false);
+              }}
+            >
+              Close
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
@@ -778,7 +843,7 @@ const DisplayingCourseStatus = ({ statusId }: any) => {
   );
 };
 
-const ShareButton = (courseData: any) => {
+const ShareButton = () => {
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
 
@@ -791,7 +856,7 @@ const ShareButton = (courseData: any) => {
   };
 
   const handleCopyDetailsPageLink = () => {
-    copyText(courseData?.data?.details_page_link);
+    copyText(CX_BASE_URL);
     setCopiedDetailsPageLink(true);
 
     setTimeout(() => {
@@ -800,13 +865,16 @@ const ShareButton = (courseData: any) => {
   };
 
   const handleCopyRegistrationLink = () => {
-    copyText(courseData?.data?.registration_link);
+    copyText(RX_BASE_URL);
     setCopiedRegistrationLink(true);
 
     setTimeout(() => {
       setCopiedRegistrationLink(false);
     }, 1000);
   };
+  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
+  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -814,81 +882,66 @@ const ShareButton = (courseData: any) => {
           Share <ShareIcon />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md w-[414px] h-[310px]">
-        <DialogHeader>
-          <DialogTitle>
-            <center className="font-open-sans text-2xl font-semibold leading-8 relative bottom-2">
-              Share in Social
-            </center>
-          </DialogTitle>
-          <DialogDescription>
-            <center>
-              <div className="flex w-auto h-auto max-w-[336px] max-h-[48px] gap-x-6 ">
-                <WhatsappIcon />
-                <FaceBookIcon />
-                <TwitterIcon />
-                <Instagram />
-                <LinkedInIcon />
-              </div>
-              <br />
-              <p className="text-gray-600">Or</p>
-            </center>
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <center className="">
-            <div className="w-[366px] h-[36px] px-3 relative bottom-12">
-              <span className="text-gray-600 relative bg-white top-[10px] right-[100px] text-[13px] ">
-                &nbsp;&nbsp; Registration link &nbsp;&nbsp;
-              </span>
-              <div className="flex border rounded-2xl p-3 justify-between">
-                <h4 id="textToCopy" className="">
-                  register.artofliving.com/cource1
-                </h4>
-                <div
-                  onClick={() => {
-                    handleCopyDetailsPageLink();
-                  }}
-                  className="relative mt-1"
-                >
-                  <CopyIcon />
-                  {copiedDetailsPageLink ? (
-                    <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                      copied
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
+      <DialogContent className="w-[414px] h-[310px] !rounded-[24px] !p-6 ">
+        <div className="flex items-center gap-5 flex-col">
+          <div className="text-[24px] font-semibold items-center">
+            Share in Social
+          </div>
+          <div className="flex flex-row gap-6 ">
+            <WhatsappIcon />
+            <FaceBookIcon />
+            <TwitterIcon />
+            <Instagram />
+            <LinkedInIcon />
+          </div>
+          <div className="text-[14px] font-normal text-[#666666]">Or</div>
+          <div className="relative w-full">
+            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+              Registration link
+            </p>
+            <div className="flex justify-between gap-2 px-3 py-1 border rounded-2xl min-w-72">
+              <div className="text-[14px] font-semibold">{RX_BASE_URL}</div>
+              <div
+                onClick={() => {
+                  handleCopyRegistrationLink();
+                }}
+                className="relative mt-1 cursor-pointer"
+              >
+                <CopyIcon />
+                {copiedRegistrationLink ? (
+                  <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                    copied
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
-            <div className="w-[366px] h-[36px] px-3 relative bottom-3">
-              <span className="text-gray-600 relative bg-white top-[10px] right-[100px] text-[13px] ">
-                &nbsp;&nbsp; Details page link &nbsp;&nbsp;
-              </span>
-              <div className="flex border rounded-2xl p-3 justify-between">
-                <h4 id="textToCopy1" className="">
-                  artofliving.com/cource1
-                </h4>
-                <div
-                  onClick={() => {
-                    handleCopyRegistrationLink();
-                  }}
-                  className="relative mt-1"
-                >
-                  <CopyIcon />
-                  {copiedRegistrationLink ? (
-                    <div className="absolute -left-8 bottom-12 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                      copied
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
+          </div>
+          <div className="relative w-full">
+            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+              Details Page link
+            </p>
+            <div className="flex justify-between gap-2 px-3 py-1 border rounded-2xl min-w-72">
+              <div className="text-[14px] font-semibold">{CX_BASE_URL}</div>
+              <div
+                onClick={() => {
+                  handleCopyDetailsPageLink();
+                }}
+                className="relative mt-1 cursor-pointer"
+              >
+                <CopyIcon />
+                {copiedDetailsPageLink ? (
+                  <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                    copied
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
-          </center>
-        </DialogFooter>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

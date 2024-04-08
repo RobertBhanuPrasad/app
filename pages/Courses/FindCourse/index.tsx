@@ -185,13 +185,149 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner() , program_fee_level_settings!inner(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
     filters: filters,
   });
 
-  const modifiedData = programData?.data?.data || []
-  const [rowSelection, setRowSelection] = React.useState({});
+  console.log("heyyy dattttaaa", programData);
+
+  const [allSelected, setAllSelected] = useState();
+
+  //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
+  useEffect(() => {
+    if (!programData?.data?.data) return;
+    const allRowSelection: any = {};
+    programData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = allSelected;
+    });
+    setRowSelection(allRowSelection);
+  }, [allSelected, programData?.data?.data]);
+
+  const handleSelectAll = (val: any) => {
+    setAllSelected(val);
+  };
+
+  //function to handle exportexcel
+  const handleExportExcel = async () => {
+    try {
+      const excelColumns = [
+        {
+          column_name: "Course ID",
+          path: ["program_code"],
+        },
+        {
+          column_name: "Course Type Name",
+          path: ["program_types", "name"],
+        },
+        {
+          column_name: "Course Name",
+          path: ["program_type_alias_names", "alias_name"],
+        },
+        {
+          column_name: "Course Status",
+          path: ["status_id", "value"],
+        },
+        {
+          column_name: "Start Date",
+          path: ["program_schedules", "start_time"],
+        },
+        {
+          column_name: "State",
+          path: ["state", "name"],
+        },
+        {
+          column_name: "City",
+          path: ["city", "name"],
+        },
+        {
+          column_name: "Center",
+          path: ["center", "name"],
+        },
+        {
+          column_name: "Attendes",
+          path: ["participant_registration", "length"],
+        },
+        {
+          column_name: "Visibility",
+          path: ["visibility_id", "value"],
+        },
+        {
+          column_name: "Course Accounting Status",
+          path: ["program_accounting_status_id", "value"],
+        },
+      ];
+
+      const params = new URLSearchParams({
+        table_name: "program",
+        select:
+          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+        columns: JSON.stringify(excelColumns),
+      });
+
+      //invoking the export_to_file function
+      const { data, error } = await supabaseClient.functions.invoke(
+        ` export_to_file?${params}`,
+        {
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+          },
+        }
+      );
+
+      if (error) {
+        console.error("Error invoking export_to_file function:", error);
+        return;
+      }
+
+      if (data?.fileUrl?.data?.publicUrl) {
+        //getting file name from the url
+        const fileUrl = data.fileUrl.data.publicUrl;
+        const fileName = fileUrl.split("/").pop();
+
+        // passing the file name to download
+        const result = await supabaseClient.storage
+          .from("export_to_excel")
+          .download(fileName);
+
+        if (result.error) {
+          console.error("Error downloading file:", result.error);
+          return; // Exit the function early if there's an error
+        }
+
+        if (result.data) {
+          // Create a Blob object from the downloaded data
+          const blob = new Blob([result.data]);
+
+          // Create a URL for the Blob object
+          const url = URL.createObjectURL(blob);
+
+          // Create a temporary anchor element
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = fileName; // Specify the filename for the download
+          document.body.appendChild(link);
+
+          // Trigger the download by simulating a click event on the anchor element
+          link.click();
+
+          // Clean up by revoking the URL
+          URL.revokeObjectURL(url);
+        } else {
+          console.error("No data returned when downloading file");
+        }
+      } else {
+        console.error("File URL not found in the response.");
+      }
+    } catch (error) {
+      console.error("Error handling export:", error);
+    }
+  };
+
+  const rowCount = Object.values(rowSelection).filter(
+    (value) => value === true
+  ).length;
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
@@ -506,7 +642,7 @@ const AdvanceFilter = () => {
   const count =
     (formData?.advanceFilter &&
       Object.keys(formData?.advanceFilter).filter(
-        (key) => formData?.advanceFilter[key] !== undefined && ""
+        (key) => formData?.advanceFilter[key] !== undefined || ""
       ).length) ||
     0;
 
