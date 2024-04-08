@@ -1068,8 +1068,8 @@ const ExistingVenueList = () => {
                     </div>
 
                     <div className="leading-tight">
-                      {item.address}, {item.state_name}, {item.city_name},{" "}
-                      {item.center_name} {item.postal_code}
+                     {item.name}, {item.address}, {item.city_name},{" "}
+                     {item.state_name}, {item.postal_code}
                     </div>
                   </div>
                 </div>

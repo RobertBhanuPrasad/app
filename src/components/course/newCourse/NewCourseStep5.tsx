@@ -84,7 +84,7 @@ export const AccomdationComponent = () => {
         <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">Actions</div>
       </div>
 
-      <div className="my-[10px]">
+      <div className="my-[10px] h-auto">
         {fields.map((field: any, index: number) => (
           <div key={field.id} className="flex items-center w-full h-[48px] ">
             <div className=" w-[288px] p-[10px]">
