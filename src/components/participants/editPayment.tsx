@@ -12,35 +12,28 @@ export default function EditPayment() {
             // id: 1, // <BASE_URL_FROM_DATA_PROVIDER>/categories/1
         },
     });
-    const {
-        refineCore: { onFinish },
-        handleSubmit,
-    } = methods;
     const onSubmit = (formData: any) => {
         console.log(formData);
         // Call onFinish with the form data if needed
         onFinish(formData);
     };
-
-    // const {
-    //     refineCore: { onFinish },
-    //     handleSubmit
-    // } = methods;
-    // const onSubmit = (formData: any) => {
-    //     console.log(formData);
-    //     // Call onFinish with the form data if needed
-    //     onFinish(formData);
-    // };
+    const {
+        refineCore: { onFinish },
+        handleSubmit,
+    } = methods
     return (
         <div>
-            <FormProvider {...methods}>
-                <form autoComplete="off">
-                    <div>
-                        <Popover>
-                            <PopoverTrigger>
-                                <Button>EditPayment</Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[637px]">
+            {/* <FormProvider {...methods}>
+                <form autoComplete="off"> */}
+            <div>
+                <Popover>
+                    <PopoverTrigger>
+                        <Button>EditPayment</Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[637px]">
+                        <FormProvider {...methods}>
+                            <form autoComplete="off">
+                                {/* hiii */}
                                 <div>
                                     <EditPaymentForm />
                                     <div className="flex justify-center">
@@ -59,11 +52,13 @@ export default function EditPayment() {
                                         </div>
                                     </div>
                                 </div>
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-                </form>
-            </FormProvider>
+                            </form>
+                        </FormProvider>
+                    </PopoverContent>
+                </Popover>
+            </div>
+            {/* </form>
+            </FormProvider> */}
         </div>
     );
 }
