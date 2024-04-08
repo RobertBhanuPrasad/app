@@ -827,10 +827,10 @@ const handlePostVenueData = async (body: any) => {
   const venueBody: VenueDataBaseType = {};
 
   if (body.isNewVenue) {
-    venueData = body?.newVenue;
+    venueData = body?.newVenue||{};
   } else {
     const venueId = body.existingVenue.id;
-    venueData = body?.newVenue;
+    venueData = body?.existingVenue;
 
     // if it is existing venue then we will insert the id and do upsert automatically it will work update or insert
     if (venueId) {
