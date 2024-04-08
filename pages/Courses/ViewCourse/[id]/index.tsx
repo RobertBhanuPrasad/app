@@ -186,7 +186,7 @@ function index() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mx-8">
       <div className="flex flex-row justify-between">
         <div className="text-[32px] font-semibold">
           {courseData?.data?.program_alias_name_id?.alias_name}

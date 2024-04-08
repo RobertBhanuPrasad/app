@@ -27,6 +27,9 @@ import {
   SelectValue,
 } from "src/ui/select";
 import _ from "lodash";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { PAYMENT_MODE } from "src/constants/OptionLabels";
+import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -83,7 +86,7 @@ export const AccomdationComponent = () => {
 
       <div className="my-[10px]">
         {fields.map((field: any, index: number) => (
-          <div key={field.id} className="flex items-center w-full h-[48px] ">
+          <div key={field.id} className="flex items-center w-full h-auto ">
             <div className=" w-[288px] p-[10px]">
               <AccommodationType index={index} />
             </div>
@@ -162,9 +165,21 @@ export const ResidentialCourse = () => {
 export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
+
+  const payOnlineId = getOptionValueObjectByOptionOrder(
+    PAYMENT_MODE,
+    PAY_ONLINE
+  )?.id;
+
+  const payOfflineId = getOptionValueObjectByOptionOrder(
+    PAYMENT_MODE,
+    PAY_OFFLINE
+  )?.id;
+
   return (
     <div className="flex gap-1 flex-col mt-[32px]">
       <div className="text-sm font-normal text-[#333333]">
@@ -173,24 +188,30 @@ export const AccommodationFeeMode = () => {
       <RadioGroup
         value={JSON.stringify(value)}
         onValueChange={(value) => {
-          value === "true" ? onChange(true) : onChange(false);
+          onChange(parseInt(value));
         }}
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="true"
+            value={JSON.stringify(payOnlineId)}
             selectedRadioValue={JSON.stringify(value)}
             label="Pay Online"
             className="w-[131px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
-            value="false"
+            value={JSON.stringify(payOfflineId)}
             selectedRadioValue={JSON.stringify(value)}
             label="Pay Offline"
             className="w-[131px] h-[40px] rounded-[12px]"
           />
         </div>
       </RadioGroup>
+      {error && (
+  <span className="text-[#FF6D6D] text-[14px]">
+    {error?.message}
+  </span>
+)}
+
     </div>
   );
 };

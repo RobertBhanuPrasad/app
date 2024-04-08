@@ -46,8 +46,7 @@ export const handlePostProgramData = async (
   }
 
   if (body[NewCourseStep2FormNames.visibility_id]) {
-    programBody.visibility_id =
-      31 || body[NewCourseStep2FormNames.visibility_id];
+    programBody.visibility_id = body[NewCourseStep2FormNames.visibility_id];
   }
 
   if (body[NewCourseStep1FormNames.is_registration_via_3rd_party]) {
@@ -121,11 +120,40 @@ export const handlePostProgramData = async (
   }
 
   // step 4
-  if (body[NewCourseStep4FormNames.is_early_bird_enabled] || true) {
-    //TODO: new to remove || true
+  if (body[NewCourseStep4FormNames.is_early_bird_enabled]) {
     programBody.is_early_bird_enabled =
-      body[NewCourseStep4FormNames.is_early_bird_enabled] || true;
+      body[NewCourseStep4FormNames.is_early_bird_enabled];
   }
+
+  const { data: programTypeData } = await supabaseClient
+    .from("program_types")
+    .select("*")
+    .eq("id", body?.program_type_id)
+    .single();
+
+  let stateId: number = 1,
+    cityId: number = 1,
+    centerId: number = 1;
+
+  //Finding the state_id ,city_id and center_id where course is going on
+  if (programTypeData?.is_online_program) {
+    stateId = body?.state_id;
+    cityId = body?.city_id;
+    centerId = body?.center_id;
+  } else {
+    if (body.is_existing_venue == "new-venue") {
+      stateId = body?.newVenue?.state_id;
+      cityId = body?.newVenue?.city_id;
+      centerId = body?.newVenue?.center_id;
+    } else if (body?.is_existing_venue == "existing-venue") {
+      stateId = body?.existingVenue?.state_id;
+      cityId = body?.existingVenue?.city_id;
+      centerId = body?.existingVenue?.center_id;
+    }
+  }
+
+  //Finding course start date
+  const courseStartDate = body?.schedules?.[0]?.date?.toISOString();
 
   //Fetching fee level settings of course
   const { data: feeData, error } = await supabaseClient.functions.invoke(
@@ -133,10 +161,10 @@ export const handlePostProgramData = async (
     {
       method: "POST",
       body: {
-        state_id: "3", //TODO Need to change with form data
-        city_id: "3",
-        center_id: "1",
-        start_date: "2024-03-18T07:00:00-00:00",
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
         program_type_id: body?.program_type_id,
       },
     }
@@ -194,6 +222,12 @@ export const handlePostProgramData = async (
     //call zustand function to store created programId
     // so that it can be helpful in thankyou page
     setProgramId(programId);
+
+    //TODO: We are doing this in backend for only first deployment
+    //TODO: We have to remove from here and need to keep in backend for code
+    if (programData[0]?.program_code) {
+      await handleGenerateProgramCode(programId, loggedInUserId);
+    }
   }
 
   //   await handlePostProgramInfoData(body, programId);
@@ -827,10 +861,10 @@ const handlePostVenueData = async (body: any) => {
   const venueBody: VenueDataBaseType = {};
 
   if (body.isNewVenue) {
-    venueData = body?.newVenue;
+    venueData = body?.newVenue || {};
   } else {
     const venueId = body.existingVenue.id;
-    venueData = body?.newVenue;
+    venueData = body?.existingVenue;
 
     // if it is existing venue then we will insert the id and do upsert automatically it will work update or insert
     if (venueId) {
@@ -1010,4 +1044,42 @@ export const handleProgramFeeLevelSettingsData = async (
   }
 
   return true;
+};
+
+/**
+ * We have to generate program
+ * the formulae for program code was countryCode+C+programId
+ * @param programId
+ */
+const handleGenerateProgramCode = async (
+  programId: number,
+  loggedInUserId: number
+) => {
+  // to fetch country code call users api
+
+  const { data, error }: any = await supabaseClient
+    .from("users")
+    .select("*,contact_id(*,country_id(*))")
+    .eq("id", loggedInUserId);
+  if (error) {
+    console.log("error while fetch user data", error);
+  } else {
+    console.log("user data", data);
+
+    let programCode =
+      data[0]?.contact_id?.country_id?.abbr || "" + "C" + programId;
+
+    // update program code in program
+    const { data: programData, error: programError } = await supabaseClient
+      .from("program")
+      .update({
+        program_code: programCode,
+      });
+
+    if (programError) {
+      console.log("erorr while updating program code", programError);
+    } else {
+      console.log("program code updated successfully", programData);
+    }
+  }
 };

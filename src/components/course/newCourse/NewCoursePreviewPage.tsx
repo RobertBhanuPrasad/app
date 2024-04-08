@@ -1,11 +1,16 @@
+import LoadingIcon from "@public/assets/LoadingIcon";
 import { useGetIdentity, useMany, useOne } from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
+  PAYMENT_MODE,
   PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
+  VISIBILITY,
 } from "src/constants/OptionLabels";
+import countryCodes from "src/data/CountryCodes";
 import { Button } from "src/ui/button";
+import { supabaseClient } from "src/utility";
 import {
   formatDateString,
   subtractDaysAndFormat,
@@ -19,13 +24,42 @@ import NewCourseStep3 from "./NewCourseStep3";
 import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import { handlePostProgramData } from "./NewCourseUtil";
-import { supabaseClient } from "src/utility";
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
     newCourseStore();
+
+  const { data: programTypeData } = useOne({
+    resource: "program_types",
+    id: newCourseData?.program_type_id,
+  });
+
+  const { data: venueState } = useOne({
+    resource: "state",
+    id: newCourseData?.state_id,
+  });
+
+  const StateNames = venueState?.data?.map((state: any) => {
+    return state?.name;
+  });
+
+  const { data: venueCity } = useOne({
+    resource: "city",
+    id: newCourseData?.city_id,
+  });
+
+  const CityNames = venueCity?.data?.map((city: any) => {
+    return city?.name;
+  });
+
+  const { data: venueCenter } = useOne({
+    resource: "center",
+    id: newCourseData?.center_id,
+  });
+  const CenterNames = venueCenter?.data?.map((center: any) => {
+    return center?.name;
+  });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,22 +67,46 @@ export default function NewCourseReviewPage() {
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
 
+  let stateId: number, cityId: number, centerId: number;
+
+  //Finding the state_id ,city_id and center_id where course is going on
+  if (programTypeData?.data?.is_online_program) {
+    stateId = newCourseData?.state_id;
+    cityId = newCourseData?.city_id;
+    centerId = newCourseData?.center_id;
+  } else {
+    if (newCourseData.is_existing_venue == "new-venue") {
+      stateId = newCourseData?.newVenue?.state_id;
+      cityId = newCourseData?.newVenue?.city_id;
+      centerId = newCourseData?.newVenue?.center_id;
+    } else if (newCourseData?.is_existing_venue == "existing-venue") {
+      stateId = newCourseData?.existingVenue?.state_id;
+      cityId = newCourseData?.existingVenue?.city_id;
+      centerId = newCourseData?.existingVenue?.center_id;
+    }
+  }
+
+  //Finding course start date
+  const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
+
   const fetchFeeData = async () => {
-    //TODO: Need to integrate with form Data
+    //Sending all required params
     const { data, error } = await supabaseClient.functions.invoke(
       "course-fee",
       {
         method: "POST",
         body: {
-          state_id: "3",
-          city_id: "3",
-          center_id: "1",
-          start_date: "2024-03-18T07:00:00-00:00",
+          state_id: stateId,
+          city_id: cityId,
+          center_id: centerId,
+          start_date: courseStartDate,
           program_type_id: newCourseData?.program_type_id,
         },
       }
     );
-    console.log(error, "error", data);
+
+    if (error)
+      console.log("error while fetching course fee level settings data", error);
     setCourseFeeSettings(data);
   };
 
@@ -62,22 +120,28 @@ export default function NewCourseReviewPage() {
       PROGRAM_ORGANIZER_TYPE,
       newCourseData?.program_created_by
     );
+
+  const paymentMethod = getOptionValueObjectById(
+    PAYMENT_MODE,
+    newCourseData?.accommodation_fee_payment_mode
+  );
+
   const timeFormat =
     newCourseData?.hour_format_id &&
     getOptionValueObjectById(TIME_FORMAT, newCourseData?.hour_format_id);
+
+  const visibility =
+    newCourseData?.visibility_id &&
+    getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id);
 
   const { data: organizationName } = useOne({
     resource: "organizations",
     id: newCourseData?.organization_id,
   });
 
-  const taxRate = organizationName?.data?.tax_enabled
-    ? organizationName?.data?.tax_rate / 100
-    : 0;
-
   const { data: ProgramOrganizer } = useMany({
     resource: "users",
-    ids: newCourseData?.organizer_ids || [],
+    ids: newCourseData?.organizer_ids,
     meta: { select: "contact_id(full_name)" },
   });
 
@@ -106,7 +170,7 @@ export default function NewCourseReviewPage() {
 
   const courseAccomodationNames = CourseAccomidation?.data?.map(
     (accomdation: any) => {
-      return accomdation?.name;
+      if (accomdation?.name) return accomdation?.name;
     }
   );
 
@@ -138,9 +202,36 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.program_type_id,
   });
 
+  const venueSessions = () => {
+    return (
+      <div className=" min-w-72 ">
+        <p className="text-sm font-normal text-accent-light text-[#999999]">
+          Sessions
+        </p>
+        {newCourseData?.schedules?.map((data: any) => {
+          const schedule = `${formatDateString(data.date)} | ${
+            data?.startHour || "00"
+          } : ${data?.startMinute || "00"}  ${
+            data?.startTimeFormat && data?.startTimeFormat
+          } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
+            data?.endTimeFormat && data?.endTimeFormat
+          }`;
+          return (
+            <abbr
+              className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+              title={schedule}
+            >
+              {schedule}
+            </abbr>
+          );
+        })}
+      </div>
+    );
+  };
+
   const allowedCountries = newCourseData?.allowed_countries
-    ?.map((data: any) => {
-      return data.value;
+    ?.map((countryCode: string) => {
+      return countryCodes[countryCode];
     })
     .join(", ");
 
@@ -193,8 +284,10 @@ export default function NewCourseReviewPage() {
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
           {/* title section */}
-          <div className="flex items-center gap-2 ">
-            <p className="font-semibold text-accent-primary">Basic Details</p>
+          <div className="flex items-center">
+            <p className="font-semibold text-accent-primary text-[#333333]">
+              Basic Details
+            </p>
             {/* Here we are calling EditModalDialog for passing the data of BasicDetails page */}
             <EditModalDialog
               title="Basic Details"
@@ -208,53 +301,73 @@ export default function NewCourseReviewPage() {
             />{" "}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Creator</p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {creator ? creator?.value : "-"}
+              <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                Creator
               </p>
+              <abbr
+                className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
+                title={creator}
+              >
+                {creator?.value ? creator?.value : "-"}
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Organization
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
+                title={organizationName?.data?.name}
+              >
                 {organizationName?.data?.name}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Program Organizer
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
+                title={programOrganizersNames}
+              >
                 {programOrganizersNames ? programOrganizersNames : "-"}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Is geo restriction applicable for registrations
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {newCourseData?.is_geo_restriction_applicable ? "yes" : "No"}
-              </p>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.is_geo_restriction_applicable}
+              >
+                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Registration via 3rd party gateway
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {newCourseData?.is_registration_via_3rd_party ? "yes" : "No"}
-              </p>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.is_registration_via_3rd_party}
+              >
+                {newCourseData?.is_registration_via_3rd_party ? "Yes" : "No"}
+              </abbr>
             </div>
             {newCourseData?.is_registration_via_3rd_party ? (
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Registration via 3rd party gateway url
                 </p>
-                <p className="font-semibold truncate text-accent-secondary">
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.registration_via_3rd_party_url}
+                >
                   {newCourseData?.registration_via_3rd_party_url}
-                </p>
+                </abbr>
               </div>
             ) : null}
           </div>
@@ -262,8 +375,10 @@ export default function NewCourseReviewPage() {
         {/* Course Details */}
         <section className="w-full py-8 text-base border-b">
           {/* title section */}
-          <div className="flex items-center gap-2 ">
-            <p className="font-semibold text-accent-primary">Course Details</p>
+          <div className="flex items-center  ">
+            <p className="font-semibold text-accent-primary text-[#333333]">
+              Course Details
+            </p>
             {/* Here we are calling EditModalDialog for passing the data of CourseDetails page */}
             <EditModalDialog
               title="Course Details"
@@ -277,119 +392,161 @@ export default function NewCourseReviewPage() {
             />{" "}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Course Type
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={courseType?.data?.name}
+              >
                 {courseType?.data?.name ? courseType?.data?.name : "-"}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">Teacher</p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
+                Teacher
+              </p>
+              <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Language(s) course is taught in
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={courselLanguageName}
+              >
                 {courselLanguageName ? courselLanguageName : "-"}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Available language(s) for translation
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={languagesTranslations}
+              >
                 {languagesTranslations ? languagesTranslations : "-"}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Max Capacity
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.max_capacity}
+              >
                 {newCourseData?.max_capacity
                   ? newCourseData?.max_capacity
                   : "-"}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Program Visibility
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {newCourseData?.visibility_id}
-              </p>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={visibility}
+              >
+                {visibility ? visibility : "-"}
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Online zoom URL
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.online_url}
+              >
                 {newCourseData?.online_url}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Country(s) from where registrations are allowed
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={allowedCountries}
+              >
                 {allowedCountries ? allowedCountries : "-"}
-              </p>
+              </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Is geo restriction applicable for registrations
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {newCourseData?.is_geo_restriction_applicable ? "yes" : "No"}
-              </p>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.is_geo_restriction_applicable}
+              >
+                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
+              </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Course Description
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {/* {newCourseData} */}
+              <abbr
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                title={
+                  "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
+                }
+              >
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
                 aut fugit, sed quia consequuntur ma
-              </p>
+              </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
 
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Course Notes
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                title={
+                  "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
+                }
+              >
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-                aut fugit, sed quia consequuntur ma
-              </p>
+                aut fugit, sed quia consequuntur ma{" "}
+              </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
 
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Email Notes
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                title={
+                  "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
+                }
+              >
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-                aut fugit, sed quia consequuntur ma
-              </p>
+                aut fugit, sed quia consequuntur ma{" "}
+              </abbr>
             </div>
           </div>
         </section>
         {/* Time and Venue */}
         <section className="w-full py-8 text-base border-b">
           {/* title section */}
-          <div className="flex items-center gap-2 ">
-            <p className="font-semibold text-accent-primary">Time and Venue</p>
+          <div className="flex items-center  ">
+            <p className="font-semibold text-accent-primary text-[#333333]">
+              Time and Venue
+            </p>
             {/* Here we are calling EditModalDialog for passing the data of VenueDetails page */}
             <EditModalDialog
               title="Venue Details"
@@ -403,53 +560,74 @@ export default function NewCourseReviewPage() {
             />{" "}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
-            {/* // TODO need to do when the form filed is clear */}
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">
-                Venue Address
-              </p>
-              <p className="font-semibold truncate text-accent-secondary">
-                2118 Thornridge Cir. Syracuse, Connecticut, Kentucky 35624
-              </p>
+          {/* // TODO need to do when the form filed is clear */}
+          {programTypeData?.data?.is_online_program === true ? (
+            <div className="grid grid-cols-4 gap-4 mt-2">
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Online zoom URL
+                </p>
+                <abbr
+                  className="text-sm font-normal text-accent-light text-[#999999]"
+                  title={newCourseData?.online_url}
+                >
+                  {newCourseData?.online_url}
+                </abbr>
+              </div>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Province
+                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  {StateNames ? StateNames : "-"}
+                </p>
+              </div>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  City
+                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  {CityNames ? CityNames : "-"}
+                </p>
+              </div>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Center
+                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  {CenterNames ? CenterNames : "-"}
+                </p>
+              </div>
+              <div>{venueSessions()}</div>
             </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">
-                Time Format
-              </p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {timeFormat?.value}
-              </p>
+          ) : (
+            <div className="grid grid-cols-4 gap-4 mt-2">
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Time Format
+                </p>
+                <p className="font-semibold truncate text-accent-secondary">
+                  {timeFormat?.value}
+                </p>
+              </div>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Time Zone
+                </p>
+                <p className="font-semibold truncate text-accent-secondary">
+                  {timeZone?.data?.name}
+                </p>
+              </div>
+              <div>{venueSessions()}</div>
             </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">Time Zone</p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {timeZone?.data?.name}
-              </p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light">Sessions</p>
-              {newCourseData?.schedules?.map((data: any) => {
-                const schedule = `${formatDateString(data.date)} | ${
-                  data?.startHour
-                } : ${data?.startMinute}  ${data?.startTimeFormat} to ${
-                  data?.endHour
-                } : ${data?.endMinute}  ${data?.endTimeFormat}`;
-                return (
-                  <p className="font-semibold truncate text-accent-secondary">
-                    {schedule}
-                  </p>
-                );
-              })}
-            </div>
-          </div>
+          )}
         </section>
         {/* Fees Information */}
         {/* // TODO need to do when the form filed is clear */}
         <section className="w-full py-8 text-base border-b">
           {/* title section */}
-          <div className="flex items-center gap-2 ">
-            <p className="font-semibold text-accent-primary">
+          <div className="flex items-center  ">
+            <p className="font-semibold text-accent-primary text-[#333333]">
               Fees Information
             </p>
             {/* Here we are calling EditModalDialog for passing the data of FeesDetails page */}
@@ -473,9 +651,12 @@ export default function NewCourseReviewPage() {
                     <p className="text-sm font-normal text-accent-light ">
                       {feeLevelData?.data?.[index]?.value}
                     </p>
-                    <p className="font-semibold truncate text-accent-secondary">
-                      MYR {feeLevel.total}
-                    </p>
+                    <abbr
+                      className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                      title={feeLevel.total}
+                    >
+                      {feeLevel.total}
+                    </abbr>
                   </div>
                 );
               }
@@ -486,12 +667,19 @@ export default function NewCourseReviewPage() {
                 (feeLevel: any, index: number) => {
                   return (
                     <div className=" min-w-72">
-                      <p className="text-sm font-normal text-accent-light ">
-                        Early Bird {feeLevelData?.data?.[index]?.value}
-                      </p>
-                      <p className="font-semibold truncate text-accent-secondary">
-                        MYR {feeLevel.early_bird_total}
-                      </p>
+                      <abbr
+                        className="text-sm font-normal text-accent-light"
+                        title={feeLevelData?.data?.[index]?.value}
+                      >
+                        {feeLevelData?.data?.[index]?.value}
+                      </abbr>
+
+                      <abbr
+                        className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                        title={feeLevel.early_bird_total}
+                      >
+                        {feeLevel.early_bird_total}
+                      </abbr>
                     </div>
                   );
                 }
@@ -500,10 +688,10 @@ export default function NewCourseReviewPage() {
               courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
               courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     Early bird cut-off period
                   </p>
-                  <p className="font-semibold truncate text-accent-secondary">
+                  <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                     {subtractDaysAndFormat(
                       courseFeeSettings?.[0]?.early_bird_cut_off_period,
                       newCourseData?.schedules?.[0]?.date
@@ -514,20 +702,23 @@ export default function NewCourseReviewPage() {
               )}
 
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">
+              <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 Disable Pay Later Label123?
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title="Yes"
+              >
                 Yes
-              </p>
+              </abbr>
             </div>
           </div>
         </section>
         {/* Accommodation Information */}
         <section className="w-full py-8 text-base border-b">
           {/* title section */}
-          <div className="flex items-center gap-2 ">
-            <p className="font-semibold text-accent-primary">
+          <div className="flex items-center ">
+            <p className="font-semibold text-accent-primary text-[#333333]">
               Accommodation Information
             </p>
             {/* Here we are calling EditModalDialog for passing the data of AccomidationDetails page */}
@@ -543,16 +734,15 @@ export default function NewCourseReviewPage() {
             />{" "}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-4 gap-4 mt-2">
             {newCourseData?.accommodation?.map((data: any) => {
               return (
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     {" "}
                     {courseAccomodationNames}
                   </p>
-                  <p className="font-semibold truncate text-accent-secondary">
-                    {" "}
+                  <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                     {data?.fee_per_person}
                   </p>
                 </div>
@@ -560,20 +750,25 @@ export default function NewCourseReviewPage() {
             })}
 
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">
+              <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 Accommodation fee payment mode
               </p>
-              <p className="font-semibold truncate text-accent-secondary">
-                {newCourseData?.accommodation_fee_payment_mode}
-              </p>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={paymentMethod?.value}
+              >
+                {paymentMethod?.value}
+              </abbr>
             </div>
           </div>
         </section>
         {/* Contact Info */}
         <section className="w-full py-8 text-base ">
           {/* title section */}
-          <div className="flex items-center gap-2 ">
-            <p className="font-semibold text-accent-primary">Contact Info</p>
+          <div className="flex items-center  ">
+            <p className="font-semibold text-accent-primary text-[#333333]">
+              Contact Info
+            </p>
             {/* Here we are calling EditModalDialog for passing the data of ContactDetails page */}
             <EditModalDialog
               title="Contact Details"
@@ -589,44 +784,58 @@ export default function NewCourseReviewPage() {
           {/* body */}
           {newCourseData?.contact?.map((data: any) => {
             return (
-              <div className="grid grid-cols-3 gap-4 pb-4 mt-2 border-b">
+              <div className="grid grid-cols-4 gap-3 pb-4 mt-2 border-b">
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     Contact Email
                   </p>
-                  <p className="font-semibold truncate text-accent-secondary">
+                  <abbr
+                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    title={data?.contact_email}
+                  >
                     {data?.contact_email}
-                  </p>
+                  </abbr>
                 </div>
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     Contact Phone
                   </p>
-                  <p className="font-semibold truncate text-accent-secondary">
+                  <abbr
+                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    title={data?.contact_number}
+                  >
                     {data?.contact_number}
-                  </p>
+                  </abbr>
                 </div>
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     Contact Name
                   </p>
-                  <p className="font-semibold truncate text-accent-secondary">
+                  <abbr
+                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    title={data?.contact_name}
+                  >
                     {data?.contact_name}
-                  </p>
+                  </abbr>
                 </div>
               </div>
             );
           })}
 
           <div className="mt-4 min-w-72">
-            <p className="text-sm font-normal text-accent-light">
+            <p className="text-sm font-normal text-accent-light text-[#999999]">
               BCC registration confirmation email
             </p>
-            <p className="font-semibold truncate text-accent-secondary">
-              {newCourseData?.bcc_registration_confirmation_email
-                ? newCourseData?.bcc_registration_confirmation_email
-                : "-"}
-            </p>
+            <div className="truncate">
+              <abbr
+                className="font-semibold  no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.bcc_registration_confirmation_email}
+              >
+                {newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email
+                  : "-"}
+              </abbr>
+            </div>
           </div>
         </section>
         <div className="flex items-center justify-center ">
