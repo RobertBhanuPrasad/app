@@ -1,8 +1,6 @@
 import EditPayment from "@components/participants/editPayment";
 import ViewDonationDetails from "@components/participants/viewDonationDetails";
 import { CrudFilter, useSelect } from "@refinedev/core";
-import { useStepsForm } from "@refinedev/react-hook-form";
-import { FormProvider } from "react-hook-form";
 
 export default function index() {
     let filter: Array<CrudFilter> = [
@@ -30,8 +28,8 @@ export default function index() {
     return (
         <div>
             index
-                    <ViewDonationDetails data={queryResult} />
-                    <EditPayment/>
+            <ViewDonationDetails data={queryResult} />
+            <EditPayment />
         </div>
     );
 }

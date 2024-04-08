@@ -8,7 +8,6 @@ import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import CustomSelect from "src/ui/custom-select";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { Textarea } from "src/ui/textarea";
 
 export default function EditPaymentForm() {
@@ -93,144 +92,135 @@ export default function EditPaymentForm() {
 
     return (
         <div>
-            <Popover>
-                <PopoverTrigger>
-                    <Button>EditPayment</Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[637px]">
+            <div>
+                <div className="flex justify-end ">
                     <div>
-                        <div className="flex justify-end ">
+                        <Cross />
+                    </div>
+                </div>
+                <div className="flex justify-center text-[24px] font-semibold ">
+                    Edit Payment
+                </div>
+                <div className="flex flex-row">
+                    <div className="flex-1">
+                        <div>
+                            <div>Participant Name</div>
                             <div>
-                                <Cross />
-                            </div>
-                        </div>
-                        <div className="flex justify-center text-[24px] font-semibold ">
-                            Edit Payment
-                        </div>
-                        <div className="flex flex-row">
-                            <div className="flex-1">
-                                <div>
-                                    <div>Participant Name</div>
-                                    <div>
-                                        <Textarea
-                                            value={participantName}
-                                            onChange={(value) => {
-                                                participantNameOnchange(value);
-                                            }}
-                                            placeholder=""
-                                            // TODO: height adjustment
-                                            className="!w-[278px] resize-none !important !h-[40px]"
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>Transaction Status</div>
-                                    <div>
-                                        <CustomSelect
-                                            data={transactionStatus}
-                                            onSearch={(value) => {
-                                                transactionOnchange(value);
-                                            }}
-                                            onBottomReached={() => {}}
-                                            onChange={() => {}}
-                                            placeholder={""}
-                                            value={transaction}
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>Transaction ID</div>
-                                    <div>
-                                        <Textarea
-                                            value={transactionID}
-                                            onChange={(value) => {
-                                                transactionIDOnchange(value);
-                                            }}
-                                            placeholder=""
-                                            className="!w-[278px] resize-none !important h-[40px]"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex-1">
-                                <div>
-                                    <div>Payment Date</div>
-                                    <div>
-                                        <Dialog open={open}>
-                                            <DialogTrigger asChild>
-                                                <Button
-                                                    onClick={() =>
-                                                        setOpen(true)
-                                                    }
-                                                    className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
-                                                    variant="outline"
-                                                >
-                                                    <div>
-                                                        <CalenderIcon />
-                                                    </div>
-                                                    <div></div>
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
-                                                <DateRangePickerComponent
-                                                    setOpen={setOpen}
-                                                />
-                                            </DialogContent>
-                                        </Dialog>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>Payment Method</div>
-                                    <div>
-                                        <CustomSelect
-                                            data={paymentMethod}
-                                            onSearch={(value) => {
-                                                paymentMethodOnchange(value);
-                                            }}
-                                            onBottomReached={() => {}}
-                                            onChange={() => {}}
-                                            placeholder={""}
-                                            value={payment}
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>Response Message</div>
-                                    <div>
-                                        <Textarea
-                                            value={responseMessage}
-                                            onChange={(value) => {
-                                                responseMessageOnchange(value);
-                                            }}
-                                            placeholder=""
-                                            className="!w-[278px] resize-none !important h-[40px]"
-                                        />
-                                    </div>
-                                </div>
+                                <Textarea
+                                    value={participantName}
+                                    onChange={(value) => {
+                                        participantNameOnchange(value);
+                                    }}
+                                    placeholder=""
+                                    // TODO: height adjustment
+                                    className="!w-[278px] resize-none !important !h-[40px]"
+                                />
                             </div>
                         </div>
                         <div>
-                            <div>Error Message</div>
+                            <div>Transaction Status</div>
+                            <div>
+                                <CustomSelect
+                                    data={transactionStatus}
+                                    onSearch={(value) => {
+                                        transactionOnchange(value);
+                                    }}
+                                    onBottomReached={() => {}}
+                                    onChange={() => {}}
+                                    placeholder={""}
+                                    value={transaction}
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <div>Transaction ID</div>
                             <div>
                                 <Textarea
-                                    value={errorMessage}
+                                    value={transactionID}
                                     onChange={(value) => {
-                                        errorMessageOnchange(value);
+                                        transactionIDOnchange(value);
                                     }}
                                     placeholder=""
                                     className="!w-[278px] resize-none !important h-[40px]"
                                 />
                             </div>
-                            <div className="flex gap-4">
-                                <div>
-                                    <Checkbox />
-                                </div>
-                                <div>Send Payment confirmation mail?</div>
+                        </div>
+                    </div>
+                    <div className="flex-1">
+                        <div>
+                            <div>Payment Date</div>
+                            <div>
+                                <Dialog open={open}>
+                                    <DialogTrigger asChild>
+                                        <Button
+                                            onClick={() => setOpen(true)}
+                                            className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
+                                            variant="outline"
+                                        >
+                                            <div>
+                                                <CalenderIcon />
+                                            </div>
+                                            <div></div>
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
+                                        <DateRangePickerComponent
+                                            setOpen={setOpen}
+                                        />
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
+                        </div>
+                        <div>
+                            <div>Payment Method</div>
+                            <div>
+                                <CustomSelect
+                                    data={paymentMethod}
+                                    onSearch={(value) => {
+                                        paymentMethodOnchange(value);
+                                    }}
+                                    onBottomReached={() => {}}
+                                    onChange={() => {}}
+                                    placeholder={""}
+                                    value={payment}
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <div>Response Message</div>
+                            <div>
+                                <Textarea
+                                    value={responseMessage}
+                                    onChange={(value) => {
+                                        responseMessageOnchange(value);
+                                    }}
+                                    placeholder=""
+                                    className="!w-[278px] resize-none !important h-[40px]"
+                                />
                             </div>
                         </div>
                     </div>
-                </PopoverContent>
-            </Popover>
+                </div>
+                <div>
+                    <div>Error Message</div>
+                    <div>
+                        <Textarea
+                            value={errorMessage}
+                            onChange={(value) => {
+                                errorMessageOnchange(value);
+                            }}
+                            placeholder=""
+                            className="!w-[278px] resize-none !important h-[40px]"
+                        />
+                    </div>
+                    <div className="flex gap-4">
+                        <div>
+                            <Checkbox />
+                        </div>
+                        <div>Send Payment confirmation mail?</div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

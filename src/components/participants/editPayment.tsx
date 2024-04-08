@@ -1,10 +1,10 @@
-import { useState } from "react";
-import EditPaymentForm from "./editPaymentForm";
 import { Button } from "src/ui/button";
+import EditPaymentForm from "./editPaymentForm";
+
 import { useForm } from "@refinedev/react-hook-form";
+import { FormProvider } from "react-hook-form";
+import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 export default function EditPayment() {
-    
-    
     const methods = useForm({
         refineCoreProps: {
             action: "edit", // or clone
@@ -13,7 +13,7 @@ export default function EditPayment() {
         },
     });
     const {
-        refineCore: { onFinish, formLoading },
+        refineCore: { onFinish },
         handleSubmit,
     } = methods;
     const onSubmit = (formData: any) => {
@@ -21,7 +21,7 @@ export default function EditPayment() {
         // Call onFinish with the form data if needed
         onFinish(formData);
     };
-   
+
     // const {
     //     refineCore: { onFinish },
     //     handleSubmit
@@ -36,22 +36,31 @@ export default function EditPayment() {
             <FormProvider {...methods}>
                 <form autoComplete="off">
                     <div>
-                        <EditPaymentForm/>
-                    <div className="flex justify-center">
-                                    <div>
-                                        <Button className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold">
-                                            Cancel
-                                        </Button>
-                                    </div>
-                                    <div>
-                                        <Button
-                                            className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
-                                            onClick={handleSubmit(onSubmit)}
-                                        >
-                                            Save
-                                        </Button>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button>EditPayment</Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[637px]">
+                                <div>
+                                    <EditPaymentForm />
+                                    <div className="flex justify-center">
+                                        <div>
+                                            <Button className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold">
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                        <div>
+                                            <Button
+                                                className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
+                                                onClick={handleSubmit(onSubmit)}
+                                            >
+                                                Save
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
+                            </PopoverContent>
+                        </Popover>
                     </div>
                 </form>
             </FormProvider>
