@@ -65,7 +65,9 @@ export const validationSchema = () => {
       }),
 
     // Step 3 Schema
-    isNewVenue:z.boolean({required_error:"Venue is a required fields"}),
+    is_existing_venue:z.string({required_error:"Venue is a required fields"}),
+    existingVenue : existingVenueSchedules,
+    newVenue : newVenueSchedules,
     online_url: z
       .string({ required_error: " Online meeting URL is a required fields" })
       .url({ message: "Online meeting URL is not valid" }),
@@ -97,7 +99,7 @@ export const validationSchema = () => {
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
     is_residential_program: z.boolean().optional(),
-    accommodation_fee_payment_mode: z.string().optional(),
+    accommodation_fee_payment_mode: z.number({required_error:"Fee payment method is required fields"}),
 
     // Step 6 Schema
     contact: contactValidationSchema,
@@ -110,6 +112,12 @@ export const validationSchema = () => {
       
   });
 };
+
+const existingVenueSchedules = z.object({id: z.number({required_error:"Venue is a required fields"})})
+
+const newVenueSchedules = z.object({state_id : z.number({
+  required_error: "Venue is a required fields",
+}),})
 
 const feelLevelsValidationSchema = z.array(
   z.object({
@@ -139,10 +147,10 @@ const accommodationValidationSchema = z.array(
     }),
     fee_per_person: z.string({
       required_error: "Please enter a valid money value for fee per person.",
-    }).regex(/^\d+$/),
+    }).regex(/^\d+$/ , "Fee can accept only integers "),
     no_of_residential_spots: z.string({
       required_error: "Please enter a valid no of residential spots",
-    }).regex(/^\d+$/),
+    }).regex(/^\d+$/, "Residential spots can accept only integers ")
   })
 );
 

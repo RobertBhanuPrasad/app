@@ -162,6 +162,7 @@ export const ResidentialCourse = () => {
 export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
@@ -191,6 +192,12 @@ export const AccommodationFeeMode = () => {
           />
         </div>
       </RadioGroup>
+      {error && (
+  <span className="text-[#FF6D6D] text-[14px]">
+    {error?.message}
+  </span>
+)}
+
     </div>
   );
 };

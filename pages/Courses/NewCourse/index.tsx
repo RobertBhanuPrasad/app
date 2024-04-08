@@ -15,7 +15,7 @@ import Venue from "@public/assets/Venue";
 import { useGetIdentity } from "@refinedev/core";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import Form from "@components/Formfield";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useFormState } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,
@@ -192,7 +192,8 @@ export const NewCourseTabs = () => {
   let RequiredNewCourseStep3FormNames = _.omit(
     NewCourseStep3FormNames,[
      ...(formData?.courseTypeSettings?.is_online_program ? [] : ["online_url", "state_id", "city_id", "center_id"]),
-     ...(formData?.courseTypeSettings?.is_online_program ? ["isNewVenue"] : []),
+     ...(formData?.courseTypeSettings?.is_online_program ? ["is_existing_venue"] : []),
+     ...(formData?.is_existing_venue == "new_venue" ? ["existingVenue"] : ["newVenue"]),
     ]
   );
 

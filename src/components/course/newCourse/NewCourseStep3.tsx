@@ -391,6 +391,7 @@ const Venue = () => {
   };
 
   const formData = watch();
+  const {errors} = useFormState()
 
   const {
     field: { onChange: isNewVenueOnchange },
@@ -591,11 +592,12 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
-      {isVenueSelectedError && (
-        <span className="text-[#FF6D6D] text-[14px]">
-          {isVenueSelectedError?.message}
-        </span>
-      )}
+      {(errors?.is_existing_venue || errors?.existingVenue) && (
+  <span className="text-[#FF6D6D] text-[14px]">
+    {"Venue is a required field"}
+  </span>
+)}
+
     </div>
   );
 };
@@ -650,8 +652,8 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address}, {data?.data?.state_id?.name},{" "}
-      {data?.data?.city_id?.name}, {data?.data?.name}, {postal_code}
+      {name}, {address}, 
+      {data?.data?.city_id?.name}, {data?.data?.state_id?.name},{" "} {postal_code}
     </div>
   );
 };
