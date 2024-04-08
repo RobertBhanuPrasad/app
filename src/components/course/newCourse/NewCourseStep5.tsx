@@ -27,9 +27,7 @@ import {
   SelectValue,
 } from "src/ui/select";
 import _ from "lodash";
-import {
-  getOptionValueObjectByOptionOrder,
-} from "src/utility/GetOptionValuesByOptionLabel";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PAYMENT_MODE } from "src/constants/OptionLabels";
 import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
 
@@ -86,7 +84,7 @@ export const AccomdationComponent = () => {
         <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">Actions</div>
       </div>
 
-      <div className="my-[10px]">
+      <div className="my-[10px] h-auto">
         {fields.map((field: any, index: number) => (
           <div key={field.id} className="flex items-center w-full h-[48px] ">
             <div className=" w-[288px] p-[10px]">
@@ -167,6 +165,7 @@ export const ResidentialCourse = () => {
 export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
@@ -207,6 +206,12 @@ export const AccommodationFeeMode = () => {
           />
         </div>
       </RadioGroup>
+      {error && (
+  <span className="text-[#FF6D6D] text-[14px]">
+    {error?.message}
+  </span>
+)}
+
     </div>
   );
 };
