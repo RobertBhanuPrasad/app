@@ -1039,7 +1039,7 @@ const handleGenerateProgramCode = async (
     console.log("user data", data);
 
     let programCode =
-      data[0]?.contact_id?.country_id?.country_code || "" + "C" + programId;
+      data[0]?.contact_id?.country_id?.abbr || "" + "C" + programId;
 
     // update program code in program
     const { data: programData, error: programError } = await supabaseClient
