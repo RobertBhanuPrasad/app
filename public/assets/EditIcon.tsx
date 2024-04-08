@@ -1,5 +1,3 @@
-import React from "react";
-
 function EditIcon() {
   return (
     <div>
@@ -19,7 +17,7 @@ function EditIcon() {
         />
       </svg>
     </div>
-  );
+  )
 }
 
-export default EditIcon;
+export default EditIcon
