@@ -21,12 +21,20 @@ export const columns: ExtendedColumnDef<any>[] = [
     header: () => {
       return <div className="w-[100px]">Course ID</div>
     },
-
     cell: ({ row }) => {
-      return <div className="w-[100px]">{row.original.program_code}</div>
+      const router = useRouter()
+      return (
+        <div
+          onClick={() => {
+            router.push(`/Courses/ViewCourse/${row?.original?.id}`)
+          }}
+          className="w-[100px] text-[#7677F4] font-semibold"
+        >
+          {row.original.program_code}
+        </div>
+      )
     }
   },
-
   {
     accessorKey: 'program_types',
     column_name: 'Course Type Name',
@@ -34,7 +42,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     header: () => {
       return <div className="w-[150px]">Course Type Name</div>
     },
-
     cell: ({ row }) => {
       return <div className="w-[150px]">{row?.original?.program_types?.name}</div>
     }
@@ -46,7 +53,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     header: () => {
       return <div className="min-w-[150px]">Course Name</div>
     },
-
     cell: ({ row }) => {
       return <div className="min-w-[150px]">{row?.original?.program_type_alias_names?.alias_name}</div>
     }
@@ -58,12 +64,11 @@ export const columns: ExtendedColumnDef<any>[] = [
     header: () => {
       return <div className="min-w-[150px]">Course Status</div>
     },
-
     cell: ({ row }) => {
-      return <div className="min-w-[150px]">{row?.original?.status_id}</div>
+      console.log('hey status', row?.original?.status_id)
+      return <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>
     }
   },
-
   {
     accessorKey: 'program_schedules',
     enableHiding: false,
@@ -76,16 +81,13 @@ export const columns: ExtendedColumnDef<any>[] = [
       if (row?.original?.program_schedules && row.original.program_schedules.length > 0) {
         // Get the record with order 1 (assuming order starts from 1)
         const record = row.original.program_schedules.find((schedule: any) => schedule.order === 1)
-
         // Check if record with order 1 exists
         if (record) {
           // Extract date from the timestamp (assuming it's stored in a property called 'timestamp')
           const startDate = new Date(record.start_time).toLocaleDateString()
-
           return <div className="min-w-[150px]">{startDate}</div>
         }
       }
-
       // Return empty if no record found or if program_schedules is not available
       return <div className="min-w-[150px]">-</div>
     }
@@ -96,7 +98,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     header: () => {
       return <div className="min-w-[150px]">State</div>
     },
-
     cell: ({ row }) => {
       return <div className="min-w-[150px]">{row?.original?.state?.name}</div>
     }
@@ -107,7 +108,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     header: () => {
       return <div className="min-w-[150px]">City</div>
     },
-
     cell: ({ row }) => {
       return <div className="min-w-[150px]">{row?.original?.city?.name}</div>
     }
@@ -118,7 +118,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     header: () => {
       return <div className="min-w-[150px]">Center</div>
     },
-
     cell: ({ row }) => {
       return <div className="min-w-[150px]">{row?.original?.center?.name}</div>
     }
@@ -132,7 +131,11 @@ export const columns: ExtendedColumnDef<any>[] = [
     },
     cell: ({ row }) => {
       const teachers = row?.original?.program_teachers?.map((teacher: any) => teacher?.users?.user_name)
-      return <div className="min-w-[150px]">{teachers && teachers.join(', ')}</div>
+      return (
+        <div className="flex flex-wrap min-w-[150px]">
+          <div>{teachers && teachers.join(', ')}</div>
+        </div>
+      )
     }
   },
   {
@@ -143,7 +146,11 @@ export const columns: ExtendedColumnDef<any>[] = [
     },
     cell: ({ row }) => {
       const organizers = row?.original?.program_organizers?.map((Organizer: any) => Organizer?.users?.user_name)
-      return <div className="min-w-[150px]">{organizers && organizers.join(',')}</div>
+      return (
+        <div className="flex flex-wrap min-w-[150px]">
+          <div>{organizers && organizers.join(',  ')}</div>
+        </div>
+      )
     }
   },
   {
@@ -170,12 +177,14 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: 'course_accounting_status',
     column_name: 'Course Accounting Status',
     header: () => {
-      return <div className="min-w-[150px]">Course Accounting Status</div>
+      return <div className="min-w-[200px]">Course Accounting Status</div>
     },
     cell: ({ row }: any) => {
       return (
-        <div className="min-w-[150px]">
-          {row?.original?.course_accounting_status ? row?.original?.course_accounting_status : '-'}
+        <div className="min-w-[200px]">
+          {row?.original?.program_accounting_status_id?.value
+            ? row?.original?.program_accounting_status_id?.value
+            : '-'}
         </div>
       )
     }
@@ -184,10 +193,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: 'Course Accounting Closure Date',
     column_name: 'Course Accounting Closure Date',
     header: () => {
-      return <div className="min-w-[150px]">Course Accounting Closure Date</div>
+      return <div className="min-w-[250px]">Course Accounting Closure Date</div>
     },
     cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">-</div>
+      return <div className="min-w-[250px]">-</div>
     }
   },
   {
@@ -301,9 +310,9 @@ export const columns: ExtendedColumnDef<any>[] = [
             break
           }
           case 10: {
-            router.push(`/Courses/ViewCourse/${[row.original.id]}`);
-            break;
-          } 
+            router.push(`/Courses/ViewCourse/${[row.original.id]}`)
+            break
+          }
         }
       }
 
