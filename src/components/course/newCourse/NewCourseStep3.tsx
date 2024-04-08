@@ -392,7 +392,7 @@ const Venue = () => {
   };
 
   const formData = watch();
-  const {errors} = useFormState()
+  const { errors } = useFormState();
 
   const {
     field: { onChange: isNewVenueOnchange },
@@ -554,7 +554,10 @@ const Venue = () => {
                   <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
-                <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
+                  <Dialog
+                    open={openAddNewVenue}
+                    onOpenChange={setOpenAddNewVenue}
+                  >
                     <DialogTrigger onClick={handleOpenEditNewVenue}>
                       <EditIcon />
                     </DialogTrigger>
@@ -594,11 +597,10 @@ const Venue = () => {
         )}
       </RadioGroup>
       {(errors?.is_existing_venue || errors?.existingVenue) && (
-  <span className="text-[#FF6D6D] text-[14px]">
-    {"Venue is a required field"}
-  </span>
-)}
-
+        <span className="text-[#FF6D6D] text-[14px]">
+          {"Venue is a required field"}
+        </span>
+      )}
     </div>
   );
 };
@@ -625,8 +627,8 @@ const NewVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address}, 
-      {data?.data?.city_id?.name}, {data?.data?.state_id?.name},{" "} {postal_code}
+      {name}, {address},{data?.data?.city_id?.name},{" "}
+      {data?.data?.state_id?.name}, {postal_code}
     </div>
   );
 };
@@ -653,8 +655,8 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address}, 
-      {data?.data?.city_id?.name}, {data?.data?.state_id?.name},{" "} {postal_code}
+      {name}, {address},{data?.data?.city_id?.name},{" "}
+      {data?.data?.state_id?.name}, {postal_code}
     </div>
   );
 };
@@ -798,8 +800,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
           </div>
           <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
             {/* Display course details */}
-            {data?.data?.map((
-              course: any) => (
+            {data?.data?.map((course: any) => (
               <div key={course.id}>
                 <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
                   {formatTime(course.start_time)} -{" "}
@@ -886,7 +887,7 @@ const ExistingVenueList = () => {
       )
       .range(otherVenueSkip, otherVenueSkip + 5);
 
-      return data;
+    return data;
   };
 
   const fetchVenueData = async () => {
@@ -1029,9 +1030,9 @@ const ExistingVenueList = () => {
                     <div className="flex justify-between">
                       <div className="font-semibold">{item.name}</div>
                       <div className="flex flex-row gap-3">
-                        {isUserNationAdminOrSuperAdmin ||
-                          (item?.created_by_user_id ==
-                            loginUserData?.userData?.id && (
+                        {item?.created_by_user_id ==
+                          loginUserData?.userData?.id ||
+                          (isUserNationAdminOrSuperAdmin && (
                             <Dialog>
                               <DialogTrigger
                                 onClick={() => {
@@ -1049,7 +1050,7 @@ const ExistingVenueList = () => {
                               </DialogContent>
                             </Dialog>
                           ))}
-                        {true && (
+                        {isUserNationAdminOrSuperAdmin && (
                           // isUserNationAdminOrSuperAdmin
                           <Dialog>
                             <DialogTrigger>
@@ -1068,8 +1069,8 @@ const ExistingVenueList = () => {
                     </div>
 
                     <div className="leading-tight">
-                     {item.name}, {item.address}, {item.city_name},{" "}
-                     {item.state_name}, {item.postal_code}
+                      {item.name}, {item.address}, {item.city_name},{" "}
+                      {item.state_name}, {item.postal_code}
                     </div>
                   </div>
                 </div>
@@ -1136,7 +1137,7 @@ export const AddOrEditVenue = ({
       </div>
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
-            <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleSubmit}>Submit</Button>
         </div>
       </DialogFooter>
     </div>
