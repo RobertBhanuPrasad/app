@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
+import { CardLabel, Header } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
