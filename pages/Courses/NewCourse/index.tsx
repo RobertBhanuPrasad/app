@@ -210,7 +210,7 @@ export const NewCourseTabs = () => {
       ? []
       : ["online_url", "state_id", "city_id", "center_id"]),
     ...(formData?.courseTypeSettings?.is_online_program
-      ? ["is_existing_venue"]
+      ? ["is_existing_venue", "newVenue", "existingVenue"]
       : []),
     ...(formData?.is_existing_venue == "new_venue"
       ? ["existingVenue"]
