@@ -66,7 +66,7 @@ export default function NewCourseReviewPage() {
     cityId = newCourseData?.city_id
     centerId = newCourseData?.center_id
   } else {
-    if (newCourseData.is_existing_venue == 'new-venue') {
+    if (newCourseData?.is_existing_venue == 'new-venue') {
       stateId = newCourseData?.newVenue?.state_id
       cityId = newCourseData?.newVenue?.city_id
       centerId = newCourseData?.newVenue?.center_id
@@ -101,6 +101,7 @@ export default function NewCourseReviewPage() {
     fetchFeeData()
   }, [])
 
+
   const creator =
     newCourseData?.program_created_by &&
     getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by)
@@ -119,7 +120,7 @@ export default function NewCourseReviewPage() {
 
   const { data: ProgramOrganizer } = useMany({
     resource: 'users',
-    ids: newCourseData?.organizer_ids,
+    ids: newCourseData?.organizer_ids || [],
     meta: { select: 'contact_id(full_name)' }
   })
 
