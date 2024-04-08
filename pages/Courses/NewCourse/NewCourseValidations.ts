@@ -25,15 +25,15 @@ export const validationSchema = () => {
       ),
 
     // Step 2 Schema
-    program_type_id: z.number({
-      required_error: "Course type is a required field",
-    }),
+    // program_type_id: z.number({
+    //   required_error: "Course type is a required field",
+    // }),
     program_alias_name_id: z.number({
       required_error: "Course Name is a required field",
     }),
-    teacher_ids: z.array(z.number(), {
-      required_error: "Please enter at least one teacher",
-    }),
+    // teacher_ids: z.array(z.number(), {
+    //   required_error: "Please enter at least one teacher",
+    // }),
     assistant_teacher_ids: z
       .array(z.number(), {
         required_error: "Please enter at least one associate teacher",
@@ -82,7 +82,7 @@ export const validationSchema = () => {
       required_error: "Center is is a required fields",
     }), 
     time_zone_id: z.number({ required_error: "Time zone is a required field" }),
-    // schedules: scheduleValidationSchema,
+    schedules: scheduleValidationSchema,
     name:z
     .string({required_error:"Venu Name is a required field."}),
     address:z

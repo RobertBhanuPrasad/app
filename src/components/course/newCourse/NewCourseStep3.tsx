@@ -795,7 +795,8 @@ const CalenderComponent = ({ index, setOpen }: any) => {
           </div>
           <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
             {/* Display course details */}
-            {data?.data?.map((course: any) => (
+            {data?.data?.map((
+              course: any) => (
               <div key={course.id}>
                 <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
                   {formatTime(course.start_time)} -{" "}
@@ -1132,9 +1133,7 @@ export const AddOrEditVenue = ({
       </div>
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
-          <DialogClose>
             <Button onClick={handleSubmit}>Submit</Button>
-          </DialogClose>
         </div>
       </DialogFooter>
     </div>
