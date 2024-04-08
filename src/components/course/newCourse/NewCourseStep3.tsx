@@ -416,7 +416,6 @@ const Venue = () => {
   });
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
-  const { errors } = useFormState();
   const [openAddNewVenue, setOpenAddNewVenue] = useState(false);
 
   const handleAddNewVenue = async () => {
