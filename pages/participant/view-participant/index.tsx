@@ -1,5 +1,9 @@
 import ViewParticipantCourseInformation from '@components/participant/viewParticipant/ViewParticipantCourseInformation'
+import ViewParticipantCustomerDeviceDetails from '@components/participant/viewParticipant/ViewParticipantCustomerDeviceDetails'
+import ViewParticipantEmailDeliveryLogs from '@components/participant/viewParticipant/ViewParticipantEmailDeliveryLogs'
 import ViewParticipantInformation from '@components/participant/viewParticipant/ViewParticipantInformation'
+import ViewParticipantTransactionDetails from '@components/participant/viewParticipant/ViewParticipantTransactionDetails'
+import ViewParticipantUtmParameters from '@components/participant/viewParticipant/ViewParticipantUtmParameters'
 import { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -7,7 +11,6 @@ import { useState } from 'react'
 import { authProvider } from 'src/authProvider'
 import {
   COURSE_ACCOUNTING_FORM_TAB,
-  PARTICIPANTS_TAB,
   REVENUE_SUMMARY_TAB,
   VIEW_CUSTOMER_DEVICE_DETAILS,
   VIEW_PARTICIPANT_COURSE_INFORMATION,
@@ -82,9 +85,12 @@ function index() {
           <TabsContent value={VIEW_PARTICIPANT_COURSE_INFORMATION}>
             <ViewParticipantCourseInformation />
           </TabsContent>
-          <TabsContent value={PARTICIPANTS_TAB}>Place participant tab here</TabsContent>
-          <TabsContent value={REVENUE_SUMMARY_TAB}>Place Revenue Summary tab here</TabsContent>
-          <TabsContent value={COURSE_ACCOUNTING_FORM_TAB}>Place Course Accounting Form tab here</TabsContent>
+          <TabsContent value={VIEW_PARTICIPANT_TRANSACTION_DETAILS}>
+            <ViewParticipantTransactionDetails />
+          </TabsContent>
+          <TabsContent value={VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS}><ViewParticipantEmailDeliveryLogs/></TabsContent>
+          <TabsContent value={VIEW_CUSTOMER_DEVICE_DETAILS}><ViewParticipantCustomerDeviceDetails/></TabsContent>
+          <TabsContent value={VIEW_PARTICIPANT_UTM_PARAMETERS}><ViewParticipantUtmParameters/></TabsContent>
         </Tabs>
       </div>
     </div>
