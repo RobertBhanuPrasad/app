@@ -19,23 +19,19 @@ export default function index() {
         filters: filter,
     };
 
-    const methods = useStepsForm({
-        refineCoreProps: {
-            action: "create",
-            resource: "event",
-        },
-    });
+    // const methods = useStepsForm({
+    //     refineCoreProps: {
+    //         action: "create",
+    //         resource: "event",
+    //     },
+    // });
     const { options, queryResult } = useSelect(selectQuery);
     console.log(queryResult, "queryResult");
     return (
         <div>
             index
-            <FormProvider {...methods}>
-                <form autoComplete="off">
                     <ViewDonationDetails data={queryResult} />
-                    <EditPayment methods={methods} />
-                </form>
-            </FormProvider>
+                    <EditPayment/>
         </div>
     );
 }
