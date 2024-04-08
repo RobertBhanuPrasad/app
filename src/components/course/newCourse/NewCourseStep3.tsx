@@ -207,6 +207,7 @@ const SchedulesHeader = () => {
       },
     ],
   });
+
   return (
     <div className="h-9 flex justify-between">
       <div className="font-semibold text-[#333333] flex items-center">
@@ -226,7 +227,7 @@ const SchedulesHeader = () => {
             >
               <SelectValue placeholder="Select Format" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="w-[161px]">
               {timeFormatOptions?.map((option: any) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
@@ -240,46 +241,48 @@ const SchedulesHeader = () => {
             </span>
           )}
         </div>
-        <div className="w-[257px]">
-          <Select
-            value={timeZones}
-            onValueChange={(value: any) => {
-              timeZonesOnChange(value);
-            }}
-          >
-            <SelectTrigger
-              className="w-[257px]"
-              error={timeZoneError ? true : false}
+        {options?.length > 0 && (
+          <div className="w-[257px]">
+            <Select
+              value={timeZones}
+              onValueChange={(value: any) => {
+                timeZonesOnChange(value);
+              }}
             >
-              <SelectValue placeholder="Select Time Zone" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItems onBottomReached={() => {}}>
-                {options?.map((option, index) => {
-                  return (
-                    <div>
-                      <SelectItem
-                        key={option.value}
-                        value={option.value}
-                        className="h-[44px]"
-                      >
-                        {option.label}
-                      </SelectItem>
-                      {index < options?.length - 1 && (
-                        <hr className="border-[#D6D7D8]" />
-                      )}
-                    </div>
-                  );
-                })}
-              </SelectItems>
-            </SelectContent>
-          </Select>
-          {timeZoneError && (
-            <span className="text-[#FF6D6D] text-[12px]">
-              {timeZoneError?.message}
-            </span>
-          )}
-        </div>
+              <SelectTrigger
+                className="w-[257px]"
+                error={timeZoneError ? true : false}
+              >
+                <SelectValue placeholder="Select Time Zone" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItems onBottomReached={() => {}}>
+                  {options?.map((option, index) => {
+                    return (
+                      <div>
+                        <SelectItem
+                          key={option.value}
+                          value={option.value}
+                          className="h-[44px]"
+                        >
+                          {option.label}
+                        </SelectItem>
+                        {index < options?.length - 1 && (
+                          <hr className="border-[#D6D7D8]" />
+                        )}
+                      </div>
+                    );
+                  })}
+                </SelectItems>
+              </SelectContent>
+            </Select>
+            {timeZoneError && (
+              <span className="text-[#FF6D6D] text-[12px]">
+                {timeZoneError?.message}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -347,9 +350,7 @@ const Sessions = () => {
               <TimePicker
                 index={index}
                 is12HourFormat={
-                  formData?.hoursFormat?.value == timeFormat12HoursId
-                    ? true
-                    : false
+                  formData?.hour_format_id == timeFormat12HoursId ? true : false
                 }
               />
               <div className="w-[127px] flex gap-4 ">
