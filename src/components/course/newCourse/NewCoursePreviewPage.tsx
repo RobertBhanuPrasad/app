@@ -20,7 +20,6 @@ import { handlePostProgramData } from './NewCourseUtil'
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
-  
 
   const { data: programTypeData } = useOne({
     resource: 'program_types',
@@ -48,7 +47,7 @@ export default function NewCourseReviewPage() {
   const { data: venueCenter } = useOne({
     resource: 'center',
     id: newCourseData?.center_id
-  })
+      })
   const CenterNames = venueCenter?.data?.map((center: any) => {
     return center?.name
   })
@@ -126,9 +125,10 @@ export default function NewCourseReviewPage() {
     ids: _.map(newCourseData?.accommodation, 'accommodation_type_id') || []
   })
 
-  const courseAccomodationNames = CourseAccomidation?.data?.map((accomdation: any) => {
-    if (accomdation?.name) return accomdation?.name
-  })
+
+  const getCourseAccomodationName = (accomdationTypeId: number) => {
+    return _.find(CourseAccomidation?.data, data => data?.id == accomdationTypeId)?.name
+  }
 
   const { data: CourseTranslation } = useMany({
     resource: 'languages',
@@ -255,7 +255,6 @@ export default function NewCourseReviewPage() {
                 className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
                 title={organizationName?.data?.name}
               >
-                
                 {organizationName?.data?.name}
               </abbr>
             </div>
@@ -265,7 +264,6 @@ export default function NewCourseReviewPage() {
                 className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
                 title={programOrganizersNames}
               >
-                
                 {programOrganizersNames ? programOrganizersNames : '-'}
               </abbr>
             </div>
@@ -277,7 +275,6 @@ export default function NewCourseReviewPage() {
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.is_geo_restriction_applicable}
               >
-                
                 {newCourseData?.is_geo_restriction_applicable ? 'Yes' : 'No'}
               </abbr>
             </div>
@@ -287,7 +284,6 @@ export default function NewCourseReviewPage() {
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.is_registration_via_3rd_party}
               >
-                
                 {newCourseData?.is_registration_via_3rd_party ? 'Yes' : 'No'}
               </abbr>
             </div>
@@ -539,7 +535,6 @@ export default function NewCourseReviewPage() {
                   >
                     {feeLevel.total}
                   </abbr>
-                  
                 </div>
               )
             })}
@@ -604,11 +599,13 @@ export default function NewCourseReviewPage() {
           {/* body */}
           <div className="grid grid-cols-4 gap-4 mt-2">
             {newCourseData?.accommodation?.map((data: any) => {
+
               return (
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] "> {courseAccomodationNames}</p>
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                    {getCourseAccomodationName(data?.accommodation_type_id)}
+                  </p>
                   <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
-                  
                     {data?.fee_per_person}
                   </p>
                 </div>
