@@ -39,84 +39,93 @@ import { supabaseClient } from "src/utility/supabaseClient";
 function index() {
   const { AllFilterData } = newCourseStore();
 
+
   const filters: any = { permanent: [] };
 
-  if (AllFilterData?.newAdvanceFilterData?.course_name) {
+  if (AllFilterData?.advanceFilter?.course_name) {
     filters.permanent.push({
       field: "program_alias_name_id",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.course_name,
+      value: AllFilterData?.advanceFilter?.course_name,
     });
   }
 
-  if (AllFilterData?.newAdvanceFilterData?.course_type) {
+  if (AllFilterData?.advanceFilter?.course_type) {
     filters.permanent.push({
       field: "program_type_id",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.course_type,
+      value: AllFilterData?.advanceFilter?.course_type,
     });
   }
 
-  if (AllFilterData?.newAdvanceFilterData?.state) {
+  if (AllFilterData?.course_type) {
+    filters.permanent.push({
+      field: "program_type_id",
+      operator: "eq",
+      value: AllFilterData?.course_type,
+    });
+  }
+
+  if (AllFilterData?.advanceFilter?.state) {
     filters.permanent.push({
       field: "state_id",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.state,
+      value: AllFilterData?.advanceFilter?.state,
     });
   }
 
-  if (AllFilterData?.newAdvanceFilterData?.city) {
+  if (AllFilterData?.advanceFilter?.city) {
     filters.permanent.push({
       field: "city_id",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.city,
+      value: AllFilterData?.advanceFilter?.city,
     });
   }
 
-  if (AllFilterData?.newAdvanceFilterData?.center) {
+  if (AllFilterData?.advanceFilter?.center) {
     filters.permanent.push({
       field: "center_id",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.center,
+      value: AllFilterData?.advanceFilter?.center,
     });
   }
 
-  if (AllFilterData?.newAdvanceFilterData?.course_teacher) {
+  if (AllFilterData?.advanceFilter?.course_teacher) {
     filters.permanent.push({
       field: "program_teachers.user_id",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.course_teacher,
+      value: AllFilterData?.advanceFilter?.course_teacher,
     });
   }
 
-  if (AllFilterData?.newAdvanceFilterData?.program_organiser) {
+  if (AllFilterData?.advanceFilter?.program_organiser) {
     filters.permanent.push({
       field: "program_organizers.user_id",
       operator: "in",
-      value: AllFilterData?.newAdvanceFilterData?.program_organiser,
+      value: AllFilterData?.advanceFilter?.program_organiser,
     });
   }
-  if (AllFilterData?.newAdvanceFilterData?.visibility) {
+  if (AllFilterData?.advanceFilter?.visibility) {
     filters.permanent.push({
       field: "visibility_id",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.visibility,
+      value: AllFilterData?.advanceFilter?.visibility,
     });
   }
 
-  if (AllFilterData?.newAdvanceFilterData?.is_residential_course) {
+  if (AllFilterData?.advanceFilter?.is_residential_course) {
     filters.permanent.push({
       field: "is_residential_program",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.is_residential_course,
+      value: AllFilterData?.advanceFilter?.is_residential_course,
     });
   }
 
-  if (AllFilterData?.newAdvanceFilterData?.course_status) {
+  if (AllFilterData?.advanceFilter?.course_status) {
     filters.permanent.push({
       field: "status_id",
       operator: "in",
-      value: AllFilterData?.newAdvanceFilterData?.course_status,
+      value: AllFilterData?.advanceFilter?.course_status,
     });
   }
   if (AllFilterData?.course_id) {
@@ -126,11 +135,11 @@ function index() {
       value: AllFilterData?.course_id,
     });
   }
-  if (AllFilterData?.newAdvanceFilterData?.is_course_fee) {
+  if (AllFilterData?.advanceFilter?.is_course_fee) {
     filters.permanent.push({
       field: "program_fee_level_settings.is_custom_fee",
       operator: "eq",
-      value: AllFilterData?.newAdvanceFilterData?.is_course_fee,
+      value: AllFilterData?.advanceFilter?.is_course_fee,
     });
   }
   if (AllFilterData?.course_date) {
@@ -171,7 +180,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
     filters: filters,
   });
@@ -191,8 +200,6 @@ function index() {
   const handleSelectAll = (val: any) => {
     setAllSelected(val);
   };
-
-  console.log("heyy row selection", rowSelection);
 
   //function to handle exportexcel
   const handleExportExcel = async () => {
@@ -247,7 +254,7 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration(*) , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
         columns: JSON.stringify(excelColumns),
       });
 
@@ -311,6 +318,10 @@ function index() {
     }
   };
 
+  const rowCount = Object.values(rowSelection).filter(
+    (value) => value === true
+  ).length;
+
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="mx-8 flex flex-col gap-4">
@@ -349,15 +360,9 @@ function index() {
             <div className="font-semibold">{programData?.data?.total || 0}</div>
           </div>
           <div>|</div>
-          {/*when select all is selected then all rows need to be selected  */}
           <div className="flex flex-row gap-2">
-            selected :{" "}
-            {allSelected
-              ? programData?.data?.total
-              : Object.values(rowSelection).filter((value) => value === true)
-                  .length}{" "}
-            Out of{" "}
-            <div className="font-semibold">{programData?.data?.total || 0}</div>
+            Selected: {allSelected ? programData?.data?.total : rowCount} Out of{" "}
+            <div className="font-semibold">{programData?.data?.total || 0}</div>{" "}
           </div>
         </div>
         <div>
@@ -394,52 +399,20 @@ function index() {
 export default index;
 
 const HeaderSection = () => {
-  const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
-
-  const { newAdvanceFilterData, setNewAdvanceFilterData, AllFilterData } =
-    newCourseStore();
-
-  const count =
-    (newAdvanceFilterData &&
-      Object.keys(newAdvanceFilterData).filter(
-        (key) => newAdvanceFilterData[key] !== undefined
-      ).length) ||
-    0;
+  const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
-      <div className="flex-[0.25]">
-        <Sheet open={advanceFilterOpen}>
-          <SheetTrigger className="p-0">
-            <Button
-              onClick={() => {
-                setAdvanceFilterOpen(true);
-              }}
-              className="flex flex-row gap-2 !rounded-xl"
-              variant="outline"
-            >
-              All Filters
-              <FilterIcon />
-              {count > 0 && <CountComponent count={count} />}
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="w-[446px] rounded-l-xl">
-            <Form onSubmit={() => {}} defaultValues={newAdvanceFilterData}>
-              <Filters
-                setAdvanceFilterOpen={setAdvanceFilterOpen}
-                setNewAdvanceFilterData={setNewAdvanceFilterData}
-              />
-            </Form>
-          </SheetContent>
-        </Sheet>
-      </div>
+    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
+      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
+        <div className="flex-[0.25]">
+          <AdvanceFilter />
+        </div>
 
-      <div className="flex-[1.75]">
-        <Form onSubmit={() => {}} defaultValues={AllFilterData}>
+        <div className="flex-[1.75]">
           <BasicFilters />
-        </Form>
+        </div>
       </div>
-    </div>
+    </Form>
   );
 };
 
@@ -487,9 +460,8 @@ export const CountComponent = ({ count }: any) => {
   );
 };
 
-export const CourseTypeComponent = () => {
+export const CourseTypeComponent = ({ name }: any) => {
   const [pageSize, setPageSize] = useState(10);
-  const { newAdvanceFilterData, setNewAdvanceFilterData } = newCourseStore();
   const { options, onSearch } = useSelect({
     resource: "program_types",
     optionLabel: "name",
@@ -515,18 +487,14 @@ export const CourseTypeComponent = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "course_type",
+    name: name,
   });
 
   return (
     <Select
-      value={value ? value : newAdvanceFilterData?.course_type}
+      value={value}
       onValueChange={(val: any) => {
         onChange(val);
-        setNewAdvanceFilterData({
-          ...newAdvanceFilterData,
-          course_type: val,
-        });
       }}
     >
       <SelectTrigger className="w-80">
@@ -556,8 +524,8 @@ export const CourseTypeComponent = () => {
 };
 
 export const BasicFilters = () => {
-  const { getValues, setValue } = useFormContext();
-  const formData = getValues();
+  const { watch, setValue } = useFormContext();
+  const formData = watch();
 
   const {
     field: { value, onChange },
@@ -571,17 +539,17 @@ export const BasicFilters = () => {
     name: "course_date",
   });
 
-  const { newAdvanceFilterData, setAllFilterData, setNewAdvanceFilterData } =
-    newCourseStore();
+  const { setAllFilterData }: any = newCourseStore();
 
   const [open, setOpen] = useState(false);
 
   const handleClearAll = () => {
-    //Clearing out allfilter data and advance filter data
-    setNewAdvanceFilterData(undefined);
-    setAllFilterData(undefined);
     setValue("course_id", "");
     setValue("course_date", "");
+    setValue("course_type", "");
+    setValue("temporaryadvancefilter.course_type", "");
+    setValue("temporaryadvancefilter", "");
+    setValue("advanceFilter", "");
   };
 
   return (
@@ -637,23 +605,19 @@ export const BasicFilters = () => {
         </Dialog>
       </div>
       <div>
-        <CourseTypeComponent />
+        <CourseTypeComponent name="course_type" />
       </div>
       <div className="flex flex-row gap-4 items-center">
         <div
           onClick={handleClearAll}
-          className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4]"
+          className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
           <div>Clear All</div>
         </div>
         <Button
           onClick={() => {
-            //Here when i click on overall apply moving advancefilter data to final variable
-            setAllFilterData({
-              ...formData,
-              newAdvanceFilterData: newAdvanceFilterData,
-            });
+            setAllFilterData(formData);
           }}
           className="h-9 w-18 rounded-xl"
         >
@@ -661,5 +625,43 @@ export const BasicFilters = () => {
         </Button>
       </div>
     </div>
+  );
+};
+
+const AdvanceFilter = () => {
+  const { setValue, watch } = useFormContext();
+  const formData = watch();
+  const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+  const count =
+    (formData?.advanceFilter &&
+      Object.keys(formData?.advanceFilter).filter(
+        (key) => formData?.advanceFilter[key] !== undefined && ""
+      ).length) ||
+    0;
+
+
+  return (
+    <Sheet open={advanceFilterOpen}>
+      <SheetTrigger className="p-0">
+        <Button
+          onClick={() => {
+            setAdvanceFilterOpen(true);
+            setValue(
+              "temporaryadvancefilter.course_type",
+              formData?.course_type
+            );
+          }}
+          className="flex flex-row gap-2 !rounded-xl"
+          variant="outline"
+        >
+          All Filters
+          <FilterIcon />
+          {count > 0 && <CountComponent count={count} />}
+        </Button>
+      </SheetTrigger>
+      <SheetContent className="w-[446px] rounded-l-xl">
+        <Filters setAdvanceFilterOpen={setAdvanceFilterOpen} />
+      </SheetContent>
+    </Sheet>
   );
 };

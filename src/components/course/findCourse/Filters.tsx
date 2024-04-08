@@ -42,10 +42,10 @@ import {
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
 
-const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
-  const { getValues, reset } = useFormContext();
+const Filters = ({ setAdvanceFilterOpen }: any) => {
+  const { watch, setValue } = useFormContext();
 
-  const formData = getValues();
+  const formData = watch();
 
   return (
     <div className="flex flex-col gap-5">
@@ -85,7 +85,9 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Name</div>
-                {formData?.course_name && <CountComponent count={1} />}
+                {formData?.temporaryadvancefilter.course_name && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -97,11 +99,13 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Type</div>
-                {formData?.course_type && <CountComponent count={1} />}
+                {formData?.temporaryadvancefilter.course_type && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
-              <CourseTypeComponent />
+              <CourseTypeComponent name="temporaryadvancefilter.course_type" />
             </AccordionContent>
           </AccordionItem>
           <Separator />
@@ -111,8 +115,12 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Status</div>
-                {formData?.course_status?.length > 0 && (
-                  <CountComponent count={formData?.course_status?.length} />
+                {formData?.temporaryadvancefilter.course_status?.length > 0 && (
+                  <CountComponent
+                    count={
+                      formData?.temporaryadvancefilter.course_status?.length
+                    }
+                  />
                 )}
               </div>
             </AccordionTrigger>
@@ -127,9 +135,13 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Accounting Status</div>
-                {formData?.course_accounting_status?.length > 0 && (
+                {formData?.temporaryadvancefilter.course_accounting_status
+                  ?.length > 0 && (
                   <CountComponent
-                    count={formData?.course_Accounting_status?.length}
+                    count={
+                      formData?.temporaryadvancefilter.course_accounting_status
+                        ?.length
+                    }
                   />
                 )}
               </div>
@@ -145,7 +157,8 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Accounting Closure Date</div>
-                {formData?.course_accounting_closure_date && (
+                {formData?.temporaryadvancefilter
+                  .course_accounting_closure_date && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -161,7 +174,9 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div> Course Visibility</div>
-                {formData?.visibility && <CountComponent count={1} />}
+                {formData?.temporaryadvancefilter.visibility && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -175,7 +190,9 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>State</div>
-                {formData?.state && <CountComponent count={1} />}
+                {formData?.temporaryadvancefilter.state && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -189,7 +206,9 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>City</div>
-                {formData?.city && <CountComponent count={1} />}
+                {formData?.temporaryadvancefilter.city && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -203,7 +222,9 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Center</div>
-                {formData?.center && <CountComponent count={1} />}
+                {formData?.temporaryadvancefilter.center && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -217,7 +238,7 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Residential Course</div>
-                {formData?.is_residential_course && (
+                {formData?.temporaryadvancefilter.is_residential_course && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -232,9 +253,14 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
           <AccordionItem value="item-10" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Program_organiser</div>
-                {formData?.Program_organiser && (
-                  <CountComponent count={formData?.Program_organiser?.length} />
+                <div>Program Organiser</div>
+                {formData?.temporaryadvancefilter.program_organiser?.length >
+                  0 && (
+                  <CountComponent
+                    count={
+                      formData?.temporaryadvancefilter.program_organiser?.length
+                    }
+                  />
                 )}
               </div>
             </AccordionTrigger>
@@ -251,7 +277,9 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Teacher Name</div>
-                {formData?.course_teacher && <CountComponent count={1} />}
+                {formData?.temporaryadvancefilter.course_teacher && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -267,7 +295,9 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>Course Fees</div>
-                {formData?.is_course_fee && <CountComponent count={1} />}
+                {formData?.temporaryadvancefilter.is_course_fee && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -289,9 +319,23 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
       <div className="flex left-0 items-center  gap-4 absolute bottom-0 h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end pr-6">
         <div
           onClick={() => {
-            //clearing the form when we click on clear all
-            reset();
-            setNewAdvanceFilterData(undefined);
+            setValue("temporaryadvancefilter.course_name", "");
+            setValue("temporaryadvancefilter.course_type", "");
+            setValue("temporaryadvancefilter.course_status", "");
+            setValue("temporaryadvancefilter.course_accounting_status", "");
+            setValue(
+              "temporaryadvancefilter.course_accounting_closure_date",
+              ""
+            );
+            setValue("temporaryadvancefilter.state", "");
+            setValue("temporaryadvancefilter.city", "");
+            setValue("temporaryadvancefilter.center", "");
+            setValue("temporaryadvancefilter.visibility", "");
+            setValue("temporaryadvancefilter.is_residential_course", "");
+            setValue("temporaryadvancefilter.is_course_fee", "");
+            setValue("temporaryadvancefilter.course_teacher", "");
+            setValue("temporaryadvancefilter.program_organiser", []);
+            console.log("hey form Data", formData);
           }}
           className="flex gap-1 items-center cursor-pointer"
         >
@@ -300,8 +344,14 @@ const Filters = ({ setNewAdvanceFilterData, setAdvanceFilterOpen }: any) => {
         </div>
         <Button
           onClick={() => {
-            //Setting the form data to newadvancefilterData and closing it
-            setNewAdvanceFilterData(formData);
+            const temporaryData = { ...formData };
+
+            setValue("advanceFilter", temporaryData?.temporaryadvancefilter);
+            setValue(
+              "course_type",
+              temporaryData?.temporaryadvancefilter.course_type
+            );
+
             setAdvanceFilterOpen(false);
           }}
         >
@@ -316,9 +366,9 @@ export default Filters;
 
 export const CourseName = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "course_name",
+    name: "temporaryadvancefilter.course_name",
   });
 
   const [pageSize, setPageSize] = useState(10);
@@ -344,9 +394,9 @@ export const CourseName = () => {
   };
   return (
     <Select
-      value={value}
+      value={temporaryValue}
       onValueChange={(val: any) => {
-        onChange(val);
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
@@ -377,9 +427,9 @@ export const CourseName = () => {
 
 export const State = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "state",
+    name: "temporaryadvancefilter.state",
   });
 
   const [pageSize, setPageSize] = useState(10);
@@ -406,9 +456,9 @@ export const State = () => {
   };
   return (
     <Select
-      value={value}
+      value={temporaryValue}
       onValueChange={(val: any) => {
-        onChange(val);
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
@@ -439,9 +489,9 @@ export const State = () => {
 
 export const City = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "city",
+    name: "temporaryadvancefilter.city",
   });
 
   const [pageSize, setPageSize] = useState(10);
@@ -467,9 +517,9 @@ export const City = () => {
   };
   return (
     <Select
-      value={value}
+      value={temporaryValue}
       onValueChange={(val: any) => {
-        onChange(val);
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
@@ -500,9 +550,9 @@ export const City = () => {
 
 export const Center = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "center",
+    name: "temporaryadvancefilter.center",
   });
   const [pageSize, setPageSize] = useState(10);
 
@@ -528,9 +578,9 @@ export const Center = () => {
   };
   return (
     <Select
-      value={value}
+      value={temporaryValue}
       onValueChange={(val: any) => {
-        onChange(val);
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
@@ -560,20 +610,26 @@ export const Center = () => {
 };
 
 export const CourseStatus = () => {
+  const { getValues } = useFormContext();
+
   let courseStatusData =
     getOptionValuesByOptionLabel(PROGRAM_STATUS)?.[0]?.option_values;
 
   const {
-    field: { value = [], onChange },
+    field: { value: temporaryValue = [], onChange: temporaryOnChange },
   } = useController({
-    name: "course_status",
+    name: "temporaryadvancefilter.course_status",
   });
 
+  const formData = getValues();
+
+  console.log("heyy value", temporaryValue, formData);
+
   const toggleCourseStatus = (id: number) => {
-    const updatedValue = value.includes(id)
-      ? value.filter((val: number) => val !== id)
-      : [...value, id];
-    onChange(updatedValue);
+    const updatedValue = temporaryValue?.includes(id)
+      ? temporaryValue?.filter((val: number) => val !== id)
+      : [...temporaryValue, id];
+    temporaryOnChange(updatedValue);
   };
   return (
     <div className="flex gap-2 flex-wrap">
@@ -581,7 +637,7 @@ export const CourseStatus = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              value?.includes(status?.id)
+              temporaryValue?.includes(status?.id)
                 ? "bg-primary text-white"
                 : "bg-white border border-[#D6D7D8]"
             }`}
@@ -602,16 +658,16 @@ export const CourseAccordingStatus = () => {
   )?.[0]?.option_values;
 
   const {
-    field: { value = [], onChange },
+    field: { value: temporaryValue = [], onChange: temporaryOnChange },
   } = useController({
-    name: "course_accounting_status",
+    name: "temporaryadvancefilter.course_accounting_status",
   });
 
   const toggleCourseStatus = (id: number) => {
-    const updatedValue = value.includes(id)
-      ? value.filter((val: number) => val !== id)
-      : [...value, id];
-    onChange(updatedValue);
+    const updatedValue = temporaryValue?.includes(id)
+      ? temporaryValue?.filter((val: number) => val !== id)
+      : [...temporaryValue, id];
+    temporaryOnChange(updatedValue);
   };
   return (
     <div className="flex gap-2 flex-wrap">
@@ -619,7 +675,7 @@ export const CourseAccordingStatus = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              value?.includes(status?.id)
+              temporaryValue?.includes(status?.id)
                 ? "bg-primary text-white"
                 : "bg-white border border-[#D6D7D8]"
             }`}
@@ -638,7 +694,7 @@ export const CourseAccountingClosureDate = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "course_accounting_closure_date",
+    name: "temporaryadvancefilter.course_accounting_closure_date",
   });
   const [open, setOpen] = useState(false);
   return (
@@ -679,9 +735,9 @@ export const CourseAccountingClosureDate = () => {
 
 export const Visibility = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "visibility",
+    name: "temporaryadvancefilter.visibility",
   });
 
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
@@ -697,21 +753,21 @@ export const Visibility = () => {
   return (
     <div>
       <RadioGroup
-        value={JSON.stringify(value)}
+        value={JSON.stringify(temporaryValue)}
         onValueChange={(val: string) => {
-          onChange(parseInt(val));
+          temporaryOnChange(parseInt(val));
         }}
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
             value={JSON.stringify(publicVisibilityId)}
-            selectedRadioValue={JSON.stringify(value)}
+            selectedRadioValue={JSON.stringify(temporaryValue)}
             label="Public"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
-            selectedRadioValue={JSON.stringify(value)}
+            selectedRadioValue={JSON.stringify(temporaryValue)}
             label="Private"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
@@ -723,24 +779,24 @@ export const Visibility = () => {
 
 export const ResidentialCourse = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "is_residential_course",
+    name: "temporaryadvancefilter.is_residential_course",
   });
 
   return (
     <div>
-      <RadioGroup value={value} onValueChange={onChange}>
+      <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
             value="TRUE"
-            selectedRadioValue={value}
+            selectedRadioValue={temporaryValue}
             label="Yes"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="FALSE"
-            selectedRadioValue={value}
+            selectedRadioValue={temporaryValue}
             label="No"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
@@ -752,24 +808,24 @@ export const ResidentialCourse = () => {
 
 export const CourseFees = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "is_course_fee",
+    name: "temporaryadvancefilter.is_course_fee",
   });
 
   return (
     <div>
-      <RadioGroup value={value} onValueChange={onChange}>
+      <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
             value="FALSE"
-            selectedRadioValue={value}
+            selectedRadioValue={temporaryValue}
             label="Default"
             className="p-2 h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="TRUE"
-            selectedRadioValue={value}
+            selectedRadioValue={temporaryValue}
             label="Custom"
             className="p-2 h-[40px] rounded-[12px]"
           />
@@ -781,9 +837,9 @@ export const CourseFees = () => {
 
 export const ProgramOrganiser = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "program_organiser",
+    name: "temporaryadvancefilter.program_organiser",
   });
 
   const [pageSize, setPageSize] = useState(20);
@@ -794,7 +850,6 @@ export const ProgramOrganiser = () => {
       select:
         "*,contact_id!inner(first_name,last_name),user_roles!inner(role_id)",
     },
-    defaultValue: value,
     onSearch: (value) => [
       {
         field: "contact_id.first_name",
@@ -826,23 +881,23 @@ export const ProgramOrganiser = () => {
 
   return (
     <MultiSelect
-      value={value}
+      value={temporaryValue}
       placeholder="Select Program Organiser"
       data={options}
       onBottomReached={handleOnBottomReached}
       onSearch={(val: string) => {
         onSearch(val);
       }}
-      onChange={onChange}
+      onChange={temporaryOnChange}
     />
   );
 };
 
 export const TeacherDropdown = () => {
   const {
-    field: { value, onChange },
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: "course_teacher",
+    name: "temporaryadvancefilter.course_teacher",
   });
 
   const [pageSize, setPageSize] = useState(10);
@@ -879,9 +934,9 @@ export const TeacherDropdown = () => {
 
   return (
     <Select
-      value={value}
+      value={temporaryValue}
       onValueChange={(val: any) => {
-        onChange(val);
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
@@ -909,5 +964,3 @@ export const TeacherDropdown = () => {
     </Select>
   );
 };
-
-

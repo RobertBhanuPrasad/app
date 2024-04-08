@@ -24,7 +24,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     enableHiding: false,
     header: () => {
       return (
-        <div className="w-[100px] flex flex-row justify-center items-center">
+        <div className="w-[100px]">
           Course ID
         </div>
       );
