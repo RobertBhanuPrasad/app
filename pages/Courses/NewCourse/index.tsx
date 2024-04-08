@@ -55,10 +55,9 @@ function index() {
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
-  console.log(loginUserData);
-  // if (!loginUserData?.userData) {
-  //   return <div>Loading...</div>;
-  // }
+  if (!loginUserData?.userData) {
+    return <div>Loading...</div>;
+  }
 
   if (viewThankyouPage) {
     return (

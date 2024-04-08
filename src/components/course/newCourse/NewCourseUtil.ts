@@ -125,16 +125,46 @@ export const handlePostProgramData = async (
       body[NewCourseStep4FormNames.is_early_bird_enabled];
   }
 
+  const { data: programTypeData } = await supabaseClient
+    .from("program_types")
+    .select("*")
+    .eq("id", body?.program_type_id)
+    .single();
+
+  let stateId: number = 1,
+    cityId: number = 1,
+    centerId: number = 1;
+
+  //Finding the state_id ,city_id and center_id where course is going on
+  if (programTypeData?.is_online_program) {
+    stateId = body?.state_id;
+    cityId = body?.city_id;
+    centerId = body?.center_id;
+  } else {
+    if (body.is_existing_venue == "new-venue") {
+      stateId = body?.newVenue?.state_id;
+      cityId = body?.newVenue?.city_id;
+      centerId = body?.newVenue?.center_id;
+    } else if (body?.is_existing_venue == "existing-venue") {
+      stateId = body?.existingVenue?.state_id;
+      cityId = body?.existingVenue?.city_id;
+      centerId = body?.existingVenue?.center_id;
+    }
+  }
+
+  //Finding course start date
+  const courseStartDate = body?.schedules?.[0]?.date?.toISOString();
+
   //Fetching fee level settings of course
   const { data: feeData, error } = await supabaseClient.functions.invoke(
     "course-fee",
     {
       method: "POST",
       body: {
-        state_id: "3", //TODO Need to change with form data
-        city_id: "3",
-        center_id: "1",
-        start_date: "2024-03-18T07:00:00-00:00",
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
         program_type_id: body?.program_type_id,
       },
     }
@@ -831,7 +861,7 @@ const handlePostVenueData = async (body: any) => {
   const venueBody: VenueDataBaseType = {};
 
   if (body.isNewVenue) {
-    venueData = body?.newVenue||{};
+    venueData = body?.newVenue || {};
   } else {
     const venueId = body.existingVenue.id;
     venueData = body?.existingVenue;
