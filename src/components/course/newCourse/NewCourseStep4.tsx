@@ -140,7 +140,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   //Checking Weather a fee is editable or not
   const isFeeEditable =
     isUserNationAdminOrSuperAdmin ||
-    courseFeeSettings?.[0]?.is_program_fee_editable;
+    courseFeeSettings?.[0]?.is_program_fee_editable ? true :false;
 
   const {
     field: {

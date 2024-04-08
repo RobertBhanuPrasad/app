@@ -54,10 +54,9 @@ function index() {
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore()
 
-  console.log(loginUserData)
-  // if (!loginUserData?.userData) {
-  //   return <div>Loading...</div>;
-  // }
+  if (!loginUserData?.userData) {
+    return <div>Loading...</div>;
+  }
 
   if (viewThankyouPage) {
     return (
@@ -226,6 +225,8 @@ export const NewCourseTabs = () => {
    * @param tab
    */
   const handleClickTab = async (currentStepFormNames: any[], tab: { value: any }) => {
+    setCurrentStep(tab.value)
+
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames)
     //if the clicked tab is lessthan current step then we can navigate to the clicked tab
     if (tab.value < currentStep) {

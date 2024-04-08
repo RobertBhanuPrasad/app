@@ -67,11 +67,6 @@ export default function NewCourseReviewPage() {
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
 
-  const { data: programTypeData } = useOne({
-    resource: "program_types",
-    id: newCourseData?.program_type_id,
-  });
-
   let stateId: number, cityId: number, centerId: number;
 
   //Finding the state_id ,city_id and center_id where course is going on
