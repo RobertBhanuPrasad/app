@@ -847,12 +847,12 @@ const LanguageDropDown = () => {
       mode: "server",
     },
   });
-
+  console.log(options)
   const filteredOptions = options?.filter((val: any) => {
     if (formData?.translation_language_ids?.includes(val?.value)) return false;
     return true;
   });
-
+  console.log(filteredOptions,'filteredOptions',formData?.translation_language_ids)
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
     if (options && (queryResult?.data?.total as number) >= pageSize)

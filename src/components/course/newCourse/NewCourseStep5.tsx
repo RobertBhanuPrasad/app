@@ -169,15 +169,14 @@ export const AccommodationFeeMode = () => {
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
 
-  //Finding program Organizer role id
-  const payOfflineId = getOptionValueObjectByOptionOrder(
-    PAYMENT_MODE,
-    PAY_OFFLINE
-  )?.id;
-
   const payOnlineId = getOptionValueObjectByOptionOrder(
     PAYMENT_MODE,
     PAY_ONLINE
+  )?.id;
+
+  const payOfflineId = getOptionValueObjectByOptionOrder(
+    PAYMENT_MODE,
+    PAY_OFFLINE
   )?.id;
 
   return (
@@ -188,7 +187,7 @@ export const AccommodationFeeMode = () => {
       <RadioGroup
         value={JSON.stringify(value)}
         onValueChange={(value) => {
-          onChange(value);
+          onChange(parseInt(value));
         }}
       >
         <div className="flex flex-row gap-6 ">

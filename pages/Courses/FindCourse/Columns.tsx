@@ -290,7 +290,7 @@ export const columns: ExtendedColumnDef<any>[] = [
           case "Cancel Course": {
             setIsDialogOpen(true);
           }
-          case "Edit course": {
+          case "Edit Course": {
             handleEditCourse();
           }
           default: {
