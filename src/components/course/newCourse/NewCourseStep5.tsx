@@ -27,9 +27,7 @@ import {
   SelectValue,
 } from "src/ui/select";
 import _ from "lodash";
-import {
-  getOptionValueObjectByOptionOrder,
-} from "src/utility/GetOptionValuesByOptionLabel";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PAYMENT_MODE } from "src/constants/OptionLabels";
 import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
 
