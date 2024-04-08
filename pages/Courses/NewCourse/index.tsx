@@ -249,18 +249,11 @@ export const NewCourseTabs = () => {
    * @param currentStepFormNames
    * @param tab
    */
-<<<<<<< HEAD
-  const handleClickTab = async (currentStepFormNames: any[], tab: { value: any }) => {
-    setCurrentStep(tab.value)
-
-    isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames)
-=======
   const handleClickTab = async (
     currentStepFormNames: any[],
     tab: { value: any }
   ) => {
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
->>>>>>> 96e6ed29da5291b2b4e6192e16a5ca797d24d500
     //if the clicked tab is lessthan current step then we can navigate to the clicked tab
     if (tab.value < currentStep) {
       setCurrentStep(tab.value);
