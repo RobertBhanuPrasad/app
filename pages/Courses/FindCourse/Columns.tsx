@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "src/ui/button";
 import { Dialog, DialogContent } from "src/ui/dialog";
 import {
@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
+import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -76,7 +77,6 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Course Status</div>;
     },
     cell: ({ row }) => {
-      console.log("hey status", row?.original?.status_id);
       return (
         <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>
       );
@@ -239,9 +239,30 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Revenue</div>;
     },
     cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">-</div>;
+      const [revenue, setRevenue] = useState<any>();
+      useEffect(() => {
+        const fetchData = async () => {
+          const { data, error } = await supabaseClient.functions.invoke(
+            "get_program_participant_summary",
+            {
+              method: "POST",
+              body: {
+                program_id: row.original.id,
+              },
+            }
+          );
+          setRevenue(data);
+        };
+
+        fetchData();
+      }, []);
+
+      return (
+        <div className="min-w-[150px]">{revenue ? revenue.income : "-"}</div>
+      );
     },
   },
+
   {
     id: "actions",
     enableHiding: false,
@@ -264,7 +285,6 @@ export const columns: ExtendedColumnDef<any>[] = [
         data?.data?.program_accounting_status_id,
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
-
 
       const handleEditCourse = async () => {
         console.log("clicking on edit course");
