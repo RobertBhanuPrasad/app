@@ -192,6 +192,12 @@ export const handlePostProgramData = async (
     //call zustand function to store created programId
     // so that it can be helpful in thankyou page
     setProgramId(programId);
+
+    //TODO: We are doing this in backend for only first deployment
+    //TODO: We have to remove from here and need to keep in backend for code
+    if (programData[0]?.program_code) {
+      await handleGenerateProgramCode(programId, loggedInUserId);
+    }
   }
 
   //   await handlePostProgramInfoData(body, programId);
@@ -1008,4 +1014,42 @@ export const handleProgramFeeLevelSettingsData = async (
   }
 
   return true;
+};
+
+/**
+ * We have to generate program
+ * the formulae for program code was countryCode+C+programId
+ * @param programId
+ */
+const handleGenerateProgramCode = async (
+  programId: number,
+  loggedInUserId: number
+) => {
+  // to fetch country code call users api
+
+  const { data, error }: any = await supabaseClient
+    .from("users")
+    .select("*,contact_id(*,country_id(*))")
+    .eq("id", loggedInUserId);
+  if (error) {
+    console.log("error while fetch user data", error);
+  } else {
+    console.log("user data", data);
+
+    let programCode =
+      data[0]?.contact_id?.country_id?.abbr || "" + "C" + programId;
+
+    // update program code in program
+    const { data: programData, error: programError } = await supabaseClient
+      .from("program")
+      .update({
+        program_code: programCode,
+      });
+
+    if (programError) {
+      console.log("erorr while updating program code", programError);
+    } else {
+      console.log("program code updated successfully", programData);
+    }
+  }
 };
