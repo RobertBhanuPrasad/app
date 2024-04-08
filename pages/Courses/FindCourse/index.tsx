@@ -84,12 +84,7 @@ const TableSection = () => {
     },
   });
 
-  const modifiedData = Object.values(
-    mapProgramModifiedDataStructure(
-      programData?.data?.data as ProgramDataBaseType
-    )
-  );
-
+  const modifiedData = programData?.data?.data || []
   const [rowSelection, setRowSelection] = React.useState({});
 
   return (

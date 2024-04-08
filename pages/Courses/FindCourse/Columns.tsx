@@ -2,6 +2,7 @@ import { handleCourseDefaultValues } from "@components/course/newCourse/EditCour
 import { DisplayOptions } from "@components/courseBusinessLogic";
 import { useGetIdentity, useOne } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
+import _ from "lodash";
 import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -268,31 +269,61 @@ export const columns: ExtendedColumnDef<any>[] = [
          * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
          */
         const defaultValues = await handleCourseDefaultValues(row.original.id);
+        console.log("default values are",defaultValues)
+
         setNewCourseData(defaultValues);
 
         setViewPreviewPage(true);
       };
+
+      /**
+   * Handles creating a new course.
+   * Retrieves default values for the course with the given ID,
+   * sets the retrieved values as the new course data, and
+   * switches the view to the new course page.
+   */
+  const handleCopyCourse = async () => {
+    
+      let defaultValues = await handleCourseDefaultValues(row.original.id);
+      // we have to delete schedules when user click on cipy course and other we need to prefill
+      defaultValues = _.omit(defaultValues, ["schedules"]);
+      setNewCourseData(defaultValues);
+      router.push("/Courses/NewCourse");
+    
+  };
+
       dropDownMenuData?.unshift('View Course')
       
       const handleSelected = (value: string) => {
         console.log("clicked on", value);
 
         switch (value) {
+          case "View Course": {
+            // TODO - Navigate to Course Listing page
+            router.push(`/Courses/ViewCourse/${[row.original.id]}`);
+            break;
+          }
           case "View Participants": {
-            // TODO - Navigate to Participants Listing page
+            // TODO - Navigate to Participant Listing page
             router.push("/");
             break;
           }
           case "Register Participant": {
             // TODO - Navigate to Register Participant page
-            router.push("/Courses/FindCourse");
+            router.push("/");
             break;
           }
           case "Cancel Course": {
             setIsDialogOpen(true);
+            break;
           }
-          case "Edit course": {
+          case "Edit Course": {
             handleEditCourse();
+            break;
+          }
+          case "Copy Course": {
+            handleCopyCourse();
+            break;
           }
           default: {
             console.log("other options");
@@ -300,16 +331,6 @@ export const columns: ExtendedColumnDef<any>[] = [
         }
       };
 
-      const roughData = [
-        {
-          status_id: 1,
-          data: ["View participants", "registration participant"],
-        },
-        {
-          status_id: 2,
-          data: ["view course", "edit course"],
-        },
-      ];
       return (
         <div className="">
           <div className="pl-[1px]">
