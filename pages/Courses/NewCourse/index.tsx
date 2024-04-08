@@ -254,8 +254,6 @@ export const NewCourseTabs = () => {
     currentStepFormNames: any[],
     tab: { value: any }
   ) => {
-    setCurrentStep(tab.value);
-
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     //if the clicked tab is lessthan current step then we can navigate to the clicked tab
     if (tab.value < currentStep) {
@@ -278,8 +276,6 @@ export const NewCourseTabs = () => {
   ) => {
     const formData = watch();
 
-    setViewPreviewPage(true);
-    setNewCourseData(formData);
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
       setViewPreviewPage(true);
