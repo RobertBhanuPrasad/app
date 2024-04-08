@@ -86,7 +86,7 @@ export const AccomdationComponent = () => {
 
       <div className="my-[10px]">
         {fields.map((field: any, index: number) => (
-          <div key={field.id} className="flex items-center w-full h-[48px] ">
+          <div key={field.id} className="flex items-center w-full h-auto ">
             <div className=" w-[288px] p-[10px]">
               <AccommodationType index={index} />
             </div>
@@ -165,6 +165,7 @@ export const ResidentialCourse = () => {
 export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
+    fieldState:{error}
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
@@ -205,6 +206,12 @@ export const AccommodationFeeMode = () => {
           />
         </div>
       </RadioGroup>
+      {error && (
+  <span className="text-[#FF6D6D] text-[14px]">
+    {error?.message}
+  </span>
+)}
+
     </div>
   );
 };

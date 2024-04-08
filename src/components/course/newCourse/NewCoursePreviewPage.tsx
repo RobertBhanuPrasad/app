@@ -47,7 +47,7 @@ export default function NewCourseReviewPage() {
   const { data: venueCenter } = useOne({
     resource: 'center',
     id: newCourseData?.center_id
-      })
+  })
   const CenterNames = venueCenter?.data?.map((center: any) => {
     return center?.name
   })
@@ -58,19 +58,42 @@ export default function NewCourseReviewPage() {
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>()
 
+  let stateId: number, cityId: number, centerId: number
+
+  //Finding the state_id ,city_id and center_id where course is going on
+  if (programTypeData?.data?.is_online_program) {
+    stateId = newCourseData?.state_id
+    cityId = newCourseData?.city_id
+    centerId = newCourseData?.center_id
+  } else {
+    if (newCourseData.is_existing_venue == 'new-venue') {
+      stateId = newCourseData?.newVenue?.state_id
+      cityId = newCourseData?.newVenue?.city_id
+      centerId = newCourseData?.newVenue?.center_id
+    } else if (newCourseData?.is_existing_venue == 'existing-venue') {
+      stateId = newCourseData?.existingVenue?.state_id
+      cityId = newCourseData?.existingVenue?.city_id
+      centerId = newCourseData?.existingVenue?.center_id
+    }
+  }
+
+  //Finding course start date
+  const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString()
+
   const fetchFeeData = async () => {
-    //TODO: Need to integrate with form Data
+    //Sending all required params
     const { data, error } = await supabaseClient.functions.invoke('course-fee', {
       method: 'POST',
       body: {
-        state_id: '3',
-        city_id: '3',
-        center_id: '1',
-        start_date: '2024-03-18T07:00:00-00:00',
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
         program_type_id: newCourseData?.program_type_id
       }
     })
-    console.log(error, 'error', data)
+
+    if (error) console.log('error while fetching course fee level settings data', error)
     setCourseFeeSettings(data)
   }
 
@@ -93,8 +116,6 @@ export default function NewCourseReviewPage() {
     resource: 'organizations',
     id: newCourseData?.organization_id
   })
-
-  const taxRate = organizationName?.data?.tax_enabled ? organizationName?.data?.tax_rate / 100 : 0
 
   const { data: ProgramOrganizer } = useMany({
     resource: 'users',
@@ -125,10 +146,9 @@ export default function NewCourseReviewPage() {
     ids: _.map(newCourseData?.accommodation, 'accommodation_type_id') || []
   })
 
-
-  const getCourseAccomodationName = (accomdationTypeId: number) => {
-    return _.find(CourseAccomidation?.data, data => data?.id == accomdationTypeId)?.name
-  }
+  const courseAccomodationNames = CourseAccomidation?.data?.map((accomdation: any) => {
+    if (accomdation?.name) return accomdation?.name
+  })
 
   const { data: CourseTranslation } = useMany({
     resource: 'languages',
@@ -162,9 +182,11 @@ export default function NewCourseReviewPage() {
       <div className=" min-w-72 ">
         <p className="text-sm font-normal text-accent-light text-[#999999]">Sessions</p>
         {newCourseData?.schedules?.map((data: any) => {
-          const schedule = `${formatDateString(data.date)} | ${data?.startHour} : ${data?.startMinute}  ${
-            data?.startTimeFormat
-          } to ${data?.endHour} : ${data?.endMinute}  ${data?.endTimeFormat}`
+          const schedule = `${formatDateString(data.date)} | ${data?.startHour || '00'} : ${
+            data?.startMinute || '00'
+          }  ${data?.startTimeFormat && data?.startTimeFormat} to ${data?.endHour || '00'} : ${
+            data?.endMinute || '00'
+          }  ${data?.endTimeFormat && data?.endTimeFormat}`
           return (
             <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]" title={schedule}>
               {schedule}
@@ -599,12 +621,9 @@ export default function NewCourseReviewPage() {
           {/* body */}
           <div className="grid grid-cols-4 gap-4 mt-2">
             {newCourseData?.accommodation?.map((data: any) => {
-
               return (
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    {getCourseAccomodationName(data?.accommodation_type_id)}
-                  </p>
+                  <p className="text-sm font-normal text-accent-light text-[#999999] "> {courseAccomodationNames}</p>
                   <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                     {data?.fee_per_person}
                   </p>

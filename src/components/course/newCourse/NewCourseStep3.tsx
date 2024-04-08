@@ -26,7 +26,6 @@ import { Badge } from "src/ui/badge";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import { DateCalendar } from "src/ui/DateCalendar";
-import CustomSelect from "src/ui/custom-select";
 import {
   Dialog,
   DialogClose,
@@ -75,6 +74,7 @@ import {
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { SelectItems } from "src/ui/select";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -89,11 +89,11 @@ function NewCourseStep3() {
   if (isLoading) {
     return <LoadingIcon />;
   }
-
+  
   return (
     <div className="flex flex-col gap-8">
       <div>
-        {programTypeData?.data?.in_online_program === true ? (
+        {programTypeData?.data?.is_online_program === true ? (
           <OnlineProgram />
         ) : (
           <div className="mb-8">
@@ -392,6 +392,7 @@ const Venue = () => {
   };
 
   const formData = watch();
+  const { errors } = useFormState();
 
   const {
     field: { onChange: isNewVenueOnchange },
@@ -416,18 +417,34 @@ const Venue = () => {
     name: "is_existing_venue",
   });
 
-  const handleAddNewVenue = () => {
-    setValue("newVenue", {
-      city_id: formData?.city_id,
-      city: formData?.city,
-      state_id: formData?.state_id,
-      state: formData?.state,
-      center_id: formData?.center_id,
-      center: formData?.center,
-      postal_code: formData?.postal_code,
-      address: formData?.address,
-      name: formData?.name,
-    });
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+  const [openAddNewVenue, setOpenAddNewVenue] = useState(false);
+
+  const handleAddNewVenue = async () => {
+    const isAllFieldsFilled = await ValidateCurrentStepFields([
+      "city_id",
+      "center_id",
+      "state_id",
+      "name",
+      "address",
+      "postal_code",
+    ]);
+    if (isAllFieldsFilled) {
+      setValue("newVenue", {
+        city_id: formData?.city_id,
+        city: formData?.city,
+        state_id: formData?.state_id,
+        state: formData?.state,
+        center_id: formData?.center_id,
+        center: formData?.center,
+        postal_code: formData?.postal_code,
+        address: formData?.address,
+        name: formData?.name,
+      });
+      setOpenAddNewVenue(false);
+    } else {
+      setOpenAddNewVenue(true);
+    }
   };
 
   const handleOpenEditNewVenue = () => {
@@ -441,6 +458,7 @@ const Venue = () => {
     setValue("center", formData?.newVenue?.center);
     setValue("postal_code", formData?.newVenue?.postal_code);
     isNewVenueOnchange(true);
+    setOpenAddNewVenue(true);
   };
 
   const handleOpenAddNewVenue = () => {
@@ -451,6 +469,7 @@ const Venue = () => {
     resetField("city_id");
     resetField("name");
     isNewVenueOnchange(true);
+    setOpenAddNewVenue(true);
   };
 
   return (
@@ -535,7 +554,10 @@ const Venue = () => {
                   <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
-                  <Dialog>
+                  <Dialog
+                    open={openAddNewVenue}
+                    onOpenChange={setOpenAddNewVenue}
+                  >
                     <DialogTrigger onClick={handleOpenEditNewVenue}>
                       <EditIcon />
                     </DialogTrigger>
@@ -562,7 +584,7 @@ const Venue = () => {
             </div>
           </Label>
         ) : (
-          <Dialog>
+          <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue}>
               <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
                 + Add New Venue
@@ -574,9 +596,9 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
-      {isVenueSelectedError && (
+      {(errors?.is_existing_venue || errors?.existingVenue) && (
         <span className="text-[#FF6D6D] text-[14px]">
-          {isVenueSelectedError?.message}
+          {"Venue is a required field"}
         </span>
       )}
     </div>
@@ -605,8 +627,8 @@ const NewVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address}, {data?.data?.state_id?.name},{" "}
-      {data?.data?.city_id?.name}, {data?.data?.name}, {postal_code}
+      {name}, {address},{data?.data?.city_id?.name},{" "}
+      {data?.data?.state_id?.name}, {postal_code}
     </div>
   );
 };
@@ -633,8 +655,8 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address}, {data?.data?.state_id?.name},{" "}
-      {data?.data?.city_id?.name}, {data?.data?.name}, {postal_code}
+      {name}, {address},{data?.data?.city_id?.name},{" "}
+      {data?.data?.state_id?.name}, {postal_code}
     </div>
   );
 };
@@ -865,7 +887,7 @@ const ExistingVenueList = () => {
       )
       .range(otherVenueSkip, otherVenueSkip + 5);
 
-      return data;
+    return data;
   };
 
   const fetchVenueData = async () => {
@@ -1008,9 +1030,9 @@ const ExistingVenueList = () => {
                     <div className="flex justify-between">
                       <div className="font-semibold">{item.name}</div>
                       <div className="flex flex-row gap-3">
-                        {isUserNationAdminOrSuperAdmin ||
-                          (item?.created_by_user_id ==
-                            loginUserData?.userData?.id && (
+                        {item?.created_by_user_id ==
+                          loginUserData?.userData?.id ||
+                          (isUserNationAdminOrSuperAdmin && (
                             <Dialog>
                               <DialogTrigger
                                 onClick={() => {
@@ -1028,7 +1050,7 @@ const ExistingVenueList = () => {
                               </DialogContent>
                             </Dialog>
                           ))}
-                        {true && (
+                        {isUserNationAdminOrSuperAdmin && (
                           // isUserNationAdminOrSuperAdmin
                           <Dialog>
                             <DialogTrigger>
@@ -1047,8 +1069,8 @@ const ExistingVenueList = () => {
                     </div>
 
                     <div className="leading-tight">
-                      {item.address}, {item.state_name}, {item.city_name},{" "}
-                      {item.center_name} {item.postal_code}
+                      {item.name}, {item.address}, {item.city_name},{" "}
+                      {item.state_name}, {item.postal_code}
                     </div>
                   </div>
                 </div>
@@ -1104,7 +1126,7 @@ export const AddOrEditVenue = ({
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />
-          <CityDropDown name="city+id" />
+          <CityDropDown name="city_id" />
         </div>
 
         <div className="flex flex-col gap-5">
@@ -1115,9 +1137,7 @@ export const AddOrEditVenue = ({
       </div>
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
-          <DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
-          </DialogClose>
+          <Button onClick={handleSubmit}>Submit</Button>
         </div>
       </DialogFooter>
     </div>

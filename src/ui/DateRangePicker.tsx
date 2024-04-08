@@ -43,7 +43,7 @@ function DateRangePicker({
         months:
           "flex flex-col justify-center sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month:
-          "space-y-4 border border-[#D6D7D8] border-[1px] w-[374px] rounded-xl  py-1",
+          "space-y-4 border border-[#D6D7D8] border-[1px] w-[374px] rounded-xl py-1",
         caption: "flex flex-row relative  border-b border-[#D6D7D8] pb-2",
         caption_dropdowns:
           "flex flex-row mt-1 justify-center gap-2 grow dropdowns",
