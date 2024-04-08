@@ -81,6 +81,7 @@ import Tick from "@public/assets/Tick.png";
 import ParticipantsTab from "@components/course/viewCourse/participantsTab";
 import { supabaseClient } from "src/utility/supabaseClient";
 import {
+  DisplayOptions,
   handleTabsBasedOnStatus,
   isApproved,
 } from "@components/courseBusinessLogic";
@@ -318,7 +319,7 @@ function index() {
               <SuccessModalOpen />
               <RejectedModalOpen />
 
-              <ActionsDropDown courseId={Id} />
+              <ActionsDropDown courseData={courseData?.data} />
             </div>
           </TabsList>
           <div className="w-full border-b border-[#D6D7D8] -mt-2"></div>
@@ -581,39 +582,19 @@ const SuccessModalOpen = () => {
   );
 };
 
-const ActionsDropDown = ({ courseId }: any) => {
+const ActionsDropDown = ({ courseData }: any) => {
+  const { data: loginUserData }: any = useGetIdentity();
+
   const router = useRouter();
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false);
   const [cancelSuccessModalOpen, setCancelSuccessModalOpen] = useState(false);
 
   const { setNewCourseData, setViewPreviewPage } = newCourseStore();
-
-  const options = [
-    {
-      label: "View Participants",
-      value: 1,
-    },
-    {
-      label: "Register Participants",
-      value: 2,
-    },
-    {
-      label: "Edit Course",
-      value: 3,
-    },
-    {
-      label: "Copy Course",
-      value: 4,
-    },
-    {
-      label: "Cancel Course",
-      value: 5,
-    },
-    {
-      label: "Submit Course Accounting Form",
-      value: 6,
-    },
-  ];
+  const options = DisplayOptions(
+    courseData?.status_id?.id,
+    courseData?.program_accounting_status_id,
+    loginUserData?.userData?.user_roles[0]?.role_id?.id
+  );
 
   /**
    * handle the Edit Course
@@ -621,6 +602,8 @@ const ActionsDropDown = ({ courseId }: any) => {
    * sets the retrieved values as the new course data, and
    * switches the view to the preview page.
    */
+
+  const courseId = courseData?.id;
   const handleEditCourse = async () => {
     if (courseId) {
       setViewPreviewPage(true);
