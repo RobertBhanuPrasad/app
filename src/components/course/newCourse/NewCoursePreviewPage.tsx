@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
+import countryCodes from 'src/data/CountryCodes'
 import { Button } from 'src/ui/button'
 import { supabaseClient } from 'src/utility'
 import { formatDateString, subtractDaysAndFormat } from 'src/utility/DateFunctions'
@@ -12,7 +13,7 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import { EditModalDialog } from './NewCoursePreviewPageEditModal'
 import NewCourseStep1 from './NewCourseStep1'
 import NewCourseStep2 from './NewCourseStep2'
-import { NewCourseStep3 } from './NewCourseStep3'
+import NewCourseStep3 from './NewCourseStep3'
 import NewCourseStep4 from './NewCourseStep4'
 import NewCourseStep5 from './NewCourseStep5'
 import NewCourseStep6 from './NewCourseStep6'
@@ -174,8 +175,8 @@ export default function NewCourseReviewPage() {
   }
 
   const allowedCountries = newCourseData?.allowed_countries
-    ?.map((data: any) => {
-      return data.value
+    ?.map((countryCode: string) => {
+      return countryCodes[countryCode]
     })
     .join(', ')
 
