@@ -1,13 +1,16 @@
 import { MapPointer } from "@components/MapComponent";
 import { CrudFilter, useSelect } from "@refinedev/core";
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { useEffect, useState, useTransition } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import CustomSelect from "src/ui/custom-select";
 import { Input } from "src/ui/input";
 import { supabaseClient } from "src/utility";
 import { fetchLongitudeLatitudeData } from "src/utility/GetOptionValuesByOptionLabel";
+import { UseTranslation } from "next-i18next";
 export const VenueNameComponent = () => {
+  const {t}=useTranslation("common")
   const {
     field: { value: venueName, onChange: venueOnchange },
     fieldState: { error: venueError },
@@ -17,12 +20,12 @@ export const VenueNameComponent = () => {
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Venue <div className="text-[#7677F4]"> *</div>
+        {t("venue")} <div className="text-[#7677F4]"> *</div>
       </div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={venueName}
-          placeholder="Enter Venue Name"
+          placeholder={t("enterVenueName")}
           className="placeholder:text-[#999999]"
           onChange={venueOnchange}
         />
@@ -32,6 +35,7 @@ export const VenueNameComponent = () => {
 };
 
 export const PostalCodeComponent = () => {
+  const {t}=useTranslation("common")
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
   } = useController({
@@ -56,11 +60,11 @@ export const PostalCodeComponent = () => {
   }, [postalCodeValue]);
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Postal Code</div>
+      <div className="text-xs font-normal text-[#333333]">{t("postalCode")}</div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={postalCodeValue}
-          placeholder="Enter Postal Code"
+          placeholder={t("enterPostalCode")}
           className="placeholder:text-[#999999]"
           onChange={postalCodeOnchange}
           required
@@ -71,6 +75,7 @@ export const PostalCodeComponent = () => {
 };
 
 export const StreetAddressComponent = () => {
+  const {t} = useTranslation("common")
   const {
     field: { value: streetAddressValue, onChange: streetAddressOnchange },
   } = useController({
@@ -78,11 +83,11 @@ export const StreetAddressComponent = () => {
   });
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Street Address</div>
+      <div className="text-xs font-normal text-[#333333]">{t("streetAddress")}</div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={streetAddressValue}
-          placeholder="Enter Street Address"
+          placeholder={t("enterStreetAddress")}
           className="placeholder:text-[#999999]"
           onChange={streetAddressOnchange}
         />
@@ -92,6 +97,7 @@ export const StreetAddressComponent = () => {
 };
 
 export const CityDropDown = () => {
+  const {t}=useTranslation("common")
   const { watch, setValue } = useFormContext();
 
   const formData = watch();
@@ -161,11 +167,11 @@ export const CityDropDown = () => {
   };
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">City</div>
+      <div className="text-xs font-normal text-[#333333]">{t("city")}</div>
 
       <CustomSelect
         value={cityValue}
-        placeholder="Select City"
+        placeholder={t("selectCity")}
         data={selectOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
@@ -179,6 +185,7 @@ export const CityDropDown = () => {
 };
 
 export const StateDropDown = () => {
+  const {t}=useTranslation("common")
   const { setValue } = useFormContext();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -239,11 +246,11 @@ export const StateDropDown = () => {
   };
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
-      <div className="text-xs font-normal text-[#333333]">Province</div>
+      <div className="text-xs font-normal text-[#333333]">{t("Province")}</div>
 
       <CustomSelect
         value={stateValue}
-        placeholder="Select Province"
+        placeholder={t("selectProvince")}
         data={selectOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
@@ -256,6 +263,7 @@ export const StateDropDown = () => {
 };
 
 export const CenterDropDown = () => {
+  const {t}=useTranslation("common")
   const [currentPage, setCurrentPage] = useState(1);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
@@ -340,11 +348,11 @@ export const CenterDropDown = () => {
   };
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Local Center</div>
+      <div className="text-xs font-normal text-[#333333]">{t("localCenter")}</div>
 
       <CustomSelect
         value={centerValue}
-        placeholder="Select Local center"
+        placeholder={t("selectLocalCenter")}
         data={selectOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
