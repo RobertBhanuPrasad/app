@@ -12,7 +12,7 @@ import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
-import { useGetIdentity } from "@refinedev/core";
+import { useGetIdentity, useList } from "@refinedev/core";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import Form from "@components/Formfield";
 import { useFormContext, useFormState } from "react-hook-form";
@@ -32,8 +32,12 @@ import {
 } from "src/constants/CourseConstants";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
 import { Button } from "src/ui/button";
-import { PAYMENT_MODE } from "src/constants/OptionLabels";
-import { PAY_ONLINE, PUBLIC } from "src/constants/OptionValueOrder";
+import { PAYMENT_MODE, TIME_FORMAT } from "src/constants/OptionLabels";
+import {
+  PAY_ONLINE,
+  PUBLIC,
+  TIME_FORMAT_24_HOURS,
+} from "src/constants/OptionValueOrder";
 import { validationSchema } from "./NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
@@ -89,6 +93,11 @@ function NewCourse() {
     PAY_ONLINE
   )?.id;
 
+  const timeFormat24HoursId = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_24_HOURS
+  )?.id;
+
   const { newCourseData } = newCourseStore();
 
   /**
@@ -109,6 +118,7 @@ function NewCourse() {
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
           [NewCourseStep5FormNames?.is_residential_program]: false,
+          [NewCourseStep3FormNames?.hour_format_id]: timeFormat24HoursId,
         }
       : newCourseData;
 
@@ -166,6 +176,8 @@ export const NewCourseTabs = () => {
   };
 
   const { data: loginUserData }: any = useGetIdentity();
+
+  const { data:timeZoneData } = useList({ resource: "time_zones" });
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
@@ -194,11 +206,21 @@ export const NewCourseTabs = () => {
      ...(formData?.courseTypeSettings?.is_online_program ? [] : ["online_url", "state_id", "city_id", "center_id"]),
      ...(formData?.courseTypeSettings?.is_online_program ? ["is_existing_venue"] : []),
      ...(formData?.is_existing_venue == "new_venue" ? ["existingVenue"] : ["newVenue"]),
+    //If country does not have multiple time zones no need to validate time zone drop down 
+    ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
     ]
   );
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
-    ...(formData?.is_residential_program == false ? ["accommodation" , "fee_per_person" , "no_of_residential_spots" ,"accommodation_type_id","accommodation_fee_payment_mode" ] : [])
+    ...(formData?.is_residential_program == false
+      ? [
+          "accommodation",
+          "fee_per_person",
+          "no_of_residential_spots",
+          "accommodation_type_id",
+          "accommodation_fee_payment_mode",
+        ]
+      : []),
   ]);
 
   const validationFieldsStepWise = [

@@ -117,7 +117,7 @@ const NewCourseThankyouPage = () => {
               />
               {data?.data?.status_id?.value}
             </Button>
-            <Link href="/course">
+            <Link href="/Courses/FindCourse">
               <Button
                 variant="outline"
                 className="text-indigo-600 border-indigo-600 "
@@ -146,7 +146,7 @@ const NewCourseThankyouPage = () => {
           <div className="flex h-auto px-4 py-4 m-5 text-base border-2 border-indigo-600 border-dashed rounded-2xl bg-indigo-50">
             <div className="flex-[1] p-4 border-r border-light">
               <p className=" text-accent-secondary">Course ID</p>
-              <Link href="/course">
+              <Link href={`/Courses/ViewCourse/${programId}`}>
                 <p className="font-bold cursor-pointer text-accent-primary">
                   {data?.data?.program_code}
                 </p>
@@ -184,7 +184,7 @@ const NewCourseThankyouPage = () => {
           </div>
 
           {/* Thank you page footer  */}
-          {data?.data?.status_id?.id == courseActiveStatusId && (
+          {data?.data?.status_id?.id === courseActiveStatusId && (
             <section>
               <div className="">
                 <p className="mx-auto text-accent-secondary max-w-fit">
@@ -202,7 +202,6 @@ const NewCourseThankyouPage = () => {
               <p className="mx-auto text-accent-secondary max-w-fit">Or</p>
               {/* Hyper links section */}
               {/* We have to display the links only when the course is active */}
-              {data?.data?.status_id === COURSE_ACTIVE_STATUS_ID && (
                 <div className="flex items-center justify-center gap-4 mt-4 ">
                   <div className="relative">
                     <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
@@ -268,7 +267,6 @@ const NewCourseThankyouPage = () => {
                     </Button>
                   </div>
                 </div>
-              )}
             </section>
           )}
         </div>

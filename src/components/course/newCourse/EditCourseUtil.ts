@@ -31,6 +31,9 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data.organization_id)
     defaultValues.organization_id = data.organization_id as number;
 
+    if(data.program_created_by)
+      defaultValues.program_created_by=data.program_created_by as number
+
   //organizer_ids
   if (data?.program_organizers) {
     defaultValues.organizer_ids = _.map(
