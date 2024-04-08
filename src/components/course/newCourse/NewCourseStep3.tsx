@@ -811,6 +811,8 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 };
 
 const ExistingVenueList = () => {
+  const { data: loginUserData }: any = useGetIdentity();
+
   const { setValue, watch } = useFormContext();
 
   const formData = watch();
@@ -845,7 +847,7 @@ const ExistingVenueList = () => {
     const { data } = await supabaseClient
       .from("venue_view_with_names")
       .select("*")
-      .eq("created_by_user_id", "1")
+      .eq("created_by_user_id", loginUserData?.userData?.id)
       .or(
         `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
       );
@@ -857,13 +859,13 @@ const ExistingVenueList = () => {
     const { data } = await supabaseClient
       .from("venue_view_with_names")
       .select("*")
-      // .neq("created_by_user_id", "1")
+      .neq("created_by_user_id", loginUserData?.userData?.id)
       .or(
         `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
       )
       .range(otherVenueSkip, otherVenueSkip + 5);
 
-    return data;
+      return data;
   };
 
   const fetchVenueData = async () => {
@@ -927,8 +929,6 @@ const ExistingVenueList = () => {
     );
     existingVenueOnChange(existingVenueObject?.[0]);
   };
-
-  const { data: loginUserData }: any = useGetIdentity();
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
 
