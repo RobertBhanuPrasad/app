@@ -1,46 +1,13 @@
-import {
-  DisplayOptions,
-  handleTabsBasedOnStatus,
-  showOptions,
-} from "@components/courseBusinessLogic";
-import { useGetIdentity, useOne } from "@refinedev/core";
+import ParticipantsTab from "@components/course/viewCourse/participantsTab";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useState } from "react";
 import { authProvider } from "src/authProvider";
-import {
-  COURSE_ACCOUNTING_FORM_TAB,
-  COURSE_DETAILS_TAB,
-  PARTICIPANTS_TAB,
-  REVENUE_SUMMARY_TAB,
-} from "src/constants/Tabs";
+import { COURSE_ACCOUNTING_FORM_TAB, COURSE_DETAILS_TAB, PARTICIPANTS_TAB, REVENUE_SUMMARY_TAB } from "src/constants/CourseConstants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-function index() {
-  const { data: loginUserData }: any = useGetIdentity();
-  const { data, isLoading } = useOne({
-    resource: "program",
-    id: 1,
-  });
-  if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
-  }
 
-  return (
-    <div className="">
-      {!isLoading ? (
-        <div className="pl-[1px]">
-          <ViewCourse data={data} />
-        </div>
-      ) : (
-        <div className="flex items-center justify-center">
-          <div>Loading...</div>;
-        </div>
-      )}
-    </div>
-  );
-}
-function ViewCourse({ data }: any) {
+function index() {
   const { t } = useTranslation("common");
   const [selectedValue, setSelectedValue] = useState();
   const tabTriggers: any = [
@@ -66,17 +33,6 @@ function ViewCourse({ data }: any) {
     },
   ];
 
-  const { data: loginUserData }: any = useGetIdentity();
-
-  console.log(
-    DisplayOptions(
-      data?.data?.status_id,
-      data?.data?.program_accounting_status_id,
-      loginUserData?.userData?.user_roles[0]?.role_id?.id
-    ),
-    "show options"
-  );
-
   return (
     <div className="w-full ">
       <Tabs
@@ -90,10 +46,7 @@ function ViewCourse({ data }: any) {
               key={index}
               value={trigger.value}
               className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
-              disabled={handleTabsBasedOnStatus(
-                data?.data?.status_id,
-                trigger.value
-              )}
+              disabled={trigger.disabled}
             >
               <div className="flex flex-col gap-1">
                 {trigger.label}
@@ -113,7 +66,7 @@ function ViewCourse({ data }: any) {
           Place course details tab here
         </TabsContent>
         <TabsContent value={PARTICIPANTS_TAB}>
-          Place participant tab here
+          <ParticipantsTab />
         </TabsContent>
         <TabsContent value={REVENUE_SUMMARY_TAB}>
           Place Revenue Summary tab here

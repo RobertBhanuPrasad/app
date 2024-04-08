@@ -1,23 +1,47 @@
-import Coteacher from "@public/assets/Coteacher"
-import Organizer from "@public/assets/Organizer"
-import Teacher from "@public/assets/Teacher"
-import { useGetIdentity, useSelect } from "@refinedev/core"
-import _ from "lodash"
-import { useTranslation } from "next-i18next"
-import { useState } from "react"
-import { useController, useFormContext } from "react-hook-form"
-import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels"
-import { I_AM_CO_TEACHING, I_AM_ORGANIZER, I_AM_TEACHING } from "src/constants/OptionValueOrder"
-import { Card } from "src/ui/card"
-import CustomSelect from "src/ui/custom-select"
-import { Input } from "src/ui/input"
-import { Label } from "src/ui/label"
-import { MultiSelect } from "src/ui/multi-select"
-import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group"
-import { Switch } from "src/ui/switch"
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel"
+import Coteacher from "@public/assets/Coteacher";
+import Organizer from "@public/assets/Organizer";
+import Teacher from "@public/assets/Teacher";
+import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
+import _ from "lodash";
+import React, { useState } from "react";
+import { useController, useFormContext, useFormState } from "react-hook-form";
+import {
+  NewCourseStep1FormNames,
+  NewCourseStep2FormNames,
+} from "src/constants/CourseConstants";
+import { PROGRAM_ORGANIZER_TYPE, USER_ROLE } from "src/constants/OptionLabels";
+import {
+  I_AM_CO_TEACHING,
+  I_AM_ORGANIZER,
+  I_AM_TEACHING,
+  PROGRAM_ORGANIZER,
+  TEACHER,
+} from "src/constants/OptionValueOrder";
+import { Card } from "src/ui/card";
+import { Input } from "src/ui/input";
+import { Label } from "src/ui/label";
+import { MultiSelect } from "src/ui/multi-select";
+import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import { Switch } from "src/ui/switch";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep1() {
+  const { data: courseData } = useOne({
+    resource: "program",
+    id: 10,
+    meta: {
+      select:
+        "*,program_fee_settings_id(*,program_fee_level_settings!inner(*,fee_level_id(*))),program_fee_level_settings(*,fee_level_id(*)),program_details_info(*,max_capacity,visibility_id(*)),program_organizers(*,user_id(*,contact_id(*))),program_translation_languages(*,language_id(*)),program_languages(*,language_id(*)),program_schedules(*),venue(*,center_id!inner(*),city_id!inner(*),state_id!inner(*)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(*)),program_type_id!inner(*),program_assistant_teachers!inner(*,user_id(*,contact_id(*))),program_teachers!inner(*,user_id(*,contact_id(*)))",
+    },
+  });
   return (
     <div>
       <RadioCards />
@@ -31,109 +55,110 @@ function NewCourseStep1() {
       </div>
       <RegistrationGateway />
     </div>
-  )
+  );
 }
 
-export default NewCourseStep1
+export default NewCourseStep1;
 
 const RegistrationGateway = () => {
-  const { t } = useTranslation("common")
   const {
-    field: { value, onChange },
+    field: { value = false, onChange },
   } = useController({
-    name: "registration_via_third_party",
-  })
+    name: NewCourseStep1FormNames?.is_registration_via_3rd_party,
+  });
 
   const {
     field: { value: registrationSieUrl, onChange: RegistrationUrlOnchange },
+    fieldState:{error}
   } = useController({
-    name: "site_url",
-  })
+    name: NewCourseStep1FormNames?.registration_via_3rd_party_url,
+  });
 
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
-      <div className="text-[14px] font-normal">{t("thirdPartyGatewayRegistration")}</div>
-      <Switch id="registration" className="!w-[57px] !h-[24px]" onCheckedChange={onChange} />
+      <div className="text-[14px] font-normal">
+        Registration via 3rd party gateway
+      </div>
+      <Switch
+        id="registration"
+        className="!w-[57px] !h-[24px]"
+        onCheckedChange={onChange}
+      />
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">
-          <div className="text-xs font-normal text-[#333333]">{t("inputSiteUrl")}</div>
+          <div className="text-xs font-normal text-[#333333]">
+            Please input the site's URL *
+          </div>
           <div className="w-[320px] h-[40px] rounded-[1px] text-[#999999] font-normal">
             <Input
               placeholder="Enter URL"
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
               className="placeholder:text-[#999999]"
+              error={error ? true : false}
             />
+            {error && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            {error?.message}
+          </span>
+        )}
           </div>
         </div>
       )}
     </div>
-  )
-}
-
+  );
+};
 const RadioCards = () => {
-  const { t } = useTranslation("common")
   const {
     field: { value, onChange },
+    fieldState: {error: radioError}
   } = useController({
-    name: "programOrganizedBy",
-  })
-
-  const iAmTeachingId = getOptionValueObjectByOptionOrder(PROGRAM_ORGANIZER_TYPE, I_AM_TEACHING)?.id
-
-  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(PROGRAM_ORGANIZER_TYPE, I_AM_CO_TEACHING)?.id
-
-  const iAmOrganizerId = getOptionValueObjectByOptionOrder(PROGRAM_ORGANIZER_TYPE, I_AM_ORGANIZER)?.id
-
-  const { data: loginUserData }: any = useGetIdentity()
-
-  const user_roles: any[] = loginUserData?.userData?.user_roles
-
-  const hasTeacherRole = user_roles && user_roles.some((role) => role.role_id.value === "Teacher")
-
-  const loginInTeacherData = {
-    value: {
-      id: loginUserData?.userData?.id,
-      contact_id: {
-        first_name: loginUserData?.userData?.contact_id?.first_name,
-        last_name: loginUserData?.userData?.contact_id?.last_name,
-      },
-      created_at: loginUserData?.userData?.created_at,
-      program_type_teachers: loginUserData?.userData?.program_type_teachers,
-      user_identifier: loginUserData?.userData?.user_identifier,
-      user_name: loginUserData?.userData?.user_name,
-    },
-    label: loginUserData?.userData?.contact_id?.first_name + " " + loginUserData?.userData?.contact_id?.last_name,
-  }
-
+    name: NewCourseStep1FormNames?.program_created_by,
+  });
+  const iAmTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_TEACHING
+  )?.id;
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
+  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_ORGANIZER
+  )?.id;
+  const { data: loginUserData }: any = useGetIdentity();
+  const user_roles: any[] = loginUserData?.userData?.user_roles;
+  const hasTeacherRole =
+    user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
+  const loginInTeacherData = loginUserData?.userData?.id;
   const {
     field: { value: teachers, onChange: teachersOnChange },
   } = useController({
-    name: "teachers",
-  })
-
+    name: NewCourseStep2FormNames?.teacher_ids,
+  });
   const handleOnChange = (val: string) => {
-    onChange(val)
-
+    onChange(parseInt(val));
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
-    if (val != iAmOrganizerId) {
+    if (parseInt(val) != iAmOrganizerId) {
       //If teachers does not exist prefill with login user
       if (!teachers) {
-        teachersOnChange([loginInTeacherData])
+        teachersOnChange([loginInTeacherData]);
       }
       //If already teacher are exist then check weather login user is present in teacher drop down or not. If not prefill with login user
-      else if (!teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))) {
-        teachersOnChange([loginInTeacherData, ...teachers])
+      else if (
+        !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
+      ) {
+        teachersOnChange([loginInTeacherData, ...teachers]);
       }
     }
-  }
-
+  };
   return (
-    <RadioGroup value={value} onValueChange={handleOnChange}>
+    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
         {hasTeacherRole && (
           <Label
-            htmlFor={iAmTeachingId}
+            htmlFor={JSON.stringify(iAmTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
             }`}
@@ -147,8 +172,8 @@ const RadioCards = () => {
             >
               <div>
                 <RadioGroupCheckItem
-                  value={iAmTeachingId}
-                  id={iAmTeachingId}
+                  value={JSON.stringify(iAmTeachingId)}
+                  id={JSON.stringify(iAmTeachingId)}
                   className={
                     value === iAmTeachingId
                       ? "!bg-[#7677F4] !border-none "
@@ -167,7 +192,7 @@ const RadioCards = () => {
         )}
         {hasTeacherRole && (
           <Label
-            htmlFor={iAmCoTeachingId}
+            htmlFor={JSON.stringify(iAmCoTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
             }`}
@@ -180,8 +205,8 @@ const RadioCards = () => {
               }`}
             >
               <RadioGroupCheckItem
-                value={iAmCoTeachingId}
-                id={iAmCoTeachingId}
+                value={JSON.stringify(iAmCoTeachingId)}
+                id={JSON.stringify(iAmCoTeachingId)}
                 className={
                   value === iAmCoTeachingId
                     ? "!bg-[#7677F4] !border-none "
@@ -200,7 +225,7 @@ const RadioCards = () => {
           </Label>
         )}
         <Label
-          htmlFor={iAmOrganizerId}
+          htmlFor={JSON.stringify(iAmOrganizerId)}
           className={`text-[#999999] font-normal ${
             value === iAmOrganizerId ? "text-[#7677F4]" : ""
           }`}
@@ -213,8 +238,8 @@ const RadioCards = () => {
             }`}
           >
             <RadioGroupCheckItem
-              value={iAmOrganizerId}
-              id={iAmOrganizerId}
+              value={JSON.stringify(iAmOrganizerId)}
+              id={JSON.stringify(iAmOrganizerId)}
               className={
                 value === iAmOrganizerId
                   ? "!bg-[#7677F4] !border-none "
@@ -225,7 +250,6 @@ const RadioCards = () => {
               <Organizer
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
-
               <div className="w-[240px] text-wrap text-center justify-center">
                 I am organizing this course for another teacher
               </div>
@@ -233,12 +257,20 @@ const RadioCards = () => {
           </Card>
         </Label>
       </div>
+      {radioError && (
+          <span className="text-[#FF6D6D] text-[14px]">
+            {radioError?.message}
+          </span>
+        )}
     </RadioGroup>
-  )
-}
+  );
+};
 
 const OrganizationDropDown = () => {
-  const { t } = useTranslation("common")
+  const [pageSize, setPageSize] = useState<number>(1);
+
+  const [searchValue, setSearchValue] = useState<string>("");
+
   const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
     optionLabel: "name",
@@ -250,152 +282,162 @@ const OrganizationDropDown = () => {
         value,
       },
     ],
-  })
+  });
 
   const {
     field: { value, onChange },
     fieldState: { error: organizationError },
   } = useController({
-    name: "organization",
-  })
+    name: NewCourseStep1FormNames?.organization_id,
+  });
 
-  const {
-    field: { onChange: organizationDetailsOnChange },
-  } = useController({
-    name: "organizationDetails",
-  })
+  const handleSearch = (val: { target: { value: string } }) => {
+    onSearch(val.target.value);
+    setSearchValue(val.target.value);
+  };
 
-  const {
-    resetField,
-    setValue,
-    formState: { errors },
-  } = useFormContext()
+  const handleOnBottomReached = () => {
+    if (queryResult?.data?.data && queryResult?.data?.total >= pageSize) {
+      setPageSize((previousLimit: number) => previousLimit + 10);
+    }
+  };
 
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333]">{t("organization")}</div>
-
-        <CustomSelect
-          error={organizationError}
+        <div className="text-xs font-normal text-[#333333]">Organization *</div>
+        <Select
           value={value}
-          placeholder={t("selectOrganization")}
-          data={options}
-          onBottomReached={() => {}}
-          onSearch={(val: string) => {
-            onSearch(val)
+          onValueChange={(value: any) => {
+            onChange(value);
           }}
-          onChange={(val) => {
-            onChange(val)
-            resetField("organization")
-            setValue("organization", val)
-            organizationDetailsOnChange(
-              queryResult?.data?.data?.filter(
-                //Need to change val?.value to val in future.
-                (value) => value?.id == val
-              )?.[0]
-            )
-          }}
-        />
+        >
+          <SelectTrigger className="w-[320px]" error={organizationError ? true : false}>
+            <SelectValue placeholder="Select Organization" />
+          </SelectTrigger>
+          <SelectContent>
+            <Input value={searchValue} onChange={handleSearch} />
+            <SelectItems onBottomReached={handleOnBottomReached}>
+              {options?.map((option, index) => {
+                return (
+                  <div>
+                    <SelectItem
+                      key={option.value}
+                      value={option.value}
+                      className="h-[44px]"
+                    >
+                      {option.label}
+                    </SelectItem>
+                    {index < options?.length - 1 && (
+                      <hr className="border-[#D6D7D8]" />
+                    )}
+                  </div>
+                );
+              })}
+            </SelectItems>
+          </SelectContent>
+        </Select>
 
-        {errors.organization && <span className="text-[#FF6D6D] text-[12px]">{t("organizerName")}</span>}
+        {organizationError && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            {organizationError?.message}
+          </span>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 const ProgramOrganizerDropDown = () => {
-  const { t } = useTranslation("common")
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
 
-  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     field: { value, onChange },
+    fieldState:{error:programOrganizerError}
   } = useController({
-    name: "programOrganizers",
-  })
+    name: NewCourseStep1FormNames?.organizer_ids,
+  });
+
+  //Finding program Organizer role id
+  const programOrganizationId = getOptionValueObjectByOptionOrder(
+    USER_ROLE,
+    PROGRAM_ORGANIZER
+  )?.id;
 
   const { queryResult, onSearch } = useSelect({
     resource: "users",
     meta: {
-      select: "*,contact_id!inner(first_name,last_name),user_roles!inner(role_id)",
+      select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
     },
     filters: [
+      //Fetch the users with Program Organizer role
       {
         field: "user_roles.role_id",
         operator: "eq",
-        value: 43,
+        value: programOrganizationId,
       },
     ],
     defaultValue: value,
     onSearch: (value) => [
       {
-        field: "contact_id.first_name",
-        operator: "contains",
-        value,
-      },
-      {
-        field: "contact_id.last_name",
+        field: "contact_id.full_name",
         operator: "contains",
         value,
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
-  })
+  });
+
   const handleOnBottomReached = () => {
-    if (queryResult?.data?.data && queryResult?.data?.data?.length >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1)
-  }
+    if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 10);
+  };
 
   const options: any =
     queryResult?.data?.data?.map((item) => {
       return {
-        label: item?.contact_id?.first_name + " " + item?.contact_id?.last_name,
+        label: item?.contact_id?.full_name,
         value: item.id,
-      }
-    }) ?? []
-
-  //If logged user is not present in data then append the value and send it to data
-  const isUserPresentInData = options?.find((obj: { val: number }) => obj?.val == loginUserData?.userData?.id)
-
-  const filteredOptions = isUserPresentInData
-    ? options
-    : [
-        ...options,
-        {
-          label: loginUserData?.userData?.contact_id?.full_name,
-          value: loginUserData?.userData?.id,
-        },
-      ]
+      };
+    }) ?? [];
 
   return (
     <div className="w-80 flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">{t("programOrganizer")}</div>
+      <div className="text-xs font-normal text-[#333333]">
+        Program Organizer *
+      </div>
       <MultiSelect
         value={value}
-        placeholder={t("enterOrganizerName")}
-        data={filteredOptions}
+        placeholder="Enter Program organizer Name"
+        data={options}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
-          onSearch(val)
+          onSearch(val);
         }}
         onChange={onChange}
         getOptionProps={(option: number) => {
           if (option === loginUserData?.userData?.id) {
             return {
               disable: true,
-            }
+            };
           } else {
             return {
               disable: false,
-            }
+            };
           }
         }}
+        error={programOrganizerError}
       />
+      {programOrganizerError && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            {programOrganizerError?.message}
+          </span>
+        )}
     </div>
-  )
-}
+  );
+};

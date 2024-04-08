@@ -1,145 +1,185 @@
-import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1"
-import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2"
-import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3"
-import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4"
-import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5"
-import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6"
-import Car from "@public/assets/Car"
-import Fees from "@public/assets/Fees"
-import Group from "@public/assets/Group"
-import Info from "@public/assets/Info"
-import Profile from "@public/assets/Profile"
-import Review from "@public/assets/Review"
-import Venue from "@public/assets/Venue"
-import { useGetIdentity } from "@refinedev/core"
-import { useStepsForm } from "@refinedev/react-hook-form"
-import { GetServerSideProps } from "next"
-import { useTranslation } from "next-i18next"
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"
-import { FormProvider } from "react-hook-form"
-import { authProvider } from "src/authProvider"
-import { Button } from "src/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs"
+import Form from "@components/Formfield";
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
+import NewCourseStep1 from "@components/course/newCourse/NewCourseStep1";
+import NewCourseStep2 from "@components/course/newCourse/NewCourseStep2";
+import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
+import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
+import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
+import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
+import Car from "@public/assets/Car";
+import Fees from "@public/assets/Fees";
+import Group from "@public/assets/Group";
+import Info from "@public/assets/Info";
+import Profile from "@public/assets/Profile";
+import Venue from "@public/assets/Venue";
+import { useGetIdentity } from "@refinedev/core";
+import { useFormContext } from "react-hook-form";
+import {
+  ACCOMMODATION_STEP_NUMBER,
+  BASIC_DETAILS_STEP_NUMBER,
+  CONTACT_INFO_STEP_NUMBER,
+  COURSE_DETAILS_STEP_NUMBER,
+  FEE_STEP_NUMBER,
+  NewCourseStep1FormNames,
+  NewCourseStep2FormNames,
+  NewCourseStep3FormNames,
+  NewCourseStep4FormNames,
+  NewCourseStep5FormNames,
+  NewCourseStep6FormNames,
+  TIME_AND_VENUE_STEP_NUMBER,
+} from "src/constants/CourseConstants";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
+import { Button } from "src/ui/button";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { VISIBILITY } from "src/constants/OptionLabels";
+import { PUBLIC } from "src/constants/OptionValueOrder";
+
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { z } from "zod";
+import { validationSchema } from "./NewCourseValidations";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import _ from "lodash";
 
 function index() {
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
 
+  const { viewPreviewPage, viewThankyouPage } = newCourseStore();
+
+  console.log(loginUserData);
   if (!loginUserData?.userData) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
-  return <NewCourse />;
+
+  if (viewThankyouPage) {
+    return (
+      <div className="mb-8">
+        <NewCourseThankyouPage />;
+      </div>
+    );
+  }
+
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />;
+  } else {
+    return <NewCourse />;
+  }
 }
 function NewCourse() {
-  const { t } = useTranslation("common")
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
+  const { currentStep, setCurrentStep } = newCourseStore();
 
-  // Schema definition for form validation
-  // const schema = z.object({
-  //   organization: z.object({
-  //     // Define the schema for the organization object's properties here
-  //     // For example:
-  //     value: z.number(),
-  //     label: z.string(),
-  //     // Add more properties as needed
-  //   }),
-  // });
-
-  const loggedUserData = {
-    value: loginUserData?.userData?.id,
-    label: loginUserData?.userData?.contact_id?.first_name + " " + loginUserData?.userData?.contact_id?.last_name,
-  }
-
-  // Destructuring values from useStepsForm hook
-  const methods = useStepsForm({
-    refineCoreProps: {
-      action: "create",
-      resource: "event",
-    },
-
-    // resolver: zodResolver(schema),
-    defaultValues: {
-      visibility: "public",
-      displayLanguage: "true",
-      isGeoRestriction: "true",
-      isResidentialCourse: "No",
-      accommodationPaymentMode: "Pay Online",
-      programOrganizers: [loggedUserData],
-    },
-  })
-
-  const {
-    refineCore: { onFinish, formLoading },
-    handleSubmit,
-    steps: { currentStep, gotoStep },
-    formState: { errors },
-  } = methods
+  const loggedUserData = loginUserData?.userData?.id;
 
   // Array of step titles, icons, and colors
   const stepTitles = [
     {
-      value: "0",
-      label: t("basicDetails"),
-      icon: <Profile color={` ${currentStep == 0 ? "#7677F4" : "#999999"}`} />,
+      value: BASIC_DETAILS_STEP_NUMBER,
+      label: "Basic Details",
+      icon: (
+        <Profile
+          color={` ${
+            currentStep == BASIC_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
-      value: "1",
-      label: t("courseDetails"),
-      icon: <Group color={` ${currentStep == 1 ? "#7677F4" : "#999999"}`} />,
+      value: COURSE_DETAILS_STEP_NUMBER,
+      label: "Course Details",
+      icon: (
+        <Group
+          color={` ${
+            currentStep == COURSE_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
-      value: "2",
-      label: t("timeAndVenue"),
-      icon: <Venue color={` ${currentStep == 2 ? "#7677F4" : "#999999"}`} />,
+      value: TIME_AND_VENUE_STEP_NUMBER,
+      label: "Time and Venue",
+      icon: (
+        <Venue
+          color={` ${
+            currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
-      value: "3",
-      label: t("fees"),
-      icon: <Fees color={` ${currentStep == 3 ? "#7677F4" : "#999999"}`} />,
+      value: FEE_STEP_NUMBER,
+      label: "Fees",
+      icon: (
+        <Fees
+          color={` ${currentStep == FEE_STEP_NUMBER ? "#7677F4" : "#999999"}`}
+        />
+      ),
     },
     {
-      value: "4",
-      label: t("accommodation"),
-      icon: <Car color={` ${currentStep == 4 ? "#7677F4" : "#999999"}`} />,
+      value: ACCOMMODATION_STEP_NUMBER,
+      label: "Accommodation",
+      icon: (
+        <Car
+          color={` ${
+            currentStep == ACCOMMODATION_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
-      value: "5",
-      label: t("contactInfo"),
-      icon: <Info color={` ${currentStep == 5 ? "#7677F4" : "#999999"}`} />,
+      value: CONTACT_INFO_STEP_NUMBER,
+      label: "Contact Info",
+      icon: (
+        <Info
+          color={` ${
+            currentStep == CONTACT_INFO_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
-
-    {
-      value: "6",
-      label: t("review"),
-      icon: <Review color={` ${currentStep == 6 ? "#7677F4" : "#999999"}`} />,
-    },
-  ]
+  ];
 
   const onSubmit = (formData: any) => {
-    console.log(formData)
-    // Call onFinish with the form data if needed
-    onFinish(formData)
-  }
+    console.log(formData);
+  };
+
+  //Finding program Organizer role id
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
+
+  const defaultValues = {
+    [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
+    [NewCourseStep2FormNames?.is_language_translation_for_participants]: true,
+    [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
+    [NewCourseStep5FormNames?.is_residential_program]: "No",
+    [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: "Pay Online",
+    [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
+  };
 
   // If the form is still loading, display a loading message
-  if (formLoading) {
-    return <div>Loading...</div>
-  }
+  // if (formLoading) {
+  //   return <div>Loading...</div>;
+  // }
+
   const contentStylings =
-    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background "
+    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
   return (
     <div className="bg-[white]  ">
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
           <TabsList className="h-full bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
-            <div className="flex flex-col  h-full gap-4 ">
+            <div className="flex flex-col h-full gap-4 ">
               {stepTitles.map((tab, index) => (
                 <TabsTrigger
                   key={index}
-                  value={tab.value}
+                  value={JSON.stringify(tab.value)}
                   className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                  onClick={() => gotoStep(index)}
+                  onClick={() => setCurrentStep(tab.value)}
                 >
-                  {JSON.stringify(currentStep) === tab.value && (
+                  {currentStep === tab.value && (
                     <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
                   )}
                   <div className="flex flex-row gap-[10px] ml-[14px] items-center">
@@ -152,98 +192,183 @@ function NewCourse() {
           </TabsList>
 
           <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
-            <FormProvider {...methods}>
-              <form autoComplete="off">
-                <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
-                  <div>
-                    <TabsContent value="0" className={contentStylings}>
-                      <NewCourseStep1 />
-                    </TabsContent>
-                    <TabsContent value="1" className={contentStylings}>
-                      <NewCourseStep2 />
-                    </TabsContent>
-                    <TabsContent value="2" className={contentStylings}>
-                      <NewCourseStep3 />
-                    </TabsContent>
-                    <TabsContent value="3" className={contentStylings}>
-                      <NewCourseStep4 />
-                    </TabsContent>
-                    <TabsContent value="4" className={contentStylings}>
-                      <NewCourseStep5 />
-                    </TabsContent>
-                    <TabsContent value="5" className={contentStylings}>
-                      <NewCourseStep6 />
-                    </TabsContent>
-                    <TabsContent value="6" className={contentStylings}>
-                      {t("accommodationDetails")}
-                    </TabsContent>
-                  </div>
-
-                  <div className="flex self-end justify-center gap-4 w-full mt-2">
-                    {currentStep > 0 && (
-                      <Button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          gotoStep(currentStep - 1)
-                        }}
-                        className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
-                      >
-                        {t("previous")}
-                      </Button>
-                    )}
-                    {currentStep < stepTitles.length - 1 && (
-                      <Button
-                        className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          gotoStep(currentStep + 1)
-                        }}
-                      >
-                        {t("next")}
-                      </Button>
-                    )}
-                    {currentStep === stepTitles.length - 1 && (
-                      <Button
-                        className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
-                        onClick={handleSubmit(onSubmit)}
-                      >
-                        {t("save")}
-                      </Button>
-                    )}
-                  </div>
+            <Form
+              onSubmit={onSubmit}
+              defaultValues={defaultValues}
+              schema={validationSchema()}
+            >
+              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
+                <div>
+                  <TabsContent
+                    value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep1 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(COURSE_DETAILS_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep2 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(TIME_AND_VENUE_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep3 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(FEE_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep4 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(ACCOMMODATION_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep5 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(CONTACT_INFO_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep6 />
+                  </TabsContent>
                 </div>
-              </form>
-            </FormProvider>
+
+                <Footer stepTitles={stepTitles} />
+              </div>
+            </Form>
           </div>
         </div>
       </Tabs>
     </div>
-  )
+  );
 }
 
-export default index
+export default index;
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const { authenticated, redirectTo } = await authProvider.check(context)
+const Footer = ({ stepTitles }: any) => {
+  const { watch, getValues } = useFormContext();
+  const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
+    newCourseStore();
 
-  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common"])
+  const { data: loginUserData }: any = useGetIdentity();
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  );
 
-  if (!authenticated) {
-    3
-    return {
-      props: {
-        ...translateProps,
-      },
-      redirect: {
-        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || "/")}`,
-        permanent: false,
-      },
+  const formData = getValues();
+
+  let RequiredNewCourseStep1FormNames = _.omit(
+    NewCourseStep1FormNames,
+    formData?.is_registration_via_3rd_party
+      ? []
+      : ["registration_via_3rd_party_url"]
+  );
+
+  let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
+    ...(formData?.program_type?.has_alias_name
+      ? []
+      : ["program_alias_name_id"]),
+    ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
+    ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
+  ]);
+
+  let RequiredNewCourseStep3FormNames = _.omit(
+    NewCourseStep3FormNames,
+    formData?.program_type?.is_online_program ? [] : ["online_url"]
+  );
+
+  let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
+    ...(formData?.is_residential_program == "No" ? ["accommodation"] : []),
+    ...(formData?.is_residential_program == "No" ? ["fee_per_person"] : []),
+    ...(formData?.is_residential_program == "No"
+      ? ["no_of_residential_spots"]
+      : []),
+    ...(formData?.is_residential_program == "No"
+      ? ["accommodation_type_id"]
+      : []),
+  ]);
+
+  const validationFieldsStepWise = [
+    Object.values(RequiredNewCourseStep1FormNames),
+    Object.values(RequiredNewCourseStep2FormNames),
+    Object.values(RequiredNewCourseStep3FormNames),
+    Object.values(NewCourseStep4FormNames),
+    Object.values(RequiredNewCourseStep5FormNames),
+    Object.values(NewCourseStep6FormNames),
+  ];
+
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+
+  const handleClickReviewDetailsButton = async (
+    currentStepFormNames: any[]
+  ) => {
+    const formData = watch();
+
+    const isAllFieldsFilled = await ValidateCurrentStepFields(
+      currentStepFormNames
+    );
+    if (isAllFieldsFilled) {
+      setViewPreviewPage(true);
+      setNewCourseData(formData);
     }
-  }
+  };
 
-  return {
-    props: {
-      ...translateProps,
-    },
-  }
-}
+  const handleClickNext = async (currentStepFormNames: any[]) => {
+    const isAllFieldsFilled = await ValidateCurrentStepFields(
+      currentStepFormNames
+    );
+    if (isAllFieldsFilled) {
+      setCurrentStep(currentStep + 1);
+    }
+    return isAllFieldsFilled;
+  };
+
+  const handleClickPrevious = () => {
+    setCurrentStep(currentStep - 1);
+  };
+
+  return (
+    <div className="flex self-end justify-center gap-4 w-full mt-2">
+      {currentStep > 1 && (
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            handleClickPrevious();
+          }}
+          className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
+        >
+          Previous
+        </Button>
+      )}
+
+      {currentStep < stepTitles.length && (
+        <Button
+          className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+          onClick={async (e) => {
+            e.preventDefault();
+            await handleClickNext(validationFieldsStepWise[currentStep - 1]);
+          }}
+        >
+          Next
+        </Button>
+      )}
+
+      {currentStep == CONTACT_INFO_STEP_NUMBER && (
+        <Button
+          className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
+          onClick={async () => {
+            await handleClickReviewDetailsButton(
+              validationFieldsStepWise[currentStep - 1]
+            );
+          }}
+        >
+          Review Details
+        </Button>
+      )}
+    </div>
+  );
+};

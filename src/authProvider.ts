@@ -122,15 +122,20 @@ export const authProvider: AuthBindings = {
   },
   getIdentity: async () => {
     const { data } = await supabaseClient.auth.getUser();
-    const { data: userData } = await supabaseClient
+    const { data: userData, error } = await supabaseClient
       .from("users")
-      .select("*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)")
+      .select(
+        "*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
+      )
       .eq("user_identifier", data?.user?.id);
 
+    if (error) {
+      console.error("Error while fetching login user data", error);
+    }
     if (userData) {
       return {
         data,
-        userData:userData?.[0],
+        userData: userData?.[0],
       };
     }
     return null;
