@@ -234,8 +234,8 @@ interface ProgramFeeLevelSettingsDataBaseType {
   program_fee_setting_id?: number | ProgramFeeSettingsDataBaseType;
   custom_fee_label?: string;
   early_bird_sub_total?: number;
-  early_brid_tax?: number;
-  early_brid_total?: number;
+  early_bird_tax?: number;
+  early_bird_total?: number;
   fee_level_id?: number | OptionValuesDataBaseType;
   is_custom_fee?: boolean;
   program_id?: number | ProgramDataBaseType;
@@ -601,5 +601,78 @@ interface ProgramDataBaseType {
   program_organizers?: ProgramOrganizersDataBaseType[];
   last_modified_by_user_id?: number | UsersDataBaseType;
   allowed_countries?: string[];
+  bcc_registration_confirmation_email?: string;
+  program_contact_detials?: {
+    prgram_id?: number;
+    id?: number;
+    contact_name?: string;
+    contact_email?: string;
+    contact_number?: number;
+  }[];
+}
+
+interface NewCourseFormFieldTypes {
+  id?: number;
+
+  //step 1
+  organization_id?: number;
+  organizer_ids?: number[];
+  is_registration_via_3rd_party?: boolean;
+  registration_via_3rd_party_url?: string;
+  program_created_by?: number;
+
+  //step 2
+  program_type_id?: number;
+  teacher_ids?: number[];
+  assistant_teacher_ids?: number[];
+  visibility_id?: number;
+  is_language_translation_for_participants?: boolean;
+  program_alias_name_id?: number;
+  is_geo_restriction_applicable?: boolean;
+  language_ids?: number[];
+  translation_language_ids?: number[];
+  allowed_countries?: string[];
+  max_capacity?: number;
+
+  // Step 3
+  online_url?: string;
+  hour_format_id?: number;
+  time_zone_id?: number;
+  schedules?: any[];
+  state_id?: number;
+  city_id?: number;
+  center_id?: number;
+  venue_id?: number;
+  is_existing_venue?: string;
+  existingVenue?: VenueDataBaseType;
+
+  // Step 4
+  is_early_bird_enabled?: boolean;
+  early_bird_cut_off_period?: number;
+  program_fee_level_settings?: {
+    program_id?: number;
+    id?: number;
+    total?: number;
+    early_bird_total?: number;
+    is_enable?: boolean;
+    fee_level_id?: number;
+  }[];
+
+  // Step 5
+  accommodation?: any[];
+  is_residential_program?: boolean;
+  fee_per_person?: number;
+  no_of_residential_spots?: number;
+  accommodation_type_id?: number;
+  accommodation_fee_payment_mode?: number;
+
+  // Step 6
+  contact?: {
+    program_id?: number;
+    id?: number;
+    contact_name?: string;
+    contact_email?: string;
+    contact_number?: number;
+  }[];
   bcc_registration_confirmation_email?: string;
 }

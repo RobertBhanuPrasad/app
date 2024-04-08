@@ -37,7 +37,6 @@ export function MultiSelect({
 }) {
   const filteredData = uniqBy(data, "value");
 
-
   // Refs to manage focus and detect clicks outside the component
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const popoverDropdownRef = React.useRef<HTMLDivElement>(null);
@@ -46,7 +45,7 @@ export function MultiSelect({
   const [open, setOpen] = React.useState(false);
   const [popoverOpen, setPopoverOpen] = React.useState(false);
 
-  const [selected, setSelected] = React.useState<number[]>(propValue);
+  const [selected, setSelected] = React.useState<any[]>(propValue);
 
   const headerStyles = selectBoxStyles?.header || "";
   const dropdownStyles = selectBoxStyles?.dropdown || "";
@@ -85,14 +84,14 @@ export function MultiSelect({
     };
   }, [open, popoverOpen]);
 
-  const findObjectById = (id: number): DataItem | undefined => {
+  const findObjectById = (id: any): DataItem | undefined => {
     // Find the object with the given id
-    return filteredData.find((obj) => parseInt(obj.value) === id);
+    return filteredData.find((obj) => obj.value === id);
   };
 
   // Filter out selected values from the dropdown
   const selectables = filteredData.filter(
-    (obj) => !selected.includes(parseInt(obj.value))
+    (obj) => !selected.includes(obj.value)
   );
 
   return (
@@ -182,7 +181,7 @@ export function MultiSelect({
         </div>
 
         {/* Selected Items List (Popover) */}
-        <div className="relative mt-2" ref={popoverDropdownRef}>
+        <div className="relative" ref={popoverDropdownRef}>
           {popoverOpen ? (
             <CommandGroup
               className={`absolute w-full  rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in ${dropdownStyles}`}
@@ -222,7 +221,7 @@ export function MultiSelect({
         </div>
 
         {/* Items to be selected list (Dropdown) */}
-        <div className="relative mt-2 z-50" ref={dropdownRef}>
+        <div className="relative z-50" ref={dropdownRef}>
           {open && (
             <div className="absolute w-full rounded-md border bg-[#FFFFFF] text-popover-foreground shadow-md outline-none animate-in">
               {/* Search input */}

@@ -1,9 +1,11 @@
-import { useMany, useOne } from '@refinedev/core'
+import LoadingIcon from '@public/assets/LoadingIcon'
+import { useGetIdentity, useMany, useOne } from '@refinedev/core'
 import _ from 'lodash'
-import { useState } from 'react'
-import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
+import { useEffect, useState } from 'react'
+import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT } from 'src/constants/OptionLabels'
 import { Button } from 'src/ui/button'
-import { formatDateString } from 'src/utility/DateFunctions'
+import { supabaseClient } from 'src/utility'
+import { formatDateString, subtractDaysAndFormat } from 'src/utility/DateFunctions'
 import { getOptionValueObjectById } from 'src/utility/GetOptionValuesByOptionLabel'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import { EditModalDialog } from './NewCoursePreviewPageEditModal'
@@ -13,9 +15,36 @@ import NewCourseStep3 from './NewCourseStep3'
 import NewCourseStep4 from './NewCourseStep4'
 import NewCourseStep5 from './NewCourseStep5'
 import NewCourseStep6 from './NewCourseStep6'
+import { handlePostProgramData } from './NewCourseUtil'
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { data }: any = useGetIdentity()
+
+  const [courseFeeSettings, setCourseFeeSettings] = useState<any>()
+
+  const fetchFeeData = async () => {
+    //TODO: Need to integrate with form Data
+    const { data, error } = await supabaseClient.functions.invoke('course-fee', {
+      method: 'POST',
+      body: {
+        state_id: '3',
+        city_id: '3',
+        center_id: '1',
+        start_date: '2024-03-18T07:00:00-00:00',
+        program_type_id: newCourseData?.program_type_id
+      }
+    })
+    console.log(error, 'error', data)
+    setCourseFeeSettings(data)
+  }
+
+  useEffect(() => {
+    fetchFeeData()
+  }, [])
 
   const creator =
     newCourseData?.program_created_by &&
@@ -29,9 +58,11 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.organization_id
   })
 
+  const taxRate = organizationName?.data?.tax_enabled ? organizationName?.data?.tax_rate / 100 : 0
+
   const { data: ProgramOrganizer } = useMany({
     resource: 'users',
-    ids: newCourseData?.organizer_ids,
+    ids: newCourseData?.organizer_ids || [],
     meta: { select: 'contact_id(full_name)' }
   })
 
@@ -43,7 +74,7 @@ export default function NewCourseReviewPage() {
 
   const { data: CourseLanguages } = useMany({
     resource: 'languages',
-    ids: newCourseData?.language_ids,
+    ids: newCourseData?.language_ids || [],
     meta: { select: 'language_name' }
   })
 
@@ -55,17 +86,19 @@ export default function NewCourseReviewPage() {
 
   const { data: CourseAccomidation } = useMany({
     resource: 'accomdation_types',
-    ids: _.map(newCourseData?.accommodation, 'accommodation_type_id')
+    ids: _.map(newCourseData?.accommodation, 'accommodation_type_id') || []
   })
 
   const courseAccomodationNames = CourseAccomidation?.data?.map((accomdation: any) => {
     return accomdation?.name
   })
+
   const { data: CourseTranslation } = useMany({
     resource: 'languages',
-    ids: newCourseData?.translation_language_ids,
+    ids: newCourseData?.translation_language_ids || [],
     meta: { select: 'language_name' }
   })
+
   const languagesTranslations = CourseTranslation?.data
     ?.map((CourseTranslation: any) => {
       return CourseTranslation?.language_name
@@ -74,15 +107,13 @@ export default function NewCourseReviewPage() {
 
   const { data: CourseTeachers } = useMany({
     resource: 'users',
-    ids: newCourseData?.teacher_ids,
+    ids: newCourseData?.teacher_ids || [],
     meta: { select: 'contact_id(full_name)' }
   })
 
-  const CourseTeachersNames = CourseTeachers?.data
-    ?.map(teacher_id => {
-      if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
-    })
-    .join(', ')
+  const CourseTeachersNames = CourseTeachers?.data?.map(teacher_id => {
+    if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
+  })
 
   const { data: courseType } = useOne({
     resource: 'program_types',
@@ -100,6 +131,11 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.time_zone_id
   })
 
+  const { data: feeLevelData } = useMany({
+    resource: 'option_values',
+    ids: _.map(newCourseData?.program_fee_level_settings, 'fee_level_id')
+  })
+
   const [openBasicDetails, setOpenBasicDetails] = useState(false)
   const [openCourseDetails, setOpenCourseDetails] = useState(false)
   const [openVenueDetails, setOpenVenueDetails] = useState(false)
@@ -108,9 +144,27 @@ export default function NewCourseReviewPage() {
   const [openFeesDetails, setOpenFeesDetails] = useState(false)
   const [clickedButton, setClickedButton] = useState<string | null>(null)
 
+  const { setProgramId } = newCourseStore()
+
+  const handClickContinue = async () => {
+    setIsSubmitting(true)
+
+    /**
+     * This variable will retur true if all api calls has been successfully it will return false if any api call fails
+     */
+    const isPosted = await handlePostProgramData(newCourseData, data?.userData?.id, setProgramId)
+
+    if (isPosted) {
+      setViewPreviewPage(false)
+      setViewThankyouPage(true)
+    } else {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold">Review Course Details </div>
+      <div className="text-[24px] my-4 font-semibold">Review Your Details Right Here</div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -218,7 +272,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Program Visibility</p>
-              <p className="font-semibold truncate text-accent-secondary">{visibility?.value}</p>
+              <p className="font-semibold truncate text-accent-secondary">{newCourseData?.visibility_id}</p>
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light">Online zoom URL</p>
@@ -302,7 +356,6 @@ export default function NewCourseReviewPage() {
                 const schedule = `${formatDateString(data.date)} | ${data?.startHour} : ${data?.startMinute}  ${
                   data?.startTimeFormat
                 } to ${data?.endHour} : ${data?.endMinute}  ${data?.endTimeFormat}`
-
                 return <p className="font-semibold truncate text-accent-secondary">{schedule}</p>
               })}
             </div>
@@ -327,43 +380,42 @@ export default function NewCourseReviewPage() {
             />{' '}
           </div>
           {/* body */}
-          <div className="grid grid-cols-4 gap-4 mt-2">
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Regular</p>
-              <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Student </p>
-              <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Repeater </p>
-              <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Senior </p>
-              <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Early Bird Regular </p>
-              <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Early Bird Student </p>
-              <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Early Bird Repeater </p>
-              <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Early Bird Senior </p>
-              <p className="font-semibold truncate text-accent-secondary">MYR 160.00</p>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light ">Early bird cut-off period</p>
-              <p className="font-semibold truncate text-accent-secondary">16 Feb, 2024 (15 Days)</p>
-            </div>
+          <div className="grid grid-cols-3 gap-4 mt-2">
+            {newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
+              return (
+                <div className=" min-w-72">
+                  <p className="text-sm font-normal text-accent-light ">{feeLevelData?.data?.[index]?.value}</p>
+                  <p className="font-semibold truncate text-accent-secondary">MYR {feeLevel.total}</p>
+                </div>
+              )
+            })}
+
+            {newCourseData?.is_early_bird_enabled &&
+              newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
+                return (
+                  <div className=" min-w-72">
+                    <p className="text-sm font-normal text-accent-light ">
+                      Early Bird {feeLevelData?.data?.[index]?.value}
+                    </p>
+                    <p className="font-semibold truncate text-accent-secondary">MYR {feeLevel.early_bird_total}</p>
+                  </div>
+                )
+              })}
+            {courseFeeSettings?.[0]?.is_program_fee_editable &&
+              courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
+              courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
+                <div className=" min-w-72">
+                  <p className="text-sm font-normal text-accent-light ">Early bird cut-off period</p>
+                  <p className="font-semibold truncate text-accent-secondary">
+                    {subtractDaysAndFormat(
+                      courseFeeSettings?.[0]?.early_bird_cut_off_period,
+                      newCourseData?.schedules?.[0]?.date
+                    )}{' '}
+                    ({courseFeeSettings?.[0]?.early_bird_cut_off_period} Days)
+                  </p>
+                </div>
+              )}
+
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light ">Disable Pay Later Label123?</p>
               <p className="font-semibold truncate text-accent-secondary">Yes</p>
@@ -453,14 +505,13 @@ export default function NewCourseReviewPage() {
           </div>
         </section>
         <div className="flex items-center justify-center ">
-          <Button
-            onClick={() => {
-              setViewPreviewPage(false)
-              setViewThankyouPage(true)
-            }}
-          >
-            Continue
-          </Button>
+          {isSubmitting ? (
+            <Button disabled>
+              <LoadingIcon />
+            </Button>
+          ) : (
+            <Button onClick={handClickContinue}>Continue</Button>
+          )}
         </div>
       </div>
     </div>

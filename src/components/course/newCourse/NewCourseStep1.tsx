@@ -34,14 +34,6 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep1() {
-  const { data: courseData } = useOne({
-    resource: "program",
-    id: 10,
-    meta: {
-      select:
-        "*,program_fee_settings_id(*,program_fee_level_settings!inner(*,fee_level_id(*))),program_fee_level_settings(*,fee_level_id(*)),program_details_info(*,max_capacity,visibility_id(*)),program_organizers(*,user_id(*,contact_id(*))),program_translation_languages(*,language_id(*)),program_languages(*,language_id(*)),program_schedules(*),venue(*,center_id!inner(*),city_id!inner(*),state_id!inner(*)),program_contact_details(*),program_accommodations!inner(*,accommodation_type_id(*)),program_type_id!inner(*),program_assistant_teachers!inner(*,user_id(*,contact_id(*))),program_teachers!inner(*,user_id(*,contact_id(*)))",
-    },
-  });
   return (
     <div>
       <RadioCards />

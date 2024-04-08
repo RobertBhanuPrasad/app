@@ -9,8 +9,17 @@ import { Checkbox } from "src/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { columns } from "./Columns";
 import { HttpError, useTable } from "@refinedev/core";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 
 function index() {
+  const { viewPreviewPage } = newCourseStore();
+
+  // If user click on edit course in menu option we have to open review page instead of table
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />;
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <HeaderSection />

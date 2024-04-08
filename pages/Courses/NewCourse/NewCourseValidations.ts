@@ -7,13 +7,13 @@ export const validationSchema = () => {
     }),
     organizer_ids: z.array(z.number(), {
       required_error: "Select Organizer Name",
-    }),
+    }).refine((val) => val.length <= 10 , {message:"Maximum number of organizer allowed is 10"}),
     program_created_by: z.number({
       required_error: "Select who is going to teach the course",
     }),
     is_registration_via_3rd_party: z.boolean().optional(),
     registration_via_3rd_party_url: z
-      .string({required_error:'URL for 3rd party website is required field'})
+      .string({ required_error: "URL for 3rd party website is required field" })
       .refine(
         (value) => {
           const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
@@ -39,7 +39,7 @@ export const validationSchema = () => {
         required_error: "Please enter at least one associate teacher",
       })
       .optional(),
-    visibility_id: z.string(),
+    visibility_id: z.number(),
     is_language_translation_for_participants: z.boolean().optional(),
     is_geo_restriction_applicable: z.boolean(),
     language_ids: z.array(z.number(), {
@@ -50,53 +50,66 @@ export const validationSchema = () => {
         required_error: "Please select atleast one Language translation",
       })
       .optional(),
-      allowed_countries: z.array(z.number(), {
+    allowed_countries: z.array(z.string(), {
       required_error: "Country is is a required fields",
     }),
     max_capacity: z
       .string({
         required_error:
-          "Maximum capacity should be between 1 and %1 - which is the allowed limit set for this course type by Program / National Admin.",
+          "Maximum capacity is required fields",
       })
       .regex(/^\d+$/, { message: "Maximum Capacity can accept only integers" })
-      .refine((val) => parseInt(val) > 50, {
+      .refine((val) => parseInt(val) < 500, {
         message:
-          "Maximum capacity exceeds the allowed limit %1 for this course type by Program / National Admin",
+          "Maximum capacity exceeds the allowed limit",
       }),
 
     // Step 3 Schema
+    isNewVenue:z.boolean({required_error:"Venue is a required fields"}),
     online_url: z
       .string({ required_error: " Online meeting URL is a required fields" })
-      .url({message:"Online meeting URL is not valid"}),
-    hour_format_id: z.number({required_error:"Time format is a required field"}),
-    time_zone_id: z.number({required_error:"Time zone is a required field"}),
-    schedules: scheduleValidationSchema,
+      .url({ message: "Online meeting URL is not valid" }),
+    hour_format_id: z.number({
+      required_error: "Time format is a required field",
+    }),
+    state_id : z.number({
+      required_error: "State is is a required fields",
+    }), 
+    city_id : z.number({
+      required_error: "City is is a required fields",
+    }), 
+    center_id: z.number({
+      required_error: "Center is is a required fields",
+    }), 
+    time_zone_id: z.number({ required_error: "Time zone is a required field" }),
+    // schedules: scheduleValidationSchema,
 
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
-    feeLevels: feelLevelsValidationSchema,
+    program_fee_level_settings: feelLevelsValidationSchema,
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
-    is_residential_program: z.string().optional(),
+    is_residential_program: z.boolean().optional(),
     accommodation_fee_payment_mode: z.string().optional(),
 
     // Step 6 Schema
     contact: contactValidationSchema,
     bcc_registration_confirmation_email: z
-    .string({ required_error: "At least on email is required." })
-    .regex(
-      /^(?:[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
-      { message: "One of the Bcc email you entered is not in correct format" }
-    ),
+      .string({ required_error: "At least on email is required." })
+      .regex(
+        /^(?:[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
+        { message: "One of the Bcc email you entered is not in correct format" }
+      ),
+      
   });
 };
 
 const feelLevelsValidationSchema = z.array(
   z.object({
-    total: z.number(),
-    earlyBirdTotal: z.number(),
-  }).refine(() => {
+    is_enable:z.boolean(),
+    total: z.string().regex(/^\d+$/),
+    early_bird_total: z.string().regex(/^\d+$/),
   })
 );
 
@@ -236,4 +249,5 @@ const scheduleValidationSchema = z
     (value: any[]) => value.every((item) => !isNaN(item.date.getTime())),
     { message: "Invalid date value" }
   )
-  .refine((value: any[]) => value.every((item) => parseInt(item.startMinute)),);
+  .refine((value: any[]) => value.every((item) => parseInt(item.startMinute)));
+
