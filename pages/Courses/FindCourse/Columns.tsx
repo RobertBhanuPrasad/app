@@ -272,7 +272,8 @@ export const columns: ExtendedColumnDef<any>[] = [
 
         setViewPreviewPage(true);
       };
-
+      dropDownMenuData?.unshift('View Course')
+      
       const handleSelected = (value: string) => {
         console.log("clicked on", value);
 
