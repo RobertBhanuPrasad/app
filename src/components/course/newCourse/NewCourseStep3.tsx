@@ -89,11 +89,11 @@ function NewCourseStep3() {
   if (isLoading) {
     return <LoadingIcon />;
   }
-
+  
   return (
     <div className="flex flex-col gap-8">
       <div>
-        {programTypeData?.data?.in_online_program === true ? (
+        {programTypeData?.data?.is_online_program === true ? (
           <OnlineProgram />
         ) : (
           <div className="mb-8">
@@ -1104,7 +1104,7 @@ export const AddOrEditVenue = ({
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />
-          <CityDropDown name="city+id" />
+          <CityDropDown name="city_id" />
         </div>
 
         <div className="flex flex-col gap-5">

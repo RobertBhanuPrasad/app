@@ -29,22 +29,50 @@ export default function CourseTable() {
 
   const formData = watch();
 
+  const { data: programTypeData } = useOne({
+    resource: "program_types",
+    id: formData?.program_type_id,
+  });
+
+  let stateId: number, cityId: number, centerId: number;
+
+  //Finding the state_id ,city_id and center_id where course is going on
+  if (programTypeData?.data?.is_online_program) {
+    stateId = formData?.state_id;
+    cityId = formData?.city_id;
+    centerId = formData?.center_id;
+  } else {
+    if (formData.is_existing_venue == "new-venue") {
+      stateId = formData?.newVenue?.state_id;
+      cityId = formData?.newVenue?.city_id;
+      centerId = formData?.newVenue?.center_id;
+    } else if (formData?.is_existing_venue == "existing-venue") {
+      stateId = formData?.existingVenue?.state_id;
+      cityId = formData?.existingVenue?.city_id;
+      centerId = formData?.existingVenue?.center_id;
+    }
+  }
+
+  //Finding course start date
+  const courseStartDate = formData?.schedules?.[0]?.date?.toISOString();
+
   const fetchFeeData = async () => {
-    //TODO: Need to integrate with form Data
+    //Sending all required params
     const { data, error } = await supabaseClient.functions.invoke(
       "course-fee",
       {
         method: "POST",
         body: {
-          state_id: "3",
-          city_id: "3",
-          center_id: "1",
-          start_date: "2024-03-18T07:00:00-00:00",
+          state_id: stateId,
+          city_id: cityId,
+          center_id: centerId,
+          start_date: courseStartDate,
           program_type_id: formData?.program_type_id,
         },
       }
     );
-    console.log(error, "error", data);
+    if (error)
+      console.log("error while fetching course fee level settings", error);
     setCourseFeeSettings(data);
   };
 
