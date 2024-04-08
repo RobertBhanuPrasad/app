@@ -5,7 +5,7 @@ export const handleCourseDefaultValues = async (programId: number) => {
   const { data, error } = await supabaseClient
     .from("program")
     .select(
-      "*,program_organizers(*),program_teachers(*),program_assistant_teachers(*),program_languages(*),program_translation_languages(*),program_schedules(*),program_accommodations(*),program_contact_details(*)"
+      "*,program_organizers(*),program_teachers(*),program_assistant_teachers(*),program_languages(*),program_translation_languages(*),program_schedules(*),program_accommodations(*),program_contact_details(*),program_fee_level_settings(*)"
     )
     .eq("id", programId);
 
@@ -184,7 +184,13 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   // Step 4
   if (data.is_early_bird_enabled)
     defaultValues.is_early_bird_enabled = data.is_early_bird_enabled;
-  //TODO: Need to do for fee settings
+
+  if (!data.program_fee_settings_id) {
+    defaultValues.program_fee_level_settings =
+      data.program_fee_level_settings as any;
+
+    defaultValues.early_bird_cut_off_period = data.early_bird_cut_off_period;
+  }
 
   // Step 5
   if (data.program_accommodations)

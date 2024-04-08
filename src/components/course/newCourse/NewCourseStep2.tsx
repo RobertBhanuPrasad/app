@@ -331,7 +331,11 @@ export const CourseTypeDropDown = () => {
 };
 
 const RegistrationGateway = () => {
-  const [checkedValue, setCheckedValue] = useState();
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.is_registration_required,
+  });
   return (
     <div className="flex flex-row items-center gap-[19px]">
       <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">
@@ -340,8 +344,9 @@ const RegistrationGateway = () => {
       <Switch
         id="registration"
         className="!w-[57px] !h-[24px]"
-        onCheckedChange={(value: any) => {
-          setCheckedValue(value);
+        value={value}
+        onCheckedChange={(value: boolean) => {
+          onChange(value);
         }}
       />
     </div>
@@ -476,7 +481,7 @@ const TeachersDropDown = () => {
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
+        "*,program_type_teachers!inner(program_type_id),contact_id!inner(full_name))",
     },
     filters: filter,
     onSearch: (value: any) => [
@@ -490,13 +495,15 @@ const TeachersDropDown = () => {
       pageSize: pageSize,
       mode: "server",
     },
+    optionLabel: "contact_id.full_name",
+    optionValue: "id",
   };
 
   if (value) {
     selectQuery.defaultValue = value;
   }
 
-  const { queryResult, onSearch } = useSelect(selectQuery);
+  const { options, queryResult, onSearch } = useSelect(selectQuery);
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
@@ -504,13 +511,6 @@ const TeachersDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
-
-  const teachers: any = queryResult.data?.data?.map((val) => {
-    return {
-      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
-      value: val?.id,
-    };
-  });
 
   return (
     <div className="flex gap-1 flex-col">
@@ -520,7 +520,7 @@ const TeachersDropDown = () => {
       <MultiSelect
         value={value}
         placeholder="Enter Teacher Name"
-        data={teachers}
+        data={options}
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={(val: any) => {
@@ -529,8 +529,8 @@ const TeachersDropDown = () => {
         getOptionProps={(option: { value: { id: number } }) => {
           //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
           if (
-            option.value === loginUserData?.userData?.id &&
-            formData?.programOrganizedBy != iAmOrganizerId
+            option === loginUserData?.userData?.id &&
+            formData?.program_created_by != iAmOrganizerId
           ) {
             return {
               disable: true,

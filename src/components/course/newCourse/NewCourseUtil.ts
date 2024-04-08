@@ -127,7 +127,33 @@ export const handlePostProgramData = async (
       body[NewCourseStep4FormNames.is_early_bird_enabled] || true;
   }
 
-  //TODO: step 4 still not done we have to do it
+  //Fetching fee level settings of course
+  const { data: feeData, error } = await supabaseClient.functions.invoke(
+    "course-fee",
+    {
+      method: "POST",
+      body: {
+        state_id: "3", //TODO Need to change with form data
+        city_id: "3",
+        center_id: "1",
+        start_date: "2024-03-18T07:00:00-00:00",
+        program_type_id: body?.program_type_id,
+      },
+    }
+  );
+
+  if (error) {
+    console.log("error while fetching fee data", error);
+  }
+
+  if (body[NewCourseStep4FormNames?.program_fee_level_settings]?.length == 0) {
+    programBody.program_fee_settings_id = feeData?.[0]?.id;
+  } else {
+    programBody.early_bird_cut_off_period = body["early_bird_cut_off_period"]
+      ? body["early_bird_cut_off_period"]
+      : feeData?.[0]?.early_bird_cut_off_period;
+  }
+
   // step 5
 
   //is_residential_program
@@ -137,7 +163,10 @@ export const handlePostProgramData = async (
   }
 
   //accommodation_fee_payment_mode
-  if (body[NewCourseStep5FormNames.accommodation_fee_payment_mode]) {
+  if (
+    body[NewCourseStep5FormNames.accommodation_fee_payment_mode] &&
+    body[NewCourseStep5FormNames?.is_residential_program]
+  ) {
     programBody.accommodation_fee_payment_mode =
       body[NewCourseStep5FormNames.accommodation_fee_payment_mode];
   }
@@ -186,8 +215,8 @@ export const handlePostProgramData = async (
 
   if (!(await handleProgramSchedulesData(body, programId))) return false;
 
-  if (!(await handlePostProgramContactDetailsData(body, programId)))
-    return false;
+  if (!(await handleProgramFeeLevelSettingsData(body, programId))) return false;
+
   if (!(await handlePostProgramContactDetailsData(body, programId)))
     return false;
 
@@ -599,10 +628,10 @@ export const handleProgramSchedulesData = async (
     NewCourseStep3FormNames.schedules
   ].map((scheduleData: any, index: number) => {
     const {
-      startHour,
-      startMinute,
-      endHour,
-      endMinute,
+      startHour = "00",
+      startMinute = "00",
+      endHour = "00",
+      endMinute = "00",
       startTimeFormat,
       endTimeFormat,
       date,
@@ -918,9 +947,13 @@ export const handleProgramStatusUpdate = async (programId: number) => {
     console.log("program doesnt need approval which is auto approval");
     console.log("patching program status_id as active directley");
 
-    const { data, error } = await supabaseClient.from("program").update({
-      status_id: COURSE_ACTIVE_STATUS_ID,
-    });
+    const { data, error } = await supabaseClient
+      .from("program")
+      .update({
+        status_id: COURSE_ACTIVE_STATUS_ID,
+      })
+      .eq("id", programId)
+      .select();
 
     if (error) {
       console.log(
@@ -931,6 +964,49 @@ export const handleProgramStatusUpdate = async (programId: number) => {
     } else {
       console.log("patched program status_id as active", data);
     }
+  }
+
+  return true;
+};
+
+export const handleProgramFeeLevelSettingsData = async (
+  body: any,
+  programId: number
+) => {
+  if (body?.program_fee_level_settings?.length == 0) {
+    return true;
+  }
+  // Fetching the existing fee level settings data
+  const { data: existingFeeLevelSettingsData } = await supabaseClient
+    .from("program_fee_level_settings")
+    .select("id")
+    .eq("program_id", programId);
+
+  //Inserting ids of program fee level settings already exist
+  const modifiedProgramFeeLevel = body?.program_fee_level_settings?.map(
+    (feeLevel: any, index: number) => {
+      if (existingFeeLevelSettingsData?.[index]?.id) {
+        return {
+          id: existingFeeLevelSettingsData?.[index]?.id,
+          program_id: programId,
+          ...feeLevel,
+        };
+      }
+      return { program_id: programId, ...feeLevel };
+    }
+  );
+
+  //upsert operation for program feeLevel settings data
+  const { data, error } = await supabaseClient
+    .from("program_fee_level_settings")
+    .upsert(modifiedProgramFeeLevel)
+    .select();
+
+  if (error) {
+    console.log("Error while posting program fee level settings data", error);
+    return false;
+  } else {
+    console.log("Program fee level settings upsert complete", data);
   }
 
   return true;

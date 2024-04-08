@@ -30,19 +30,20 @@ import {
   NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/CourseConstants";
-import { VISIBILITY } from "src/constants/OptionLabels";
-import { PUBLIC } from "src/constants/OptionValueOrder";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
 import { Button } from "src/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
+import { PAYMENT_MODE } from "src/constants/OptionLabels";
+import { PAY_ONLINE, PUBLIC } from "src/constants/OptionValueOrder";
+import { validationSchema } from "./NewCourseValidations";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { useState } from "react";
+import { VISIBILITY } from "src/constants/OptionLabels";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
-import { useState } from "react";
 import Success from "@public/assets/Success";
 import Error from "@public/assets/Error";
 import _ from "lodash";
-import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
-import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
-import { validationSchema } from "./NewCourseValidations";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -83,6 +84,11 @@ function NewCourse() {
     PUBLIC
   )?.id;
 
+  const payOnlineId = getOptionValueObjectByOptionOrder(
+    PAYMENT_MODE,
+    PAY_ONLINE
+  )?.id;
+
   const { newCourseData } = newCourseStore();
 
   /**
@@ -99,7 +105,8 @@ function NewCourse() {
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
           [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
-          [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: true,
+          [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
+            payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
           [NewCourseStep5FormNames?.is_residential_program]: false,
         }
@@ -190,7 +197,7 @@ export const NewCourseTabs = () => {
   );
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
-    ...(formData?.is_residential_program == "No" ? ["accommodation" , "fee_per_person" , "no_of_residential_spots" ,"accommodation_type_id" ] : [])
+    ...(formData?.is_residential_program == false ? ["accommodation" , "fee_per_person" , "no_of_residential_spots" ,"accommodation_type_id","accommodation_fee_payment_mode" ] : [])
   ]);
 
   const validationFieldsStepWise = [

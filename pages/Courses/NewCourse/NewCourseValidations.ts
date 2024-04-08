@@ -50,7 +50,7 @@ export const validationSchema = () => {
         required_error: "Please select atleast one Language translation",
       })
       .optional(),
-    allowed_countries: z.array(z.number(), {
+    allowed_countries: z.array(z.string(), {
       required_error: "Country is is a required fields",
     }),
     max_capacity: z
@@ -82,15 +82,15 @@ export const validationSchema = () => {
       required_error: "Center is is a required fields",
     }), 
     time_zone_id: z.number({ required_error: "Time zone is a required field" }),
-    schedules: scheduleValidationSchema,
+    // schedules: scheduleValidationSchema,
 
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
-    feeLevels: feelLevelsValidationSchema,
+    program_fee_level_settings: feelLevelsValidationSchema,
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
-    is_residential_program: z.string().optional(),
+    is_residential_program: z.boolean().optional(),
     accommodation_fee_payment_mode: z.string().optional(),
 
     // Step 6 Schema
@@ -106,12 +106,11 @@ export const validationSchema = () => {
 };
 
 const feelLevelsValidationSchema = z.array(
-  z
-    .object({
-      total: z.number(),
-      earlyBirdTotal: z.number(),
-    })
-    .refine(() => {})
+  z.object({
+    is_enable:z.boolean(),
+    total: z.string().regex(/^\d+$/),
+    early_bird_total: z.string().regex(/^\d+$/),
+  })
 );
 
 const contactValidationSchema = z.array(

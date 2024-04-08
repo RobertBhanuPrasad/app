@@ -234,8 +234,8 @@ interface ProgramFeeLevelSettingsDataBaseType {
   program_fee_setting_id?: number | ProgramFeeSettingsDataBaseType;
   custom_fee_label?: string;
   early_bird_sub_total?: number;
-  early_brid_tax?: number;
-  early_brid_total?: number;
+  early_bird_tax?: number;
+  early_bird_total?: number;
   fee_level_id?: number | OptionValuesDataBaseType;
   is_custom_fee?: boolean;
   program_id?: number | ProgramDataBaseType;
@@ -602,7 +602,7 @@ interface ProgramDataBaseType {
   last_modified_by_user_id?: number | UsersDataBaseType;
   allowed_countries?: string[];
   bcc_registration_confirmation_email?: string;
-  program_contact_detials: {
+  program_contact_detials?: {
     prgram_id?: number;
     id?: number;
     contact_name?: string;
@@ -648,6 +648,15 @@ interface NewCourseFormFieldTypes {
 
   // Step 4
   is_early_bird_enabled?: boolean;
+  early_bird_cut_off_period?: number;
+  program_fee_level_settings?: {
+    program_id?: number;
+    id?: number;
+    total?: number;
+    early_bird_total?: number;
+    is_enable?: boolean;
+    fee_level_id?: number;
+  }[];
 
   // Step 5
   accommodation?: any[];
@@ -659,7 +668,7 @@ interface NewCourseFormFieldTypes {
 
   // Step 6
   contact?: {
-    prgram_id?: number;
+    program_id?: number;
     id?: number;
     contact_name?: string;
     contact_email?: string;
