@@ -14,7 +14,7 @@ import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import { useGetIdentity, useList } from "@refinedev/core";
 import Form from "@components/Formfield";
-import { useForm, useFormContext, useFormState } from "react-hook-form";
+import { useFormContext, useFormState } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,
@@ -184,14 +184,15 @@ export const NewCourseTabs = () => {
     ...(hasSuperAdminRole ? [] : ['is_language_translation_for_participants'])
   ])
 
-  let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
-    ...(formData?.courseTypeSettings?.is_online_program
-      ? []
-      : ["online_url", "state_id", "city_id", "center_id"]),
-    ...(formData?.courseTypeSettings?.is_online_program ? ["isNewVenue"] : []),
+  let RequiredNewCourseStep3FormNames = _.omit(
+    NewCourseStep3FormNames,[
+     ...(formData?.courseTypeSettings?.is_online_program ? [] : ["online_url", "state_id", "city_id", "center_id"]),
+     ...(formData?.courseTypeSettings?.is_online_program ? ["is_existing_venue"] : []),
+     ...(formData?.is_existing_venue == "new_venue" ? ["existingVenue"] : ["newVenue"]),
     //If country does not have multiple time zones no need to validate time zone drop down 
     ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
-  ]);
+    ]
+  );
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false
