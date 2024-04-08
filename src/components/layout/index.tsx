@@ -32,9 +32,9 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
           </div>
         </div>
         <Breadcrumb />
-        <div className="mt-5">
-          <div className="mx-8">
-            <div className="text-[24px] my-4 font-semibold"></div>
+        <div className="mt-9">
+          <div className="">
+            <div className="text-[24px] my-4 font-semibold mx-8">NEW COURSE</div>
             {children}
           </div>
         </div>
