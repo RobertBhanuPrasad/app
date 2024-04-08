@@ -46,8 +46,7 @@ export const handlePostProgramData = async (
   }
 
   if (body[NewCourseStep2FormNames.visibility_id]) {
-    programBody.visibility_id =
-      31 || body[NewCourseStep2FormNames.visibility_id];
+    programBody.visibility_id = body[NewCourseStep2FormNames.visibility_id];
   }
 
   if (body[NewCourseStep1FormNames.is_registration_via_3rd_party]) {
@@ -121,10 +120,9 @@ export const handlePostProgramData = async (
   }
 
   // step 4
-  if (body[NewCourseStep4FormNames.is_early_bird_enabled] || true) {
-    //TODO: new to remove || true
+  if (body[NewCourseStep4FormNames.is_early_bird_enabled]) {
     programBody.is_early_bird_enabled =
-      body[NewCourseStep4FormNames.is_early_bird_enabled] || true;
+      body[NewCourseStep4FormNames.is_early_bird_enabled];
   }
 
   //Fetching fee level settings of course
