@@ -2,8 +2,7 @@ import LoadingIcon from '@public/assets/LoadingIcon'
 import { useGetIdentity, useMany, useOne } from '@refinedev/core'
 import _ from 'lodash'
 import { useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
+import { PAYMENT_MODE, PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
 import countryCodes from 'src/data/CountryCodes'
 import { Button } from 'src/ui/button'
 import { supabaseClient } from 'src/utility'
@@ -21,13 +20,11 @@ import { handlePostProgramData } from './NewCourseUtil'
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
-  const { watch } = useFormContext()
-
-  const { program_type_id } = watch()
+  
 
   const { data: programTypeData } = useOne({
     resource: 'program_types',
-    id: program_type_id
+    id: newCourseData?.program_type_id
   })
 
   const { data: venueState } = useOne({
@@ -85,10 +82,14 @@ export default function NewCourseReviewPage() {
   const creator =
     newCourseData?.program_created_by &&
     getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by)
+
+  const paymentMethod = getOptionValueObjectById(PAYMENT_MODE, newCourseData?.accommodation_fee_payment_mode)
+
   const timeFormat =
     newCourseData?.hour_format_id && getOptionValueObjectById(TIME_FORMAT, newCourseData?.hour_format_id)
 
   const visibility = newCourseData?.visibility_id && getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id)
+
   const { data: organizationName } = useOne({
     resource: 'organizations',
     id: newCourseData?.organization_id
@@ -98,7 +99,7 @@ export default function NewCourseReviewPage() {
 
   const { data: ProgramOrganizer } = useMany({
     resource: 'users',
-    ids: newCourseData?.organizer_ids || [1, 2],
+    ids: newCourseData?.organizer_ids,
     meta: { select: 'contact_id(full_name)' }
   })
 
@@ -245,8 +246,7 @@ export default function NewCourseReviewPage() {
                 className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
                 title={creator}
               >
-                {' '}
-                {creator ? creator?.value : '-'}
+                {creator?.value ? creator?.value : '-'}
               </abbr>
             </div>
             <div className=" min-w-72">
@@ -255,7 +255,7 @@ export default function NewCourseReviewPage() {
                 className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
                 title={organizationName?.data?.name}
               >
-                {' '}
+                
                 {organizationName?.data?.name}
               </abbr>
             </div>
@@ -265,7 +265,7 @@ export default function NewCourseReviewPage() {
                 className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
                 title={programOrganizersNames}
               >
-                {' '}
+                
                 {programOrganizersNames ? programOrganizersNames : '-'}
               </abbr>
             </div>
@@ -277,8 +277,8 @@ export default function NewCourseReviewPage() {
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.is_geo_restriction_applicable}
               >
-                {' '}
-                {newCourseData?.is_geo_restriction_applicable ? 'yes' : 'No'}
+                
+                {newCourseData?.is_geo_restriction_applicable ? 'Yes' : 'No'}
               </abbr>
             </div>
             <div className=" min-w-72">
@@ -287,8 +287,8 @@ export default function NewCourseReviewPage() {
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.is_registration_via_3rd_party}
               >
-                {' '}
-                {newCourseData?.is_registration_via_3rd_party ? 'yes' : 'No'}
+                
+                {newCourseData?.is_registration_via_3rd_party ? 'Yes' : 'No'}
               </abbr>
             </div>
             {newCourseData?.is_registration_via_3rd_party ? (
@@ -406,7 +406,7 @@ export default function NewCourseReviewPage() {
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.is_geo_restriction_applicable}
               >
-                {newCourseData?.is_geo_restriction_applicable ? 'yes' : 'No'}
+                {newCourseData?.is_geo_restriction_applicable ? 'Yes' : 'No'}
               </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
@@ -539,7 +539,7 @@ export default function NewCourseReviewPage() {
                   >
                     {feeLevel.total}
                   </abbr>
-                  =
+                  
                 </div>
               )
             })}
@@ -578,7 +578,7 @@ export default function NewCourseReviewPage() {
 
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">Disable Pay Later Label123?</p>
-              <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]" title="yes">
+              <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]" title="Yes">
                 Yes
               </abbr>
             </div>
@@ -608,7 +608,7 @@ export default function NewCourseReviewPage() {
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light text-[#999999] "> {courseAccomodationNames}</p>
                   <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
-                    {' '}
+                  
                     {data?.fee_per_person}
                   </p>
                 </div>
@@ -619,9 +619,9 @@ export default function NewCourseReviewPage() {
               <p className="text-sm font-normal text-accent-light text-[#999999] ">Accommodation fee payment mode</p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.accommodation_fee_payment_mode}
+                title={paymentMethod?.value}
               >
-                {newCourseData?.accommodation_fee_payment_mode ? 'Pay Online' : 'Pay Offline'}
+                {paymentMethod?.value}
               </abbr>
             </div>
           </div>
