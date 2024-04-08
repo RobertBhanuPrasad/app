@@ -1,19 +1,31 @@
 import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import { DisplayOptions } from "@components/courseBusinessLogic";
-import { useGetIdentity, useOne } from "@refinedev/core";
+import Cross from "@public/assets/Cross";
+import Exclamation from "@public/assets/Exclamation";
+import { useGetIdentity, useOne, useUpdate } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { PROGRAM_STATUS } from "src/constants/OptionLabels";
+import { CANCELED } from "src/constants/OptionValueOrder";
+import { useEffect, useState } from "react";
 import { Button } from "src/ui/button";
-import { Dialog, DialogContent } from "src/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+} from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -76,7 +88,6 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Course Status</div>;
     },
     cell: ({ row }) => {
-      console.log("hey status", row?.original?.status_id);
       return (
         <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>
       );
@@ -239,9 +250,30 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Revenue</div>;
     },
     cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">-</div>;
+      const [revenue, setRevenue] = useState<any>();
+      useEffect(() => {
+        const fetchData = async () => {
+          const { data, error } = await supabaseClient.functions.invoke(
+            "get_program_participant_summary",
+            {
+              method: "POST",
+              body: {
+                program_id: row.original.id,
+              },
+            }
+          );
+          setRevenue(data);
+        };
+
+        fetchData();
+      }, []);
+
+      return (
+        <div className="min-w-[150px]">{revenue ? revenue.income : "-"}</div>
+      );
     },
   },
+
   {
     id: "actions",
     enableHiding: false,
@@ -250,6 +282,27 @@ export const columns: ExtendedColumnDef<any>[] = [
 
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
+      const [cancelSuccessModalOpen, setCancelSuccessModalOpen] =
+        useState(false);
+
+      const courseCanceledStatusId = getOptionValueObjectByOptionOrder(
+        PROGRAM_STATUS,
+        CANCELED
+      )?.id;
+
+      const { mutate } = useUpdate();
+
+      const cancelCourse = async () => {
+        setIsDialogOpen(false);
+        await mutate({
+          resource: "program",
+          values: {
+            status_id: courseCanceledStatusId,
+          },
+          id: row.original.id,
+        });
+        setCancelSuccessModalOpen(true);
+      };
 
       const { data: loginUserData }: any = useGetIdentity();
 
@@ -264,7 +317,6 @@ export const columns: ExtendedColumnDef<any>[] = [
         data?.data?.program_accounting_status_id,
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
-
 
       const handleEditCourse = async () => {
         console.log("clicking on edit course");
@@ -382,12 +434,70 @@ export const columns: ExtendedColumnDef<any>[] = [
                 </DropdownMenuContent>
               </DropdownMenu>
               {isDialogOpen && (
-                <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <Button>Yes</Button>
-                    <Button>No</Button>
-                  </DialogContent>
-                </Dialog>
+                <div>
+                  <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
+                    <DialogContent className="flex flex-col h-[248px] w-[425px]">
+                      <DialogHeader>
+                        <div className="flex items-center w-full justify-center">
+                          <Exclamation />
+                        </div>
+                        <DialogDescription className="font-bold text-black text-lg items-center text-center">
+                          Are you sure you want to cancel this course?
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <div className="w-full flex justify-center items-center gap-5">
+                          <div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="text-blue-500 w-[71px] h-[46px]"
+                              onClick={() => {
+                                setIsDialogOpen(false);
+                              }}
+                            >
+                              No
+                            </Button>
+                          </div>
+                          <div>
+                            <Button
+                              type="button"
+                              className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                              onClick={() => {
+                                cancelCourse();
+                              }}
+                            >
+                              Yes
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                  <Dialog open={cancelSuccessModalOpen}>
+                    <DialogContent className="w-[414px] h-[279px]">
+                      <div className="text-center">
+                        <div className="flex justify-center">
+                          <Cross />
+                        </div>
+                        <div className="font-bold text-center my-5">
+                          Course canceled Successfully
+                        </div>
+                      </div>
+
+                      <div className="w-full flex items-center justify-center">
+                        <Button
+                          className=" bg-[#7677F4] w-[91px] h-[46px] text-white"
+                          onClick={() => {
+                            setCancelSuccessModalOpen(false);
+                          }}
+                        >
+                          Close
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               )}
             </div>
           </div>

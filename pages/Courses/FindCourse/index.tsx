@@ -1,18 +1,26 @@
+import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable";
+import Filters from "@components/course/findCourse/Filters";
+import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
-import { useList, useSelect } from "@refinedev/core";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { useSelect, useTable } from "@refinedev/core";
+import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import Filters from "@components/course/findCourse/Filters";
-import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
-import Form from "@components/Formfield";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { Input } from "src/ui/input";
 import { Checkbox } from "src/ui/checkbox";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "src/ui/dropdown-menu";
+import { Input } from "src/ui/input";
 import {
   Select,
   SelectContent,
@@ -21,29 +29,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "src/ui/select";
-import { format } from "date-fns";
-import { columns } from "./Columns";
-import { useTable } from "@refinedev/core";
-import { useController, useFormContext } from "react-hook-form";
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import CalenderIcon from "@public/assets/CalenderIcon";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "src/ui/dropdown-menu";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { columns } from "./Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 
 function index() {
   const { viewPreviewPage, AllFilterData } = newCourseStore();
 
+  console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
-  if (viewPreviewPage) {
-    return <NewCourseReviewPage />;
-  }
 
   const filters: any = { permanent: [] };
 
@@ -328,6 +324,10 @@ function index() {
   const rowCount = Object.values(rowSelection).filter(
     (value) => value === true
   ).length;
+
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />;
+  }
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
@@ -642,7 +642,10 @@ const AdvanceFilter = () => {
   const count =
     (formData?.advanceFilter &&
       Object.keys(formData?.advanceFilter).filter(
-        (key) => formData?.advanceFilter[key] !== undefined || ""
+        (key) =>
+          formData.advanceFilter[key] !== undefined &&
+          formData.advanceFilter[key] !== "" &&
+          formData.advanceFilter[key].length > 0
       ).length) ||
     0;
 
