@@ -83,7 +83,13 @@ export const validationSchema = () => {
     }), 
     time_zone_id: z.number({ required_error: "Time zone is a required field" }),
     // schedules: scheduleValidationSchema,
-
+    name:z
+    .string({required_error:"Venu Name is a required field."}),
+    address:z
+      .string({required_error:"Address is a required field."}),
+    postal_code : z.string({
+      required_error: "Postal Code is a required field.",
+    }).regex(/^\d+$/,{message:"Please provide a valid Postal Code"}),
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
@@ -133,10 +139,10 @@ const accommodationValidationSchema = z.array(
     }),
     fee_per_person: z.string({
       required_error: "Please enter a valid money value for fee per person.",
-    }),
+    }).regex(/^\d+$/),
     no_of_residential_spots: z.string({
-      required_error: "Please enter a valid money value for fee per person.",
-    }),
+      required_error: "Please enter a valid no of residential spots",
+    }).regex(/^\d+$/),
   })
 );
 

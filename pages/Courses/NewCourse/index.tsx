@@ -15,7 +15,7 @@ import Venue from "@public/assets/Venue";
 import { useGetIdentity } from "@refinedev/core";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import Form from "@components/Formfield";
-import { useForm, useFormContext, useFormState } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,

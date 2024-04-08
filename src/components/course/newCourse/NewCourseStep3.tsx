@@ -26,7 +26,6 @@ import { Badge } from "src/ui/badge";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import { DateCalendar } from "src/ui/DateCalendar";
-import CustomSelect from "src/ui/custom-select";
 import {
   Dialog,
   DialogClose,
@@ -75,6 +74,7 @@ import {
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { SelectItems } from "src/ui/select";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -415,18 +415,35 @@ const Venue = () => {
     name: "is_existing_venue",
   });
 
-  const handleAddNewVenue = () => {
-    setValue("newVenue", {
-      city_id: formData?.city_id,
-      city: formData?.city,
-      state_id: formData?.state_id,
-      state: formData?.state,
-      center_id: formData?.center_id,
-      center: formData?.center,
-      postal_code: formData?.postal_code,
-      address: formData?.address,
-      name: formData?.name,
-    });
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+  const { errors } = useFormState();
+  const [openAddNewVenue, setOpenAddNewVenue] = useState(false);
+
+  const handleAddNewVenue = async () => {
+    const isAllFieldsFilled = await ValidateCurrentStepFields([
+      "city_id",
+      "center_id",
+      "state_id",
+      "name",
+      "address",
+      "postal_code",
+    ]);
+    if (isAllFieldsFilled) {
+      setValue("newVenue", {
+        city_id: formData?.city_id,
+        city: formData?.city,
+        state_id: formData?.state_id,
+        state: formData?.state,
+        center_id: formData?.center_id,
+        center: formData?.center,
+        postal_code: formData?.postal_code,
+        address: formData?.address,
+        name: formData?.name,
+      });
+      setOpenAddNewVenue(false);
+    } else {
+      setOpenAddNewVenue(true);
+    }
   };
 
   const handleOpenEditNewVenue = () => {
@@ -440,6 +457,7 @@ const Venue = () => {
     setValue("center", formData?.newVenue?.center);
     setValue("postal_code", formData?.newVenue?.postal_code);
     isNewVenueOnchange(true);
+    setOpenAddNewVenue(true);
   };
 
   const handleOpenAddNewVenue = () => {
@@ -450,6 +468,7 @@ const Venue = () => {
     resetField("city_id");
     resetField("name");
     isNewVenueOnchange(true);
+    setOpenAddNewVenue(true);
   };
 
   return (
@@ -534,7 +553,7 @@ const Venue = () => {
                   <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
-                  <Dialog>
+                <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
                     <DialogTrigger onClick={handleOpenEditNewVenue}>
                       <EditIcon />
                     </DialogTrigger>
@@ -561,7 +580,7 @@ const Venue = () => {
             </div>
           </Label>
         ) : (
-          <Dialog>
+          <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue}>
               <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
                 + Add New Venue
@@ -604,8 +623,8 @@ const NewVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address}, {data?.data?.state_id?.name},{" "}
-      {data?.data?.city_id?.name}, {data?.data?.name}, {postal_code}
+      {name}, {address}, 
+      {data?.data?.city_id?.name}, {data?.data?.state_id?.name},{" "} {postal_code}
     </div>
   );
 };
@@ -1103,7 +1122,7 @@ export const AddOrEditVenue = ({
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />
-          <CityDropDown name="city+id" />
+          <CityDropDown name="city_id" />
         </div>
 
         <div className="flex flex-col gap-5">
