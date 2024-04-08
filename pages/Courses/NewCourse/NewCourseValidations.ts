@@ -5,9 +5,12 @@ export const validationSchema = () => {
     organization_id: z.number({
       required_error: "Select Organization Name.",
     }),
-    organizer_ids: z.array(z.number(), {
-      required_error: "Select Organizer Name",
-    }).refine((val) => val.length <= 10 , {message:"Maximum number of organizer allowed is 10"}),
+    organizer_ids: z
+      .array(z.number())
+      .nonempty({ message: "Select at least one Organizer Name" })
+      .refine((val) => val.length <= 10, {
+        message: "Maximum number of organizers allowed is 10",
+      }),
     program_created_by: z.number({
       required_error: "Select who is going to teach the course",
     }),
@@ -31,9 +34,9 @@ export const validationSchema = () => {
     program_alias_name_id: z.number({
       required_error: "Course Name is a required field",
     }),
-    teacher_ids: z.array(z.number(), {
-      required_error: "Please enter at least one teacher",
-    }),
+    teacher_ids: z
+      .array(z.number())
+      .nonempty({ message: "Please enter at least one teacher" }),
     assistant_teacher_ids: z
       .array(z.number(), {
         required_error: "Please enter at least one associate teacher",
@@ -42,56 +45,56 @@ export const validationSchema = () => {
     visibility_id: z.number(),
     is_language_translation_for_participants: z.boolean().optional(),
     is_geo_restriction_applicable: z.boolean(),
-    language_ids: z.array(z.number(), {
-      required_error: "Please select atleast one Language",
-    }),
+    language_ids: z
+      .array(z.number())
+      .nonempty({ message: "Please select at least one Language" }),
     translation_language_ids: z
       .array(z.number(), {
         required_error: "Please select atleast one Language translation",
       })
       .optional(),
-    allowed_countries: z.array(z.string(), {
-      required_error: "Country is is a required fields",
-    }),
+    allowed_countries: z
+      .array(z.string())
+      .nonempty({ message: "Country is a required field" }),
     max_capacity: z
       .string({
-        required_error:
-          "Maximum capacity is required fields",
+        required_error: "Maximum capacity is required fields",
       })
       .regex(/^\d+$/, { message: "Maximum Capacity can accept only integers" })
       .refine((val) => parseInt(val) < 500, {
-        message:
-          "Maximum capacity exceeds the allowed limit",
+        message: "Maximum capacity exceeds the allowed limit",
       }),
 
     // Step 3 Schema
-    is_existing_venue:z.string({required_error:"Venue is a required fields"}),
-    existingVenue : existingVenueSchedules,
-    newVenue : newVenueSchedules,
+    is_existing_venue: z.string({
+      required_error: "Venue is a required fields",
+    }),
+    existingVenue: existingVenueSchedules,
+    newVenue: newVenueSchedules,
     online_url: z
       .string({ required_error: " Online meeting URL is a required fields" })
       .url({ message: "Online meeting URL is not valid" }),
     hour_format_id: z.number({
       required_error: "Time format is a required field",
     }),
-    state_id : z.number({
+    state_id: z.number({
       required_error: "State is is a required fields",
-    }), 
-    city_id : z.number({
+    }),
+    city_id: z.number({
       required_error: "City is is a required fields",
-    }), 
+    }),
     center_id: z.number({
       required_error: "Center is is a required fields",
-    }), 
+    }),
     time_zone_id: z.number({ required_error: "Time zone is a required field" }),
     schedules: scheduleValidationSchema,
-    name:z
-    .string({required_error:"Venu Name is a required field."}),
-    address:z
-      .string({required_error:"Address is a required field."}),
-    postal_code : z.string({
-      required_error: "Postal Code is a required field.",
-    }).regex(/^\d+$/,{message:"Please provide a valid Postal Code"}),
+    name: z.string({ required_error: "Venu Name is a required field." }),
+    address: z.string({ required_error: "Address is a required field." }),
+    postal_code: z
+      .string({
+        required_error: "Postal Code is a required field.",
+      })
+      .regex(/^\d+$/, { message: "Please provide a valid Postal Code" }),
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
@@ -99,7 +102,9 @@ export const validationSchema = () => {
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
     is_residential_program: z.boolean().optional(),
-    accommodation_fee_payment_mode: z.number({required_error:"Fee payment method is required fields"}),
+    accommodation_fee_payment_mode: z.number({
+      required_error: "Fee payment method is required fields",
+    }),
 
     // Step 6 Schema
     contact: contactValidationSchema,
@@ -109,19 +114,22 @@ export const validationSchema = () => {
         /^(?:[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
         { message: "One of the Bcc email you entered is not in correct format" }
       ),
-      
   });
 };
 
-const existingVenueSchedules = z.object({id: z.number({required_error:"Venue is a required fields"})})
+const existingVenueSchedules = z.object({
+  id: z.number({ required_error: "Venue is a required fields" }),
+});
 
-const newVenueSchedules = z.object({state_id : z.number({
-  required_error: "Venue is a required fields",
-}),})
+const newVenueSchedules = z.object({
+  state_id: z.number({
+    required_error: "Venue is a required fields",
+  }),
+});
 
 const feelLevelsValidationSchema = z.array(
   z.object({
-    is_enable:z.boolean(),
+    is_enable: z.boolean(),
     total: z.string().regex(/^\d+$/),
     early_bird_total: z.string().regex(/^\d+$/),
   })
@@ -145,12 +153,16 @@ const accommodationValidationSchema = z.array(
     accommodation_type_id: z.number({
       required_error: "Accommodation type is required field.",
     }),
-    fee_per_person: z.string({
-      required_error: "Please enter a valid money value for fee per person.",
-    }).regex(/^\d+$/ , "Fee can accept only integers "),
-    no_of_residential_spots: z.string({
-      required_error: "Please enter a valid no of residential spots",
-    }).regex(/^\d+$/, "Residential spots can accept only integers ")
+    fee_per_person: z
+      .string({
+        required_error: "Please enter a valid money value for fee per person.",
+      })
+      .regex(/^\d+$/, "Fee can accept only integers "),
+    no_of_residential_spots: z
+      .string({
+        required_error: "Please enter a valid no of residential spots",
+      })
+      .regex(/^\d+$/, "Residential spots can accept only integers "),
   })
 );
 
@@ -264,4 +276,3 @@ const scheduleValidationSchema = z
     { message: "Invalid date value" }
   )
   .refine((value: any[]) => value.every((item) => parseInt(item.startMinute)));
-

@@ -52,6 +52,7 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
+  console.log(loginUserData,'loginUserData')
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
