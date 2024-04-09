@@ -44,7 +44,7 @@ export const getOptionValueObjectById = (
   const { optionLabelValue } = optionLabelValueStore();
   const foundOptionValue = _.find(
     optionLabelValue,
-    (val) => val?.id === optionLabel
+    (val) => val?.key === optionLabel
   );
   return foundOptionValue
     ? _.find(foundOptionValue?.option_values, { id: id })

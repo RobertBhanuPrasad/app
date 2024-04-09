@@ -35,9 +35,10 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.program_type_id,
   });
 
-  let stateId: number = 1,
-    cityId: number = 1,
-    centerId: number = 1;
+
+  let stateId: number = 0,
+    cityId: number = 0,
+    centerId: number = 0;
 
   //Finding the state_id ,city_id and center_id where course is going on
   if (programTypeData?.data?.is_online_program) {
@@ -55,32 +56,27 @@ export default function NewCourseReviewPage() {
       centerId = newCourseData?.existingVenue?.center_id
     }
   }
-
+  console.log(stateId,cityId,centerId)
   const { data: venueState } = useOne({
     resource: "state",
     id: stateId,
   });
 
-  const StateNames = venueState?.data?.map((state: any) => {
-    return state?.name;
-  });
+  const StateNames = venueState?.data?.name
 
   const { data: venueCity } = useOne({
     resource: "city",
     id: cityId,
   });
 
-  const CityNames = venueCity?.data?.map((city: any) => {
-    return city?.name;
-  });
+  const CityNames = venueCity?.data?.name
 
   const { data: venueCenter } = useOne({
     resource: "center",
     id: centerId,
   });
-  const CenterNames = venueCenter?.data?.map((center: any) => {
-    return center?.name;
-  });
+
+  const CenterNames = venueCenter?.data?.name
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -305,13 +301,14 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="grid grid-cols-4 gap-4 mt-2">
-            <div className=" min-w-72">
+            <div className=" min-w-72 ">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 Creator
               </p>
+
               <abbr
-                className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
-                title={creator}
+                className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
+                title={creator?.value}
               >
                 {creator?.value ? creator?.value : "-"}
               </abbr>
@@ -459,17 +456,6 @@ export default function NewCourseReviewPage() {
                 title={visibility?.value}
               >
                 {visibility ? visibility?.value : "-"}
-              </abbr>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Online zoom URL
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.online_url}
-              >
-                {newCourseData?.online_url}
               </abbr>
             </div>
             <div className=" min-w-72">

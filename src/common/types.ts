@@ -609,6 +609,7 @@ interface ProgramDataBaseType {
     contact_email?: string;
     contact_number?: number;
   }[];
+  modified_at: Date
 }
 
 interface NewCourseFormFieldTypes {
