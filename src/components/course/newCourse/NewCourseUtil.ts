@@ -23,6 +23,7 @@ export const handlePostProgramData = async (
   //   if (!programId) {
   const programBody: ProgramDataBaseType = {
     last_modified_by_user_id: loggedInUserId,
+    modified_at:new Date()
   };
 
   // if body contains id pls insert if it does not contain id then record will create if it contains id just it will update table
@@ -123,6 +124,9 @@ export const handlePostProgramData = async (
   if (body[NewCourseStep4FormNames.is_early_bird_enabled]) {
     programBody.is_early_bird_enabled =
       body[NewCourseStep4FormNames.is_early_bird_enabled];
+  }else{
+    programBody.is_early_bird_enabled =
+    false;
   }
 
   const { data: programTypeData } = await supabaseClient
