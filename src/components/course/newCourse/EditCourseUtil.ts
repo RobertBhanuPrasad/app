@@ -132,12 +132,6 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
     //online_url
     if (data?.online_url) defaultValues.online_url = data.online_url;
 
-    if (data?.hour_format_id)
-      defaultValues.hour_format_id = data.hour_format_id as number;
-
-    if (data?.time_zone_id)
-      defaultValues.time_zone_id = data.time_zone_id as number;
-
     if (data?.state_id) defaultValues.state_id = data.state_id as number;
 
     if (data?.city_id) defaultValues.city_id = data.city_id as number;
@@ -158,6 +152,13 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
       }
     }
   }
+
+  
+  if (data?.hour_format_id)
+  defaultValues.hour_format_id = data.hour_format_id as number;
+
+if (data?.time_zone_id)
+  defaultValues.time_zone_id = data.time_zone_id as number;
 
   //program_schedules
   if (data?.program_schedules) {
