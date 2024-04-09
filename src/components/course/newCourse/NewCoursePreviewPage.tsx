@@ -301,12 +301,13 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="grid grid-cols-4 gap-4 mt-2">
-            <div className=" min-w-72">
+            <div className=" min-w-72 ">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 Creator
               </p>
+
               <abbr
-                className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
                 title={creator?.value}
               >
                 {creator?.value ? creator?.value : "-"}
