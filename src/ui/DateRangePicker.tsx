@@ -105,7 +105,7 @@ function DateRangePicker({
           return (
             <Select
               {...props}
-              onValueChange={handleValueChange}
+              onValueChange={handleValueChange as any}
               value={selectedValue ?? (props.value as string)}
             >
               <SelectTrigger
