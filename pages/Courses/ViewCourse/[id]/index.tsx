@@ -96,6 +96,16 @@ import {
 import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 
 function index() {
+  const { viewPreviewPage } = newCourseStore();
+
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />;
+  } else {
+    return <ViewDetails />;
+  }
+}
+
+function ViewDetails() {
   const router = useRouter();
 
   const Id: number | undefined = router?.query?.id
@@ -149,7 +159,6 @@ function index() {
   const countryName = "India";
 
   const { t } = useTranslation("common");
-  const { viewPreviewPage } = newCourseStore();
 
   const [selectedValue, setSelectedValue] = useState(
     JSON.stringify(COURSE_DETAILS_TAB)
@@ -182,9 +191,6 @@ function index() {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-  if (viewPreviewPage) {
-    return <NewCourseReviewPage />;
-  }
 
   return (
     <div className="flex flex-col mx-8">
@@ -606,9 +612,9 @@ const ActionsDropDown = ({ courseData }: any) => {
   const courseId = courseData?.id;
   const handleEditCourse = async () => {
     if (courseId) {
-      setViewPreviewPage(true);
       const defaultValues = await handleCourseDefaultValues(courseId);
       setNewCourseData(defaultValues);
+      setViewPreviewPage(true);
     }
   };
 

@@ -52,6 +52,7 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
+  console.log(loginUserData,'loginUserData')
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
@@ -115,7 +116,7 @@ function NewCourse() {
           [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
-          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
+          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
@@ -616,5 +617,3 @@ export const NewCourseTabs = () => {
     </div>
   );
 };
-
-
