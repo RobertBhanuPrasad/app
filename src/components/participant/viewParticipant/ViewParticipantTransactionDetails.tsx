@@ -8,7 +8,7 @@ import { Button } from 'src/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
 
 function ViewParticipantTransactionDetails() {
-  const {
+  let {
     tableQueryResult: programData,
     pageCount,
     pageSize,
@@ -23,6 +23,7 @@ function ViewParticipantTransactionDetails() {
   })
   console.log('programData', programData)
   const [rowSelection, setRowSelection] = React.useState({})
+  programData = {data:{total:5,data:[{id:1},{id:2}]}}
   return (
     <div>
       <p className='text-[18px] font-[600] mb-[20px]'>Transaction Details</p>
@@ -248,9 +249,10 @@ const columns: ColumnDef<Program>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Copy course</DropdownMenuItem>
-              <DropdownMenuItem>Edit Course</DropdownMenuItem>
-              <DropdownMenuItem>View Course</DropdownMenuItem>
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>View</DropdownMenuItem>
+              <DropdownMenuItem>Refund</DropdownMenuItem>
+              <DropdownMenuItem>Download receipt</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

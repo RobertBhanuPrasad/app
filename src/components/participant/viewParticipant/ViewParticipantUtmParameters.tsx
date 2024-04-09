@@ -76,18 +76,18 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">1</div>
+      return <div className="lowercase">{row?.id}</div>
     }
   },
   {
     accessorKey: 'Source',
     header: () => {
-      return <div className="">test </div>
+      return <div className="">Source </div>
     },
 
     cell: ({ row }: any) => {
       console.log('row innn', row)
-      return <div className="">Success</div>
+      return <div className="">{row?.source}</div>
     }
   },
   {
@@ -97,7 +97,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">testMedium</div>
+      return <div className="lowercase">{row?.medium}</div>
     }
   },
   {
@@ -107,7 +107,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">testCampaign</div>
+      return <div className="lowercase">{row?.campaign}</div>
     }
   },
   {
@@ -117,7 +117,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">testTerm</div>
+      return <div className="lowercase">{row?.term}</div>
     }
   },
   {
@@ -127,7 +127,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">testContent</div>
+      return <div className="lowercase">{row?.content}</div>
     }
   },
   {
@@ -137,7 +137,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">testHttp</div>
+      return <div className="lowercase">{row?.http_refer}</div>
     }
   }
 ]

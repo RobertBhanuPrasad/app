@@ -18,6 +18,7 @@ import {
   VIEW_PARTICIPANT_TRANSACTION_DETAILS,
   VIEW_PARTICIPANT_UTM_PARAMETERS
 } from 'src/constants/Tabs'
+import TabbedSection from 'src/ui/tab-section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 
 function index() {
@@ -56,6 +57,7 @@ function index() {
       <div>
         <ViewParticipantInformation />
       </div>
+      {/* <div><TabbedSection/></div> */}
       <div className="w-full p-[20px]">
         <Tabs
           onValueChange={(val: any) => {
