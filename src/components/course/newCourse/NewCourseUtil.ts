@@ -229,7 +229,7 @@ export const handlePostProgramData = async (
 
     //TODO: We are doing this in backend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
-    if (programData[0]?.program_code) {
+    if (!programData[0]?.program_code) {
       await handleGenerateProgramCode(programId, loggedInUserId);
     }
   }
@@ -911,7 +911,7 @@ const handlePostVenueData = async (body: any) => {
     console.log("error while creating venue", error);
     return false;
   } else {
-    console.log("venue created successfully", data);
+    console.log("venue created or updated successfully", data);
   }
 
   // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
@@ -1078,7 +1078,7 @@ const handleGenerateProgramCode = async (
       .from("program")
       .update({
         program_code: programCode,
-      });
+      }).eq("id",programId).select();
 
     if (programError) {
       console.log("erorr while updating program code", programError);
