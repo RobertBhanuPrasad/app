@@ -786,7 +786,7 @@ const GeoRestriction = () => {
       </div>
 
       <RadioGroup
-        value={value}
+        value={JSON.stringify(value)}
         onValueChange={(val: string) => {
           val == "true" ? onChange(true) : onChange(false);
         }}
