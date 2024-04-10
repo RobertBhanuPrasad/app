@@ -7,7 +7,7 @@ function ViewParticipantInformation() {
 
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 1, //TODO:Replace with selected participant ID
+    id: 3, //TODO:Replace with selected participant ID
     optionLabel: 'name',
     optionValue: 'id',
     meta: {

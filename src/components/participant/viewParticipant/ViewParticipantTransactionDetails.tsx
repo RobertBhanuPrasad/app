@@ -40,7 +40,7 @@ function ViewParticipantTransactionDetails() {
           setPageSize={setPageSize}
           pagination={true}
           tableStyles={{
-            table: '',
+            table: '!w-[970px]',
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
@@ -239,6 +239,10 @@ const columns: ColumnDef<Program>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
+      const editParticipant =()=>{}
+      const viewParticipant = ()=>{}
+      const refundTransaction= ()=>{}
+      const downloadReceipt= ()=>{}
       return (
         <div className="flex justify-center text-primary">
           <DropdownMenu>
@@ -249,10 +253,10 @@ const columns: ColumnDef<Program>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>View</DropdownMenuItem>
-              <DropdownMenuItem>Refund</DropdownMenuItem>
-              <DropdownMenuItem>Download receipt</DropdownMenuItem>
+             <div onClick={()=>{editParticipant()}}> <DropdownMenuItem>Edit</DropdownMenuItem></div>
+             <div onClick={()=>{viewParticipant()}}><DropdownMenuItem>View</DropdownMenuItem></div>
+             <div onClick={()=>{refundTransaction()}}><DropdownMenuItem>Refund</DropdownMenuItem></div>
+             <div onClick={()=>{downloadReceipt()}}> <DropdownMenuItem>Download receipt</DropdownMenuItem></div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
