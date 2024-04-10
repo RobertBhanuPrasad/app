@@ -1,3 +1,4 @@
+//@ts-ignore
 interface AccommodationTypesDataBaseType {
   id?: number;
   created_at?: Date;
@@ -633,7 +634,7 @@ interface NewCourseFormFieldTypes {
   language_ids?: number[];
   translation_language_ids?: number[];
   allowed_countries?: string[];
-  max_capacity?: number;
+  max_capacity?: string;
 
   // Step 3
   online_url?: string;

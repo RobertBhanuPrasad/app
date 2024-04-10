@@ -37,7 +37,7 @@ import {
   PUBLIC,
   TIME_FORMAT_24_HOURS,
 } from "src/constants/OptionValueOrder";
-import { validationSchema } from "./NewCourseValidations";
+import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { useState } from "react";

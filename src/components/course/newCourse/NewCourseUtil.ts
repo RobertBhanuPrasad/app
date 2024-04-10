@@ -23,7 +23,7 @@ export const handlePostProgramData = async (
   //   if (!programId) {
   const programBody: ProgramDataBaseType = {
     last_modified_by_user_id: loggedInUserId,
-    modified_at:new Date()
+    modified_at: new Date(),
   };
 
   // if body contains id pls insert if it does not contain id then record will create if it contains id just it will update table
@@ -80,14 +80,23 @@ export const handlePostProgramData = async (
       body[NewCourseStep2FormNames.allowed_countries];
   }
 
+  const { data: programTypeData } = await supabaseClient
+    .from("program_types")
+    .select("*")
+    .eq("id", body?.program_type_id)
+    .single();
+
   //Step-3
 
-  const venuId = await handlePostVenueData(body);
+  //We have to create a venue when the program is offline .no need to create venue for online program
+  if (programTypeData?.is_online_program === false) {
+    const venuId = await handlePostVenueData(body);
 
-  if (venuId === false) {
-    return false;
-  } else {
-    programBody.venue_id = venuId;
+    if (venuId === false) {
+      return false;
+    } else {
+      programBody.venue_id = venuId;
+    }
   }
 
   //online_url
@@ -124,16 +133,9 @@ export const handlePostProgramData = async (
   if (body[NewCourseStep4FormNames.is_early_bird_enabled]) {
     programBody.is_early_bird_enabled =
       body[NewCourseStep4FormNames.is_early_bird_enabled];
-  }else{
-    programBody.is_early_bird_enabled =
-    false;
+  } else {
+    programBody.is_early_bird_enabled = false;
   }
-
-  const { data: programTypeData } = await supabaseClient
-    .from("program_types")
-    .select("*")
-    .eq("id", body?.program_type_id)
-    .single();
 
   let stateId: number = 1,
     cityId: number = 1,
@@ -867,8 +869,8 @@ const handlePostVenueData = async (body: any) => {
   if (body.isNewVenue) {
     venueData = body?.newVenue || {};
   } else {
-    const venueId = body.existingVenue.id;
-    venueData = body?.existingVenue;
+    const venueId = body.existingVenue?.id;
+    venueData = body?.existingVenue || {};
 
     // if it is existing venue then we will insert the id and do upsert automatically it will work update or insert
     if (venueId) {
@@ -1011,7 +1013,7 @@ export const handleProgramFeeLevelSettingsData = async (
   body: any,
   programId: number
 ) => {
-  if (body?.program_fee_level_settings?.length == 0) {
+  if (body?.program_fee_level_settings?.length == 0 || !body?.program_fee_level_settings) {
     return true;
   }
   // Fetching the existing fee level settings data
@@ -1078,7 +1080,9 @@ const handleGenerateProgramCode = async (
       .from("program")
       .update({
         program_code: programCode,
-      }).eq("id",programId).select();
+      })
+      .eq("id", programId)
+      .select();
 
     if (programError) {
       console.log("erorr while updating program code", programError);
