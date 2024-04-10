@@ -98,9 +98,12 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <Visibility />
         </div>
-        <div className="w-80 h-20">
-          <GeoRestriction />
-        </div>
+        {/* Allow only for super Admin */}
+        {hasSuperAdminRole && (
+          <div className="w-80 h-20">
+            <GeoRestriction />
+          </div>
+        )}
         {formData?.is_geo_restriction_applicable && (
           <div className="w-80 h-20">
             <AllowedCountriesDropDown />

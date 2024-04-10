@@ -35,7 +35,6 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.program_type_id,
   });
 
-
   let stateId: number = 0,
     cityId: number = 0,
     centerId: number = 0;
@@ -46,37 +45,37 @@ export default function NewCourseReviewPage() {
     cityId = newCourseData?.city_id;
     centerId = newCourseData?.center_id;
   } else {
-    if (newCourseData?.is_existing_venue == 'new-venue') {
-      stateId = newCourseData?.newVenue?.state_id
-      cityId = newCourseData?.newVenue?.city_id
-      centerId = newCourseData?.newVenue?.center_id
-    } else if (newCourseData?.is_existing_venue == 'existing-venue') {
-      stateId = newCourseData?.existingVenue?.state_id
-      cityId = newCourseData?.existingVenue?.city_id
-      centerId = newCourseData?.existingVenue?.center_id
+    if (newCourseData?.is_existing_venue == "new-venue") {
+      stateId = newCourseData?.newVenue?.state_id;
+      cityId = newCourseData?.newVenue?.city_id;
+      centerId = newCourseData?.newVenue?.center_id;
+    } else if (newCourseData?.is_existing_venue == "existing-venue") {
+      stateId = newCourseData?.existingVenue?.state_id;
+      cityId = newCourseData?.existingVenue?.city_id;
+      centerId = newCourseData?.existingVenue?.center_id;
     }
   }
-  console.log(stateId,cityId,centerId)
+
   const { data: venueState } = useOne({
     resource: "state",
     id: stateId,
   });
 
-  const StateNames = venueState?.data?.name
+  const StateNames = venueState?.data?.name;
 
   const { data: venueCity } = useOne({
     resource: "city",
     id: cityId,
   });
 
-  const CityNames = venueCity?.data?.name
+  const CityNames = venueCity?.data?.name;
 
   const { data: venueCenter } = useOne({
     resource: "center",
     id: centerId,
   });
 
-  const CenterNames = venueCenter?.data?.name
+  const CenterNames = venueCenter?.data?.name;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -112,7 +111,6 @@ export default function NewCourseReviewPage() {
     fetchFeeData();
   }, []);
 
-
   const creator =
     newCourseData?.program_created_by &&
     getOptionValueObjectById(
@@ -139,10 +137,10 @@ export default function NewCourseReviewPage() {
   });
 
   const { data: ProgramOrganizer } = useMany({
-    resource: 'users',
+    resource: "users",
     ids: newCourseData?.organizer_ids || [],
-    meta: { select: 'contact_id(full_name)' }
-  })
+    meta: { select: "contact_id(full_name)" },
+  });
 
   const programOrganizersNames = ProgramOrganizer?.data
     ?.map((user_id) => {
@@ -337,7 +335,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Is geo restriction applicable for registrations
+                Registration via 3rd party gateway
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -722,7 +720,7 @@ export default function NewCourseReviewPage() {
               }}
             />{" "}
           </div>
-          {/* body */}
+          {newCourseData?.is_residential_program &&
           <div className="grid grid-cols-4 gap-4 mt-2">
             {newCourseData?.accommodation?.map((data: any) => {
               return (
@@ -750,6 +748,7 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
           </div>
+          }
         </section>
         {/* Contact Info */}
         <section className="w-full py-8 text-base ">
