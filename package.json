@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "refine dev --port 2000",
     "build": "refine build",
+    "build:qa": "env-cmd -f .env.qa refine build",
     "start": "refine start --port 2000",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "refine": "refine"
@@ -47,6 +48,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.1",
     "date-fns": "^3.6.0",
+    "env-cmd": "^10.1.0",
     "loadash": "^1.0.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.302.0",
