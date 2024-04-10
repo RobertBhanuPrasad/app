@@ -32,7 +32,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { columns } from "./Columns";
+import { columns } from "../../../src/components/course/findCourse/Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 
 function index() {

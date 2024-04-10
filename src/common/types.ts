@@ -1,3 +1,4 @@
+//@ts-ignore
 interface AccommodationTypesDataBaseType {
   id?: number;
   created_at?: Date;

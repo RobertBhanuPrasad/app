@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "refine dev --port 2000",
     "build": "refine build",
+    "build:qa": "env-cmd -f .env.qa refine build",
     "start": "refine start --port 2000",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "refine": "refine"
@@ -47,6 +48,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.1",
     "date-fns": "^3.6.0",
+    "env-cmd": "^10.1.0",
     "loadash": "^1.0.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.302.0",
@@ -57,14 +59,16 @@
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.0.0",
     "react-hook-form": "^7.49.2",
-    "react-minimal-pie-chart": "^8.4.0",
     "react-icons": "^5.0.1",
+    "react-leaflet": "^4.2.1",
+    "react-minimal-pie-chart": "^8.4.0",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.9",
     "@types/lodash": "^4.14.202",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.0",
