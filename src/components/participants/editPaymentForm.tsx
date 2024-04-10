@@ -1,22 +1,18 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
-import Cross from "@public/assets/Cross";
-import React, { useState } from "react";
-import { DateRange } from "react-day-picker";
+import SimpleCross from "@public/assets/SimpleCross";
+import { format } from "date-fns";
+import { DateRangePickerComponent } from "pages/Courses/FindCourse";
+import { useState } from "react";
 import { useController } from "react-hook-form";
-import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import CustomSelect from "src/ui/custom-select";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Textarea } from "src/ui/textarea";
+import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 
 export default function EditPaymentForm() {
     const [open, setOpen] = useState(false);
-    const {
-        field: { value: participantName, onChange: participantNameOnchange },
-    } = useController({
-        name: "participantName",
-    });
     const {
         field: { value: transaction, onChange: transactionOnchange },
     } = useController({
@@ -31,6 +27,10 @@ export default function EditPaymentForm() {
         field: { value: paymentDate, onChange: paymentDateOnchange },
     } = useController({
         name: "paymentDate",
+        defaultValue: {
+            from: "Mon May 20 2024 00:00:00 GMT-0400 (Eastern Daylight Time)",
+            to: "Thu May 23 2024 00:00:00 GMT-0400 (Eastern Daylight Time)",
+        },
     });
     const {
         field: { value: payment, onChange: paymentMethodOnchange },
@@ -38,39 +38,43 @@ export default function EditPaymentForm() {
         name: "paymentMethod",
     });
     const {
-        field: { value: responseMessage, onChange: responseMessageOnchange },
-    } = useController({
-        name: "responseMessage",
-    });
-    const {
         field: { value: errorMessage, onChange: errorMessageOnchange },
     } = useController({
         name: "errorMessage",
     });
-    // TODO: todo for payment confirmation checkbox
-    //   const {
-    //     field: { value:transactionID, onChange:transactionIDOnchange },
-    //   } = useController({
-    //     name: "transactionID",
-    //   });
-    const transactionStatus = [
-        {
-            label: "Confirmed",
-            value: "confirmed",
-        },
-        {
-            label: "Pending",
-            value: "pending",
-        },
-        {
-            label: "Failed",
-            value: "failed",
-        },
-        {
-            label: "Not Recieved",
-            value: "not recieved",
-        },
-    ];
+    const {
+        field: { value: emailConfirmation, onChange: emailConfirmatiOnchange },
+    } = useController({
+        name: "emailConfirmation",
+    });
+    let transactionStatus =
+        getOptionValuesByOptionLabel("TRANSACTION_STATUS")?.[0]?.option_values;
+    console.log(transactionStatus, "transactionStatus1");
+    transactionStatus = transactionStatus?.map(
+        (val: { id: any; value: string }) => {
+            return {
+                value: val?.id,
+                label: val?.value,
+            };
+        }
+    );
+    //     {
+    //         label: "Confirmed",
+    //         value: "confirmed",
+    //     },
+    //     {
+    //         label: "Pending",
+    //         value: "pending",
+    //     },
+    //     {
+    //         label: "Failed",
+    //         value: "failed",
+    //     },
+    //     {
+    //         label: "Not Recieved",
+    //         value: "not recieved",
+    //     },
+    // ];
     const paymentMethod = [
         {
             label: "Cash",
@@ -89,13 +93,13 @@ export default function EditPaymentForm() {
             value: "credit card",
         },
     ];
-
+    const x = "xyz";
     return (
         <div>
             <div>
                 <div className="flex justify-end ">
                     <div>
-                        <Cross />
+                        <SimpleCross />
                     </div>
                 </div>
                 <div className="flex justify-center text-[24px] font-semibold ">
@@ -103,106 +107,121 @@ export default function EditPaymentForm() {
                 </div>
                 <div className="flex flex-row">
                     <div className="flex-1">
-                        <div>
-                            <div>Participant Name</div>
+                        <div className="py-[5px]">
+                            <div className="py-[5px]">Participant Name</div>
                             <div>
                                 <Textarea
-                                    value={participantName}
-                                    onChange={(value) => {
-                                        participantNameOnchange(value);
-                                    }}
+                                    // TODO: replace it with api data
+                                    value={x}
                                     placeholder=""
                                     // TODO: height adjustment
                                     className="!w-[278px] resize-none !important !h-[40px]"
                                 />
                             </div>
                         </div>
-                        <div>
-                            <div>Transaction Status</div>
+                        <div className="w-[278px] py-[5px]">
+                            <div className="py-[5px]">Transaction Status</div>
                             <div>
                                 <CustomSelect
                                     data={transactionStatus}
-                                    onSearch={(value) => {
-                                        transactionOnchange(value);
-                                    }}
-                                    onBottomReached={() => {}}
-                                    onChange={() => {}}
+                                    onBottomReached={() => { }}
+                                    onChange={transactionOnchange}
                                     placeholder={""}
-                                    value={transaction}
-                                />
+                                    value={transaction} 
+                                    onSearch={()=>{}}                                />
                             </div>
                         </div>
-                        <div>
-                            <div>Transaction ID</div>
+                        <div className="py-[5px]">
+                            <div className="py-[5px]">Transaction ID</div>
                             <div>
                                 <Textarea
-                                    value={transactionID}
-                                    onChange={(value) => {
-                                        transactionIDOnchange(value);
-                                    }}
-                                    placeholder=""
+                                    value={'121wqqw2123d'}
                                     className="!w-[278px] resize-none !important h-[40px]"
                                 />
                             </div>
                         </div>
                     </div>
                     <div className="flex-1">
-                        <div>
-                            <div>Payment Date</div>
+                        <div className="py-[5px]" >
+                            <div className="py-[5px]">Payment Date</div>
                             <div>
                                 <Dialog open={open}>
                                     <DialogTrigger asChild>
                                         <Button
                                             onClick={() => setOpen(true)}
-                                            className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
+                                            className="w-[278px] h-[40px] flex flex-row items-center"
                                             variant="outline"
+                                            
                                         >
-                                            <div>
-                                                <CalenderIcon />
+                                            <div className="flex gap-8">
+                                                <div className="">
+                                                    {paymentDate?.from ? (
+                                                        paymentDate?.to ? (
+                                                            <>
+                                                                {format(
+                                                                    paymentDate.from,
+                                                                    "MM/dd/yyyy"
+                                                                )}{" "}
+                                                                -{" "}
+                                                                {format(
+                                                                    paymentDate.to,
+                                                                    "MM/dd/yyyy"
+                                                                )}
+                                                            </>
+                                                        ) : (
+                                                            format(
+                                                                paymentDate.from,
+                                                                "MM/dd/yyyy"
+                                                            )
+                                                        )
+                                                    ) : (
+                                                        <div className="flex gap-2 font-normal">
+                                                            Select the Date
+                                                            Range
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="">
+                                                    <CalenderIcon color="#666666" />
+                                                </div>
                                             </div>
-                                            <div></div>
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
                                         <DateRangePickerComponent
                                             setOpen={setOpen}
+                                            value={paymentDate}
+                                            onSelect={paymentDateOnchange}
                                         />
                                     </DialogContent>
                                 </Dialog>
                             </div>
                         </div>
-                        <div>
-                            <div>Payment Method</div>
-                            <div>
+                        <div className="py-[5px]">
+                            <div className="py-[5px]">Payment Method</div>
+                            <div className="!w-[278px]">
                                 <CustomSelect
                                     data={paymentMethod}
-                                    onSearch={(value) => {
-                                        paymentMethodOnchange(value);
-                                    }}
+                                    onSearch={()=>{}}
                                     onBottomReached={() => {}}
-                                    onChange={() => {}}
-                                    placeholder={""}
+                                    onChange={paymentMethodOnchange}
                                     value={payment}
-                                />
+                                />x
                             </div>
                         </div>
-                        <div>
-                            <div>Response Message</div>
+                        <div className="py-[5px]">
+                            <div className="py-[5px]">Response Message</div>
                             <div>
                                 <Textarea
-                                    value={responseMessage}
-                                    onChange={(value) => {
-                                        responseMessageOnchange(value);
-                                    }}
-                                    placeholder=""
+                                    value={'Response Message'}
                                     className="!w-[278px] resize-none !important h-[40px]"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div>
-                    <div>Error Message</div>
+                <div className="flex flex-col py-[5px]">
+                    <div className="py-[5px]">Error Message</div>
                     <div>
                         <Textarea
                             value={errorMessage}
@@ -210,12 +229,12 @@ export default function EditPaymentForm() {
                                 errorMessageOnchange(value);
                             }}
                             placeholder=""
-                            className="!w-[278px] resize-none !important h-[40px]"
+                            className=" resize-none !important !h-[40px] !w-[578px]"
                         />
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 py-[30px]">
                         <div>
-                            <Checkbox />
+                            <Checkbox checked={emailConfirmation} onCheckedChange={emailConfirmatiOnchange}/>
                         </div>
                         <div>Send Payment confirmation mail?</div>
                     </div>
@@ -224,43 +243,3 @@ export default function EditPaymentForm() {
         </div>
     );
 }
-const DateRangePickerComponent = ({ setOpen }: any) => {
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: new Date(),
-        to: new Date(2024, 3, 20),
-    });
-
-    return (
-        <div className="relative">
-            <DateRangePicker
-                mode="range"
-                defaultMonth={date?.from}
-                selected={date}
-                onSelect={setDate}
-                numberOfMonths={2}
-                captionLayout="dropdown-buttons"
-                fromYear={2000}
-                toYear={2025}
-            />
-            <div className="flex flex-row gap-4 justify-center items-center fixed p-2 rounded-b-3xl bottom-0 left-0 w-full shadow-[rgba(0,_0,_0,_0.24)_0px_2px_8px]">
-                <Button
-                    onClick={() =>
-                        setDate({
-                            from: new Date(),
-                            to: new Date(2024, 3, 20),
-                        })
-                    }
-                    className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
-                >
-                    Reset
-                </Button>
-                <Button
-                    onClick={() => setOpen(false)}
-                    className=" w-[94px] h-10 rounded-xl"
-                >
-                    Apply
-                </Button>
-            </div>
-        </div>
-    );
-};

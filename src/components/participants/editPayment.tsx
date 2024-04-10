@@ -4,6 +4,7 @@ import EditPaymentForm from "./editPaymentForm";
 import { useForm } from "@refinedev/react-hook-form";
 import { FormProvider } from "react-hook-form";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
+import { useUpdate } from "@refinedev/core";
 export default function EditPayment() {
     const methods = useForm({
         refineCoreProps: {
@@ -20,7 +21,16 @@ export default function EditPayment() {
     const {
         refineCore: { onFinish },
         handleSubmit,
-    } = methods
+    } = methods;
+    // TODO: update the values to corresponding api
+    // const { mutate } = useUpdate();
+
+    // mutate({
+    //     values: {
+    //         name: "New Category",
+    //         description: "New Category Description",
+    //     },
+    // });
     return (
         <div>
             {/* <FormProvider {...methods}>
@@ -36,7 +46,7 @@ export default function EditPayment() {
                                 {/* hiii */}
                                 <div>
                                     <EditPaymentForm />
-                                    <div className="flex justify-center">
+                                    <div className="flex justify-center gap-6">
                                         <div>
                                             <Button className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold">
                                                 Cancel

@@ -1,9 +1,8 @@
-import Cross from "@public/assets/Cross";
+import SimpleCross from "@public/assets/SimpleCross";
 import { Button } from "src/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 
 export default function ViewDonationDetails({data}) {
-    console.log(data?.data?.data[0])
     return (
         <div>
             viewDonationDetails
@@ -13,9 +12,9 @@ export default function ViewDonationDetails({data}) {
                 </PopoverTrigger>
                 <PopoverContent className="w-[993px]">
                     <div>
-                        <div className="flex justify-end ">
+                        <div className="flex justify-end">
                             <div>
-                                <Cross />
+                                <SimpleCross />
                             </div>
                         </div>
                         <div className="flex justify-center text-[24px] font-semibold ">
