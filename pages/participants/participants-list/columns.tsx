@@ -31,16 +31,13 @@ interface ParticipantRegistration {
   payment_status_id: number;
 }
 
-interface CustomColumnDef<T> {
-  pinPosition?: string;
-}
-
 // Use an intersection type to combine with ColumnDef
-type ExtendedColumnDef<T> = CustomColumnDef<T> & ColumnDef<T>;
+type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
+export const columns: ExtendedColumnDef<any>[] = [
   {
-    accessorKey: "Registration ID",
+    accessorKey: "participant_code",
+    column_name: "Registration ID",
     enablePinning: true,
     enableHiding: false,
     header: ({ column }) => {
@@ -60,7 +57,8 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     },
   },
   {
-    accessorKey: "Registration Date",
+    accessorKey: "created_at",
+    column_name: "Registration Date",
     header: ({ column }) => {
       return (
         <div>
@@ -82,12 +80,13 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     },
 
     cell: ({ row }: any) => {
-      const db_date = formatDate(row?.original?.registration_date);
+      const db_date = formatDate(row?.original?.created_at);
       return <div className="text-left">{db_date}</div>;
     },
   },
   {
     accessorKey: "NIF",
+    column_name: "NIF",
     header: ({ column }) => {
       return <div className="text-left">NIF</div>;
     },
@@ -100,6 +99,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Name",
+    column_name: "Name",
     enableHiding: false,
     enableSorting: true,
     header: ({ column }) => {
@@ -130,6 +130,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Date of Birth",
+    column_name: "Date of Birth",
     header: ({ column }) => {
       return (
         <div>
@@ -160,6 +161,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Phone",
+    column_name: "Phone",
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -189,6 +191,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Email",
+    column_name: "Email",
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -220,6 +223,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Fee Level",
+    column_name: "Fee Level",
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -251,6 +255,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Amount",
+    column_name: "Amount",
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -282,6 +287,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Transaction Type",
+    column_name: "Transaction Type",
     header: ({ column }) => {
       return <div className="min-w-[150px] text-left">Transaction Type</div>;
     },
@@ -298,6 +304,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Transaction ID",
+    column_name: "Transaction ID",
     header: ({ column }) => {
       return <div className="text-left">Transaction ID</div>;
     },
@@ -314,6 +321,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Payment Method",
+    column_name: "Payment Method",
     header: ({ column }) => {
       return <div className="min-w-[200px] text-left">Payment Method</div>;
     },
@@ -330,6 +338,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Balance",
+    column_name: "Balance",
     header: ({ column }) => {
       return <div className="text-left">Balance</div>;
     },
@@ -346,6 +355,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Transaction Status",
+    column_name: "Transaction Status",
     enableHiding: false,
     header: ({ column }) => {
       return <div className="min-w-[150px] text-left">Transaction Status</div>;
@@ -356,13 +366,14 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status?.transaction_status}
+          {row?.original?.payment_status_id?.value}
         </div>
       );
     },
   },
   {
     accessorKey: "Attendance Status",
+    column_name: "Attendance Status",
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -394,6 +405,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Program Agreement Version",
+    column_name: "Program Agreement Version",
     header: ({ column }) => {
       return <div className="text-left">Program Agreement Version</div>;
     },
@@ -410,6 +422,7 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
   },
   {
     accessorKey: "Program Agreement Status",
+    column_name: "Program Agreement Status",
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">Program Agreement Status</div>
@@ -419,15 +432,15 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.program_agreement_status}
-        </div>
-      );
+      const toggle = row?.original?.program_agreement_status
+        ? "Completed"
+        : "Pending";
+      return <div className="min-w-[150px] text-left">{toggle}</div>;
     },
   },
   {
     accessorKey: "Program Agreement Date",
+    column_name: "Program Agreement Date",
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">Program Agreement Date</div>
@@ -437,15 +450,13 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.program_agreement_date}
-        </div>
-      );
+      const db_date = formatDate(row?.original?.program_agreement_date);
+      return <div className="min-w-[150px] text-left">{db_date}</div>;
     },
   },
   {
     accessorKey: "Health Declaration Status",
+    column_name: "Health Declaration Status",
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">Health Declaration Status</div>
@@ -455,15 +466,15 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.health_declaration_status}
-        </div>
-      );
+      const toggle = row?.original?.is_health_declaration_checked
+        ? "Completed"
+        : "Pending";
+      return <div className="min-w-[150px] text-left">{toggle}</div>;
     },
   },
   {
     accessorKey: "Health Declaration Consent Date",
+    column_name: "Health Declaration Consent Date",
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">
@@ -475,11 +486,10 @@ export const columns: ExtendedColumnDef<ParticipantRegistration>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.health_declaration_date}
-        </div>
+      const db_date = formatDate(
+        row?.original?.health_declaration_consent_date
       );
+      return <div className="min-w-[150px] text-left">{db_date}</div>;
     },
   },
   {
