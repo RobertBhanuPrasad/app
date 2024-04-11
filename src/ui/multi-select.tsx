@@ -62,7 +62,13 @@ export function MultiSelect({
     console.log(data, selected, selectables, "selectables");
   };
 
+  //When prop values changes from external functions, we have to keep the selected state and prop value in sync.
+  useEffect(() => {
+    setSelected(propValue);
+  }, [propValue]);
+
   // Handle clicks outside the dropdown to close it
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -123,7 +129,10 @@ export function MultiSelect({
                   className="border flex items-center"
                 >
                   <div className="max-w-[60px] truncate">
-                    <abbr className="no-underline" title={findObjectById(item)?.label}>
+                    <abbr
+                      className="no-underline"
+                      title={findObjectById(item)?.label}
+                    >
                       {findObjectById(item)?.label}
                     </abbr>
                   </div>
