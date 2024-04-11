@@ -16,7 +16,6 @@ import { Label } from "src/ui/label";
 import { Input } from "src/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import CalenderIcon from "@public/assets/CalenderIcon";
-import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import React, { useState } from "react";
 import { format } from "date-fns";
@@ -36,8 +35,10 @@ import {
 } from "src/constants/OptionLabels";
 import ClearAllIcon from "@public/assets/ClearAllIcon";
 import { MultiSelect } from "src/ui/multi-select";
+import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 
 export function ParticipantsAdvanceFilter() {
+  const { setParticpantFiltersData } = ParticipantStore();
   const { watch, setValue } = useFormContext();
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
@@ -264,6 +265,7 @@ export function ParticipantsAdvanceFilter() {
                       completed: false,
                       pending: false,
                     });
+                    setValue("advanceFilter", {});
                   }}
                   className="flex gap-1 items-center cursor-pointer"
                 >
@@ -281,6 +283,7 @@ export function ParticipantsAdvanceFilter() {
                       tempFilterData?.tempFilters?.registration_date_range
                     );
                     setOpenAdvFilter(false);
+                    setParticpantFiltersData(formData);
                   }}
                 >
                   Apply
