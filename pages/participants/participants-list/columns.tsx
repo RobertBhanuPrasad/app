@@ -297,7 +297,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status?.transaction_type}
+          {
+            row?.original?.participant_payment_history[0]?.transaction_type_id
+              ?.value
+          }
         </div>
       );
     },
@@ -314,7 +317,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status?.transaction_id}
+          {
+            row?.original?.participant_payment_history[0]
+              ?.payment_transaction_id
+          }
         </div>
       );
     },
@@ -331,7 +337,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status?.payment_method}
+          {
+            row?.original?.participant_payment_history[0]?.payment_method_id
+              ?.value
+          }
         </div>
       );
     },

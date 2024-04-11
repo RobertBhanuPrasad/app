@@ -253,8 +253,8 @@ export function ParticipantsAdvanceFilter() {
                     setValue("tempFilters.registration_date_range", "");
                     setValue("tempFilters.transaction_status", "");
                     setValue("tempFilters.transaction_type", "");
-                    setValue("tempFilters.payment_method", "");
-                    setValue("tempFilters.fee_level", "");
+                    setValue("tempFilters.payment_method", []);
+                    setValue("tempFilters.fee_level", []);
                     setValue("tempFilters.attendance_status", "");
                     setValue("tempFilters.health_consent_status", {
                       completed: false,
@@ -341,8 +341,6 @@ export const RegistrationDate = () => {
 
   const { watch, setValue } = useFormContext();
   const formData = watch();
-
-  console.log(formData, "sa");
 
   return (
     <div className="flex flex-col gap-2">
@@ -488,7 +486,7 @@ export const PaymentMethod = () => {
     <div>
       <MultiSelect
         value={paymentMethods}
-        placeholder="Select Program Organiser"
+        placeholder="Select Payment Method"
         data={paymentMethodValues}
         onBottomReached={() => {}}
         onSearch={() => {}}
@@ -496,8 +494,6 @@ export const PaymentMethod = () => {
       />
     </div>
   );
-
-  // paymentMethodOptions.map()
 };
 
 export const FeeLevel = () => {
