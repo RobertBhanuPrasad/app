@@ -1,44 +1,42 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { useTable } from '@refinedev/core'
+import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 function ViewParticipantEmailDeliveryLogs() {
-  const {
-    tableQueryResult: programData,
-    pageCount,
-    pageSize,
-    setPageSize,
-    current,
-    setCurrent
-  } = useTable({
+
+  const selectQuery: any = {
     resource: 'participant_registration',
+    id: 4, //TODO:Replace with selected participant ID
     meta: {
       select: 'email_delivery_logs_section'
     }
-  })
-  console.log('programData', programData)
+  }
+
+  const { data: programData, isLoading, isError } = useOne(selectQuery)
+
+  console.log('programData', programData?.data)
   const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
-      <p className='text-[18px] font-[600] mb-[20px]'>Email Delivery Logs</p>
+      <p className="text-[18px] font-[600] mb-[20px]">Email Delivery Logs</p>
       <div>
         <BaseTable
-          current={current}
+          current={1}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
           checkboxSelection={false}
-          setCurrent={setCurrent}
-          pageCount={pageCount}
-          total={programData?.data?.total || 0}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
+          setCurrent={() => {}}
+          pageCount={10}
+          total={programData?.data?.email_delivery_logs_section?.length || 0}
+          pageSize={10}
+          setPageSize={() => {}}
           pagination={false}
           tableStyles={{
             table: '',
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.data || []}
+          data={programData?.data?.email_delivery_logs_section || []}
           columnPinning={false}
         />
       </div>
@@ -72,54 +70,55 @@ interface Program {
 
 const columns: ColumnDef<Program>[] = [
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'transaction_id',
     header: () => {
       return <div className="">Transaction ID</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">re_3MU29YFiFJJDb8N0JOATa4O</div>
+      console.log('row', row)
+
+      return <div className="lowercase">{row?.original?.transaction_id}</div>
     }
   },
   {
-    accessorKey: 'transaction_type',
+    accessorKey: 'time_stamp',
     header: () => {
       return <div className="">Time Stamp</div>
     },
 
     cell: ({ row }: any) => {
-      console.log('row innn', row)
-      return <div className="">Jan 22, 1994 | 01:42:56</div>
+      return <div className="">{row?.original?.time_stamp}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'ip_address',
     header: () => {
       return <div className=" ">IP Address</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">176.202.107.161</div>
+      return <div className="lowercase">{row?.original?.ip_address}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'operating_system',
     header: () => {
       return <div className="">Operating System</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">Windows 10</div>
+      return <div className="lowercase">{row?.original?.operating_system}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'browser',
     header: () => {
       return <div className="">Browser</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase ">Firefox/109.0</div>
+      return <div className="lowercase ">{row?.original?.browser}</div>
     }
   }
 ]

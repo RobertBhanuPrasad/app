@@ -18,21 +18,30 @@ function ViewParticipantTransactionDetails() {
   } = useTable({
     resource: 'participant_payment_history',
     meta: {
-      select: '*'
+      select: '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*)'
+    },
+    filters: {
+      permanent: [
+        {
+          field: 'participant_id',
+          operator: 'eq',
+          value: 2
+        }
+      ]
     }
   })
-  console.log('programData', programData)
+  console.log('programData...', programData)
   const [rowSelection, setRowSelection] = React.useState({})
-  programData = {data:{total:5,data:[{id:1},{id:2}]}}
+  // programData = { data: { total: 5, data: [{ id: 1 }, { id: 2 }] } }
   return (
     <div>
-      <p className='text-[18px] font-[600] mb-[20px]'>Transaction Details</p>
-      <div>
+      <p className="text-[18px] font-[600] mb-[20px]">Transaction Details</p>
+      <div className="!min-w-[1000px] rounded-[10px]">
         <BaseTable
           current={current}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
-          checkboxSelection={true}
+          checkboxSelection={false}
           setCurrent={setCurrent}
           pageCount={pageCount}
           total={programData?.data?.total || 0}
@@ -40,7 +49,7 @@ function ViewParticipantTransactionDetails() {
           setPageSize={setPageSize}
           pagination={true}
           tableStyles={{
-            table: '!w-[970px]',
+            table: ' !rounded-3xl',
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
@@ -78,7 +87,7 @@ interface Program {
 
 const columns: ColumnDef<Program>[] = [
   {
-    accessorKey: 'state_id',
+    accessorKey: 'payment_transaction_id',
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -100,138 +109,145 @@ const columns: ColumnDef<Program>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      return <div>{row?.original?.state_id?.name}</div>
+      return <div>{row?.original?.payment_transaction_id}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[100px]">Time Stamp</div>
+      return <div className="  min-w-[100px]">Time Stamp</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.source_timestamp}</div>
+      return <div className="lowercase ">{row?.original?.source_timestamp}</div>
     }
   },
   {
     accessorKey: 'transaction_type',
     header: () => {
-      return <div className=" text-center min-w-[150px]">Transaction Type </div>
+      return <div className="  min-w-[150px]">Transaction Type </div>
     },
 
     cell: ({ row }: any) => {
-      console.log('row innn', row)
-      return <div className=" text-center min-w-[150px]">{row?.original?.transaction_type}</div>
+      return (
+        <div
+          className={`  min-w-[150px] ${
+            row?.original?.transaction_status_id == 8 ? 'text-[#FF6D6D]' : 'text-[#7677F4]'
+          }`}
+        >
+          {row?.original?.transaction_type_id?.value}
+        </div>
+      )
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[150px]">Payment Method</div>
+      return <div className="min-w-[150px]">Payment Method</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase">{row?.original?.payment_method_id?.value}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[170px]">Organization fee (EUR)</div>
+      return <div className=" min-w-[170px]">Organization fee (EUR)</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center ">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase ">{row?.original?.organization_fee}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[150px]">Expense fee (EUR)</div>
+      return <div className=" min-w-[150px]">Expense fee (EUR)</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase">{row?.original?.program_type_id?.name}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[100px]">Tax (EUR)</div>
+      return <div className=" min-w-[100px]">Tax (EUR)</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase">{row?.original?.expense_fee}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center">Discount </div>
+      return <div className="">Discount </div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase">{row?.original?.program_type_id?.name}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[170px]">Accommodation Type</div>
+      return <div className=" min-w-[170px]">Accommodation Type</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase">{row?.original?.accommodation_type}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[200px]">Accommodation Fee (EUR)</div>
+      return <div className=" min-w-[200px]">Accommodation Fee (EUR)</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase">{row?.original?.accommodation_fee}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[120px]">Total fee (EUR)</div>
+      return <div className=" min-w-[120px]">Total fee (EUR)</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center ">{row?.original?.total_amount}</div>
+      return <div className="lowercase ">{row?.original?.total_amount}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[120px]">Fee level</div>
+      return <div className=" min-w-[120px]">Fee level</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase ">{row?.original?.transaction_fee_level_id?.value}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center min-w-[150px]">Transaction Status</div>
+      return <div className=" min-w-[150px]">Transaction Status</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.payment_transaction_id}</div>
+      return <div className="lowercase">{row?.original?.transaction_status_id?.value}</div>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" text-center">Reason</div>
+      return <div className="">Reason</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase text-center">{row?.original?.program_type_id?.name}</div>
+      return <div className="lowercase">{row?.original?.transaction_reason}</div>
     }
   },
 
@@ -239,10 +255,10 @@ const columns: ColumnDef<Program>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const editParticipant =()=>{}
-      const viewParticipant = ()=>{}
-      const refundTransaction= ()=>{}
-      const downloadReceipt= ()=>{}
+      const editParticipant = () => {}
+      const viewParticipant = () => {}
+      const refundTransaction = () => {}
+      const downloadReceipt = () => {}
       return (
         <div className="flex justify-center text-primary">
           <DropdownMenu>
@@ -253,10 +269,36 @@ const columns: ColumnDef<Program>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-             <div onClick={()=>{editParticipant()}}> <DropdownMenuItem>Edit</DropdownMenuItem></div>
-             <div onClick={()=>{viewParticipant()}}><DropdownMenuItem>View</DropdownMenuItem></div>
-             <div onClick={()=>{refundTransaction()}}><DropdownMenuItem>Refund</DropdownMenuItem></div>
-             <div onClick={()=>{downloadReceipt()}}> <DropdownMenuItem>Download receipt</DropdownMenuItem></div>
+              <div
+                onClick={() => {
+                  editParticipant()
+                }}
+              >
+                {' '}
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+              </div>
+              <div
+                onClick={() => {
+                  viewParticipant()
+                }}
+              >
+                <DropdownMenuItem>View</DropdownMenuItem>
+              </div>
+              <div
+                onClick={() => {
+                  refundTransaction()
+                }}
+              >
+                <DropdownMenuItem>Refund</DropdownMenuItem>
+              </div>
+              <div
+                onClick={() => {
+                  downloadReceipt()
+                }}
+              >
+                {' '}
+                <DropdownMenuItem>Download receipt</DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

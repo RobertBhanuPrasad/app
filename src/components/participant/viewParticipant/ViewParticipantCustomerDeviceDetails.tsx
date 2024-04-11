@@ -1,44 +1,42 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { useTable } from '@refinedev/core'
+import { useOne, useTable } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 function ViewParticipantCustomerDeviceDetails() {
-  const {
-    tableQueryResult: programData,
-    pageCount,
-    pageSize,
-    setPageSize,
-    current,
-    setCurrent
-  } = useTable({
+
+  const selectQuery: any = {
     resource: 'participant_registration',
+    id: 4, //TODO:Replace with selected participant ID
     meta: {
       select: 'customer_device_details_section'
     }
-  })
+  }
+
+  const { data: programData, isLoading, isError } = useOne(selectQuery)
+
   console.log('programData', programData)
   const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
       <p className="text-[18px] font-[600] mb-[20px]">Customer Device Details</p>
       <div>
-        <BaseTable
-          current={current}
+      <BaseTable
+          current={1}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
           checkboxSelection={false}
-          setCurrent={setCurrent}
-          pageCount={pageCount}
-          total={programData?.data?.total || 0}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
+          setCurrent={() => {}}
+          pageCount={10}
+          total={programData?.data?.customer_device_details_section?.length || 0}
+          pageSize={10}
+          setPageSize={() => {}}
           pagination={false}
           tableStyles={{
             table: '',
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.data || []}
+          data={programData?.data?.customer_device_details_section || []}
           columnPinning={false}
         />
       </div>
@@ -72,54 +70,54 @@ interface Program {
 
 const columns: ColumnDef<Program>[] = [
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'program_type',
     header: () => {
       return <div className="">Type</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">Registration Confirmation</div>
+      return <div className="lowercase">{row?.original?.program_type}</div>
     }
   },
   {
-    accessorKey: 'transaction_type',
+    accessorKey: 'delivery_status',
     header: () => {
       return <div className="">Delivery status </div>
     },
 
     cell: ({ row }: any) => {
       console.log('row innn', row)
-      return <div className="">Success</div>
+      return <div className="">{row?.original?.program_type}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'delivery_time_stamp',
     header: () => {
       return <div className="">Delivery time Stamp</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">2022-09-07 01:35:30</div>
+      return <div className="lowercase">{row?.original?.delivery_time_stamp}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'source',
     header: () => {
       return <div className="">Source</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">System (sumittest1@yopmail.com )</div>
+      return <div className="lowercase">{row?.original?.source}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'open_time_stamp',
     header: () => {
       return <div className="">Open time stamp</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">2022-09-07 01:35:30</div>
+      return <div className="lowercase">{row?.original?.open_time_stamp}</div>
     }
   }
 ]

@@ -5,6 +5,7 @@ import {
   ColumnDef,
   ColumnDefResolved,
   RowSelectionState,
+  SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -160,6 +161,7 @@ export function BaseTable<TData, TValue>({
     {}
   );
 
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
@@ -175,6 +177,7 @@ export function BaseTable<TData, TValue>({
   const [selectAll, setSelectAll] = useState(initialSelectAll);
 
   const getRowId = (originalRow: any) => originalRow.id.toString();
+
   // table hook
   const table = useReactTable({
     data,
@@ -305,12 +308,12 @@ export function BaseTable<TData, TValue>({
                 <DropDown />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
+            <DropdownMenuContent className="w-[192px]" align="start">
               <div>
                 <div className="flex flex-col gap-4 p-3 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
                   <div className="flex flex-row gap-4 items-center">
                     <Checkbox
-                      className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+                      className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                       checked={selectAll}
                       onCheckedChange={handleSelectAllChange}
                     />
@@ -321,20 +324,20 @@ export function BaseTable<TData, TValue>({
                     .getAllColumns()
                     .filter((column) => column?.accessorFn)
                     // Here we are filtering the columns which have accessorKey
-                    .map((column) => {
+                    .map((column: any) => {
                       return (
                         <div className="flex flex-row gap-4 items-center">
                           <Checkbox
                             key={column.id}
                             disabled={!column.getCanHide()}
                             //Disabling the checkbox if the column cannot be hidden
-                            className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
+                            className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                             checked={columnVisibilityChanges[column.id]}
                             onCheckedChange={(value: boolean) => {
                               handleColumnVisibilityChange(column.id, value);
                             }}
                           />
-                          {column.id}
+                          {column?.columnDef?.column_name}
                         </div>
                       );
                     })}
@@ -381,7 +384,7 @@ export function BaseTable<TData, TValue>({
                 {table &&
                   table?.getHeaderGroups()?.map((headerGroup) => (
                     <TableRow
-                      className=" border-none text-[16px] font-bold w-full"
+                      className="border-none text-[16px] font-bold w-full"
                       key={headerGroup?.id}
                     >
                       {/* If the checkboxSelection is true then we need to show checkboxes  */}
@@ -392,6 +395,7 @@ export function BaseTable<TData, TValue>({
                           }`}
                         >
                           <Checkbox
+                            className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                             checked={table.getIsAllPageRowsSelected()}
                             onCheckedChange={(value: boolean) => {
                               table.toggleAllPageRowsSelected(value);
@@ -408,12 +412,12 @@ export function BaseTable<TData, TValue>({
                               columnPinning &&
                               index === 0 &&
                               `sticky ${
-                                checkboxSelection ? "left-8" : "left-0"
-                              } z-10 bg-[#E9E9F5]`
+                                checkboxSelection ? "left-10" : "left-0"
+                              } z-10 bg-[#E9E9F5] drop-shadow-right`
                             } ${
                               columnPinning &&
                               index === headerGroup.headers.length - 1 &&
-                              `sticky right-0 z-10 bg-[#E9E9F5]`
+                              `sticky right-0 z-10 bg-[#E9E9F5] drop-shadow-left w-[50px]`
                             } text-[#333333] `}
                             key={header?.id}
                           >
@@ -447,7 +451,7 @@ export function BaseTable<TData, TValue>({
                 {table && table?.getRowModel()?.rows?.length ? (
                   table?.getRowModel()?.rows?.map((row) => (
                     <TableRow
-                      className={`{${tableStyles?.rowStyles} `}
+                      className={`{${tableStyles?.rowStyles}`}
                       key={row?.id}
                       data-state={row?.getIsSelected() && "selected"}
                     >
@@ -455,10 +459,11 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableCell
                           className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#FFFFFF]"
+                            columnPinning && "sticky left-0 z-10 bg-[#FFFFFF] "
                           }`}
                         >
                           <Checkbox
+                            className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
                             checked={row.getIsSelected()}
                             onCheckedChange={(value) =>
                               row.toggleSelected(!!value)
@@ -475,12 +480,12 @@ export function BaseTable<TData, TValue>({
                             columnPinning &&
                             index === 0 &&
                             `sticky ${
-                              checkboxSelection ? "left-8" : "left-0"
-                            }  top-0 z-10 bg-[#FFFFFF]`
+                              checkboxSelection ? "left-10" : "left-0"
+                            }  top-0 z-10 bg-[#FFFFFF] drop-shadow-right`
                           } ${
                             columnPinning &&
                             index === row.getVisibleCells().length - 1 &&
-                            `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[100px]`
+                            `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[50px] drop-shadow-left`
                           } text-[#333333]`}
                           key={cell.id}
                         >

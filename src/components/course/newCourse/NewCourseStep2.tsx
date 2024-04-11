@@ -1,33 +1,57 @@
-import Globe from "@public/assets/Globe"
-import Important from "@public/assets/Important"
-import LockIcon from "@public/assets/Lock"
-import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core"
-import _ from "lodash"
-import { useTranslation } from "next-i18next"
-import { useEffect, useState } from "react"
-import { useController, useFormContext } from "react-hook-form"
-import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels"
-import { I_AM_ORGANIZER, SUPER_ADMIN } from "src/constants/OptionValueOrder"
-import countryCodes from "src/data/CountryCodes"
-import CustomSelect from "src/ui/custom-select"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "src/ui/hover-card"
-import { Input } from "src/ui/input"
-import { DataItem, MultiSelect } from "src/ui/multi-select"
-import { RadioGroup } from "src/ui/radio-group"
-import { RadioButtonCard } from "src/ui/radioButtonCard"
-import { Switch } from "src/ui/switch"
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel"
+import Globe from "@public/assets/Globe";
+import Important from "@public/assets/Important";
+import LockIcon from "@public/assets/Lock";
+import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
+import _ from "lodash";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
+import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
+import {
+  CERTIFICATION_TYPE,
+  PROGRAM_CATEGORY,
+  PROGRAM_ORGANIZER_TYPE,
+  VISIBILITY,
+} from "src/constants/OptionLabels";
+import {
+  ASSIST,
+  COURSE,
+  I_AM_ORGANIZER,
+  PRIVATE,
+  PUBLIC,
+  SUPER_ADMIN,
+} from "src/constants/OptionValueOrder";
+import countryCodes from "src/data/CountryCodes";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "src/ui/hover-card";
+import { Input } from "src/ui/input";
+import { DataItem, MultiSelect } from "src/ui/multi-select";
+import { RadioGroup } from "src/ui/radio-group";
+import { RadioButtonCard } from "src/ui/radioButtonCard";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import { Switch } from "src/ui/switch";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 export default function NewCourseStep2() {
-  const { t } = useTranslation("common")
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const formData = watch()
+  const formData = watch();
 
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
+
+  // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
-  )
+  );
 
   return (
     <div className="pt-2 w-auto ">
@@ -35,59 +59,52 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <CourseTypeDropDown />
         </div>
-
         {/* Course Name drop will come from settings */}
-        {formData?.courseTypeSettings?.has_alias_name === true && (
+        {/* //TODO: Need to BussinessLayer for this with proper code */}
+        {formData?.program_type?.has_alias_name === true && (
           <div className="w-80 h-20">
             <CourseNameDropDown />
           </div>
         )}
-
         <div className="w-80 h-20">
           <TeachersDropDown />
         </div>
-
         <div className="w-80 h-20">
           <AssistantTeachersDropDown />
         </div>
-
         <div className="w-80 h-20">
           <LanguageDropDown />
         </div>
-
         {/* Allow only for super Admin */}
         {hasSuperAdminRole && (
           <div className="w-80 h-20">
             <DisplayLanguage />
           </div>
         )}
-
-        {formData?.displayLanguage == "true" && (
+        {formData?.is_language_translation_for_participants == true && (
           <div className="w-80 h-20">
             <LanguageTranslationDropDown />
           </div>
         )}
-
         {/* Allow only for super Admin */}
         {hasSuperAdminRole && (
           <div className="w-80 h-20 flex items-center">
             <RegistrationGateway />
           </div>
         )}
-
         <div className="w-80 h-20">
           <MaximumCapacity />
         </div>
-
         <div className="w-80 h-20">
           <Visibility />
         </div>
-
-        <div className="w-80 h-20">
-          <GeoRestriction />
-        </div>
-
-        {formData?.isGeoRestriction == "true" && (
+        {/* Allow only for super Admin */}
+        {hasSuperAdminRole && (
+          <div className="w-80 h-20">
+            <GeoRestriction />
+          </div>
+        )}
+        {formData?.is_geo_restriction_applicable && (
           <div className="w-80 h-20">
             <AllowedCountriesDropDown />
           </div>
@@ -95,94 +112,119 @@ export default function NewCourseStep2() {
       </div>
       <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          {t("courseDescription")}
-          <HoverCard>
-            <HoverCardTrigger>
-              <Important />
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">{t("courseDescriptionText")}</div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
-        <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          {t("courseNotes")}
-          <HoverCard>
-            <HoverCardTrigger>
-              <Important />
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">{t("courseNotesText")}</div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
-        <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          {t("courseDescription")}
+          Course Description *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                {t("registrationsRestrictionDescription")}
+                Course Description text is managed by National Admin. If the
+                National Admin has allowed Organizers / Teachers to edit Course
+                description then only this field will be editable. If you want
+                to change the course description and this field is not editable
+                kindly contact your National Admin.
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+        <div className="w-80 h-10 flex flex-row gap-1 items-center">
+          Course Notes *
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                Text entered in the 'Course Notes' field will be shown only on
+                the Art of Living Website course details page.
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+        <div className="w-80 h-10 flex flex-row gap-1 items-center">
+          Course Description *
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                Text entered in the 'Email Notes' field will be included in the
+                registration confirmation email only irrespective of the
+                transaction status (Email notes will not be shown on the Art of
+                Living Website)
               </div>
             </HoverCardContent>
           </HoverCard>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export const CourseTypeDropDown = () => {
-  const { t } = useTranslation("common")
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10);
 
-  const formData = watch()
+  const [searchValue, searchOnChange] = useState("");
 
-  const [selectOptions, setSelectOptions] = useState<any>()
+  const formData = watch();
 
+  const courseCategoryId = getOptionValueObjectByOptionOrder(
+    PROGRAM_CATEGORY,
+    COURSE
+  )?.id;
+
+  //Requirement: Fetch only the course types of organization selected in Step-1
   let filter: Array<CrudFilter> = [
     {
       field: "organization_id",
       operator: "eq",
-      value: formData?.organization,
+      value: formData?.organization_id,
     },
     {
-      field: "program_category_id.value",
+      field: "program_category_id",
       operator: "eq",
-      value: "Course",
+      value: courseCategoryId,
     },
-  ]
+  ];
 
-  if (formData?.teachers?.length > 0) {
-    const programTypeIds: number[] = []
-    formData?.teachers?.map((val: any) => {
-      val?.value?.program_type_teachers?.map((val: { program_type_id: number }) =>
-        programTypeIds.push(val?.program_type_id)
-      )
-    })
+  //Need to filter course types based on teacher and assistant teacher
+  if (
+    formData?.teacher_ids?.length > 0 ||
+    formData?.assistant_teacher_ids?.length > 0
+  ) {
+    let userIds: number[] = [];
+
+    if (formData?.teacher_ids?.length > 0) {
+      userIds = [...userIds, ...formData?.teacher_ids];
+    }
+
+    if (formData?.assistant_teacher_ids?.length > 0) {
+      userIds = [...userIds, ...formData?.assistant_teacher_ids];
+    }
 
     filter.push({
-      field: "id",
+      field: "program_type_teachers.user_id",
       operator: "in",
-      value: programTypeIds,
-    })
+      value: userIds,
+    });
   }
 
   const {
     field: { value, onChange },
+    fieldState: { error: courseTypeError },
   } = useController({
-    name: "courseType",
-  })
+    name: NewCourseStep2FormNames?.program_type_id,
+  });
 
   const selectQuery: any = {
     resource: "program_types",
-    optionLabel: "name",
-    optionValue: "id",
-    meta: { select: "*,program_category_id!inner(*)" },
+    meta: {
+      select: "*,program_type_teachers!inner(user_id)",
+    },
     onSearch: (value: any) => [
       {
         field: "name",
@@ -192,87 +234,134 @@ export const CourseTypeDropDown = () => {
     ],
     filters: filter,
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
-  }
+  };
 
   if (value) {
-    selectQuery.defaultValue = value
+    selectQuery.defaultValue = value;
   }
 
-  const { options, onSearch, queryResult } = useSelect(selectQuery)
+  const { onSearch, queryResult } = useSelect(selectQuery);
 
-  useEffect(() => {
-    if (options) {
-      if (currentPage > 1) setSelectOptions([...selectOptions, ...options])
-      else setSelectOptions(options)
-    }
-  }, [options])
+  const options: { label: string; value: number }[] =
+    queryResult?.data?.data?.map((programType) => {
+      return {
+        label: programType?.name,
+        value: programType?.id,
+      };
+    }) as { label: string; value: number }[];
 
   const {
     field: { onChange: setCourseTypeSettings },
   } = useController({
-    name: "courseTypeSettings",
-  })
+    name: NewCourseStep2FormNames?.program_type,
+  });
 
+  /**
+   * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
+   * @function getCourseTypeSettings
+   * @param val
+   * This functions sets the data which is came from program_types table usign the id we have  in the setCourseTypeSettings redux variable
+   */
   const getCourseTypeSettings = async (val: any) => {
-    const courseSettings = queryResult?.data?.data.filter((data) => data.id == val.value)
+    const courseSettings = queryResult?.data?.data.filter(
+      (data) => data.id == val
+    );
 
-    setCourseTypeSettings(courseSettings?.[0])
-  }
+    setCourseTypeSettings(courseSettings?.[0]);
+  };
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1)
-  }
-
-  if (queryResult.isLoading) {
-    return null
-  }
+    if (queryResult?.data?.data && queryResult?.data?.total >= pageSize) {
+      setPageSize((previousLimit: number) => previousLimit + 10);
+    }
+  };
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("courseType")} <div className="text-[#7677F4]"> *</div>
+        Course Type <div className="text-[#7677F4]"> *</div>
       </div>
-      <CustomSelect
+      <Select
         value={value}
-        placeholder={t("selectCourseType")}
-        data={selectOptions}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          onSearch(val)
+        onValueChange={(val: any) => {
+          onChange(val);
+          getCourseTypeSettings(val);
         }}
-        onChange={(val) => {
-          getCourseTypeSettings(val)
-          onChange(val)
-        }}
-      />
+      >
+        <SelectTrigger
+          className="w-[320px]"
+          error={courseTypeError ? true : false}
+        >
+          <SelectValue placeholder="Select course type" />
+        </SelectTrigger>
+        <SelectContent>
+          <Input
+            value={searchValue}
+            onChange={(value: ChangeEvent<HTMLInputElement>) => {
+              searchOnChange(value.target.value);
+              onSearch(value.target.value);
+            }}
+          />
+          <SelectItems onBottomReached={handleOnBottomReached}>
+            {options?.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+
+      {courseTypeError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {courseTypeError?.message}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 const RegistrationGateway = () => {
-  const { t } = useTranslation("common")
-  const [checkedValue, setCheckedValue] = useState()
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.is_registration_required,
+  });
   return (
     <div className="flex flex-row items-center gap-[19px]">
-      <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">{t("registrationMandatory")}</div>
+      <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">
+        Registration is mandatory for this course
+      </div>
       <Switch
         id="registration"
         className="!w-[57px] !h-[24px]"
-        onCheckedChange={(value: any) => {
-          setCheckedValue(value)
+        value={value}
+        onCheckedChange={(value: boolean) => {
+          onChange(value);
         }}
       />
     </div>
-  )
-}
+  );
+};
 
 const CourseNameDropDown = () => {
-  const { t } = useTranslation("common")
-  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10);
+
+  const { watch } = useFormContext();
+
+  const formData = watch();
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "program_type_alias_names",
@@ -286,80 +375,119 @@ const CourseNameDropDown = () => {
       },
     ],
     filters: [
+      //Need to fetch alias names of program_types
       {
         field: "program_type_id",
         operator: "eq",
-        value: 1,
+        value: formData?.program_type_id,
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize,
       mode: "server",
     },
-  })
+  });
 
   const {
     field: { value, onChange },
+    fieldState: { error },
   } = useController({
-    name: "courseName",
-  })
+    name: NewCourseStep2FormNames?.program_alias_name_id,
+  });
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1)
-  }
+    if (queryResult?.data?.data && queryResult?.data?.total >= pageSize) {
+      setPageSize((previousLimit: number) => previousLimit + 10);
+    }
+  };
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("courseName")} <div className="text-[#7677F4]">*</div>
+        Course Name <div className="text-[#7677F4]">*</div>
       </div>
-      <CustomSelect
+
+      <Select
         value={value}
-        placeholder={t("selectCourseName")}
-        data={options}
-        onBottomReached={handleOnBottomReached}
-        onSearch={(val: string) => {
-          onSearch(val)
+        onValueChange={(val) => {
+          onChange(val);
         }}
-        onChange={(val) => {
-          onChange(val)
-        }}
-      />
+      >
+        <SelectTrigger className="w-[320px]" error={error ? true : false}>
+          <SelectValue placeholder="Select course alias name" />
+        </SelectTrigger>
+        <SelectContent>
+          <Input
+            onChange={(value: ChangeEvent<HTMLInputElement>) =>
+              onSearch(value.target.value)
+            }
+          />
+          <SelectItems onBottomReached={handleOnBottomReached}>
+            {options.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 const TeachersDropDown = () => {
-  const { t } = useTranslation("common")
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
 
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const formData = watch()
+  const formData = watch();
 
-  const iAmOrganizerId = getOptionValueObjectByOptionOrder(PROGRAM_ORGANIZER_TYPE, I_AM_ORGANIZER)?.id
+  const {
+    field: { value, onChange },
+    fieldState: { error: teachersErrors },
+  } = useController({
+    name: NewCourseStep2FormNames?.teacher_ids,
+  });
 
-  let filter: Array<CrudFilter> = []
+  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_ORGANIZER
+  )?.id;
 
-  if (formData?.courseType?.value) {
+  let filter: Array<CrudFilter> = [];
+
+  if (formData?.program_type_id) {
     filter.push({
       field: "program_type_teachers.program_type_id",
       operator: "eq",
-      value: formData?.courseType?.value,
-    })
+      value: formData?.program_type_id,
+    });
   }
 
-  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10);
 
-  const { queryResult, onSearch } = useSelect({
+  const selectQuery: any = {
     resource: "users",
     meta: {
-      select: "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
+      select:
+        "*,program_type_teachers!inner(program_type_id),contact_id!inner(full_name))",
     },
     filters: filter,
-    onSearch: (value) => [
+    onSearch: (value: any) => [
       {
         field: "contact_id.full_name",
         operator: "contains",
@@ -367,83 +495,93 @@ const TeachersDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
-  })
+    optionLabel: "contact_id.full_name",
+    optionValue: "id",
+  };
+
+  if (value) {
+    selectQuery.defaultValue = value;
+  }
+
+  const { options, queryResult, onSearch } = useSelect(selectQuery);
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (queryResult && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1)
-  }
-
-  const teachers: any = queryResult.data?.data?.map((val) => {
-    return {
-      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
-      value: val,
+    if (queryResult && (queryResult?.data?.total as number) >= pageSize) {
+      setPageSize((previousLimit: number) => previousLimit + 10);
     }
-  })
-
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: "teachers",
-  })
+  };
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row">
-        {t("teacher")} <div className="text-[#7677F4]">*</div>
+        Teacher <div className="text-[#7677F4]">*</div>
       </div>
       <MultiSelect
         value={value}
-        placeholder={t("enterTeacherName")}
-        data={teachers}
+        placeholder="Enter Teacher Name"
+        data={options}
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={(val: any) => {
-          onChange(val)
+          onChange(val);
         }}
         getOptionProps={(option: { value: { id: number } }) => {
           //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
-          if (option.value?.id === loginUserData?.userData?.id && formData?.programOrganizedBy != iAmOrganizerId) {
+          if (
+            option === loginUserData?.userData?.id &&
+            formData?.program_created_by != iAmOrganizerId
+          ) {
             return {
               disable: true,
-            }
+            };
           } else {
             return {
               disable: false,
-            }
+            };
           }
         }}
+        error={teachersErrors}
       />
+      {teachersErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {teachersErrors?.message}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 const AssistantTeachersDropDown = () => {
-  const { t } = useTranslation("common")
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10);
 
-  const formData = watch()
+  const formData = watch();
+
+  //Finding program Organizer role id
+  const certificationLevelId = getOptionValueObjectByOptionOrder(
+    CERTIFICATION_TYPE,
+    ASSIST
+  )?.id;
 
   let filter: Array<CrudFilter> = [
     {
       field: "program_type_teachers.certification_level_id",
       operator: "eq",
-      value: "38",
+      value: certificationLevelId,
     },
-  ]
+  ];
 
-  if (formData?.courseType?.value) {
+  if (formData?.program_type_id) {
     filter.push({
       field: "program_type_teachers.program_type_id",
       operator: "eq",
-      value: formData?.courseType?.value,
-    })
+      value: formData?.program_type_id,
+    });
   }
 
   const { queryResult, onSearch } = useSelect({
@@ -461,57 +599,76 @@ const AssistantTeachersDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
-  })
+  });
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (queryResult && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1)
-  }
+    if (queryResult && (queryResult?.data?.total as number) >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 10);
+  };
 
   const teachers: any = queryResult.data?.data?.map((val) => {
     return {
       label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
-      value: val,
-    }
-  })
+      value: val?.id,
+    };
+  });
 
   const {
     field: { value, onChange },
+    fieldState: { error: assistantTeachersErrors },
   } = useController({
-    name: "assistantTeachers",
-  })
+    name: NewCourseStep2FormNames?.assistant_teacher_ids,
+  });
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">{t("assistantTeacher")}</div>
+      <div className="text-xs font-normal text-[#333333]">
+        Assistant Teacher
+      </div>
       <MultiSelect
         value={value}
-        placeholder={t("enterTeacherName")}
+        placeholder="Enter Teacher Name"
         data={teachers}
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
         onChange={onChange}
+        error={assistantTeachersErrors}
       />
+      {assistantTeachersErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {assistantTeachersErrors?.message}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 const Visibility = () => {
-  const { t } = useTranslation("common")
-    const {
-      field: { value, onChange },
-    } = useController({
-      name: "visibility",
-    })
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.visibility_id,
+  });
+
+  //Finding program Organizer role id
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
+
+  const privateVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PRIVATE
+  )?.id;
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        {t("programVisibility")} <div className="text-[#7677F4]"> *</div>
+        Program Visibility <div className="text-[#7677F4]"> *</div>
         <HoverCard>
           <HoverCardTrigger>
             <Important />
@@ -520,88 +677,101 @@ const Visibility = () => {
             <div className="w-[231px] text-wrap !rounded-[15px]">
               <div className="flex flex-row gap-1 items-center">
                 <Globe />
-                {t("public")}
+                Public
               </div>
-              <div>{t("publicSentence")}</div>
+              <div>
+                There are a lot of things you can do in space, and space
+                essentially is unlimited resources.
+              </div>
               <div className="my-2">
                 <hr></hr>
               </div>
               <div className="flex flex-row gap-1 items-center">
                 <LockIcon />
-                {t("private")}
+                Private
               </div>
-              <div>{t("privateSentence")}</div>
+              <div>
+                There are a lot of things you can do in space, and space
+                essentially is unlimited resources.
+              </div>
             </div>
           </HoverCardContent>
         </HoverCard>
       </div>
 
-      <RadioGroup defaultValue="public" onValueChange={onChange} value={value}>
+      <RadioGroup
+        onValueChange={(val: string) => {
+          onChange(parseInt(val));
+        }}
+        value={JSON.stringify(value)}
+      >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="public"
-            selectedRadioValue={value}
-            label={t("public")}
+            value={JSON.stringify(publicVisibilityId)}
+            selectedRadioValue={JSON.stringify(value)}
+            label="Public"
             className="w-[112px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
-            value="private"
-            selectedRadioValue={value}
-            label={t("private")}
+            value={JSON.stringify(privateVisibilityId)}
+            selectedRadioValue={JSON.stringify(value)}
+            label="Private"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
       </RadioGroup>
     </div>
-  )
-}
+  );
+};
 
 const DisplayLanguage = () => {
-  const { t } = useTranslation("common")
   const {
     field: { value, onChange },
   } = useController({
-    name: "displayLanguage",
-  })
+    name: NewCourseStep2FormNames?.is_language_translation_for_participants,
+  });
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">{t("displayLanguageOption")}</div>
-      <RadioGroup value={value} onValueChange={onChange}>
+      <div className="text-xs font-normal text-[#333333]">
+        Display language translation option for participants *
+      </div>
+      <RadioGroup
+        value={JSON.stringify(value)}
+        onValueChange={(value) => {
+          value === "true" ? onChange(true) : onChange(false);
+        }}
+      >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
             value="true"
-            selectedRadioValue={value}
-            label={t("yes")}
+            selectedRadioValue={JSON.stringify(value)}
+            label="Yes"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
-            selectedRadioValue={value}
-            label={t("no")}
+            selectedRadioValue={JSON.stringify(value)}
+            label="No"
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
       </RadioGroup>
     </div>
-  )
-}
+  );
+};
 
 const GeoRestriction = () => {
-  const { t } = useTranslation("common")
   const {
     field: { value, onChange },
   } = useController({
-    name: "isGeoRestriction",
-  })
-  const {
-    formState: { errors },
-  } = useFormContext()
+    name: NewCourseStep2FormNames?.is_geo_restriction_applicable,
+  });
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        {t("registrationsRestriction")}
+        Is geo restriction applicable for registrations
         <div className="text-[#7677F4]">*</div>
         <HoverCard>
           <HoverCardTrigger>
@@ -609,52 +779,65 @@ const GeoRestriction = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              {t("registrationsRestrictionDescription")}
+              Text entered in the 'Email Notes' field will be included in the
+              registration confirmation email only irrespective of the
+              transaction status (Email notes will not be shown on the Art of
+              Living Website)
             </div>
           </HoverCardContent>
         </HoverCard>
       </div>
 
-      <RadioGroup value={value} onValueChange={onChange}>
+      <RadioGroup
+        value={JSON.stringify(value)}
+        onValueChange={(val: string) => {
+          val == "true" ? onChange(true) : onChange(false);
+        }}
+      >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
             value="true"
-            selectedRadioValue={value}
-            label={t("yes")}
+            selectedRadioValue={JSON.stringify(value)}
+            label="Yes"
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
-            selectedRadioValue={value}
-            label={t("no")}
+            selectedRadioValue={JSON.stringify(value)}
+            label="No"
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
         </div>
       </RadioGroup>
     </div>
-  )
-}
+  );
+};
 const LanguageDropDown = () => {
-  const { t } = useTranslation("common")
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const formData = watch()
+  const formData = watch();
 
-  const [currentPage, setCurrentPage] = useState(1)
-
-  const [selectOptions, setSelectOptions] = useState<any>()
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     field: { value, onChange },
+    fieldState: { error: languageError },
   } = useController({
-    name: "languages",
-  })
+    name: NewCourseStep2FormNames?.language_ids,
+  });
 
   const { options, onSearch, queryResult } = useSelect({
-    resource: "organization_languages",
+    resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
     defaultValue: value,
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: formData?.organization_id,
+      },
+    ],
     onSearch: (value) => [
       {
         field: "language_name",
@@ -663,65 +846,68 @@ const LanguageDropDown = () => {
       },
     ],
     pagination: {
-      pageSize: 20,
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
-  })
+  });
 
-  useEffect(() => {
-    if (currentPage > 1) setSelectOptions([...selectOptions, ...options])
-    else setSelectOptions(options)
-  }, [options])
-
-  const filteredOptions = selectOptions?.filter((val: any) => {
-    if (_.some(formData?.translationLanguages, (obj) => obj.value === val.value)) return false
-    return true
-  })
+  const filteredOptions = options?.filter((val: any) => {
+    if (formData?.translation_language_ids?.includes(val?.value)) return false;
+    return true;
+  });
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 20)
-      setCurrentPage((previousLimit: number) => previousLimit + 1)
-  }
+    if (options && (queryResult?.data?.total as number) >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 10);
+  };
 
   const handleOnSearch = (value: any) => {
-    // For resetting the data to the first page which coming from the API
-    setCurrentPage(1)
-
-    onSearch(value)
-  }
+    onSearch(value);
+  };
 
   return (
     <div className="flex gap-1 flex-col">
       <div className=" flex flex-row text-xs font-normal text-[#333333]">
-        {t("languagesTaught")}
+        Language(s) course is taught in
         <div className="text-[#7677F4]"> *</div>
       </div>
       <MultiSelect
         value={value}
-        placeholder={t("selectLanguage")}
+        placeholder="Select Language"
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
         onChange={onChange}
+        error={languageError}
       />
+      {languageError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {languageError?.message}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 const LanguageTranslationDropDown = () => {
-  const { t } = useTranslation("common")
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const formData = watch()
+  const formData = watch();
 
-  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch, queryResult } = useSelect({
-    resource: "organization_languages",
+    resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: formData?.organization_id,
+      },
+    ],
     onSearch: (value) => [
       {
         field: "language_name",
@@ -730,115 +916,130 @@ const LanguageTranslationDropDown = () => {
       },
     ],
     pagination: {
-      current: currentPage,
+      pageSize: pageSize,
       mode: "server",
     },
-  })
+  });
 
   const filteredOptions = options?.filter((val) => {
-    if (_.some(formData?.languages, (obj) => obj.value === val.value)) return false
+    if (formData?.language_ids?.includes(val.value)) return false;
 
-    return true
-  })
+    return true;
+  });
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
-    if (options && (queryResult?.data?.total as number) >= currentPage * 10)
-      setCurrentPage((previousLimit: number) => previousLimit + 1)
-  }
+    if (options && (queryResult?.data?.total as number) >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 10);
+  };
 
   const {
     field: { value, onChange },
+    fieldState: { error: languageTranslationError },
   } = useController({
-    name: "translationLanguages",
-  })
+    name: NewCourseStep2FormNames?.translation_language_ids,
+  });
 
   const handleOnSearch = (value: any) => {
-    setCurrentPage(1)
-    onSearch(value)
-  }
+    onSearch(value);
+  };
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">{t("availableLanguages")}</div>
+      <div className="text-xs font-normal text-[#333333]">
+        Available language(s) for translation
+      </div>
       <MultiSelect
         value={value}
-        placeholder={t("selectTranslationLanguages")}
+        placeholder="Select translation languages"
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
         onChange={onChange}
+        error={languageTranslationError}
       />
     </div>
-  )
-}
+  );
+};
 
 const AllowedCountriesDropDown = () => {
-  const { t } = useTranslation("common")
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const formData = watch()
+  const formData = watch();
 
-  const countryArray: DataItem[] = Object.entries(countryCodes).map(([countryCode, countryName]) => ({
-    label: countryName,
-    value: countryCode,
-  }))
+  const countryArray: DataItem[] = Object.entries(countryCodes).map(
+    ([countryCode, countryName]) => ({
+      label: countryName,
+      value: countryCode,
+    })
+  );
 
-  const allowedCountries = formData?.courseTypeSettings?.allowed_countries
+  const allowedCountries = formData?.program_type?.allowed_countries;
 
-  const allowedCountriesData = countryArray?.filter((val) => allowedCountries?.includes(val?.value))
+  const allowedCountriesData = countryArray?.filter((val) =>
+    allowedCountries?.includes(val?.value)
+  );
 
   const {
     field: { value, onChange },
+    fieldState: { error: allowedCountriesErrors },
   } = useController({
-    name: "allowedCountries",
-  })
+    name: NewCourseStep2FormNames?.allowed_countries,
+  });
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("countryRegistrationsAllowed")}
+        Country(s) from where registrations are allowed
         <div className="text-[#7677F4]">*</div>
       </div>
       <MultiSelect
         value={value}
-        placeholder={t("enterCountries")}
+        placeholder="Enter Countries"
         data={allowedCountriesData}
         onBottomReached={() => {}}
         onSearch={() => {}}
         onChange={onChange}
+        error={allowedCountriesErrors}
       />
+      {allowedCountriesErrors && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {allowedCountriesErrors?.message}{" "}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 const MaximumCapacity = () => {
-  const { t } = useTranslation("common")
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const formData = watch()
+  const formData = watch();
 
-  const maxAttendees = formData?.courseTypeSettings?.maximum_capacity
-
-  useEffect(() => {
-    onChange(formData?.courseTypeSettings?.max_capacity)
-  }, [formData?.courseTypeSettings?.max_capacity])
+  const maxAttendees = formData?.courseTypeSettings?.maximum_capacity;
 
   const {
     field: { value = maxAttendees, onChange },
-  } = useController({ name: "maxCapacity" })
+    fieldState: { error },
+  } = useController({ name: NewCourseStep2FormNames?.max_capacity });
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">{t("maxCapacity")}</div>
+      <div className="text-xs font-normal text-[#333333]">Max Capacity</div>
       <Input
-        placeholder={t("numberOfAttendees")}
+        placeholder="Enter no. of attendees"
         value={value}
         onChange={(val) => {
-          onChange(val?.target?.value)
+          onChange(val?.target?.value);
         }}
         className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
+        error={error ? true : false}
       />
+      {error && (
+        <span className="text-[#FF6D6D] text-[12px] !w-[320px] break-all">
+          {error?.message}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};

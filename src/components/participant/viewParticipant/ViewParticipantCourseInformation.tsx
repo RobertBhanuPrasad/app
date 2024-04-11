@@ -1,4 +1,4 @@
-import { useOne } from '@refinedev/core'
+import { useOne, useSelect } from '@refinedev/core'
 
 function ViewParticipantCourseInformation() {
   const textStyle = 'font-sans text-[14px]' // Common text style for both key and value
@@ -7,23 +7,36 @@ function ViewParticipantCourseInformation() {
 
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 1, //TODO:Replace with selected participant ID
+    id: 4, //TODO:Replace with selected participant ID
     optionLabel: 'name',
     optionValue: 'id',
     meta: {
-      select: '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id,program_type_id),participant_attendence_status_id(*)'
+      select:
+        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id(*),program_type_id(id,name)),participant_attendence_status_id(*)'
     }
   }
 
   const { data: participantCourseData, isLoading, isError } = useOne(selectQuery)
 
-  console.log(participantCourseData, 'participantCourseData')
+  const { queryResult } = useSelect({
+    resource: 'program_teachers',
+    meta:{
+      select:'*,user_id(*,contact_id(full_name))'
+    },
+    filters: [
+      {
+        field: 'program_id',
+        operator: 'eq',
+        value: 1
+      }
+    ]
+  })
 
   const coursePaticipantInformation = [
-    { key: 'Course Type', value: 'Happiness Program' },
+    { key: 'Course Type', value: participantCourseData?.data?.program_id?.program_type_id?.name },
     { key: 'CourseName', value: 'Happiness Program' },
     { key: 'Teachers', value: 'Test Teachers' },
-    { key: 'Attendance Status', value: 'Pending' },
+    { key: 'Attendance Status', value: participantCourseData?.data?.participant_attendence_status_id?.value },
     { key: 'Discount Amount', value: participantCourseData?.data?.discounted_amount }
   ]
   return (

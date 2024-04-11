@@ -1,43 +1,41 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { useTable } from '@refinedev/core'
+import { useOne, useTable } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 function ViewParticipantUtmParameters() {
-  const {
-    tableQueryResult: programData,
-    pageCount,
-    pageSize,
-    setPageSize,
-    current,
-    setCurrent
-  } = useTable({
+
+  const selectQuery: any = {
     resource: 'participant_registration',
+    id: 4, //TODO:Replace with selected participant ID
     meta: {
       select: 'utm_parameters_section'
     }
-  })
+  }
+
+  const { data: programData, isLoading, isError } = useOne(selectQuery)
+
   const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
       <p className="text-[18px] font-[600] mb-[20px]">UTM Parameters</p>
       <div>
-        <BaseTable
-          current={current}
+      <BaseTable
+          current={1}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
           checkboxSelection={false}
-          setCurrent={setCurrent}
-          pageCount={pageCount}
-          total={programData?.data?.total || 0}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
+          setCurrent={() => {}}
+          pageCount={10}
+          total={programData?.data?.utm_parameters_section?.length || 0}
+          pageSize={10}
+          setPageSize={() => {}}
           pagination={false}
           tableStyles={{
             table: '',
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.data || []}
+          data={programData?.data?.utm_parameters_section || []}
           columnPinning={false}
         />
       </div>
@@ -76,68 +74,66 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.id}</div>
+      return <div className="lowercase">{row?.original?.program_type_id}</div>
     }
   },
   {
-    accessorKey: 'Source',
+    accessorKey: 'source',
     header: () => {
       return <div className="">Source </div>
     },
 
     cell: ({ row }: any) => {
-      console.log('row innn', row)
-      return <div className="">{row?.source}</div>
+      return <div className="">{row?.original?.source}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'medium',
     header: () => {
       return <div className="">Medium</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.medium}</div>
+      return <div className="lowercase">{row?.original?.medium}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'campaign',
     header: () => {
       return <div className="">Campaign</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.campaign}</div>
+      return <div className="lowercase">{row?.original?.campaign}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'term',
     header: () => {
       return <div className="">Term</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.term}</div>
+      return <div className="lowercase">{row?.original?.term}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'content',
     header: () => {
       return <div className="">Content</div>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.content}</div>
+      return <div className="lowercase">{row?.original?.content}</div>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'http_refer',
     header: () => {
       return <div className="">HTTP Refer</div>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.http_refer}</div>
+      return <div className="lowercase">{row?.original?.http_refer}</div>
     }
   }
 ]
