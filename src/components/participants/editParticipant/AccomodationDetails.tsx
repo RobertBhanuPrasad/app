@@ -6,20 +6,6 @@ import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { Textarea } from "src/ui/textarea";
 
 export default function AccomodationDetails({data}) {
-    const selectQuery: any = {
-        resource: "participant_payment_history",
-        filters: [
-            {
-                field: "participant_id",
-                operator: "eq",
-                value: data?.data[0]?.id,
-            },
-        ],
-        meta: {
-            select: "accommodation_fee, accommodation_type,currency_code",
-        },
-    };
-    const {queryResult}=useSelect(selectQuery)
     const {
         field: { value: roomPreference1, onChange: roomPreference1Change },
     } = useController({ name: "roomPreference1" });
@@ -82,8 +68,8 @@ export default function AccomodationDetails({data}) {
                     <div className="text-[#999999] ">Fee per Person</div>
                     <div>
                         EUR 90.00
-
-                        {queryResult?.data?.accommodation_fee}
+                        {/* {data?.data[0]?.currency_code} */}
+                        {/* {data?.data[0]?.accommodation_fee} */}
                     </div>
                 </div>
                 <div className="">

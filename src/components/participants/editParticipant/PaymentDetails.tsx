@@ -6,10 +6,15 @@ import { Textarea } from "src/ui/textarea";
 export default function PaymentDetails() {
     const {
         field: { value: specialCode, onChange: specialCodeChange },
-    } = useController({ name: "specialCode" });
+    } = useController({ name: "specialCode" ,
+// defaultValue:data?.data[0]?.participant_id?.discount_code
+
+    });
     const {
         field: { value: paymentDetails, onChange: paymentDetailsChange },
-    } = useController({ name: "paymentDetails" });
+    } = useController({ name: "paymentDetails" ,
+        // defaultValue:data?.data[0]?.participant_id?.participant_attendence_status_id
+    });
     const attendanceStatus = [
         { label: "pending", value: 1 },
         { label: "confirmed", value: 2 },
@@ -24,17 +29,24 @@ export default function PaymentDetails() {
             <div className="flex ">
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Course Fee</div>
-                    <div className="font-semibold">EUR 110.00</div>
+                    <div className="font-semibold">EUR 110.00
+                     {/* {data?.data[0]?.currency_code} */}
+                        {/* {data?.data[0]?.expense_fee} */}
+                    </div>
                 </div>
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Accomodation Fee</div>
-                    <div className="font-semibold">EUR 90.00</div>
+                    <div className="font-semibold">EUR 90.00
+                     {/* {data?.data[0]?.currency_code} */}
+                        {/* {data?.data[0]?.accommodation_fee} */}</div>
                 </div>
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">
                         Total Fee {`(Includes VAT)`}
                     </div>
-                    <div className="font-semibold">EUR 200.00</div>
+                    <div className="font-semibold">EUR 200.00
+                     {/* {data?.data[0]?.currency_code} */}
+                        {/* {data?.data[0]?.total_fee} */}</div>
                 </div>
             </div>
             <div className="flex py-[10px] gap-4">

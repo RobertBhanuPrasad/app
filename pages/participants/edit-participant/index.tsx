@@ -3,8 +3,7 @@ import CourseFee from "@components/participants/editParticipant/CourseFee";
 import ParticipnatInformation from "@components/participants/editParticipant/ParticipantInformation";
 import PaymentDetails from "@components/participants/editParticipant/PaymentDetails";
 import { TabsContent, TabsList } from "@radix-ui/react-tabs";
-
-import { useSelect } from "@refinedev/core";
+import { useSelect, useUpdate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { useState } from "react";
 import { FormProvider } from "react-hook-form";
@@ -14,14 +13,19 @@ export default function index() {
     const [selectedValue, setSelectedValue] = useState(
         "Participants Information"
     );
+
+    // fetching participant payment history and participant registartion data of particular participnat
+
     const selectQuery: any = {
-        resource: "participant_registration",
+        resource: "participant_payment_history",
         meta: {
-            select: "*,created_at,total_amount,contact_id!inner(full_name),price_category_id!inner(option_values(value)),program_id!inner(*)",
+            select: "*,participant_id!inner(contact_id!inner(full_name),memo,created_at,discount_code_id,discount_code,participant_attendence_status_id),transaction_fee_level_id!inner(values),expense_fee,accommodation_type,accommodation_fee,currency_code,total_fee",
         },
+        // TODO: add the participant id here
+        // filters: [{ field: "participant_id", operator: "eq", value: "1" }],
     };
-    const { options, queryResult } = useSelect(selectQuery);
-    console.log(options, queryResult, "query result");
+    const { queryResult } = useSelect(selectQuery);
+    console.log(queryResult, "query result");
     const [selectedTab, setSelectedTab] = useState("Participants Information");
     const tabTriggers = [
         {
@@ -86,6 +90,17 @@ export default function index() {
             section.scrollIntoView({ behavior: "smooth" });
         }
     };
+    // TODO: update the partcipant -registarion api
+    // const {mutate}=useUpdate()
+    // mutate({
+    //     resource:"",
+    //     values:{
+
+    //     },
+    //     id:
+    // })
+
+
     // const methods = useStepsForm({
     //     refineCoreProps: {
     //         action: "edit",
@@ -166,26 +181,26 @@ export default function index() {
                         <TabsContent value="Participants Information">
                             <ParticipnatInformation data={queryResult?.data} />
                             <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails data={queryResult?.data}/>
-                            <PaymentDetails />
+                            <AccomodationDetails data={queryResult?.data} />
+                            <PaymentDetails data={queryResult?.data}/>
                         </TabsContent>
                         <TabsContent value="Course Fees">
                             <ParticipnatInformation data={queryResult?.data} />
                             <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails data={queryResult?.data}/>
-                            <PaymentDetails />
+                            <AccomodationDetails data={queryResult?.data} />
+                            <PaymentDetails data={queryResult?.data}/>
                         </TabsContent>
                         <TabsContent value="Accomodation Details">
                             <ParticipnatInformation data={queryResult?.data} />
                             <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails data={queryResult?.data}/>
-                            <PaymentDetails />
+                            <AccomodationDetails data={queryResult?.data} />
+                            <PaymentDetails data={queryResult?.data}/>
                         </TabsContent>
                         <TabsContent value="Payment Details">
                             <ParticipnatInformation data={queryResult?.data} />
                             <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails data={queryResult?.data}/>
-                            <PaymentDetails />
+                            <AccomodationDetails data={queryResult?.data} />
+                            <PaymentDetails data={queryResult?.data}/>
                         </TabsContent>
                         <TabsContent value="Transaction Details">
                             Place Transaction Details tab here
