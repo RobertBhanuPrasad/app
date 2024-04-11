@@ -2,12 +2,11 @@ import { BaseTable } from "@components/course/findCourse/BaseTable";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import React, { useEffect, useState } from "react";
-import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { columns } from "../../../src/components/participants/columns";
-import { useTable } from "@refinedev/core";
+import { CrudFilters, useTable } from "@refinedev/core";
 import { Input } from "src/ui/input";
 import { SearchIcon } from "lucide-react";
 import {
@@ -35,7 +34,26 @@ import { CountComponent } from "pages/Courses/FindCourse";
 
 function index() {
   const { ParticpantFiltersData, setSelectedTableRows } = ParticipantStore();
-  const filters: any = {
+  const filters: {
+    /**
+     * Initial filter state
+     */
+    initial?: CrudFilters;
+    /**
+     * Default and unchangeable filter state
+     *  @default `[]`
+     */
+    permanent: CrudFilters;
+    /**
+     * Default behavior of the `setFilters` function
+     * @default `"merge"`
+     */
+    /**
+     * Whether to use server side filter or not.
+     * @default "server"
+     */
+    mode?: "server" | "off";
+  } = {
     permanent: [{ field: "program_id", operator: "eq", value: 1 }],
   };
 
@@ -57,7 +75,6 @@ function index() {
         field: "created_at",
         operator: "gte",
         value:
-          ParticpantFiltersData?.registration_date.from &&
           new Date(
             ParticpantFiltersData?.registration_date.from?.setHours(0, 0, 0, 0)
           )
@@ -67,11 +84,10 @@ function index() {
       },
       {
         field: "created_at",
-        operator: "lt",
+        operator: "lte",
         value:
-          ParticpantFiltersData?.registration_date.to &&
           new Date(
-            ParticpantFiltersData?.registration_date.to?.setHours(0, 0, 0, 0)
+            ParticpantFiltersData?.registration_date.to?.setHours(23, 59, 0, 0)
           )
             ?.toISOString()
             .replace("T", " ")
@@ -114,7 +130,6 @@ function index() {
         field: "created_at",
         operator: "gte",
         value:
-          ParticpantFiltersData?.advanceFilter?.registration_date_range?.from &&
           new Date(
             ParticpantFiltersData?.advanceFilter?.registration_date_range?.from?.setHours(
               0,
@@ -129,13 +144,12 @@ function index() {
       },
       {
         field: "created_at",
-        operator: "lt",
+        operator: "lte",
         value:
-          ParticpantFiltersData?.advanceFilter?.registration_date_range?.to &&
           new Date(
             ParticpantFiltersData?.advanceFilter?.registration_date_range?.to?.setHours(
-              0,
-              0,
+              23,
+              59,
               0,
               0
             )

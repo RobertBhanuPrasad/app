@@ -52,6 +52,14 @@ export function ParticipantsAdvanceFilter() {
       ).length) ||
     0;
 
+  const {
+    field: { value: feeLevels, onChange: onSelectChange },
+  } = useController({
+    name: "tempFilters.fee_level",
+  });
+
+  console.log("Fee", feeLevels);
+
   return (
     <Sheet open={openAdvFilter}>
       <SheetTrigger
@@ -201,7 +209,7 @@ export function ParticipantsAdvanceFilter() {
                     <div>Health Consent Status</div>
                     {formData?.tempFilters &&
                       Object.values(
-                        formData?.tempFilters?.health_consent_status
+                        formData?.tempFilters?.health_consent_status || {}
                       ).filter((value) => value === true)?.length > 0 && (
                         <CountComponent
                           count={
@@ -225,12 +233,13 @@ export function ParticipantsAdvanceFilter() {
                     <div>Program Agreement Status</div>
                     {formData?.tempFilters &&
                       Object.values(
-                        formData?.tempFilters?.program_agreement_status
+                        formData?.tempFilters?.program_agreement_status || {}
                       ).filter((value) => value === true).length > 0 && (
                         <CountComponent
                           count={
                             Object.values(
-                              formData?.tempFilters?.program_agreement_status
+                              formData?.tempFilters?.program_agreement_status ||
+                                {}
                             ).filter((value) => value === true).length
                           }
                         />
@@ -248,6 +257,7 @@ export function ParticipantsAdvanceFilter() {
               <div className="flex justify-end w-full gap-4">
                 <div
                   onClick={() => {
+                    // onSelectChange([]);
                     setValue("tempFilters.full_name", "");
                     setValue("tempFilters.email", "");
                     setValue("tempFilters.mobile", "");
