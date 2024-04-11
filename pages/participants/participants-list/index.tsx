@@ -31,8 +31,10 @@ import {
 } from "src/constants/OptionLabels";
 import { MultiSelect } from "src/ui/multi-select";
 import { CountComponent } from "pages/Courses/FindCourse";
+import { useParams } from "next/navigation";
 
 function index() {
+  const { program_id } = useParams();
   const { ParticpantFiltersData, setSelectedTableRows } = ParticipantStore();
   const filters: {
     /**
@@ -54,7 +56,7 @@ function index() {
      */
     mode?: "server" | "off";
   } = {
-    permanent: [{ field: "program_id", operator: "eq", value: 1 }],
+    permanent: [{ field: "program_id", operator: "eq", value: program_id }],
   };
 
   if (ParticpantFiltersData?.participant_code) {
