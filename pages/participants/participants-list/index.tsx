@@ -2,12 +2,11 @@ import { BaseTable } from "@components/course/findCourse/BaseTable";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAll from "@public/assets/ClearAll";
 import React, { useEffect, useState } from "react";
-import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import { columns } from "./columns";
-import { useTable } from "@refinedev/core";
+import { columns } from "../../../src/components/participants/columns";
+import { CrudFilters, useTable } from "@refinedev/core";
 import { Input } from "src/ui/input";
 import { SearchIcon } from "lucide-react";
 import {
@@ -18,11 +17,11 @@ import {
 } from "src/ui/dropdown-menu";
 import DropDown from "@public/assets/DropDown";
 import { format } from "date-fns";
-import { ParticipantsAdvanceFilter } from "./ParticipantsListAdvanceFilters";
+import { ParticipantsAdvanceFilter } from "../../../src/components/participants/ParticipantsListAdvanceFilters";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useController, useFormContext } from "react-hook-form";
 import Form from "@components/Formfield";
-import { viewParticipantsStore } from "src/zustandStore/ViewParticipantsStore";
+import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 import { Checkbox } from "src/ui/checkbox";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
@@ -32,12 +31,32 @@ import {
 } from "src/constants/OptionLabels";
 import { MultiSelect } from "src/ui/multi-select";
 import { CountComponent } from "pages/Courses/FindCourse";
+import { useParams } from "next/navigation";
 
 function index() {
-  const { ParticpantFiltersData, setSelectedTableRows } =
-    viewParticipantsStore();
-  const filters: any = {
-    permanent: [{ field: "program_id", operator: "eq", value: 1 }],
+  const { program_id } = useParams();
+  const { ParticpantFiltersData, setSelectedTableRows } = ParticipantStore();
+  const filters: {
+    /**
+     * Initial filter state
+     */
+    initial?: CrudFilters;
+    /**
+     * Default and unchangeable filter state
+     *  @default `[]`
+     */
+    permanent: CrudFilters;
+    /**
+     * Default behavior of the `setFilters` function
+     * @default `"merge"`
+     */
+    /**
+     * Whether to use server side filter or not.
+     * @default "server"
+     */
+    mode?: "server" | "off";
+  } = {
+    permanent: [{ field: "program_id", operator: "eq", value: program_id }],
   };
 
   if (ParticpantFiltersData?.participant_code) {
@@ -58,7 +77,6 @@ function index() {
         field: "created_at",
         operator: "gte",
         value:
-          ParticpantFiltersData?.registration_date.from &&
           new Date(
             ParticpantFiltersData?.registration_date.from?.setHours(0, 0, 0, 0)
           )
@@ -68,11 +86,10 @@ function index() {
       },
       {
         field: "created_at",
-        operator: "lt",
+        operator: "lte",
         value:
-          ParticpantFiltersData?.registration_date.to &&
           new Date(
-            ParticpantFiltersData?.registration_date.to?.setHours(0, 0, 0, 0)
+            ParticpantFiltersData?.registration_date.to?.setHours(23, 59, 0, 0)
           )
             ?.toISOString()
             .replace("T", " ")
@@ -115,7 +132,6 @@ function index() {
         field: "created_at",
         operator: "gte",
         value:
-          ParticpantFiltersData?.advanceFilter?.registration_date_range?.from &&
           new Date(
             ParticpantFiltersData?.advanceFilter?.registration_date_range?.from?.setHours(
               0,
@@ -130,13 +146,12 @@ function index() {
       },
       {
         field: "created_at",
-        operator: "lt",
+        operator: "lte",
         value:
-          ParticpantFiltersData?.advanceFilter?.registration_date_range?.to &&
           new Date(
             ParticpantFiltersData?.advanceFilter?.registration_date_range?.to?.setHours(
-              0,
-              0,
+              23,
+              59,
               0,
               0
             )
@@ -188,7 +203,10 @@ function index() {
     });
   }
 
-  if (ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed) {
+  if (
+    ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ===
+    true
+  ) {
     filters.permanent.push({
       field: "is_health_declaration_checked",
       operator: "eq",
@@ -197,26 +215,34 @@ function index() {
     });
   }
 
-  if (ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending) {
+  if (
+    ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ===
+    true
+  ) {
     filters.permanent.push({
       field: "is_health_declaration_checked",
       operator: "eq",
       value:
-        ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending,
-    });
-  }
-
-  if (ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending) {
-    filters.permanent.push({
-      field: "is_program_agreement_checked",
-      operator: "eq",
-      value:
-        ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending,
+        !ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending,
     });
   }
 
   if (
-    ParticpantFiltersData?.advanceFilter?.program_agreement_status?.completed
+    ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ===
+    true
+  ) {
+    filters.permanent.push({
+      field: "is_program_agreement_checked",
+      operator: "eq",
+      value:
+        !ParticpantFiltersData?.advanceFilter?.program_agreement_status
+          ?.pending,
+    });
+  }
+
+  if (
+    ParticpantFiltersData?.advanceFilter?.program_agreement_status
+      ?.completed === true
   ) {
     filters.permanent.push({
       field: "is_health_declaration_checked",
@@ -238,12 +264,17 @@ function index() {
     resource: "participant_registration",
     meta: {
       select:
-        "*, contact_id(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history!inner(*, transaction_type_id(*), sub_payment_method_id(*), payment_method_id(*)))",
+        "*, contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id!inner(value), total), participant_attendence_status_id(*), payment_status_id!inner(*), participant_payment_history!inner(*, transaction_type_id(*), payment_method_id(*)))",
     },
     filters: filters,
   });
 
   console.log("hey table data", participantData);
+  console.log(
+    "Filters",
+    ParticpantFiltersData?.advanceFilter?.program_agreement_status
+  );
+  console.log("Filters", filters);
   const [rowSelection, setRowSelection] = React.useState({});
   const [allSelected, setAllSelected] = useState();
 
@@ -387,1128 +418,6 @@ function index() {
     }
   };
 
-  // const testData = [
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "2024-04-06T12:38:42.587328+00:00",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "2024-07-24T12:38:42.587328+00:00",
-  //     contact_id: {
-  //       full_name: "a",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  //   {
-  //     id: "ALTABC4512458",
-  //     registration_date: "17 Oct, 2020",
-  //     contact_id: {
-  //       full_name: "Eleanor Pena",
-  //       date_of_birth: "Jan. 22, 1994",
-  //       mobile: 6842018413,
-  //       email: "nathan.roberts@example.com",
-  //       nif: 458484254,
-  //     },
-  //     price_category_id: {
-  //       fee_level_id: {
-  //         value: "Regular",
-  //       },
-  //       amount: 5000,
-  //     },
-  //     payment_status: {
-  //       transaction_type: "Sale",
-  //       transaction_id: "102656693ac3ca6e0cdafbfe89ab99",
-  //       payment_method: "Credit/Debit Card stripe",
-  //       balance: 300,
-  //       transaction_status: "Confirmed",
-  //     },
-  //     participant_attendence_status_id: {
-  //       value: "Confirmed",
-  //     },
-  //     legal_agreement_version: 3.1,
-  //     program_agreement_status: "Completed",
-  //     health_declaration_status: "Completed",
-  //     program_agreement_date: "24th Mar, 2022",
-  //     health_declaration_date: "25th Mar, 2022",
-  //   },
-  // ];
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="flex flex-col gap-4 p-10">
@@ -1594,7 +503,7 @@ export default index;
 
 const HeaderSection = () => {
   const { ParticpantFiltersData, setParticpantFiltersData, selectedTableRows } =
-    viewParticipantsStore();
+    ParticipantStore();
   const [open, setOpen] = useState(false);
 
   console.log("COUNT", selectedTableRows);

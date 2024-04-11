@@ -16,7 +16,6 @@ import { Label } from "src/ui/label";
 import { Input } from "src/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import CalenderIcon from "@public/assets/CalenderIcon";
-import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import React, { useState } from "react";
 import { format } from "date-fns";
@@ -36,8 +35,10 @@ import {
 } from "src/constants/OptionLabels";
 import ClearAllIcon from "@public/assets/ClearAllIcon";
 import { MultiSelect } from "src/ui/multi-select";
+import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 
 export function ParticipantsAdvanceFilter() {
+  const { setParticpantFiltersData } = ParticipantStore();
   const { watch, setValue } = useFormContext();
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
@@ -50,6 +51,14 @@ export function ParticipantsAdvanceFilter() {
           formData.advanceFilter[key].length > 0
       ).length) ||
     0;
+
+  const {
+    field: { value: feeLevels, onChange: onSelectChange },
+  } = useController({
+    name: "tempFilters.fee_level",
+  });
+
+  console.log("Fee", feeLevels);
 
   return (
     <Sheet open={openAdvFilter}>
@@ -200,7 +209,7 @@ export function ParticipantsAdvanceFilter() {
                     <div>Health Consent Status</div>
                     {formData?.tempFilters &&
                       Object.values(
-                        formData?.tempFilters?.health_consent_status
+                        formData?.tempFilters?.health_consent_status || {}
                       ).filter((value) => value === true)?.length > 0 && (
                         <CountComponent
                           count={
@@ -224,12 +233,13 @@ export function ParticipantsAdvanceFilter() {
                     <div>Program Agreement Status</div>
                     {formData?.tempFilters &&
                       Object.values(
-                        formData?.tempFilters?.program_agreement_status
+                        formData?.tempFilters?.program_agreement_status || {}
                       ).filter((value) => value === true).length > 0 && (
                         <CountComponent
                           count={
                             Object.values(
-                              formData?.tempFilters?.program_agreement_status
+                              formData?.tempFilters?.program_agreement_status ||
+                                {}
                             ).filter((value) => value === true).length
                           }
                         />
@@ -247,6 +257,7 @@ export function ParticipantsAdvanceFilter() {
               <div className="flex justify-end w-full gap-4">
                 <div
                   onClick={() => {
+                    // onSelectChange([]);
                     setValue("tempFilters.full_name", "");
                     setValue("tempFilters.email", "");
                     setValue("tempFilters.mobile", "");
@@ -264,6 +275,7 @@ export function ParticipantsAdvanceFilter() {
                       completed: false,
                       pending: false,
                     });
+                    setValue("advanceFilter", {});
                   }}
                   className="flex gap-1 items-center cursor-pointer"
                 >
@@ -281,6 +293,7 @@ export function ParticipantsAdvanceFilter() {
                       tempFilterData?.tempFilters?.registration_date_range
                     );
                     setOpenAdvFilter(false);
+                    setParticpantFiltersData(formData);
                   }}
                 >
                   Apply

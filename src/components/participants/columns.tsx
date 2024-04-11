@@ -2,34 +2,12 @@ import { CaretSortIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
 import { Button } from "src/ui/button";
-// import { Checkbox } from "src/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
-
-interface ParticipantRegistration {
-  id: number;
-  created_at: string;
-  contact_id: number;
-  discount_code_id: number | null;
-  is_payment_refund_request: boolean | null;
-  is_payment_refunded: boolean | null;
-  participant_attendence_status_id: number | null;
-  price_category_id: number | null;
-  program_category_id: number | null;
-  program_id: number;
-  discount_code: string | null;
-  discounted_amount: number | null;
-  discounted_tax: number | null;
-  hear_program_from_id: number | null;
-  is_health_declaration_checked: boolean | null;
-  is_program_agreement_checked: boolean | null;
-  legal_agreement_version: number | null;
-  payment_status_id: number;
-}
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -50,7 +28,7 @@ export const columns: ExtendedColumnDef<any>[] = [
       return (
         <a className="cursor-pointer">
           <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
-            {row?.original?.id}
+            {row?.original?.participant_code}
           </div>
         </a>
       );

@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
-interface ViewParticipantsStore {
+interface IViewParticipantsStore {
   selectedTableRows: number;
   setSelectedTableRows: (by: any) => void;
   ParticpantFiltersData: any;
   setParticpantFiltersData: (by: any) => void;
 }
 
-export const viewParticipantsStore = create<ViewParticipantsStore>((set) => ({
+export const ParticipantStore = create<IViewParticipantsStore>((set) => ({
   ParticpantFiltersData: {},
   setParticpantFiltersData: (data: any) => {
     set(() => ({
@@ -16,7 +16,6 @@ export const viewParticipantsStore = create<ViewParticipantsStore>((set) => ({
   },
   selectedTableRows: 0,
   setSelectedTableRows: (count: any) => {
-    console.log("STATE", count);
     set(() => ({
       selectedTableRows: count,
     }));
