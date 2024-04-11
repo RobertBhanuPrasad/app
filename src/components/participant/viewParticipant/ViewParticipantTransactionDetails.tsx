@@ -1,42 +1,46 @@
-import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import { useTable } from '@refinedev/core'
-import { ColumnDef } from '@tanstack/react-table'
-import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react'
-import React from 'react'
-import { Button } from 'src/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
+import { BaseTable } from '@components/course/findCourse/BaseTable'; // Importing BaseTable component for displaying table
+import { CaretSortIcon } from '@radix-ui/react-icons'; // Importing CaretSortIcon for sorting indicator
+import { useTable } from '@refinedev/core'; // Importing useTable hook for fetching table data
+import { ColumnDef } from '@tanstack/react-table'; // Importing ColumnDef type for defining table columns
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react'; // Importing icons for UI
+import React from 'react'; // Importing React
+import { Button } from 'src/ui/button'; // Importing Button component
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'; // Importing components for dropdown menu
 
+// Component for viewing participant transaction details
 function ViewParticipantTransactionDetails() {
+  // Fetching table data using useTable hook
   let {
-    tableQueryResult: programData,
-    pageCount,
-    pageSize,
-    setPageSize,
-    current,
-    setCurrent
+    tableQueryResult: programData, // Table data result
+    pageCount, // Number of pages
+    pageSize, // Number of items per page
+    setPageSize, // Function to set page size
+    current, // Current page number
+    setCurrent // Function to set current page number
   } = useTable({
-    resource: 'participant_payment_history',
+    resource: 'participant_payment_history', // Resource name for fetching data
     meta: {
-      select: '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*)'
+      select: '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*)' // Selecting specific fields
     },
     filters: {
       permanent: [
         {
           field: 'participant_id',
           operator: 'eq',
-          value: 2
+          value: 2 // Participant ID (TODO: Replace with actual participant ID)
         }
       ]
     }
-  })
-  console.log('programData...', programData)
-  const [rowSelection, setRowSelection] = React.useState({})
-  // programData = { data: { total: 5, data: [{ id: 1 }, { id: 2 }] } }
+  });
+
+  // State variable for row selection
+  const [rowSelection, setRowSelection] = React.useState({});
+
   return (
     <div>
       <p className="text-[18px] font-[600] mb-[20px]">Transaction Details</p>
       <div className="!min-w-[1000px] rounded-[10px]">
+        {/* BaseTable component for rendering table */}
         <BaseTable
           current={current}
           rowSelection={rowSelection}
@@ -44,47 +48,49 @@ function ViewParticipantTransactionDetails() {
           checkboxSelection={false}
           setCurrent={setCurrent}
           pageCount={pageCount}
-          total={programData?.data?.total || 0}
+          total={programData?.data?.total || 0} // Total number of items
           pageSize={pageSize}
           setPageSize={setPageSize}
-          pagination={true}
+          pagination={true} // Enable pagination
           tableStyles={{
-            table: ' !rounded-3xl',
-            rowStyles: ''
+            table: ' !rounded-3xl', // Custom table styles
+            rowStyles: '' // Custom row styles
           }}
-          columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.data || []}
-          columnPinning={true}
+          columns={columns as ColumnDef<any>[]} // Table columns
+          data={programData?.data?.data || []} // Table data
+          columnPinning={true} // Enable column pinning
         />
       </div>
     </div>
-  )
+  );
 }
 
-export default ViewParticipantTransactionDetails
+export default ViewParticipantTransactionDetails;
 
+// TypeScript interface for defining program object structure
 interface Program {
-  id: number
-  created_at: string
-  organization_id: number
-  venue_id: number
-  registration_link: string
-  program_code: string
-  program_fee_settings_id: number
-  program_type_id: number
-  status_id: number
-  accommodation_fee_payment_mode: number | null
-  center_id: number
-  city_id: number
-  details_page_link: string
-  is_early_bird_enabled: boolean
-  is_residential_program: boolean
-  program_alias_name_id: number
-  program_created_by: number
-  state_id: number
-  use_default_fee: boolean
+  id: number;
+  created_at: string;
+  organization_id: number;
+  venue_id: number;
+  registration_link: string;
+  program_code: string;
+  program_fee_settings_id: number;
+  program_type_id: number;
+  status_id: number;
+  accommodation_fee_payment_mode: number | null;
+  center_id: number;
+  city_id: number;
+  details_page_link: string;
+  is_early_bird_enabled: boolean;
+  is_residential_program: boolean;
+  program_alias_name_id: number;
+  program_created_by: number;
+  state_id: number;
+  use_default_fee: boolean;
 }
 
+// Array of table columns
 const columns: ColumnDef<Program>[] = [
   {
     accessorKey: 'payment_transaction_id',

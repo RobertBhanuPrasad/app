@@ -2,20 +2,20 @@ import { BaseTable } from '@components/course/findCourse/BaseTable'
 import { useOne, useTable } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
+// Component for viewing participant customer device details
 function ViewParticipantCustomerDeviceDetails() {
-
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 4, //TODO:Replace with selected participant ID
+    id: 4, // Participant ID (TODO: Replace with actual participant ID)
     meta: {
-      select: 'customer_device_details_section'
+      select: 'customer_device_details_section' // Selecting specific fields
     }
-  }
+  };
 
-  const { data: programData, isLoading, isError } = useOne(selectQuery)
+  // Fetching participant registration data
+  const { data: programData, isLoading, isError } = useOne(selectQuery);
 
-  console.log('programData', programData)
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = React.useState({});
   return (
     <div>
       <p className="text-[18px] font-[600] mb-[20px]">Customer Device Details</p>

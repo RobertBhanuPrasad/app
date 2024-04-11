@@ -57,7 +57,6 @@ function index() {
       <div>
         <ViewParticipantInformation />
       </div>
-      {/* <div><TabbedSection/></div> */}
       <div className="w-full p-[20px]">
         <Tabs
           onValueChange={(val: any) => {

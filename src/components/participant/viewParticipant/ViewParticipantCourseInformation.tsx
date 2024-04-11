@@ -1,48 +1,63 @@
-import { useOne, useSelect } from '@refinedev/core'
+import { useOne, useSelect } from '@refinedev/core';
 
+// Component for viewing participant course information
 function ViewParticipantCourseInformation() {
-  const textStyle = 'font-sans text-[14px]' // Common text style for both key and value
-  const keyTextStyle = `${textStyle} font-[400] text-[#999999]` // Style for keys
-  const valueTextStyle = `${textStyle} font-[600] text-[#666666]` // Style for values
+  // Common text styles
+  const textStyle = 'font-sans text-[14px]';
+  const keyTextStyle = `${textStyle} font-[400] text-[#999999]`;
+  const valueTextStyle = `${textStyle} font-[600] text-[#666666]`;
 
+  // Query for fetching participant registration data
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 4, //TODO:Replace with selected participant ID
+    id: 4, // Participant ID (TODO: Replace with actual participant ID)
     optionLabel: 'name',
     optionValue: 'id',
     meta: {
-      select:
-        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id(*),program_type_id(id,name)),participant_attendence_status_id(*)'
+      select: '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id(*),program_type_id(id,name)),participant_attendence_status_id(*)' // Selecting specific fields
     }
-  }
+  };
 
-  const { data: participantCourseData, isLoading, isError } = useOne(selectQuery)
+  // Fetching participant course data
+  const { data: participantCourseData, isLoading, isError } = useOne(selectQuery);
 
+  // Query for fetching program teachers
   const { queryResult } = useSelect({
     resource: 'program_teachers',
-    meta:{
-      select:'*,user_id(*,contact_id(full_name))'
+    meta: {
+      select: '*,user_id(*,contact_id(full_name))' // Selecting specific fields
     },
     filters: [
       {
         field: 'program_id',
         operator: 'eq',
-        value: 1
+        value: 1 // Program ID (TODO: Replace with actual program ID)
       }
     ]
-  })
+  });
 
+  // Extracting teacher full names
+  const teacherFullNames = queryResult?.data?.data?.map(teacher => teacher.user_id.contact_id.full_name).join(', ');
+
+  // Participant course information
   const coursePaticipantInformation = [
     { key: 'Course Type', value: participantCourseData?.data?.program_id?.program_type_id?.name },
-    { key: 'CourseName', value: 'Happiness Program' },
-    { key: 'Teachers', value: 'Test Teachers' },
+    {
+      key: 'CourseName',
+      value: participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
+        ? participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
+        : participantCourseData?.data?.program_id?.program_type_id?.name
+    },
+    { key: 'Teachers', value: teacherFullNames },
     { key: 'Attendance Status', value: participantCourseData?.data?.participant_attendence_status_id?.value },
     { key: 'Discount Amount', value: participantCourseData?.data?.discounted_amount }
-  ]
+  ];
+
   return (
     <div>
       <p className="text-[#7677F4] text-[18px] font-[600]">Course Information </p>
       <div className="grid grid-cols-3 gap-4 mt-[20px]">
+        {/* Rendering course information */}
         {coursePaticipantInformation.map((info, index) => (
           <div key={index}>
             <p className={keyTextStyle}>{info?.key}</p>
@@ -51,7 +66,7 @@ function ViewParticipantCourseInformation() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
-export default ViewParticipantCourseInformation
+export default ViewParticipantCourseInformation;

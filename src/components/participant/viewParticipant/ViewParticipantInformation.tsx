@@ -1,132 +1,53 @@
-import CopyIcon from '@public/assets/CopyIcon'
-import { useOne } from '@refinedev/core'
-import { useState } from 'react'
-
-interface Contact {
-  id: number
-  nif: string | null
-  email: string | null
-  gender: string | null
-  mobile: string | null
-  city_id: number | null
-  hx_pkey: number | null
-  state_id: number | null
-  full_name: string
-  gender_id: number | null
-  last_name: string
-  country_id: number | null
-  created_at: string
-  first_name: string
-  occupation: string | null
-  work_phone: string | null
-  postal_code: string | null
-  contact_type: string | null
-  date_of_birth: string | null
-  street_address: string | null
-  identification_num: string | null
-  identification_type: string | null
-  mobile_country_code: string | null
-  identification_type_id: number | null
-  preferred_to_receive_notifications: boolean | null
-}
-
-interface Program {
-  id: number
-  registration_link: string
-}
-
-interface CustomerDeviceDetails {
-  source: string
-  program_type: number
-  delivery_status: string
-  open_time_stamp: string
-  delivery_time_stamp: string
-}
-
-interface EmailDeliveryLog {
-  browser: string
-  ip_address: string
-  time_stamp: string
-  transaction_id: string
-  operating_system: string
-}
-
-interface UtmParameters {
-  term: string
-  medium: string
-  source: string
-  content: string
-  campaign: string
-  http_refer: string
-  program_type_id: string
-}
-
-interface ParticipantRegistrationDetails {
-  id: number
-  created_at: string
-  contact_id: Contact
-  discount_code_id: number | null
-  is_payment_refund_request: boolean
-  is_payment_refunded: boolean
-  participant_attendence_status_id: number
-  price_category_id: number | null
-  program_category_id: number
-  program_id: Program
-  discount_code: string
-  discounted_amount: number
-  is_health_declaration_checked: boolean
-  is_program_agreement_checked: boolean
-  legal_agreement_version: number
-  payment_status_id: number
-  customer_device_details_section: CustomerDeviceDetails[]
-  email_delivery_logs_section: EmailDeliveryLog[]
-  utm_parameters_section: UtmParameters[]
-  basic_amount: number
-  tax: number
-  total_amount: number
-  how_did_you_find_the_course: string
-  hx_pkey: number
-  health_declaration_consent_date: string
-  program_agreement_date: string
-  memo: string
-}
+import CopyIcon from '@public/assets/CopyIcon'; 
+import { useOne } from '@refinedev/core';
+import { useState } from 'react'; 
 
 function ViewParticipantInformation() {
-  const textStyle = 'font-sans text-[14px]' // Common text style for both key and value
-  const keyTextStyle = `${textStyle} font-[400] text-[#999999]` // Style for keys
-  const valueTextStyle = `${textStyle} font-[600] text-[#666666]` // Style for values
-  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
+  const textStyle = 'font-sans text-[14px]'; // Common text style for both key and value
+  const keyTextStyle = `${textStyle} font-[400] text-[#999999]`; // Style for keys
+  const valueTextStyle = `${textStyle} font-[600] text-[#666666]`; // Style for values
 
+  // State variable to track whether the registration link has been copied
+  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
+
+  // Query object for fetching participant data
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 4, //TODO:Replace with selected participant ID
+    id: 4, // TODO: Replace with selected participant ID
     optionLabel: 'name',
     optionValue: 'id',
     meta: {
-      select:
-        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(id,registration_link)'
+      select: '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(id,registration_link)'
     }
-  }
+  };
 
+  // Function to copy text to clipboard
   const copyText = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(text);
     } catch (err) {
-      console.error('Failed to copy: ', err)
+      console.error('Failed to copy: ', err);
     }
-  }
+  };
 
+  // Function to handle copying the registration link
   const handleCopyRegistrationLink = () => {
-    copyText(participantData?.data?.program_id?.registration_link)
-    setCopiedRegistrationLink(true)
+    copyText(participantData?.data?.program_id?.registration_link); // Copy the registration link to clipboard
+    setCopiedRegistrationLink(true); // Set copiedRegistrationLink state to true
 
+    // Reset copiedRegistrationLink state after a delay
     setTimeout(() => {
-      setCopiedRegistrationLink(false)
-    }, 1000)
-  }
+      setCopiedRegistrationLink(false);
+    }, 1000);
+  };
 
-  const { data: participantData, isLoading, isError } = useOne(selectQuery)
-  const contactData = participantData?.data?.contact_id
+  // Fetching participant data using useOne hook
+  const { data: participantData, isLoading, isError } = useOne(selectQuery);
+
+  // Extracting contact data from participantData
+  const contactData = participantData?.data?.contact_id;
+
+  // Array containing participant information with keys and values
   const participantInfo = [
     { key: 'Participants Name', value: contactData?.full_name ?? '-' },
     { key: 'Memo', value: participantData?.data?.memo ?? '-' },
@@ -179,6 +100,7 @@ function ViewParticipantInformation() {
     }
   ]
 
+  // Render component content based on loading state
   return !isLoading ? (
     <div className="w-[303px] bg-[white] border border-[#D9D9D9] rounded-[15px] shadow-lg flex justify-center items-center">
       <div className="w-[263px]">
@@ -192,8 +114,8 @@ function ViewParticipantInformation() {
       </div>
     </div>
   ) : (
-    <div>Loading..</div>
-  )
+    <div>Loading..</div> // Display loading indicator if data is being fetched
+  );
 }
 
-export default ViewParticipantInformation
+export default ViewParticipantInformation;
