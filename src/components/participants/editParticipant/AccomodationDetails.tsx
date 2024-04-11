@@ -1,10 +1,25 @@
+import { useSelect } from "@refinedev/core";
 import { useController } from "react-hook-form";
 import CustomSelect from "src/ui/custom-select";
 import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { Textarea } from "src/ui/textarea";
 
-export default function AccomodationDetails() {
+export default function AccomodationDetails({data}) {
+    const selectQuery: any = {
+        resource: "participant_payment_history",
+        filters: [
+            {
+                field: "participant_id",
+                operator: "eq",
+                value: data?.data[0]?.id,
+            },
+        ],
+        meta: {
+            select: "accommodation_fee, accommodation_type,currency_code",
+        },
+    };
+    const {queryResult}=useSelect(selectQuery)
     const {
         field: { value: roomPreference1, onChange: roomPreference1Change },
     } = useController({ name: "roomPreference1" });
@@ -16,7 +31,10 @@ export default function AccomodationDetails() {
     } = useController({ name: "roomPreference3" });
     const {
         field: { value: accommodationType, onChange: accommodationTypeChange },
-    } = useController({ name: "accommodationType" });
+    } = useController({ name: "accommodationType" 
+// TODO: validation accomodation type, returning text but needed id
+    // ,defaultValue:queryResult?.data?.accommodation_type
+});
     const {
         field: { value: snore, onChange: snoreChange },
     } = useController({ name: "snore" });
@@ -62,7 +80,11 @@ export default function AccomodationDetails() {
                 </div>
                 <div className="w-[303px] ">
                     <div className="text-[#999999] ">Fee per Person</div>
-                    <div>EUR 90.00</div>
+                    <div>
+                        EUR 90.00
+
+                        {queryResult?.data?.accommodation_fee}
+                    </div>
                 </div>
                 <div className="">
                     <div className="text-[#999999] ">

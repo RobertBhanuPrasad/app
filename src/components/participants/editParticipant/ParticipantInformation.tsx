@@ -1,10 +1,14 @@
-import React from "react";
 import { useController } from "react-hook-form";
 import { Textarea } from "src/ui/textarea";
 
-export default function ParticipnatInformation({data}) {
-    const {field:{value:participantMemo,onChange:participantMemoChange}}=useController({name:'participantMemo'})
-    console.log(data?.data[0]?.contact_id?.full_name)
+export default function ParticipnatInformation({ data }) {
+    const {
+        field: { value: participantMemo, onChange: participantMemoChange },
+    } = useController({
+        name: "participantMemo",
+        defaultValue: data?.data[0]?.memo,
+    });
+    console.log(data?.data[0], "participants details");
     return (
         <div id="participants">
             <div className="font-semibold text-[18px] pt-[25px] ">
@@ -13,7 +17,9 @@ export default function ParticipnatInformation({data}) {
             <div className="flex gap-4 py-[20px]">
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Participants</div>
-                    <div className="font-semibold">{data?.data[0]?.contact_id?.full_name}</div>
+                    <div className="font-semibold">
+                        {data?.data[0]?.contact_id?.full_name}
+                    </div>
                 </div>
                 <div className="flex">
                     <div className="w-[303px]">

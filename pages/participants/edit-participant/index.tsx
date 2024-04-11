@@ -16,8 +16,6 @@ export default function index() {
     );
     const selectQuery: any = {
         resource: "participant_registration",
-        optionLabel: "edit_participant",
-        optionvalue: "id",
         meta: {
             select: "*,created_at,total_amount,contact_id!inner(full_name),price_category_id!inner(option_values(value)),program_id!inner(*)",
         },
@@ -168,25 +166,25 @@ export default function index() {
                         <TabsContent value="Participants Information">
                             <ParticipnatInformation data={queryResult?.data} />
                             <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails />
+                            <AccomodationDetails data={queryResult?.data}/>
                             <PaymentDetails />
                         </TabsContent>
                         <TabsContent value="Course Fees">
                             <ParticipnatInformation data={queryResult?.data} />
                             <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails />
+                            <AccomodationDetails data={queryResult?.data}/>
                             <PaymentDetails />
                         </TabsContent>
                         <TabsContent value="Accomodation Details">
                             <ParticipnatInformation data={queryResult?.data} />
                             <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails />
+                            <AccomodationDetails data={queryResult?.data}/>
                             <PaymentDetails />
                         </TabsContent>
                         <TabsContent value="Payment Details">
                             <ParticipnatInformation data={queryResult?.data} />
                             <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails />
+                            <AccomodationDetails data={queryResult?.data}/>
                             <PaymentDetails />
                         </TabsContent>
                         <TabsContent value="Transaction Details">
