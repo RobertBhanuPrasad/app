@@ -25,10 +25,20 @@ import Form from "@components/Formfield";
 import { viewParticipantsStore } from "src/zustandStore/ViewParticipantsStore";
 import { Checkbox } from "src/ui/checkbox";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+import {
+  PARTICIPANT_ATTENDANCE_STATUS,
+  PARTICIPANT_PAYMENT_STATUS,
+} from "src/constants/OptionLabels";
+import { MultiSelect } from "src/ui/multi-select";
+import { CountComponent } from "pages/Courses/FindCourse";
 
 function index() {
-  const { ParticpantFiltersData } = viewParticipantsStore();
-  const filters: any = { permanent: [] };
+  const { ParticpantFiltersData, setSelectedTableRows } =
+    viewParticipantsStore();
+  const filters: any = {
+    permanent: [{ field: "program_id", operator: "eq", value: 1 }],
+  };
 
   if (ParticpantFiltersData?.participant_code) {
     filters.permanent.push({
@@ -228,7 +238,7 @@ function index() {
     resource: "participant_registration",
     meta: {
       select:
-        "*, contact_id(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history!inner(*)",
+        "*, contact_id(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history!inner(*, transaction_type_id(*), sub_payment_method_id(*), payment_method_id(*)))",
     },
     filters: filters,
   });
@@ -244,7 +254,14 @@ function index() {
       allRowSelection[row?.id] = allSelected;
     });
     setRowSelection(allRowSelection);
-  }, [allSelected, participantData?.data?.data]);
+  }, [allSelected, participantData?.data?.data, setSelectedTableRows]);
+
+  useEffect(() => {
+    const tempCount = Object.values(rowSelection).filter(
+      (value) => value === true
+    ).length;
+    setSelectedTableRows(tempCount);
+  }, [rowSelection]);
 
   const handleSelectAll = (val: any) => {
     setAllSelected(val);
@@ -1576,15 +1593,11 @@ function index() {
 export default index;
 
 const HeaderSection = () => {
-  const { ParticpantFiltersData, setParticpantFiltersData } =
+  const { ParticpantFiltersData, setParticpantFiltersData, selectedTableRows } =
     viewParticipantsStore();
   const [open, setOpen] = useState(false);
-  const transactionStatusOptions = [
-    "Confirmed",
-    "Pending",
-    "Failed",
-    "Not Received",
-  ];
+
+  console.log("COUNT", selectedTableRows);
 
   const { watch, setValue } = useFormContext();
   const formData = watch();
@@ -1601,10 +1614,40 @@ const HeaderSection = () => {
     name: "registration_date",
   });
 
+  const {
+    field: { value: transactionStatus, onChange: onSelectChange },
+  } = useController({
+    name: "transaction_status",
+  });
+
+  const transactionStatusOptions = getOptionValuesByOptionLabel(
+    PARTICIPANT_PAYMENT_STATUS
+  )?.[0]?.option_values;
+
+  const transactionStatusValues = transactionStatusOptions?.map(
+    (record: any) => {
+      return {
+        label: record?.value,
+        value: record?.id,
+      };
+    }
+  );
+
   const handleClearAll = () => {
     setValue("participant_code", "");
     setValue("registration_date", "");
+    setValue("transaction_status", []);
   };
+
+  const [disableBulkOptions, setEnableBulkOptions] = useState(true);
+  const [bulkActions, setBulkAction] = useState("");
+  const attendanceOptions = getOptionValuesByOptionLabel(
+    PARTICIPANT_ATTENDANCE_STATUS
+  )?.[0]?.option_values;
+
+  const paymentStatusOptions = getOptionValuesByOptionLabel(
+    PARTICIPANT_PAYMENT_STATUS
+  )?.[0]?.option_values;
 
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4 flex-wrap gap-y-4">
@@ -1673,25 +1716,14 @@ const HeaderSection = () => {
       </div>
       {/* Transaction Status Section */}
       <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              onClick={() => setOpen(true)}
-              variant="outline"
-              className="flex flex-row justify-between w-[192px] h-10"
-            >
-              Transaction Status
-              <DropDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <div className="flex flex-col gap-4 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
-              {transactionStatusOptions.map((value) => (
-                <DropdownMenuItem>{value}</DropdownMenuItem>
-              ))}
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <MultiSelect
+          value={transactionStatus}
+          placeholder="Transaction Status"
+          data={transactionStatusValues}
+          onBottomReached={() => {}}
+          onSearch={() => {}}
+          onChange={onSelectChange}
+        />
       </div>
       {/* Bulk actions Section */}
       <div>
@@ -1701,16 +1733,40 @@ const HeaderSection = () => {
               onClick={() => setOpen(true)}
               variant="outline"
               className="flex flex-row justify-between w-[192px] h-10"
+              disabled={selectedTableRows > 0 ? false : true}
             >
               Records Selected
+              <CountComponent count={selectedTableRows} />
               <DropDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <div className="flex flex-col gap-4 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
-              {transactionStatusOptions.map((value) => (
-                <DropdownMenuItem>{value}</DropdownMenuItem>
-              ))}
+              <DropdownMenuItem
+                onClick={() => {
+                  setEnableBulkOptions(true);
+                }}
+              >
+                Print Registration Form
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setEnableBulkOptions(false);
+
+                  setBulkAction("attendance");
+                }}
+              >
+                Update Attendance Status
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setEnableBulkOptions(false);
+
+                  setBulkAction("transaction");
+                }}
+              >
+                Update Transaction Status
+              </DropdownMenuItem>
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -1722,6 +1778,7 @@ const HeaderSection = () => {
               onClick={() => setOpen(true)}
               variant="outline"
               className="flex flex-row justify-between w-[192px] h-10"
+              disabled={disableBulkOptions}
             >
               Select Status
               <DropDown />
@@ -1729,9 +1786,18 @@ const HeaderSection = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <div className="flex flex-col gap-4 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
-              {transactionStatusOptions.map((value) => (
-                <DropdownMenuItem>{value}</DropdownMenuItem>
-              ))}
+              {bulkActions == "attendance"
+                ? attendanceOptions?.map((record: any) => (
+                    <DropdownMenuItem key={record.id}>
+                      {record.value}
+                    </DropdownMenuItem>
+                  ))
+                : paymentStatusOptions?.map((record: any) => (
+                    <DropdownMenuItem key={record.id}>
+                      {record.value}
+                    </DropdownMenuItem>
+                  ))}
+              {/* <DropdownMenuItem>Pending</DropdownMenuItem> */}
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -1751,8 +1817,6 @@ const HeaderSection = () => {
           className="h-9 w-18 rounded-xl"
           onClick={() => {
             setParticpantFiltersData(formData);
-            console.log("form data", formData);
-            console.log("Redux Data", ParticpantFiltersData);
           }}
         >
           Apply
