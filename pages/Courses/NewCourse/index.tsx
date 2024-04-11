@@ -37,7 +37,7 @@ import {
   PUBLIC,
   TIME_FORMAT_24_HOURS,
 } from "src/constants/OptionValueOrder";
-import { validationSchema } from "./NewCourseValidations";
+import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { useState } from "react";
@@ -116,7 +116,7 @@ function NewCourse() {
           [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
-          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: true,
+          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
@@ -203,6 +203,7 @@ export const NewCourseTabs = () => {
       : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
+    ...(formData?.program_type?.is_geo_restriction_applicable ? []:["is_geo_restriction_applicable"])
   ]);
 
   let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
@@ -617,5 +618,3 @@ export const NewCourseTabs = () => {
     </div>
   );
 };
-
-

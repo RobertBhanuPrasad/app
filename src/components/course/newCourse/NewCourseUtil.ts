@@ -23,6 +23,7 @@ export const handlePostProgramData = async (
   //   if (!programId) {
   const programBody: ProgramDataBaseType = {
     last_modified_by_user_id: loggedInUserId,
+    modified_at: new Date(),
   };
 
   // if body contains id pls insert if it does not contain id then record will create if it contains id just it will update table
@@ -79,14 +80,23 @@ export const handlePostProgramData = async (
       body[NewCourseStep2FormNames.allowed_countries];
   }
 
+  const { data: programTypeData } = await supabaseClient
+    .from("program_types")
+    .select("*")
+    .eq("id", body?.program_type_id)
+    .single();
+
   //Step-3
 
-  const venuId = await handlePostVenueData(body);
+  //We have to create a venue when the program is offline .no need to create venue for online program
+  if (programTypeData?.is_online_program === false) {
+    const venuId = await handlePostVenueData(body, loggedInUserId);
 
-  if (venuId === false) {
-    return false;
-  } else {
-    programBody.venue_id = venuId;
+    if (venuId === false) {
+      return false;
+    } else {
+      programBody.venue_id = venuId;
+    }
   }
 
   //online_url
@@ -123,13 +133,9 @@ export const handlePostProgramData = async (
   if (body[NewCourseStep4FormNames.is_early_bird_enabled]) {
     programBody.is_early_bird_enabled =
       body[NewCourseStep4FormNames.is_early_bird_enabled];
+  } else {
+    programBody.is_early_bird_enabled = false;
   }
-
-  const { data: programTypeData } = await supabaseClient
-    .from("program_types")
-    .select("*")
-    .eq("id", body?.program_type_id)
-    .single();
 
   let stateId: number = 1,
     cityId: number = 1,
@@ -225,7 +231,7 @@ export const handlePostProgramData = async (
 
     //TODO: We are doing this in backend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
-    if (programData[0]?.program_code) {
+    if (!programData[0]?.program_code) {
       await handleGenerateProgramCode(programId, loggedInUserId);
     }
   }
@@ -851,7 +857,7 @@ export const handlePostProgramContactDetailsData = async (
  * We need to update existing venue table if it is already present
  * @param body formData
  */
-const handlePostVenueData = async (body: any) => {
+const handlePostVenueData = async (body: any, loggedInUserId: number) => {
   // if body.isNewVenue true then first we have to create a new venue and then add it to program table with created venue_id
   // if user select and created new venue in step-3 then we have to create new venue and add it to program table
   // if user sleect existed venue and updated the venue details by clicking edit icon in existed venue popup then we have to update existing venue table right
@@ -863,8 +869,8 @@ const handlePostVenueData = async (body: any) => {
   if (body.isNewVenue) {
     venueData = body?.newVenue || {};
   } else {
-    const venueId = body.existingVenue.id;
-    venueData = body?.existingVenue;
+    const venueId = body.existingVenue?.id;
+    venueData = body?.existingVenue || {};
 
     // if it is existing venue then we will insert the id and do upsert automatically it will work update or insert
     if (venueId) {
@@ -896,6 +902,8 @@ const handlePostVenueData = async (body: any) => {
     venueBody.postal_code = venueData.postal_code;
   }
 
+  venueBody.created_by_user_id = loggedInUserId;
+
   //TODO: Need to post latitude and longitude also when map component was done.
 
   const { data, error } = await supabaseClient
@@ -907,7 +915,7 @@ const handlePostVenueData = async (body: any) => {
     console.log("error while creating venue", error);
     return false;
   } else {
-    console.log("venue created successfully", data);
+    console.log("venue created or updated successfully", data);
   }
 
   // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
@@ -1007,7 +1015,10 @@ export const handleProgramFeeLevelSettingsData = async (
   body: any,
   programId: number
 ) => {
-  if (body?.program_fee_level_settings?.length == 0) {
+  if (
+    body?.program_fee_level_settings?.length == 0 ||
+    !body?.program_fee_level_settings
+  ) {
     return true;
   }
   // Fetching the existing fee level settings data
@@ -1074,7 +1085,9 @@ const handleGenerateProgramCode = async (
       .from("program")
       .update({
         program_code: programCode,
-      });
+      })
+      .eq("id", programId)
+      .select();
 
     if (programError) {
       console.log("erorr while updating program code", programError);

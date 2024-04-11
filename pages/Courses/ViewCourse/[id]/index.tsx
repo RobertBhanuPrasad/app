@@ -117,7 +117,7 @@ function ViewDetails() {
     id: Id,
     meta: {
       select:
-        "*,created_by_user_id(contact_id(full_name)),program_type_id(is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
+        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
     },
   });
 
@@ -196,7 +196,9 @@ function ViewDetails() {
     <div className="flex flex-col mx-8">
       <div className="flex flex-row justify-between">
         <div className="text-[32px] font-semibold">
-          {courseData?.data?.program_alias_name_id?.alias_name}
+          {courseData?.data?.program_alias_name_id
+            ? courseData?.data?.program_alias_name_id?.alias_name
+            : courseData?.data?.program_type_id?.name}
         </div>
         <div className="flex items-center gap-4">
           <DisplayingCourseStatus
@@ -630,7 +632,7 @@ const ActionsDropDown = ({ courseData }: any) => {
 
       // we have to delete schedules when user click on copy course and other we need to prefill
 
-      defaultValues = _.omit(defaultValues, ["schedules"]);
+      defaultValues = _.omit(defaultValues, ["id","schedules"]);
       setNewCourseData(defaultValues);
       router.push("/Courses/NewCourse");
     }
@@ -936,30 +938,30 @@ const ShareButton = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const { authenticated, redirectTo } = await authProvider.check(context);
+// export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+//   const { authenticated, redirectTo } = await authProvider.check(context);
 
-  const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-  ]);
+//   const translateProps = await serverSideTranslations(context.locale ?? "en", [
+//     "common",
+//   ]);
 
-  if (!authenticated) {
-    return {
-      props: {
-        ...translateProps,
-      },
-      redirect: {
-        destination: `${redirectTo}?to=${encodeURIComponent(
-          context.req.url || "/"
-        )}`,
-        permanent: false,
-      },
-    };
-  }
+//   if (!authenticated) {
+//     return {
+//       props: {
+//         ...translateProps,
+//       },
+//       redirect: {
+//         destination: `${redirectTo}?to=${encodeURIComponent(
+//           context.req.url || "/"
+//         )}`,
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  return {
-    props: {
-      ...translateProps,
-    },
-  };
-};
+//   return {
+//     props: {
+//       ...translateProps,
+//     },
+//   };
+// };

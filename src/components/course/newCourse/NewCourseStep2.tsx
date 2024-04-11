@@ -98,9 +98,12 @@ export default function NewCourseStep2() {
         <div className="w-80 h-20">
           <Visibility />
         </div>
-        <div className="w-80 h-20">
-          <GeoRestriction />
-        </div>
+        {/* Allow only for super Admin */}
+        {hasSuperAdminRole && (
+          <div className="w-80 h-20">
+            <GeoRestriction />
+          </div>
+        )}
         {formData?.is_geo_restriction_applicable && (
           <div className="w-80 h-20">
             <AllowedCountriesDropDown />
@@ -786,7 +789,7 @@ const GeoRestriction = () => {
       </div>
 
       <RadioGroup
-        value={value}
+        value={JSON.stringify(value)}
         onValueChange={(val: string) => {
           val == "true" ? onChange(true) : onChange(false);
         }}
@@ -847,12 +850,12 @@ const LanguageDropDown = () => {
       mode: "server",
     },
   });
-  console.log(options)
+
   const filteredOptions = options?.filter((val: any) => {
     if (formData?.translation_language_ids?.includes(val?.value)) return false;
     return true;
   });
-  console.log(filteredOptions,'filteredOptions',formData?.translation_language_ids)
+
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
     if (options && (queryResult?.data?.total as number) >= pageSize)

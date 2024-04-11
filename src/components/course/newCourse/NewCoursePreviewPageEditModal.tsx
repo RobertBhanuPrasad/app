@@ -1,10 +1,10 @@
-import Form from '@components/Formfield'
-import EditIcon from '@public/assets/EditIcon'
-import { Dialog } from '@radix-ui/react-dialog'
-import { useFormContext } from 'react-hook-form'
-import { Button } from 'src/ui/button'
-import { DialogContent, DialogFooter, DialogTrigger } from 'src/ui/dialog'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+import Form from "@components/Formfield";
+import EditIcon from "@public/assets/EditIcon";
+import { Dialog } from "@radix-ui/react-dialog";
+import { useFormContext } from "react-hook-form";
+import { Button } from "src/ui/button";
+import { DialogContent, DialogFooter, DialogTrigger } from "src/ui/dialog";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 /**
  * EditModalDialog Component
@@ -23,15 +23,21 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
  */
 
 interface EditModalDialogProps {
-  title: string
-  content: any
-  onClose: () => void
-  open: boolean
-  openEdit: () => void
+  title: string;
+  content: any;
+  onClose: () => void;
+  open: boolean;
+  openEdit: () => void;
 }
 
-export const EditModalDialog = ({ title, content, onClose, open, openEdit }: EditModalDialogProps) => {
-  const { newCourseData, setNewCourseData } = newCourseStore()
+export const EditModalDialog = ({
+  title,
+  content,
+  onClose,
+  open,
+  openEdit,
+}: EditModalDialogProps) => {
+  const { newCourseData, setNewCourseData } = newCourseStore();
 
   /**
    * ButtonsDialog Component
@@ -44,42 +50,50 @@ export const EditModalDialog = ({ title, content, onClose, open, openEdit }: Edi
    */
 
   const ButtonsDialog = () => {
-    const { getValues } = useFormContext()
-    const formData = getValues()
+    const { getValues } = useFormContext();
+    const formData = getValues();
     const onSubmit = () => {
       // Update newCourseData with new form data
-      setNewCourseData({ ...newCourseData, ...formData })
+      setNewCourseData({ ...newCourseData, ...formData });
       // Close the dialog
-      onClose()
-    }
+      onClose();
+    };
 
     return (
       <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
-        <Button onClick={onClose} className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold">
+        <Button
+          onClick={onClose}
+          className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+        >
           Cancel
         </Button>
         <Button className="w-[100px]" onClick={onSubmit}>
           Save
         </Button>
       </DialogFooter>
-    )
-  }
+    );
+  };
 
   return (
     <Dialog open={open}>
       <DialogTrigger asChild>
-      <div className="w-16 h-18 ml-4 text-blue-600 ">
-        <div onClick={openEdit} className="cursor-pointer">
-          <EditIcon />
+        <div className="w-16 h-18 ml-4 text-blue-600 ">
+          <div onClick={openEdit} className="cursor-pointer">
+            <EditIcon />
+          </div>
         </div>
-      </div>
       </DialogTrigger>
       <DialogContent className="w-auto">
-        <Form defaultValues={newCourseData}>
+        <Form
+          defaultValues={newCourseData}
+          onSubmit={function (data: any): void {
+            throw new Error("Function not implemented.");
+          }}
+        >
           {content}
           <ButtonsDialog />
         </Form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

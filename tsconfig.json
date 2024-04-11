@@ -26,6 +26,12 @@
     },
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/test", "pages/Courses/ViewCourse/[id]"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/test",
+    "pages/Courses/ViewCourse/[id]"
+  ],
   "exclude": ["node_modules"]
 }

@@ -31,8 +31,8 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data.organization_id)
     defaultValues.organization_id = data.organization_id as number;
 
-    if(data.program_created_by)
-      defaultValues.program_created_by=data.program_created_by as number
+  if (data.program_created_by)
+    defaultValues.program_created_by = data.program_created_by as number;
 
   //organizer_ids
   if (data?.program_organizers) {
@@ -97,7 +97,8 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   }
 
   //max_capacity
-  if (data?.max_capacity) defaultValues.max_capacity = data.max_capacity;
+  if (data?.max_capacity)
+    defaultValues.max_capacity = JSON.stringify(data.max_capacity);
 
   //visibility_id
   if (data?.visibility_id) {
@@ -132,12 +133,6 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
     //online_url
     if (data?.online_url) defaultValues.online_url = data.online_url;
 
-    if (data?.hour_format_id)
-      defaultValues.hour_format_id = data.hour_format_id as number;
-
-    if (data?.time_zone_id)
-      defaultValues.time_zone_id = data.time_zone_id as number;
-
     if (data?.state_id) defaultValues.state_id = data.state_id as number;
 
     if (data?.city_id) defaultValues.city_id = data.city_id as number;
@@ -158,6 +153,12 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
       }
     }
   }
+ 
+  if (data?.hour_format_id)
+    defaultValues.hour_format_id = data.hour_format_id as number;
+
+  if (data?.time_zone_id)
+    defaultValues.time_zone_id = data.time_zone_id as number;
 
   //program_schedules
   if (data?.program_schedules) {
