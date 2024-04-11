@@ -111,6 +111,7 @@ import {
     DialogFooter,
   } from "../../src/ui/dialog.tsx";
   import { Button } from "src/ui/button";
+  import { useSelect } from "@refinedev/core";
 
 export default function TransactionActivity() {
     const [open, setOpen] = useState(false);
@@ -175,6 +176,23 @@ export default function TransactionActivity() {
         }
       };
 
+      // const { options } = useSelect({
+      //   resource: "participant_payment_history",
+      //   optionLabel: "value",
+      //   optionValue: "id",
+      //   meta: {
+      //     select:
+      //       "*,contact_id!inner(first_name,last_name),user_roles!inner(role_id)",
+      //   },
+      //   filters: [
+      //     {
+      //       field: "option_label_id",
+      //       operator: "eq",
+      //       value: data?.data[0]?.id,
+      //     },
+      //   ],
+      // });
+
   return (
     <div>
         {transactions.map((transaction, index) => (
@@ -198,11 +216,11 @@ export default function TransactionActivity() {
               </div>
               <div className="flex">
                   <span className="font-semibold text-base leading-5 pr-2">Transaction id:</span>
-                  <span className="font-normal text-base leading-5" style={{ color: transaction.details.statusColor }}>{transaction.details.transactionId}</span>
+                  <span className="font-normal text-base leading-5">{transaction.details.transactionId}</span>
               </div>
               <div className="flex">
                   <span className="font-semibold text-base leading-5 pr-2">Transaction Status:</span>
-                  <span className="font-normal text-base leading-5 text-[#FF6D6D]">{transaction.details.status}</span>
+                  <span className="font-normal text-base leading-5 text-[#FF6D6D]" style={{ color: transaction.details.statusColor }}>{transaction.details.status}</span>
               </div>
               </div>
               </div>

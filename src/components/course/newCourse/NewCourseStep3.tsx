@@ -8,19 +8,24 @@ import {
   useSelect,
   CrudFilters,
   useGetIdentity,
+  useOne,
 } from "@refinedev/core";
 import _ from "lodash";
 import Add from "@public/assets/Add";
 import Clock from "@public/assets/Clock";
 import DropDown from "@public/assets/DropDown";
 import { useEffect, useState } from "react";
-import { useController, useFieldArray, useFormContext } from "react-hook-form";
+import {
+  useController,
+  useFieldArray,
+  useFormContext,
+  useFormState,
+} from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { Badge } from "src/ui/badge";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import { DateCalendar } from "src/ui/DateCalendar";
-import CustomSelect from "src/ui/custom-select";
 import {
   Dialog,
   DialogClose,
@@ -46,7 +51,11 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
-import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
+import {
+  NATIONAL_ADMIN,
+  SUPER_ADMIN,
+  TIME_FORMAT_12_HOURS,
+} from "src/constants/OptionValueOrder";
 import {
   CenterDropDown,
   CityDropDown,
@@ -55,14 +64,36 @@ import {
   StreetAddressComponent,
   VenueNameComponent,
 } from "@components/CommonComponents/DropDowns";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "src/ui/select";
+import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
+import { SelectItems } from "src/ui/select";
+import LoadingIcon from "@public/assets/LoadingIcon";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
-  const formData = watch();
+
+  const { program_type_id } = watch();
+
+  const { data: programTypeData, isLoading } = useOne({
+    resource: "program_types",
+    id: program_type_id,
+  });
+
+  if (isLoading) {
+    return <LoadingIcon />;
+  }
+  
   return (
     <div className="flex flex-col gap-8">
       <div>
-        {formData?.courseTypeSettings?.is_online_program ? (
+        {programTypeData?.data?.is_online_program === true ? (
           <OnlineProgram />
         ) : (
           <div className="mb-8">
@@ -78,12 +109,29 @@ function NewCourseStep3() {
 export default NewCourseStep3;
 
 const OnlineProgram = () => {
+  const {
+    field: { value, onChange },
+    fieldState: { error },
+  } = useController({
+    name: NewCourseStep3FormNames?.online_url,
+  });
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
         <div className="">Online zoom URL </div>
         <div className="w-80">
-          <Input placeholder="URL" className="rounded-[12px]" />
+          <Input
+            placeholder="URL"
+            className="rounded-[12px]"
+            value={value}
+            onChange={(event) => {
+              onChange(event.target.value);
+            }}
+            error={error ? true : false}
+          />
+          {error && (
+            <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+          )}
           <div className="text-xs font-normal text-[#666666] italic w-[320px] overflow-hidden">
             <div>
               Note: Participants will join your online course through your
@@ -99,13 +147,13 @@ const OnlineProgram = () => {
         </div>
         <div className="flex gap-7">
           <div className="w-80">
-            <StateDropDown />
+            <StateDropDown name="state_id" />
           </div>
           <div className="w-80">
-            <CityDropDown />
+            <CityDropDown name="city_id" />
           </div>
           <div className="w-80">
-            <CenterDropDown />
+            <CenterDropDown name="center_id" />
           </div>
         </div>
       </div>
@@ -114,10 +162,16 @@ const OnlineProgram = () => {
 };
 
 const Schedules = () => {
+  const { errors } = useFormState();
   return (
     <div className="flex flex-col gap-4 w-[1016px]">
       <SchedulesHeader />
       <Sessions />
+      {errors?.schedules && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {errors?.schedules?.message as string}
+        </span>
+      )}
     </div>
   );
 };
@@ -125,11 +179,14 @@ const Schedules = () => {
 const SchedulesHeader = () => {
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
-  } = useController({ name: "hoursFormat" });
-
+    fieldState: { error: schedulesHeaderErrors },
+  } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
+  const {
+    field: { value: timeZones, onChange: timeZonesOnChange },
+    fieldState: { error: timeZoneError },
+  } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
   let timeFormatOptions =
     getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
-
   timeFormatOptions = timeFormatOptions?.map(
     (val: { id: any; value: string }) => {
       return {
@@ -138,6 +195,19 @@ const SchedulesHeader = () => {
       };
     }
   );
+  const { options } = useSelect({
+    resource: "time_zones",
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
+
   return (
     <div className="h-9 flex justify-between">
       <div className="font-semibold text-[#333333] flex items-center">
@@ -145,71 +215,103 @@ const SchedulesHeader = () => {
       </div>
       <div className="flex gap-4">
         <div className="w-[161px]">
-          <CustomSelect
+          <Select
             value={hoursFormat}
-            placeholder="Select time format"
-            data={timeFormatOptions}
-            onBottomReached={() => {}}
-            onSearch={() => {}}
-            onChange={(val) => {
+            onValueChange={(val: any) => {
               hoursFormatOnChange(val);
             }}
-          />
+          >
+            <SelectTrigger
+              className="w-[161px]"
+              error={schedulesHeaderErrors ? true : false}
+            >
+              <SelectValue placeholder="Select Format" />
+            </SelectTrigger>
+            <SelectContent className="w-[161px]">
+              {timeFormatOptions?.map((option: any) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {schedulesHeaderErrors && (
+            <span className="text-[#FF6D6D] text-[12px]">
+              {schedulesHeaderErrors?.message}
+            </span>
+          )}
         </div>
-        <div className="w-[257px]">
-          <CustomSelect
-            value={""}
-            placeholder="Select time format"
-            data={timeFormatOptions}
-            onBottomReached={() => {}}
-            onSearch={() => {}}
-            onChange={() => {}}
-          />
-        </div>
+        {options?.length > 0 && (
+          <div className="w-[257px]">
+            <Select
+              value={timeZones}
+              onValueChange={(value: any) => {
+                timeZonesOnChange(value);
+              }}
+            >
+              <SelectTrigger
+                className="w-[257px]"
+                error={timeZoneError ? true : false}
+              >
+                <SelectValue placeholder="Select Time Zone" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItems onBottomReached={() => {}}>
+                  {options?.map((option, index) => {
+                    return (
+                      <div>
+                        <SelectItem
+                          key={option.value}
+                          value={option.value}
+                          className="h-[44px]"
+                        >
+                          {option.label}
+                        </SelectItem>
+                        {index < options?.length - 1 && (
+                          <hr className="border-[#D6D7D8]" />
+                        )}
+                      </div>
+                    );
+                  })}
+                </SelectItems>
+              </SelectContent>
+            </Select>
+            {timeZoneError && (
+              <span className="text-[#FF6D6D] text-[12px]">
+                {timeZoneError?.message}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
 const Sessions = () => {
   const { append, remove } = useFieldArray({
     name: "schedules",
   });
-
   const { watch } = useFormContext();
-
+  const { errors } = useFormState();
   const [open, setOpen] = useState(false);
-
   const formData = watch();
-
   const schedules = formData?.schedules;
-
   const handleAddSession = () => {
-    append({
-      startHour: "00",
-      startMinute: "00",
-      endHour: "00",
-      endMinute: "00",
-      startTimeFormat: "AM",
-      endTimeFormat: "AM",
-      date: new Date(),
-    });
+    append(undefined);
   };
-
   useEffect(() => {
     if (schedules?.length <= 0 || !schedules) {
       handleAddSession();
     }
   }, []);
-
   const handleRemoveSession = (index: number) => {
     remove(index);
   };
-
   const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
     TIME_FORMAT,
     TIME_FORMAT_12_HOURS
   )?.id;
-
   return (
     <div className="flex flex-col gap-4">
       {schedules?.map((schedule: any, index: number) => {
@@ -227,14 +329,17 @@ const Sessions = () => {
                 <DialogTrigger asChild>
                   <Button
                     onClick={() => setOpen(true)}
-                    className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
+                    className={`w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 ${
+                      errors?.schedules && "border-[#FF6D6D]"
+                    }`}
                     variant="outline"
                   >
                     <div>
-                      <CalenderIcon />
+                      <CalenderIcon color="#999999" />
                     </div>
                     <div>
-                      {format(new Date(schedule?.date), "dd MMM, yyyy")}
+                      {schedule?.date &&
+                        format(new Date(schedule.date), "dd MMM, yyyy")}
                     </div>
                   </Button>
                 </DialogTrigger>
@@ -245,9 +350,7 @@ const Sessions = () => {
               <TimePicker
                 index={index}
                 is12HourFormat={
-                  formData?.hoursFormat?.value == timeFormat12HoursId
-                    ? true
-                    : false
+                  formData?.hour_format_id == timeFormat12HoursId ? true : false
                 }
               />
               <div className="w-[127px] flex gap-4 ">
@@ -289,9 +392,11 @@ const Venue = () => {
   };
 
   const formData = watch();
+  const { errors } = useFormState();
 
   const {
     field: { onChange: isNewVenueOnchange },
+    fieldState: { error: isVenueSelectedError },
   } = useController({
     name: "isNewVenue",
   });
@@ -309,21 +414,37 @@ const Venue = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "isNewVenueSelected",
+    name: "is_existing_venue",
   });
 
-  const handleAddNewVenue = () => {
-    setValue("newVenue", {
-      city_id: formData?.city_id,
-      city: formData?.city,
-      state_id: formData?.state_id,
-      state: formData?.state,
-      center_id: formData?.center_id,
-      center: formData?.center,
-      postal_code: formData?.postal_code,
-      address: formData?.address,
-      name: formData?.name,
-    });
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+  const [openAddNewVenue, setOpenAddNewVenue] = useState(false);
+
+  const handleAddNewVenue = async () => {
+    const isAllFieldsFilled = await ValidateCurrentStepFields([
+      "city_id",
+      "center_id",
+      "state_id",
+      "name",
+      "address",
+      "postal_code",
+    ]);
+    if (isAllFieldsFilled) {
+      setValue("newVenue", {
+        city_id: formData?.city_id,
+        city: formData?.city,
+        state_id: formData?.state_id,
+        state: formData?.state,
+        center_id: formData?.center_id,
+        center: formData?.center,
+        postal_code: formData?.postal_code,
+        address: formData?.address,
+        name: formData?.name,
+      });
+      setOpenAddNewVenue(false);
+    } else {
+      setOpenAddNewVenue(true);
+    }
   };
 
   const handleOpenEditNewVenue = () => {
@@ -337,6 +458,7 @@ const Venue = () => {
     setValue("center", formData?.newVenue?.center);
     setValue("postal_code", formData?.newVenue?.postal_code);
     isNewVenueOnchange(true);
+    setOpenAddNewVenue(true);
   };
 
   const handleOpenAddNewVenue = () => {
@@ -347,6 +469,7 @@ const Venue = () => {
     resetField("city_id");
     resetField("name");
     isNewVenueOnchange(true);
+    setOpenAddNewVenue(true);
   };
 
   return (
@@ -379,10 +502,7 @@ const Venue = () => {
             {data ? (
               <div>
                 {existingVenue ? (
-                  <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                    {formData?.existingVenue?.address},
-                    {formData?.existingVenue?.postal_code}
-                  </div>
+                  <ExistingVenueDetails />
                 ) : (
                   <div className="pl-[30px] leading-6 font-normal">
                     Select a venue by clicking “View All” button
@@ -434,7 +554,10 @@ const Venue = () => {
                   <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
-                  <Dialog>
+                  <Dialog
+                    open={openAddNewVenue}
+                    onOpenChange={setOpenAddNewVenue}
+                  >
                     <DialogTrigger onClick={handleOpenEditNewVenue}>
                       <EditIcon />
                     </DialogTrigger>
@@ -457,14 +580,11 @@ const Venue = () => {
                   </Dialog>
                 </div>
               </div>
-              <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-                {formData?.newVenue?.address},{formData?.newVenue?.city?.name},
-                {formData?.newVenue?.postal_code}
-              </div>
+              <NewVenueDetails />
             </div>
           </Label>
         ) : (
-          <Dialog>
+          <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue}>
               <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
                 + Add New Venue
@@ -476,6 +596,67 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
+      {(errors?.is_existing_venue || errors?.existingVenue) && (
+        <span className="text-[#FF6D6D] text-[14px]">
+          {"Venue is a required field"}
+        </span>
+      )}
+    </div>
+  );
+};
+
+const NewVenueDetails = () => {
+  const { getValues } = useFormContext();
+  const {
+    newVenue: { center_id, address, postal_code, name },
+  } = getValues();
+
+  const { data, isLoading } = useOne({
+    resource: "center",
+    id: center_id,
+    meta: {
+      select: "*,state_id(*),city_id(*)",
+    },
+  });
+
+  console.log("new venue data is", data);
+
+  if (isLoading) {
+    return <LoadingIcon />;
+  }
+
+  return (
+    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
+      {name}, {address},{data?.data?.city_id?.name},{" "}
+      {data?.data?.state_id?.name}, {postal_code}
+    </div>
+  );
+};
+
+const ExistingVenueDetails = () => {
+  const { getValues } = useFormContext();
+  const {
+    existingVenue: { center_id, address, postal_code, name },
+  } = getValues();
+
+  const { data, isLoading } = useOne({
+    resource: "center",
+    id: center_id,
+    meta: {
+      select: "*,state_id(*),city_id(*)",
+    },
+  });
+
+  console.log("new venue data is", data);
+
+  if (isLoading) {
+    return <LoadingIcon />;
+  }
+
+  return (
+    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
+      {name}, {address},{data?.data?.city_id?.name},{" "}
+      {data?.data?.state_id?.name}, {postal_code}
     </div>
   );
 };
@@ -487,20 +668,23 @@ const TimePicker = ({
   index: number;
   is12HourFormat: Boolean;
 }) => {
+  const { errors } = useFormState();
   return (
     <div className="flex items-center gap-6">
       <div className="text-sm text-[#999999] font-normal">From</div>
       <div className="w-[233px]">
         <TimeSelector
-          name={`schedules[${index}].start`}
+          name={`${NewCourseStep3FormNames?.schedules}[${index}].start`}
           is12HourFormat={is12HourFormat}
+          error={errors?.schedules ? true : false}
         />
       </div>
       <div className="text-sm text-[#999999] font-normal">To</div>
       <div className="w-[233px]">
         <TimeSelector
-          name={`schedules[${index}].end`}
+          name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
           is12HourFormat={is12HourFormat}
+          error={errors?.schedules ? true : false}
         />
       </div>
     </div>
@@ -511,12 +695,10 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   const {
     field: { value: dateValue, onChange },
   } = useController({
-    name: `schedules[${index}].date`,
+    name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
-
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date
   const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
-
   // Fetch organization calendar settings
   const { data: settingsData } = useList<any>({
     resource: "organization_calender_settings",
@@ -528,7 +710,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       },
     ],
   });
-
   // Define filters based on the selected date
   const dateFilters: CrudFilters = [
     {
@@ -543,7 +724,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         date && new Date(date?.getTime() + 24 * 60 * 60 * 1000)?.toISOString(),
     },
   ];
-
   // Add additional filters based on organization calendar settings
   const filter = [...dateFilters];
   if (settingsData) {
@@ -569,7 +749,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       });
     }
   }
-
   // Fetch program schedules based on the filters
   const { data } = useList<any>({
     resource: "program_schedules",
@@ -579,12 +758,10 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     },
     filters: filter,
   });
-
   // Handle date selection in the calendar
   const handleOnSelect = (selected: Date | undefined) => {
     setDate(selected);
   };
-
   // Format time string
   const formatTime = (timeString: string) => {
     const dateObj = new Date(timeString);
@@ -594,7 +771,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       minutes < 10 ? "0" + minutes : minutes
     }`;
   };
-
   return (
     <div className="flex flex-col gap-4">
       <div className="h-[401px] flex flex-row gap-4">
@@ -657,6 +833,8 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 };
 
 const ExistingVenueList = () => {
+  const { data: loginUserData }: any = useGetIdentity();
+
   const { setValue, watch } = useFormContext();
 
   const formData = watch();
@@ -691,7 +869,7 @@ const ExistingVenueList = () => {
     const { data } = await supabaseClient
       .from("venue_view_with_names")
       .select("*")
-      .eq("created_by_user_id", "1")
+      .eq("created_by_user_id", loginUserData?.userData?.id)
       .or(
         `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
       );
@@ -703,7 +881,7 @@ const ExistingVenueList = () => {
     const { data } = await supabaseClient
       .from("venue_view_with_names")
       .select("*")
-      // .neq("created_by_user_id", "1")
+      .neq("created_by_user_id", loginUserData?.userData?.id)
       .or(
         `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
       )
@@ -759,7 +937,7 @@ const ExistingVenueList = () => {
   };
 
   const handleCheckboxChange = (item: any) => {
-    setValue("venueId", item.id);
+    setValue(NewCourseStep3FormNames.venue_id, item.id);
   };
   const {
     field: { value: existingVenue, onChange: existingVenueOnChange },
@@ -769,19 +947,16 @@ const ExistingVenueList = () => {
 
   const handleSubmitVenueList = () => {
     const existingVenueObject = venueData.filter(
-      (venue) => venue.id == formData?.venueId
+      (venue) => venue.id == formData[NewCourseStep3FormNames.venue_id]
     );
     existingVenueOnChange(existingVenueObject?.[0]);
   };
-
-  const { data: loginUserData }: any = useGetIdentity();
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
 
   const isUserNationAdminOrSuperAdmin = user_roles?.find(
     (role) =>
-      role.role_id.value == "National Admin" ||
-      role.role_id.value == "Super Admin"
+      role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
   );
 
   const handleOpenExistingVenue = (item: any) => {
@@ -810,7 +985,7 @@ const ExistingVenueList = () => {
 
   return (
     <div>
-      <div className="w-[858px]  rounded-[24px]  pt-6 !pl-4 !pr-4 ">
+      <div className="rounded-[24px] ">
         <div className="flex justify-center text-[24px] font-semibold">
           Existing Venues
         </div>
@@ -834,7 +1009,7 @@ const ExistingVenueList = () => {
           }}
         >
           <div
-            className=" h-[344px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
+            className=" mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
             id={"options"}
           >
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
@@ -845,34 +1020,37 @@ const ExistingVenueList = () => {
                     id={item.id}
                     value={item.id}
                     onCheckedChange={() => handleCheckboxChange(item)}
-                    checked={formData?.venueId == item.id ? true : false}
+                    checked={
+                      formData[NewCourseStep3FormNames.venue_id] == item.id
+                        ? true
+                        : false
+                    }
                   />
                   <div className="space-y-1 leading-none w-full">
                     <div className="flex justify-between">
                       <div className="font-semibold">{item.name}</div>
                       <div className="flex flex-row gap-3">
-                        {true && (
-                          // isUserNationAdminOrSuperAdmin ||
-                          // item?.created_by_user_id ==
-                          //   loginUserData?.userData?.id
-                          <Dialog>
-                            <DialogTrigger
-                              onClick={() => {
-                                handleOpenExistingVenue(item);
-                              }}
-                            >
-                              <EditIcon />
-                            </DialogTrigger>
-                            <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-                              <AddOrEditVenue
-                                handleSubmit={() => {
-                                  handleSubmitExistingVenue(index);
+                        {item?.created_by_user_id ==
+                          loginUserData?.userData?.id ||
+                          (isUserNationAdminOrSuperAdmin && (
+                            <Dialog>
+                              <DialogTrigger
+                                onClick={() => {
+                                  handleOpenExistingVenue(item);
                                 }}
-                              />
-                            </DialogContent>
-                          </Dialog>
-                        )}
-                        {true && (
+                              >
+                                <EditIcon />
+                              </DialogTrigger>
+                              <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                                <AddOrEditVenue
+                                  handleSubmit={() => {
+                                    handleSubmitExistingVenue(index);
+                                  }}
+                                />
+                              </DialogContent>
+                            </Dialog>
+                          ))}
+                        {isUserNationAdminOrSuperAdmin && (
                           // isUserNationAdminOrSuperAdmin
                           <Dialog>
                             <DialogTrigger>
@@ -891,7 +1069,8 @@ const ExistingVenueList = () => {
                     </div>
 
                     <div className="leading-tight">
-                      {item.address} {item.postal_code}
+                      {item.name}, {item.address}, {item.city_name},{" "}
+                      {item.state_name}, {item.postal_code}
                     </div>
                   </div>
                 </div>
@@ -947,20 +1126,18 @@ export const AddOrEditVenue = ({
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />
-          <CityDropDown />
+          <CityDropDown name="city_id" />
         </div>
 
         <div className="flex flex-col gap-5">
           <StreetAddressComponent />
-          <StateDropDown />
-          <CenterDropDown />
+          <StateDropDown name="state_id" />
+          <CenterDropDown name="center_id" />
         </div>
       </div>
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
-          <DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
-          </DialogClose>
+          <Button onClick={handleSubmit}>Submit</Button>
         </div>
       </DialogFooter>
     </div>
@@ -971,28 +1148,26 @@ export const AddOrEditVenue = ({
 const TimeSelector = ({
   name, // Name of the time selector
   is12HourFormat, // Boolean indicating whether to display time in 12-hour format
+  error,
 }: {
   name: string;
   is12HourFormat: Boolean;
+  error: boolean;
 }) => {
   // Maximum hours depending on the time format
   const maximumHours = is12HourFormat ? 12 : 23;
-
   // Extracting hour value and onChange function using useController hook
   const {
     field: { value: hourValue = "00", onChange: hourOnChange },
   } = useController({ name: `${name}Hour` });
-
   // Extracting minute value and onChange function using useController hook
   const {
     field: { value: minuteValue = "00", onChange: minuteOnChange },
   } = useController({ name: `${name}Minute` });
-
   // Extracting time format value and onChange function using useController hook
   const {
     field: { value: timeFormat = "AM", onChange: timeFormatOnChange },
   } = useController({ name: `${name}TimeFormat` });
-
   // Function to preprocess input value (add leading zeros and remove non-numeric characters)
   const preProcessInputValue = (value: string): string => {
     while (value.length < 2) {
@@ -1000,77 +1175,62 @@ const TimeSelector = ({
     }
     // Remove any non-numeric characters from the input
     const numericValue = value.replace(/[^0-9]/g, "");
-
     // Truncate to 2 characters
     const truncatedValue = numericValue.slice(-2);
-
     return truncatedValue;
   };
-
   // Event handler for hour input change
   const handleHour = (event: { target: { value: any } }) => {
     let inputValue = event.target.value;
-
     const hour = preProcessInputValue(inputValue);
-
     hourOnChange(hour);
   };
-
   // Event handler for incrementing hour
   const handleHourUpArrow = () => {
     if (hourValue == "00") {
       hourOnChange(maximumHours);
       return;
     }
-
     let hour = (parseInt(hourValue) - 1).toString();
     hour = preProcessInputValue(hour);
     hourOnChange(hour);
   };
-
   // Event handler for decrementing hour
   const handleHourDownArrow = () => {
     if (hourValue >= maximumHours) {
       hourOnChange("00");
       return;
     }
-
     let hour = (parseInt(hourValue) + 1).toString();
     hour = preProcessInputValue(hour);
     hourOnChange(hour);
   };
-
   // Event handler for minute input change
   const handleMinute = (event: { target: { value: any } }) => {
     let inputValue = event.target.value;
     const minute = preProcessInputValue(inputValue);
     minuteOnChange(minute);
   };
-
   // Event handler for incrementing minutes
   const handleMinutesUpArrow = () => {
     if (minuteValue == "00") {
       minuteOnChange("59");
       return;
     }
-
     let minute = (parseInt(minuteValue) - 1).toString();
     minute = preProcessInputValue(minute);
     minuteOnChange(minute);
   };
-
   // Event handler for decrementing minutes
   const handleMinutesDownArrow = () => {
     if (minuteValue == "59") {
       minuteOnChange("00");
       return;
     }
-
     let minute = (parseInt(minuteValue) + 1).toString();
     minute = preProcessInputValue(minute);
     minuteOnChange(minute);
   };
-
   // Effect to handle hour format change
   useEffect(() => {
     if (is12HourFormat == true) {
@@ -1088,11 +1248,14 @@ const TimeSelector = ({
       }
     }
   }, [is12HourFormat]);
-
   return (
     <Popover>
       <PopoverTrigger name={`TimeSelector ${name}`}>
-        <div className="border border-1 py-[10px] px-[14px] flex justify-between items-center rounded-xl cursor-pointer w-[233px]">
+        <div
+          className={`border border-1 py-[10px] px-[14px] flex justify-between items-center rounded-xl cursor-pointer w-[233px] ${
+            error && "border-[red]"
+          }`}
+        >
           <div className="flex gap-2 items-center">
             <Clock />
             <div>
@@ -1187,7 +1350,6 @@ const TimeSelector = ({
     </Popover>
   );
 };
-
 const DeleteVenueComponent = ({
   handleDeleteVenue,
 }: {
@@ -1201,7 +1363,7 @@ const DeleteVenueComponent = ({
           Are you sure you want to delete the address
         </DialogDescription>
       </DialogHeader>
-      <DialogFooter className="w-full flex !justify-center gap-6">
+      <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
             No

@@ -4,10 +4,21 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "src/ui/checkbox";
 import { supabaseClient } from "src/utility";
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity } from "@refinedev/core";
+import { useGetIdentity, useOne } from "@refinedev/core";
 import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
-import { useController, useFieldArray, useFormContext } from "react-hook-form";
+import {
+  useController,
+  useFieldArray,
+  useFormContext,
+  useFormState,
+} from "react-hook-form";
 import { Input } from "src/ui/input";
+import { NewCourseStep4FormNames } from "src/constants/CourseConstants";
+import { DateCalendar } from "src/ui/DateCalendar";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { Button } from "src/ui/button";
+import CalenderIcon from "@public/assets/CalenderIcon";
+import { format } from "date-fns";
 
 // Define CourseTable component
 
@@ -18,21 +29,50 @@ export default function CourseTable() {
 
   const formData = watch();
 
+  const { data: programTypeData } = useOne({
+    resource: "program_types",
+    id: formData?.program_type_id,
+  });
+
+  let stateId: number, cityId: number, centerId: number;
+
+  //Finding the state_id ,city_id and center_id where course is going on
+  if (programTypeData?.data?.is_online_program) {
+    stateId = formData?.state_id;
+    cityId = formData?.city_id;
+    centerId = formData?.center_id;
+  } else {
+    if (formData.is_existing_venue == "new-venue") {
+      stateId = formData?.newVenue?.state_id;
+      cityId = formData?.newVenue?.city_id;
+      centerId = formData?.newVenue?.center_id;
+    } else if (formData?.is_existing_venue == "existing-venue") {
+      stateId = formData?.existingVenue?.state_id;
+      cityId = formData?.existingVenue?.city_id;
+      centerId = formData?.existingVenue?.center_id;
+    }
+  }
+
+  //Finding course start date
+  const courseStartDate = formData?.schedules?.[0]?.date?.toISOString();
+
   const fetchFeeData = async () => {
+    //Sending all required params
     const { data, error } = await supabaseClient.functions.invoke(
       "course-fee",
       {
         method: "POST",
         body: {
-          state_id: "1",
-          city_id: "1",
-          center_id: "1",
-          start_date: "2024-03-18T07:00:00-00:00",
-          program_type_id: "1",
+          state_id: stateId,
+          city_id: cityId,
+          center_id: centerId,
+          start_date: courseStartDate,
+          program_type_id: formData?.program_type_id,
         },
       }
     );
-
+    if (error)
+      console.log("error while fetching course fee level settings", error);
     setCourseFeeSettings(data);
   };
 
@@ -40,17 +80,26 @@ export default function CourseTable() {
     fetchFeeData();
   }, [formData?.organization]);
 
-  if (courseFeeSettings == undefined) {
+  const { data: organizationData, isLoading } = useOne({
+    resource: "organizations",
+    id: formData?.organization_id,
+  });
+
+  if (courseFeeSettings == undefined || isLoading) {
     return <LoadingIcon />;
   }
   return (
     <div className="flex flex-col gap-[18px]">
       <div className="font-semibold text-base text-[#333333]">Fee</div>
-      <CourseFeeTable courseFeeSettings={courseFeeSettings} />;
+      <CourseFeeTable
+        courseFeeSettings={courseFeeSettings}
+        organizationData={organizationData?.data}
+      />
     </div>
   );
 }
-function CourseFeeTable({ courseFeeSettings }: any) {
+function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
+  //If Fee is not found based on users selection then need to show this
   if (courseFeeSettings?.length == 0) {
     return (
       <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
@@ -65,6 +114,13 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   const { watch } = useFormContext();
 
   const formData = watch();
+
+  const { errors } = useFormState();
+
+  //If organization as tax enabled then we need consider tax else tax will be zero
+  const taxRate = organizationData?.tax_enabled
+    ? organizationData?.tax_rate / 100
+    : 0;
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
 
@@ -84,45 +140,55 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   //Checking Weather a fee is editable or not
   const isFeeEditable =
     isUserNationAdminOrSuperAdmin ||
-    courseFeeSettings?.[0]?.is_program_fee_editable;
+    courseFeeSettings?.[0]?.is_program_fee_editable ? true :false;
 
   const {
     field: {
       value: showEarlyBirdColumns = false,
       onChange: setShowEarlyBirdColumns,
     },
-  } = useController({ name: "showEarlyBirdColumns" });
+  } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
 
   // Data for the table
   const courseFeeData: FeeLevelType[] =
     courseFeeSettings?.[0]?.program_fee_level_settings?.map((val: any) => {
       return {
-        earlyBirdSubTotal: val?.early_bird_sub_total,
-        earlyBirdTax: val?.early_brid_tax,
-        earlyBirdTotal: val?.early_brid_total,
+        earlyBirdSubTotal:
+          val?.early_bird_total - val?.early_bird_total * taxRate,
+        earlyBirdTax: val?.early_bird_total * taxRate,
+        earlyBirdTotal: JSON.stringify(val?.early_bird_total),
         feeLevelId: val?.fee_level_id?.id,
         feeLevelLabel: val?.is_custom_fee
           ? val?.custom_fee_label
           : val?.fee_level_id?.value,
-        isEnable: val?.is_enable,
-        subTotal: val?.sub_total,
-        tax: val?.tax,
-        total: val?.total,
+        is_enable: val?.is_enable,
+        subTotal: val?.total - val?.total * taxRate,
+        tax: val?.total * taxRate,
+        total: JSON.stringify(val?.total),
       };
     });
 
-  const { fields, append } = useFieldArray({ name: "feeLevels" });
+  const { fields: feeLevels, append } = useFieldArray({
+    name: "program_fee_level_settings",
+  });
 
   useEffect(() => {
     //Initializing setting data into form if fee is editable.Appending only if we have no data present in field
-    if (isFeeEditable && fields?.length == 0) {
-      append(courseFeeData);
+    if (isFeeEditable && feeLevels?.length == 0) {
+      const feeData = courseFeeData?.map((fee) => {
+        return {
+          // By default all checkbox will be false
+          is_enable: false,
+          total: fee?.total,
+          early_bird_total: fee?.earlyBirdTotal,
+          fee_level_id: fee?.feeLevelId,
+        };
+      });
+      append(feeData);
     }
   }, []);
 
-  const organizationData = formData?.organizationDetails;
-
-  const feeLevels = formData?.feeLevels;
+  console.log(errors, "errors");
 
   //Normal Fee Columns
   let normalFeeColumns: ColumnDef<FeeLevelType>[] = [
@@ -142,6 +208,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       enableHiding: false,
       header: "Normal Fee",
     },
+    //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
         return <div className="">{row?.original?.tax}</div>;
@@ -173,10 +240,14 @@ function CourseFeeTable({ courseFeeSettings }: any) {
     {
       cell: ({ row }) => {
         const {
-          field: { value },
-        } = useController({ name: `feeLevels[${row?.index}][subTotal]` });
+          field: { value: total },
+        } = useController({
+          name: `program_fee_level_settings[${row?.index}][total]`,
+        });
 
-        return <div className="">{value}</div>;
+        const normalFee = total - total * taxRate;
+
+        return <div className="">{normalFee}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -185,9 +256,13 @@ function CourseFeeTable({ courseFeeSettings }: any) {
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
         const {
-          field: { value },
-        } = useController({ name: `feeLevels[${row?.index}][tax]` });
-        return <div className="">{value}</div>;
+          field: { value: total },
+        } = useController({
+          name: `program_fee_level_settings[${row?.index}][total]`,
+        });
+
+        const tax = total * taxRate;
+        return <div className="">{tax}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -197,34 +272,24 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value, onChange },
-        } = useController({ name: `feeLevels[${row?.index}][total]` });
+          fieldState: { error },
+        } = useController({
+          name: `program_fee_level_settings[${row?.index}][total]`,
+        });
 
-        const taxRate = organizationData?.tax_rate;
-
-        const { setValue } = useFormContext();
-
-        const [feeAmount, setFeeAmount] = useState(value);
-
-        //Calculation of Normal Fee based on tax rate
-        const normalFee = feeAmount - (feeAmount * taxRate) / 100;
-
-        const handleTotalChange = () => {
-          onChange(feeAmount || 0);
-          setValue(`feeLevels[${row?.index}][subTotal]`, normalFee);
-          setValue(
-            `feeLevels[${row?.index}][tax]`,
-            (feeAmount * taxRate) / 100
-          );
-        };
+        const [total, setTotal] = useState(value);
 
         return (
           <div className="w-[75px]">
             <Input
-              value={feeAmount}
+              value={total}
               onChange={(val) => {
-                setFeeAmount(parseFloat(val.target.value || "0"));
+                setTotal(val.target.value);
               }}
-              onBlur={handleTotalChange}
+              error={error ? true : false}
+              onBlur={() => {
+                onChange(total);
+              }}
             />
           </div>
         );
@@ -267,29 +332,32 @@ function CourseFeeTable({ courseFeeSettings }: any) {
   const editableEarlyBirdFeeColumn: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
-        const taxEnable = organizationData?.tax_enabled;
-
         const {
-          field: { value: feeLevel },
-        } = useController({ name: `feeLevels[${row?.index}]` });
+          field: { value: earlyBirdTotal },
+        } = useController({
+          name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
+        });
 
-        if (taxEnable == false) {
-          return <div>{feeLevel?.earlyBirdTotal}</div>;
-        }
+        const earlyBirdSubTotal = earlyBirdTotal * taxRate;
 
-        return <div className="">{feeLevel?.earlyBirdSubTotal}</div>;
+        //TODO need to calculate based on organization tax
+        return <div className="">{earlyBirdSubTotal}</div>;
       },
       enableSorting: false,
       enableHiding: false,
       header: "Early Normal Fee",
     },
+    //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
         const {
-          field: { value },
-        } = useController({ name: `feeLevels[${row?.index}]` });
+          field: { value: earlyBirdTotal },
+        } = useController({
+          name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
+        });
 
-        return <div className="">{value?.earlyBirdTax}</div>;
+        const tax = earlyBirdTotal * taxRate;
+        return <div className="">{tax}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -299,37 +367,24 @@ function CourseFeeTable({ courseFeeSettings }: any) {
       cell: ({ row }) => {
         const {
           field: { value, onChange },
-        } = useController({ name: `feeLevels[${row?.index}][earlyBirdTotal]` });
+          fieldState: { error },
+        } = useController({
+          name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
+        });
 
-        const { setValue } = useFormContext();
-
-        const taxRate = organizationData?.tax_rate;
-
-        const [feeAmount, setFeeAmount] = useState(value);
-
-        //Calculation of Normal Fee based on tax rate
-        const normalEarlyBirdFee = feeAmount - (feeAmount * taxRate) / 100;
-
-        const handleTotalChange = () => {
-          onChange(feeAmount || 0);
-          setValue(
-            `feeLevels[${row?.index}][earlyBirdSubTotal]`,
-            normalEarlyBirdFee
-          );
-          setValue(
-            `feeLevels[${row?.index}][earlyBirdTax]`,
-            (feeAmount * taxRate) / 100
-          );
-        };
+        const [earlyBirdTotal, setEarlyBirdTotal] = useState(value);
 
         return (
           <div className="w-[75px]">
             <Input
-              value={feeAmount}
+              value={earlyBirdTotal}
               onChange={(val) => {
-                setFeeAmount(parseFloat(val.target.value || "0"));
+                setEarlyBirdTotal(val.target.value);
               }}
-              onBlur={handleTotalChange}
+              error={error ? true : false}
+              onBlur={() => {
+                onChange(earlyBirdTotal);
+              }}
             />
           </div>
         );
@@ -365,7 +420,9 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         cell: ({ row }) => {
           const {
             field: { value, onChange },
-          } = useController({ name: `feeLevels[${row?.index}][isEnable]` });
+          } = useController({
+            name: `program_fee_level_settings[${row?.index}][is_enable]`,
+          });
 
           return (
             <Checkbox
@@ -389,6 +446,27 @@ function CourseFeeTable({ courseFeeSettings }: any) {
 
   feeColumns = feeColumns.filter(Boolean);
 
+  //Form variable to store the early_bird_cut_off_period
+  const {
+    field: {
+      value: earlyBirdCutOff = courseFeeSettings?.[0]
+        ?.early_bird_cut_off_period,
+      onChange: setEarlyBirdCutOff,
+    },
+  } = useController({ name: "early_bird_cut_off_period" });
+
+  //Finding course start date
+  const courseStartDate = formData?.schedules?.[0]?.date;
+
+  const earlyBirdStartDate = new Date(courseStartDate);
+  //calculate of early bird start date
+  earlyBirdStartDate.setDate(
+    earlyBirdStartDate.getDate() -
+      courseFeeSettings?.[0]?.early_bird_cut_off_period
+  );
+
+  const [selectedDate, setSelectedData] = useState(earlyBirdStartDate);
+
   return (
     <div className="flex flex-col justify-center">
       {/* Enable Early Bird fee if it is enabled in settings */}
@@ -396,9 +474,9 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         <div className="flex justify-end items-center gap-2 py-4">
           <Checkbox
             checked={showEarlyBirdColumns}
-            onCheckedChange={(val) =>
-              setShowEarlyBirdColumns((prev: boolean) => !prev)
-            }
+            onCheckedChange={(val) => {
+              setShowEarlyBirdColumns(val);
+            }}
             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
           />
           <div>Enable early bird fees?</div>
@@ -413,6 +491,65 @@ function CourseFeeTable({ courseFeeSettings }: any) {
         ) : (
           <DataTable columns={feeColumns} data={courseFeeData} />
         )}
+      </div>
+
+      <div>
+        {isFeeEditable &&
+          courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
+          courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
+            <div className="w-80">
+              <div className="flex justify-between">
+                <div className="font-normal text-base text-sm">
+                  Early bird cut-off period
+                </div>
+                <div className="font-normal italic text-base text-sm text-[#7677F4]">
+                  {earlyBirdCutOff} Days left
+                </div>
+              </div>
+              <div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      onClick={() => {}}
+                      className={`w-full h-[40px] flex flex-row items-center justify-start gap-2 ${
+                        errors?.schedules && "border-[#FF6D6D]"
+                      }`}
+                      variant="outline"
+                    >
+                      <div>
+                        <CalenderIcon color="#999999" />
+                      </div>
+                      <div>
+                        {format(new Date(selectedDate), "dd MMM, yyyy")}
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
+                    <DateCalendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={(date: any) => {
+                        setSelectedData(date);
+                        const differenceInMilliseconds: number =
+                          courseStartDate.getTime() - date.getTime();
+
+                        // Convert milliseconds to days
+                        const oneDayInMilliseconds: number =
+                          1000 * 60 * 60 * 24;
+
+                        const differenceInDays: number = Math.floor(
+                          differenceInMilliseconds / oneDayInMilliseconds
+                        );
+
+                        setEarlyBirdCutOff(differenceInDays);
+                      }}
+                      className="rounded-md"
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );

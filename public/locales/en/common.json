@@ -1,65 +1,173 @@
 {
-  "home": "Home",
-  "administer": "Administer",
-  "contacts": " Contacts",
-  "courses": "Courses",
-  "events": "Events",
-  "teachers": "Teachers",
-  "mailings": "Mailings",
-  "menu": "Menu",
-
-  "basicDetails": "Basic Details",
-  "courseDetails": "Course Details",
-  "timeAndVenue": "Time and Venue",
-  "fees": "Fees",
-  "accommodation": "Accommodation",
-  "contactInfo": "Contact Info",
-  "review": "Review",
-  "accommodationDetails": "Change your accommodation details",
-  "previous": "Previous",
-  "next": "Next",
-  "save": "Save",
-
-  "thirdPartyGatewayRegistration": "Registration via 3rd party gateway",
-  "inputSiteUrl": "Please input the site's URL *",
-
-  "teaching": "I am teaching this course",
-  "coTeaching": "I am co-teaching this course",
-  "organizingThisCourse": "I am organizing this course for another teacher",
-  "organization": "Organization *",
-  "selectOrganization": "Select Organization",
-  "organizerName": "Select Organizer Name.",
-  "programOrganizer": "Program Organizer *",
-  "enterOrganizerName": "Enter Program organizer Name",
-
-  "courseType": "Course Type",
-  "selectCourseType": "Select course type",
-  "teacher": "Teacher",
-  "enterTeacherName": "Enter Teacher Name",
-  "assistantTeacher": "Assistant Teacher",
-  "languagesTaught": "Language(s) course is taught in",
-  "selectLanguage": "Select Language",
-  "displayLanguageOption": "Display language translation option for participants *",
-  "yes": "Yes",
-  "no": "No",
-  "availableLanguages": "Available language(s) for translation",
-  "selectTranslationLanguages": "Select translation languages",
-  "registrationMandatory": "Registration is mandatory for this course",
-  "maxCapacity": "Max Capacity",
-  "numberOfAttendees": "Enter no. of attendees",
-  "programVisibility": "Program Visibility",
-  "public": "Public",
-  "private": "Private",
-  "publicSentence": "There are a lot of things you can do in space, and space essentially is unlimited resources.",
-  "privateSentence": "There are a lot of things you can do in space, and space essentially is unlimited resources.",
-  "registrationsRestriction": "Is geo restriction applicable for registrations",
-  "registrationsRestrictionDescription": "Text entered in the 'Email Notes' field will be included in the registration confirmation email only irrespective of the transaction status (Email notes will not be shown on the Art of Living Website)",
-  "countryRegistrationsAllowed": "Country(s) from where registrations are allowed",
-  "enterCountries": "Enter Countries",
-  "courseDescription": "Course Description *",
-  "courseDescriptionText": "Course Description text is managed by National Admin. If the National Admin has allowed Organizers / Teachers to edit Course description then only this field will be editable. If you want to change the course description and this field is not editable kindly contact your National Admin.",
-  "courseNotes": "Course Notes *",
-  "courseNotesText": "Text entered in the 'Course Notes' field will be shown only on the Art of Living Website course details page.",
-  "courseName": "Course Name",
-  "selectCourseName": "Select course name"
+  "pages": {
+    "login": {
+      "title": "Sign in to your account",
+      "signin": "Sign in",
+      "signup": "Sign up",
+      "divider": "or",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Invalid email address"
+      },
+      "buttons": {
+        "submit": "Login",
+        "forgotPassword": "Forgot password?",
+        "noAccount": "Don’t have an account?",
+        "rememberMe": "Remember me"
+      }
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "fields": {
+        "email": "Email"
+      },
+      "errors": {
+        "validEmail": "Invalid email address"
+      },
+      "buttons": {
+        "submit": "Send reset instructions"
+      }
+    },
+    "register": {
+      "title": "Sign up for your account",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Invalid email address"
+      },
+      "buttons": {
+        "submit": "Register",
+        "haveAccount": "Have an account?"
+      }
+    },
+    "updatePassword": {
+      "title": "Update password",
+      "fields": {
+        "password": "New Password",
+        "confirmPassword": "Confirm new password"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "Passwords do not match"
+      },
+      "buttons": {
+        "submit": "Update"
+      }
+    },
+    "error": {
+      "info": "You may have forgotten to add the {{action}} component to {{resource}} resource.",
+      "404": "Sorry, the page you visited does not exist.",
+      "resource404": "Are you sure you have created the {{resource}} resource.",
+      "backHome": "Back Home"
+    },
+    "Tabs": {
+      "CourseDetailsTab": "Course Details",
+      "participantTab": "Participants",
+      "revenueSummaryTab": "Revenue Summary",
+      "courseAccountingFormTab": "Course Accounting Form"
+    }
+  },
+  "actions": {
+    "list": "List",
+    "create": "Create",
+    "edit": "Edit",
+    "show": "Show"
+  },
+  "buttons": {
+    "create": "Create",
+    "save": "Save",
+    "logout": "Logout",
+    "delete": "Delete",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "confirm": "Are you sure?",
+    "filter": "Filter",
+    "clear": "Clear",
+    "refresh": "Refresh",
+    "show": "Show",
+    "undo": "Undo",
+    "import": "Import",
+    "clone": "Clone",
+    "notAccessTitle": "You don't have permission to access"
+  },
+  "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
+  "notifications": {
+    "success": "Successful",
+    "error": "Error (status code: {{statusCode}})",
+    "undoable": "You have {{seconds}} seconds to undo",
+    "createSuccess": "Successfully created {{resource}}",
+    "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+    "deleteSuccess": "Successfully deleted {{resource}}",
+    "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+    "editSuccess": "Successfully edited {{resource}}",
+    "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+    "importProgress": "Importing: {{processed}}/{{total}}"
+  },
+  "loading": "Loading",
+  "tags": {
+    "clone": "Clone"
+  },
+  "dashboard": {
+    "title": "Dashboard"
+  },
+  "blog_posts": {
+    "blog_posts": "Blog Posts",
+    "fields": {
+      "id": "Id",
+      "title": "Title",
+      "content": "Content",
+      "status": "Status",
+      "created_at": "Created At",
+      "categoryId": "Category"
+    },
+    "titles": {
+      "create": "Create Blog Post",
+      "edit": "Edit Blog Post",
+      "list": "Blog Posts",
+      "show": "Show Blog Post"
+    }
+  },
+  "categories": {
+    "categories": "Categories",
+    "fields": {
+      "id": "Id",
+      "title": "Title",
+      "created_at": "Created At"
+    },
+    "titles": {
+      "create": "Create Category",
+      "edit": "Edit Category",
+      "list": "Categories",
+      "show": "Show Category"
+    }
+  },
+  "documentTitle": {
+    "default": "refine",
+    "suffix": " | refine",
+    "blog_posts": {
+      "list": "Blog Posts | refine",
+      "show": "#{{id}} Show Blog Post | refine",
+      "edit": "#{{id}} Edit Blog Post | refine",
+      "create": "Create new Blog Post | refine",
+      "clone": "#{{id}} Clone Blog Post | refine"
+    },
+    "categories": {
+      "list": "Categories | refine",
+      "show": "#{{id}} Show Category | refine",
+      "edit": "#{{id}} Edit Category | refine",
+      "create": "Create new Category | refine",
+      "clone": "#{{id}} Clone Category | refine"
+    }
+  },
+  "table": {
+    "actions": "Actions"
+  },
+  "pagination": {
+    "go": "Go to Page",
+    "show": "Show"
+  }
 }
