@@ -1,51 +1,52 @@
-import CopyIcon from '@public/assets/CopyIcon'; 
-import { useOne } from '@refinedev/core';
-import { useState } from 'react'; 
+import CopyIcon from '@public/assets/CopyIcon'
+import { useOne } from '@refinedev/core'
+import { useState } from 'react'
 
-function ViewParticipantInformation() {
-  const textStyle = 'font-sans text-[14px]'; // Common text style for both key and value
-  const keyTextStyle = `${textStyle} font-[400] text-[#999999]`; // Style for keys
-  const valueTextStyle = `${textStyle} font-[600] text-[#666666]`; // Style for values
+function ViewParticipantInformation(participantId: any) {
+  const textStyle = 'font-sans text-[14px]' // Common text style for both key and value
+  const keyTextStyle = `${textStyle} font-[400] text-[#999999]` // Style for keys
+  const valueTextStyle = `${textStyle} font-[600] text-[#666666]` // Style for values
 
   // State variable to track whether the registration link has been copied
-  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
+  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
 
   // Query object for fetching participant data
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 4, // TODO: Replace with selected participant ID
+    id: participantId,
     optionLabel: 'name',
     optionValue: 'id',
     meta: {
-      select: '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(id,registration_link)'
+      select:
+        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(id,registration_link)'
     }
-  };
+  }
 
   // Function to copy text to clipboard
   const copyText = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(text)
     } catch (err) {
-      console.error('Failed to copy: ', err);
+      console.error('Failed to copy: ', err)
     }
-  };
+  }
 
   // Function to handle copying the registration link
   const handleCopyRegistrationLink = () => {
-    copyText(participantData?.data?.program_id?.registration_link); // Copy the registration link to clipboard
-    setCopiedRegistrationLink(true); // Set copiedRegistrationLink state to true
+    copyText(participantData?.data?.program_id?.registration_link) // Copy the registration link to clipboard
+    setCopiedRegistrationLink(true) // Set copiedRegistrationLink state to true
 
     // Reset copiedRegistrationLink state after a delay
     setTimeout(() => {
-      setCopiedRegistrationLink(false);
-    }, 1000);
-  };
+      setCopiedRegistrationLink(false)
+    }, 1000)
+  }
 
   // Fetching participant data using useOne hook
-  const { data: participantData, isLoading, isError } = useOne(selectQuery);
+  const { data: participantData, isLoading, isError } = useOne(selectQuery)
 
   // Extracting contact data from participantData
-  const contactData = participantData?.data?.contact_id;
+  const contactData = participantData?.data?.contact_id
 
   // Array containing participant information with keys and values
   const participantInfo = [
@@ -115,7 +116,7 @@ function ViewParticipantInformation() {
     </div>
   ) : (
     <div>Loading..</div> // Display loading indicator if data is being fetched
-  );
+  )
 }
 
-export default ViewParticipantInformation;
+export default ViewParticipantInformation

@@ -5,24 +5,24 @@ import ViewParticipantInformation from '@components/participant/viewParticipant/
 import ViewParticipantTransactionDetails from '@components/participant/viewParticipant/ViewParticipantTransactionDetails'
 import ViewParticipantUtmParameters from '@components/participant/viewParticipant/ViewParticipantUtmParameters'
 import { GetServerSideProps } from 'next'
-import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { authProvider } from 'src/authProvider'
 import {
-  COURSE_ACCOUNTING_FORM_TAB,
-  REVENUE_SUMMARY_TAB,
   VIEW_CUSTOMER_DEVICE_DETAILS,
   VIEW_PARTICIPANT_COURSE_INFORMATION,
   VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS,
   VIEW_PARTICIPANT_TRANSACTION_DETAILS,
   VIEW_PARTICIPANT_UTM_PARAMETERS
 } from 'src/constants/Tabs'
-import TabbedSection from 'src/ui/tab-section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 
 function index() {
-  const { t } = useTranslation('common')
+  const router = useRouter()
+
+  const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
+
   const [selectedValue, setSelectedValue] = useState()
   const tabTriggers: any = [
     {
@@ -55,7 +55,7 @@ function index() {
   return (
     <div className="flex">
       <div>
-        <ViewParticipantInformation />
+        <ViewParticipantInformation participantId={Id} />
       </div>
       <div className="w-full p-[20px]">
         <Tabs
@@ -89,9 +89,15 @@ function index() {
           <TabsContent value={VIEW_PARTICIPANT_TRANSACTION_DETAILS}>
             <ViewParticipantTransactionDetails />
           </TabsContent>
-          <TabsContent value={VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS}><ViewParticipantEmailDeliveryLogs/></TabsContent>
-          <TabsContent value={VIEW_CUSTOMER_DEVICE_DETAILS}><ViewParticipantCustomerDeviceDetails/></TabsContent>
-          <TabsContent value={VIEW_PARTICIPANT_UTM_PARAMETERS}><ViewParticipantUtmParameters/></TabsContent>
+          <TabsContent value={VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS}>
+            <ViewParticipantEmailDeliveryLogs />
+          </TabsContent>
+          <TabsContent value={VIEW_CUSTOMER_DEVICE_DETAILS}>
+            <ViewParticipantCustomerDeviceDetails />
+          </TabsContent>
+          <TabsContent value={VIEW_PARTICIPANT_UTM_PARAMETERS}>
+            <ViewParticipantUtmParameters />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
