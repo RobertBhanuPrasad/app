@@ -5,6 +5,8 @@ interface IViewParticipantsStore {
   setSelectedTableRows: (by: any) => void;
   ParticpantFiltersData: any;
   setParticpantFiltersData: (by: any) => void;
+  selectedRowObjects: [];
+  setSelectedRowObjects: (by: any) => void;
 }
 
 export const ParticipantStore = create<IViewParticipantsStore>((set) => ({
@@ -18,6 +20,12 @@ export const ParticipantStore = create<IViewParticipantsStore>((set) => ({
   setSelectedTableRows: (count: any) => {
     set(() => ({
       selectedTableRows: count,
+    }));
+  },
+  selectedRowObjects: [],
+  setSelectedRowObjects: (data: any) => {
+    set(() => ({
+      selectedRowObjects: data,
     }));
   },
 }));

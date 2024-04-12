@@ -1,6 +1,7 @@
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
+import { useRouter } from "next/router";
 import { Button } from "src/ui/button";
 import {
   DropdownMenu,
@@ -16,7 +17,6 @@ import TransactionActivity from './TransactionActivityPopover'
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 ;
 
-// const [open, setOpen] = useState(false);
 
 export const columns: ExtendedColumnDef<any>[] = [
   {
@@ -32,6 +32,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
+        // TODO: Write onClick to redirect to view participant page
         <a className="cursor-pointer">
           <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
             {row?.original?.participant_code}
@@ -65,20 +66,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       const db_date = formatDate(row?.original?.created_at);
-      return <div className="text-left">{db_date}</div>;
-    },
-  },
-  {
-    accessorKey: "NIF",
-    column_name: "NIF",
-    header: ({ column }) => {
-      return <div className="text-left">NIF</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      return <div className="text-left">{row?.original?.contact_id?.nif}</div>;
+      return <div className="text-left pl-4">{db_date}</div>;
     },
   },
   {
@@ -108,7 +96,26 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left">{row?.original?.contact_id?.full_name}</div>
+        <div className="text-left pl-4 !min-w-[175px] capitalize">
+          {row?.original?.contact_id?.full_name}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "NIF",
+    column_name: "NIF",
+    header: ({ column }) => {
+      return <div className="text-left">NIF</div>;
+    },
+
+    // This any will be removed after internal dataStructure implementation
+
+    cell: ({ row }: any) => {
+      return (
+        <div className="text-left !min-w-[125px]">
+          {row?.original?.contact_id?.nif}
+        </div>
       );
     },
   },
@@ -136,9 +143,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     },
 
     cell: ({ row }: any) => {
+      const db_date = formatDate(row?.original?.contact_id?.date_of_birth);
       return (
-        <div className="text-left">
-          {row?.original?.contact_id?.date_of_birth}
+        <div className="text-left !min-w-[150px] pl-4">
+          {db_date.length ? db_date : "-"}
         </div>
       );
     },
@@ -169,7 +177,9 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left">{row?.original?.contact_id?.mobile}</div>
+        <div className="text-left !min-w-[150px] pl-4">
+          {row?.original?.contact_id?.mobile}
+        </div>
       );
     },
   },
@@ -199,7 +209,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="lowercase text-left">
+        <div className="lowercase text-left !min-w-[150px] pl-4">
           {row?.original?.contact_id?.email}
         </div>
       );
@@ -231,7 +241,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="titlecase text-left">
+        <div className=" capitalize text-left !min-w-[150px] pl-4">
           {row?.original?.price_category_id?.fee_level_id?.value}
         </div>
       );
@@ -263,8 +273,8 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left">
-          {row?.original?.price_category_id?.amount}
+        <div className="text-left !min-w-[150px] pl-4">
+          {row?.original?.price_category_id?.total}
         </div>
       );
     },
@@ -292,7 +302,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Transaction ID",
     column_name: "Transaction ID",
     header: ({ column }) => {
-      return <div className="text-left">Transaction ID</div>;
+      return <div className=" min-w-[200px] text-left">Transaction ID</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -300,10 +310,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {
-            row?.original?.participant_payment_history[0]
-              ?.payment_transaction_id
-          }
+          {row?.original?.participant_payment_history[0]?.payment_transaction_id
+            ? row?.original?.participant_payment_history[0]
+                ?.payment_transaction_id
+            : "-"}
         </div>
       );
     },
@@ -320,10 +330,11 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {
-            row?.original?.participant_payment_history[0]?.payment_method_id
-              ?.value
-          }
+          {row?.original?.participant_payment_history[0]?.payment_method_id
+            ?.value
+            ? row?.original?.participant_payment_history[0]?.payment_method_id
+                ?.value
+            : "-"}
         </div>
       );
     },
@@ -340,7 +351,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status?.balance? <BalanceDue balanceDue= {row?.original?.payment_status?.balance}/> :'-' }
+          {/* {row?.original?.payment_status?.balance? <BalanceDue balanceDue= {row?.original?.payment_status?.balance}/> :'-' } */}
+          <BalanceDue balanceDue= {row?.original?.payment_status?.balance}/>
         </div>
       );
     },
@@ -358,7 +370,9 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status_id?.value}
+          {row?.original?.payment_status_id?.value
+            ? row?.original?.payment_status_id?.value
+            : "-"}
         </div>
       );
     },
@@ -389,8 +403,10 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left">
-          {row?.original?.participant_attendence_status_id?.value}
+        <div className="text-left !min-w-[150px] pl-4">
+          {row?.original?.participant_attendence_status_id?.value
+            ? row?.original?.participant_attendence_status_id?.value
+            : "-"}
         </div>
       );
     },
@@ -407,7 +423,9 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="min-w-[150px] text-left">
-          {row?.original?.legal_agreement_version}
+          {row?.original?.legal_agreement_version
+            ? row?.original?.legal_agreement_version
+            : "-"}
         </div>
       );
     },
@@ -443,7 +461,11 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       const db_date = formatDate(row?.original?.program_agreement_date);
-      return <div className="min-w-[150px] text-left">{db_date}</div>;
+      return (
+        <div className="min-w-[150px] text-left">
+          {row?.original?.program_agreement_date ? db_date : "-"}
+        </div>
+      );
     },
   },
   {
@@ -481,13 +503,17 @@ export const columns: ExtendedColumnDef<any>[] = [
       const db_date = formatDate(
         row?.original?.health_declaration_consent_date
       );
-      return <div className="min-w-[150px] text-left">{db_date}</div>;
+      return (
+        <div className="min-w-[150px] text-left">
+          {row?.original?.health_declaration_consent_date ? db_date : "-"}
+        </div>
+      );
     },
   },
   {
     id: "actions",
     enableHiding: false,
-    cell: () => {
+    cell: ({ row }) => {
       const optionsValues = [
         "View Participant",
         "Edit Participant",
@@ -499,6 +525,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         "Download receipt",
         "Transaction Activity",
       ];
+      // console.log("ROW", row);
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -509,8 +536,14 @@ export const columns: ExtendedColumnDef<any>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <div className="flex flex-col gap-4 p-3 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
-              {optionsValues.map((value) => (
-                <DropdownMenuItem>{value}</DropdownMenuItem>
+              {optionsValues.map((value, index) => (
+                <DropdownMenuItem
+                  onClick={() => {
+                    handleActions(index, row?.original?.id);
+                  }}
+                >
+                  {value}
+                </DropdownMenuItem>
               ))}
             </div>
           </DropdownMenuContent>
@@ -528,3 +561,47 @@ export function formatDate(date: string): string {
   };
   return new Date(date).toLocaleDateString("en-US", options);
 }
+
+export const handleActions = (index: number, participant_id: any) => {
+  const router = useRouter();
+  switch (index) {
+    case 0: {
+      // TODO: Navigate to view participant page
+      router.push("/");
+      break;
+    }
+    case 1: {
+      // TODO: Navigate to edit participant page
+      router.push("/");
+      break;
+    }
+    case 2: {
+      // TODO(Not in MVP scope): Transfer
+      break;
+    }
+    case 3: {
+      // TODO: Send Email, dependency on harmony API
+      break;
+    }
+    case 4: {
+      // TODO(Not in MVP scope): Perform Sale
+      break;
+    }
+    case 5: {
+      // TODO: Send Registration confirmation email, dependency on Harmony API
+      break;
+    }
+    case 6: {
+      // TODO(Not in MVP scope): Upload offline payment receipt
+      break;
+    }
+    case 7: {
+      // TODO: Download Receipt, Tejaswini working on it
+      break;
+    }
+    case 8: {
+      // TODO: Navigate to view participant page -> Transaction activity tab
+      break;
+    }
+  }
+};

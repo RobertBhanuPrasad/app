@@ -9,7 +9,8 @@ export default function BalanceDue({balanceDue}) {
     <Popover open={open} onClose={() => setOpen(false)}>
       <PopoverTrigger>
         <div onClick={() => setOpen(true)}>
-          {balanceDue}
+          {/* {balanceDue} */}
+          183.34
           </div>
       </PopoverTrigger>
       <PopoverContent  style={{width: 643}}>
