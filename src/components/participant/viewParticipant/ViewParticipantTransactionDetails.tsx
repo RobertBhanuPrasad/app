@@ -1,14 +1,14 @@
-import { BaseTable } from '@components/course/findCourse/BaseTable'; // Importing BaseTable component for displaying table
-import { CaretSortIcon } from '@radix-ui/react-icons'; // Importing CaretSortIcon for sorting indicator
-import { useTable } from '@refinedev/core'; // Importing useTable hook for fetching table data
-import { ColumnDef } from '@tanstack/react-table'; // Importing ColumnDef type for defining table columns
-import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react'; // Importing icons for UI
-import React from 'react'; // Importing React
+import { BaseTable } from '@components/course/findCourse/BaseTable' // Importing BaseTable component for displaying table
+import { CaretSortIcon } from '@radix-ui/react-icons' // Importing CaretSortIcon for sorting indicator
+import { useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
+import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react' // Importing icons for UI
+import React from 'react' // Importing React
 import { PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
 import { TableHeader, Text } from 'src/ui/TextTags'
-import { Button } from 'src/ui/button'; // Importing Button component
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'; // Importing components for dropdown menu
+import { Button } from 'src/ui/button' // Importing Button component
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu' // Importing components for dropdown menu
 import { formatDateAndTime } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 
@@ -72,31 +72,8 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
 
 export default ViewParticipantTransactionDetails
 
-// TypeScript interface for defining program object structure
-interface Program {
-  id: number
-  created_at: string
-  organization_id: number
-  venue_id: number
-  registration_link: string
-  program_code: string
-  program_fee_settings_id: number
-  program_type_id: number
-  status_id: number
-  accommodation_fee_payment_mode: number | null
-  center_id: number
-  city_id: number
-  details_page_link: string
-  is_early_bird_enabled: boolean
-  is_residential_program: boolean
-  program_alias_name_id: number
-  program_created_by: number
-  state_id: number
-  use_default_fee: boolean
-}
-
 // Array of table columns
-const columns: ColumnDef<Program>[] = [
+const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
   {
     accessorKey: 'payment_transaction_id',
     enableHiding: false,
@@ -143,7 +120,7 @@ const columns: ColumnDef<Program>[] = [
       const participantPendingPaymentStatusId = getOptionValueObjectByOptionOrder(
         PARTICIPANT_PAYMENT_STATUS,
         PARTICIPANT_PENDING_PAYMENT_STATUS
-      )?.id;
+      )?.id
       return (
         <Text
           className={`  min-w-[150px] ${
@@ -230,38 +207,38 @@ const columns: ColumnDef<Program>[] = [
   {
     accessorKey: 'total_amount',
     header: () => {
-      return <TableHeader className="min-w-[120px]">Total fee (EUR)</TableHeader>;
+      return <TableHeader className="min-w-[120px]">Total fee (EUR)</TableHeader>
     },
     cell: ({ row }: any) => {
-      return <Text className="lowercase">{row?.original?.total_amount}</Text>;
-    },
+      return <Text className="lowercase">{row?.original?.total_amount}</Text>
+    }
   },
   {
     accessorKey: 'transaction_fee_level_id',
     header: () => {
-      return <TableHeader className="min-w-[120px]">Fee level</TableHeader>;
+      return <TableHeader className="min-w-[120px]">Fee level</TableHeader>
     },
     cell: ({ row }: any) => {
-      return <Text className="lowercase">{row?.original?.transaction_fee_level_id?.value}</Text>;
-    },
+      return <Text className="lowercase">{row?.original?.transaction_fee_level_id?.value}</Text>
+    }
   },
   {
     accessorKey: 'transaction_status_id',
     header: () => {
-      return <TableHeader className="min-w-[150px]">Transaction Status</TableHeader>;
+      return <TableHeader className="min-w-[150px]">Transaction Status</TableHeader>
     },
     cell: ({ row }: any) => {
-      return <Text className="lowercase">{row?.original?.transaction_status_id?.value}</Text>;
-    },
+      return <Text className="lowercase">{row?.original?.transaction_status_id?.value}</Text>
+    }
   },
   {
     accessorKey: 'transaction_reason',
     header: () => {
-      return <TableHeader>Reason</TableHeader>;
+      return <TableHeader>Reason</TableHeader>
     },
     cell: ({ row }: any) => {
-      return <Text className="lowercase">{row?.original?.transaction_reason}</Text>;
-    },
+      return <Text className="lowercase">{row?.original?.transaction_reason}</Text>
+    }
   },
 
   {

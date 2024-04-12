@@ -22,7 +22,7 @@ function ViewParticipantInformation({ participantId }: any) {
 
   // Fetching participant data using useOne hook
   const { data: participantData, isLoading, isError } = useOne(query)
-
+  
   // Extracting contact data from participantData
   const contactData = participantData?.data?.contact_id
 
@@ -95,7 +95,9 @@ function ViewParticipantInformation({ participantId }: any) {
       </div>
     </div>
   ) : (
-    <div><LoadingIcon/></div> // Display loading indicator if data is being fetched
+    <div>
+      <LoadingIcon />
+    </div> // Display loading indicator if data is being fetched
   )
 }
 
