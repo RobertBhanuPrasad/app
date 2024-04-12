@@ -5,8 +5,7 @@ import { CardLabel, CardValue } from 'src/ui/TextTags'
 import { handleCopyRegistrationLink } from 'src/utility/CopyText'
 import { formatGlobalDate } from 'src/utility/DateFunctions'
 
-function ViewParticipantInformation({participantId}: any) {
-
+function ViewParticipantInformation({ participantId }: any) {
   // State variable to track whether the registration link has been copied
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
 
@@ -35,14 +34,13 @@ function ViewParticipantInformation({participantId}: any) {
     { key: 'NIF', value: contactData?.nif ?? '-' },
     {
       key: 'Address',
-      value:
-        contactData?.city_id?.name +
-          ' ' +
-          contactData?.state_id?.name +
-          ' ' +
-          contactData?.country_id?.name +
-          ' ' +
-          contactData?.postal_code ?? '-'
+      value: contactData
+        ? contactData?.city_id?.name ??
+          '' + ' ' + contactData?.state_id?.name ??
+          '' + ' ' + contactData?.country_id?.name ??
+          '' + ' ' + contactData?.postal_code ??
+          ''
+        : '-'
     },
     { key: 'Phone Number', value: contactData?.mobile_country_code + ' ' + contactData?.mobile ?? '-' },
     { key: 'Home/Work Phone', value: contactData?.work_phone ?? '-' },
@@ -52,12 +50,15 @@ function ViewParticipantInformation({participantId}: any) {
       key: 'Url for registration completion',
       value: (
         <div className="flex ">
-          <div className="text-[14px] font-semibold text-[#7677F4] underline pr-[10px]">
-            {participantData?.data?.program_id?.registration_link?.substring(0, 25) + '..'}
+          <div className="text-[14px] font-semibold text-[#7677F4] underline pr-[10px] truncate">
+            {participantData?.data?.program_id?.registration_link}
           </div>
           <div
             onClick={() => {
-              handleCopyRegistrationLink(setCopiedRegistrationLink,participantData?.data?.program_id?.registration_link)
+              handleCopyRegistrationLink(
+                setCopiedRegistrationLink,
+                participantData?.data?.program_id?.registration_link
+              )
             }}
             className="relative mt-1 cursor-pointer"
           >
@@ -87,7 +88,7 @@ function ViewParticipantInformation({participantId}: any) {
         {participantInfo?.map((info, index) => (
           <div key={index} className="mt-[23px]">
             <CardLabel>{info?.key}</CardLabel>
-            <CardValue className='text-sm'>{info?.value}</CardValue>
+            <CardValue className="text-sm">{info?.value}</CardValue>
           </div>
         ))}
       </div>
