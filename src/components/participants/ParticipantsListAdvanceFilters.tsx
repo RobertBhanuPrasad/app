@@ -88,11 +88,7 @@ export function ParticipantsAdvanceFilter() {
                 <AccordionTrigger>
                   <div className="flex flex-row gap-3 items-center">
                     <div>Contact Details</div>
-                    {(formData?.tempFilters?.full_name?.length > 0 ||
-                      formData?.tempFilters?.email?.length > 0 ||
-                      formData?.tempFilters?.mobile?.length > 0) && (
-                      <CountComponent count={1} />
-                    )}
+                    {getContactCount()}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
@@ -188,7 +184,16 @@ export function ParticipantsAdvanceFilter() {
 
             <Accordion type="single" collapsible defaultValue="item-7">
               <AccordionItem value="item-7">
-                <AccordionTrigger>Attendance Status</AccordionTrigger>
+                <AccordionTrigger>
+                  <div className="flex gap-3 items-center">
+                    <div>Attendance Status</div>
+                    {formData?.tempFilters?.attendance_status?.length > 0 && (
+                      <CountComponent
+                        count={formData?.tempFilters?.attendance_status?.length}
+                      />
+                    )}
+                  </div>
+                </AccordionTrigger>
                 <AccordionContent>
                   <AttendanceStatus />
                 </AccordionContent>
@@ -317,6 +322,8 @@ export const ContactDetails = () => {
     name: "tempFilters.mobile",
   });
 
+  const emailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
@@ -340,10 +347,16 @@ export const ContactDetails = () => {
           value={contactEmail}
           type="email"
         ></Input>
+        {contactEmail?.length >= 1 &&
+          (emailRegex.test(contactEmail) ? (
+            ""
+          ) : (
+            <div className="text-red-600">Enter valid email id</div>
+          ))}
       </div>
       <div className="flex flex-col gap-2">
         <Label>Phone</Label>
-        <Input onChange={onPhoneChange} value={contactPhone}></Input>
+        <Input onChange={onPhoneChange} value={contactPhone} type="tel"></Input>
       </div>
     </div>
   );
@@ -735,4 +748,18 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
       </div>
     </div>
   );
+};
+
+const getContactCount = () => {
+  let count = 0;
+  const { getValues } = useFormContext();
+  const formData = getValues();
+
+  if (formData?.tempFilters?.full_name?.length > 0) count += 1;
+  if (formData?.tempFilters?.email?.length > 0) count += 1;
+  if (formData?.tempFilters?.mobile?.length > 0) count += 1;
+
+  if (count > 0) {
+    return <CountComponent count={count} />;
+  }
 };
