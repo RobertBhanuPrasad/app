@@ -284,12 +284,12 @@ export function ParticipantsAdvanceFilter() {
                     const tempFilterData = { ...formData };
 
                     setValue("advanceFilter", tempFilterData?.tempFilters);
+                    setParticpantFiltersData(formData);
                     setValue(
                       "registration_date",
                       tempFilterData?.tempFilters?.registration_date_range
                     );
                     setOpenAdvFilter(false);
-                    setParticpantFiltersData(formData);
                   }}
                 >
                   Apply
