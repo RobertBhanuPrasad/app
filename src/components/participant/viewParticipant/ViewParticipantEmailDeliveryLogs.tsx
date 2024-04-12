@@ -2,21 +2,22 @@ import { BaseTable } from '@components/course/findCourse/BaseTable'
 import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
+import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant email delivery logs
-function ViewParticipantEmailDeliveryLogs({participantId}:any) {
+function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
   const query: any = {
     resource: 'participant_registration',
-    id: participantId, 
+    id: participantId,
     meta: {
       select: 'email_delivery_logs_section' // Selecting specific fields
     }
-  };
+  }
 
   // Fetching participant registration data
-  const { data: participantEmailDeliveryLogsData, isLoading, isError } = useOne(query);
+  const { data: participantEmailDeliveryLogsData, isLoading, isError } = useOne(query)
 
-  console.log('programData', participantEmailDeliveryLogsData?.data);
-  const [rowSelection, setRowSelection] = React.useState({});
+  console.log('programData', participantEmailDeliveryLogsData?.data)
+  const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
       <p className="text-[18px] font-[600] mb-[20px]">Email Delivery Logs</p>
@@ -89,7 +90,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="">{row?.original?.time_stamp}</div>
+      return <div className="">{formatDateAndTime(row?.original?.time_stamp)}</div>
     }
   },
   {

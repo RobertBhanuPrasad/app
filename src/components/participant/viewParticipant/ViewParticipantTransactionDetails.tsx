@@ -6,6 +6,7 @@ import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react'; // Impo
 import React from 'react'; // Importing React
 import { Button } from 'src/ui/button'; // Importing Button component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'; // Importing components for dropdown menu
+import { formatDateAndTime } from 'src/utility/DateFunctions';
 
 // Component for viewing participant transaction details
 function ViewParticipantTransactionDetails({participantId}:any) {
@@ -125,7 +126,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.source_timestamp}</div>
+      return <div className="lowercase ">{formatDateAndTime(row?.original?.source_timestamp)}</div>
     }
   },
   {

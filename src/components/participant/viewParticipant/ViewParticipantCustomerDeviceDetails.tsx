@@ -1,26 +1,27 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { useOne, useTable } from '@refinedev/core'
+import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
+import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant customer device details
-function ViewParticipantCustomerDeviceDetails({participantId}:any) {
+function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
   const query: any = {
     resource: 'participant_registration',
     id: participantId,
     meta: {
       select: 'customer_device_details_section' // Selecting specific fields
     }
-  };
+  }
 
   // Fetching participant registration data
-  const { data: participantCustomerDeviceDetailsData, isLoading, isError } = useOne(query);
+  const { data: participantCustomerDeviceDetailsData, isLoading, isError } = useOne(query)
 
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
       <p className="text-[18px] font-[600] mb-[20px]">Customer Device Details</p>
       <div>
-      <BaseTable
+        <BaseTable
           current={1}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
@@ -86,7 +87,6 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      console.log('row innn', row)
       return <div className="">{row?.original?.program_type}</div>
     }
   },
@@ -97,7 +97,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.delivery_time_stamp}</div>
+      return <div className="lowercase">{formatDateAndTime(row?.original?.delivery_time_stamp)}</div>
     }
   },
   {
@@ -117,7 +117,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.open_time_stamp}</div>
+      return <div className="lowercase">{formatDateAndTime(row?.original?.open_time_stamp)}</div>
     }
   }
 ]
