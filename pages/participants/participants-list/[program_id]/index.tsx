@@ -4,8 +4,7 @@ import ClearAll from "@public/assets/ClearAll";
 import React, { useEffect, useState } from "react";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import { columns } from "../../../src/components/participants/columns";
+import { columns } from "../../../../src/components/participants/columns";
 import { CrudFilters, useTable } from "@refinedev/core";
 import { Input } from "src/ui/input";
 import { SearchIcon } from "lucide-react";
@@ -17,7 +16,7 @@ import {
 } from "src/ui/dropdown-menu";
 import DropDown from "@public/assets/DropDown";
 import { format } from "date-fns";
-import { ParticipantsAdvanceFilter } from "../../../src/components/participants/ParticipantsListAdvanceFilters";
+import { ParticipantsAdvanceFilter } from "../../../../src/components/participants/ParticipantsListAdvanceFilters";
 import { useController, useFormContext } from "react-hook-form";
 import Form from "@components/Formfield";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
@@ -30,13 +29,16 @@ import {
 } from "src/constants/OptionLabels";
 import { MultiSelect } from "src/ui/multi-select";
 import { CountComponent } from "pages/Courses/FindCourse";
-import { useParams } from "next/navigation";
-import { z } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
+import { useRouter } from "next/router";
 
 function index() {
-  const { program_id } = useParams();
+  const router = useRouter();
+  const programID: number | undefined = router?.query?.program_id
+    ? parseInt(router.query.program_id as string)
+    : undefined;
+
   const { ParticpantFiltersData, setSelectedTableRows } = ParticipantStore();
   const filters: {
     /**
@@ -58,7 +60,7 @@ function index() {
      */
     mode?: "server" | "off";
   } = {
-    permanent: [{ field: "program_id", operator: "eq", value: program_id }],
+    permanent: [{ field: "program_id", operator: "eq", value: programID }],
   };
 
   if (ParticpantFiltersData?.participant_code) {
