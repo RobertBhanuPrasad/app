@@ -13,7 +13,7 @@ function ViewParticipantCustomerDeviceDetails({participantId}:any) {
   };
 
   // Fetching participant registration data
-  const { data: programData, isLoading, isError } = useOne(query);
+  const { data: customerDeviceDetailsData, isLoading, isError } = useOne(query);
 
   const [rowSelection, setRowSelection] = React.useState({});
   return (
@@ -27,7 +27,7 @@ function ViewParticipantCustomerDeviceDetails({participantId}:any) {
           checkboxSelection={false}
           setCurrent={() => {}}
           pageCount={10}
-          total={programData?.data?.customer_device_details_section?.length || 0}
+          total={customerDeviceDetailsData?.data?.customer_device_details_section?.length || 0}
           pageSize={10}
           setPageSize={() => {}}
           pagination={false}
@@ -36,7 +36,7 @@ function ViewParticipantCustomerDeviceDetails({participantId}:any) {
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.customer_device_details_section || []}
+          data={customerDeviceDetailsData?.data?.customer_device_details_section || []}
           columnPinning={false}
         />
       </div>

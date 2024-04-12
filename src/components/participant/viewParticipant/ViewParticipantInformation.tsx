@@ -12,7 +12,7 @@ function ViewParticipantInformation({participantId}: any) {
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
 
   // Query object for fetching participant data
-  const selectQuery: any = {
+  const query: any = {
     resource: 'participant_registration',
     id: participantId,
     meta: {
@@ -42,7 +42,7 @@ function ViewParticipantInformation({participantId}: any) {
   }
 
   // Fetching participant data using useOne hook
-  const { data: participantData, isLoading, isError } = useOne(selectQuery)
+  const { data: participantData, isLoading, isError } = useOne(query)
 
   // Extracting contact data from participantData
   const contactData = participantData?.data?.contact_id

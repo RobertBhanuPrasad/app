@@ -11,7 +11,7 @@ function ViewParticipantCourseInformation({participantId}: any) {
   const valueTextStyle = `${textStyle} font-[600] text-[#666666]`
 
   // Query for fetching participant registration data
-  const selectQuery: any = {
+  const query: any = {
     resource: 'participant_registration',
     id: participantId,
     meta: {
@@ -21,7 +21,7 @@ function ViewParticipantCourseInformation({participantId}: any) {
   }
 
   // Fetching participant course data
-  const { data: participantCourseData, isLoading, isError } = useOne(selectQuery)
+  const { data: participantCourseData, isLoading, isError } = useOne(query)
 
   console.log('participantCourseData', participantCourseData)
 

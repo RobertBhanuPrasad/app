@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 // Component for viewing participant email delivery logs
 function ViewParticipantEmailDeliveryLogs({participantId}:any) {
-  const selectQuery: any = {
+  const query: any = {
     resource: 'participant_registration',
     id: participantId, 
     meta: {
@@ -13,9 +13,9 @@ function ViewParticipantEmailDeliveryLogs({participantId}:any) {
   };
 
   // Fetching participant registration data
-  const { data: programData, isLoading, isError } = useOne(selectQuery);
+  const { data: emailDeliveryLogsData, isLoading, isError } = useOne(query);
 
-  console.log('programData', programData?.data);
+  console.log('programData', emailDeliveryLogsData?.data);
   const [rowSelection, setRowSelection] = React.useState({});
   return (
     <div>
@@ -28,7 +28,7 @@ function ViewParticipantEmailDeliveryLogs({participantId}:any) {
           checkboxSelection={false}
           setCurrent={() => {}}
           pageCount={10}
-          total={programData?.data?.email_delivery_logs_section?.length || 0}
+          total={emailDeliveryLogsData?.data?.email_delivery_logs_section?.length || 0}
           pageSize={10}
           setPageSize={() => {}}
           pagination={false}
@@ -37,7 +37,7 @@ function ViewParticipantEmailDeliveryLogs({participantId}:any) {
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.email_delivery_logs_section || []}
+          data={emailDeliveryLogsData?.data?.email_delivery_logs_section || []}
           columnPinning={false}
         />
       </div>

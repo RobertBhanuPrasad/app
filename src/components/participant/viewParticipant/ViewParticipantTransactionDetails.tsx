@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 function ViewParticipantTransactionDetails({participantId}:any) {
   // Fetching table data using useTable hook
   let {
-    tableQueryResult: programData, // Table data result
+    tableQueryResult: participantTransactionDetailsData, // Table data result
     pageCount, // Number of pages
     pageSize, // Number of items per page
     setPageSize, // Function to set page size
@@ -48,7 +48,7 @@ function ViewParticipantTransactionDetails({participantId}:any) {
           checkboxSelection={false}
           setCurrent={setCurrent}
           pageCount={pageCount}
-          total={programData?.data?.total || 0} // Total number of items
+          total={participantTransactionDetailsData?.data?.total || 0} // Total number of items
           pageSize={pageSize}
           setPageSize={setPageSize}
           pagination={true} // Enable pagination
@@ -57,7 +57,7 @@ function ViewParticipantTransactionDetails({participantId}:any) {
             rowStyles: '' // Custom row styles
           }}
           columns={columns as ColumnDef<any>[]} // Table columns
-          data={programData?.data?.data || []} // Table data
+          data={participantTransactionDetailsData?.data?.data || []} // Table data
           columnPinning={true} // Enable column pinning
         />
       </div>

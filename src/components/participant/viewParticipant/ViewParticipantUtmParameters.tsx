@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 // Component for viewing participant UTM parameters
 function ViewParticipantUtmParameters({participantId}:any) {
-  const selectQuery: any = {
+  const query: any = {
     resource: 'participant_registration',
     id: participantId,
     meta: {
@@ -13,7 +13,7 @@ function ViewParticipantUtmParameters({participantId}:any) {
   };
 
   // Fetching participant registration data
-  const { data: programData, isLoading, isError } = useOne(selectQuery);
+  const { data: utmParametersData, isLoading, isError } = useOne(query);
   const [rowSelection, setRowSelection] = React.useState({});
 
   return (
@@ -27,7 +27,7 @@ function ViewParticipantUtmParameters({participantId}:any) {
           checkboxSelection={false}
           setCurrent={() => {}}
           pageCount={10}
-          total={programData?.data?.utm_parameters_section?.length || 0}
+          total={utmParametersData?.data?.utm_parameters_section?.length || 0}
           pageSize={10}
           setPageSize={() => {}}
           pagination={false}
@@ -36,7 +36,7 @@ function ViewParticipantUtmParameters({participantId}:any) {
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.utm_parameters_section || []}
+          data={utmParametersData?.data?.utm_parameters_section || []}
           columnPinning={false}
         />
       </div>
