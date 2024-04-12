@@ -18,7 +18,6 @@ import {
 import DropDown from "@public/assets/DropDown";
 import { format } from "date-fns";
 import { ParticipantsAdvanceFilter } from "../../../src/components/participants/ParticipantsListAdvanceFilters";
-import { supabaseClient } from "src/utility/supabaseClient";
 import { useController, useFormContext } from "react-hook-form";
 import Form from "@components/Formfield";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
@@ -33,6 +32,7 @@ import { MultiSelect } from "src/ui/multi-select";
 import { CountComponent } from "pages/Courses/FindCourse";
 import { useParams } from "next/navigation";
 import { z } from "zod";
+import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 
 function index() {
   const { program_id } = useParams();
@@ -307,122 +307,6 @@ function index() {
     (value) => value === true
   ).length;
 
-  const handleExportExcel = async () => {
-    try {
-      const excelColumns = [
-        {
-          column_name: "Course ID",
-          path: ["program_code"],
-        },
-        {
-          column_name: "Course Type Name",
-          path: ["program_types", "name"],
-        },
-        {
-          column_name: "Course Name",
-          path: ["program_type_alias_names", "alias_name"],
-        },
-        {
-          column_name: "Course Status",
-          path: ["status_id", "value"],
-        },
-        {
-          column_name: "Start Date",
-          path: ["program_schedules", "start_time"],
-        },
-        {
-          column_name: "State",
-          path: ["state", "name"],
-        },
-        {
-          column_name: "City",
-          path: ["city", "name"],
-        },
-        {
-          column_name: "Center",
-          path: ["center", "name"],
-        },
-        {
-          column_name: "Attendes",
-          path: ["participant_registration", "length"],
-        },
-        {
-          column_name: "Visibility",
-          path: ["visibility_id", "value"],
-        },
-        {
-          column_name: "Course Accounting Status",
-          path: ["program_accounting_status_id", "value"],
-        },
-      ];
-
-      const params = new URLSearchParams({
-        table_name: "participant_registration",
-        select:
-          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
-        columns: JSON.stringify(excelColumns),
-      });
-
-      //invoking the export_to_file function
-      const { data, error } = await supabaseClient.functions.invoke(
-        ` export_to_file?${params}`,
-        {
-          headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-          },
-        }
-      );
-
-      if (error) {
-        console.error("Error invoking export_to_file function:", error);
-        return;
-      }
-
-      if (data?.fileUrl?.data?.publicUrl) {
-        //getting file name from the url
-        const fileUrl = data.fileUrl.data.publicUrl;
-        const fileName = fileUrl.split("/").pop();
-
-        // passing the file name to download
-        const result = await supabaseClient.storage
-          .from("export_to_excel")
-          .download(fileName);
-
-        if (result.error) {
-          console.error("Error downloading file:", result.error);
-          return; // Exit the function early if there's an error
-        }
-
-        if (result.data) {
-          // Create a Blob object from the downloaded data
-          const blob = new Blob([result.data]);
-
-          // Create a URL for the Blob object
-          const url = URL.createObjectURL(blob);
-
-          // Create a temporary anchor element
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = fileName; // Specify the filename for the download
-          document.body.appendChild(link);
-
-          // Trigger the download by simulating a click event on the anchor element
-          link.click();
-
-          // Clean up by revoking the URL
-          URL.revokeObjectURL(url);
-        } else {
-          console.error("No data returned when downloading file");
-        }
-      } else {
-        console.error("File URL not found in the response.");
-      }
-    } catch (error) {
-      console.error("Error handling export:", error);
-    }
-  };
-
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="flex flex-col gap-4 p-10">
@@ -487,7 +371,7 @@ function index() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
               <DropdownMenuItem
-                onClick={handleExportExcel}
+                // onClick={handleExportExcel}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 Excel
@@ -585,8 +469,8 @@ const HeaderSection = () => {
       {/* Registration Date Filter Section */}
       <div>
         {" "}
-        <Dialog open={open}>
-          <DialogTrigger asChild>
+        <Popover open={open}>
+          <PopoverTrigger asChild>
             <Button
               onClick={() => setOpen(true)}
               className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 border-2 px-3 py-5 rounded-lg"
@@ -615,15 +499,15 @@ const HeaderSection = () => {
                 )}
               </div>
             </Button>
-          </DialogTrigger>
-          <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center p-14">
+          </PopoverTrigger>
+          <PopoverContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center p-10">
             <DateRangePickerComponent
               setOpen={setOpen}
               value={RegistrationDate}
               onSelect={RegistrationDateChange}
             />
-          </DialogContent>
-        </Dialog>
+          </PopoverContent>
+        </Popover>
       </div>
       {/* Transaction Status Section */}
       <div>
