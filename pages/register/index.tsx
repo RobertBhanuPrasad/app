@@ -24,7 +24,6 @@ const Signup = () => {
       },
     ],
   });
-
   const { options } = useSelect({
     resource: "option_values",
     optionLabel: "value",

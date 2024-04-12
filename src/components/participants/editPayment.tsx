@@ -1,74 +1,84 @@
+import { useState } from "react";
 import { Button } from "src/ui/button";
 import EditPaymentForm from "./editPaymentForm";
 
+import { useUpdate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { FormProvider } from "react-hook-form";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
-import { useUpdate } from "@refinedev/core";
-export default function EditPayment() {
+export default function EditPayment({ data }) {
     const methods = useForm({
         refineCoreProps: {
-            action: "edit", // or clone
-            // resource: "categories",
-            // id: 1, // <BASE_URL_FROM_DATA_PROVIDER>/categories/1
+            action: "edit"
         },
     });
+    const { mutate } = useUpdate();
     const onSubmit = (formData: any) => {
-        console.log(formData);
+        console.log(formData,"edit payment form data");
         // Call onFinish with the form data if needed
         onFinish(formData);
+        // TODO: update the values to corresponding api
+       mutate({
+        resource:"participant_payment_history",
+        values:{
+            send_payment_confirmation:formData?.emailConfirmation,
+            payment_date:formData?.paymentDate,
+            payment_method_id:formData?.paymentMethod,
+            transaction_status_id:formData?.transaction
+        },
+        // TODO: replace with participant_paymente_history id
+        id:2
+       })
+       setEditPayment(false)
+    
     };
     const {
         refineCore: { onFinish },
         handleSubmit,
     } = methods;
-    // TODO: update the values to corresponding api
-    // const { mutate } = useUpdate();
-
-    // mutate({
-    //     values: {
-    //         name: "New Category",
-    //         description: "New Category Description",
-    //     },
-    // });
+    const [editPayment, setEditPayment] = useState(true);
     return (
         <div>
-            {/* <FormProvider {...methods}>
-                <form autoComplete="off"> */}
             <div>
                 <Popover>
                     <PopoverTrigger>
-                        <Button>EditPayment</Button>
+                        <Button onClick={() => setEditPayment(true)}>
+                            EditPayment
+                        </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[637px]">
-                        <FormProvider {...methods}>
-                            <form autoComplete="off">
-                                {/* hiii */}
-                                <div>
-                                    <EditPaymentForm />
-                                    <div className="flex justify-center gap-6">
-                                        <div>
-                                            <Button className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold">
-                                                Cancel
-                                            </Button>
-                                        </div>
-                                        <div>
-                                            <Button
-                                                className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
-                                                onClick={handleSubmit(onSubmit)}
-                                            >
-                                                Save
-                                            </Button>
+                    {editPayment && (
+                        <PopoverContent className="w-[637px]">
+                            <FormProvider {...methods}>
+                                <form autoComplete="off">
+                                    <div>
+                                        <EditPaymentForm
+                                            setEditPayment={setEditPayment}
+                                            paymentData={data}
+                                        />
+                                        <div className="flex justify-center gap-6">
+                                            <div>
+                                                <Button onClick={() => setEditPayment(false)} className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold">
+                                                    Cancel
+                                                </Button>
+                                            </div>
+                                            <div>
+                                                <Button
+                                                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
+                                                    onClick={handleSubmit(
+                                                        onSubmit
+                                                    )}
+                                                >
+                                                    Save
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
-                        </FormProvider>
-                    </PopoverContent>
+                                </form>
+                            </FormProvider>
+                        </PopoverContent>
+                    )}
                 </Popover>
             </div>
-            {/* </form>
-            </FormProvider> */}
         </div>
     );
 }

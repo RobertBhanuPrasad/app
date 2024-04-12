@@ -1,104 +1,118 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import SimpleCross from "@public/assets/SimpleCross";
+import { useList, useSelect } from "@refinedev/core";
 import { format } from "date-fns";
-import { DateRangePickerComponent } from "pages/Courses/FindCourse";
 import { useState } from "react";
 import { useController } from "react-hook-form";
+import { DateCalendar } from "src/ui/DateCalendar";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
-import CustomSelect from "src/ui/custom-select";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectItems,
+    SelectTrigger,
+    SelectValue,
+} from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
-import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 
-export default function EditPaymentForm() {
+export default function EditPaymentForm({ setEditPayment, paymentData }) {
     const [open, setOpen] = useState(false);
     const {
         field: { value: transaction, onChange: transactionOnchange },
     } = useController({
         name: "transaction",
-    });
-    const {
-        field: { value: transactionID, onChange: transactionIDOnchange },
-    } = useController({
-        name: "transactionID",
+        defaultValue: paymentData?.transaction_status_id?.id,
     });
     const {
         field: { value: paymentDate, onChange: paymentDateOnchange },
     } = useController({
         name: "paymentDate",
-        defaultValue: {
-            from: "Mon May 20 2024 00:00:00 GMT-0400 (Eastern Daylight Time)",
-            to: "Thu May 23 2024 00:00:00 GMT-0400 (Eastern Daylight Time)",
-        },
+        defaultValue: paymentData?.payment_date ? paymentData?.payment_date : "",
+
+        //{ from: "Mon May 20 2024 00:00:00 GMT-0400 (Eastern Daylight Time)",
+        // to: "Thu May 23 2024 00:00:00 GMT-0400 (Eastern Daylight Time)",}
     });
     const {
         field: { value: payment, onChange: paymentMethodOnchange },
     } = useController({
         name: "paymentMethod",
-    });
-    const {
-        field: { value: errorMessage, onChange: errorMessageOnchange },
-    } = useController({
-        name: "errorMessage",
+        defaultValue: paymentData?.payment_method_id?.id,
     });
     const {
         field: { value: emailConfirmation, onChange: emailConfirmatiOnchange },
     } = useController({
         name: "emailConfirmation",
+        defaultValue:paymentData?.send_payment_confirmation
     });
-    let transactionStatus =
-        getOptionValuesByOptionLabel("TRANSACTION_STATUS")?.[0]?.option_values;
-    console.log(transactionStatus, "transactionStatus1");
-    transactionStatus = transactionStatus?.map(
-        (val: { id: any; value: string }) => {
-            return {
-                value: val?.id,
-                label: val?.value,
-            };
-        }
+    const [date, setDate] = useState<any>(
+        paymentDate ? paymentDate : new Date()
     );
-    //     {
-    //         label: "Confirmed",
-    //         value: "confirmed",
-    //     },
-    //     {
-    //         label: "Pending",
-    //         value: "pending",
-    //     },
-    //     {
-    //         label: "Failed",
-    //         value: "failed",
-    //     },
-    //     {
-    //         label: "Not Recieved",
-    //         value: "not recieved",
-    //     },
-    // ];
-    const paymentMethod = [
-        {
-            label: "Cash",
-            value: "cash",
-        },
-        {
-            label: "Check",
-            value: "check",
-        },
-        {
-            label: "Pay Later Label123",
-            value: "pay later",
-        },
-        {
-            label: "Credit Card(Offline)",
-            value: "credit card",
-        },
-    ];
-    const x = "xyz";
+
+    const handleOnSelect = (selected: Date | undefined) => {
+        setDate(selected);
+    };
+
+    // Getting option label for transaction status
+    const { data: transaction_data } = useList<any>({
+        resource: "option_labels",
+        filters: [
+            {
+                field: "name",
+                operator: "eq",
+                value: "Transaction Status",
+            },
+        ],
+    });
+    // Getting option values for transaction status
+    const { options: transactionStatus } = useSelect({
+        resource: "option_values",
+        optionLabel: "value",
+        optionValue: "id",
+        filters: [
+            {
+                field: "option_label_id",
+                operator: "eq",
+                value: transaction_data?.data[0]?.id,
+            },
+        ],
+    });
+
+    // Getting option label for payment method
+    const { data: payment_data } = useList<any>({
+        resource: "option_labels",
+        filters: [
+            {
+                field: "name",
+                operator: "eq",
+                value: "Payment Method",
+            },
+        ],
+    });
+
+    // Getting option values for payment method
+    const { options: payment_method } = useSelect({
+        resource: "option_values",
+        optionLabel: "value",
+        optionValue: "id",
+        filters: [
+            {
+                field: "option_label_id",
+                operator: "eq",
+                value: payment_data?.data[0]?.id,
+            },
+        ],
+    });
     return (
         <div>
             <div>
                 <div className="flex justify-end ">
-                    <div>
+                    <div
+                        onClick={() => setEditPayment(false)}
+                        className="cursor-pointer"
+                    >
                         <SimpleCross />
                     </div>
                 </div>
@@ -107,43 +121,81 @@ export default function EditPaymentForm() {
                 </div>
                 <div className="flex flex-row">
                     <div className="flex-1">
+
                         <div className="py-[5px]">
-                            <div className="py-[5px]">Participant Name</div>
+                            <div className="py-[5px] ">Participant Name</div>
                             <div>
                                 <Textarea
-                                    // TODO: replace it with api data
-                                    value={x}
+                                    value={
+                                        paymentData?.participant_id?.contact_id
+                                            ?.full_name
+                                            ? paymentData?.participant_id
+                                                  ?.contact_id?.full_name
+                                            : ""
+                                    }
                                     placeholder=""
-                                    // TODO: height adjustment
-                                    className="!w-[278px] resize-none !important !h-[40px]"
+                                    className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed"
                                 />
                             </div>
                         </div>
+                        
                         <div className="w-[278px] py-[5px]">
                             <div className="py-[5px]">Transaction Status</div>
                             <div>
-                                <CustomSelect
-                                    data={transactionStatus}
-                                    onBottomReached={() => { }}
-                                    onChange={transactionOnchange}
-                                    placeholder={""}
-                                    value={transaction} 
-                                    onSearch={()=>{}}                                />
+                                {/* TODO: need to disable select for confirmed and failed transaction ids */}
+                                <Select
+                                    value={transaction}
+                                    onValueChange={(val: any) => {
+                                        transactionOnchange(val);
+                                    }}
+                                >
+                                    <SelectTrigger className="w-[278px]">
+                                        <SelectValue placeholder="Select Course Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItems>
+                                            {transactionStatus.map(
+                                                (
+                                                    option: any,
+                                                    index: number
+                                                ) => (
+                                                    <>
+                                                        <SelectItem
+                                                            key={option.value}
+                                                            value={option.value}
+                                                            className="h-[44px]"
+                                                        >
+                                                            {option.label}
+                                                        </SelectItem>
+                                                        {index <
+                                                            transactionStatus?.length -
+                                                                1 && (
+                                                            <hr className="border-[#D6D7D8]" />
+                                                        )}
+                                                    </>
+                                                )
+                                            )}
+                                        </SelectItems>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
+
                         <div className="py-[5px]">
                             <div className="py-[5px]">Transaction ID</div>
                             <div>
                                 <Textarea
-                                    value={'121wqqw2123d'}
+                                    value={paymentData?.payment_transaction_id}
                                     className="!w-[278px] resize-none !important h-[40px]"
                                 />
                             </div>
                         </div>
                     </div>
+
                     <div className="flex-1">
-                        <div className="py-[5px]" >
+                        <div className="py-[5px]">
                             <div className="py-[5px]">Payment Date</div>
+                            {/* TODO: need to disable it for confirmed and failed transaction ids */}
                             <div>
                                 <Dialog open={open}>
                                     <DialogTrigger asChild>
@@ -151,7 +203,6 @@ export default function EditPaymentForm() {
                                             onClick={() => setOpen(true)}
                                             className="w-[278px] h-[40px] flex flex-row items-center"
                                             variant="outline"
-                                            
                                         >
                                             <div className="flex gap-8">
                                                 <div className="">
@@ -187,54 +238,94 @@ export default function EditPaymentForm() {
                                             </div>
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
-                                        <DateRangePickerComponent
+                                    <DialogContent className="!w-[440px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
+                                        {/* <DateRangePickerComponent
                                             setOpen={setOpen}
                                             value={paymentDate}
                                             onSelect={paymentDateOnchange}
+                                        /> */}
+                                        {/* <CalenderComponent index={0} setOpen={setOpen} /> */}
+                                        <DateCalendar
+                                            mode="single"
+                                            selected={date}
+                                            onSelect={handleOnSelect}
+                                            // className="rounded-md"
+                                            // count={data?.total || 0}
                                         />
                                     </DialogContent>
                                 </Dialog>
                             </div>
                         </div>
+
                         <div className="py-[5px]">
                             <div className="py-[5px]">Payment Method</div>
                             <div className="!w-[278px]">
-                                <CustomSelect
-                                    data={paymentMethod}
-                                    onSearch={()=>{}}
-                                    onBottomReached={() => {}}
-                                    onChange={paymentMethodOnchange}
+                                {/* TODO:need to disable select for confimed and failed transaction ids */}
+                                <Select
                                     value={payment}
-                                />x
+                                    onValueChange={(val: any) => {
+                                        paymentMethodOnchange(val);
+                                    }}
+                                >
+                                    <SelectTrigger className="w-[278px]">
+                                        <SelectValue placeholder="Select Course Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItems>
+                                            {payment_method?.map(
+                                                (
+                                                    option: any,
+                                                    index: number
+                                                ) => (
+                                                    <>
+                                                        <SelectItem
+                                                            key={option.value}
+                                                            value={option.value}
+                                                            className="h-[44px]"
+                                                        >
+                                                            {option.label}
+                                                        </SelectItem>
+                                                        {index <
+                                                            payment_method?.length -
+                                                                1 && (
+                                                            <hr className="border-[#D6D7D8]" />
+                                                        )}
+                                                    </>
+                                                )
+                                            )}
+                                        </SelectItems>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
+
                         <div className="py-[5px]">
                             <div className="py-[5px]">Response Message</div>
                             <div>
                                 <Textarea
-                                    value={'Response Message'}
+                                    value={paymentData?.response_message}
                                     className="!w-[278px] resize-none !important h-[40px]"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div className="flex flex-col py-[5px]">
                     <div className="py-[5px]">Error Message</div>
                     <div>
                         <Textarea
-                            value={errorMessage}
-                            onChange={(value) => {
-                                errorMessageOnchange(value);
-                            }}
-                            placeholder=""
+                            value={paymentData?.error_message}
                             className=" resize-none !important !h-[40px] !w-[578px]"
                         />
                     </div>
+                    
                     <div className="flex gap-4 py-[30px]">
                         <div>
-                            <Checkbox checked={emailConfirmation} onCheckedChange={emailConfirmatiOnchange}/>
+                            <Checkbox
+                                checked={emailConfirmation}
+                                onCheckedChange={emailConfirmatiOnchange}
+                            />
                         </div>
                         <div>Send Payment confirmation mail?</div>
                     </div>
