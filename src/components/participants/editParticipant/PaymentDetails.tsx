@@ -1,56 +1,53 @@
 import { useList, useSelect } from "@refinedev/core";
 import { useController } from "react-hook-form";
 import { Button } from "src/ui/button";
-import CustomSelect from "src/ui/custom-select";
-import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from "src/ui/select";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectItems,
+    SelectTrigger,
+    SelectValue,
+} from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
 
-export default function PaymentDetails({participantData}) {
+export default function PaymentDetails({ participantData }) {
     const {
         field: { value: specialCode, onChange: specialCodeChange },
-    } = useController({ name: "specialCode" ,
-// defaultValue:data?.data[0]?.participant_id?.discount_code
-
-    });
-    const {
-        field: { value: paymentDetails, onChange: paymentDetailsChange },
-    } = useController({ name: "paymentDetails" ,
-        // defaultValue:data?.data[0]?.participant_id?.participant_attendence_status_id
+    } = useController({
+        name: "specialCode",
+        defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
         field: { value: attendanceStatus, onChange: attendanceStatusChange },
-    } = useController({ name: "attendanceStatus" ,
-        defaultValue:participantData?.participant_id?.participant_attendence_status_id
+    } = useController({
+        name: "attendanceStatus",
+        defaultValue:
+            participantData?.participant_id?.participant_attendence_status_id,
     });
-    // const attendanceStatus = [
-    //     { label: "pending", value: 1 },
-    //     { label: "confirmed", value: 2 },
-    //     { label: "dropout", value: 3 },
-    //     { label: "cancelled", value: 4 },
-    // ];
     const { data } = useList<any>({
         resource: "option_labels",
         filters: [
-          {
-            field: "name",
-            operator: "eq",
-            value: "Attendance Status",
-          },
+            {
+                field: "name",
+                operator: "eq",
+                value: "Attendance Status",
+            },
         ],
-      });
-    
-      const { options:attendanceOptions } = useSelect({
+    });
+
+    const { options: attendanceOptions } = useSelect({
         resource: "option_values",
         optionLabel: "value",
         optionValue: "id",
         filters: [
-          {
-            field: "option_label_id",
-            operator: "eq",
-            value: data?.data[0]?.id,
-          },
+            {
+                field: "option_label_id",
+                operator: "eq",
+                value: data?.data[0]?.id,
+            },
         ],
-      });
+    });
     return (
         <div className="flex-row" id="Payment">
             <div className="font-semibold text-[18px] py-[25px]">
@@ -59,24 +56,38 @@ export default function PaymentDetails({participantData}) {
             <div className="flex ">
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Course Fee</div>
-                    <div className="font-semibold"> {participantData?.currency_code} {participantData?.expense_fee}
-                     {/* {data?.data[0]?.currency_code} */}
-                        {/* {data?.data[0]?.expense_fee} */}
+                    <div className="font-semibold">
+                        {participantData?.currency_code
+                            ? participantData?.currency_code
+                            : "-"}
+                        {participantData?.expense_fee
+                            ? participantData?.expense_fee
+                            : "-"}
                     </div>
                 </div>
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Accomodation Fee</div>
-                    <div className="font-semibold">{participantData?.currency_code} {participantData?.accommodation_fee}
-                     {/* {data?.data[0]?.currency_code} */}
-                        {/* {data?.data[0]?.accommodation_fee} */}</div>
+                    <div className="font-semibold">
+                        {participantData?.currency_code
+                            ? participantData?.currency_code
+                            : "-"}
+                        {participantData?.accommodation_fee
+                            ? participantData?.accommodation_fee
+                            : "-"}
+                    </div>
                 </div>
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">
                         Total Fee {`(Includes VAT)`}
                     </div>
-                    <div className="font-semibold">{participantData?.currency_code} {participantData?.participant_id?.total_amount}
-                     {/* {data?.data[0]?.currency_code} */}
-                        {/* {data?.data[0]?.total_fee} */}</div>
+                    <div className="font-semibold">
+                        {participantData?.currency_code
+                            ? participantData?.currency_code
+                            : "-"}{" "}
+                        {participantData?.participant_id?.total_amount
+                            ? participantData?.participant_id?.total_amount
+                            : "-"}
+                    </div>
                 </div>
             </div>
             <div className="flex py-[10px] gap-4">
@@ -87,40 +98,26 @@ export default function PaymentDetails({participantData}) {
                         <div>
                             <Textarea
                                 value={specialCode}
-                                onChange={(val) => {
-                                    specialCodeChange(val?.target?.value);
-                                }}
                                 className="w-[278px] !h-[40px] resize-none"
+                                // onChange={(val)=> specialCodeChange(val?.target?.value)}
                             />
                         </div>
                         <div>
-                            <Button>Apply</Button>
+                            <Button onClick={(e)=>{e.preventDefault(),specialCodeChange(e?.target?.value)}}>Apply</Button>
                         </div>
                     </div>
                 </div>
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Attendance Status</div>
                     <div>
-                        {/* <CustomSelect
-                            data={attendanceStatus}
-                            onSearch={() => {}}
-                            onBottomReached={() => {}}
-                            onChange={(value) => paymentDetailsChange(value)}
-                            placeholder={"Select attendance status"}
-                            selectBoxStyles={{
-                                header: "w-80",
-                                dropdown: "w-80",
-                            }}
-                            value={paymentDetails}
-                        /> */}
-                         <Select
+                        <Select
                             value={attendanceStatus}
                             onValueChange={(val) => {
                                 attendanceStatusChange(val);
                             }}
                         >
                             <SelectTrigger className="w-[278px] border text-[#999999] font-semibold !border-[#999999]">
-                                <SelectValue placeholder="Select accomodation type" />
+                                <SelectValue placeholder="Select attendence status" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItems>
