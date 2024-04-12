@@ -1,6 +1,7 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable' // Importing BaseTable component for displaying table
+import EditPayment from '@components/participants/editPayment'
 import { CaretSortIcon } from '@radix-ui/react-icons' // Importing CaretSortIcon for sorting indicator
-import { useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
+import { useSelect, useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
 import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
 import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react' // Importing icons for UI
 import React from 'react' // Importing React
@@ -246,7 +247,12 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const editParticipant = () => {}
+      const EditParticipant = () => {
+      
+        return (
+          <div><EditPayment  text={'edit participant'}/></div>
+        )
+      }
       const viewParticipant = () => {}
       const refundTransaction = () => {}
       const downloadReceipt = () => {}
@@ -262,7 +268,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
             <DropdownMenuContent align="end">
               <div
                 onClick={() => {
-                  editParticipant()
+                  EditParticipant()
                 }}
               >
                 {' '}

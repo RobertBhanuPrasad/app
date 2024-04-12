@@ -2,11 +2,25 @@ import { useState } from "react";
 import { Button } from "src/ui/button";
 import EditPaymentForm from "./editPaymentForm";
 
-import { useUpdate } from "@refinedev/core";
+import { useSelect, useUpdate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { FormProvider } from "react-hook-form";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
-export default function EditPayment({ data }) {
+export default function EditPayment({ text }) {
+    let filter = [{ field: "participant_id", operator: "eq", value: 1 }];
+    let sorter = [{ field: "created_at", order: "desc" }];
+    const selectQuery: any = {
+        resource: "participant_payment_history",
+        meta: {
+            select: "currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
+        },
+        filters: filter,
+        sorters: sorter,
+    };
+
+    const { queryResult } = useSelect(selectQuery);
+    const data = queryResult?.data?.data[0];
+   
     const methods = useForm({
         refineCoreProps: {
             action: "edit"
@@ -41,7 +55,7 @@ export default function EditPayment({ data }) {
                 <Popover>
                     <PopoverTrigger>
                         <Button onClick={() => setEditPayment(true)}>
-                            EditPayment
+                            {text}
                         </Button>
                     </PopoverTrigger>
                     {editPayment && (
