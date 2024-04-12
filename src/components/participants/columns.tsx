@@ -523,6 +523,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         "Download receipt",
         "Transaction Activity",
       ];
+      const router = useRouter();
       // console.log("ROW", row);
       return (
         <DropdownMenu>
@@ -537,7 +538,7 @@ export const columns: ExtendedColumnDef<any>[] = [
               {optionsValues.map((value, index) => (
                 <DropdownMenuItem
                   onClick={() => {
-                    handleActions(index, row?.original?.id);
+                    handleActions(index, row?.original?.id,router);
                   }}
                 >
                   {value}
@@ -560,8 +561,8 @@ export function formatDate(date: string): string {
   return new Date(date).toLocaleDateString("en-US", options);
 }
 
-export const handleActions = (index: number, participant_id: any) => {
-  const router = useRouter();
+export const handleActions = (index: number, participant_id: any,router:any) => {
+  
   switch (index) {
     case 0: {
       // TODO: Navigate to view participant page
@@ -570,7 +571,7 @@ export const handleActions = (index: number, participant_id: any) => {
     }
     case 1: {
       // TODO: Navigate to edit participant page
-      router.push(`/participants/editParticipant/${participant_id}`);
+      router.push(`/participants/edit-participant/${participant_id}`);
       break;
     }
     case 2: {

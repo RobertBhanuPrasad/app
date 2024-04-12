@@ -18,7 +18,7 @@ import {
 import { Textarea } from "src/ui/textarea";
 import { formatDateString } from "src/utility/DateFunctions";
 
-export default function EditPaymentForm({ setEditPayment, paymentData }) {
+export default function EditPaymentForm({ paymentData }) {
     const [open, setOpen] = useState(false);
     const {
         field: { value: transaction, onChange: transactionOnchange },
@@ -102,7 +102,7 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
             <div>
                 <div className="flex justify-end ">
                     <div
-                        onClick={() => setEditPayment(false)}
+                        // onClick={() => setEditPayment(false)}
                         className="cursor-pointer"
                     >
                         <SimpleCross />

@@ -5,7 +5,7 @@ import ViewParticipantEmailDeliveryLogs from './ViewParticipantEmailDeliveryLogs
 import ViewParticipantTransactionDetails from './ViewParticipantTransactionDetails'
 import ViewParticipantUtmParameters from './ViewParticipantUtmParameters'
 
-function SampleTabs() {
+function SampleTabs({participantId}:any) {
   const tabs = [
     {
       id: 0,
@@ -13,7 +13,7 @@ function SampleTabs() {
       content: (
         <div>
           {' '}
-          <ViewParticipantCourseInformation participantId={12} />
+          <ViewParticipantCourseInformation participantId={participantId} />
         </div>
       )
     },
@@ -23,13 +23,13 @@ function SampleTabs() {
       content: (
         <div>
           {' '}
-          <ViewParticipantTransactionDetails participantId={12} />
+          <ViewParticipantTransactionDetails participantId={participantId} />
         </div>
       )
     },
-    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={12} /> },
-    { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={12} /> },
-    { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={12} /> }
+    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={participantId} /> },
+    { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={participantId} /> },
+    { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={participantId} /> }
   ]
 
   const [activeTab, setActiveTab] = useState(0)

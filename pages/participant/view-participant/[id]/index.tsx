@@ -197,7 +197,7 @@ function index() {
       
       <div className="sticky w-full px-[20px]">
         {' '}
-        <SampleTabs />
+        <SampleTabs participantId={Id} />
       </div>
     </div>
     </div>

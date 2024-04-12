@@ -6,7 +6,9 @@ import { useSelect, useUpdate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { FormProvider } from "react-hook-form";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
-export default function EditPayment({ text }) {
+import { DialogContent } from "@radix-ui/react-dialog";
+import { Dialog } from "src/ui/dialog";
+export default function EditPayment({setEditPayment}) {
     let filter = [{ field: "participant_id", operator: "eq", value: 1 }];
     let sorter = [{ field: "created_at", order: "desc" }];
     const selectQuery: any = {
@@ -48,15 +50,49 @@ export default function EditPayment({ text }) {
         refineCore: { onFinish },
         handleSubmit,
     } = methods;
-    const [editPayment, setEditPayment] = useState(true);
     return (
         <div>
+            {/* <div >{trigger}</div>
             <div>
-                <Popover>
+                <Dialog open={editPayment} onOpenChange={setEditPayment}>
+                    <DialogContent> */}
+                    <FormProvider {...methods}>
+                                <form autoComplete="off">
+                                    <div>
+                                        <EditPaymentForm
+                                            // setEditPayment={setEditPayment}
+                                            paymentData={data}
+                                        />
+                                        <div className="flex justify-center gap-6">
+                                            <div>
+                                                <Button className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold">
+                                                    Cancel
+                                                </Button>
+                                            </div>
+                                            <div>
+                                                <Button
+                                                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
+                                                    onClick={handleSubmit(
+                                                        onSubmit
+                                                    )}
+                                                >
+                                                    Save
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </FormProvider>
+                        
+                    {/* </DialogContent>
+                </Dialog> */}
+                {/* <Popover>
                     <PopoverTrigger>
-                        <Button onClick={() => setEditPayment(true)}>
-                            {text}
-                        </Button>
+                        <div 
+                        onClick={() => setEditPayment(true)}
+                        >
+                            {trigger}
+                        </div>
                     </PopoverTrigger>
                     {editPayment && (
                         <PopoverContent className="w-[637px]">
@@ -88,9 +124,9 @@ export default function EditPayment({ text }) {
                                 </form>
                             </FormProvider>
                         </PopoverContent>
-                    )}
-                </Popover>
-            </div>
+            )}
+                </Popover> */}
+            {/* </div> */}
         </div>
     );
 }

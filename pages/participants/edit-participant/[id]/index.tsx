@@ -17,7 +17,7 @@ export default function index() {
   const router = useRouter()
 
   const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
-  console.log('IDddddddd', Id)
+
   const [selectedValue, setSelectedValue] = useState('Participants Information')
   // participant_payment_history contains numerous records of same particpant, getting the latest history record
   // TODO:replace value with participant_id

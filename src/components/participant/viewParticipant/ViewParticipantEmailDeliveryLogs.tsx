@@ -6,6 +6,7 @@ import { TableHeader, Text } from 'src/ui/TextTags'
 import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant email delivery logs
 function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
+  console.log("participantId",participantId)
   const query: any = {
     resource: 'participant_registration',
     id: participantId,
