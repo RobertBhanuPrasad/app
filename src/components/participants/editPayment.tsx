@@ -6,7 +6,7 @@ import { useSelect, useUpdate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { FormProvider } from "react-hook-form";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
-export default function EditPayment({ text }) {
+export default function EditPayment() {
     let filter = [{ field: "participant_id", operator: "eq", value: 1 }];
     let sorter = [{ field: "created_at", order: "desc" }];
     const selectQuery: any = {
@@ -52,14 +52,14 @@ export default function EditPayment({ text }) {
     return (
         <div>
             <div>
-                <Popover>
+                {/* <Popover>
                     <PopoverTrigger>
                         <Button onClick={() => setEditPayment(true)}>
                             {text}
                         </Button>
                     </PopoverTrigger>
                     {editPayment && (
-                        <PopoverContent className="w-[637px]">
+                        <PopoverContent className="w-[637px]"> */}
                             <FormProvider {...methods}>
                                 <form autoComplete="off">
                                     <div>
@@ -87,9 +87,9 @@ export default function EditPayment({ text }) {
                                     </div>
                                 </form>
                             </FormProvider>
-                        </PopoverContent>
-                    )}
-                </Popover>
+                        {/* </PopoverContent> */}
+                    {/* )} */}
+                {/* </Popover> */}
             </div>
         </div>
     );
