@@ -108,7 +108,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left !min-w-[125px] pl-4">
+        <div className="text-left !min-w-[125px]">
           {row?.original?.contact_id?.nif}
         </div>
       );

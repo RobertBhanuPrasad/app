@@ -39,7 +39,8 @@ function index() {
     ? parseInt(router.query.program_id as string)
     : undefined;
 
-  const { ParticpantFiltersData, setSelectedTableRows } = ParticipantStore();
+  const { ParticpantFiltersData, setSelectedTableRows, setSelectedRowObjects } =
+    ParticipantStore();
   const filters: {
     /**
      * Initial filter state
@@ -308,6 +309,7 @@ function index() {
       (value) => value === true
     ).length;
     setSelectedTableRows(tempCount);
+    setSelectedRowObjects(rowSelection);
   }, [rowSelection]);
 
   const handleSelectAll = (val: any) => {
@@ -402,11 +404,16 @@ function index() {
 export default index;
 
 const HeaderSection = () => {
-  const { ParticpantFiltersData, setParticpantFiltersData, selectedTableRows } =
-    ParticipantStore();
+  const {
+    ParticpantFiltersData,
+    setParticpantFiltersData,
+    selectedTableRows,
+    selectedRowObjects,
+  } = ParticipantStore();
   const [open, setOpen] = useState(false);
   const { watch, setValue } = useFormContext();
   const formData = watch();
+  const router = useRouter();
 
   const {
     field: { value: Searchvalue, onChange: onSearch },
@@ -454,6 +461,51 @@ const HeaderSection = () => {
   const paymentStatusOptions = getOptionValuesByOptionLabel(
     PARTICIPANT_PAYMENT_STATUS
   )?.[0]?.option_values;
+
+  const handleUpdateAttendanceStatus = async (attendance_status_id: number) => {
+    const participantIds: number[] = Object.keys(selectedRowObjects)
+      .filter((key: any) => selectedRowObjects[key] === true)
+      .map(Number);
+
+    const { error } = await supabaseClient
+      .from("participant_registration")
+      .update({ participant_attendence_status_id: attendance_status_id })
+      .in("id", participantIds);
+
+    console.log("ERR", error);
+  };
+
+  const handleBulkUpdateTransactionStatus = async (
+    transaction_status_id: number
+  ) => {
+    const programID: number | undefined = router?.query?.program_id
+      ? parseInt(router.query.program_id as string)
+      : undefined;
+
+    const participantIds: number[] = Object.keys(selectedRowObjects)
+      .filter((key: any) => selectedRowObjects[key] === true)
+      .map(Number);
+
+    const transactionPendingStatusID = paymentStatusOptions.find(
+      (record: any) => record.value == "Pending"
+    )?.id;
+
+    const { error } = await supabaseClient
+      .from("participant_payment_history")
+      .update({ transaction_status_id: transaction_status_id })
+      .match({
+        program_id: programID,
+        transaction_status_id: transactionPendingStatusID,
+      })
+      .in("participant_id", participantIds);
+
+    const { data } = await supabaseClient
+      .from("participant_registration")
+      .update({ payment_status_id: transaction_status_id })
+      .in("id", participantIds);
+
+    console.log("Err", error);
+  };
 
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4 flex-wrap gap-y-4">
@@ -548,6 +600,7 @@ const HeaderSection = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <div className="flex flex-col gap-4 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+              {/* TODO (Not in MVP Scope): Print Registration Form */}
               <DropdownMenuItem
                 onClick={() => {
                   setEnableBulkOptions(true);
@@ -594,12 +647,20 @@ const HeaderSection = () => {
             <div className="flex flex-col gap-4 max-h-[300px] w-full overflow-y-auto scrollbar text-[#333333]">
               {bulkActions == "attendance"
                 ? attendanceOptions?.map((record: any) => (
-                    <DropdownMenuItem key={record.id}>
+                    <DropdownMenuItem
+                      key={record.id}
+                      onClick={() => handleUpdateAttendanceStatus(record.id)}
+                    >
                       {record.value}
                     </DropdownMenuItem>
                   ))
                 : paymentStatusOptions?.map((record: any) => (
-                    <DropdownMenuItem key={record.id}>
+                    <DropdownMenuItem
+                      key={record.id}
+                      onClick={() =>
+                        handleBulkUpdateTransactionStatus(record.id)
+                      }
+                    >
                       {record.value}
                     </DropdownMenuItem>
                   ))}
