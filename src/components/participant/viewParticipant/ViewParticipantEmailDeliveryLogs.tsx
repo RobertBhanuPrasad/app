@@ -3,10 +3,10 @@ import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 // Component for viewing participant email delivery logs
-function ViewParticipantEmailDeliveryLogs() {
+function ViewParticipantEmailDeliveryLogs({participantId}:any) {
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 4, // Participant ID (TODO: Replace with actual participant ID)
+    id: participantId, 
     meta: {
       select: 'email_delivery_logs_section' // Selecting specific fields
     }

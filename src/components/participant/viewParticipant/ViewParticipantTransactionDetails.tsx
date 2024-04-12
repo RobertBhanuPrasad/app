@@ -8,7 +8,7 @@ import { Button } from 'src/ui/button'; // Importing Button component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'; // Importing components for dropdown menu
 
 // Component for viewing participant transaction details
-function ViewParticipantTransactionDetails() {
+function ViewParticipantTransactionDetails({participantId}:any) {
   // Fetching table data using useTable hook
   let {
     tableQueryResult: programData, // Table data result
@@ -27,7 +27,7 @@ function ViewParticipantTransactionDetails() {
         {
           field: 'participant_id',
           operator: 'eq',
-          value: 2 // Participant ID (TODO: Replace with actual participant ID)
+          value: participantId 
         }
       ]
     }

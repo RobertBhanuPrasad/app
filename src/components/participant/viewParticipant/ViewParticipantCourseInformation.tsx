@@ -1,25 +1,29 @@
-import { useOne, useSelect } from '@refinedev/core';
+import { useOne, useSelect } from '@refinedev/core'
+import { CardLabel, CardValue } from 'src/ui/TextTags';
 
 // Component for viewing participant course information
-function ViewParticipantCourseInformation() {
+function ViewParticipantCourseInformation({participantId}: any) {
+  console.log(participantId,"participantId");
+  
   // Common text styles
-  const textStyle = 'font-sans text-[14px]';
-  const keyTextStyle = `${textStyle} font-[400] text-[#999999]`;
-  const valueTextStyle = `${textStyle} font-[600] text-[#666666]`;
+  const textStyle = 'font-sans text-[14px]'
+  const keyTextStyle = `${textStyle} font-[400] text-[#999999]`
+  const valueTextStyle = `${textStyle} font-[600] text-[#666666]`
 
   // Query for fetching participant registration data
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 4, // Participant ID (TODO: Replace with actual participant ID)
-    optionLabel: 'name',
-    optionValue: 'id',
+    id: participantId,
     meta: {
-      select: '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id(*),program_type_id(id,name)),participant_attendence_status_id(*)' // Selecting specific fields
+      select:
+        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id(*),program_type_id(id,name)),participant_attendence_status_id(*))' // Selecting specific fields
     }
-  };
+  }
 
   // Fetching participant course data
-  const { data: participantCourseData, isLoading, isError } = useOne(selectQuery);
+  const { data: participantCourseData, isLoading, isError } = useOne(selectQuery)
+
+  console.log('participantCourseData', participantCourseData)
 
   // Query for fetching program teachers
   const { queryResult } = useSelect({
@@ -34,10 +38,10 @@ function ViewParticipantCourseInformation() {
         value: 1 // Program ID (TODO: Replace with actual program ID)
       }
     ]
-  });
+  })
 
   // Extracting teacher full names
-  const teacherFullNames = queryResult?.data?.data?.map(teacher => teacher.user_id.contact_id.full_name).join(', ');
+  const teacherFullNames = queryResult?.data?.data?.map(teacher => teacher.user_id.contact_id.full_name).join(', ')
 
   // Participant course information
   const coursePaticipantInformation = [
@@ -51,7 +55,7 @@ function ViewParticipantCourseInformation() {
     { key: 'Teachers', value: teacherFullNames },
     { key: 'Attendance Status', value: participantCourseData?.data?.participant_attendence_status_id?.value },
     { key: 'Discount Amount', value: participantCourseData?.data?.discounted_amount }
-  ];
+  ]
 
   return (
     <div>
@@ -60,13 +64,13 @@ function ViewParticipantCourseInformation() {
         {/* Rendering course information */}
         {coursePaticipantInformation.map((info, index) => (
           <div key={index}>
-            <p className={keyTextStyle}>{info?.key}</p>
-            <p className={valueTextStyle}>{info?.value}</p>
+            <CardLabel>{info?.key}</CardLabel>
+            <CardValue className='text-sm'>{info?.value}</CardValue>
           </div>
         ))}
       </div>
     </div>
-  );
+  )
 }
 
-export default ViewParticipantCourseInformation;
+export default ViewParticipantCourseInformation

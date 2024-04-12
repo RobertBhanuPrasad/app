@@ -3,10 +3,10 @@ import { useOne, useTable } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 // Component for viewing participant UTM parameters
-function ViewParticipantUtmParameters() {
+function ViewParticipantUtmParameters({participantId}:any) {
   const selectQuery: any = {
     resource: 'participant_registration',
-    id: 4, // Participant ID (TODO: Replace with actual participant ID)
+    id: participantId,
     meta: {
       select: 'utm_parameters_section' // Selecting specific fields
     }
@@ -15,7 +15,7 @@ function ViewParticipantUtmParameters() {
   // Fetching participant registration data
   const { data: programData, isLoading, isError } = useOne(selectQuery);
   const [rowSelection, setRowSelection] = React.useState({});
-  
+
   return (
     <div>
       <p className="text-[18px] font-[600] mb-[20px]">UTM Parameters</p>

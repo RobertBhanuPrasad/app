@@ -1,8 +1,9 @@
 import CopyIcon from '@public/assets/CopyIcon'
 import { useOne } from '@refinedev/core'
 import { useState } from 'react'
+import { CardLabel, CardValue } from 'src/ui/TextTags'
 
-function ViewParticipantInformation(participantId: any) {
+function ViewParticipantInformation({participantId}: any) {
   const textStyle = 'font-sans text-[14px]' // Common text style for both key and value
   const keyTextStyle = `${textStyle} font-[400] text-[#999999]` // Style for keys
   const valueTextStyle = `${textStyle} font-[600] text-[#666666]` // Style for values
@@ -14,11 +15,9 @@ function ViewParticipantInformation(participantId: any) {
   const selectQuery: any = {
     resource: 'participant_registration',
     id: participantId,
-    optionLabel: 'name',
-    optionValue: 'id',
     meta: {
       select:
-        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(id,registration_link)'
+        '*,contact_id(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id(id,registration_link)'
     }
   }
 
@@ -108,8 +107,8 @@ function ViewParticipantInformation(participantId: any) {
         <p className="font-[600] text-[18px] font-sans">Participants Information</p>
         {participantInfo?.map((info, index) => (
           <div key={index} className="mt-[23px]">
-            <p className={keyTextStyle}>{info?.key}</p>
-            <p className={valueTextStyle}>{info?.value}</p>
+            <CardLabel>{info?.key}</CardLabel>
+            <CardValue className='text-sm'>{info?.value}</CardValue>
           </div>
         ))}
       </div>

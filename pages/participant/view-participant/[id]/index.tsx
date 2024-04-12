@@ -84,19 +84,19 @@ function index() {
           </TabsList>
           <div className="w-full border-b -mt-2"></div>
           <TabsContent value={VIEW_PARTICIPANT_COURSE_INFORMATION}>
-            <ViewParticipantCourseInformation />
+            <ViewParticipantCourseInformation participantId = {Id} />
           </TabsContent>
           <TabsContent value={VIEW_PARTICIPANT_TRANSACTION_DETAILS}>
-            <ViewParticipantTransactionDetails />
+            <ViewParticipantTransactionDetails participantId = {Id}  />
           </TabsContent>
           <TabsContent value={VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS}>
-            <ViewParticipantEmailDeliveryLogs />
+            <ViewParticipantEmailDeliveryLogs participantId = {Id} />
           </TabsContent>
           <TabsContent value={VIEW_CUSTOMER_DEVICE_DETAILS}>
-            <ViewParticipantCustomerDeviceDetails />
+            <ViewParticipantCustomerDeviceDetails participantId = {Id} />
           </TabsContent>
           <TabsContent value={VIEW_PARTICIPANT_UTM_PARAMETERS}>
-            <ViewParticipantUtmParameters />
+            <ViewParticipantUtmParameters participantId = {Id} />
           </TabsContent>
         </Tabs>
       </div>
