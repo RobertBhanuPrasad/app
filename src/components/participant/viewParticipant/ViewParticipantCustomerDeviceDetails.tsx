@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 // Component for viewing participant customer device details
 function ViewParticipantCustomerDeviceDetails({participantId}:any) {
-  const selectQuery: any = {
+  const query: any = {
     resource: 'participant_registration',
     id: participantId,
     meta: {
@@ -13,7 +13,7 @@ function ViewParticipantCustomerDeviceDetails({participantId}:any) {
   };
 
   // Fetching participant registration data
-  const { data: programData, isLoading, isError } = useOne(selectQuery);
+  const { data: programData, isLoading, isError } = useOne(query);
 
   const [rowSelection, setRowSelection] = React.useState({});
   return (
