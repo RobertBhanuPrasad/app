@@ -570,7 +570,7 @@ export const handleActions = (index: number, participant_id: any) => {
     }
     case 1: {
       // TODO: Navigate to edit participant page
-      router.push("/");
+      router.push(`/participants/editParticipant/${participant_id}`);
       break;
     }
     case 2: {
