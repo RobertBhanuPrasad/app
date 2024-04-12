@@ -181,7 +181,6 @@ export default function TransactionActivity({transactionType}) {
                 >
                   Close
                 </Button>
-      </div>
     </SheetFooter>
     </SheetContent>
     </Sheet>
