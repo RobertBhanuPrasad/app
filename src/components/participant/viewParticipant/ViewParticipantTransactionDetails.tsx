@@ -122,7 +122,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'created_at',
     header: () => {
       return <TableHeader className="  min-w-[100px]">Time Stamp</TableHeader>
     },
@@ -132,7 +132,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'transaction_type',
+    accessorKey: 'transaction_type_id',
     header: () => {
       return <TableHeader className="  min-w-[150px]">Transaction Type </TableHeader>
     },
@@ -152,7 +152,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'payment_method_id',
     header: () => {
       return <TableHeader className="min-w-[150px]">Payment Method</TableHeader>
     },
@@ -162,7 +162,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'organization_fee',
     header: () => {
       return <TableHeader className=" min-w-[170px]">Organization fee (EUR)</TableHeader>
     },
@@ -172,7 +172,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'expense_fee',
     header: () => {
       return <TableHeader className=" min-w-[150px]">Expense fee (EUR)</TableHeader>
     },
@@ -182,7 +182,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'tax',
     header: () => {
       return <TableHeader className=" min-w-[100px]">Tax (EUR)</TableHeader>
     },
@@ -192,7 +192,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'discounted_amount',
     header: () => {
       return <TableHeader className="">Discount </TableHeader>
     },
@@ -202,7 +202,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'accommodation_type',
     header: () => {
       return <TableHeader className=" min-w-[170px]">Accommodation Type</TableHeader>
     },
@@ -212,7 +212,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'accommodation_fee',
     header: () => {
       return <TableHeader className=" min-w-[200px]">Accommodation Fee (EUR)</TableHeader>
     },
@@ -222,7 +222,7 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'total_amount',
     header: () => {
       return <TableHeader className="min-w-[120px]">Total fee (EUR)</TableHeader>;
     },
@@ -231,7 +231,7 @@ const columns: ColumnDef<Program>[] = [
     },
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'transaction_fee_level_id',
     header: () => {
       return <TableHeader className="min-w-[120px]">Fee level</TableHeader>;
     },
@@ -239,9 +239,8 @@ const columns: ColumnDef<Program>[] = [
       return <Text className="lowercase">{row?.original?.transaction_fee_level_id?.value}</Text>;
     },
   },
-  
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'transaction_status_id',
     header: () => {
       return <TableHeader className="min-w-[150px]">Transaction Status</TableHeader>;
     },
@@ -250,7 +249,7 @@ const columns: ColumnDef<Program>[] = [
     },
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'transaction_reason',
     header: () => {
       return <TableHeader>Reason</TableHeader>;
     },
