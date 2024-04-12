@@ -27,7 +27,7 @@ function ViewParticipantCourseInformation({participantId}: any) {
       {
         field: 'program_id',
         operator: 'eq',
-        value: 1 // Program ID (TODO: Replace with actual program ID)
+        value: participantCourseData?.data?.program_id 
       }
     ]
   })
