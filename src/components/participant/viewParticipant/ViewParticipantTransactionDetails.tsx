@@ -25,7 +25,8 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
   } = useTable({
     resource: 'participant_payment_history', // Resource name for fetching data
     meta: {
-      select: '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*)' // Selecting specific fields
+      select:
+        '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*),accommodation_type_id(*,accommodation_type_id(*))' // Selecting specific fields
     },
     filters: {
       permanent: [
@@ -37,6 +38,8 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
       ]
     }
   })
+
+  console.log('participantTransactionDetailsData', participantTransactionDetailsData)
 
   // State variable for row selection
   const [rowSelection, setRowSelection] = React.useState({})
@@ -191,7 +194,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <Text className="lowercase">{row?.original?.accommodation_type}</Text>
+      return <Text className="lowercase">{row?.original?.accommodation_type_id?.accommodation_type_id?.name}</Text>
     }
   },
   {
@@ -201,7 +204,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <Text className="lowercase">{row?.original?.accommodation_fee}</Text>
+      return <Text className="lowercase">{row?.original?.accommodation_type_id?.fee_per_person}</Text>
     }
   },
   {

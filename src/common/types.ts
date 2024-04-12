@@ -548,7 +548,7 @@ interface ParticipantPaymentHistoryDataBaseType {
   transaction_id?: number | null
   transaction_status?: string | null
   sub_payment_method?: string | null
-  accommodation_type_id?: number | null
+  accommodation_type_id?: number | ProgramAccommodationsDataBaseType
 }
 
 interface ParticipantReassignmentHistoryDataBaseType {
