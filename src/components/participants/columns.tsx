@@ -440,7 +440,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      const toggle = row?.original?.program_agreement_status
+      const toggle = row?.original?.is_program_agreement_checked
         ? "Completed"
         : "Pending";
       return <div className="min-w-[150px] text-left">{toggle}</div>;

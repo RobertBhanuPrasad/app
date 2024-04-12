@@ -258,7 +258,7 @@ function index() {
       ?.completed === true
   ) {
     filters.permanent.push({
-      field: "is_health_declaration_checked",
+      field: "is_program_agreement_checked",
       operator: "eq",
       value:
         ParticpantFiltersData?.advanceFilter?.program_agreement_status
