@@ -17,8 +17,6 @@ function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
   // Fetching participant registration data
   const { data: participantCustomerDeviceDetailsData, isLoading, isError } = useOne(query)
 
-  console.log('programData', participantCustomerDeviceDetailsData?.data)
-
   const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>

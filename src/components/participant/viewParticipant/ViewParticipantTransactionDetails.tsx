@@ -39,8 +39,6 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
     }
   })
 
-  console.log('participantTransactionDetailsData', participantTransactionDetailsData)
-
   // State variable for row selection
   const [rowSelection, setRowSelection] = React.useState({})
 
