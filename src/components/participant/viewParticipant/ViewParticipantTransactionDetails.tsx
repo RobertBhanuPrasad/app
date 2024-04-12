@@ -45,7 +45,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
   return (
     <div>
       <p className="text-[18px] font-[600] mb-[20px]">Transaction Details</p>
-      <div className="!min-w-[1000px] rounded-[10px]">
+      <div className="!w-[1133px] rounded-[10px]">
         {/* BaseTable component for rendering table */}
         <BaseTable
           current={current}
@@ -57,7 +57,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
           total={participantTransactionDetailsData?.data?.total || 0} // Total number of items
           pageSize={pageSize}
           setPageSize={setPageSize}
-          pagination={true} // Enable pagination
+          pagination={false} // Enable pagination
           tableStyles={{
             table: ' !rounded-3xl rounded-md', // Custom table styles
             rowStyles: '' // Custom row styles

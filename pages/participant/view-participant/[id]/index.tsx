@@ -1,9 +1,5 @@
-import ViewParticipantCourseInformation from '@components/participant/viewParticipant/ViewParticipantCourseInformation'
-import ViewParticipantCustomerDeviceDetails from '@components/participant/viewParticipant/ViewParticipantCustomerDeviceDetails'
-import ViewParticipantEmailDeliveryLogs from '@components/participant/viewParticipant/ViewParticipantEmailDeliveryLogs'
+import SampleTabs from '@components/participant/viewParticipant/SampleTabs'
 import ViewParticipantInformation from '@components/participant/viewParticipant/ViewParticipantInformation'
-import ViewParticipantTransactionDetails from '@components/participant/viewParticipant/ViewParticipantTransactionDetails'
-import ViewParticipantUtmParameters from '@components/participant/viewParticipant/ViewParticipantUtmParameters'
 import { GetServerSideProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
@@ -16,7 +12,6 @@ import {
   VIEW_PARTICIPANT_TRANSACTION_DETAILS,
   VIEW_PARTICIPANT_UTM_PARAMETERS
 } from 'src/constants/Tabs'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 
 function index() {
   const router = useRouter()
@@ -53,11 +48,11 @@ function index() {
   ]
 
   return (
-    <div className="flex">
+    <div className="flex p-[20px]">
       <div>
         <ViewParticipantInformation participantId={Id} />
       </div>
-      <div className="w-full p-[20px]">
+      {/* <div className="w-full p-[20px]">
         <Tabs
           onValueChange={(val: any) => {
             setSelectedValue(val)
@@ -99,6 +94,10 @@ function index() {
             <ViewParticipantUtmParameters participantId = {Id} />
           </TabsContent>
         </Tabs>
+      </div> */}
+      <div className="sticky w-full p-[20px]">
+        {' '}
+        <SampleTabs />
       </div>
     </div>
   )
