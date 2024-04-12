@@ -13,9 +13,9 @@ function ViewParticipantEmailDeliveryLogs({participantId}:any) {
   };
 
   // Fetching participant registration data
-  const { data: emailDeliveryLogsData, isLoading, isError } = useOne(query);
+  const { data: participantEmailDeliveryLogsData, isLoading, isError } = useOne(query);
 
-  console.log('programData', emailDeliveryLogsData?.data);
+  console.log('programData', participantEmailDeliveryLogsData?.data);
   const [rowSelection, setRowSelection] = React.useState({});
   return (
     <div>
@@ -28,7 +28,7 @@ function ViewParticipantEmailDeliveryLogs({participantId}:any) {
           checkboxSelection={false}
           setCurrent={() => {}}
           pageCount={10}
-          total={emailDeliveryLogsData?.data?.email_delivery_logs_section?.length || 0}
+          total={participantEmailDeliveryLogsData?.data?.email_delivery_logs_section?.length || 0}
           pageSize={10}
           setPageSize={() => {}}
           pagination={false}
@@ -37,7 +37,7 @@ function ViewParticipantEmailDeliveryLogs({participantId}:any) {
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={emailDeliveryLogsData?.data?.email_delivery_logs_section || []}
+          data={participantEmailDeliveryLogsData?.data?.email_delivery_logs_section || []}
           columnPinning={false}
         />
       </div>
