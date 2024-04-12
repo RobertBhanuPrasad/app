@@ -33,6 +33,7 @@ import { CountComponent } from "pages/Courses/FindCourse";
 import { useParams } from "next/navigation";
 import { z } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
+import { supabaseClient } from "src/utility/supabaseClient";
 
 function index() {
   const { program_id } = useParams();
@@ -310,7 +311,7 @@ function index() {
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="flex flex-col gap-4 p-10">
-        <Form onSubmit={() => {}} defaultValues={[]} schema={formValidation()}>
+        <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
         <div className="w-full">
@@ -363,15 +364,15 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl"
+                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
                 Export <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="!w-[106px] focus:outline-none">
+            <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
               <DropdownMenuItem
-                // onClick={handleExportExcel}
+                onClick={handleExportExcel}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 Excel
@@ -495,7 +496,7 @@ const HeaderSection = () => {
                     format(RegistrationDate.from, "MM/dd/yyyy")
                   )
                 ) : (
-                  <span className="font-normal">Select Registration Date</span>
+                  <span className="font-thin">Select Registration Date</span>
                 )}
               </div>
             </Button>
@@ -652,8 +653,150 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
   );
 };
 
-const formValidation = () => {
-  return z.object({
-    "tempFilters.email": z.string().email().optional(),
-  });
+const handleExportExcel = async () => {
+  try {
+    const excelColumns = [
+      {
+        column_name: "Registration ID",
+        path: ["participant_code"],
+      },
+      {
+        column_name: "Registration Date",
+        path: ["created_at"],
+      },
+      {
+        column_name: "Name",
+        path: ["contact_id", "full_name"],
+      },
+      {
+        column_name: "NIF",
+        path: ["contact_id", "nif"],
+      },
+      {
+        column_name: "Date of Birth",
+        path: ["contact_id", "date_of_birth"],
+      },
+      {
+        column_name: "Phone",
+        path: ["contact_id", "mobile"],
+      },
+      {
+        column_name: "Email",
+        path: ["contact_id", "email"],
+      },
+      {
+        column_name: "Fee Level",
+        path: ["price_category_id", "fee_level_id", "value"],
+      },
+      {
+        column_name: "Amount",
+        path: ["price_category_id", "total"],
+      },
+      {
+        column_name: "Transaction Type",
+        path: ["participant_payment_history[0]", "transaction_type_id"],
+      },
+      {
+        column_name: "Transaction ID",
+        path: ["participant_payment_history[0]", "payment_transaction_id"],
+      },
+      {
+        column_name: "Payment Method",
+        path: ["participant_payment_history[0]", "payment_method_id", "value"],
+      },
+      {
+        column_name: "Transaction Status",
+        path: ["payment_status_id", "value"],
+      },
+      {
+        column_name: "Attendance Status",
+        path: ["participant_attendence_status_id", "value"],
+      },
+      {
+        column_name: "Program Agreement Version",
+        path: ["legal_agreement_version"],
+      },
+      {
+        column_name: "Program Agreement Status",
+        path: ["program_agreement_status"],
+      },
+      {
+        column_name: "Program Agreement Date",
+        path: ["program_agreement_date"],
+      },
+      {
+        column_name: "Health Declaration Status",
+        path: ["is_health_declaration_checked"],
+      },
+      {
+        column_name: "Health Declaration Consent Date",
+        path: ["health_declaration_consent_date"],
+      },
+    ];
+
+    const params = new URLSearchParams({
+      table_name: "participant_registration",
+      select:
+        ", contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*)))",
+      columns: JSON.stringify(excelColumns),
+    });
+
+    //invoking the export_to_file function
+    const { data, error } = await supabaseClient.functions.invoke(
+      ` export_to_file?${params}`,
+      {
+        headers: {
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+        },
+      }
+    );
+
+    if (error) {
+      console.error("Error invoking export_to_file function:", error);
+      return;
+    }
+
+    if (data?.fileUrl?.data?.publicUrl) {
+      //getting file name from the url
+      const fileUrl = data.fileUrl.data.publicUrl;
+      const fileName = fileUrl.split("/").pop();
+
+      // passing the file name to download
+      const result = await supabaseClient.storage
+        .from("export_to_excel")
+        .download(fileName);
+
+      if (result.error) {
+        console.error("Error downloading file:", result.error);
+        return; // Exit the function early if there's an error
+      }
+
+      if (result.data) {
+        // Create a Blob object from the downloaded data
+        const blob = new Blob([result.data]);
+
+        // Create a URL for the Blob object
+        const url = URL.createObjectURL(blob);
+
+        // Create a temporary anchor element
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName; // Specify the filename for the download
+        document.body.appendChild(link);
+
+        // Trigger the download by simulating a click event on the anchor element
+        link.click();
+
+        // Clean up by revoking the URL
+        URL.revokeObjectURL(url);
+      } else {
+        console.error("No data returned when downloading file");
+      }
+    } else {
+      console.error("File URL not found in the response.");
+    }
+  } catch (error) {
+    console.error("Error handling export:", error);
+  }
 };

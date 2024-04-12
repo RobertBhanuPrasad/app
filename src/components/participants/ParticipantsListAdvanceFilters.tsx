@@ -52,14 +52,6 @@ export function ParticipantsAdvanceFilter() {
       ).length) ||
     0;
 
-  const {
-    field: { value: feeLevels, onChange: onSelectChange },
-  } = useController({
-    name: "tempFilters.fee_level",
-  });
-
-  console.log("Fee", feeLevels);
-
   return (
     <Sheet open={openAdvFilter}>
       <SheetTrigger
@@ -257,7 +249,6 @@ export function ParticipantsAdvanceFilter() {
               <div className="flex justify-end w-full gap-4">
                 <div
                   onClick={() => {
-                    // onSelectChange([]);
                     setValue("tempFilters.full_name", "");
                     setValue("tempFilters.email", "");
                     setValue("tempFilters.mobile", "");
@@ -330,11 +321,25 @@ export const ContactDetails = () => {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label>Name</Label>
-        <Input onChange={onNameChange} value={contactName}></Input>
+        <Input
+          onChange={onNameChange}
+          value={contactName}
+          type="text"
+          maxLength={50}
+        ></Input>
+        {contactName?.length >= 50 && (
+          <div className=" text-red-600">
+            Reached maximum character limit: 50
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <Label>Email</Label>
-        <Input onChange={onEmailChange} value={contactEmail}></Input>
+        <Input
+          onChange={onEmailChange}
+          value={contactEmail}
+          type="email"
+        ></Input>
       </div>
       <div className="flex flex-col gap-2">
         <Label>Phone</Label>
