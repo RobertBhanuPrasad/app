@@ -54,6 +54,7 @@ export default function EditPayment({setEditPayment}) {
         <div>
             {/* <div >{trigger}</div>
             <div>
+<<<<<<< HEAD
                 <Dialog open={editPayment} onOpenChange={setEditPayment}>
                     <DialogContent> */}
                     <FormProvider {...methods}>
@@ -86,6 +87,8 @@ export default function EditPayment({setEditPayment}) {
                         
                     {/* </DialogContent>
                 </Dialog> */}
+=======
+>>>>>>> 658edc4ad13c2673520d925b0506157fbffb63f5
                 {/* <Popover>
                     <PopoverTrigger>
                         <div 
@@ -95,7 +98,7 @@ export default function EditPayment({setEditPayment}) {
                         </div>
                     </PopoverTrigger>
                     {editPayment && (
-                        <PopoverContent className="w-[637px]">
+                        <PopoverContent className="w-[637px]"> */}
                             <FormProvider {...methods}>
                                 <form autoComplete="off">
                                     <div>
@@ -123,10 +126,17 @@ export default function EditPayment({setEditPayment}) {
                                     </div>
                                 </form>
                             </FormProvider>
+<<<<<<< HEAD
                         </PopoverContent>
             )}
                 </Popover> */}
             {/* </div> */}
+=======
+                        {/* </PopoverContent> */}
+                    {/* )} */}
+                {/* </Popover> */}
+            </div>
+>>>>>>> 658edc4ad13c2673520d925b0506157fbffb63f5
         </div>
     );
 }

@@ -409,9 +409,9 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                                 <DropdownMenuItem>Refund</DropdownMenuItem>
                             </div>
                             <div
-                                onClick={() => {
-                                    downloadReceipt();
-                                }}
+                            // onClick={() => {
+                            //     downloadReceipt();
+                            // }}
                             >
                                 {" "}
                                 <DropdownMenuItem>
