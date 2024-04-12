@@ -3,7 +3,7 @@ import CourseFee from "@components/participants/editParticipant/CourseFee";
 import ParticipnatInformation from "@components/participants/editParticipant/ParticipantInformation";
 import PaymentDetails from "@components/participants/editParticipant/PaymentDetails";
 import { TabsContent, TabsList } from "@radix-ui/react-tabs";
-import { useSelect, useUpdate } from "@refinedev/core";
+import { useSelect } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { useState } from "react";
 import { FormProvider } from "react-hook-form";
@@ -19,14 +19,15 @@ export default function index() {
     const selectQuery: any = {
         resource: "participant_payment_history",
         meta: {
-            select:"id,participant_id!inner(contact_id!inner(full_name),memo,created_at),transaction_fee_level_id"
-            // select: "participant_id!inner(contact_id!inner(full_name),memo,created_at,discount_code_id,discount_code,participant_attendence_status_id),transaction_fee_level_id!inner(value),expense_fee,accommodation_type,accommodation_fee,currency_code,total_fee",
+            select: "id,participant_id!inner(contact_id!inner(full_name),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,total_amount,participant_code,participant_attendence_status_id,discount_code),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee",
         },
         // TODO: add the participant id here
         filter: [{ field: "participant_id", operator: "eq", value: "1" }],
+        
     };
     const { queryResult } = useSelect(selectQuery);
-    console.log(queryResult, "query result");
+    const participantData=queryResult?.data?.data[0]
+    console.log(participantData, "query result");
     const [selectedTab, setSelectedTab] = useState("Participants Information");
     const tabTriggers = [
         {
@@ -69,8 +70,7 @@ export default function index() {
     const methods = useForm({
         refineCoreProps: {
             action: "edit", // or clone
-            resource: "categories",
-            id: 1, // <BASE_URL_FROM_DATA_PROVIDER>/categories/1
+            
         },
     });
     const onSubmit = (formData: any) => {
@@ -101,43 +101,6 @@ export default function index() {
     //     id:
     // })
 
-
-    // const methods = useStepsForm({
-    //     refineCoreProps: {
-    //         action: "edit",
-    //         resource: "posts",
-    //     },
-    //     // resolver: zodResolver(schema),
-    //     defaultValues: {
-    //         visibility: "public",
-    //         displayLanguage: "true",
-    //         isGeoRestriction: "true",
-    //         isResidentialCourse: "No",
-    //         accommodationPaymentMode: "Pay Online",
-    //         programOrganizers: [loggedUserData],
-    //     },
-    // });
-    // const isInView = (elem) => {
-    //     const rect = elem.getBoundingClientRect();
-    //     return (
-    //         rect.top >= 0 &&
-    //         rect.bottom <=
-    //             (window.innerHeight || document.documentElement.clientHeight)
-    //     );
-    // };
-    // // Function to handle scroll events
-    // const handleScroll = () => {
-    //     tabTriggers.forEach((trigger) => {
-    //         const section = document.getElementById(trigger.id);
-    //         console.log(section, "isInView(section)");
-    //         if (section && isInView(section)) {
-    //             setSelectedTab(trigger.value);
-    //         }
-    //     });
-    // };
-
-    // // Add scroll event listener
-    // window.addEventListener("scroll", handleScroll);
     return (
         <div>
             index
@@ -180,28 +143,28 @@ export default function index() {
                 <FormProvider {...methods}>
                     <form autoComplete="off">
                         <TabsContent value="Participants Information">
-                            <ParticipnatInformation data={queryResult?.data} />
-                            <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails data={queryResult?.data} />
-                            <PaymentDetails data={queryResult?.data}/>
+                            <ParticipnatInformation data={participantData} />
+                            <CourseFee data={participantData} />
+                            <AccomodationDetails data={participantData} />
+                            <PaymentDetails participantData={participantData} />
                         </TabsContent>
                         <TabsContent value="Course Fees">
-                            <ParticipnatInformation data={queryResult?.data} />
-                            <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails data={queryResult?.data} />
-                            <PaymentDetails data={queryResult?.data}/>
+                        <ParticipnatInformation data={participantData} />
+                            <CourseFee data={participantData} />
+                            <AccomodationDetails data={participantData} />
+                            <PaymentDetails participantData={participantData} />
                         </TabsContent>
                         <TabsContent value="Accomodation Details">
-                            <ParticipnatInformation data={queryResult?.data} />
-                            <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails data={queryResult?.data} />
-                            <PaymentDetails data={queryResult?.data}/>
+                        <ParticipnatInformation data={participantData} />
+                            <CourseFee data={participantData} />
+                            <AccomodationDetails data={participantData} />
+                            <PaymentDetails participantData={participantData} />
                         </TabsContent>
                         <TabsContent value="Payment Details">
-                            <ParticipnatInformation data={queryResult?.data} />
-                            <CourseFee data={queryResult?.data} />
-                            <AccomodationDetails data={queryResult?.data} />
-                            <PaymentDetails data={queryResult?.data}/>
+                        <ParticipnatInformation data={participantData} />
+                            <CourseFee data={participantData} />
+                            <AccomodationDetails data={participantData} />
+                            <PaymentDetails participantData={participantData} />
                         </TabsContent>
                         <TabsContent value="Transaction Details">
                             Place Transaction Details tab here

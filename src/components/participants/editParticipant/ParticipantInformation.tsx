@@ -6,9 +6,9 @@ export default function ParticipnatInformation({ data }) {
         field: { value: participantMemo, onChange: participantMemoChange },
     } = useController({
         name: "participantMemo",
-        // defaultValue: data?.data[0]?.participant_id?.memo,
+        defaultValue: data?.participant_id?.memo,
     });
-    console.log(data?.data[0], "participants details");
+    console.log(data, "participants details");
     return (
         <div id="participants">
             <div className="font-semibold text-[18px] pt-[25px] ">
@@ -18,7 +18,7 @@ export default function ParticipnatInformation({ data }) {
                 <div className="w-[303px]">
                     <div className="text-[#999999] ">Participants</div>
                     <div className="font-semibold">
-                        {data?.data[0]?.participant_id?.contact_id?.full_name}
+                        {data?.participant_id?.contact_id?.full_name}
                     </div>
                 </div>
                 <div className="flex">
