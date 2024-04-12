@@ -8,9 +8,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
+import BalanceDue from './BalanceDuePopover'
+import TransactionActivity from './TransactionActivityPopover'
+
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
+;
+
+// const [open, setOpen] = useState(false);
 
 export const columns: ExtendedColumnDef<any>[] = [
   {
@@ -275,10 +281,9 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {
-            row?.original?.participant_payment_history[0]?.transaction_type_id
-              ?.value
-          }
+          {row?.original?.participant_payment_history[0]?.transaction_type_id
+          ?.value?<TransactionActivity transactionType={row?.original?.participant_payment_history[0]?.transaction_type_id
+            ?.value} />:'-'}
         </div>
       );
     },
@@ -335,7 +340,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status?.balance}
+          {row?.original?.payment_status?.balance? <BalanceDue balanceDue= {row?.original?.payment_status?.balance}/> :'-' }
         </div>
       );
     },
