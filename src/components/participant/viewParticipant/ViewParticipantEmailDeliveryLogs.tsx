@@ -20,7 +20,7 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
   const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
-      <p className="text-[18px] font-[600] mb-[20px]">Email Delivery Logs</p>
+      <p className="text-[18px] font-[600] ">Email Delivery Logs</p>
       <div>
         <BaseTable
           current={1}

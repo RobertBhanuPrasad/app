@@ -19,7 +19,7 @@ function ViewParticipantUtmParameters({ participantId }: any) {
 
   return (
     <div>
-      <p className="text-[18px] font-[600] mb-[20px]">UTM Parameters</p>
+      <p className="text-[18px] font-[600] ">UTM Parameters</p>
       <div>
         <BaseTable
           current={1}

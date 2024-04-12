@@ -20,7 +20,7 @@ function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
   const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
-      <p className="text-[18px] font-[600] mb-[20px]">Customer Device Details</p>
+      <p className="text-[18px] font-[600]">Customer Device Details</p>
       <div>
         <BaseTable
           current={1}

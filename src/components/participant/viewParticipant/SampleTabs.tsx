@@ -10,9 +10,23 @@ function SampleTabs() {
     {
       id: 0,
       label: 'Course Information ',
-      content: <ViewParticipantCourseInformation participantId={12} />
+      content: (
+        <div>
+          {' '}
+          <ViewParticipantCourseInformation participantId={12} />
+        </div>
+      )
     },
-    { id: 1, label: 'Transaction Details', content: <ViewParticipantTransactionDetails participantId={12} /> },
+    {
+      id: 1,
+      label: 'Transaction Details',
+      content: (
+        <div>
+          {' '}
+          <ViewParticipantTransactionDetails participantId={12} />
+        </div>
+      )
+    },
     { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={12} /> },
     { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={12} /> },
     { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={12} /> }
@@ -72,7 +86,13 @@ function SampleTabs() {
         <div className="py-4">
           {/* Ensure vertical overflow */}
           {tabs.map((tab, index) => (
-            <div key={tab.id} id={`tab-${tab.id}`} ref={el => (tabRefs.current[index] = el)} data-tab-index={index}>
+            <div
+              className="mb-[20px]"
+              key={tab.id}
+              id={`tab-${tab.id}`}
+              ref={el => (tabRefs.current[index] = el)}
+              data-tab-index={index}
+            >
               {tab.content}
             </div>
           ))}
