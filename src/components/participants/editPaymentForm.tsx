@@ -1,11 +1,10 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import SimpleCross from "@public/assets/SimpleCross";
 import { useList, useSelect } from "@refinedev/core";
-import { format } from "date-fns";
 import { useState } from "react";
 import { useController } from "react-hook-form";
-import { DateCalendar } from "src/ui/DateCalendar";
 import { Button } from "src/ui/button";
+import { Calendar } from "src/ui/calendar";
 import { Checkbox } from "src/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import {
@@ -17,6 +16,7 @@ import {
     SelectValue,
 } from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
+import { formatDateString } from "src/utility/DateFunctions";
 
 export default function EditPaymentForm({ setEditPayment, paymentData }) {
     const [open, setOpen] = useState(false);
@@ -30,10 +30,9 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
         field: { value: paymentDate, onChange: paymentDateOnchange },
     } = useController({
         name: "paymentDate",
-        defaultValue: paymentData?.payment_date ? paymentData?.payment_date : "",
-
-        //{ from: "Mon May 20 2024 00:00:00 GMT-0400 (Eastern Daylight Time)",
-        // to: "Thu May 23 2024 00:00:00 GMT-0400 (Eastern Daylight Time)",}
+        defaultValue: paymentData?.payment_date
+            ? paymentData?.payment_date
+            : "",
     });
     const {
         field: { value: payment, onChange: paymentMethodOnchange },
@@ -45,15 +44,8 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
         field: { value: emailConfirmation, onChange: emailConfirmatiOnchange },
     } = useController({
         name: "emailConfirmation",
-        defaultValue:paymentData?.send_payment_confirmation
+        defaultValue: paymentData?.send_payment_confirmation,
     });
-    const [date, setDate] = useState<any>(
-        paymentDate ? paymentDate : new Date()
-    );
-
-    const handleOnSelect = (selected: Date | undefined) => {
-        setDate(selected);
-    };
 
     // Getting option label for transaction status
     const { data: transaction_data } = useList<any>({
@@ -121,7 +113,6 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
                 </div>
                 <div className="flex flex-row">
                     <div className="flex-1">
-
                         <div className="py-[5px]">
                             <div className="py-[5px] ">Participant Name</div>
                             <div>
@@ -138,7 +129,7 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
                                 />
                             </div>
                         </div>
-                        
+
                         <div className="w-[278px] py-[5px]">
                             <div className="py-[5px]">Transaction Status</div>
                             <div>
@@ -206,31 +197,22 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
                                         >
                                             <div className="flex gap-8">
                                                 <div className="">
-                                                    {paymentDate?.from ? (
-                                                        paymentDate?.to ? (
-                                                            <>
-                                                                {format(
-                                                                    paymentDate.from,
-                                                                    "MM/dd/yyyy"
-                                                                )}{" "}
-                                                                -{" "}
-                                                                {format(
-                                                                    paymentDate.to,
-                                                                    "MM/dd/yyyy"
+                                                    {
+                                                        paymentDate ? (
+                                                            <div>
+                                                                {formatDateString(
+                                                                    new Date(
+                                                                        paymentDate
+                                                                    )
                                                                 )}
-                                                            </>
+                                                            </div>
                                                         ) : (
-                                                            format(
-                                                                paymentDate.from,
-                                                                "MM/dd/yyyy"
-                                                            )
+                                                            <div className="flex gap-2 font-normal">
+                                                                Select the Date
+                                                                Range
+                                                            </div>
                                                         )
-                                                    ) : (
-                                                        <div className="flex gap-2 font-normal">
-                                                            Select the Date
-                                                            Range
-                                                        </div>
-                                                    )}
+                                                    }
                                                 </div>
                                                 <div className="">
                                                     <CalenderIcon color="#666666" />
@@ -238,20 +220,19 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
                                             </div>
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="!w-[440px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
-                                        {/* <DateRangePickerComponent
-                                            setOpen={setOpen}
-                                            value={paymentDate}
-                                            onSelect={paymentDateOnchange}
-                                        /> */}
-                                        {/* <CalenderComponent index={0} setOpen={setOpen} /> */}
-                                        <DateCalendar
+                                    <DialogContent className="bg-[#FFFFFF] !rounded-3xl">
+                                        <Calendar
                                             mode="single"
-                                            selected={date}
-                                            onSelect={handleOnSelect}
-                                            // className="rounded-md"
-                                            // count={data?.total || 0}
+                                            selected={paymentDate}
+                                            onSelect={paymentDateOnchange}
+                                            className="rounded-md border"
                                         />
+                                        <Button
+                                            onClick={() => setOpen(false)}
+                                            className=" w-[94px] h-10 rounded-xl"
+                                        >
+                                            Apply
+                                        </Button>
                                     </DialogContent>
                                 </Dialog>
                             </div>
@@ -319,7 +300,7 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
                             className=" resize-none !important !h-[40px] !w-[578px]"
                         />
                     </div>
-                    
+
                     <div className="flex gap-4 py-[30px]">
                         <div>
                             <Checkbox
