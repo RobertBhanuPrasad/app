@@ -108,15 +108,6 @@ export default function index() {
             section.scrollIntoView({ behavior: "smooth" });
         }
     };
-    // TODO: update the partcipant -registarion api
-    // const {mutate}=useUpdate()
-    // mutate({
-    //     resource:"",
-    //     values:{
-
-    //     },
-    //     id:
-    // })
 
     return (
         <div>

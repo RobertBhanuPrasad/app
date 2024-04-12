@@ -136,13 +136,13 @@ export default function AccomodationDetails({ data }) {
                     >
                         <div className="flex flex-row gap-6 ">
                             <RadioButtonCard
-                                // value={snore}
+                                value={snore}
                                 selectedRadioValue={snore}
                                 label="Yes"
                                 className="w-[112px] !h-[40px] rounded-[12px]"
                             />
                             <RadioButtonCard
-                                // value={!snore}
+                                value={!snore}
                                 selectedRadioValue={snore}
                                 label="No"
                                 className="w-[112px] !h-[40px] rounded-[12px]"
@@ -159,13 +159,13 @@ export default function AccomodationDetails({ data }) {
                 >
                     <div className="flex flex-row gap-6 ">
                         <RadioButtonCard
-                            // value={roomateSnore}
+                            value={roomateSnore}
                             selectedRadioValue={roomateSnore}
                             label="Yes"
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
                         <RadioButtonCard
-                            // value={!roomateSnore}
+                            value={!roomateSnore}
                             selectedRadioValue={roomateSnore}
                             label="No"
                             className="w-[112px] !h-[40px] rounded-[12px]"
