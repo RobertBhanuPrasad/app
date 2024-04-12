@@ -37,7 +37,7 @@ const Signup = () => {
       },
     ],
   });
-
+console.log(data,options,"options")
   const handleSignup = async () => {
     const { data, error } = await supabaseClient.auth.signUp({
       email,

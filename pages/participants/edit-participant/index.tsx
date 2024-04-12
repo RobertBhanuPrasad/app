@@ -19,10 +19,11 @@ export default function index() {
     const selectQuery: any = {
         resource: "participant_payment_history",
         meta: {
-            select: "*,participant_id!inner(contact_id!inner(full_name),memo,created_at,discount_code_id,discount_code,participant_attendence_status_id),transaction_fee_level_id!inner(values),expense_fee,accommodation_type,accommodation_fee,currency_code,total_fee",
+            select:"id,participant_id!inner(contact_id!inner(full_name),memo,created_at),transaction_fee_level_id"
+            // select: "participant_id!inner(contact_id!inner(full_name),memo,created_at,discount_code_id,discount_code,participant_attendence_status_id),transaction_fee_level_id!inner(value),expense_fee,accommodation_type,accommodation_fee,currency_code,total_fee",
         },
         // TODO: add the participant id here
-        // filters: [{ field: "participant_id", operator: "eq", value: "1" }],
+        filter: [{ field: "participant_id", operator: "eq", value: "1" }],
     };
     const { queryResult } = useSelect(selectQuery);
     console.log(queryResult, "query result");
