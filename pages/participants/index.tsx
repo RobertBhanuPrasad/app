@@ -3,7 +3,8 @@ import ViewDonationDetails from "@components/participants/viewDonationDetails";
 import { useSelect } from "@refinedev/core";
 
 export default function index() {
-    // TODO:
+    // participant_payment_history contains numerous records of same particpant, getting the latest history record
+    // TODO:replace value with participant_id
     let filter = [{ field: "participant_id", operator: "eq", value: 1 }];
     let sorter = [{ field: "created_at", order: "desc" }];
     const selectQuery: any = {
@@ -19,7 +20,6 @@ export default function index() {
     const particpantData = queryResult?.data?.data[0];
     return (
         <div>
-            index
             <ViewDonationDetails data={particpantData} />
             <EditPayment data={particpantData} />
         </div>

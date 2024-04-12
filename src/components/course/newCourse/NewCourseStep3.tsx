@@ -690,7 +690,7 @@ const TimePicker = ({
     </div>
   );
 };
-export const CalenderComponent = ({ index, setOpen }: any) => {
+const CalenderComponent = ({ index, setOpen }: any) => {
   // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },

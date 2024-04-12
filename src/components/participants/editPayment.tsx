@@ -14,10 +14,8 @@ export default function EditPayment({ data }) {
     });
     const { mutate } = useUpdate();
     const onSubmit = (formData: any) => {
-        console.log(formData,"edit payment form data");
         // Call onFinish with the form data if needed
         onFinish(formData);
-        // TODO: update the values to corresponding api
        mutate({
         resource:"participant_payment_history",
         values:{

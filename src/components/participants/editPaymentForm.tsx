@@ -124,7 +124,6 @@ export default function EditPaymentForm({ setEditPayment, paymentData }) {
                                                   ?.contact_id?.full_name
                                             : ""
                                     }
-                                    placeholder=""
                                     className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed"
                                 />
                             </div>
