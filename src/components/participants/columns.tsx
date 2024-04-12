@@ -61,7 +61,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       const db_date = formatDate(row?.original?.created_at);
-      return <div className="text-left">{db_date}</div>;
+      return <div className="text-left pl-4">{db_date}</div>;
     },
   },
   {
@@ -91,7 +91,9 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left">{row?.original?.contact_id?.full_name}</div>
+        <div className="text-left pl-4 !min-w-[175px] capitalize">
+          {row?.original?.contact_id?.full_name}
+        </div>
       );
     },
   },
@@ -105,7 +107,11 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      return <div className="text-left">{row?.original?.contact_id?.nif}</div>;
+      return (
+        <div className="text-left !min-w-[125px] pl-4">
+          {row?.original?.contact_id?.nif}
+        </div>
+      );
     },
   },
   {
@@ -133,7 +139,11 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       const db_date = formatDate(row?.original?.contact_id?.date_of_birth);
-      return <div className="text-left">{db_date.length ? db_date : "-"}</div>;
+      return (
+        <div className="text-left !min-w-[150px] pl-4">
+          {db_date.length ? db_date : "-"}
+        </div>
+      );
     },
   },
   {
@@ -162,7 +172,9 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left">{row?.original?.contact_id?.mobile}</div>
+        <div className="text-left !min-w-[150px] pl-4">
+          {row?.original?.contact_id?.mobile}
+        </div>
       );
     },
   },
@@ -192,7 +204,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="lowercase text-left">
+        <div className="lowercase text-left !min-w-[150px] pl-4">
           {row?.original?.contact_id?.email}
         </div>
       );
@@ -224,7 +236,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="titlecase text-left">
+        <div className=" capitalize text-left !min-w-[150px] pl-4">
           {row?.original?.price_category_id?.fee_level_id?.value}
         </div>
       );
@@ -256,7 +268,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left">
+        <div className="text-left !min-w-[150px] pl-4">
           {row?.original?.price_category_id?.total}
         </div>
       );
@@ -389,7 +401,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left">
+        <div className="text-left !min-w-[150px] pl-4">
           {row?.original?.participant_attendence_status_id?.value
             ? row?.original?.participant_attendence_status_id?.value
             : "-"}
