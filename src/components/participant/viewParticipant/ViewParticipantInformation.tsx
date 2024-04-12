@@ -3,6 +3,7 @@ import { useOne } from '@refinedev/core'
 import { useState } from 'react'
 import { CardLabel, CardValue } from 'src/ui/TextTags'
 import { handleCopyRegistrationLink } from 'src/utility/CopyText'
+import { formatGlobalDate } from 'src/utility/DateFunctions'
 
 function ViewParticipantInformation({participantId}: any) {
 
@@ -30,7 +31,7 @@ function ViewParticipantInformation({participantId}: any) {
     { key: 'Participants Name', value: contactData?.full_name ?? '-' },
     { key: 'Memo', value: participantData?.data?.memo ?? '-' },
     { key: 'Gender', value: contactData?.gender_id?.value ?? '-' },
-    { key: 'Date Of Birth', value: contactData?.date_of_birth?.substring(0, 10) ?? '-' },
+    { key: 'Date Of Birth', value: formatGlobalDate(contactData?.date_of_birth) ?? '-' },
     { key: 'NIF', value: contactData?.nif ?? '-' },
     {
       key: 'Address',

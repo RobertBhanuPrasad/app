@@ -109,7 +109,7 @@ export const formatDateAndTime = (dateString: any) => {
   const date = new Date(dateString)
 
   // Function to pad single digits with leading zeros
-  const padZero = (num:any) => (num < 10 ? '0' + num : num)
+  const padZero = (num: any) => (num < 10 ? '0' + num : num)
 
   // Array of month names
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -124,4 +124,11 @@ export const formatDateAndTime = (dateString: any) => {
   const result = formattedDate + ' | ' + formattedTime
 
   return result // Output format : Apr 11, 2024 | 19:30:52
+}
+
+// Function to format date as "27 Mar 2023"
+export const formatGlobalDate = (dateString: string | number | Date) => {
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-GB', options)
 }
