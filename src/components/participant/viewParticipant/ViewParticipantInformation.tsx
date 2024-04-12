@@ -1,4 +1,5 @@
 import CopyIcon from '@public/assets/CopyIcon'
+import LoadingIcon from '@public/assets/LoadingIcon'
 import { useOne } from '@refinedev/core'
 import { useState } from 'react'
 import { CardLabel, CardValue } from 'src/ui/TextTags'
@@ -94,7 +95,7 @@ function ViewParticipantInformation({ participantId }: any) {
       </div>
     </div>
   ) : (
-    <div>Loading..</div> // Display loading indicator if data is being fetched
+    <div><LoadingIcon/></div> // Display loading indicator if data is being fetched
   )
 }
 
