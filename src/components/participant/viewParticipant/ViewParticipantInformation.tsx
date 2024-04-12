@@ -2,6 +2,7 @@ import CopyIcon from '@public/assets/CopyIcon'
 import { useOne } from '@refinedev/core'
 import { useState } from 'react'
 import { CardLabel, CardValue } from 'src/ui/TextTags'
+import { handleCopyRegistrationLink } from 'src/utility/CopyText'
 
 function ViewParticipantInformation({participantId}: any) {
 
@@ -16,26 +17,6 @@ function ViewParticipantInformation({participantId}: any) {
       select:
         '*,contact_id(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id(id,registration_link)'
     }
-  }
-
-  // Function to copy text to clipboard
-  const copyText = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text)
-    } catch (err) {
-      console.error('Failed to copy: ', err)
-    }
-  }
-
-  // Function to handle copying the registration link
-  const handleCopyRegistrationLink = () => {
-    copyText(participantData?.data?.program_id?.registration_link) // Copy the registration link to clipboard
-    setCopiedRegistrationLink(true) // Set copiedRegistrationLink state to true
-
-    // Reset copiedRegistrationLink state after a delay
-    setTimeout(() => {
-      setCopiedRegistrationLink(false)
-    }, 1000)
   }
 
   // Fetching participant data using useOne hook
@@ -75,7 +56,7 @@ function ViewParticipantInformation({participantId}: any) {
           </div>
           <div
             onClick={() => {
-              handleCopyRegistrationLink()
+              handleCopyRegistrationLink(setCopiedRegistrationLink,participantData?.data?.program_id?.registration_link)
             }}
             className="relative mt-1 cursor-pointer"
           >

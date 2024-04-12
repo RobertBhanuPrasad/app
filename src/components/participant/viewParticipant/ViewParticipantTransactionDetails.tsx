@@ -1,14 +1,16 @@
-import { BaseTable } from '@components/course/findCourse/BaseTable' // Importing BaseTable component for displaying table
-import { CaretSortIcon } from '@radix-ui/react-icons' // Importing CaretSortIcon for sorting indicator
-import { useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
-import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
-import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react' // Importing icons for UI
-import React from 'react' // Importing React
+import { BaseTable } from '@components/course/findCourse/BaseTable'; // Importing BaseTable component for displaying table
+import { CaretSortIcon } from '@radix-ui/react-icons'; // Importing CaretSortIcon for sorting indicator
+import { useTable } from '@refinedev/core'; // Importing useTable hook for fetching table data
+import { ColumnDef } from '@tanstack/react-table'; // Importing ColumnDef type for defining table columns
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react'; // Importing icons for UI
+import React from 'react'; // Importing React
+import { PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
 import { TableHeader, Text } from 'src/ui/TextTags'
-import { Button } from 'src/ui/button' // Importing Button component
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu' // Importing components for dropdown menu
+import { Button } from 'src/ui/button'; // Importing Button component
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'; // Importing components for dropdown menu
 import { formatDateAndTime } from 'src/utility/DateFunctions'
+import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 
 // Component for viewing participant transaction details
 function ViewParticipantTransactionDetails({ participantId }: any) {
@@ -56,7 +58,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
           setPageSize={setPageSize}
           pagination={true} // Enable pagination
           tableStyles={{
-            table: ' !rounded-3xl', // Custom table styles
+            table: ' !rounded-3xl rounded-md', // Custom table styles
             rowStyles: '' // Custom row styles
           }}
           columns={columns as ColumnDef<any>[]} // Table columns
@@ -138,10 +140,14 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
+      const participantPendingPaymentStatusId = getOptionValueObjectByOptionOrder(
+        PARTICIPANT_PAYMENT_STATUS,
+        PARTICIPANT_PENDING_PAYMENT_STATUS
+      )?.id;
       return (
         <Text
           className={`  min-w-[150px] ${
-            row?.original?.transaction_status_id == PARTICIPANT_PENDING_PAYMENT_STATUS
+            row?.original?.transaction_status_id == participantPendingPaymentStatusId
               ? 'text-[#FF6D6D]'
               : 'text-[#7677F4]'
           }`}
