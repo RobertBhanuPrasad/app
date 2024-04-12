@@ -32,6 +32,7 @@ import {
 import { MultiSelect } from "src/ui/multi-select";
 import { CountComponent } from "pages/Courses/FindCourse";
 import { useParams } from "next/navigation";
+import { z } from "zod";
 
 function index() {
   const { program_id } = useParams();
@@ -96,6 +97,14 @@ function index() {
             .slice(0, -5) + "+00",
       }
     );
+  }
+
+  if (ParticpantFiltersData?.transaction_status?.length) {
+    filters.permanent.push({
+      field: "payment_status_id",
+      operator: "in",
+      value: ParticpantFiltersData?.transaction_status,
+    });
   }
 
   if (ParticpantFiltersData?.advanceFilter?.full_name?.length) {
@@ -171,21 +180,21 @@ function index() {
     });
   }
 
-  // if (ParticpantFiltersData?.advanceFilter?.transaction_type?.length) {
-  //   filters.permanent.push({
-  //     field: "payment_status_id",
-  //     operator: "in",
-  //     value: ParticpantFiltersData?.advanceFilter?.transaction_type,
-  //   });
-  // }
+  if (ParticpantFiltersData?.advanceFilter?.transaction_type?.length) {
+    filters.permanent.push({
+      field: "transaction_type",
+      operator: "in",
+      value: ParticpantFiltersData?.advanceFilter?.transaction_type,
+    });
+  }
 
-  //  if (ParticpantFiltersData?.advanceFilter?.payment_method?.length) {
-  //   filters.permanent.push({
-  //     field: "payment_status_id",
-  //     operator: "in",
-  //     value: ParticpantFiltersData?.advanceFilter?.payment_method,
-  //   });
-  // }
+  if (ParticpantFiltersData?.advanceFilter?.payment_method?.length) {
+    filters.permanent.push({
+      field: "participant_payment_history[0]?.payment_method_id",
+      operator: "in",
+      value: ParticpantFiltersData?.advanceFilter?.payment_method,
+    });
+  }
 
   if (ParticpantFiltersData?.advanceFilter?.fee_level?.length) {
     filters.permanent.push({
@@ -264,17 +273,13 @@ function index() {
     resource: "participant_registration",
     meta: {
       select:
-        "*, contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id!inner(value), total), participant_attendence_status_id(*), payment_status_id!inner(*), participant_payment_history!inner(*, transaction_type_id(*), payment_method_id(*)))",
+        "*, contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*)))",
     },
     filters: filters,
   });
 
-  console.log("hey table data", participantData);
-  console.log(
-    "Filters",
-    ParticpantFiltersData?.advanceFilter?.program_agreement_status
-  );
-  console.log("Filters", filters);
+  console.log("Participant table data", participantData);
+
   const [rowSelection, setRowSelection] = React.useState({});
   const [allSelected, setAllSelected] = useState();
 
@@ -285,7 +290,7 @@ function index() {
       allRowSelection[row?.id] = allSelected;
     });
     setRowSelection(allRowSelection);
-  }, [allSelected, participantData?.data?.data, setSelectedTableRows]);
+  }, [allSelected, participantData?.data?.data]);
 
   useEffect(() => {
     const tempCount = Object.values(rowSelection).filter(
@@ -421,7 +426,7 @@ function index() {
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="flex flex-col gap-4 p-10">
-        <Form onSubmit={() => {}} defaultValues={[]}>
+        <Form onSubmit={() => {}} defaultValues={[]} schema={formValidation()}>
           <HeaderSection />
         </Form>
         <div className="w-full">
@@ -505,9 +510,6 @@ const HeaderSection = () => {
   const { ParticpantFiltersData, setParticpantFiltersData, selectedTableRows } =
     ParticipantStore();
   const [open, setOpen] = useState(false);
-
-  console.log("COUNT", selectedTableRows);
-
   const { watch, setValue } = useFormContext();
   const formData = watch();
 
@@ -614,7 +616,7 @@ const HeaderSection = () => {
               </div>
             </Button>
           </DialogTrigger>
-          <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
+          <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center p-14">
             <DateRangePickerComponent
               setOpen={setOpen}
               value={RegistrationDate}
@@ -693,8 +695,8 @@ const HeaderSection = () => {
               <DropDown />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <div className="flex flex-col gap-4 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+          <DropdownMenuContent align="end" className=" w-full">
+            <div className="flex flex-col gap-4 max-h-[300px] w-full overflow-y-auto scrollbar text-[#333333]">
               {bulkActions == "attendance"
                 ? attendanceOptions?.map((record: any) => (
                     <DropdownMenuItem key={record.id}>
@@ -764,4 +766,10 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
       </div>
     </div>
   );
+};
+
+const formValidation = () => {
+  return z.object({
+    "tempFilters.email": z.string().email().optional(),
+  });
 };
