@@ -2,6 +2,7 @@ import { BaseTable } from '@components/course/findCourse/BaseTable'
 import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
+import { TableHeader, Text } from 'src/ui/TextTags'
 import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant email delivery logs
 function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
@@ -74,53 +75,46 @@ const columns: ColumnDef<Program>[] = [
   {
     accessorKey: 'transaction_id',
     header: () => {
-      return <div className="">Transaction ID</div>
+      return <TableHeader>Transaction ID</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      console.log('row', row)
-
-      return <div className="lowercase">{row?.original?.transaction_id}</div>
+      return <Text className="lowercase">{row?.original?.transaction_id}</Text>
     }
   },
   {
     accessorKey: 'time_stamp',
     header: () => {
-      return <div className="">Time Stamp</div>
+      return <TableHeader>Time Stamp</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="">{formatDateAndTime(row?.original?.time_stamp)}</div>
+      return <Text>{formatDateAndTime(row?.original?.time_stamp)}</Text>
     }
   },
   {
     accessorKey: 'ip_address',
     header: () => {
-      return <div className=" ">IP Address</div>
+      return <TableHeader>IP Address</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.ip_address}</div>
+      return <Text className="lowercase">{row?.original?.ip_address}</Text>
     }
   },
   {
     accessorKey: 'operating_system',
     header: () => {
-      return <div className="">Operating System</div>
+      return <TableHeader>Operating System</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.operating_system}</div>
+      return <Text className="lowercase">{row?.original?.operating_system}</Text>
     }
   },
   {
     accessorKey: 'browser',
     header: () => {
-      return <div className="">Browser</div>
+      return <TableHeader>Browser</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.browser}</div>
+      return <Text className="lowercase">{row?.original?.browser}</Text>
     }
   }
 ]

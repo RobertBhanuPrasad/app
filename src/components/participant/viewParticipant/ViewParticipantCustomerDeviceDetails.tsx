@@ -2,6 +2,7 @@ import { BaseTable } from '@components/course/findCourse/BaseTable'
 import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
+import { TableHeader, Text } from 'src/ui/TextTags'
 import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant customer device details
 function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
@@ -73,51 +74,46 @@ const columns: ColumnDef<Program>[] = [
   {
     accessorKey: 'program_type',
     header: () => {
-      return <div className="">Type</div>
+      return <TableHeader>Type</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.program_type}</div>
+      return <Text className="lowercase">{row?.original?.program_type}</Text>
     }
   },
   {
     accessorKey: 'delivery_status',
     header: () => {
-      return <div className="">Delivery status </div>
+      return <TableHeader>Delivery status</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="">{row?.original?.program_type}</div>
+      return <Text>{row?.original?.program_type}</Text>
     }
   },
   {
     accessorKey: 'delivery_time_stamp',
     header: () => {
-      return <div className="">Delivery time Stamp</div>
+      return <TableHeader>Delivery time Stamp</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{formatDateAndTime(row?.original?.delivery_time_stamp)}</div>
+      return <Text className="lowercase">{formatDateAndTime(row?.original?.delivery_time_stamp)}</Text>
     }
   },
   {
     accessorKey: 'source',
     header: () => {
-      return <div className="">Source</div>
+      return <TableHeader>Source</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.source}</div>
+      return <Text className="lowercase">{row?.original?.source}</Text>
     }
   },
   {
     accessorKey: 'open_time_stamp',
     header: () => {
-      return <div className="">Open time stamp</div>
+      return <TableHeader>Open time stamp</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{formatDateAndTime(row?.original?.open_time_stamp)}</div>
+      return <Text className="lowercase">{formatDateAndTime(row?.original?.open_time_stamp)}</Text>
     }
   }
 ]

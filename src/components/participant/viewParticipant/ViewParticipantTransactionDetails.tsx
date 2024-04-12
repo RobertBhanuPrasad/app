@@ -5,6 +5,7 @@ import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type fo
 import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react' // Importing icons for UI
 import React from 'react' // Importing React
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
+import { TableHeader, Text } from 'src/ui/TextTags'
 import { Button } from 'src/ui/button' // Importing Button component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu' // Importing components for dropdown menu
 import { formatDateAndTime } from 'src/utility/DateFunctions'
@@ -123,22 +124,22 @@ const columns: ColumnDef<Program>[] = [
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className="  min-w-[100px]">Time Stamp</div>
+      return <TableHeader className="  min-w-[100px]">Time Stamp</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{formatDateAndTime(row?.original?.created_at)}</div>
+      return <Text className="lowercase ">{formatDateAndTime(row?.original?.created_at)}</Text>
     }
   },
   {
     accessorKey: 'transaction_type',
     header: () => {
-      return <div className="  min-w-[150px]">Transaction Type </div>
+      return <TableHeader className="  min-w-[150px]">Transaction Type </TableHeader>
     },
 
     cell: ({ row }: any) => {
       return (
-        <div
+        <Text
           className={`  min-w-[150px] ${
             row?.original?.transaction_status_id == PARTICIPANT_PENDING_PAYMENT_STATUS
               ? 'text-[#FF6D6D]'
@@ -146,119 +147,116 @@ const columns: ColumnDef<Program>[] = [
           }`}
         >
           {row?.original?.transaction_type_id?.value}
-        </div>
+        </Text>
       )
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className="min-w-[150px]">Payment Method</div>
+      return <TableHeader className="min-w-[150px]">Payment Method</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.payment_method_id?.value}</div>
+      return <Text className="lowercase">{row?.original?.payment_method_id?.value}</Text>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" min-w-[170px]">Organization fee (EUR)</div>
+      return <TableHeader className=" min-w-[170px]">Organization fee (EUR)</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.organization_fee}</div>
+      return <Text className="lowercase ">{row?.original?.organization_fee}</Text>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" min-w-[150px]">Expense fee (EUR)</div>
+      return <TableHeader className=" min-w-[150px]">Expense fee (EUR)</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.program_type_id?.name}</div>
+      return <Text className="lowercase">{row?.original?.expense_fee}</Text>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" min-w-[100px]">Tax (EUR)</div>
+      return <TableHeader className=" min-w-[100px]">Tax (EUR)</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.expense_fee}</div>
+      return <Text className="lowercase">{row?.original?.tax}</Text>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className="">Discount </div>
+      return <TableHeader className="">Discount </TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.program_type_id?.name}</div>
+      return <Text className="lowercase">{row?.original?.discounted_amount}</Text>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" min-w-[170px]">Accommodation Type</div>
+      return <TableHeader className=" min-w-[170px]">Accommodation Type</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.accommodation_type}</div>
+      return <Text className="lowercase">{row?.original?.accommodation_type}</Text>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" min-w-[200px]">Accommodation Fee (EUR)</div>
+      return <TableHeader className=" min-w-[200px]">Accommodation Fee (EUR)</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.accommodation_fee}</div>
+      return <Text className="lowercase">{row?.original?.accommodation_fee}</Text>
     }
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" min-w-[120px]">Total fee (EUR)</div>
+      return <TableHeader className="min-w-[120px]">Total fee (EUR)</TableHeader>;
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.total_amount}</div>
-    }
+      return <Text className="lowercase">{row?.original?.total_amount}</Text>;
+    },
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" min-w-[120px]">Fee level</div>
+      return <TableHeader className="min-w-[120px]">Fee level</TableHeader>;
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.transaction_fee_level_id?.value}</div>
-    }
+      return <Text className="lowercase">{row?.original?.transaction_fee_level_id?.value}</Text>;
+    },
+  },
+  
+  {
+    accessorKey: 'program_type_id',
+    header: () => {
+      return <TableHeader className="min-w-[150px]">Transaction Status</TableHeader>;
+    },
+    cell: ({ row }: any) => {
+      return <Text className="lowercase">{row?.original?.transaction_status_id?.value}</Text>;
+    },
   },
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className=" min-w-[150px]">Transaction Status</div>
+      return <TableHeader>Reason</TableHeader>;
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.transaction_status_id?.value}</div>
-    }
-  },
-  {
-    accessorKey: 'program_type_id',
-    header: () => {
-      return <div className="">Reason</div>
+      return <Text className="lowercase">{row?.original?.transaction_reason}</Text>;
     },
-
-    cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.transaction_reason}</div>
-    }
   },
 
   {

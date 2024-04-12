@@ -3,12 +3,6 @@ import { CardLabel, CardValue } from 'src/ui/TextTags';
 
 // Component for viewing participant course information
 function ViewParticipantCourseInformation({participantId}: any) {
-  console.log(participantId,"participantId");
-  
-  // Common text styles
-  const textStyle = 'font-sans text-[14px]'
-  const keyTextStyle = `${textStyle} font-[400] text-[#999999]`
-  const valueTextStyle = `${textStyle} font-[600] text-[#666666]`
 
   // Query for fetching participant registration data
   const query: any = {
@@ -22,8 +16,6 @@ function ViewParticipantCourseInformation({participantId}: any) {
 
   // Fetching participant course data
   const { data: participantCourseData, isLoading, isError } = useOne(query)
-
-  console.log('participantCourseData', participantCourseData)
 
   // Query for fetching program teachers
   const { queryResult } = useSelect({

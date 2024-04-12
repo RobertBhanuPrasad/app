@@ -4,9 +4,6 @@ import { useState } from 'react'
 import { CardLabel, CardValue } from 'src/ui/TextTags'
 
 function ViewParticipantInformation({participantId}: any) {
-  const textStyle = 'font-sans text-[14px]' // Common text style for both key and value
-  const keyTextStyle = `${textStyle} font-[400] text-[#999999]` // Style for keys
-  const valueTextStyle = `${textStyle} font-[600] text-[#666666]` // Style for values
 
   // State variable to track whether the registration link has been copied
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
