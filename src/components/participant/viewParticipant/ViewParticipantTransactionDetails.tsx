@@ -1,42 +1,52 @@
-import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import { useTable } from '@refinedev/core'
-import { ColumnDef } from '@tanstack/react-table'
-import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react'
-import React from 'react'
-import { Button } from 'src/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
+import { BaseTable } from '@components/course/findCourse/BaseTable' // Importing BaseTable component for displaying table
+import { CaretSortIcon } from '@radix-ui/react-icons' // Importing CaretSortIcon for sorting indicator
+import { useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
+import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react' // Importing icons for UI
+import React from 'react' // Importing React
+import { PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
+import { PARTICIPANT_PENDING_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
+import { TableHeader, Text } from 'src/ui/TextTags'
+import { Button } from 'src/ui/button' // Importing Button component
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu' // Importing components for dropdown menu
+import { formatDateAndTime } from 'src/utility/DateFunctions'
+import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 
-function ViewParticipantTransactionDetails() {
+// Component for viewing participant transaction details
+function ViewParticipantTransactionDetails({ participantId }: any) {
+  // Fetching table data using useTable hook
   let {
-    tableQueryResult: programData,
-    pageCount,
-    pageSize,
-    setPageSize,
-    current,
-    setCurrent
+    tableQueryResult: participantTransactionDetailsData, // Table data result
+    pageCount, // Number of pages
+    pageSize, // Number of items per page
+    setPageSize, // Function to set page size
+    current, // Current page number
+    setCurrent // Function to set current page number
   } = useTable({
-    resource: 'participant_payment_history',
+    resource: 'participant_payment_history', // Resource name for fetching data
     meta: {
-      select: '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*)'
+      select:
+        '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*),accommodation_type_id(*,accommodation_type_id(*))' // Selecting specific fields
     },
     filters: {
       permanent: [
         {
           field: 'participant_id',
           operator: 'eq',
-          value: 2
+          value: participantId
         }
       ]
     }
   })
-  console.log('programData...', programData)
+
+  // State variable for row selection
   const [rowSelection, setRowSelection] = React.useState({})
-  // programData = { data: { total: 5, data: [{ id: 1 }, { id: 2 }] } }
+
   return (
     <div>
-      <p className="text-[18px] font-[600] mb-[20px]">Transaction Details</p>
-      <div className=" rounded-[10px] ">
+      <p className="text-[18px] font-[600] ">Transaction Details</p>
+      <div className="!w-[1133px] rounded-[10px]">
+        {/* BaseTable component for rendering table */}
         <BaseTable
           current={current}
           rowSelection={rowSelection}
@@ -44,17 +54,17 @@ function ViewParticipantTransactionDetails() {
           checkboxSelection={false}
           setCurrent={setCurrent}
           pageCount={pageCount}
-          total={programData?.data?.total || 0}
+          total={participantTransactionDetailsData?.data?.total || 0} // Total number of items
           pageSize={pageSize}
           setPageSize={setPageSize}
-          pagination={true}
+          pagination={false} // Enable pagination
           tableStyles={{
-            table: ' !rounded-3xl !max-w-fit min-w-[900px]',
-            rowStyles: ''
+            table: ' !rounded-3xl rounded-md', // Custom table styles
+            rowStyles: '' // Custom row styles
           }}
-          columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.data || []}
-          columnPinning={true}
+          columns={columns as ColumnDef<any>[]} // Table columns
+          data={participantTransactionDetailsData?.data?.data || []} // Table data
+          columnPinning={true} // Enable column pinning
         />
       </div>
     </div>
@@ -63,29 +73,8 @@ function ViewParticipantTransactionDetails() {
 
 export default ViewParticipantTransactionDetails
 
-interface Program {
-  id: number
-  created_at: string
-  organization_id: number
-  venue_id: number
-  registration_link: string
-  program_code: string
-  program_fee_settings_id: number
-  program_type_id: number
-  status_id: number
-  accommodation_fee_payment_mode: number | null
-  center_id: number
-  city_id: number
-  details_page_link: string
-  is_early_bird_enabled: boolean
-  is_residential_program: boolean
-  program_alias_name_id: number
-  program_created_by: number
-  state_id: number
-  use_default_fee: boolean
-}
-
-const columns: ColumnDef<Program>[] = [
+// Array of table columns
+const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
   {
     accessorKey: 'payment_transaction_id',
     enableHiding: false,
@@ -113,141 +102,143 @@ const columns: ColumnDef<Program>[] = [
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'created_at',
     header: () => {
-      return <div className="  min-w-[100px]">Time Stamp</div>
+      return <TableHeader className="  min-w-[100px]">Time Stamp</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.source_timestamp}</div>
+      return <Text className="lowercase ">{formatDateAndTime(row?.original?.created_at)}</Text>
     }
   },
   {
-    accessorKey: 'transaction_type',
+    accessorKey: 'transaction_type_id',
     header: () => {
-      return <div className="  min-w-[150px]">Transaction Type </div>
+      return <TableHeader className="  min-w-[150px]">Transaction Type </TableHeader>
     },
 
     cell: ({ row }: any) => {
+      const participantPendingPaymentStatusId = getOptionValueObjectByOptionOrder(
+        PARTICIPANT_PAYMENT_STATUS,
+        PARTICIPANT_PENDING_PAYMENT_STATUS
+      )?.id
       return (
-        <div
+        <Text
           className={`  min-w-[150px] ${
-            row?.original?.transaction_status_id == 8 ? 'text-[#FF6D6D]' : 'text-[#7677F4]'
+            row?.original?.transaction_status_id == participantPendingPaymentStatusId
+              ? 'text-[#FF6D6D]'
+              : 'text-[#7677F4]'
           }`}
         >
           {row?.original?.transaction_type_id?.value}
-        </div>
+        </Text>
       )
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'payment_method_id',
     header: () => {
-      return <div className="min-w-[150px]">Payment Method</div>
+      return <TableHeader className="min-w-[150px]">Payment Method</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.payment_method_id?.value}</div>
+      return <Text className="lowercase">{row?.original?.payment_method_id?.value}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'organization_fee',
     header: () => {
-      return <div className=" min-w-[170px]">Organization fee (EUR)</div>
+      return <TableHeader className=" min-w-[170px]">Organization fee (EUR)</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.organization_fee}</div>
+      return <Text className="lowercase ">{row?.original?.organization_fee}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'expense_fee',
     header: () => {
-      return <div className=" min-w-[150px]">Expense fee (EUR)</div>
+      return <TableHeader className=" min-w-[150px]">Expense fee (EUR)</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.program_type_id?.name}</div>
+      return <Text className="lowercase">{row?.original?.expense_fee}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'tax',
     header: () => {
-      return <div className=" min-w-[100px]">Tax (EUR)</div>
+      return <TableHeader className=" min-w-[100px]">Tax (EUR)</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.expense_fee}</div>
+      return <Text className="lowercase">{row?.original?.tax}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'discounted_amount',
     header: () => {
-      return <div className="">Discount </div>
+      return <TableHeader className="">Discount </TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.program_type_id?.name}</div>
+      return <Text className="lowercase">{row?.original?.discounted_amount}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'accommodation_type',
     header: () => {
-      return <div className=" min-w-[170px]">Accommodation Type</div>
+      return <TableHeader className=" min-w-[170px]">Accommodation Type</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.accommodation_type}</div>
+      return <Text className="lowercase">{row?.original?.accommodation_type_id?.accommodation_type_id?.name}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'accommodation_fee',
     header: () => {
-      return <div className=" min-w-[200px]">Accommodation Fee (EUR)</div>
+      return <TableHeader className=" min-w-[200px]">Accommodation Fee (EUR)</TableHeader>
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.accommodation_fee}</div>
+      return <Text className="lowercase">{row?.original?.accommodation_type_id?.fee_per_person}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'total_amount',
     header: () => {
-      return <div className=" min-w-[120px]">Total fee (EUR)</div>
+      return <TableHeader className="min-w-[120px]">Total fee (EUR)</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.total_amount}</div>
+      return <Text className="lowercase">{row?.original?.total_amount}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'transaction_fee_level_id',
     header: () => {
-      return <div className=" min-w-[120px]">Fee level</div>
+      return <TableHeader className="min-w-[120px]">Fee level</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{row?.original?.transaction_fee_level_id?.value}</div>
+      return <Text className="lowercase">{row?.original?.transaction_fee_level_id?.value}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'transaction_status_id',
     header: () => {
-      return <div className=" min-w-[150px]">Transaction Status</div>
+      return <TableHeader className="min-w-[150px]">Transaction Status</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.transaction_status_id?.value}</div>
+      return <Text className="lowercase">{row?.original?.transaction_status_id?.value}</Text>
     }
   },
   {
-    accessorKey: 'program_type_id',
+    accessorKey: 'transaction_reason',
     header: () => {
-      return <div className="">Reason</div>
+      return <TableHeader>Reason</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.transaction_reason}</div>
+      return <Text className="lowercase">{row?.original?.transaction_reason}</Text>
     }
   },
 

@@ -1,32 +1,34 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { useOne, useTable } from '@refinedev/core'
+import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
-function ViewParticipantUtmParameters() {
-
-  const selectQuery: any = {
+import { TableHeader, Text } from 'src/ui/TextTags'
+// Component for viewing participant UTM parameters
+function ViewParticipantUtmParameters({ participantId }: any) {
+  const query: any = {
     resource: 'participant_registration',
-    id: 4, //TODO:Replace with selected participant ID
+    id: participantId,
     meta: {
-      select: 'utm_parameters_section'
+      select: 'utm_parameters_section' // Selecting specific fields
     }
   }
 
-  const { data: programData, isLoading, isError } = useOne(selectQuery)
-
+  // Fetching participant registration data
+  const { data: utmParametersData, isLoading, isError } = useOne(query)
   const [rowSelection, setRowSelection] = React.useState({})
+
   return (
     <div>
-      <p className="text-[18px] font-[600] mb-[20px]">UTM Parameters</p>
+      <p className="text-[18px] font-[600] ">UTM Parameters</p>
       <div>
-      <BaseTable
+        <BaseTable
           current={1}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
           checkboxSelection={false}
           setCurrent={() => {}}
           pageCount={10}
-          total={programData?.data?.utm_parameters_section?.length || 0}
+          total={utmParametersData?.data?.utm_parameters_section?.length || 0}
           pageSize={10}
           setPageSize={() => {}}
           pagination={false}
@@ -35,7 +37,7 @@ function ViewParticipantUtmParameters() {
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={programData?.data?.utm_parameters_section || []}
+          data={utmParametersData?.data?.utm_parameters_section || []}
           columnPinning={false}
         />
       </div>
@@ -44,96 +46,69 @@ function ViewParticipantUtmParameters() {
 }
 
 export default ViewParticipantUtmParameters
-interface Program {
-  id: number
-  created_at: string
-  organization_id: number
-  venue_id: number
-  registration_link: string
-  program_code: string
-  program_fee_settings_id: number
-  program_type_id: number
-  status_id: number
-  accommodation_fee_payment_mode: number | null
-  center_id: number
-  city_id: number
-  details_page_link: string
-  is_early_bird_enabled: boolean
-  is_residential_program: boolean
-  program_alias_name_id: number
-  program_created_by: number
-  state_id: number
-  use_default_fee: boolean
-}
 
-const columns: ColumnDef<Program>[] = [
+const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
   {
     accessorKey: 'program_type_id',
     header: () => {
-      return <div className="">ID</div>
+      return <TableHeader>ID</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.program_type_id}</div>
+      return <Text className="lowercase">{row?.original?.program_type_id}</Text>
     }
   },
   {
     accessorKey: 'source',
     header: () => {
-      return <div className="">Source </div>
+      return <TableHeader>Source</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="">{row?.original?.source}</div>
+      return <Text>{row?.original?.source}</Text>
     }
   },
   {
     accessorKey: 'medium',
     header: () => {
-      return <div className="">Medium</div>
+      return <TableHeader>Medium</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.medium}</div>
+      return <Text className="lowercase">{row?.original?.medium}</Text>
     }
   },
   {
     accessorKey: 'campaign',
     header: () => {
-      return <div className="">Campaign</div>
+      return <TableHeader>Campaign</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.campaign}</div>
+      return <Text className="lowercase">{row?.original?.campaign}</Text>
     }
   },
   {
     accessorKey: 'term',
     header: () => {
-      return <div className="">Term</div>
+      return <TableHeader>Term</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.term}</div>
+      return <Text className="lowercase">{row?.original?.term}</Text>
     }
   },
   {
     accessorKey: 'content',
     header: () => {
-      return <div className="">Content</div>
+      return <TableHeader>Content</TableHeader>
     },
-
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.content}</div>
+      return <Text className="lowercase">{row?.original?.content}</Text>
     }
   },
   {
     accessorKey: 'http_refer',
     header: () => {
-      return <div className="">HTTP Refer</div>
+      return <TableHeader>HTTP Refer</TableHeader>
     },
     cell: ({ row }: any) => {
-      return <div className="lowercase">{row?.original?.http_refer}</div>
+      return <Text className="lowercase">{row?.original?.http_refer}</Text>
     }
   }
 ]
