@@ -565,7 +565,7 @@ export const handleActions = (index: number, participant_id: any) => {
   switch (index) {
     case 0: {
       // TODO: Navigate to view participant page
-      router.push("/");
+      router.push(`/participant/view-participant/${participant_id}`);
       break;
     }
     case 1: {
