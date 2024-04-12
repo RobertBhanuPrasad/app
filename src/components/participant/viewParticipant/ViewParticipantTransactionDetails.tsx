@@ -1,15 +1,16 @@
-import { BaseTable } from '@components/course/findCourse/BaseTable'; // Importing BaseTable component for displaying table
-import { CaretSortIcon } from '@radix-ui/react-icons'; // Importing CaretSortIcon for sorting indicator
-import { useTable } from '@refinedev/core'; // Importing useTable hook for fetching table data
-import { ColumnDef } from '@tanstack/react-table'; // Importing ColumnDef type for defining table columns
-import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react'; // Importing icons for UI
-import React from 'react'; // Importing React
-import { Button } from 'src/ui/button'; // Importing Button component
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'; // Importing components for dropdown menu
-import { formatDateAndTime } from 'src/utility/DateFunctions';
+import { BaseTable } from '@components/course/findCourse/BaseTable' // Importing BaseTable component for displaying table
+import { CaretSortIcon } from '@radix-ui/react-icons' // Importing CaretSortIcon for sorting indicator
+import { useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
+import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react' // Importing icons for UI
+import React from 'react' // Importing React
+import { PARTICIPANT_PENDING_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
+import { Button } from 'src/ui/button' // Importing Button component
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu' // Importing components for dropdown menu
+import { formatDateAndTime } from 'src/utility/DateFunctions'
 
 // Component for viewing participant transaction details
-function ViewParticipantTransactionDetails({participantId}:any) {
+function ViewParticipantTransactionDetails({ participantId }: any) {
   // Fetching table data using useTable hook
   let {
     tableQueryResult: participantTransactionDetailsData, // Table data result
@@ -28,14 +29,14 @@ function ViewParticipantTransactionDetails({participantId}:any) {
         {
           field: 'participant_id',
           operator: 'eq',
-          value: participantId 
+          value: participantId
         }
       ]
     }
-  });
+  })
 
   // State variable for row selection
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({})
 
   return (
     <div>
@@ -63,32 +64,32 @@ function ViewParticipantTransactionDetails({participantId}:any) {
         />
       </div>
     </div>
-  );
+  )
 }
 
-export default ViewParticipantTransactionDetails;
+export default ViewParticipantTransactionDetails
 
 // TypeScript interface for defining program object structure
 interface Program {
-  id: number;
-  created_at: string;
-  organization_id: number;
-  venue_id: number;
-  registration_link: string;
-  program_code: string;
-  program_fee_settings_id: number;
-  program_type_id: number;
-  status_id: number;
-  accommodation_fee_payment_mode: number | null;
-  center_id: number;
-  city_id: number;
-  details_page_link: string;
-  is_early_bird_enabled: boolean;
-  is_residential_program: boolean;
-  program_alias_name_id: number;
-  program_created_by: number;
-  state_id: number;
-  use_default_fee: boolean;
+  id: number
+  created_at: string
+  organization_id: number
+  venue_id: number
+  registration_link: string
+  program_code: string
+  program_fee_settings_id: number
+  program_type_id: number
+  status_id: number
+  accommodation_fee_payment_mode: number | null
+  center_id: number
+  city_id: number
+  details_page_link: string
+  is_early_bird_enabled: boolean
+  is_residential_program: boolean
+  program_alias_name_id: number
+  program_created_by: number
+  state_id: number
+  use_default_fee: boolean
 }
 
 // Array of table columns
@@ -126,7 +127,7 @@ const columns: ColumnDef<Program>[] = [
     },
 
     cell: ({ row }: any) => {
-      return <div className="lowercase ">{formatDateAndTime(row?.original?.source_timestamp)}</div>
+      return <div className="lowercase ">{formatDateAndTime(row?.original?.created_at)}</div>
     }
   },
   {
@@ -139,7 +140,9 @@ const columns: ColumnDef<Program>[] = [
       return (
         <div
           className={`  min-w-[150px] ${
-            row?.original?.transaction_status_id == 8 ? 'text-[#FF6D6D]' : 'text-[#7677F4]'
+            row?.original?.transaction_status_id == PARTICIPANT_PENDING_PAYMENT_STATUS
+              ? 'text-[#FF6D6D]'
+              : 'text-[#7677F4]'
           }`}
         >
           {row?.original?.transaction_type_id?.value}
