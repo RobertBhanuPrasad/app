@@ -5,6 +5,10 @@ interface NewCourseStore {
   viewThankyouPage: boolean;
   viewSuccessModal: boolean;
   viewRejectedModal: boolean;
+  viewAccountingForm: boolean;
+  courseAccountingSection: 'close_Registration_Section' | 'revenue_Section' | 'expense_Section';
+  setCourseAccountingSection: (by: any) => void;
+  setViewAccountingForm: (by: boolean) => void;
   setViewRejectedModal: (by: boolean) => void;
   setViewPreviewPage: (by: boolean) => void;
   setViewThankyouPage: (by: boolean) => void;
@@ -28,6 +32,18 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   programId: 1,
   viewSuccessModal: false,
   viewRejectedModal: false,
+  viewAccountingForm: false,
+  courseAccountingSection: 'closeRegistrationSection',
+  setCourseAccountingSection: (data: any) => {
+    set(() => ({
+      courseAccountingSection: data,
+    }));
+  },
+  setViewAccountingForm: (data: boolean) => {
+    set(() => ({
+      viewAccountingForm: data,
+    }));
+  },
   setViewRejectedModal: (data: boolean) => {
     set(() => ({
       viewRejectedModal: data,

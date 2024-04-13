@@ -94,6 +94,8 @@ import {
   SelectValue,
 } from "src/ui/select";
 import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
+import RulesSection from "../../../../src/components/course/viewCourse/CourseAccountingFormTab";
+import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/CourseAccountingFormTab";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -341,7 +343,7 @@ function ViewDetails() {
             Place Revenue Summary tab here
           </TabsContent>
           <TabsContent value={JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)}>
-            Place Course Accounting Form tab here
+            <CourseAccountingFormTab />
           </TabsContent>
         </Tabs>
       </div>
@@ -632,7 +634,7 @@ const ActionsDropDown = ({ courseData }: any) => {
 
       // we have to delete schedules when user click on copy course and other we need to prefill
 
-      defaultValues = _.omit(defaultValues, ["id","schedules"]);
+      defaultValues = _.omit(defaultValues, ["id", "schedules"]);
       setNewCourseData(defaultValues);
       router.push("/Courses/NewCourse");
     }
@@ -938,30 +940,30 @@ const ShareButton = () => {
   );
 };
 
-// export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-//   const { authenticated, redirectTo } = await authProvider.check(context);
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
 
-//   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-//     "common",
-//   ]);
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+  ]);
 
-//   if (!authenticated) {
-//     return {
-//       props: {
-//         ...translateProps,
-//       },
-//       redirect: {
-//         destination: `${redirectTo}?to=${encodeURIComponent(
-//           context.req.url || "/"
-//         )}`,
-//         permanent: false,
-//       },
-//     };
-//   }
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
 
-//   return {
-//     props: {
-//       ...translateProps,
-//     },
-//   };
-// };
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};
