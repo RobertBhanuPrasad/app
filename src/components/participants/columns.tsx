@@ -291,9 +291,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.transaction_type_id
-          ?.value?<TransactionActivity transactionType={row?.original?.participant_payment_history[0]?.transaction_type_id
-            ?.value} />:'-'}
+          {row?.original?.participant_payment_history?.length > 0 ? <TransactionActivity transactionHistory={row?.original?.participant_payment_history} />:'-'}
         </div>
       );
     },
