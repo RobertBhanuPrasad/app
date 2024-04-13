@@ -5,32 +5,32 @@ import ViewParticipantEmailDeliveryLogs from './ViewParticipantEmailDeliveryLogs
 import ViewParticipantTransactionDetails from './ViewParticipantTransactionDetails'
 import ViewParticipantUtmParameters from './ViewParticipantUtmParameters'
 
-function SampleTabs() {
-  const tabs = [
-    {
-      id: 0,
-      label: 'Course Information ',
-      content: (
-        <div>
-          {' '}
-          <ViewParticipantCourseInformation participantId={12} />
-        </div>
-      )
-    },
-    {
-      id: 1,
-      label: 'Transaction Details',
-      content: (
-        <div>
-          {' '}
-          <ViewParticipantTransactionDetails participantId={12} />
-        </div>
-      )
-    },
-    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={12} /> },
-    { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={12} /> },
-    { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={12} /> }
-  ]
+function SampleTabs({tabs}) {
+  // const tabs = [
+  //   {
+  //     id: 0,
+  //     label: 'Course Information ',
+  //     content: (
+  //       <div>
+  //         {' '}
+  //         <ViewParticipantCourseInformation participantId={12} />
+  //       </div>
+  //     )
+  //   },
+  //   {
+  //     id: 1,
+  //     label: 'Transaction Details',
+  //     content: (
+  //       <div>
+  //         {' '}
+  //         <ViewParticipantTransactionDetails participantId={12} />
+  //       </div>
+  //     )
+  //   },
+  //   { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={12} /> },
+  //   { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={12} /> },
+  //   { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={12} /> }
+  // ]
 
   const [activeTab, setActiveTab] = useState(0)
   const tabRefs = useRef([])
@@ -63,7 +63,7 @@ function SampleTabs() {
 
   return (
     <div className="sticky top-0 z-50 bg-white ">
-      <div className="h-[700px] overflow-y-auto">
+      <div className="h-[800px] overflow-y-auto">
         <div className="flex sticky top-0 gap-4 py-2 bg-white overflow-x-auto ">
           {/* Ensure horizontal overflow */}
           {tabs.map((tab, index) => (

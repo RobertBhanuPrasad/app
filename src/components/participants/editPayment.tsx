@@ -126,14 +126,14 @@ export default function EditPayment({ paymentData }) {
     return (
         <div>
             <div>
-                <Popover>
+                {/* <Popover>
                     <PopoverTrigger>
                         <Button onClick={() => setEditPayment(true)}>
                             EditPayment
                         </Button>
                     </PopoverTrigger>
                     {editPayment && (
-                        <PopoverContent className="w-[637px]">
+                        <PopoverContent className="w-[637px]"> */}
                             <div>
                                 <div>
                                     <div>
@@ -437,9 +437,9 @@ export default function EditPayment({ paymentData }) {
                                     </div>
                                 </div>
                             </div>
-                        </PopoverContent>
+                        {/* </PopoverContent>
                     )}
-                </Popover>
+                </Popover> */}
             </div>
         </div>
     );
