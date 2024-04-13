@@ -202,7 +202,7 @@ function ViewDetails() {
   if (isViewCourseAccountingTabToDisplay) {
     tabTriggers.push({
       value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
-      label: t("pages.Tabs.viewCourseAccountingFormTab"),
+      label: "View Course Accounting Form",
       disabled: true,
     });
   } else {

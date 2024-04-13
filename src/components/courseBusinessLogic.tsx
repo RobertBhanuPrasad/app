@@ -711,13 +711,13 @@ export const getCourseStatusColorBasedOnStatusId = (statusId: number) => {
 
 /**
  * Function to determine whether to display course accounting form or view course accounting form.
- * @param {any} courseStatusId - The ID representing the course status.
- * @param {any} courseAccountingStatusId - The ID representing the accounting status of the course.
+ * @param {number} courseStatusId - The ID representing the course status.
+ * @param {number} courseAccountingStatusId - The ID representing the accounting status of the course.
  * @returns boolean value
  */
 export const isViewCourseAccountingTabDisplay = (
-  courseStatusId: any,
-  courseAccountingStatusId: any
+  courseStatusId: number,
+  courseAccountingStatusId: number
 ) => {
   // Getting the ID for the active course status
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
