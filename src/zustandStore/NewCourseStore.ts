@@ -28,6 +28,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   programId: 1,
   viewSuccessModal: false,
   viewRejectedModal: false,
+
   setViewRejectedModal: (data: boolean) => {
     set(() => ({
       viewRejectedModal: data,

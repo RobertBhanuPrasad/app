@@ -45,6 +45,7 @@ import {
   COURSE_DETAILS_TAB,
   PARTICIPANTS_TAB,
   REVENUE_SUMMARY_TAB,
+  VIEW_COURSE_ACCOUNTING_FORM_TAB,
 } from "src/constants/CourseConstants";
 import {
   Dialog,
@@ -84,6 +85,7 @@ import {
   DisplayOptions,
   handleTabsBasedOnStatus,
   isApproved,
+  isViewCourseAccountingTabDisplay,
 } from "@components/courseBusinessLogic";
 import {
   Select,
@@ -94,6 +96,8 @@ import {
   SelectValue,
 } from "src/ui/select";
 import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
+import RulesSection from "../../../../src/components/course/viewCourse/CourseAccountingFormTab";
+import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/CourseAccountingFormTab";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -117,7 +121,7 @@ function ViewDetails() {
     id: Id,
     meta: {
       select:
-        "*,created_by_user_id(contact_id(full_name)),program_type_id(is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
+        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
     },
   });
 
@@ -163,6 +167,7 @@ function ViewDetails() {
   const [selectedValue, setSelectedValue] = useState(
     JSON.stringify(COURSE_DETAILS_TAB)
   );
+ 
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
@@ -179,12 +184,34 @@ function ViewDetails() {
       label: t("pages.Tabs.revenueSummaryTab"),
       disabled: false,
     },
-    {
+  ];
+
+ /**
+  * variable to check whether we have to show course accounting form tab or 
+  * we have to view course accounting form tab 
+  * based on course status and course accounting status
+  */
+  const isViewCourseAccountingTabToDisplay = isViewCourseAccountingTabDisplay(
+    courseData?.data?.status_id?.id,
+    courseData?.data?.program_accounting_status_id
+  );
+
+ 
+
+  // Check if the tab should be enabled and append the object accordingly
+  if (isViewCourseAccountingTabToDisplay) {
+    tabTriggers.push({
+      value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
+      label: "View Course Accounting Form",
+      disabled: true,
+    });
+  } else {
+    tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
       label: t("pages.Tabs.courseAccountingFormTab"),
       disabled: true,
-    },
-  ];
+    });
+  }
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -196,7 +223,9 @@ function ViewDetails() {
     <div className="flex flex-col mx-8">
       <div className="flex flex-row justify-between">
         <div className="text-[32px] font-semibold">
-          {courseData?.data?.program_alias_name_id?.alias_name}
+          {courseData?.data?.program_alias_name_id
+            ? courseData?.data?.program_alias_name_id?.alias_name
+            : courseData?.data?.program_type_id?.name}
         </div>
         <div className="flex items-center gap-4">
           <DisplayingCourseStatus
@@ -339,7 +368,10 @@ function ViewDetails() {
             Place Revenue Summary tab here
           </TabsContent>
           <TabsContent value={JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)}>
-            Place Course Accounting Form tab here
+            <CourseAccountingFormTab />
+          </TabsContent>
+          <TabsContent value={JSON.stringify(VIEW_COURSE_ACCOUNTING_FORM_TAB)}>
+            <div>View Course Accounting Form Tab</div>
           </TabsContent>
         </Tabs>
       </div>
@@ -630,7 +662,7 @@ const ActionsDropDown = ({ courseData }: any) => {
 
       // we have to delete schedules when user click on copy course and other we need to prefill
 
-      defaultValues = _.omit(defaultValues, ["schedules"]);
+      defaultValues = _.omit(defaultValues, ["id", "schedules"]);
       setNewCourseData(defaultValues);
       router.push("/Courses/NewCourse");
     }

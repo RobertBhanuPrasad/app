@@ -182,7 +182,8 @@ export const NewCourseTabs = () => {
     ...(formData?.program_type?.has_alias_name ? [] : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
-  ])
+    ...(formData?.program_type?.is_geo_restriction_applicable ? []:["is_geo_restriction_applicable"])
+  ]);
 
   let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
     ...(formData?.courseTypeSettings?.is_online_program ? [] : ["online_url", "state_id", "city_id", "center_id"]),
