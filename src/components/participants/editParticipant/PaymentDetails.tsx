@@ -1,6 +1,8 @@
 import { useList, useSelect } from "@refinedev/core";
 import { useController } from "react-hook-form";
+import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
+import { Input } from "src/ui/input";
 import {
     Select,
     SelectContent,
@@ -9,21 +11,23 @@ import {
     SelectTrigger,
     SelectValue,
 } from "src/ui/select";
-import { Textarea } from "src/ui/textarea";
 
 export default function PaymentDetails({ participantData }) {
     const {
-        field: { value: specialCode, onChange: specialCodeChange },
+        field: { value: participant_code, onChange: specialCodeChange },
     } = useController({
-        name: "specialCode",
-        defaultValue: participantData?.participant_id?.discount_code,
+        name: "participant_code",
+        // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
-        field: { value: attendanceStatus, onChange: attendanceStatusChange },
+        field: {
+            value: participant_attendence_status_id,
+            onChange: attendanceStatusChange,
+        },
     } = useController({
-        name: "attendanceStatus",
-        defaultValue:
-            participantData?.participant_id?.participant_attendence_status_id,
+        name: "participant_attendence_status_id",
+        // defaultValue:
+        //     participantData?.participant_id?.participant_attendence_status_id,
     });
     const { data } = useList<any>({
         resource: "option_labels",
@@ -50,68 +54,77 @@ export default function PaymentDetails({ participantData }) {
     });
     return (
         <div className="flex-row" id="Payment">
-            <div className="font-semibold text-[18px] py-[25px]">
+            <Text className="font-semibold text-[18px] py-[25px]">
                 Payment Details
-            </div>
+            </Text>
             <div className="flex ">
                 <div className="w-[303px]">
-                    <div className="text-[#999999] ">Course Fee</div>
-                    <div className="font-semibold">
+                    <Text className="text-[#999999] ">Course Fee</Text>
+                    <Text className="font-semibold">
                         {participantData?.currency_code
                             ? participantData?.currency_code
                             : "-"}
                         {participantData?.expense_fee
                             ? participantData?.expense_fee
                             : "-"}
-                    </div>
+                    </Text>
                 </div>
                 <div className="w-[303px]">
-                    <div className="text-[#999999] ">Accomodation Fee</div>
-                    <div className="font-semibold">
+                    <Text className="text-[#999999] ">Accomodation Fee</Text>
+                    <Text className="font-semibold">
                         {participantData?.currency_code
                             ? participantData?.currency_code
                             : "-"}
                         {participantData?.accommodation_fee
                             ? participantData?.accommodation_fee
                             : "-"}
-                    </div>
+                    </Text>
                 </div>
                 <div className="w-[303px]">
-                    <div className="text-[#999999] ">
+                    <Text className="text-[#999999] ">
                         Total Fee {`(Includes VAT)`}
-                    </div>
-                    <div className="font-semibold">
+                    </Text>
+                    <Text className="font-semibold">
                         {participantData?.currency_code
                             ? participantData?.currency_code
                             : "-"}{" "}
                         {participantData?.participant_id?.total_amount
                             ? participantData?.participant_id?.total_amount
                             : "-"}
-                    </div>
+                    </Text>
                 </div>
             </div>
             <div className="flex py-[10px] gap-4">
                 <div className="">
-                    <div className="text-[#999999] ">Enter Special Code</div>
+                    <Text className="text-[#999999] ">Enter Special Code</Text>
 
                     <div className="flex">
                         <div>
-                            <Textarea
-                                value={specialCode}
+                            <Input
+                                value={participant_code}
                                 className="w-[278px] !h-[40px] resize-none"
-                                // onChange={(val)=> specialCodeChange(val?.target?.value)}
+                                onChange={(val) =>
+                                    specialCodeChange(val?.target?.value)
+                                }
                             />
                         </div>
                         <div>
-                            <Button onClick={(e)=>{e.preventDefault(),specialCodeChange(e?.target?.value)}}>Apply</Button>
+                            <Button
+                                onClick={(e) => {
+                                    e.preventDefault(),
+                                        specialCodeChange(e?.target?.value);
+                                }}
+                            >
+                                Apply
+                            </Button>
                         </div>
                     </div>
                 </div>
                 <div className="w-[303px]">
-                    <div className="text-[#999999] ">Attendance Status</div>
+                    <Text className="text-[#999999] ">Attendance Status</Text>
                     <div>
                         <Select
-                            value={attendanceStatus}
+                            value={participant_attendence_status_id}
                             onValueChange={(val) => {
                                 attendanceStatusChange(val);
                             }}

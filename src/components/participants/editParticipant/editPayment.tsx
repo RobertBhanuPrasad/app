@@ -16,22 +16,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "src/ui/select";
+import { TableHeader, Text } from 'src/ui/TextTags'
 import { Textarea } from "src/ui/textarea";
 import { formatDateString } from "src/utility/DateFunctions";
 export default function EditPayment({ setEditPayment }) {
     const { id } = useRouter();
-    let filter = [{ field: "participant_id", operator: "eq", value: id }];
-    let sorter = [{ field: "created_at", order: "desc" }];
-    const selectQuery: any = {
+    const  queryResult  = useList({
         resource: "participant_payment_history",
         meta: {
             select: "id,currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
         },
-        filters: filter,
-        sorters: sorter,
-    };
-
-    const { queryResult } = useSelect(selectQuery);
+        // TODO: replace id with participnat_id
+        filters: [{ field: "participant_id", operator: "eq", value: 2 }],
+        sorters:  [{ field: "created_at", order: "desc" }], 
+    });
     const paymentData = queryResult?.data?.data[0];
     const { mutate } = useUpdate();
     const { watch } = useFormContext();
@@ -55,30 +53,26 @@ export default function EditPayment({ setEditPayment }) {
     // Form fileds useControllers
     const [open, setOpen] = useState(false);
     const {
-        field: { value: transaction, onChange: transactionOnchange },
+        field: { value: transaction_status_id, onChange: transactionOnchange },
     } = useController({
-        name: "transaction",
-        defaultValue: paymentData?.transaction_status_id?.id,
+        name: "transaction_status_id",
     });
     const {
-        field: { value: paymentDate, onChange: paymentDateOnchange },
+        field: { value: payment_date, onChange: paymentDateOnchange },
     } = useController({
-        name: "paymentDate",
-        defaultValue: paymentData?.payment_date
-            ? paymentData?.payment_date
-            : "",
+        name: "payment_date",
     });
     const {
-        field: { value: payment, onChange: paymentMethodOnchange },
+        field: { value: payment_method_id, onChange: paymentMethodOnchange },
     } = useController({
-        name: "paymentMethod",
-        defaultValue: paymentData?.payment_method_id?.id,
+        name: "payment_method_id",
+        // defaultValue: paymentData?.payment_method_id?.id,
     });
     const {
-        field: { value: emailConfirmation, onChange: emailConfirmatiOnchange },
+        field: { value: send_payment_confirmation, onChange: emailConfirmatiOnchange },
     } = useController({
-        name: "emailConfirmation",
-        defaultValue: paymentData?.send_payment_confirmation,
+        name: "send_payment_confirmation",
+        // defaultValue: paymentData?.send_payment_confirmation,
     });
 
     // Getting option label for transaction status
@@ -138,15 +132,15 @@ export default function EditPayment({ setEditPayment }) {
                 <div>
                     <div>
                         <div>
-                            <div className="flex justify-center text-[24px] font-semibold ">
+                            <Text className="flex justify-center text-[24px] font-semibold ">
                                 Edit Payment
-                            </div>
+                            </Text>
                             <div className="flex flex-row">
                                 <div className="flex-1">
                                     <div className="py-[5px]">
-                                        <div className="py-[5px] ">
+                                        <Text className="py-[5px] ">
                                             Participant Name
-                                        </div>
+                                        </Text>
                                         <div>
                                             <Textarea
                                                 value={
@@ -164,13 +158,13 @@ export default function EditPayment({ setEditPayment }) {
                                     </div>
 
                                     <div className="w-[278px] py-[5px]">
-                                        <div className="py-[5px]">
+                                        <Text className="py-[5px]">
                                             Transaction Status
-                                        </div>
+                                        </Text>
                                         <div>
                                             {/* TODO: need to disable select for confirmed and failed transaction ids */}
                                             <Select
-                                                value={transaction}
+                                                value={transaction_status_id}
                                                 onValueChange={(val: any) => {
                                                     transactionOnchange(val);
                                                 }}
@@ -199,11 +193,7 @@ export default function EditPayment({ setEditPayment }) {
                                                                             option.label
                                                                         }
                                                                     </SelectItem>
-                                                                    {index <
-                                                                        transactionStatus?.length -
-                                                                            1 && (
-                                                                        <hr className="border-[#D6D7D8]" />
-                                                                    )}
+                                                                   
                                                                 </>
                                                             )
                                                         )}
@@ -214,9 +204,9 @@ export default function EditPayment({ setEditPayment }) {
                                     </div>
 
                                     <div className="py-[5px]">
-                                        <div className="py-[5px]">
+                                        <Text className="py-[5px]">
                                             Transaction ID
-                                        </div>
+                                        </Text>
                                         <div>
                                             <Textarea
                                                 value={
@@ -230,9 +220,9 @@ export default function EditPayment({ setEditPayment }) {
 
                                 <div className="flex-1">
                                     <div className="py-[5px]">
-                                        <div className="py-[5px]">
+                                        <Text className="py-[5px]">
                                             Payment Date
-                                        </div>
+                                        </Text>
                                         {/* TODO: need to disable it for confirmed and failed transaction ids */}
                                         <div>
                                             <Dialog open={open}>
@@ -246,20 +236,20 @@ export default function EditPayment({ setEditPayment }) {
                                                     >
                                                         <div className="flex gap-8">
                                                             <div className="">
-                                                                {paymentDate ? (
-                                                                    <div>
+                                                                {payment_date ? (
+                                                                    <Text>
                                                                         {formatDateString(
                                                                             new Date(
-                                                                                paymentDate
+                                                                                payment_date
                                                                             )
                                                                         )}
-                                                                    </div>
+                                                                    </Text>
                                                                 ) : (
-                                                                    <div className="flex gap-2 font-normal">
+                                                                    <Text className="flex gap-2 font-normal">
                                                                         Select
                                                                         the Date
                                                                         Range
-                                                                    </div>
+                                                                    </Text>
                                                                 )}
                                                             </div>
                                                             <div className="">
@@ -271,7 +261,7 @@ export default function EditPayment({ setEditPayment }) {
                                                 <DialogContent className="bg-[#FFFFFF] !rounded-3xl">
                                                     <Calendar
                                                         mode="single"
-                                                        selected={paymentDate}
+                                                        selected={payment_date}
                                                         onSelect={
                                                             paymentDateOnchange
                                                         }
@@ -291,13 +281,13 @@ export default function EditPayment({ setEditPayment }) {
                                     </div>
 
                                     <div className="py-[5px]">
-                                        <div className="py-[5px]">
+                                        <Text className="py-[5px]">
                                             Payment Method
-                                        </div>
+                                        </Text>
                                         <div className="!w-[278px]">
                                             {/* TODO:need to disable select for confimed and failed transaction ids */}
                                             <Select
-                                                value={payment}
+                                                value={payment_method_id}
                                                 onValueChange={(val: any) => {
                                                     paymentMethodOnchange(val);
                                                 }}
@@ -341,9 +331,9 @@ export default function EditPayment({ setEditPayment }) {
                                     </div>
 
                                     <div className="py-[5px]">
-                                        <div className="py-[5px]">
+                                        <Text className="py-[5px]">
                                             Response Message
-                                        </div>
+                                        </Text>
                                         <div>
                                             <Textarea
                                                 value={
@@ -357,7 +347,7 @@ export default function EditPayment({ setEditPayment }) {
                             </div>
 
                             <div className="flex flex-col py-[5px]">
-                                <div className="py-[5px]">Error Message</div>
+                                <Text className="py-[5px]">Error Message</Text>
                                 <div>
                                     <Textarea
                                         value={paymentData?.error_message}
@@ -368,13 +358,13 @@ export default function EditPayment({ setEditPayment }) {
                                 <div className="flex gap-4 py-[30px]">
                                     <div>
                                         <Checkbox
-                                            checked={emailConfirmation}
+                                            checked={send_payment_confirmation}
                                             onCheckedChange={
                                                 emailConfirmatiOnchange
                                             }
                                         />
                                     </div>
-                                    <div>Send Payment confirmation mail?</div>
+                                    <Text>Send Payment confirmation mail?</Text>
                                 </div>
                             </div>
                         </div>

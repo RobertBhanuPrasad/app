@@ -521,9 +521,9 @@ interface ParticipantPaymentHistoryDataBaseType {
   created_at?: string
   payment_transaction_id?: number | null
   currency_code?: string | null
-  participant_id?: number
+  participant_id?: ParticipantRegistrationDataBaseType | number,
   program_id?: number
-  total_amount?: number
+  total_amount?: number,
   transaction_status_id?: number | OptionValuesDataBaseType
   transaction_date?: string | null
   payment_method_id?: number | OptionValuesDataBaseType
@@ -594,7 +594,7 @@ interface ParticipantRegistrationDataBaseType {
   discount_code_id?: number
   is_payment_refund_request?: boolean
   is_payment_refunded?: boolean
-  participant_attendence_status_id?: number
+  participant_attendence_status_id?: number | ParticipantAttendenceStatusDataBaseType
   price_category_id?: number
   program_category_id?: number
   program_id?: number
@@ -609,6 +609,14 @@ interface ParticipantRegistrationDataBaseType {
   email_delivery_logs_section?: ParticipantEmailDeliveryLogsDataBaseType
   customer_device_details_section?: ParticipantCustomerDeviceDetailsDataBaseType
   utm_parameters_section?: ParticipantUtmParametersDataBaseType
+  memo?:string
+  transaction_fee_level_id?:number| OptionValuesDataBaseType
+  roommate_preferences_1?:string
+  roommate_preferences_2?:string
+  roommate_preferences_3?:string
+  participant_code?:string
+  roommate_snore?:boolean
+  accommodation_snore?:boolean
 }
 
 interface ProgramDataBaseType {
@@ -730,4 +738,68 @@ interface NewCourseFormFieldTypes {
     contact_number?: number
   }[]
   bcc_registration_confirmation_email?: string
+}
+ interface EditParticipantDataBaseTypes{
+  id: number;
+  participant_id: {
+      contact_id: {
+          full_name: string;
+      };
+      memo: string;
+      transaction_fee_level_id: string;
+      created_at: string | null;
+      total_amount: string;
+      accommodation_snore: boolean;
+      roommate_snore: boolean;
+      participant_code: string;
+      roommate_preferences_1: string;
+      roommate_preferences_2: string;
+      roommate_preferences_3: string;
+      discount_code: string;
+      participant_attendance_status_id: number;
+  };
+  transaction_fee_level_id: {
+      value: string;
+  };
+  currency_code: string;
+  accommodation_type_id: number;
+  accommodation_fee: string;
+  expense_fee: string;
+  // Add other fields here
+  transaction_status_id: number;
+  payment_date: string;
+  payment_method_id: number;
+  send_payment_confirmation: boolean;
+  payment_transaction_id: string;
+  response_message: string;
+  error_message: string;
+ }
+
+ 
+ interface EditParticipantFormFieldTypes {
+  id?: number | string;
+  full_name?: string;
+  memo?: string;
+  transaction_fee_level_id?: string;
+  created_at?: Date;
+  currency_code?: string;
+  total_amount?: number;
+  accommodation_type_id?: number|ProgramAccommodationsDataBaseType;
+  accommodation_snore?: boolean;
+  roommate_snore?: boolean;
+  participant_code?: string;
+  accommodation_fee?: number;
+  roommate_preferences_1?: string;
+  roommate_preferences_2?: string;
+  roommate_preferences_3?: string;
+  discount_code?: string;
+  participant_attendence_status_id?: number | ParticipantAttendenceStatusDataBaseType;
+  transaction_status_id?: number | OptionValuesDataBaseType;
+  payment_date?: string;
+  payment_method_id?: number|OptionValuesDataBaseType;
+  send_payment_confirmation?: boolean;
+  payment_transaction_id?: number;
+  response_message?: string;
+  error_message?: string;
+  expense_fee?: number;
 }

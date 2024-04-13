@@ -1,36 +1,37 @@
 import { formatDateString } from "src/utility/DateFunctions";
+import { Text } from "src/ui/TextTags";
 
 export default function CourseFee({ data }) {
     return (
         <div className="" id="Course">
-            <div className="font-semibold text-[18px] pt-[25px]">
+            <Text className="font-semibold text-[18px] pt-[25px]">
                 Course Fees
-            </div>
+            </Text>
 
             <div className="flex py-[20px]">
                 <div className="w-[303px]">
-                    <div className="text-[#999999] ">Registartion Date</div>
-                    <div className="font-semibold">
+                    <Text className="text-[#999999] ">Registartion Date</Text>
+                    <Text className="font-semibold">
                         {data?.participant_id?.created_at
                             ? formatDateString(
                                   new Date(data?.participant_id?.created_at)
                               )
                             : "-"}
-                    </div>
+                    </Text>
                 </div>
                 <div className="w-[303px]">
-                    <div className="text-[#999999] ">Fee Level</div>
-                    <div className="font-semibold">
+                    <Text className="text-[#999999] ">Fee Level</Text>
+                    <Text className="font-semibold">
                         {data?.transaction_fee_level_id?.value
                             ? data?.transaction_fee_level_id?.value
                             : "-"}
-                    </div>
+                    </Text>
                 </div>
                 <div className="w-[303px]">
-                    <div className="text-[#999999] ">Course Fee</div>
-                    <div className="font-semibold">
+                    <Text className="text-[#999999] ">Course Fee</Text>
+                    <Text className="font-semibold">
                         {data?.currency_code?data?.currency_code:'-'} {data?.participant_id?.total_amount?data?.participant_id?.total_amount:'-'}
-                    </div>
+                    </Text>
                 </div>
             </div>
             <hr />
