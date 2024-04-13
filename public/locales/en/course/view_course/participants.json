@@ -4,7 +4,6 @@
         "contact_placeholder": "Select Contact ",
         "registration_date": "Registration Date",
         "registration_date_placeholder": "Select  Date ",
-        "fee_level": "Fee Level",
         "fee_level_placeholder": "Select Fee Level ",
         "course_fee": "Course Fee",
         "attendance_status": "Attendance Status",
@@ -32,7 +31,6 @@
         "country_placeholder": "Enter Country",
         "zip_code": "Zip Code",
         "zip_code_placeholder": "Enter Zip Code",
-        "city": "City",
         "city_placeholder": "Enter City",
         "state": "State",
         "state_placeholder": "Enter State",
@@ -201,7 +199,6 @@
         },
         "course_information_tab": {
             "course_information": "Course Information",
-            "course_type": "Course type",
             "course_name": "Course name",
             "Teachers(S)": "Teachers(S)",
             "attendance_status": "Attendance Status",

@@ -3,13 +3,10 @@
         "teaching_course": "I am teaching this course",
         "co_teaching": "I am co-teaching this course",
         "organizing_this_course": "I am organizing this course",
-        "organization": "Organizatio",
         "organization_placeholder": "Select Organization",
-        "program_organizer": "Program Organizer",
         "program_organizer_placeholder": "Enter Program organizer Name"
     },
     "course_details_tab": {
-        "course_type": "Course Type",
         "teacher": "Teacher",
         "teacher_placeholder": "Enter Teacher Name",
         "assistant_teacher": "Assistant Teacher",
@@ -20,10 +17,7 @@
         "max_capacity": "Maximum Capacity",
         "max_capacity_placeholder": "Enter no. of attendees",
         "registrations_restriction": "I geo restrict applicable for registration",
-        "country_registrations_allowed_placeholder": "Enter Countries",
-        "course_description": "Course Description",
-        "course_notes": "Course Notes",
-        "email_notes": "Email Notes"
+        "country_registrations_allowed_placeholder": "Enter Countries"
     },
     "time_and_venue_tab": {
         "existing_venue": "Existing Venue",
@@ -42,7 +36,6 @@
         "postal_code_placeholder": "Enter Postal Code",
         "province": "Province",
         "province_placeholder": "Select Province",
-        "local_center": "Local Center",
         "local_center_placeholder": "Select Local Center",
         "view_all": "View All",
         "existing_venues": "Existing Venues",
