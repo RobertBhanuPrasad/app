@@ -27,7 +27,6 @@ export default function index() {
     };
     const { queryResult } = useSelect(selectQuery);
     const participantData = queryResult?.data?.data[0];
-    console.log(queryResult,'participantData')
     const [selectedTab, setSelectedTab] = useState("Participants Information");
     const tabTriggers = [
         {
@@ -67,6 +66,61 @@ export default function index() {
             id: "UTM",
         },
     ];
+    // TODO: need to integrated with efficient tabs component
+    // const tabs = [
+    //     {
+    //         id: 0,
+    //         label: "Participants Information ",
+    //         content: (
+    //             <div>
+    //                 <ParticipantInformation data={participantData} />
+    //             </div>
+    //         ),
+    //     },
+    //     {
+    //         id: 1,
+    //         label: "Course Fees",
+    //         content: (
+    //             <div>
+    //                 <CourseFee data={participantData} />
+    //             </div>
+    //         ),
+    //     },
+    //     {
+    //         id: 2,
+    //         label: "Accomodation Details",
+    //         content: (
+    //             <div>
+    //                 {" "}
+    //                 <AccomodationDetails data={participantData} />
+    //             </div>
+    //         ),
+    //     },
+    //     {
+    //         id: 3,
+    //         label:"Payment Details",
+    //         content: (
+    //             <div>
+    //                 <PaymentDetails participantData={participantData} />
+    //             </div>
+    //         ),
+    //     },
+    //     {
+    //         id:4,
+    //         label:'Transaction Details',
+    //         content:(
+    //             <div>
+    //                 <ViewParticipantTransactionDetails participantId={12} />
+    //             </div>
+    //         )
+    //     },
+    //     {
+    //         id: 5,
+    //         label: "UTM Parameters",
+    //         content: <ViewParticipantUtmParameters participantId={12} />,
+    //     },
+    // ];
+
     const methods = useForm({
         refineCoreProps: {
             action: "edit", // or clone
