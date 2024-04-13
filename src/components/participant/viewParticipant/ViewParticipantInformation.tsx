@@ -44,6 +44,7 @@ function ViewParticipantInformation({ participantId }: any) {
         : '-'
     },
     { key: 'Phone Number', value: contactData?.mobile_country_code + ' ' + contactData?.mobile ?? '-' },
+    //TODO: Need to implement Do not call, Do not message in next phase
     { key: 'Home/Work Phone', value: contactData?.work_phone ?? '-' },
     { key: 'Occupation', value: contactData?.occupation ?? '-' },
     { key: 'Email', value: contactData?.email ?? '-' },

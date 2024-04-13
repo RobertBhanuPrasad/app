@@ -23,15 +23,8 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
       <p className="text-[18px] font-[600] ">Email Delivery Logs</p>
       <div>
         <BaseTable
-          current={1}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
           checkboxSelection={false}
-          setCurrent={() => {}}
-          pageCount={10}
           total={participantEmailDeliveryLogsData?.data?.email_delivery_logs_section?.length || 0}
-          pageSize={10}
-          setPageSize={() => {}}
           pagination={false}
           tableStyles={{
             table: '',

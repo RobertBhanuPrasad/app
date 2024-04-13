@@ -113,7 +113,7 @@ export const formatDateAndTime = (dateString: any) => {
 
   // Array of month names
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
+  //TODO:use english string statically
   // Format date in "MMM DD, YYYY" format
   const formattedDate = months[date.getMonth()] + ' ' + padZero(date.getDate()) + ', ' + date.getFullYear()
 

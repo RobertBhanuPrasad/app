@@ -26,7 +26,7 @@ function ViewParticipantCourseInformation({ participantId }: any) {
       key: 'CourseName',
       value: participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
         ? participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
-        : participantCourseData?.data?.program_id?.program_type_id?.name
+        : '-'
     },
     { key: 'Teachers', value: teacherFullNames },
     { key: 'Attendance Status', value: participantCourseData?.data?.participant_attendence_status_id?.value },

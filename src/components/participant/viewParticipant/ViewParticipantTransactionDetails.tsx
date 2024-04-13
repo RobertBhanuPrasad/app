@@ -48,15 +48,8 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
       <div className="!w-[1133px] rounded-[10px]">
         {/* BaseTable component for rendering table */}
         <BaseTable
-          current={current}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
           checkboxSelection={false}
-          setCurrent={setCurrent}
-          pageCount={pageCount}
           total={participantTransactionDetailsData?.data?.total || 0} // Total number of items
-          pageSize={pageSize}
-          setPageSize={setPageSize}
           pagination={false} // Enable pagination
           tableStyles={{
             table: ' !rounded-3xl rounded-md', // Custom table styles

@@ -17,21 +17,13 @@ function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
   // Fetching participant registration data
   const { data: participantCustomerDeviceDetailsData, isLoading, isError } = useOne(query)
 
-  const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
       <p className="text-[18px] font-[600]">Customer Device Details</p>
       <div>
         <BaseTable
-          current={1}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
           checkboxSelection={false}
-          setCurrent={() => {}}
-          pageCount={10}
           total={participantCustomerDeviceDetailsData?.data?.customer_device_details_section?.length || 0}
-          pageSize={10}
-          setPageSize={() => {}}
           pagination={false}
           tableStyles={{
             table: '',
