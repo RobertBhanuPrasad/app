@@ -592,7 +592,7 @@ const SuccessModalOpen = () => {
   );
 };
 
-const ActionsDropDown = ({ courseData }: any) => {
+export const ActionsDropDown = ({ courseData }: any) => {
   const { data: loginUserData }: any = useGetIdentity();
 
   const router = useRouter();
