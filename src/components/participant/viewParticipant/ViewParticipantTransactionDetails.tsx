@@ -1,5 +1,6 @@
 import { BaseTable } from "@components/course/findCourse/BaseTable"; // Importing BaseTable component for displaying table
-import { DialogContent } from "@radix-ui/react-dialog";
+import EditPayment from "@components/participants/editParticipant/editPayment";
+import ViewDonationDetails from "@components/participants/editParticipant/viewDonationDetails";
 import { CaretSortIcon } from "@radix-ui/react-icons"; // Importing CaretSortIcon for sorting indicator
 import { useTable } from "@refinedev/core"; // Importing useTable hook for fetching table data
 import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type for defining table columns
@@ -10,11 +11,10 @@ import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
 import { TableHeader, Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button"; // Importing Button component
-import { Dialog, DialogTrigger } from "src/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
     DropdownMenuTrigger,
 } from "src/ui/dropdown-menu"; // Importing components for dropdown menu
 import { formatDateAndTime } from "src/utility/DateFunctions";
@@ -352,11 +352,10 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const editParticipant = () => {};
-            const viewParticipant = () => {};
             const refundTransaction = () => {};
-            const downloadReceipt = () => {};
-            const [editPayment, setEditPayment] = useState(false)
+
+            const [editPayment, setEditPayment] = useState(false);
+            const [viewDonation, setViewDonation] = useState(false);
             return (
                 <div className="flex justify-center text-primary">
                     <DropdownMenu>
@@ -367,47 +366,53 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <div
-                                onClick={() => {
-                                    editParticipant();
-                                }}
-                            >
-                                {" "}
+                            {/* Edit Payment option */}
+                            <div>
                                 <div>
-                                    <Dialog open={editPayment}>
-                                        <DialogTrigger>
-                                            <div onClick={()=>setEditPayment(!editPayment)}>Edit</div>
+                                    <Dialog open={editPayment} onOpenChange={setEditPayment}>
+                                        <DialogTrigger asChild>
+                                            <div
+                                                onClick={() => {
+                                                    setEditPayment(true);
+                                                }}
+                                            >
+                                                Edit
+                                            </div>
                                         </DialogTrigger>
                                         <DialogContent>
-                                            <EditPayment1 />
+                                            <EditPayment setEditPayment={setEditPayment}/>
                                         </DialogContent>
                                     </Dialog>
                                 </div>
-                                {/* <DropdownMenuItem>Edit</DropdownMenuItem> */}
                             </div>
-                            <div
-                                onClick={() => {
-                                    viewParticipant();
-                                }}
-                            >
-                                <DropdownMenuItem>View</DropdownMenuItem>
+                            {/* View Donation option */}
+                            <div>
+                                <div>
+                                    <Dialog open={viewDonation} onOpenChange={setViewDonation}>
+                                        <DialogTrigger asChild>
+                                            <div
+                                                onClick={() => {
+                                                    setViewDonation(true);
+                                                }}
+                                            >
+                                                View
+                                            </div>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <ViewDonationDetails setViewDonation={setViewDonation}/>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
                             </div>
                             <div
                                 onClick={() => {
                                     refundTransaction();
                                 }}
                             >
-                                <DropdownMenuItem>Refund</DropdownMenuItem>
+                                <div>Refund</div>
                             </div>
-                            <div
-                                onClick={() => {
-                                    downloadReceipt();
-                                }}
-                            >
-                                {" "}
-                                <DropdownMenuItem>
-                                    Download receipt
-                                </DropdownMenuItem>
+                            <div>
+                                <div>Download Receipt</div>
                             </div>
                         </DropdownMenuContent>
                     </DropdownMenu>

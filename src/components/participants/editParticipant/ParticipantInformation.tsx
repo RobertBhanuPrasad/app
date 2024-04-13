@@ -8,7 +8,6 @@ export default function ParticipantInformation({ data }) {
             // Add more fields with their default values if needed
         }
     });
-    console.log(formState,data?.participant_id?.memo,"form state")
     // Access the memo field from the form state
     // const { memo } = formState;
     
