@@ -6,31 +6,7 @@ import ViewParticipantTransactionDetails from './ViewParticipantTransactionDetai
 import ViewParticipantUtmParameters from './ViewParticipantUtmParameters'
 
 function SampleTabs({tabs}) {
-  // const tabs = [
-  //   {
-  //     id: 0,
-  //     label: 'Course Information ',
-  //     content: (
-  //       <div>
-  //         {' '}
-  //         <ViewParticipantCourseInformation participantId={12} />
-  //       </div>
-  //     )
-  //   },
-  //   {
-  //     id: 1,
-  //     label: 'Transaction Details',
-  //     content: (
-  //       <div>
-  //         {' '}
-  //         <ViewParticipantTransactionDetails participantId={12} />
-  //       </div>
-  //     )
-  //   },
-  //   { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={12} /> },
-  //   { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={12} /> },
-  //   { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={12} /> }
-  // ]
+
 
   const [activeTab, setActiveTab] = useState(0)
   const tabRefs = useRef([])
