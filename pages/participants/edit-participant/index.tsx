@@ -15,7 +15,7 @@ export default function index() {
     );
     // participant_payment_history contains numerous records of same particpant, getting the latest history record
     // TODO:replace value with participant_id
-    let filter = [{ field: "participant_id", operator: "eq", value: 1 }];
+    let filter = [{ field: "participant_id", operator: "eq", value: 2 }];
     let sorter = [{ field: "created_at", order: "desc" }];
     const selectQuery: any = {
         resource: "participant_payment_history",
@@ -27,6 +27,7 @@ export default function index() {
     };
     const { queryResult } = useSelect(selectQuery);
     const participantData = queryResult?.data?.data[0];
+    console.log(queryResult,'participantData')
     const [selectedTab, setSelectedTab] = useState("Participants Information");
     const tabTriggers = [
         {
@@ -111,7 +112,6 @@ export default function index() {
 
     return (
         <div>
-            index
             <Tabs
                 defaultValue="Participants Information"
                 onValueChange={(val: any) => {
