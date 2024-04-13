@@ -563,7 +563,7 @@ const HeaderSection = () => {
               </div>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center p-10">
+          <PopoverContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center p-8">
             <DateRangePickerComponent
               setOpen={setOpen}
               value={RegistrationDate}
@@ -593,7 +593,7 @@ const HeaderSection = () => {
               className="flex flex-row justify-between w-[192px] h-10"
               disabled={selectedTableRows > 0 ? false : true}
             >
-              Records Selected
+              Bulk Actions
               <CountComponent count={selectedTableRows} />
               <DropDown />
             </Button>
@@ -644,7 +644,7 @@ const HeaderSection = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className=" w-full">
-            <div className="flex flex-col gap-4 max-h-[300px] w-full overflow-y-auto scrollbar text-[#333333]">
+            <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
               {bulkActions == "attendance"
                 ? attendanceOptions?.map((record: any) => (
                     <DropdownMenuItem
