@@ -14,12 +14,11 @@ export default function EditPayment({setEditPayment}) {
     const selectQuery: any = {
         resource: "participant_payment_history",
         meta: {
-            select: "currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
+            select: "currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,first_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
         },
         filters: filter,
         sorters: sorter,
     };
-
     const { queryResult } = useSelect(selectQuery);
     const data = queryResult?.data?.data[0];
    
@@ -85,58 +84,8 @@ export default function EditPayment({setEditPayment}) {
                                 </form>
                             </FormProvider>
                         
-                    {/* </DialogContent>
-                </Dialog> */}
-=======
->>>>>>> 658edc4ad13c2673520d925b0506157fbffb63f5
-                {/* <Popover>
-                    <PopoverTrigger>
-                        <div 
-                        onClick={() => setEditPayment(true)}
-                        >
-                            {trigger}
-                        </div>
-                    </PopoverTrigger>
-                    {editPayment && (
-                        <PopoverContent className="w-[637px]"> */}
-                            <FormProvider {...methods}>
-                                <form autoComplete="off">
-                                    <div>
-                                        <EditPaymentForm
-                                            setEditPayment={setEditPayment}
-                                            paymentData={data}
-                                        />
-                                        <div className="flex justify-center gap-6">
-                                            <div>
-                                                <Button onClick={() => setEditPayment(false)} className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold">
-                                                    Cancel
-                                                </Button>
-                                            </div>
-                                            <div>
-                                                <Button
-                                                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
-                                                    onClick={handleSubmit(
-                                                        onSubmit
-                                                    )}
-                                                >
-                                                    Save
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </FormProvider>
-<<<<<<< HEAD
-                        </PopoverContent>
-            )}
-                </Popover> */}
-            {/* </div> */}
-=======
-                        {/* </PopoverContent> */}
-                    {/* )} */}
-                {/* </Popover> */}
-            </div>
->>>>>>> 658edc4ad13c2673520d925b0506157fbffb63f5
-        </div>
+                    </div>
+
+        // </div>
     );
 }

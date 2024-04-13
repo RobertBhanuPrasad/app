@@ -23,14 +23,7 @@ export default function ViewDonationDetails() {
 
     return (
         <div>
-            {/* <Popover>
-                <PopoverTrigger>
-                    <Button onClick={() => setOpen(true)}>
-                        View Dontaion Details
-                    </Button>
-                </PopoverTrigger>
-                {open && (
-                    <PopoverContent className="w-[993px]"> */}
+            
                         <div>
                             <div className="flex justify-end">
                                 <div
@@ -330,9 +323,6 @@ export default function ViewDonationDetails() {
                                 </Button>
                             </div>
                         </div>
-                    {/* </PopoverContent>
-                )}
-            </Popover> */}
         </div>
     );
 }

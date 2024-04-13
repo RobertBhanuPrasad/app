@@ -101,12 +101,6 @@ export default function EditPaymentForm({ paymentData }) {
         <div>
             <div>
                 <div className="flex justify-end ">
-                    <div
-                        // onClick={() => setEditPayment(false)}
-                        className="cursor-pointer"
-                    >
-                        <SimpleCross />
-                    </div>
                 </div>
                 <div className="flex justify-center text-[24px] font-semibold ">
                     Edit Payment
