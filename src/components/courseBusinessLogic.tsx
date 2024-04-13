@@ -2,7 +2,8 @@ import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
   PARTICIPANTS_TAB,
-  REVENUE_SUMMARY_TAB
+  REVENUE_SUMMARY_TAB,
+  VIEW_COURSE_ACCOUNTING_FORM_TAB
 } from 'src/constants/CourseConstants'
 import { COURSE_ACCOUNTING_STATUS, PROGRAM_STATUS, USER_ROLE } from 'src/constants/OptionLabels'
 import {
@@ -649,6 +650,7 @@ export const handleTabsBasedOnStatus = (courseStatusId: any, tabIndex: any) => {
     if (PARTICIPANTS_TAB == tabIndex) return false
     if (REVENUE_SUMMARY_TAB == tabIndex) return false
     if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
+    if(VIEW_COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
     else return true
     //Course status id is Pending then course details tab is enabled
   } else if (courseStatusId == coursePendingReviewStatusId) {
@@ -670,6 +672,7 @@ export const handleTabsBasedOnStatus = (courseStatusId: any, tabIndex: any) => {
     if (PARTICIPANTS_TAB == tabIndex) return false
     if (REVENUE_SUMMARY_TAB == tabIndex) return false
     if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
+    if (VIEW_COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
     else return true
     //Course status id is Completed then course details tab,participant tab,revenue summary tab, course accounting tabs are enabled
   } else if (courseStatusId == courseFullStatusId) {
@@ -677,6 +680,7 @@ export const handleTabsBasedOnStatus = (courseStatusId: any, tabIndex: any) => {
     if (PARTICIPANTS_TAB == tabIndex) return false
     if (REVENUE_SUMMARY_TAB == tabIndex) return false
     if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
+    if (VIEW_COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
     else return true
   }
 }
@@ -703,3 +707,79 @@ export const getCourseStatusColorBasedOnStatusId = (statusId: number) => {
   // If status ID does not match any known status, return undefined
   // This may indicate an invalid or unknown status ID
 }
+
+
+/**
+ * Function to determine whether to display course accounting form or view course accounting form.
+ * @param {any} courseStatusId - The ID representing the course status.
+ * @param {any} courseAccountingStatusId - The ID representing the accounting status of the course.
+ * @returns boolean value
+ */
+export const isViewCourseAccountingTabDisplay = (
+  courseStatusId: any,
+  courseAccountingStatusId: any
+) => {
+  // Getting the ID for the active course status
+  const courseActiveStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    ACTIVE
+  )?.id;
+
+  // Getting the ID for the full course status
+  const courseFullStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    FULL
+  )?.id;
+
+  // Getting the ID for the completed course status
+  const courseCompletedStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    COMPLETED
+  )?.id;
+
+  // Getting the ID for the not submitted accounting status
+  const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(
+    COURSE_ACCOUNTING_STATUS,
+    NOT_SUBMITTED
+  )?.id;
+
+  // Getting the ID for the rejected accounting status
+  const accountingRejectedStatusId = getOptionValueObjectByOptionOrder(
+    COURSE_ACCOUNTING_STATUS,
+    REJECTED
+  )?.id;
+
+  // Getting the ID for the closed accounting status
+  const accountingClosedStatusId = getOptionValueObjectByOptionOrder(
+    COURSE_ACCOUNTING_STATUS,
+    CLOSED
+  )?.id;
+
+  // Getting the ID for the pending review accounting status
+  const accountingPendingStatusId = getOptionValueObjectByOptionOrder(
+    COURSE_ACCOUNTING_STATUS,
+    ACCOUNTING_PENDING_REVIEW
+  )?.id;
+
+  // Check if the course status is active, completed, or full
+  if (
+    courseStatusId === courseActiveStatusId ||
+    courseStatusId === courseCompletedStatusId ||
+    courseStatusId === courseFullStatusId
+  ) {
+    // If the accounting status is pending review or closed, return true
+    if (
+      courseAccountingStatusId === accountingPendingStatusId ||
+      courseAccountingStatusId === accountingClosedStatusId
+    ) {
+      return true;
+    }
+    // If the accounting status is not submitted or rejected, return false
+    if (
+      courseAccountingStatusId === accountingNotSubmittedStatusId ||
+      courseAccountingStatusId === accountingRejectedStatusId
+    ) {
+      return false;
+    }
+  }
+};
