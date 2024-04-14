@@ -187,6 +187,7 @@ export default function TransactionActivity({transactionHistory}) {
                   Time Stamp:
                 </span>
                 <span className="font-normal text-base leading-5">
+                  {/* // TODO:  Update this with function to display in proper format , praveen has already done it // */}
                   {transaction.created_at}
                 </span>
               </div>
@@ -211,6 +212,9 @@ export default function TransactionActivity({transactionHistory}) {
                         : "#EC7357",
                   }}
                 >
+                  
+                    {/* // TODO:  Updated this transaction_status_id's value */}
+
                   {transaction.transaction_status_id}
                 </span>
               </div>
