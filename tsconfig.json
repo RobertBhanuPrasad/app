@@ -32,6 +32,6 @@
     "**/*.tsx",
     "pages/test",
     "pages/Courses/ViewCourse/[id]"
-  ],
+, "pages/Courses/ViewCourse/[id]/course-accounting-form"  ],
   "exclude": ["node_modules"]
 }

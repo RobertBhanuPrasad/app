@@ -352,6 +352,7 @@ function index() {
             columns={columns}
             data={programData?.data?.data || []}
             columnPinning={true}
+            columnSelector={true}
           />
         </div>
       </div>

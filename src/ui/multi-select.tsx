@@ -24,6 +24,7 @@ export function MultiSelect({
   getOptionProps,
   error,
   selectBoxStyles,
+  searchBar = true,
 }: {
   placeholder?: string;
   data: DataItem[];
@@ -34,6 +35,12 @@ export function MultiSelect({
   getOptionProps?: any;
   error?: any;
   selectBoxStyles?: any;
+  /**
+   * To hide search bar for mutli select dropdowns we can use this prop
+   * True: by default it will be true only no need to pass
+   * False: it will not display search bar
+   */
+  searchBar?: boolean;
 }) {
   const filteredData = uniqBy(data, "value");
 
@@ -234,10 +241,12 @@ export function MultiSelect({
           {open && (
             <div className="absolute w-full rounded-md border bg-[#FFFFFF] text-popover-foreground shadow-md outline-none animate-in">
               {/* Search input */}
-              <Input
-                onChange={(e) => onSearch(e.target.value)}
-                className="border-none rounded-xl focus:outline-none text-[#999999]"
-              />
+              {searchBar && (
+                <Input
+                  onChange={(e) => onSearch(e.target.value)}
+                  className="border-none rounded-xl focus:outline-none text-[#999999]"
+                />
+              )}
               <hr className="border-[#D6D7D8]" />
 
               {/* Scrollable list of selectable items */}
