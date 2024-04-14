@@ -15,7 +15,7 @@ export default function TransactionActivity({transactionHistory}) {
   console.log("transactionHistory",transactionHistory);
   console.log("transaction total amount",transactionHistory[0]?.total_amount);
   const [open, setOpen] = useState(false);
-  // variable total_amount,created_at,transaction_id,transaction_type_id?.value,transaction_status_id
+
   const transactions = [
     {
       type: "Sale Completed",
@@ -127,11 +127,10 @@ export default function TransactionActivity({transactionHistory}) {
     <Sheet open={open} onClose={() => setOpen(false)}>
       <SheetTrigger onClick={() => setOpen(true)}>
         <div>
-          {/* {transactionType} */}
-          Transaction Type
+          {transactionHistory[0].transaction_type_id.value}
           </div>
       </SheetTrigger>
-      <SheetContent className="w-[470px] h-[763px] rounded-l-xl">
+      <SheetContent className="w-[470px] h-fit rounded-l-xl">
       <SheetHeader className="p-3 text-2xl font-semibold flex flex-row">
               <div className="flex justify-between items-center flex-grow">
                 <div className="text-2xl font-semibold">Transaction Activity</div>
@@ -144,74 +143,14 @@ export default function TransactionActivity({transactionHistory}) {
               </div>
             </SheetHeader>
             <Separator />
-    {/* <div className="m-l-5 p-t-10">
-      {transactions.map((transaction, index) => (
-        <div key={index} className="flex flex-row gap-4">
-          <div className="flex flex-col items-center justify-start">
-            <div className="flex">{getTransactionIcon(transaction.type)}</div>
-        {index !== transactions.length - 1 && (
-          <div
-            className={`flex !w-[3px] h-[170px] m-t-2 m-b-2 bg-[${transaction.details.statusColor}]`}
-          ></div>
-        )}
-          </div>
-          <div className="flex flex-col">
-            <div
-              className="flex text-xl font-bold m-b-10"
-              style={{ color: transaction.details.statusColor }}
-            >
-              {transaction.type}
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex">
-                <span className="font-semibold text-base leading-5 pr-2">
-                  Transaction Amount:
-                </span>
-                <span className="font-normal text-base leading-5">
-                  {transaction.details.amount}
-                </span>
-              </div>
-              <div className="flex">
-                <span className="font-semibold text-base leading-5 pr-2">
-                  Time Stamp:
-                </span>
-                <span className="font-normal text-base leading-5">
-                  {transaction.details.timeStamp}
-                </span>
-              </div>
-              <div className="flex">
-                <span className="font-semibold text-base leading-5 pr-2">
-                  Transaction id:
-                </span>
-                <span className="font-normal text-base leading-5">
-                  {transaction.details.transactionId}
-                </span>
-              </div>
-              <div className="flex">
-                <span className="font-semibold text-base leading-5 pr-2">
-                  Transaction Status:
-                </span>
-                <span
-                  className="font-normal text-base leading-5 text-[#FF6D6D]"
-                  style={{ color: transaction.details.statusColor }}
-                >
-                  {transaction.details.status}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div> */}
 
 <div className="m-l-5 p-t-10">
       {transactionHistory.map((transaction, index) => (
         <div key={index} className="flex flex-row gap-4">
           <div className="flex flex-col items-center justify-start">
             <div className="flex">{getTransactionIcon(transaction.transaction_type_id.value)}</div>
-        {index !== transactions.length - 1 && (
+        {index !== transactionHistory.length - 1 && (
           <div
-            // className={`flex !w-[3px] h-[170px] m-t-2 m-b-2 bg-[${transaction.details.statusColor}]`}
             className={`flex !w-[3px] h-[170px] m-t-2 m-b-2`}
             style={{
               background:
@@ -280,7 +219,6 @@ export default function TransactionActivity({transactionHistory}) {
         </div>
       ))}
     </div>
-    {/* <SheetFooter> */}
     <div className="flex justify-center p-t-5">
     <Button
                   className="font-bold"
@@ -289,7 +227,6 @@ export default function TransactionActivity({transactionHistory}) {
                   Close
                 </Button>
     </div>
-    {/* </SheetFooter> */}
     </SheetContent>
     </Sheet>
   );
