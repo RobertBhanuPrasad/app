@@ -4,7 +4,7 @@ export const handleEditParticipantValues=async(participantId:number)=>{
     const { data, error } = await supabaseClient
     .from("participant_payment_history")
     .select(
-        "id,participant_id!inner(id,contact_id!inner(full_name),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,participant_code,participant_attendence_status_id,discount_code),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee,total_amount",
+        "id,participant_id!inner(id,program_id,contact_id!inner(full_name),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,participant_code,participant_attendence_status_id,discount_code),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee,total_amount",
     )
     .eq("id", participantId); 
 
@@ -29,11 +29,12 @@ export const getDefaultValues = async (data:ParticipantPaymentHistoryDataBaseTyp
         defaultValues.memo = data.participant_id.memo;
 
     // transaction_fee_level_id
-    if (data.participant_id?.transaction_fee_level_id)
-        if (data.participant_id.transaction_fee_level_id && typeof data.participant_id.transaction_fee_level_id === 'object') {
-            defaultValues.transaction_fee_level_id = data.participant_id.transaction_fee_level_id.value;
-        }
-
+    if (data.transaction_fee_level_id)
+       defaultValues.transaction_fee_level_id = data.transaction_fee_level_id.value;
+     
+// program_id
+if(data.participant_id.program_id)
+    defaultValues.program_id=data.participant_id.program_id
     // created_at
     if (data.participant_id?.created_at)
         defaultValues.created_at = data.participant_id.created_at;

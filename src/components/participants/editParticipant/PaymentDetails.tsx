@@ -1,6 +1,6 @@
 import Star from "@public/assets/star";
 import { useList, useSelect } from "@refinedev/core";
-import { useController } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Input } from "src/ui/input";
@@ -13,11 +13,31 @@ import {
     SelectValue,
 } from "src/ui/select";
 
-export default function PaymentDetails({ participantData }) {
+export default function PaymentDetails() {
+    const { getValues } = useFormContext();
+    const FormData = getValues();
     const {
         field: { value: participant_code, onChange: specialCodeChange },
     } = useController({
         name: "participant_code",
+        // defaultValue: participantData?.participant_id?.discount_code,
+    });
+    const {
+        field: { value: expense_fee},
+    } = useController({
+        name: "expense_fee",
+        // defaultValue: participantData?.participant_id?.discount_code,
+    });
+    const {
+        field: { value: accommodation_fee},
+    } = useController({
+        name: "accommodation_fee",
+        // defaultValue: participantData?.participant_id?.discount_code,
+    });
+    const {
+        field: { value: total_amount},
+    } = useController({
+        name: "total_amount",
         // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
@@ -27,8 +47,6 @@ export default function PaymentDetails({ participantData }) {
         },
     } = useController({
         name: "participant_attendence_status_id",
-        // defaultValue:
-        //     participantData?.participant_id?.participant_attendence_status_id,
     });
     const { data } = useList<any>({
         resource: "option_labels",
@@ -49,7 +67,7 @@ export default function PaymentDetails({ participantData }) {
             {
                 field: "option_label_id",
                 operator: "eq",
-                value: data?.data[0]?.id,
+                value:data?.data[0]?.id,
             },
         ],
     });
@@ -64,10 +82,9 @@ export default function PaymentDetails({ participantData }) {
                         Course Fee
                     </Text>
                     <Text className="text-[16px] font-semibold">
-                        {participantData?.currency_code
-                            ? participantData?.currency_code
-                            : ""} {participantData?.expense_fee
-                            ? participantData?.expense_fee
+                    {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
+                         {expense_fee
+                            ? expense_fee
                             : "-"}
                     </Text>
                 </div>
@@ -76,10 +93,9 @@ export default function PaymentDetails({ participantData }) {
                         Accomodation Fee
                     </Text>
                     <Text className="text-[16px] font-semibold">
-                        {participantData?.currency_code
-                            ? participantData?.currency_code
-                            : ""} {participantData?.accommodation_fee
-                            ? participantData?.accommodation_fee
+                    {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
+                       {accommodation_fee
+                            ? accommodation_fee
                             : "-"}
                     </Text>
                 </div>
@@ -88,10 +104,9 @@ export default function PaymentDetails({ participantData }) {
                         Total Fee {`(Includes VAT)`}
                     </Text>
                     <Text className="text-[16px] font-semibold">
-                        {participantData?.currency_code
-                            ? participantData?.currency_code
-                            : ""} {participantData?.participant_id?.total_amount
-                            ? participantData?.participant_id?.total_amount
+                    {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
+                        {total_amount
+                            ? total_amount
                             : "-"}
                     </Text>
                 </div>

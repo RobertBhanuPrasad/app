@@ -14,6 +14,7 @@ export const editParticipantStore = create((set) => ({
     accommodation_snore: false,
     roommate_snore: false,
     participant_code: '',
+    program_id:0,
     accommodation_fee: 0,
     roommate_preferences_1: '',
     roommate_preferences_2: '',
@@ -77,6 +78,11 @@ export const editParticipantStore = create((set) => ({
         set(() => ({
             roommate_snore: data
         }));
+    },
+    setProgramId:(data:number)=>{
+        set(()=>({
+            program_id:data
+        }))
     },
     setParticipantCode: (data: string) => {
         set(() => ({

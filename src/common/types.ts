@@ -788,6 +788,7 @@ interface NewCourseFormFieldTypes {
   accommodation_snore?: boolean;
   roommate_snore?: boolean;
   participant_code?: string;
+  program_id?:number
   accommodation_fee?: number;
   roommate_preferences_1?: string;
   roommate_preferences_2?: string;

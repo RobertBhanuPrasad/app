@@ -1,4 +1,5 @@
-import { useController } from "react-hook-form";
+import { useList } from "@refinedev/core";
+import { useController, useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
@@ -12,7 +13,9 @@ import {
 } from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
 
-export default function AccomodationDetails({ data }) {
+export default function AccomodationDetails() {
+    const { getValues } = useFormContext();
+    const FormData = getValues();
     const {
         field: {
             value: accommodation_type_id,
@@ -27,42 +30,57 @@ export default function AccomodationDetails({ data }) {
         name: "accommodation_snore",
     });
     const {
+        field: { value: accommodation_fee },
+    } = useController({
+        name: "accommodation_fee",
+    });
+    const {
+        field: { value: roommate_preferences_1 },
+    } = useController({
+        name: "roommate_preferences_1",
+    });
+    const {
+        field: { value: roommate_preferences_2 },
+    } = useController({
+        name: "roommate_preferences_2",
+    });
+    const {
+        field: { value: roommate_preferences_3 },
+    } = useController({
+        name: "roommate_preferences_3",
+    });
+    const {
         field: { value: roommate_snore, onChange: roomateSnoreChange },
     } = useController({
         name: "roommate_snore",
-        defaultValue: data?.participant_id?.roommate_snore,
     });
     // TODO: need to get the api data for accomodation types for particular program_id
-    const accommodationOptions = [
-        {
-            label: "single sharing",
-            value: 1,
-        },
-        {
-            label: "double sharing(men)",
-            value: 2,
-        },
-        {
-            label: "double sharing(women)",
-            value: 3,
-        },
-        {
-            label: "triple sharing",
-            value: 4,
-        },
-        {
-            lable: "four sharing",
-            value: 5,
-        },
-    ];
-    return (
+
+    const { data:accommodationOptions } = useList<any>({
+        resource: "program_accommodations",
+        filters: [
+            {
+                field: "program_id",
+                operator: "eq",
+                value: FormData?.program_id,
+            },
+        ],
+        meta:{
+            select:'accommodation_type_id!inner(id,name)'
+        }
+    });
+       return (
         <div id="Accomodation">
             <Text className="font-semibold text-[18px] py-[25px]">
                 Accomodation Details
             </Text>
             <div className="flex gap-4">
                 <div className="text-[#999999] gap-2">
-                    <div><Text className="text-[#999999] text-[14px]">Accomodation Type</Text></div>
+                    <div>
+                        <Text className="text-[#999999] text-[14px]">
+                            Accomodation Type
+                        </Text>
+                    </div>
                     <div className="py-[5px]">
                         {/* TODO: need to disable this accommodation type select */}
                         <Select
@@ -76,15 +94,15 @@ export default function AccomodationDetails({ data }) {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItems>
-                                    {accommodationOptions?.map(
+                                    {accommodationOptions?.data?.map(
                                         (option: any, index: number) => (
                                             <>
                                                 <SelectItem
-                                                    key={option.value}
-                                                    value={option.value}
+                                                    key={option.accommodation_type_id.id}
+                                                    value={option.accommodation_type_id.id}
                                                     className="h-[44px]"
                                                 >
-                                                    {option.label}
+                                                    {option.accommodation_type_id.name}
                                                 </SelectItem>
                                             </>
                                         )
@@ -95,20 +113,22 @@ export default function AccomodationDetails({ data }) {
                     </div>
                 </div>
                 <div className="w-[303px] ">
-                    <Text className="text-[#999999] text-[14px]">Fee per Person</Text>
+                    <Text className="text-[#999999] text-[14px]">
+                        Fee per Person
+                    </Text>
                     <Text className="py-[5px] font-semibold">
-                        {data?.currency_code ? data?.currency_code : "-"}{" "}
-                        {data?.accommodation_fee
-                            ? data?.accommodation_fee
-                            : "-"}
+                        {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
+                        {accommodation_fee ? accommodation_fee : "-"}
                     </Text>
                 </div>
                 <div className="text-[#999999] ">
-                    <Text className="text-[#999999] text-[14px]">Roommate Preferences 1</Text>
+                    <Text className="text-[#999999] text-[14px]">
+                        Roommate Preferences 1
+                    </Text>
                     <Textarea
                         value={
-                            data?.participant_id?.roommate_preferences_1
-                                ? data?.participant_id?.roommate_preferences_1
+                            roommate_preferences_1
+                                ? roommate_preferences_1
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
@@ -117,30 +137,37 @@ export default function AccomodationDetails({ data }) {
             </div>
             <div className="flex gap-6 py-[10px]">
                 <div className="text-[#999999] ">
-                    <Text className="text-[#999999] text-[14px]">Roommate Preferences 2</Text>
+                    <Text className="text-[#999999] text-[14px]">
+                        Roommate Preferences 2
+                    </Text>
                     <Textarea
                         value={
-                            data?.participant_id?.roommate_preferences_2
-                                ? data?.participant_id?.roommate_preferences_2
+                            roommate_preferences_2
+                                ? roommate_preferences_2
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
                     />
                 </div>
                 <div className="text-[#999999] ">
-                    <Text className="text-[#999999] text-[14px]">Roommate Preferences 3</Text>
+                    <Text className="text-[#999999] text-[14px]">
+                        Roommate Preferences 3
+                    </Text>
                     <Textarea
                         value={
-                            data?.participant_id?.roommate_preferences_3
-                                ? data?.participant_id?.roommate_preferences_3
+                            roommate_preferences_3
+                                ? roommate_preferences_3
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
                     />
                 </div>
                 <div className="text-[#999999] ">
-                    <Text className="text-[#999999] text-[14px]">Do you snore?</Text>
-                    <div className=""></div><RadioGroup
+                    <Text className="text-[#999999] text-[14px]">
+                        Do you snore?
+                    </Text>
+                    <div className=""></div>
+                    <RadioGroup
                         value={accommodation_snore}
                         onValueChange={(value) => snoreChange(value)}
                     >
@@ -162,7 +189,9 @@ export default function AccomodationDetails({ data }) {
                 </div>
             </div>
             <div className="text-[#999999] py-[10px]">
-                <Text className="text-[#999999] text-[14px] py-[5px]">Would you object to having room mate who snores?</Text>
+                <Text className="text-[#999999] text-[14px] py-[5px]">
+                    Would you object to having room mate who snores?
+                </Text>
                 <RadioGroup
                     value={roommate_snore}
                     onValueChange={(value) => roomateSnoreChange(value)}

@@ -69,7 +69,7 @@ export default function EditParticipantTabs() {
             label: "Course Fees",
             content: (
                 <div>
-                    <CourseFee data={participantData} />
+                    <CourseFee />
                 </div>
             ),
         },
@@ -78,7 +78,7 @@ export default function EditParticipantTabs() {
             label: "Accommodation Details",
             content: (
                 <div>
-                    <AccomodationDetails data={participantData} />
+                    <AccomodationDetails />
                 </div>
             ),
         },
@@ -87,7 +87,7 @@ export default function EditParticipantTabs() {
             label: "Payment Details",
             content: (
                 <div>
-                    <PaymentDetails participantData={participantData} />
+                    <PaymentDetails />
                 </div>
             ),
         },

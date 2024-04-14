@@ -1,6 +1,7 @@
 import Form from "@components/Formfield";
 import EditParticipantTabs from "@components/participants/editParticipant/EditParticipantTabs";
 import { handleEditParticipantValues } from "@components/participants/editParticipant/EditParticipantUtil";
+import LoadingIcon from "@public/assets/LoadingIcon";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -27,10 +28,15 @@ export default function Index() {
     return (
         <div>
             <div>
-                <Form onSubmit={() => {}} defaultValues={defaultValues}>
-                    <EditParticipantTabs />
-                </Form>
+                {!defaultValues || Object.keys(defaultValues).length === 0 ? (
+                    <LoadingIcon />
+                ) : (
+                    <Form onSubmit={() => {}} defaultValues={defaultValues}>
+                        <EditParticipantTabs />
+                    </Form>
+                )}
             </div>
         </div>
     );
+    
 }

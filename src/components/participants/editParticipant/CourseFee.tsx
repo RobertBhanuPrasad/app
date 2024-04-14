@@ -1,7 +1,28 @@
 import { formatDateString } from "src/utility/DateFunctions";
 import { Text } from "src/ui/TextTags";
+import { useController } from "react-hook-form";
 
-export default function CourseFee({ data }) {
+export default function CourseFee() {
+    const {
+        field: { value: created_at },
+    } = useController({
+        name: "created_at",
+    });
+    const {
+        field: { value: transaction_fee_level_id },
+    } = useController({
+        name: "transaction_fee_level_id",
+    });
+    const {
+        field: { value: currency_code },
+    } = useController({
+        name: "currency_code",
+    });
+    const {
+        field: { value: total_amount },
+    } = useController({
+        name: "total_amount",
+    });
     return (
         <div className="" id="Course">
             <Text className="font-semibold text-[18px] pt-[25px]">
@@ -12,9 +33,9 @@ export default function CourseFee({ data }) {
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px]">Registartion Date</Text>
                     <Text className="font-semibold text-[16px]">
-                        {data?.participant_id?.created_at
+                        {created_at
                             ? formatDateString(
-                                  new Date(data?.participant_id?.created_at)
+                                  new Date(created_at)
                               )
                             : "-"}
                     </Text>
@@ -22,15 +43,15 @@ export default function CourseFee({ data }) {
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px] ">Fee Level</Text>
                     <Text className="font-semibold text-[16px]">
-                        {data?.transaction_fee_level_id?.value
-                            ? data?.transaction_fee_level_id?.value
+                        {transaction_fee_level_id
+                            ? transaction_fee_level_id
                             : "-"}
                     </Text>
                 </div>
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px] ">Course Fee</Text>
                     <Text className="font-semibold text-[16px]">
-                        {data?.currency_code?data?.currency_code:'-'} {data?.participant_id?.total_amount?data?.participant_id?.total_amount:'-'}
+                        {currency_code?currency_code:'-'} {total_amount?total_amount:'-'}
                     </Text>
                 </div>
             </div>
