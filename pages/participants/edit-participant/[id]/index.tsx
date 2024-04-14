@@ -31,6 +31,7 @@ export default function Index() {
                 {!defaultValues || Object.keys(defaultValues).length === 0 ? (
                     <LoadingIcon />
                 ) : (
+                    // Add schema for form validations
                     <Form onSubmit={() => {}} defaultValues={defaultValues}>
                         <EditParticipantTabs />
                     </Form>

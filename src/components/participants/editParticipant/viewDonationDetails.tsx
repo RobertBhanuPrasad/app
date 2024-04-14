@@ -1,13 +1,13 @@
-import { useList, useSelect } from "@refinedev/core";
-import { useRouter } from "next/router";
+import { useList } from "@refinedev/core";
+import { useController, useFormContext } from "react-hook-form";
+import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
-import { TableHeader, Text } from 'src/ui/TextTags'
 
 export default function ViewDonationDetails({ setViewDonation }) {
-    const { id } = useRouter();
-   
-    const queryResult  = useList({
+    const { getValues } = useFormContext();
+    const formData = getValues();
+    const queryResult = useList({
         resource: "participant_payment_history",
         meta: {
             select: "currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
@@ -16,7 +16,21 @@ export default function ViewDonationDetails({ setViewDonation }) {
         filters: [{ field: "participant_id", operator: "eq", value: 2 }],
         sorters: [{ field: "created_at", order: "desc" }],
     });
-    console.log(queryResult)
+    const {
+        field: { value: email },
+    } = useController({ name: "email" });
+    const {
+        field: { value: mobile },
+    } = useController({ name: "mobile" });
+    const {
+        field: { value: date_of_birth },
+    } = useController({ name: "date_of_birth" });
+    const {
+        field: { value: street_address },
+    } = useController({ name: "street_address" });
+    const {
+        field: { value: postal_code },
+    } = useController({ name: "postal_code" });
     const data = queryResult?.data?.data[0];
     return (
         <div>
@@ -44,7 +58,9 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999] text-[14px]">Amount</Text>
+                                <Text className="text-[#999999] text-[14px]">
+                                    Amount
+                                </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.currency_code && data?.currency_code}{" "}
                                     {data?.total_amount
@@ -135,11 +151,12 @@ export default function ViewDonationDetails({ setViewDonation }) {
                     <div className="flex flex-col gap-4 py-[20px]">
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
-                                <Text className="text-[#999999] text-[14px]">Name</Text>
+                                <Text className="text-[#999999] text-[14px]">
+                                    Name
+                                </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id?.full_name
-                                        ? data?.participant_id?.contact_id
-                                              ?.full_name
+                                    {formData?.full_name
+                                        ? formData.full_name
                                         : "-"}
                                 </Text>
                             </div>
@@ -149,30 +166,27 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Date of Birth
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id
-                                        ?.date_of_birth
+                                    {date_of_birth
                                         ? formatDateString(
-                                              new Date(
-                                                  data?.participant_id?.contact_id?.date_of_birth
-                                              )
+                                              new Date(date_of_birth)
                                           )
                                         : "-"}
                                 </Text>
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999] text-[14px]">Address</Text>
+                                <Text className="text-[#999999] text-[14px]">
+                                    Address
+                                </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id
-                                        ?.street_address
-                                        ? data?.participant_id?.contact_id
-                                              ?.street_address
-                                        : "-"}
+                                    {street_address ? street_address : "-"}
                                 </Text>
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999] text-[14px]">Country</Text>
+                                <Text className="text-[#999999] text-[14px]">
+                                    Country
+                                </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id
                                         ?.country_id?.name
@@ -189,16 +203,14 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Zip/Postal Code
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id
-                                        ?.postal_code
-                                        ? data?.participant_id?.contact_id
-                                              ?.postal_code
-                                        : "-"}
+                                    {postal_code ? postal_code : "-"}
                                 </Text>
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999] text-[14px]">State</Text>
+                                <Text className="text-[#999999] text-[14px]">
+                                    State
+                                </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id?.state_id
                                         ?.name
@@ -209,7 +221,9 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999] text-[14px]">City</Text>
+                                <Text className="text-[#999999] text-[14px]">
+                                    City
+                                </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id?.city_id
                                         ?.name
@@ -220,24 +234,22 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999] text-[14px]">Mobile</Text>
+                                <Text className="text-[#999999] text-[14px]">
+                                    Mobile
+                                </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id?.mobile
-                                        ? data?.participant_id?.contact_id
-                                              ?.mobile
-                                        : "-"}
+                                    {mobile ? mobile : "-"}
                                 </Text>
                             </div>
                         </div>
 
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
-                                <Text className="text-[#999999] text-[14px]">Email ID</Text>
+                                <Text className="text-[#999999] text-[14px]">
+                                    Email ID
+                                </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id?.email
-                                        ? data?.participant_id?.contact_id
-                                              ?.email
-                                        : "-"}
+                                    {email ? email : "-"}
                                 </Text>
                             </div>
 

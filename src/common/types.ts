@@ -32,6 +32,7 @@ interface ContactDataBaseType {
   last_name?: string
   email?: string
   mobile?: number
+  street_address?:string
   identification_num?: number
   state_id?: number | StateDataBaseType
   city_id?: number | CityDataBaseType
@@ -783,7 +784,11 @@ interface NewCourseFormFieldTypes {
   transaction_fee_level_id?: string;
   created_at?: Date;
   currency_code?: string;
+  email?:string;
+  postal_code?:string;
   total_amount?: number;
+  date_of_birth?:Date;
+  street_address?:string;
   accommodation_type_id?: number|ProgramAccommodationsDataBaseType;
   accommodation_snore?: boolean;
   roommate_snore?: boolean;

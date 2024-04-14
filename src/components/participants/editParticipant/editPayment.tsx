@@ -3,8 +3,8 @@ import { Button } from "src/ui/button";
 
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { useList, useSelect, useUpdate } from "@refinedev/core";
-import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
+import { Text } from "src/ui/TextTags";
 import { Calendar } from "src/ui/calendar";
 import { Checkbox } from "src/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
@@ -16,19 +16,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from "src/ui/select";
-import { TableHeader, Text } from 'src/ui/TextTags'
 import { Textarea } from "src/ui/textarea";
 import { formatDateString } from "src/utility/DateFunctions";
 export default function EditPayment({ setEditPayment }) {
-    const { id } = useRouter();
-    const  queryResult  = useList({
+    const queryResult = useList({
         resource: "participant_payment_history",
         meta: {
             select: "id,currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
         },
         // TODO: replace id with participnat_id
         filters: [{ field: "participant_id", operator: "eq", value: 2 }],
-        sorters:  [{ field: "created_at", order: "desc" }], 
+        sorters: [{ field: "created_at", order: "desc" }],
     });
     const paymentData = queryResult?.data?.data[0];
     const { mutate } = useUpdate();
@@ -57,6 +55,7 @@ export default function EditPayment({ setEditPayment }) {
     } = useController({
         name: "transaction_status_id",
     });
+
     const {
         field: { value: payment_date, onChange: paymentDateOnchange },
     } = useController({
@@ -69,10 +68,27 @@ export default function EditPayment({ setEditPayment }) {
         // defaultValue: paymentData?.payment_method_id?.id,
     });
     const {
-        field: { value: send_payment_confirmation, onChange: emailConfirmatiOnchange },
+        field: { value: transaction_id },
+    } = useController({
+        name: "transaction_id",
+    });
+    const {
+        field: { value: response_message },
+    } = useController({
+        name: "response_message",
+    });
+    const {
+        field: { value: error_message },
+    } = useController({
+        name: "error_message",
+    });
+    const {
+        field: {
+            value: send_payment_confirmation,
+            onChange: emailConfirmatiOnchange,
+        },
     } = useController({
         name: "send_payment_confirmation",
-        // defaultValue: paymentData?.send_payment_confirmation,
     });
 
     // Getting option label for transaction status
@@ -125,7 +141,8 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-
+    const { getValues } = useFormContext();
+    const defaultData = getValues();
     return (
         <div>
             <div>
@@ -144,12 +161,8 @@ export default function EditPayment({ setEditPayment }) {
                                         <div>
                                             <Textarea
                                                 value={
-                                                    paymentData?.participant_id
-                                                        ?.contact_id?.full_name
-                                                        ? paymentData
-                                                              ?.participant_id
-                                                              ?.contact_id
-                                                              ?.full_name
+                                                    defaultData?.full_name
+                                                        ? defaultData?.full_name
                                                         : ""
                                                 }
                                                 className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed"
@@ -193,7 +206,6 @@ export default function EditPayment({ setEditPayment }) {
                                                                             option.label
                                                                         }
                                                                     </SelectItem>
-                                                                   
                                                                 </>
                                                             )
                                                         )}
@@ -209,9 +221,7 @@ export default function EditPayment({ setEditPayment }) {
                                         </Text>
                                         <div>
                                             <Textarea
-                                                value={
-                                                    paymentData?.payment_transaction_id
-                                                }
+                                                value={transaction_id}
                                                 className="!w-[278px] resize-none !important h-[40px]"
                                             />
                                         </div>
@@ -336,9 +346,7 @@ export default function EditPayment({ setEditPayment }) {
                                         </Text>
                                         <div>
                                             <Textarea
-                                                value={
-                                                    paymentData?.response_message
-                                                }
+                                                value={response_message}
                                                 className="!w-[278px] resize-none !important h-[40px]"
                                             />
                                         </div>
@@ -350,7 +358,7 @@ export default function EditPayment({ setEditPayment }) {
                                 <Text className="py-[5px]">Error Message</Text>
                                 <div>
                                     <Textarea
-                                        value={paymentData?.error_message}
+                                        value={error_message}
                                         className=" resize-none !important !h-[40px] !w-[578px]"
                                     />
                                 </div>
