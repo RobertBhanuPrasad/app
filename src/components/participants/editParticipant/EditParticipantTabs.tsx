@@ -51,15 +51,15 @@ export default function EditParticipantTabs() {
         });
     };
 
+    const accommodation=true
     // TODO: need to integrated with efficient tabs component
     // Rendering tabs content through tabs variable
-    const tabs = [
+    let tabs = [
         {
             id: 0,
-            label: "Participants Information ",
+            label: "Participants Information",
             content: (
                 <div>
-                    {" "}
                     <ParticipantInformation />
                 </div>
             ),
@@ -69,17 +69,16 @@ export default function EditParticipantTabs() {
             label: "Course Fees",
             content: (
                 <div>
-                    {" "}
                     <CourseFee data={participantData} />
                 </div>
             ),
         },
         {
             id: 2,
-            label: "Accomodation Details",
+            label: "Accommodation Details",
             content: (
                 <div>
-                    <AccomodationDetails data={participantData} />{" "}
+                    <AccomodationDetails data={participantData} />
                 </div>
             ),
         },
@@ -88,7 +87,6 @@ export default function EditParticipantTabs() {
             label: "Payment Details",
             content: (
                 <div>
-                    {" "}
                     <PaymentDetails participantData={participantData} />
                 </div>
             ),
@@ -102,7 +100,6 @@ export default function EditParticipantTabs() {
                 </div>
             ),
         },
-
         {
             id: 5,
             label: "UTM Parameters",
@@ -113,6 +110,12 @@ export default function EditParticipantTabs() {
             ),
         },
     ];
+    
+    // Check if accommodation should be rendered
+    if (!accommodation) {
+        tabs = tabs.filter(tab => tab.label !== "Accommodation Details");
+    }
+    
 
     return (
         <div onClick={(e) => e.preventDefault()} >
