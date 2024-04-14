@@ -24,7 +24,6 @@ export default function Index() {
             fetchData();
         }
     }, [query?.id]);
-
     return (
         <div>
             <div>

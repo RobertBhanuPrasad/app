@@ -1,3 +1,4 @@
+import Star from "@public/assets/star";
 import { useList, useSelect } from "@refinedev/core";
 import { useController } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
@@ -53,56 +54,59 @@ export default function PaymentDetails({ participantData }) {
         ],
     });
     return (
-        <div className="flex-row" id="Payment">
+        <div className="flex-row pb-[5px]" id="Payment">
             <Text className="font-semibold text-[18px] py-[25px]">
                 Payment Details
             </Text>
             <div className="flex ">
                 <div className="w-[303px]">
-                    <Text className="text-[#999999] ">Course Fee</Text>
-                    <Text className="font-semibold">
+                    <Text className="text-[#999999]  text-[14px] ">
+                        Course Fee
+                    </Text>
+                    <Text className="text-[16px] font-semibold">
                         {participantData?.currency_code
                             ? participantData?.currency_code
-                            : "-"}
-                        {participantData?.expense_fee
+                            : ""} {participantData?.expense_fee
                             ? participantData?.expense_fee
                             : "-"}
                     </Text>
                 </div>
                 <div className="w-[303px]">
-                    <Text className="text-[#999999] ">Accomodation Fee</Text>
-                    <Text className="font-semibold">
+                    <Text className="text-[#999999]  text-[14px]  ">
+                        Accomodation Fee
+                    </Text>
+                    <Text className="text-[16px] font-semibold">
                         {participantData?.currency_code
                             ? participantData?.currency_code
-                            : "-"}
-                        {participantData?.accommodation_fee
+                            : ""} {participantData?.accommodation_fee
                             ? participantData?.accommodation_fee
                             : "-"}
                     </Text>
                 </div>
                 <div className="w-[303px]">
-                    <Text className="text-[#999999] ">
+                    <Text className="text-[#999999]  text-[14px] ">
                         Total Fee {`(Includes VAT)`}
                     </Text>
-                    <Text className="font-semibold">
+                    <Text className="text-[16px] font-semibold">
                         {participantData?.currency_code
                             ? participantData?.currency_code
-                            : "-"}{" "}
-                        {participantData?.participant_id?.total_amount
+                            : ""} {participantData?.participant_id?.total_amount
                             ? participantData?.participant_id?.total_amount
                             : "-"}
                     </Text>
                 </div>
             </div>
-            <div className="flex py-[10px] gap-4">
+            <div className="flex py-[10px] gap-8">
                 <div className="">
-                    <Text className="text-[#999999] ">Enter Special Code</Text>
+                    <Text className="text-[#999999]  text-[14px] ">
+                        Enter Special Code
+                    </Text>
 
-                    <div className="flex">
+                    <div className="flex gap-4">
                         <div>
                             <Input
                                 value={participant_code}
-                                className="w-[278px] !h-[40px] resize-none"
+                                className="w-[178px] !h-[40px] resize-none"
                                 onChange={(val) =>
                                     specialCodeChange(val?.target?.value)
                                 }
@@ -120,8 +124,17 @@ export default function PaymentDetails({ participantData }) {
                         </div>
                     </div>
                 </div>
-                <div className="w-[303px]">
-                    <Text className="text-[#999999] ">Attendance Status</Text>
+                <div className="w-[305px]">
+                    <div className="flex gap-2">
+                        <div>
+                            <Text className="text-[#999999] text-[14px]  ">
+                                Attendance Status
+                            </Text>
+                        </div>
+                        <div>
+                            <Star />
+                        </div>
+                    </div>
                     <div>
                         <Select
                             value={participant_attendence_status_id}
@@ -129,7 +142,7 @@ export default function PaymentDetails({ participantData }) {
                                 attendanceStatusChange(val);
                             }}
                         >
-                            <SelectTrigger className="w-[278px] border text-[#999999] font-semibold !border-[#999999]">
+                            <SelectTrigger className="w-[305px] border text-[#999999] font-semibold !border-[#999999]">
                                 <SelectValue placeholder="Select attendence status" />
                             </SelectTrigger>
                             <SelectContent>

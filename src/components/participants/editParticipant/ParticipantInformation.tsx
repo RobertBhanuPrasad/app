@@ -1,3 +1,4 @@
+import Star from "@public/assets/star";
 import { useController } from "react-hook-form";
 import { Textarea } from "src/ui/textarea";
 import { Text } from "src/ui/TextTags";
@@ -17,15 +18,24 @@ export default function ParticipantInformation() {
             <Text className="font-semibold text-[18px] pt-[25px] ">
                 Participant Details
             </Text>
-            <div className="flex gap-4 py-[20px]">
+            <div className="flex py-[20px]">
                 <div className="w-[303px]">
-                    <Text className="text-[#999999] ">Participants</Text>
-                    <Text>{full_name ? full_name : "-"}</Text>
+                    <Text className="text-[#999999] text-[14px] ">
+                        Participants
+                    </Text>
+                    <Text className="text-[16px] font-semibold">{full_name ? full_name : "-"}</Text>
                 </div>
 
                 <div className="flex">
                     <div className="w-[303px]">
-                        <div>Memo</div>
+                        <div className="flex gap-2">
+                            <div>
+                                <Text>Memo</Text>
+                            </div>
+                            <div>
+                                <Star />
+                            </div>
+                        </div>
 
                         <div>
                             <Textarea

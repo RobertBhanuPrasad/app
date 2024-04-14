@@ -59,7 +59,7 @@ function SampleTabs({tabs}) {
         </div>
         <div className="w-full border-b"></div>
 
-        <div className="py-4">
+        <div className="py-4 px-4">
           {/* Ensure vertical overflow */}
           {tabs.map((tab, index) => (
             <div

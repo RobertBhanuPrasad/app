@@ -12,11 +12,9 @@ import PaymentDetails from "./PaymentDetails";
 import { editParticipantStore } from "src/zustandStore/EditParticipantStore";
 
 export default function EditParticipantTabs() {
-    const { id } = useRouter();
     const { watch, getValues } = useFormContext();
     const formData = watch();
    
-
     // participant_payment_history contains numerous records of same participant, getting the latest history record
         
     const  queryResult  = useList({
@@ -100,7 +98,7 @@ export default function EditParticipantTabs() {
             label: "Transaction Details",
             content: (
                 <div>
-                    <ViewParticipantTransactionDetails participantId={id} />
+                    <ViewParticipantTransactionDetails participantId={2} />
                 </div>
             ),
         },
@@ -110,14 +108,14 @@ export default function EditParticipantTabs() {
             label: "UTM Parameters",
             content: (
                 <div>
-                    <ViewParticipantUtmParameters participantId={id} />
+                    <ViewParticipantUtmParameters participantId={2} />
                 </div>
             ),
         },
     ];
 
     return (
-        <div onClick={(e) => e.preventDefault()}>
+        <div onClick={(e) => e.preventDefault()} >
             
             <SampleTabs tabs={tabs} />
             <div className="flex justify-center gap-4">

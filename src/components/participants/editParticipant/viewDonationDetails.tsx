@@ -32,10 +32,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                     <div className="flex flex-col gap-4 py-[20px]">
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     orgainization
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.organisation_id?.name
                                         ? data?.participant_id?.organisation_id
                                               ?.name
@@ -44,8 +44,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">Amount</Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="text-[#999999] text-[14px]">Amount</Text>
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.currency_code && data?.currency_code}{" "}
                                     {data?.total_amount
                                         ? data?.total_amount
@@ -54,10 +54,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     Donation Type
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.donation_type
                                         ? data?.participant_id?.donation_type
                                         : "-"}
@@ -65,10 +65,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     Donation Date
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.donation_date
                                         ? formatDateString(
                                               new Date(
@@ -82,10 +82,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
 
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     Payment Method
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.payment_method_id?.value
                                         ? data?.payment_method_id?.value
                                         : "-"}
@@ -93,10 +93,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     Transaction Type
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.transaction_type_id?.value
                                         ? data?.transaction_type_id?.value
                                         : "-"}
@@ -104,10 +104,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     Transaction Status
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.transaction_status_id?.value
                                         ? data?.transaction_status_id?.value
                                         : "-"}
@@ -115,10 +115,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     Transaction ID
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.payment_transaction_id
                                         ? data?.payment_transaction_id
                                         : "-"}
@@ -135,8 +135,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                     <div className="flex flex-col gap-4 py-[20px]">
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">Name</Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="text-[#999999] text-[14px]">Name</Text>
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id?.full_name
                                         ? data?.participant_id?.contact_id
                                               ?.full_name
@@ -145,10 +145,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     Date of Birth
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id
                                         ?.date_of_birth
                                         ? formatDateString(
@@ -161,8 +161,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">Address</Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="text-[#999999] text-[14px]">Address</Text>
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id
                                         ?.street_address
                                         ? data?.participant_id?.contact_id
@@ -172,8 +172,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">Country</Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="text-[#999999] text-[14px]">Country</Text>
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id
                                         ?.country_id?.name
                                         ? data?.participant_id?.contact_id
@@ -185,10 +185,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
 
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[14px]">
                                     Zip/Postal Code
                                 </Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id
                                         ?.postal_code
                                         ? data?.participant_id?.contact_id
@@ -198,8 +198,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">State</Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="text-[#999999] text-[14px]">State</Text>
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id?.state_id
                                         ?.name
                                         ? data?.participant_id?.contact_id
@@ -209,8 +209,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">City</Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="text-[#999999] text-[14px]">City</Text>
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id?.city_id
                                         ?.name
                                         ? data?.participant_id?.contact_id
@@ -220,8 +220,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">Mobile</Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="text-[#999999] text-[14px]">Mobile</Text>
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id?.mobile
                                         ? data?.participant_id?.contact_id
                                               ?.mobile
@@ -232,8 +232,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
 
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">Email ID</Text>
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="text-[#999999] text-[14px]">Email ID</Text>
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id?.email
                                         ? data?.participant_id?.contact_id
                                               ?.email
@@ -242,7 +242,7 @@ export default function ViewDonationDetails({ setViewDonation }) {
                             </div>
 
                             <div className="w-[225px]">
-                                <Text className="text-[#999999]">
+                                <Text className="text-[#999999] text-[16px]">
                                     {data?.participant_id?.contact_id
                                         ?.identification_type_id?.name
                                         ? data?.participant_id?.contact_id
@@ -250,7 +250,7 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                         : "-"}
                                 </Text>
 
-                                <Text className="font-semibold text-[#666666]">
+                                <Text className="font-semibold text-[#666666] text-[16px]">
                                     {data?.participant_id?.contact_id
                                         ?.identification_num
                                         ? data?.participant_id?.contact_id

@@ -61,9 +61,9 @@ export default function AccomodationDetails({ data }) {
                 Accomodation Details
             </Text>
             <div className="flex gap-4">
-                <div className="text-[#999999] ">
-                    <Text>Accomodation Type</Text>
-                    <div className="">
+                <div className="text-[#999999] gap-2">
+                    <div><Text className="text-[#999999] text-[14px]">Accomodation Type</Text></div>
+                    <div className="py-[5px]">
                         {/* TODO: need to disable this accommodation type select */}
                         <Select
                             value={accommodation_type_id}
@@ -95,8 +95,8 @@ export default function AccomodationDetails({ data }) {
                     </div>
                 </div>
                 <div className="w-[303px] ">
-                    <Text className="text-[#999999] ">Fee per Person</Text>
-                    <Text>
+                    <Text className="text-[#999999] text-[14px]">Fee per Person</Text>
+                    <Text className="py-[5px] font-semibold">
                         {data?.currency_code ? data?.currency_code : "-"}{" "}
                         {data?.accommodation_fee
                             ? data?.accommodation_fee
@@ -104,43 +104,43 @@ export default function AccomodationDetails({ data }) {
                     </Text>
                 </div>
                 <div className="text-[#999999] ">
-                    <Text>Roommate Preferences 1</Text>
+                    <Text className="text-[#999999] text-[14px]">Roommate Preferences 1</Text>
                     <Textarea
                         value={
                             data?.participant_id?.roommate_preferences_1
                                 ? data?.participant_id?.roommate_preferences_1
                                 : "-"
                         }
-                        className="w-[278px] !h-[40px] resize-none"
+                        className="w-[278px] !h-[40px] resize-none py-[5px]"
                     />
                 </div>
             </div>
             <div className="flex gap-6 py-[10px]">
                 <div className="text-[#999999] ">
-                    <Text>Roommate Preferences 2</Text>
+                    <Text className="text-[#999999] text-[14px]">Roommate Preferences 2</Text>
                     <Textarea
                         value={
                             data?.participant_id?.roommate_preferences_2
                                 ? data?.participant_id?.roommate_preferences_2
                                 : "-"
                         }
-                        className="w-[278px] !h-[40px] resize-none"
+                        className="w-[278px] !h-[40px] resize-none py-[5px]"
                     />
                 </div>
                 <div className="text-[#999999] ">
-                    <Text>Roommate Preferences 3</Text>
+                    <Text className="text-[#999999] text-[14px]">Roommate Preferences 3</Text>
                     <Textarea
                         value={
                             data?.participant_id?.roommate_preferences_3
                                 ? data?.participant_id?.roommate_preferences_3
                                 : "-"
                         }
-                        className="w-[278px] !h-[40px] resize-none"
+                        className="w-[278px] !h-[40px] resize-none py-[5px]"
                     />
                 </div>
                 <div className="text-[#999999] ">
-                    <Text>Do you snore?</Text>
-                    <RadioGroup
+                    <Text className="text-[#999999] text-[14px]">Do you snore?</Text>
+                    <div className=""></div><RadioGroup
                         value={accommodation_snore}
                         onValueChange={(value) => snoreChange(value)}
                     >
@@ -162,7 +162,7 @@ export default function AccomodationDetails({ data }) {
                 </div>
             </div>
             <div className="text-[#999999] py-[10px]">
-                <Text>Would you object to having room mate who snores?</Text>
+                <Text className="text-[#999999] text-[14px] py-[5px]">Would you object to having room mate who snores?</Text>
                 <RadioGroup
                     value={roommate_snore}
                     onValueChange={(value) => roomateSnoreChange(value)}

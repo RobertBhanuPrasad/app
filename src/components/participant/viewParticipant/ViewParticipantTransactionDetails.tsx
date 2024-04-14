@@ -5,7 +5,6 @@ import { CaretSortIcon } from "@radix-ui/react-icons"; // Importing CaretSortIco
 import { useTable } from "@refinedev/core"; // Importing useTable hook for fetching table data
 import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type for defining table columns
 import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react"; // Importing icons for UI
-import EditPayment1 from "pages/participants/edit-participants/[id]/editPayment1";
 import React, { useState } from "react"; // Importing React
 import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
@@ -366,53 +365,69 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            {/* Edit Payment option */}
-                            <div>
+                            <div className="p-[10px]">
+                                {/* Edit Payment option */}
                                 <div>
-                                    <Dialog open={editPayment} onOpenChange={setEditPayment}>
-                                        <DialogTrigger asChild>
-                                            <div
-                                                onClick={() => {
-                                                    setEditPayment(true);
-                                                }}
-                                            >
-                                                Edit
-                                            </div>
-                                        </DialogTrigger>
-                                        <DialogContent>
-                                            <EditPayment setEditPayment={setEditPayment}/>
-                                        </DialogContent>
-                                    </Dialog>
+                                    <div className="p-[5px]">
+                                        <Dialog
+                                            open={editPayment}
+                                            onOpenChange={setEditPayment}
+                                        >
+                                            <DialogTrigger asChild>
+                                                <div
+                                                    onClick={() => {
+                                                        setEditPayment(true);
+                                                    }}
+                                                >
+                                                    Edit
+                                                </div>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <EditPayment
+                                                    setEditPayment={
+                                                        setEditPayment
+                                                    }
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
                                 </div>
-                            </div>
-                            {/* View Donation option */}
-                            <div>
+                                {/* View Donation option */}
                                 <div>
-                                    <Dialog open={viewDonation} onOpenChange={setViewDonation}>
-                                        <DialogTrigger asChild>
-                                            <div
-                                                onClick={() => {
-                                                    setViewDonation(true);
-                                                }}
-                                            >
-                                                View
-                                            </div>
-                                        </DialogTrigger>
-                                        <DialogContent>
-                                            <ViewDonationDetails setViewDonation={setViewDonation}/>
-                                        </DialogContent>
-                                    </Dialog>
+                                    <div className="p-[5px]">
+                                        <Dialog
+                                            open={viewDonation}
+                                            onOpenChange={setViewDonation}
+                                        >
+                                            <DialogTrigger asChild>
+                                                <div
+                                                    onClick={() => {
+                                                        setViewDonation(true);
+                                                    }}
+                                                >
+                                                    View
+                                                </div>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <ViewDonationDetails
+                                                    setViewDonation={
+                                                        setViewDonation
+                                                    }
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
                                 </div>
-                            </div>
-                            <div
-                                onClick={() => {
-                                    refundTransaction();
-                                }}
-                            >
-                                <div>Refund</div>
-                            </div>
-                            <div>
-                                <div>Download Receipt</div>
+                                <div
+                                    onClick={() => {
+                                        refundTransaction();
+                                    }}
+                                >
+                                    <div className="p-[5px]">Refund</div>
+                                </div>
+                                <div>
+                                    <div className="p-[5px]">Download Receipt</div>
+                                </div>
                             </div>
                         </DropdownMenuContent>
                     </DropdownMenu>
