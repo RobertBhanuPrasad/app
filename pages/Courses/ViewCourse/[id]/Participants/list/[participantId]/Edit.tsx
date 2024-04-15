@@ -13,7 +13,7 @@ export default function Edit() {
         async function fetchData() {
             try {
                 const values = await handleEditParticipantValues(
-                    Number(query?.id)
+                    Number(query?.participantId)
                 );
                 setDefaultValues(values);
             } catch (error) {
@@ -21,10 +21,10 @@ export default function Edit() {
             }
         }
 
-        if (query?.id) {
+        if (query?.participantId) {
             fetchData();
         }
-    }, [query?.id]);
+    }, [query?.participantId]);
     return (
         <div>
             <div>

@@ -37,8 +37,6 @@ function ParticipantsTab() {
         fetchData();
     }, []);
 
-    console.log(router, "router");
-
     return (
         <div className="my-[31px] mb-6 overscroll ">
             <div className="flex justify-between">
@@ -52,7 +50,7 @@ function ParticipantsTab() {
                     <Button
                         className="w-[188px] h-[46px] rounded-[12px]"
                         onClick={() =>
-                            router.push(`${router.asPath}/Participants/list/`)
+                            router.push(`${router.pathname}/Participants/list/`)
                         }
                     >
                         View Participants

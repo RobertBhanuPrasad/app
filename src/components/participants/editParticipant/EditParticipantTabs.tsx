@@ -97,7 +97,7 @@ export default function EditParticipantTabs() {
       label: 'Transaction Details',
       content: (
         <div>
-          <ViewParticipantTransactionDetails participantId={2} />
+          <ViewParticipantTransactionDetails participantId={4} />
         </div>
       )
     },
