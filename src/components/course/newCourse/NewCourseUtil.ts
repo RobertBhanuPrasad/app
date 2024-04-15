@@ -18,7 +18,7 @@ export const handlePostProgramData = async (
 ) => {
   console.log("i will post course data in this function", body);
 
-  let programId = body.id;
+  let programId = body?.id;
   // we have to create course only when we dont have id
   //   if (!programId) {
   const programBody: ProgramDataBaseType = {

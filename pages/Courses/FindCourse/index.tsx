@@ -204,7 +204,7 @@ function index() {
     setAllSelected(val);
   };
 
-  //function to handle exportexcel
+  //function to handle export excel
   const handleExportExcel = async () => {
     try {
       const excelColumns = [

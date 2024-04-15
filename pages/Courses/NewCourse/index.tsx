@@ -49,30 +49,18 @@ import Success from "@public/assets/Success";
 import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { useRouter } from "next/router";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData,'loginUserData')
-
-  const { viewPreviewPage, viewThankyouPage } = newCourseStore();
-
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
+  }else{
+    return <NewCourse/>
   }
 
-  if (viewThankyouPage) {
-    return (
-      <div className="mb-8">
-        <NewCourseThankyouPage />;
-      </div>
-    );
-  }
-
-  if (viewPreviewPage) {
-    return <NewCourseReviewPage />;
-  } else {
-    return <NewCourse />;
-  }
+ 
 }
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -147,8 +135,9 @@ function NewCourse() {
 export default index;
 
 export const NewCourseTabs = () => {
+  const router = useRouter();
   const { watch, getValues } = useFormContext();
-  const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
+  const { setNewCourseData, currentStep, setCurrentStep } =
     newCourseStore();
 
   const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined);
@@ -279,10 +268,12 @@ export const NewCourseTabs = () => {
     currentStepFormNames: any[]
   ) => {
     const formData = watch();
-
+    
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
-      setViewPreviewPage(true);
+      router.push(
+        `${router.asPath}/new-course?current_section=preview_page`
+      );
       setNewCourseData(formData);
     }
     handelIsAllFieldsFilled(isAllFieldsFilled);

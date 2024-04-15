@@ -1,13 +1,9 @@
 import { create } from "zustand";
 
 interface NewCourseStore {
-  viewPreviewPage: boolean;
-  viewThankyouPage: boolean;
   viewSuccessModal: boolean;
   viewRejectedModal: boolean;
   setViewRejectedModal: (by: boolean) => void;
-  setViewPreviewPage: (by: boolean) => void;
-  setViewThankyouPage: (by: boolean) => void;
   setViewSuccessModal: (by: boolean) => void;
   newCourseData: any;
   setNewCourseData: (by: any) => void;
@@ -22,8 +18,6 @@ interface NewCourseStore {
 }
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
-  viewPreviewPage: false,
-  viewThankyouPage: false,
   newCourseData: null,
   programId: 1,
   viewSuccessModal: false,
@@ -37,16 +31,6 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   setViewSuccessModal: (data: boolean) => {
     set(() => ({
       viewSuccessModal: data,
-    }));
-  },
-  setViewPreviewPage: (data: boolean) => {
-    set(() => ({
-      viewPreviewPage: data,
-    }));
-  },
-  setViewThankyouPage: (data: boolean) => {
-    set(() => ({
-      viewThankyouPage: data,
     }));
   },
   setNewCourseData: (data: any) => {
