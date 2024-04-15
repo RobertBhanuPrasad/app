@@ -1014,7 +1014,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
  * Component for managing the dropdown to approve or reject a pending course accounting form
  * here user go to approve the course accounting form or reject the course accounting form
  */
-const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: {courseId:number}) => {
+const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: number }) => {
   const accountingClosedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, CLOSED)?.id
 
   const options = [
@@ -1040,7 +1040,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: {courseId:num
    * in that modal we have no button if we click on no button then we have to clear the value at reset to the initial state.
    */
   const [selectApprovalOrReject, setSelectApprovalOrReject] = useState(null)
-  const { setViewCourseAccountingSuccessModal, setViewCourseAccountingRejectedDescriptionModal,setViewCourseAccountingRejectedModal,viewCourseAccountingRejectedModal } = newCourseStore();
+  const { setViewCourseAccountingSuccessModal, setViewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedModal, viewCourseAccountingRejectedModal } = newCourseStore();
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -1060,15 +1060,21 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: {courseId:num
       resource: "program",
       values: {
         program_accounting_status_id: accountingClosedStatusId,
-        approved_by_user_id: loginUserData?.userData?.id,
       },
       id: courseId,
     });
+
+    await supabaseClient
+      .from('program_accounting_activity')
+      .insert([{ caf_status_id: accountingClosedStatusId, user_id: loginUserData?.userData?.id }])
+
     setViewCourseAccountingSuccessModal(true);
     setApproveModalOpen(false);
   };
 
-  // TODO we need to do insert course accounting status in course accounting table
+
+
+
 
   /**
    * Function to reject a course
@@ -1082,7 +1088,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: {courseId:num
   return (
     <div>
       <Select
-        onValueChange={(val : any) => {
+        onValueChange={(val: any) => {
           setSelectApprovalOrReject(val)
           if (val == 1) {
             setApproveModalOpen(true);
@@ -1113,7 +1119,11 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: {courseId:num
         </SelectContent>
       </Select>
       <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
-        <DialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
+        <DialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6" 
+        closeIconOnclick={()=> {
+          setSelectApprovalOrReject(null)
+          setApproveModalOpen(false)
+          }}>
           <DialogHeader>
             <div className="flex items-center w-full justify-center">
               <Exclamation />
@@ -1154,7 +1164,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: {courseId:num
       </Dialog>
 
       <Dialog open={viewCourseAccountingRejectedModal} onOpenChange={setViewCourseAccountingRejectedModal}>
-        <DialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
+        <DialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6" hideCloseButton={true}>
           <DialogHeader>
             <div className="flex items-center w-full justify-center">
               <Cross />
@@ -1235,12 +1245,12 @@ const ViewCourseAccountingSuccessModalOpen = () => {
 /**
  * Component to display a reject modal when the accounting form for a course is rejected
 */
-const ViewCourseAccountingRejectedModalOpen = ({ courseId }: {courseId:number}) => {
-  const { viewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedDescriptionModal,setViewCourseAccountingRejectedModal } = newCourseStore();
+const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number }) => {
+  const { viewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedModal } = newCourseStore();
 
   const [rejectionFeedback, setRejectionFeedback] = useState(false);
 
-  // const { data: loginUserData }: any = useGetIdentity();
+  const { data: loginUserData }: any = useGetIdentity();
 
   const accountingRejectedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, REJECTED)?.id
 
@@ -1254,31 +1264,31 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: {courseId:number}) 
  * Specifies the ID of the course to be rejected
  * Closes the modal for viewing the rejected accounting form
  */
-const rejectCourse = async () => {
-  // Make an asynchronous call to update the program resource
-  await mutate({
-    resource: "program",
-    values: {
-      // Set the status ID to indicate the accounting form is rejected
-      program_accounting_status_id: accountingRejectedStatusId,
-      // Provide rejection feedback if available
-      program_rejection_feedback: rejectionFeedback,
-    },
-    // Specify the ID of the course to be rejected
-    id: courseId,
-  });
+  const rejectCourse = async () => {
+    // Make an asynchronous call to update the program resource
+    await mutate({
+      resource: "program",
+      values: {
+        // Set the status ID to indicate the accounting form is rejected
+        program_accounting_status_id: accountingRejectedStatusId,
+      },
+      // Specify the ID of the course to be rejected
+      id: courseId,
+    });
 
-  // TODO we need to insert course accounting status and feed back in the accounting table
+    await supabaseClient
+      .from('program_accounting_activity')
+      .insert({ caf_status_id: accountingRejectedStatusId, user_id: loginUserData?.userData?.id, comment: rejectionFeedback })
 
-  // Close the modal for viewing the rejected accounting form
-  setViewCourseAccountingRejectedDescriptionModal(false);
-  setViewCourseAccountingRejectedModal(false);
-};
+    // Close the modal for viewing the rejected accounting form
+    setViewCourseAccountingRejectedDescriptionModal(false);
+    setViewCourseAccountingRejectedModal(false);
+  };
 
 
   return (
     <Dialog open={viewCourseAccountingRejectedDescriptionModal}>
-      <DialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6 ">
+      <DialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6" hideCloseButton={true}>
         <DialogHeader className="text-center">
           <div className="flex items-center w-full justify-center">
             <Cross />{" "}
