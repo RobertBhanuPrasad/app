@@ -809,3 +809,16 @@ interface NewCourseFormFieldTypes {
   error_message?: string;
   expense_fee?: number;
 }
+
+/**
+ * This is are form names where we are mantaining in course-accounting-form tab.
+ * This can be helpful to give specified form name for a field instead of giving random names to useControllers.
+ * When you are registering a field in useController assign this type to useController<CourseAccountingFormFieldTypes>({name:"program_id"}) like this example
+ * This will be helpful in edit course accounting form also where we need to prefill at that time also we will do
+ */
+interface CourseAccountingFormFieldTypes {
+  program_id?: number;
+  program_expenses?: {
+    id?: number;
+  }[];
+}
