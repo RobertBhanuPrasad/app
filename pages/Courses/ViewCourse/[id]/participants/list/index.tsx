@@ -4,7 +4,7 @@ import ClearAll from "@public/assets/ClearAll";
 import React, { useEffect, useState } from "react";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
-import { columns } from "../../../../src/components/participants/columns";
+import { columns } from "../../../../../../src/components/participants/columns";
 import { CrudFilters, useTable } from "@refinedev/core";
 import { Input } from "src/ui/input";
 import { SearchIcon } from "lucide-react";
@@ -16,7 +16,7 @@ import {
 } from "src/ui/dropdown-menu";
 import DropDown from "@public/assets/DropDown";
 import { format } from "date-fns";
-import { ParticipantsAdvanceFilter } from "../../../../src/components/participants/ParticipantsListAdvanceFilters";
+import { ParticipantsAdvanceFilter } from "../../../../../../src/components/participants/ParticipantsListAdvanceFilters";
 import { useController, useFormContext } from "react-hook-form";
 import Form from "@components/Formfield";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
@@ -35,8 +35,8 @@ import { useRouter } from "next/router";
 
 function index() {
   const router = useRouter();
-  const programID: number | undefined = router?.query?.program_id
-    ? parseInt(router.query.program_id as string)
+  const programID: number | undefined = router?.query?.id
+    ? parseInt(router.query.id as string)
     : undefined;
 
   const { ParticpantFiltersData, setSelectedTableRows, setSelectedRowObjects } =
