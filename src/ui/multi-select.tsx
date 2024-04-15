@@ -70,9 +70,9 @@ export function MultiSelect({
   };
 
   //When prop values changes from external functions, we have to keep the selected state and prop value in sync.
-  // useEffect(() => {
-  //   setSelected(propValue);
-  // }, [propValue]);
+  useEffect(() => {
+    setSelected(propValue);
+  }, [propValue]);
 
   // Handle clicks outside the dropdown to close it
 
