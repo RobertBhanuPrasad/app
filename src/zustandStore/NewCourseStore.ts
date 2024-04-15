@@ -5,10 +5,14 @@ interface NewCourseStore {
   viewThankyouPage: boolean;
   viewSuccessModal: boolean;
   viewRejectedModal: boolean;
+  viewCourseAccountingSuccessModal: boolean;
+  viewCourseAccountingRejectedModal: boolean;
   setViewRejectedModal: (by: boolean) => void;
   setViewPreviewPage: (by: boolean) => void;
   setViewThankyouPage: (by: boolean) => void;
   setViewSuccessModal: (by: boolean) => void;
+  setViewCourseAccountingSuccessModal: (by: boolean) => void;
+  setViewCourseAccountingRejectedModal: (by: boolean) => void;
   newCourseData: any;
   setNewCourseData: (by: any) => void;
   newAdvanceFilterData: any;
@@ -28,6 +32,8 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   programId: 1,
   viewSuccessModal: false,
   viewRejectedModal: false,
+  viewCourseAccountingSuccessModal: false,
+  viewCourseAccountingRejectedModal: false,
 
   setViewRejectedModal: (data: boolean) => {
     set(() => ({
@@ -75,6 +81,16 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   setProgramId: (data: number) => {
     set(() => ({
       programId: data,
+    }));
+  },
+  setViewCourseAccountingRejectedModal: (data: boolean) => {
+    set(() => ({
+      viewCourseAccountingRejectedModal: data,
+    }));
+  },
+  setViewCourseAccountingSuccessModal: (data: boolean) => {
+    set(() => ({
+      viewCourseAccountingSuccessModal: data,
     }));
   },
 }));
