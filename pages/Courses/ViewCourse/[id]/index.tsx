@@ -96,8 +96,7 @@ import {
   SelectValue,
 } from "src/ui/select";
 import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
-import RulesSection from "../../../../src/components/course/viewCourse/CourseAccountingFormTab";
-import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/CourseAccountingFormTab";
+import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
