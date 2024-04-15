@@ -90,7 +90,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     // This any will be removed after internal dataStructure implementation
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <div>{row?.original?.payment_transaction_id}</div>
     }
   },
@@ -100,7 +100,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="  min-w-[100px]">Time Stamp</TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase ">{formatDateAndTime(row?.original?.created_at)}</Text>
     }
   },
@@ -110,7 +110,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="  min-w-[150px]">Transaction Type </TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       const participantPendingPaymentStatusId = getOptionValueObjectByOptionOrder(
         PARTICIPANT_PAYMENT_STATUS,
         PARTICIPANT_PENDING_PAYMENT_STATUS
@@ -134,7 +134,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="min-w-[150px]">Payment Method</TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.payment_method_id?.value}</Text>
     }
   },
@@ -144,7 +144,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className=" min-w-[170px]">Organization fee (EUR)</TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase ">{row?.original?.organization_fee}</Text>
     }
   },
@@ -154,7 +154,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className=" min-w-[150px]">Expense fee (EUR)</TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.expense_fee}</Text>
     }
   },
@@ -164,7 +164,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className=" min-w-[100px]">Tax (EUR)</TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.tax}</Text>
     }
   },
@@ -174,7 +174,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="">Discount </TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.discounted_amount}</Text>
     }
   },
@@ -184,7 +184,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className=" min-w-[170px]">Accommodation Type</TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.accommodation_type_id?.accommodation_type_id?.name}</Text>
     }
   },
@@ -194,7 +194,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className=" min-w-[200px]">Accommodation Fee (EUR)</TableHeader>
     },
 
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.accommodation_type_id?.fee_per_person}</Text>
     }
   },
@@ -203,7 +203,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     header: () => {
       return <TableHeader className="min-w-[120px]">Total fee (EUR)</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.total_amount}</Text>
     }
   },
@@ -212,7 +212,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     header: () => {
       return <TableHeader className="min-w-[120px]">Fee level</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.transaction_fee_level_id?.value}</Text>
     }
   },
@@ -221,7 +221,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     header: () => {
       return <TableHeader className="min-w-[150px]">Transaction Status</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.transaction_status_id?.value}</Text>
     }
   },
@@ -230,7 +230,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     header: () => {
       return <TableHeader>Reason</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.transaction_reason}</Text>
     }
   },

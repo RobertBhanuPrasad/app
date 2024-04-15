@@ -46,7 +46,7 @@ const columns: ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Type</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.program_type}</Text>
     }
   },
@@ -55,7 +55,7 @@ const columns: ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Delivery status</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text>{row?.original?.program_type}</Text>
     }
   },
@@ -64,7 +64,7 @@ const columns: ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Delivery time Stamp</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{formatDateAndTime(row?.original?.delivery_time_stamp)}</Text>
     }
   },
@@ -73,7 +73,7 @@ const columns: ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Source</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.source}</Text>
     }
   },
@@ -82,7 +82,7 @@ const columns: ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Open time stamp</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{formatDateAndTime(row?.original?.open_time_stamp)}</Text>
     }
   }

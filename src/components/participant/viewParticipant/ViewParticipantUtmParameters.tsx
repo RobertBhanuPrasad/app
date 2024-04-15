@@ -15,7 +15,6 @@ function ViewParticipantUtmParameters({ participantId }: any) {
 
   // Fetching participant registration data
   const { data: utmParametersData, isLoading, isError } = useOne(query)
-  const [rowSelection, setRowSelection] = React.useState({})
 
   return (
     <div>
@@ -46,7 +45,7 @@ const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
     header: () => {
       return <TableHeader>ID</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.program_type_id}</Text>
     }
   },
@@ -55,7 +54,7 @@ const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
     header: () => {
       return <TableHeader>Source</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text>{row?.original?.source}</Text>
     }
   },
@@ -64,7 +63,7 @@ const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
     header: () => {
       return <TableHeader>Medium</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.medium}</Text>
     }
   },
@@ -73,7 +72,7 @@ const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
     header: () => {
       return <TableHeader>Campaign</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.campaign}</Text>
     }
   },
@@ -82,7 +81,7 @@ const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
     header: () => {
       return <TableHeader>Term</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.term}</Text>
     }
   },
@@ -91,7 +90,7 @@ const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
     header: () => {
       return <TableHeader>Content</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.content}</Text>
     }
   },
@@ -100,7 +99,7 @@ const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
     header: () => {
       return <TableHeader>HTTP Refer</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.http_refer}</Text>
     }
   }
