@@ -1,13 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import ViewParticipantCourseInformation from './ViewParticipantCourseInformation'
-import ViewParticipantCustomerDeviceDetails from './ViewParticipantCustomerDeviceDetails'
-import ViewParticipantEmailDeliveryLogs from './ViewParticipantEmailDeliveryLogs'
-import ViewParticipantTransactionDetails from './ViewParticipantTransactionDetails'
-import ViewParticipantUtmParameters from './ViewParticipantUtmParameters'
 
-function SampleTabs({tabs}) {
-
-
+function ScrollableTabs({ tabs }) {
   const [activeTab, setActiveTab] = useState(0)
   const tabRefs = useRef([])
 
@@ -78,4 +71,4 @@ function SampleTabs({tabs}) {
   )
 }
 
-export default SampleTabs
+export default ScrollableTabs

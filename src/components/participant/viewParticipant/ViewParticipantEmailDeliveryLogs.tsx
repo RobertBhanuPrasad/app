@@ -23,15 +23,8 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
       <p className="text-[18px] font-[600] ">Email Delivery Logs</p>
       <div>
         <BaseTable
-          current={1}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
           checkboxSelection={false}
-          setCurrent={() => {}}
-          pageCount={10}
           total={participantEmailDeliveryLogsData?.data?.email_delivery_logs_section?.length || 0}
-          pageSize={10}
-          setPageSize={() => {}}
           pagination={false}
           tableStyles={{
             table: '',
@@ -54,7 +47,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Transaction ID</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.transaction_id}</Text>
     }
   },
@@ -63,7 +56,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Time Stamp</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text>{formatDateAndTime(row?.original?.time_stamp)}</Text>
     }
   },
@@ -72,7 +65,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
     header: () => {
       return <TableHeader>IP Address</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.ip_address}</Text>
     }
   },
@@ -81,7 +74,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Operating System</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.operating_system}</Text>
     }
   },
@@ -90,7 +83,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
     header: () => {
       return <TableHeader>Browser</TableHeader>
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.browser}</Text>
     }
   }
