@@ -804,8 +804,8 @@ export const isCourseAccountingFormApproved = (courseAccountingStatusId: number,
   
   // Check if the course accounting form is in 'Pending Review' status and the user is a Super Admin or National Admin
   if (
-    courseAccountingPendingReviewStatusId === courseAccountingStatusId 
-    // (roleId === superAdminRoleId || roleId === nationalAdminRoleId)
+    courseAccountingPendingReviewStatusId === courseAccountingStatusId &&
+    roleId === nationalAdminRoleId
   ) {
     return true; // Return true if the conditions are met
   } else {
