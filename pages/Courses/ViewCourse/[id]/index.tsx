@@ -88,6 +88,7 @@ import {
   DisplayOptions,
   handleTabsBasedOnStatus,
   isApproved,
+  isCourseAccountingFormApproved,
   isViewCourseAccountingTabDisplay,
 } from "@components/courseBusinessLogic";
 import {
@@ -100,6 +101,7 @@ import {
 } from "src/ui/select";
 import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -355,6 +357,14 @@ function ViewDetails() {
 
               <SuccessModalOpen />
               <RejectedModalOpen />
+
+              {isCourseAccountingFormApproved (
+                courseData?.data?.program_accounting_status_id,
+                 loginUserData?.userData?.user_roles[0]?.role_id?.id
+                ) && Id && <PendingCourseAccountingFormApprovalDropDown courseId={Id }/>}
+
+                <ViewCourseAccountingSuccessModalOpen />
+               {Id && ( <ViewCourseAccountingRejectedModalOpen courseId={Id} /> )}
 
               <ActionsDropDown courseData={courseData?.data} />
             </div>
@@ -1004,7 +1014,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
  * Component for managing the dropdown to approve or reject a pending course accounting form
  * here user go to approve the course accounting form or reject the course accounting form
  */
-const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: any) => {
+const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: {courseId:number}) => {
   const accountingClosedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, CLOSED)?.id
 
   const options = [
@@ -1022,8 +1032,6 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: any) => {
   // Initialize state for whether the approve modal is open or not
   const [approveModalOpen, setApproveModalOpen] = useState(false);
 
-  // Initialize state for whether the reject modal is open or not
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
 
   /**
    * Initialize state for the selected approval  or reject
@@ -1032,7 +1040,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: any) => {
    * in that modal we have no button if we click on no button then we have to clear the value at reset to the initial state.
    */
   const [selectApprovalOrReject, setSelectApprovalOrReject] = useState(null)
-  const { setViewCourseAccountingSuccessModal, setViewCourseAccountingRejectedModal } = newCourseStore();
+  const { setViewCourseAccountingSuccessModal, setViewCourseAccountingRejectedDescriptionModal,setViewCourseAccountingRejectedModal,viewCourseAccountingRejectedModal } = newCourseStore();
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -1060,14 +1068,15 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: any) => {
     setApproveModalOpen(false);
   };
 
+  // TODO we need to do insert course accounting status in course accounting table
+
   /**
    * Function to reject a course
    * Set state to display a rejected modal
    * Close the reject modal
    */
   const rejectCourse = async () => {
-    setViewCourseAccountingRejectedModal(true);
-    setRejectModalOpen(false)
+    setViewCourseAccountingRejectedDescriptionModal(true);
   };
 
   return (
@@ -1078,7 +1087,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: any) => {
           if (val == 1) {
             setApproveModalOpen(true);
           } else {
-            setRejectModalOpen(true);
+            setViewCourseAccountingRejectedModal(true);
           }
         }}
         value={selectApprovalOrReject}
@@ -1144,7 +1153,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: any) => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
+      <Dialog open={viewCourseAccountingRejectedModal} onOpenChange={setViewCourseAccountingRejectedModal}>
         <DialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
           <DialogHeader>
             <div className="flex items-center w-full justify-center">
@@ -1162,7 +1171,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: any) => {
                   variant="outline"
                   className="text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px]"
                   onClick={() => {
-                    setRejectModalOpen(false);
+                    setViewCourseAccountingRejectedModal(false);
                     setSelectApprovalOrReject(null)
                   }}
                 >
@@ -1182,8 +1191,6 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: any) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <ViewCourseAccountingSuccessModalOpen />
-      <ViewCourseAccountingRejectedModalOpen courseId={courseId} />
     </div>
   );
 };
@@ -1228,8 +1235,8 @@ const ViewCourseAccountingSuccessModalOpen = () => {
 /**
  * Component to display a reject modal when the accounting form for a course is rejected
 */
-const ViewCourseAccountingRejectedModalOpen = ({ courseId }: any) => {
-  const { viewCourseAccountingRejectedModal, setViewCourseAccountingRejectedModal } = newCourseStore();
+const ViewCourseAccountingRejectedModalOpen = ({ courseId }: {courseId:number}) => {
+  const { viewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedDescriptionModal,setViewCourseAccountingRejectedModal } = newCourseStore();
 
   const [rejectionFeedback, setRejectionFeedback] = useState(false);
 
@@ -1261,13 +1268,16 @@ const rejectCourse = async () => {
     id: courseId,
   });
 
+  // TODO we need to insert course accounting status and feed back in the accounting table
+
   // Close the modal for viewing the rejected accounting form
+  setViewCourseAccountingRejectedDescriptionModal(false);
   setViewCourseAccountingRejectedModal(false);
 };
 
 
   return (
-    <Dialog open={viewCourseAccountingRejectedModal}>
+    <Dialog open={viewCourseAccountingRejectedDescriptionModal}>
       <DialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6 ">
         <DialogHeader className="text-center">
           <div className="flex items-center w-full justify-center">
@@ -1296,7 +1306,7 @@ const rejectCourse = async () => {
                 variant="outline"
                 className="text-[#7677F4] w-[71px] h-[46px] border border-[#7677F4] rounded-[12px] "
                 onClick={() => {
-                  setViewCourseAccountingRejectedModal(false);
+                  setViewCourseAccountingRejectedDescriptionModal(false);
                 }}
               >
                 No
