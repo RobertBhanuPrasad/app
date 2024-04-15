@@ -1,4 +1,5 @@
 import Back from '@public/assets/Back'
+import Currency from '@public/assets/Currency'
 import Important from '@public/assets/Important'
 import ParticipantsIcon from '@public/assets/ParticipantsIcon'
 import Line from '@public/assets/line'
@@ -6,7 +7,6 @@ import { useList, useOne } from '@refinedev/core'
 import { useRouter } from 'next/router'
 import { ActionsDropDown } from 'pages/Courses/ViewCourse/[id]'
 import { useEffect, useState } from 'react'
-import CurrencyIcon from 'src/ui/CurrencyIcon'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card'
 import { formatDate } from 'src/utility/DateFunctions'
 import { supabaseClient } from 'src/utility/supabaseClient'
@@ -70,7 +70,6 @@ function HeaderSection() {
           {courseData?.data?.program_alias_name_id
             ? courseData?.data?.program_alias_name_id?.alias_name
             : courseData?.data?.program_type_id?.name}
-        
         </div>
         <div className="pr-2 ml-auto  ">
           <ActionsDropDown courseData={courseData?.data} />
@@ -114,7 +113,7 @@ function HeaderSection() {
           </HoverCardContent>
         </HoverCard>
         <div className="pt-1">
-          <CurrencyIcon />
+          <Currency />
         </div>
 
         <div
