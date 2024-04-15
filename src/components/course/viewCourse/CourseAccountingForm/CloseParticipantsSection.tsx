@@ -267,7 +267,7 @@ export const participantsColumns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return (
         <div className="w-[150px]">
-          <Text className="max-w-[120px] truncate">
+          <Text className="max-w-[130px] truncate">
             <abbr
               title={row?.original?.contact?.full_name}
               className="no-underline"
