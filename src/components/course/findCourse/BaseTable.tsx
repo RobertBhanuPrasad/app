@@ -41,6 +41,7 @@ import {
 
 import DropDown from "@public/assets/DropDown";
 import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 interface IBaseTable<TData, TValue> {
   /**
    * Columns defined for the table
@@ -326,6 +327,7 @@ export function BaseTable<TData, TValue>({
                     // Here we are filtering the columns which have accessorKey
                     .map((column: any) => {
 
+                      const {t} = useTranslation("common")
                       return (
                         <div className="flex flex-row gap-4 items-center">
                           <Checkbox

@@ -108,7 +108,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -143,7 +143,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingRejectedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -184,7 +184,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -219,7 +219,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === superAdminRoleId || roleId === nationalAdminRoleId || roleId === financeAdminRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -250,7 +250,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -273,7 +273,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingRejectedStatusId &&
       (roleId === superAdminRoleId || roleId === nationalAdminRoleId || roleId === financeAdminRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -304,7 +304,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingRejectedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -335,7 +335,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingClosedStatusId &&
       (roleId === superAdminRoleId || roleId === nationalAdminRoleId || roleId === financeAdminRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -358,7 +358,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingClosedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -387,7 +387,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -422,7 +422,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === superAdminRoleId || roleId === nationalAdminRoleId || roleId === financeAdminRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -453,7 +453,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -480,7 +480,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -510,7 +510,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
         roleId === financeAdminRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -533,7 +533,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
       courseAccountingStatusId === accountingClosedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),
@@ -564,7 +564,7 @@ export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: an
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-
+      const {t} = useTranslation("common")
       return [
         {
           label: t('view_participants'),

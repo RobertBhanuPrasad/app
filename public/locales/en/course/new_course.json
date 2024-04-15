@@ -1,4 +1,5 @@
 {
+
     "basic_details_tab": {
         "teaching_course": "I am teaching this course",
         "co_teaching": "I am co-teaching this course",
@@ -6,7 +7,8 @@
         "organization": "Organizatio",
         "organization_placeholder": "Select Organization",
         "program_organizer": "Program Organizer",
-        "program_organizer_placeholder": "Enter Program organizer Name"
+        "program_organizer_placeholder": "Enter Program organizer Name",
+        
     },
     "course_details_tab": {
         "course_type": "Course Type",

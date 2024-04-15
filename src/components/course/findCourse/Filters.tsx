@@ -47,7 +47,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
   const { watch, setValue } = useFormContext();
 
   const formData = watch();
-  const { t } = useTranslation("common")
+  const {t} = useTranslation("common")
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -770,7 +770,7 @@ export const Visibility = () => {
           <RadioButtonCard
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label={t('public')}
+            label= {t('public')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
