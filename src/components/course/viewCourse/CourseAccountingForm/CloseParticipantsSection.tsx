@@ -29,11 +29,11 @@ import { useController } from "react-hook-form";
 import { ActionProps, getActions } from "@components/courseBusinessLogic";
 import { BaseTable } from "@components/course/findCourse/BaseTable";
 import { TableHeader, Text } from "src/ui/TextTags";
+import { supabaseClient } from "src/utility";
 
 function CloseParticipantsSection() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
   const { replace } = useRouter();
 
   /**
@@ -136,6 +136,26 @@ function CloseParticipantsSection() {
 
   const [rowSelection, setRowSelection] = useState({});
 
+  const handleStatusChange = async (value: OptionValuesDataBaseType) => {
+    statusOnChange(value);
+    const participantIds = Object.keys(rowSelection).map((key) =>
+      parseInt(key)
+    );
+    console.log("heyy participant ids", participantIds);
+
+    if (actionValue == UPDATE_ATTENDENCE_STATUS) {
+      const { error } = await supabaseClient
+        .from("participant_registration")
+        .update({ participant_attendence_status_id: value })
+        .in("id", participantIds);
+    } else {
+      const { error } = await supabaseClient
+        .from("participant_registration")
+        .update({ payment_status_id: value })
+        .in("id", participantIds);
+    }
+  };
+
   return (
     <div>
       <div className="m-6 flex flex-col gap-4">
@@ -149,6 +169,11 @@ function CloseParticipantsSection() {
             >
               <SelectTrigger className="w-[254px]">
                 <SelectValue placeholder="Select Action" />
+                {Object.keys(rowSelection).length > 0 && actionValue && (
+                  <Text className="text-[#7677F4] font-semibold">
+                    ({Object.keys(rowSelection).length})
+                  </Text>
+                )}
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
@@ -167,7 +192,9 @@ function CloseParticipantsSection() {
               //disabled when no action is selected
               disabled={actionValue == undefined}
               value={statusValue}
-              onValueChange={statusOnChange}
+              onValueChange={(val: any) => {
+                handleStatusChange(val);
+              }}
             >
               <SelectTrigger className="w-[254px]">
                 <SelectValue placeholder="Select Status" />
