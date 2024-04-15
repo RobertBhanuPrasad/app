@@ -690,4 +690,5 @@ interface CourseAccountingFormFieldTypes {
   program_expenses?: {
     id?: number;
   }[];
+  program_revenue: {}[];
 }
