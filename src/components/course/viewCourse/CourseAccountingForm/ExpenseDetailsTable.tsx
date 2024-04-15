@@ -21,8 +21,16 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { useList, useSelect } from "@refinedev/core";
-import {  Header} from "src/ui/TextTags";
+import { Header } from "src/ui/TextTags";
 import { TableHeader } from "src/ui/TextTags";
+import { DateField } from "src/ui/DateField";
+import {
+  RadioGroup,
+  RadioGroupCircleItem,
+  RadioGroupItem,
+} from "src/ui/radio-group";
+import { Label } from "src/ui/label";
+import classNames from "classnames";
 export const ExpenseDetails = () => {
   const { fields, append, remove } = useFieldArray({
     name: "expenses",
@@ -42,51 +50,77 @@ export const ExpenseDetails = () => {
     <div>
       <Header className="py-4" children={"Expense Details"} />
       <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
-        <div className="inline-flex h-[48px] w-auto bg-[#7677F41A]">
-          <div className="w-[50px] flex items-center">#</div>
-          <TableHeader className="min-w-[180px]">Expense Category</TableHeader>
-          <TableHeader className="min-w-[180px]">Details</TableHeader>
-          <TableHeader className="min-w-[180px]">Receipt Id</TableHeader>
-          <TableHeader className="min-w-[180px]">Amount</TableHeader>
-          <TableHeader className="min-w-[180px]">Payment Method</TableHeader>
-          <TableHeader className="min-w-[180px]">Vat Condition</TableHeader>
-          <TableHeader className="min-w-[180px]">Vendor Tax Id</TableHeader>
-          <TableHeader className="min-w-[180px]">Vendor Name</TableHeader>
-          <TableHeader className="min-w-[180px]">Vat Rate</TableHeader>
-          <TableHeader className="min-w-[180px]">Actions</TableHeader>
+        <div className="flex h-[48px] w-fit bg-[#7677F41A]">
+          <TableHeader className="min-w-[50px] px-[12px]">#</TableHeader>
+          <TableHeader className="min-w-[250px] px-[12px] ">
+            Expense Category
+          </TableHeader>
+          <TableHeader className="min-w-[250px] px-[12px]">Details</TableHeader>
+          <TableHeader className="min-w-[130px] px-[12px]">
+            Receipt Id
+          </TableHeader>
+          <TableHeader className="min-w-[180px] px-[12px]">
+            Purchase date
+          </TableHeader>
+          <TableHeader className="min-w-[130px] px-[12px]">Amount</TableHeader>
+          <TableHeader className="min-w-[120px] px-[12px]">
+            Reimbursable
+          </TableHeader>
+          <TableHeader className="min-w-[220px] px-[12px]">
+            Payment Method
+          </TableHeader>
+          <TableHeader className="min-w-[220px] px-[12px]">
+            Vat Condition
+          </TableHeader>
+          <TableHeader className="min-w-[220px] px-[12px]">
+            Vendor Tax Id
+          </TableHeader>
+          <TableHeader className="min-w-[220px] px-[12px]">
+            Vendor Name
+          </TableHeader>
+          <TableHeader className="min-w-[220px] px-[12px]">
+            Vat Rate
+          </TableHeader>
+          <TableHeader className="min-w-[220px] px-[12px]">Actions</TableHeader>
         </div>
 
         {fields.map((field: any, index: number) => (
-          <div key={field.id} className="flex items-center w-full h-auto  ">
-            <div className="w-[50px] flex items-center">{index + 1}</div>
-            <div className="min-w-[180px]">
+          <div key={field.id} className="flex items-center w-full h-[48px]  ">
+            <div className="min-w-[50px] px-[12px]">{index + 1}</div>
+            <div className="min-w-[250px]  px-[12px]">
               <ExpenseCategory index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-[250px] px-[12px]">
               <Details index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-[130px] px-[12px]">
               <ReceiptId index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-[180px] px-[12px]">
+              <PurchaseDate index={index} />
+            </div>
+            <div className="min-w-[130px] px-[12px]">
               <Amount index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-[120px] px-[12px]">
+              <IsReimbursable index={index} />
+            </div>
+            <div className="min-w-[220px] px-[12px]">
               <PaymentMethod index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-[220px] px-[12px]">
               <VatCondition index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-[220px] px-[12px]">
               <VendorTaxId index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-[220px] px-[12px]">
               <VendorName index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-[220px] px-[12px]">
               <VatRate index={index} />
             </div>
-            <div className="min-w-[180px]">
+            <div className="w-[180px]">
               <Action index={index} remove={remove} append={append} />
             </div>
 
@@ -103,10 +137,10 @@ export const ExpenseDetails = () => {
 /**
  * @function ExpenseCategory
  * @description This function is used to take the expense category and store in the form data
- * @param index 
- * @returns 
+ * @param index
+ * @returns
  */
-const ExpenseCategory = ({index}:{index:number}) => {
+const ExpenseCategory = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -173,13 +207,12 @@ const ExpenseCategory = ({index}:{index:number}) => {
  * @param index
  * @returns
  */
-const Details = ({index}:{index:number}) => {
+const Details = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
     name: `program_expenses.${index}.details`,
-
   });
   return (
     <div className="">
@@ -194,7 +227,7 @@ const Details = ({index}:{index:number}) => {
  * @param index
  * @returns
  */
-const ReceiptId = ({index}:{index:number}) => {
+const ReceiptId = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -214,13 +247,12 @@ const ReceiptId = ({index}:{index:number}) => {
  * @param index
  * @returns
  */
-const Amount = ({index}:{index:number}) => {
+const Amount = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
     name: `program_expenses.${index}.amount`,
-
   });
   return (
     <div className="">
@@ -235,13 +267,12 @@ const Amount = ({index}:{index:number}) => {
  * @param index
  * @returns
  */
-const PaymentMethod = ({index}:{index:number}) => {
+const PaymentMethod = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
     name: `program_expenses.${index}.payment_method`,
-
   });
 
   const { data } = useList<any>({
@@ -308,13 +339,12 @@ const PaymentMethod = ({index}:{index:number}) => {
  * @param index
  * @returns
  */
-const VatCondition = ({index}:{index:number}) => {
+const VatCondition = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
     name: `program_expenses.${index}.vat_condition`,
-
   });
   const options = [
     {
@@ -374,7 +404,7 @@ const VatCondition = ({index}:{index:number}) => {
  * @param index
  * @returns
  */
-const VendorTaxId = ({index}:{index:number}) => {
+const VendorTaxId = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -394,13 +424,12 @@ const VendorTaxId = ({index}:{index:number}) => {
  * @param index
  * @returns
  */
-const VendorName = ({index}:{index:number}) => {
+const VendorName = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
     name: `program_expenses.${index}.vendar_name`,
-
   });
   return (
     <div className="">
@@ -415,13 +444,12 @@ const VendorName = ({index}:{index:number}) => {
  * @param index
  * @returns
  */
-const VatRate = ({index}:{index:number}) => {
+const VatRate = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
     name: `program_expenses.${index}.vat_rate`,
-
   });
   const options = [
     {
@@ -591,5 +619,111 @@ const Action = ({
         </DialogContent>
       </Dialog>
     </div>
+  );
+};
+
+/**
+ * @function PurchaseDate
+ * @description this function is used to select the date of the purchase of the expense
+ * @param index 
+ * @returns 
+ */
+const PurchaseDate = ({ index }: { index: number }) => {
+  const {
+    field: { value = new Date(), onChange },
+    fieldState: { error },
+  } = useController({
+    name: `program_expenses.${index}.purchase_date`,
+  });
+  return (
+    <div>
+      <DateField
+        value={value}
+        onChange={onChange}
+        placeholder=" "
+        className="!w-[150px]"
+      />
+    </div>
+  );
+};
+
+/**
+ * @function IsReimbursable
+ * @description This function is used to get the radio buttons for the make reimburs or not buttons
+ * @param index 
+ * @returns 
+ */
+const IsReimbursable = ({ index }: { index: number }) => {
+  const {
+    field: { value, onChange },
+    fieldState: { error },
+  } = useController({
+    name: `program_expenses.${index}.reimbursable`,
+  });
+
+  console.log(value, "value");
+  return (
+    <div className="flex gap-1 flex-col">
+      <RadioGroup
+        onValueChange={(val: string) => {
+          onChange(parseInt(val));
+        }}
+        value={JSON.stringify(value)}
+      >
+        <div className="flex flex-row gap-2 ">
+          <RadioItem
+            value={JSON.stringify(1)}
+            selectedRadioValue={JSON.stringify(value)}
+            label="Yes"
+            className="w-[112px] h-[40px] rounded-[12px] "
+          />
+          <RadioItem
+            value={JSON.stringify(0)}
+            selectedRadioValue={JSON.stringify(value)}
+            label="No"
+            className="w-[112px] h-[40px] rounded-[12px]"
+          />
+        </div>
+      </RadioGroup>
+    </div>
+  );
+};
+
+interface RadioItemProps {
+  selectedRadioValue?: string;
+  value: string;
+  className?: string;
+  label: string;
+}
+/**
+ * @function RadioItem
+ * @description This function is used for getting the radio button
+ */
+const RadioItem: React.FC<RadioItemProps> = ({
+  selectedRadioValue,
+  value,
+  label,
+  className,
+}) => {
+  return (
+    <>
+      <RadioGroupCircleItem
+        value={value}
+        id={value}
+        className={classNames({
+          "!bg-[#7677F4]": selectedRadioValue === value,
+          "border !border-[#D6D7D8] border-[1.5px] ":
+            selectedRadioValue !== value,
+        })}
+      />
+      <Label
+        htmlFor={value}
+        className={`text-[#333333] font-normal ${
+          selectedRadioValue === value ? "text-[#7677F4]" : ""
+        }`}
+      >
+        {label}
+      </Label>
+    </>
   );
 };
