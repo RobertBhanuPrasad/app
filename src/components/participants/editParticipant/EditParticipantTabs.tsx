@@ -18,6 +18,7 @@ export default function EditParticipantTabs() {
 
   // participant_payment_history contains numerous records of same participant, getting the latest history record
 
+  const Id: number | undefined = query?.id ? parseInt(query.id as string) : undefined
   const queryResult = useList({
     resource: 'participant_payment_history',
     meta: {
@@ -25,7 +26,7 @@ export default function EditParticipantTabs() {
         'id,participant_id!inner(id,contact_id!inner(full_name),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,total_amount,participant_code,participant_attendence_status_id,discount_code),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee'
     },
     // TODO:replace value with participant_id
-    filters: [{ field: 'participant_id', operator: 'eq', value: query?.id }],
+    filters: [{ field: 'participant_id', operator: 'eq', value: Id }],
     sorters: [{ field: 'created_at', order: 'desc' }]
   })
   const participantData = queryResult?.data?.data[0]
@@ -41,7 +42,7 @@ export default function EditParticipantTabs() {
         participant_attendence_status_id: formData?.attendanceStatus
       },
       // TODO: need to update it with participant_registration id
-      id: participantData?.participant_id?.id
+      id: Id
     })
     mutate({
       resource: 'participant_payment_history',
@@ -49,7 +50,7 @@ export default function EditParticipantTabs() {
         accommodation_type_id: formData?.accommodationType
       },
       // TODO: need to update it with participant_payment_history id
-      id: participantData?.id
+      id: Id
     })
   }
 
@@ -97,7 +98,7 @@ export default function EditParticipantTabs() {
       label: 'Transaction Details',
       content: (
         <div>
-          <ViewParticipantTransactionDetails participantId={4} />
+          <ViewParticipantTransactionDetails participantId={Id} />
         </div>
       )
     },
@@ -106,7 +107,7 @@ export default function EditParticipantTabs() {
       label: 'UTM Parameters',
       content: (
         <div>
-          <ViewParticipantUtmParameters participantId={2} />
+          <ViewParticipantUtmParameters participantId={Id} />
         </div>
       )
     }

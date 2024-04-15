@@ -44,7 +44,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
     return (
       <div>
         <p className="text-[18px] font-[600] ">Transaction Details</p>
-        <div className="!w-[1133px] rounded-[10px]">
+        <div className="!w-[1000px] rounded-[10px]">
           {/* BaseTable component for rendering table */}
           <BaseTable
             checkboxSelection={false}

@@ -8,12 +8,15 @@ import { useEffect, useState } from "react";
 export default function Edit() {
     const { query } = useRouter();
     const [defaultValues, setDefaultValues] = useState({});
+    const Id: number | undefined = query?.id
+        ? parseInt(query.id as string)
+        : undefined;
 
     useEffect(() => {
         async function fetchData() {
             try {
                 const values = await handleEditParticipantValues(
-                    Number(query?.participantId)
+                    Number(Id)
                 );
                 setDefaultValues(values);
             } catch (error) {
@@ -21,10 +24,10 @@ export default function Edit() {
             }
         }
 
-        if (query?.participantId) {
+        if (Id) {
             fetchData();
         }
-    }, [query?.participantId]);
+    }, [Id]);
     return (
         <div>
             <div>
@@ -39,5 +42,4 @@ export default function Edit() {
             </div>
         </div>
     );
-    
 }
