@@ -1,39 +1,25 @@
-import { useOne, useSelect } from '@refinedev/core'
-import { CardLabel, CardValue } from 'src/ui/TextTags';
+import { useOne } from '@refinedev/core'
+import { CardLabel, CardValue } from 'src/ui/TextTags'
 
 // Component for viewing participant course information
-function ViewParticipantCourseInformation({participantId}: any) {
-
+function ViewParticipantCourseInformation({ participantId }: any) {
   // Query for fetching participant registration data
   const query: any = {
     resource: 'participant_registration',
     id: participantId,
     meta: {
       select:
-        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id(*),program_type_id(id,name)),participant_attendence_status_id(*))' // Selecting specific fields
+        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id(*),program_type_id(id,name),program_teachers!inner(*,user_id(*,contact_id(full_name)))),participant_attendence_status_id(*))' // Selecting specific fields
     }
   }
 
   // Fetching participant course data
   const { data: participantCourseData, isLoading, isError } = useOne(query)
 
-  // Query for fetching program teachers
-  const { queryResult } = useSelect({
-    resource: 'program_teachers',
-    meta: {
-      select: '*,user_id(*,contact_id(full_name))' // Selecting specific fields
-    },
-    filters: [
-      {
-        field: 'program_id',
-        operator: 'eq',
-        value: participantCourseData?.data?.program_id 
-      }
-    ]
-  })
-
   // Extracting teacher full names
-  const teacherFullNames = queryResult?.data?.data?.map(teacher => teacher.user_id.contact_id.full_name).join(', ')
+  const teacherFullNames = participantCourseData?.data?.program_id?.program_teachers
+    ?.map((teacher: { user_id: { contact_id: { full_name: any } } }) => teacher.user_id.contact_id.full_name)
+    .join(', ')
 
   // Participant course information
   const coursePaticipantInformation = [
@@ -42,7 +28,7 @@ function ViewParticipantCourseInformation({participantId}: any) {
       key: 'CourseName',
       value: participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
         ? participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
-        : participantCourseData?.data?.program_id?.program_type_id?.name
+        : '-'
     },
     { key: 'Teachers', value: teacherFullNames },
     { key: 'Attendance Status', value: participantCourseData?.data?.participant_attendence_status_id?.value },
@@ -57,7 +43,7 @@ function ViewParticipantCourseInformation({participantId}: any) {
         {coursePaticipantInformation.map((info, index) => (
           <div key={index}>
             <CardLabel>{info?.key}</CardLabel>
-            <CardValue className='text-sm'>{info?.value}</CardValue>
+            <CardValue className="text-sm">{info?.value}</CardValue>
           </div>
         ))}
       </div>

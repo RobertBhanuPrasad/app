@@ -1,4 +1,4 @@
-import SampleTabs from '@components/participant/viewParticipant/SampleTabs'
+import ScrollableTabs from '@components/participant/viewParticipant/ScrollableTabs'
 import ViewParticipantCourseInformation from '@components/participant/viewParticipant/ViewParticipantCourseInformation'
 import ViewParticipantCustomerDeviceDetails from '@components/participant/viewParticipant/ViewParticipantCustomerDeviceDetails'
 import ViewParticipantEmailDeliveryLogs from '@components/participant/viewParticipant/ViewParticipantEmailDeliveryLogs'
@@ -8,7 +8,6 @@ import ViewParticipantUtmParameters from '@components/participant/viewParticipan
 import { GetServerSideProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import { authProvider } from 'src/authProvider'
 import {
   VIEW_CUSTOMER_DEVICE_DETAILS,
@@ -23,7 +22,6 @@ function index() {
 
   const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
-  const [selectedValue, setSelectedValue] = useState()
   const tabTriggers: any = [
     {
       value: VIEW_PARTICIPANT_COURSE_INFORMATION,
@@ -57,7 +55,6 @@ function index() {
       label: 'Course Information ',
       content: (
         <div>
-          {' '}
           <ViewParticipantCourseInformation participantId={12} />
         </div>
       )
@@ -81,52 +78,8 @@ function index() {
       <div>
         <ViewParticipantInformation participantId={Id} />
       </div>
-      {/* <div className="w-full p-[20px]">
-        <Tabs
-          onValueChange={(val: any) => {
-            setSelectedValue(val)
-          }}
-        >
-          <TabsList className="flex flex-row gap-10 !flex-start !justify-start !bg-[white] !rounded-none">
-            {tabTriggers.map((trigger: any, index: any) => (
-              <TabsTrigger
-                key={index}
-                value={trigger.value}
-                className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
-                disabled={trigger.disabled}
-              >
-                <div className="flex flex-col gap-1">
-                  {trigger.label}
-                  <div
-                    className={`${
-                      selectedValue === trigger.value ? 'bg-[#7677F4] rounded w-full h-[2px]' : 'w-full h-[2px]'
-                    }`}
-                  />
-                </div>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          <div className="w-full border-b -mt-2"></div>
-          <TabsContent value={VIEW_PARTICIPANT_COURSE_INFORMATION}>
-            <ViewParticipantCourseInformation participantId = {Id} />
-          </TabsContent>
-          <TabsContent value={VIEW_PARTICIPANT_TRANSACTION_DETAILS}>
-            <ViewParticipantTransactionDetails participantId = {Id}  />
-          </TabsContent>
-          <TabsContent value={VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS}>
-            <ViewParticipantEmailDeliveryLogs participantId = {Id} />
-          </TabsContent>
-          <TabsContent value={VIEW_CUSTOMER_DEVICE_DETAILS}>
-            <ViewParticipantCustomerDeviceDetails participantId = {Id} />
-          </TabsContent>
-          <TabsContent value={VIEW_PARTICIPANT_UTM_PARAMETERS}>
-            <ViewParticipantUtmParameters participantId = {Id} />
-          </TabsContent>
-        </Tabs>
-      </div> */}
       <div className="sticky w-full p-[20px]">
-        {' '}
-        <SampleTabs tabs={tabs}/>
+        <ScrollableTabs tabs={tabs} />
       </div>
     </div>
   )
