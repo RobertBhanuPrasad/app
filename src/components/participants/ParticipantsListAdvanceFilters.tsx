@@ -59,7 +59,13 @@ export function ParticipantsAdvanceFilter() {
           setOpenAdvFilter(true);
         }}
       >
-        <Button variant="outline" className="flex gap-4 px-10 pl-5">
+        <Button
+          variant="outline"
+          className="flex gap-4 px-10 pl-5"
+          onClick={() => {
+            setValue("tempFilters", "advanceFilter");
+          }}
+        >
           {" "}
           <FilterIcon />
           All Filters
