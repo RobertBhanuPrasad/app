@@ -21,9 +21,8 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { useList, useSelect } from "@refinedev/core";
-import { CardLabel, Header, SubHeader } from "src/ui/TextTags";
+import {  Header} from "src/ui/TextTags";
 import { TableHeader } from "src/ui/TextTags";
-import { Alert, AlertDescription, AlertTitle } from "src/ui/alert";
 export const ExpenseDetails = () => {
   const { fields, append, remove } = useFieldArray({
     name: "expenses",
