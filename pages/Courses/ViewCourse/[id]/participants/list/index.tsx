@@ -461,7 +461,7 @@ function index() {
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="min-w-full">
+              <DropdownMenuContent className="w-[150px]">
                 <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333] w-full">
                   {bulkActions == "attendance"
                     ? attendanceOptions?.map((record: any) => (
