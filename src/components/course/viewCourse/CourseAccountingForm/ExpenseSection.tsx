@@ -100,18 +100,18 @@ function ExpenseSection() {
           </Button>
 
           <Button
-            className={`w-[86px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white] `}
-            onClick={handleSaveClick}
-          >
-            {isSaving ? <LoadingIcon /> : "Save"}
-          </Button>
-
-          <Button
             className="w-[101px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white]"
             onClick={handleCancelClick}
             type="button"
           >
             Cancel
+          </Button>
+
+          <Button
+            className={`w-[86px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white] `}
+            onClick={handleSaveClick}
+          >
+            {isSaving ? <LoadingIcon /> : "Save"}
           </Button>
         </section>
         {/* It will open when user click on cancel button and if user changed any details */}
