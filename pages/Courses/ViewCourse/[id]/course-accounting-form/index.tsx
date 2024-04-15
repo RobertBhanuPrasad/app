@@ -8,13 +8,13 @@ import { useList, useOne } from '@refinedev/core'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import BackArrowIcon from 'src/ui/BackArrowIcon'
 import CurrencyIcon from 'src/ui/CurrencyIcon'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card'
 import Line from 'src/ui/line'
 import { formatDate } from 'src/utility/DateFunctions'
 import { supabaseClient } from 'src/utility/supabaseClient'
 import { ActionsDropDown } from '..'
+import Back from 'src/ui/Back'
 
 // Define type for sectionComponents
 
@@ -106,7 +106,7 @@ function index() {
               replace('/Courses/ViewCourse/2')
             }}
           >
-            <BackArrowIcon />
+            <Back />
           </div>
 
           <div className="text-[33px] font-semibold pl-5 ">

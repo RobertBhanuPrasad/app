@@ -1,4 +1,4 @@
-function BackArrowIcon() {
+function Back() {
   return (
     <svg width="15" height="30" viewBox="0 0 15 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -8,4 +8,4 @@ function BackArrowIcon() {
     </svg>
   )
 }
-export default BackArrowIcon
+export default Back
