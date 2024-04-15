@@ -1,6 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { Button } from "src/ui/button";
+import { ExpenseDetails } from "../newCourse/ExpenseDetailsTable";
 
 function ExpenseSection() {
   const searchParams = useSearchParams();
@@ -17,7 +18,7 @@ function ExpenseSection() {
     <div>
       {" "}
       <div>
-        expense
+        <ExpenseDetails/>
         <Button
           className="w-[118px] h-[46px] border border-[#7677F4] rounded-[12px] bg-[white] text-[#7677F4]"
           onClick={() => {
