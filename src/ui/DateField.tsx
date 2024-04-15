@@ -6,28 +6,24 @@ import { Button } from "src/ui/button";
 import { Calendar } from "src/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 
-interface SingleDateCalendarProps {
+interface DateFieldProps {
   /**
    * The selected date to be displayed in the calendar.
    */
-  date?: Date;
+  value?: Date;
 
   /**
    * Function to set the selected date.
-   * @param date - The date to set as the selected date.
+   * @param value - The date to set as the selected date.
    */
-  setDate: (date: Date) => void;
+  onChange: (value: Date) => void;
 
   /**
    * Placeholder text to display when no date is selected.
    */
   placeholder?: string;
 }
-export const SingleDateCalender = ({
-  date,
-  setDate,
-  placeholder,
-}: SingleDateCalendarProps) => {
+export const DateField = ({ value, onChange, placeholder }: DateFieldProps) => {
   // State to manage the visibility of the popover
   const [isOpen, setIsOpen] = useState(false);
 
@@ -35,7 +31,7 @@ export const SingleDateCalender = ({
    * Function to handle the selected date
    */
   const handleSelectDate = (value: any) => {
-    setDate(value);
+    onChange(value);
     setIsOpen(false);
   };
 
@@ -72,8 +68,8 @@ export const SingleDateCalender = ({
 
           {/* Render the formatted date if date is selected, otherwise render the placeholder */}
 
-          {date ? (
-            format(date, "dd MMM, yyyy")
+          {value ? (
+            format(value, "dd MMM, yyyy")
           ) : (
             <span>{placeholder ? placeholder : "Pick a date"}</span>
           )}
@@ -82,7 +78,7 @@ export const SingleDateCalender = ({
       <PopoverContent ref={popoverRef} className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
+          selected={value}
           onSelect={handleSelectDate}
           initialFocus
         />
