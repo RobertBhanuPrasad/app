@@ -106,7 +106,7 @@ export const ExpenseDetails = () => {
  * @param index 
  * @returns 
  */
-const ExpenseCategory = (index: any) => {
+const ExpenseCategory = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -173,7 +173,7 @@ const ExpenseCategory = (index: any) => {
  * @param index
  * @returns
  */
-const Details = (index: any) => {
+const Details = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -193,7 +193,7 @@ const Details = (index: any) => {
  * @param index
  * @returns
  */
-const ReceiptId = (index: any) => {
+const ReceiptId = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -213,7 +213,7 @@ const ReceiptId = (index: any) => {
  * @param index
  * @returns
  */
-const Amount = (index: any) => {
+const Amount = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -233,7 +233,7 @@ const Amount = (index: any) => {
  * @param index
  * @returns
  */
-const PaymentMethod = (index: any) => {
+const PaymentMethod = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -305,7 +305,7 @@ const PaymentMethod = (index: any) => {
  * @param index
  * @returns
  */
-const VatCondition = (index: any) => {
+const VatCondition = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -370,7 +370,7 @@ const VatCondition = (index: any) => {
  * @param index
  * @returns
  */
-const VendorTaxId = (index: any) => {
+const VendorTaxId = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -390,12 +390,12 @@ const VendorTaxId = (index: any) => {
  * @param index
  * @returns
  */
-const VendorName = (index: any) => {
+const VendorName = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `vendor_name`,
+    name: `vendor_name${index}`,
   });
   return (
     <div className="">
@@ -410,7 +410,7 @@ const VendorName = (index: any) => {
  * @param index
  * @returns
  */
-const VatRate = (index: any) => {
+const VatRate = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
