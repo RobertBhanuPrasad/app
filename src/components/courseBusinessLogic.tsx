@@ -872,7 +872,7 @@ export const getActions = ({
   const conditions = [
     {
       condition:
-        attendenceStatusId === pendingAttendenceStatusId &&
+        attendenceStatusId === pendingAttendenceStatusId ||
         attendenceStatusId === failedTransactionStatusId,
       action: "Update attendance status",
     },

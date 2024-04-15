@@ -48,16 +48,19 @@ function CloseParticipantsSection() {
     replace(`${pathname}?${params.toString()}`);
   }
 
+  //getting pending attendence status id
   const pendingAttendenceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     PENDING_ATTENDANCE_STATUS
   )?.id;
 
+  //getting pending transacion status id
   const pendingTransactionStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
 
+  //Getting participant data 
   const { tableQueryResult: participantData } = useTable({
     resource: "participant_registration",
     meta: {
@@ -96,7 +99,7 @@ function CloseParticipantsSection() {
         {
           field: "program_id",
           operator: "eq",
-          value: 11,
+          value: 11, //TODO will remove after wards
         },
       ],
     },
@@ -114,15 +117,17 @@ function CloseParticipantsSection() {
     name: "status",
   });
 
-
+  //Getting attendance status data from option values
   const attendanceStatusData = getOptionValuesByOptionLabel(
     PARTICIPANT_ATTENDANCE_STATUS
   )?.[0]?.option_values;
 
+  //Getting payment status data from option values
   const paymentStatusData = getOptionValuesByOptionLabel(
     PARTICIPANT_PAYMENT_STATUS
   )?.[0]?.option_values;
 
+//updating the status data based on 
   const statusData =
     actionValue == UPDATE_ATTENDENCE_STATUS
       ? attendanceStatusData
@@ -136,6 +141,7 @@ function CloseParticipantsSection() {
         <div className="ml-auto flex flex-row gap-4">
           <div>
             <Select
+              //Disabled when i havent select any row from the table
               disabled={Object.keys(rowSelection).length === 0}
               value={actionValue}
               onValueChange={actionOnChange}
@@ -157,6 +163,7 @@ function CloseParticipantsSection() {
           </div>
           <div>
             <Select
+              //disabled when no action is selected
               disabled={actionValue == undefined}
               value={statusValue}
               onValueChange={statusOnChange}
@@ -166,7 +173,7 @@ function CloseParticipantsSection() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
-                  {statusData?.map((status: any, index: number) => {
+                  {statusData?.map((status: OptionValuesDataBaseType, index: number) => {
                     return (
                       <SelectItem
                         key={index}
@@ -276,14 +283,13 @@ export const participantsColumns: ColumnDef<any>[] = [
     header: () => {
       return <div className="min-w-[150px]">Required Action (s)</div>;
     },
-    cell: ({ row }: any) => {
+    cell: ({ row }) => {
       const actions: string[] = getActions({
         attendenceStatusId: row.original.participant_attendence_status_id,
         transactionStatusId: row.original.payment_status_id,
         isPPAConsentChecked: row.original.is_program_agreement_checked,
         isHealthDeclarationChecked: row.original.is_health_declaration_checked,
       });
-      console.log("hey row", actions);
       return (
         <div className="min-w-[150px]">
           {actions.map((action, index) => (
