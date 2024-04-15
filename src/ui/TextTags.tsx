@@ -69,7 +69,7 @@ const CardValue: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children, c
  */
 const TableHeader: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children, className, ...props }) => {
   return (
-    <p className={cn('text-sm font-semibold text-[#333333] p-2 text-[16px] bg-[#7677F41A]',className)} {...props}>
+    <p className={cn('text-sm font-semibold flex items-center text-[16px]',className)} {...props}>
       {children}
     </p>
   )

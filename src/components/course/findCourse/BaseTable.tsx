@@ -187,7 +187,7 @@ export function BaseTable<TData, TValue>({
    * @param index 
    * @returns index in string format
    */
-  const getRowId = (originalRow: any, index: any) => {
+  const getRowId = (originalRow: any, index: number) => {
     if (checkboxSelection) {
       return originalRow.id.toString();
     } else {

@@ -41,52 +41,52 @@ export const ExpenseDetails = () => {
   return (
     <div>
       <Header className="py-4" children={"Expense Details"} />
-      <div className="rounded-[12px] border border-[#D6D7D8] w-full overflow-hidden overflow-x-auto scrollbar">
-        <div className="flex h-[48px] w-full ">
-          <div className="p-2 w-[50px] bg-[#7677F41A]">#</div>
-          <TableHeader className="p-2 min-w-[180px]">Expense Category</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Details</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Receipt Id</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Amount</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Payment Method</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Vat Condition</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Vendor Tax Id</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Vendor Name</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Vat Rate</TableHeader>
-          <TableHeader className="p-2 min-w-[180px]">Actions</TableHeader>
+      <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
+        <div className="inline-flex h-[48px] w-auto bg-[#7677F41A]">
+          <div className="w-[50px] flex items-center">#</div>
+          <TableHeader className="min-w-[180px]">Expense Category</TableHeader>
+          <TableHeader className="min-w-[180px]">Details</TableHeader>
+          <TableHeader className="min-w-[180px]">Receipt Id</TableHeader>
+          <TableHeader className="min-w-[180px]">Amount</TableHeader>
+          <TableHeader className="min-w-[180px]">Payment Method</TableHeader>
+          <TableHeader className="min-w-[180px]">Vat Condition</TableHeader>
+          <TableHeader className="min-w-[180px]">Vendor Tax Id</TableHeader>
+          <TableHeader className="min-w-[180px]">Vendor Name</TableHeader>
+          <TableHeader className="min-w-[180px]">Vat Rate</TableHeader>
+          <TableHeader className="min-w-[180px]">Actions</TableHeader>
         </div>
 
         {fields.map((field: any, index: number) => (
-          <div key={field.id} className="flex items-center w-full h-auto ">
-            <div className="w-[50px] p-2">{index + 1}</div>
-            <div className="min-w-[180px] p-2">
+          <div key={field.id} className="flex items-center w-full h-auto  ">
+            <div className="w-[50px] flex items-center">{index + 1}</div>
+            <div className="min-w-[180px]">
               <ExpenseCategory index={index} />
             </div>
-            <div className="min-w-[180px] p-2">
+            <div className="min-w-[180px]">
               <Details index={index} />
             </div>
-            <div className="min-w-[180px] p-2">
+            <div className="min-w-[180px]">
               <ReceiptId index={index} />
             </div>
-            <div className="min-w-[180px] p-2">
+            <div className="min-w-[180px]">
               <Amount index={index} />
             </div>
-            <div className="min-w-[180px] p-2">
+            <div className="min-w-[180px]">
               <PaymentMethod index={index} />
             </div>
-            <div className="min-w-[180px] p-2">
+            <div className="min-w-[180px]">
               <VatCondition index={index} />
             </div>
-            <div className="min-w-[180px] p-2">
+            <div className="min-w-[180px]">
               <VendorTaxId index={index} />
             </div>
-            <div className="min-w-[180px] p-2">
+            <div className="min-w-[180px]">
               <VendorName index={index} />
             </div>
-            <div className="min-w-[180px] p-2">
+            <div className="min-w-[180px]">
               <VatRate index={index} />
             </div>
-            <div className="min-w-[180px] p-2 ">
+            <div className="min-w-[180px]">
               <Action index={index} remove={remove} append={append} />
             </div>
 
@@ -110,8 +110,8 @@ const ExpenseCategory = ({index}:{index:number}) => {
   const {
     field: { value, onChange },
     fieldState: { error },
-  } = useController({
-    name: `expense_category${index}`,
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
   });
 
   const options = [
@@ -178,7 +178,8 @@ const Details = ({index}:{index:number}) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `details${index}`,
+    name: `program_expenses.${index}.details`,
+
   });
   return (
     <div className="">
@@ -198,7 +199,7 @@ const ReceiptId = ({index}:{index:number}) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `receipt_id${index}`,
+    name: `program_expenses.${index}.recipt_id`,
   });
   return (
     <div className="">
@@ -218,7 +219,8 @@ const Amount = ({index}:{index:number}) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `amount${index}`,
+    name: `program_expenses.${index}.amount`,
+
   });
   return (
     <div className="">
@@ -238,7 +240,8 @@ const PaymentMethod = ({index}:{index:number}) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `payment_method${index}`,
+    name: `program_expenses.${index}.payment_method`,
+
   });
 
   const { data } = useList<any>({
@@ -310,7 +313,8 @@ const VatCondition = ({index}:{index:number}) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `vat_condition${index}`,
+    name: `program_expenses.${index}.vat_condition`,
+
   });
   const options = [
     {
@@ -375,7 +379,7 @@ const VendorTaxId = ({index}:{index:number}) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `vendor_tax_id${index}`,
+    name: `program_expenses.${index}.vat_tax_id`,
   });
   return (
     <div className="">
@@ -395,7 +399,8 @@ const VendorName = ({index}:{index:number}) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `vendor_name${index}`,
+    name: `program_expenses.${index}.vendar_name`,
+
   });
   return (
     <div className="">
@@ -415,7 +420,8 @@ const VatRate = ({index}:{index:number}) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `vat_rate${index}`,
+    name: `program_expenses.${index}.vat_rate`,
+
   });
   const options = [
     {
