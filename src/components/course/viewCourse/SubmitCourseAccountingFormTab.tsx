@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { Button } from "src/ui/button";
 
-function CourseAccountingFormTab() {
+function SubmitCourseAccountingFormTab() {
   const router = useRouter();
 
   /**
@@ -31,4 +31,4 @@ function CourseAccountingFormTab() {
   );
 }
 
-export default CourseAccountingFormTab;
+export default SubmitCourseAccountingFormTab;
