@@ -21,25 +21,7 @@ import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesBy
 
 import { handleCourseDefaultValues } from '@components/course/newCourse/EditCourseUtil'
 import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
-import CourseDetailsTab from '@components/course/viewCourse/courseDetailsTab'
-import ParticipantsTab from '@components/course/viewCourse/participantsTab'
-import {
-  DisplayOptions,
-  handleTabsBasedOnStatus,
-  isApproved,
-  isViewCourseAccountingTabDisplay
-} from '@components/courseBusinessLogic'
-import CopyIcon from '@public/assets/CopyIcon'
-import Cross from '@public/assets/Cross'
-import Currency from '@public/assets/Currency'
-import Exclamation from '@public/assets/Exclamation'
-import FaceBookIcon from '@public/assets/FaceBookIcon'
-import Instagram from '@public/assets/Instagram'
-import LinkedInIcon from '@public/assets/LinkedInIcon'
-import ShareIcon from '@public/assets/ShareIcon'
-import Tick from '@public/assets/Tick.png'
-import TwitterIcon from '@public/assets/TwitterIcon'
-import WhatsappIcon from '@public/assets/WhatsappIcon'
+
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
@@ -47,7 +29,6 @@ import {
   REVENUE_SUMMARY_TAB,
   VIEW_COURSE_ACCOUNTING_FORM_TAB
 } from 'src/constants/CourseConstants'
-import { Button } from 'src/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -55,13 +36,49 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
-} from 'src/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
-import { Textarea } from 'src/ui/textarea'
-import { supabaseClient } from 'src/utility/supabaseClient'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
-import CourseAccountingFormTab from '../../../../src/components/course/viewCourse/CourseAccountingFormTab'
+  DialogTrigger,
+} from "src/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "src/ui/alert-dialog";
+import { Button } from "src/ui/button";
+import { Textarea } from "src/ui/textarea";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import ShareIcon from "@public/assets/ShareIcon";
+import CopyIcon from "@public/assets/CopyIcon";
+import WhatsappIcon from "@public/assets/WhatsappIcon";
+import FaceBookIcon from "@public/assets/FaceBookIcon";
+import TwitterIcon from "@public/assets/TwitterIcon";
+import Instagram from "@public/assets/Instagram";
+import LinkedInIcon from "@public/assets/LinkedInIcon";
+import Exclamation from "@public/assets/Exclamation";
+import Cross from "@public/assets/Cross";
+import Tick from "@public/assets/Tick.png";
+import ParticipantsTab from "@components/course/viewCourse/participantsTab";
+import { supabaseClient } from "src/utility/supabaseClient";
+import {
+  DisplayOptions,
+  handleTabsBasedOnStatus,
+  isApproved,
+  isViewCourseAccountingTabDisplay,
+} from "@components/courseBusinessLogic";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
+import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 import CurrencyIcon from '@public/assets/CurrencyIcon'
 
 function index() {

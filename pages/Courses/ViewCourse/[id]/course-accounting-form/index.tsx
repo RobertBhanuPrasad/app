@@ -1,10 +1,13 @@
-import Form from '@components/Formfield'
-import CloseParticipantsSection from '@components/course/viewCourse/CloseParticipantsSection'
-import ExpenseSection from '@components/course/viewCourse/ExpenseSection'
-import RevenueSection from '@components/course/viewCourse/RevenueSection'
-import { useSearchParams } from 'next/navigation'
+
 import HeaderSection from './CourseAccountingFormHeader'
 
+import Form from "@components/Formfield";
+import CloseParticipantsSection from "@components/course/viewCourse/CourseAccountingForm/CloseParticipantsSection";
+import ExpenseSection from "@components/course/viewCourse/CourseAccountingForm/ExpenseSection";
+import RevenueSection from "@components/course/viewCourse/CourseAccountingForm/RevenueSection";
+import { useSearchParams } from "next/navigation";
+import React from "react";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 // Define type for sectionComponents
 
 function index() {
@@ -41,6 +44,7 @@ function index() {
     console.log('form data', data)
   }
 
+  const { courseAccountingFormDefaultValues } = newCourseStore();
   return (
     <div>
       <section>
@@ -49,7 +53,10 @@ function index() {
         <HeaderSection />
       </section>
 
-      <Form defaultValues={{}} onSubmit={onSubmit}>
+      <Form
+        defaultValues={courseAccountingFormDefaultValues}
+        onSubmit={onSubmit}
+      >
         <section>{componentToRender?.component}</section>
       </Form>
     </div>
