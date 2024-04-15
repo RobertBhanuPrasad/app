@@ -1,14 +1,13 @@
-"use client";
+"use client"
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import * as React from "react";
-import { DayPicker } from "react-day-picker";
+import * as React from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { DayPicker } from "react-day-picker"
 
-import { cn } from "src/lib/utils";
-import { buttonVariants } from "src/ui/button";
+import { cn } from "src/lib/utils"
+import { buttonVariants } from "src/ui/button"
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
-
+export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
 function Calendar({
   className,
@@ -37,17 +36,10 @@ function Calendar({
         head_cell:
           "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",
-<<<<<<< HEAD
-        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-        day: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
-=======
         cell: "h-9 w-9 text-center text-sm !rounded-full p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
         day: cn(
           buttonVariants({ variant: "ghost" }),
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100 text-[13px] !rounded-full"
->>>>>>> 8d9f573f446d7c337ce0d30f595315b7db6b1054
         ),
         day_range_end: "day-range-end",
         day_selected:
@@ -64,15 +56,6 @@ function Calendar({
       components={{
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
-<<<<<<< HEAD
-      }}
-      {...props}
-    />
-  )
-}
-Calendar.displayName = "Calendar"
- 
-=======
         CaptionLabel: ({ ...props }) => {
           // Extract the month from the props
           const { displayMonth } = props;
@@ -107,5 +90,4 @@ Calendar.displayName = "Calendar"
 }
 Calendar.displayName = "Calendar"
 
->>>>>>> 8d9f573f446d7c337ce0d30f595315b7db6b1054
 export { Calendar }
