@@ -14,6 +14,7 @@ import { editParticipantStore } from "src/zustandStore/EditParticipantStore";
 export default function EditParticipantTabs() {
     const { watch, getValues } = useFormContext();
     const formData = watch();
+    const accommodationData=getValues()
    
     // participant_payment_history contains numerous records of same participant, getting the latest history record
         
@@ -51,7 +52,6 @@ export default function EditParticipantTabs() {
         });
     };
 
-    const accommodation=true
     // TODO: need to integrated with efficient tabs component
     // Rendering tabs content through tabs variable
     let tabs = [
@@ -110,9 +110,8 @@ export default function EditParticipantTabs() {
             ),
         },
     ];
-    
     // Check if accommodation should be rendered
-    if (!accommodation) {
+    if (!accommodationData?.program_id?.program_type_id?.is_online_program) {
         tabs = tabs.filter(tab => tab.label !== "Accommodation Details");
     }
     
