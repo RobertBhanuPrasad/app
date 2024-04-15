@@ -32,6 +32,16 @@ import { CountComponent } from "pages/Courses/FindCourse";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "src/ui/alert-dialog";
 
 function index() {
   const router = useRouter();
@@ -39,8 +49,13 @@ function index() {
     ? parseInt(router.query.id as string)
     : undefined;
 
-  const { ParticpantFiltersData, setSelectedTableRows, setSelectedRowObjects } =
-    ParticipantStore();
+  const {
+    ParticpantFiltersData,
+    setSelectedTableRows,
+    setSelectedRowObjects,
+    selectedTableRows,
+    selectedRowObjects,
+  } = ParticipantStore();
   const filters: {
     /**
      * Initial filter state
@@ -320,12 +335,160 @@ function index() {
     (value) => value === true
   ).length;
 
+  const [open, setOpen] = useState(false);
+  const [disableBulkOptions, setEnableBulkOptions] = useState(true);
+  const [bulkActions, setBulkAction] = useState("");
+  const attendanceOptions = getOptionValuesByOptionLabel(
+    PARTICIPANT_ATTENDANCE_STATUS
+  )?.[0]?.option_values;
+
+  const paymentStatusOptions = getOptionValuesByOptionLabel(
+    PARTICIPANT_PAYMENT_STATUS
+  )?.[0]?.option_values;
+
+  const handleUpdateAttendanceStatus = async (attendance_status_id: number) => {
+    const participantIds: number[] = Object.keys(selectedRowObjects)
+      .filter((key: any) => selectedRowObjects[key] === true)
+      .map(Number);
+
+    const { error } = await supabaseClient
+      .from("participant_registration")
+      .update({ participant_attendence_status_id: attendance_status_id })
+      .in("id", participantIds);
+
+    if (!error) {
+      alert(`${participantIds.length} Record(s) updated successfully`);
+    }
+  };
+
+  const handleBulkUpdateTransactionStatus = async (
+    transaction_status_id: number
+  ) => {
+    const programID: number | undefined = router?.query?.id
+      ? parseInt(router.query.id as string)
+      : undefined;
+
+    const participantIds: number[] = Object.keys(selectedRowObjects)
+      .filter((key: any) => selectedRowObjects[key] === true)
+      .map(Number);
+
+    const transactionPendingStatusID = paymentStatusOptions.find(
+      (record: any) => record.value == "Pending"
+    )?.id;
+
+    const { error } = await supabaseClient
+      .from("participant_payment_history")
+      .update({ transaction_status_id: transaction_status_id })
+      .match({
+        program_id: programID,
+        transaction_status_id: transactionPendingStatusID,
+      })
+      .in("participant_id", participantIds);
+
+    const { data } = await supabaseClient
+      .from("participant_registration")
+      .update({ payment_status_id: transaction_status_id })
+      .in("id", participantIds);
+
+    if (!error) {
+      alert(`${participantIds.length} Record(s) updated successfully`);
+    }
+  };
+
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="flex flex-col gap-4 p-10">
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
+        <div className="flex gap-10 justify-end w-full">
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  onClick={() => setOpen(true)}
+                  variant="outline"
+                  className="flex flex-row justify-between w-[192px] h-10"
+                  disabled={selectedTableRows > 0 ? false : true}
+                >
+                  Bulk Actions
+                  <CountComponent count={selectedTableRows} />
+                  <DropDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
+                  {/* TODO (Not in MVP Scope): Print Registration Form */}
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setEnableBulkOptions(true);
+                    }}
+                  >
+                    Print Registration Form
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setEnableBulkOptions(false);
+
+                      setBulkAction("attendance");
+                    }}
+                  >
+                    Update Attendance Status
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setEnableBulkOptions(false);
+
+                      setBulkAction("transaction");
+                    }}
+                  >
+                    Update Transaction Status
+                  </DropdownMenuItem>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  onClick={() => setOpen(true)}
+                  variant="outline"
+                  className="flex flex-row justify-between w-[152px] h-10"
+                  disabled={disableBulkOptions}
+                >
+                  Select Status
+                  <DropDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="min-w-full">
+                <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333] w-full">
+                  {bulkActions == "attendance"
+                    ? attendanceOptions?.map((record: any) => (
+                        <DropdownMenuItem
+                          key={record.id}
+                          onClick={() =>
+                            handleUpdateAttendanceStatus(record.id)
+                          }
+                        >
+                          {record.value}
+                        </DropdownMenuItem>
+                      ))
+                    : paymentStatusOptions?.map((record: any) => (
+                        <DropdownMenuItem
+                          key={record.id}
+                          onClick={() =>
+                            handleBulkUpdateTransactionStatus(record.id)
+                          }
+                        >
+                          {record.value}
+                        </DropdownMenuItem>
+                      ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         <div className="w-full">
           <BaseTable
             current={current}
@@ -452,61 +615,6 @@ const HeaderSection = () => {
     setValue("transaction_status", []);
   };
 
-  const [disableBulkOptions, setEnableBulkOptions] = useState(true);
-  const [bulkActions, setBulkAction] = useState("");
-  const attendanceOptions = getOptionValuesByOptionLabel(
-    PARTICIPANT_ATTENDANCE_STATUS
-  )?.[0]?.option_values;
-
-  const paymentStatusOptions = getOptionValuesByOptionLabel(
-    PARTICIPANT_PAYMENT_STATUS
-  )?.[0]?.option_values;
-
-  const handleUpdateAttendanceStatus = async (attendance_status_id: number) => {
-    const participantIds: number[] = Object.keys(selectedRowObjects)
-      .filter((key: any) => selectedRowObjects[key] === true)
-      .map(Number);
-
-    const { error } = await supabaseClient
-      .from("participant_registration")
-      .update({ participant_attendence_status_id: attendance_status_id })
-      .in("id", participantIds);
-
-    console.log("ERR", error);
-  };
-
-  const handleBulkUpdateTransactionStatus = async (
-    transaction_status_id: number
-  ) => {
-    const programID: number | undefined = router?.query?.program_id
-      ? parseInt(router.query.program_id as string)
-      : undefined;
-
-    const participantIds: number[] = Object.keys(selectedRowObjects)
-      .filter((key: any) => selectedRowObjects[key] === true)
-      .map(Number);
-
-    const transactionPendingStatusID = paymentStatusOptions.find(
-      (record: any) => record.value == "Pending"
-    )?.id;
-
-    const { error } = await supabaseClient
-      .from("participant_payment_history")
-      .update({ transaction_status_id: transaction_status_id })
-      .match({
-        program_id: programID,
-        transaction_status_id: transactionPendingStatusID,
-      })
-      .in("participant_id", participantIds);
-
-    const { data } = await supabaseClient
-      .from("participant_registration")
-      .update({ payment_status_id: transaction_status_id })
-      .in("id", participantIds);
-
-    console.log("Err", error);
-  };
-
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4 flex-wrap gap-y-4">
       {/* Advance Filter Seciton */}
@@ -582,92 +690,6 @@ const HeaderSection = () => {
           onSearch={() => {}}
           onChange={onSelectChange}
         />
-      </div>
-      {/* Bulk actions Section */}
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              onClick={() => setOpen(true)}
-              variant="outline"
-              className="flex flex-row justify-between w-[192px] h-10"
-              disabled={selectedTableRows > 0 ? false : true}
-            >
-              Bulk Actions
-              <CountComponent count={selectedTableRows} />
-              <DropDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <div className="flex flex-col gap-4 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
-              {/* TODO (Not in MVP Scope): Print Registration Form */}
-              <DropdownMenuItem
-                onClick={() => {
-                  setEnableBulkOptions(true);
-                }}
-              >
-                Print Registration Form
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setEnableBulkOptions(false);
-
-                  setBulkAction("attendance");
-                }}
-              >
-                Update Attendance Status
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setEnableBulkOptions(false);
-
-                  setBulkAction("transaction");
-                }}
-              >
-                Update Transaction Status
-              </DropdownMenuItem>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              onClick={() => setOpen(true)}
-              variant="outline"
-              className="flex flex-row justify-between w-[192px] h-10"
-              disabled={disableBulkOptions}
-            >
-              Select Status
-              <DropDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className=" w-full">
-            <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
-              {bulkActions == "attendance"
-                ? attendanceOptions?.map((record: any) => (
-                    <DropdownMenuItem
-                      key={record.id}
-                      onClick={() => handleUpdateAttendanceStatus(record.id)}
-                    >
-                      {record.value}
-                    </DropdownMenuItem>
-                  ))
-                : paymentStatusOptions?.map((record: any) => (
-                    <DropdownMenuItem
-                      key={record.id}
-                      onClick={() =>
-                        handleBulkUpdateTransactionStatus(record.id)
-                      }
-                    >
-                      {record.value}
-                    </DropdownMenuItem>
-                  ))}
-              {/* <DropdownMenuItem>Pending</DropdownMenuItem> */}
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
       {/* Clear, Apply Filters Section */}
       <div className="flex flex-row gap-4 items-center">
