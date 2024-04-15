@@ -48,6 +48,7 @@ import {
   COURSE_DETAILS_TAB,
   PARTICIPANTS_TAB,
   REVENUE_SUMMARY_TAB,
+  VIEW_COURSE_ACCOUNTING_FORM_TAB,
 } from "src/constants/CourseConstants";
 import {
   Dialog,
@@ -87,6 +88,7 @@ import {
   DisplayOptions,
   handleTabsBasedOnStatus,
   isApproved,
+  isViewCourseAccountingTabDisplay,
 } from "@components/courseBusinessLogic";
 import {
   Select,
@@ -97,8 +99,7 @@ import {
   SelectValue,
 } from "src/ui/select";
 import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
-import RulesSection from "../../../../src/components/course/viewCourse/CourseAccountingFormTab";
-import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/CourseAccountingFormTab";
+import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -168,6 +169,7 @@ function ViewDetails() {
   const [selectedValue, setSelectedValue] = useState(
     JSON.stringify(COURSE_DETAILS_TAB)
   );
+ 
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
@@ -184,12 +186,34 @@ function ViewDetails() {
       label: t("pages.Tabs.revenueSummaryTab"),
       disabled: false,
     },
-    {
+  ];
+
+ /**
+  * variable to check whether we have to show course accounting form tab or 
+  * we have to view course accounting form tab 
+  * based on course status and course accounting status
+  */
+  const isViewCourseAccountingTabToDisplay = isViewCourseAccountingTabDisplay(
+    courseData?.data?.status_id?.id,
+    courseData?.data?.program_accounting_status_id
+  );
+
+ 
+
+  // Check if the tab should be enabled and append the object accordingly
+  if (isViewCourseAccountingTabToDisplay) {
+    tabTriggers.push({
+      value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
+      label: "View Course Accounting Form",
+      disabled: true,
+    });
+  } else {
+    tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
       label: t("pages.Tabs.courseAccountingFormTab"),
       disabled: true,
-    },
-  ];
+    });
+  }
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -347,6 +371,9 @@ function ViewDetails() {
           </TabsContent>
           <TabsContent value={JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)}>
             <CourseAccountingFormTab />
+          </TabsContent>
+          <TabsContent value={JSON.stringify(VIEW_COURSE_ACCOUNTING_FORM_TAB)}>
+            <div>View Course Accounting Form Tab</div>
           </TabsContent>
         </Tabs>
       </div>
