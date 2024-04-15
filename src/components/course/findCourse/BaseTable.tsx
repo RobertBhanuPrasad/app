@@ -198,8 +198,6 @@ export function BaseTable<TData, TValue>({
     },
   });
 
-  console.log("heyy table", table);
-
   /**
    * Function to handle the select all checkbox changes
    */
@@ -404,9 +402,9 @@ export function BaseTable<TData, TValue>({
                         >
                           <Checkbox
                             className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
-                            checked={table && table?.getIsAllPageRowsSelected()}
+                            checked={table.getIsAllPageRowsSelected()}
                             onCheckedChange={(value: boolean) => {
-                              table?.toggleAllPageRowsSelected(value);
+                              table.toggleAllPageRowsSelected(value);
                             }}
                             aria-label="Select all"
                           />
