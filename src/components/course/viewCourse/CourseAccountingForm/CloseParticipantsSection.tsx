@@ -10,7 +10,6 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
-import { BaseTable } from "../findCourse/BaseTable";
 import {
   Select,
   SelectContent,
@@ -28,6 +27,8 @@ import {
 } from "src/constants/OptionValueOrder";
 import { useController } from "react-hook-form";
 import { ActionProps, getActions } from "@components/courseBusinessLogic";
+import { BaseTable } from "@components/course/findCourse/BaseTable";
+import { TableHeader, Text } from "src/ui/TextTags";
 
 function CloseParticipantsSection() {
   const searchParams = useSearchParams();
@@ -60,7 +61,7 @@ function CloseParticipantsSection() {
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
 
-  //Getting participant data 
+  //Getting participant data
   const { tableQueryResult: participantData } = useTable({
     resource: "participant_registration",
     meta: {
@@ -127,7 +128,7 @@ function CloseParticipantsSection() {
     PARTICIPANT_PAYMENT_STATUS
   )?.[0]?.option_values;
 
-//updating the status data based on 
+  //updating the status data based on
   const statusData =
     actionValue == UPDATE_ATTENDENCE_STATUS
       ? attendanceStatusData
@@ -173,17 +174,19 @@ function CloseParticipantsSection() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
-                  {statusData?.map((status: OptionValuesDataBaseType, index: number) => {
-                    return (
-                      <SelectItem
-                        key={index}
-                        value={status.id}
-                        className="h-[44px]"
-                      >
-                        {status.value}
-                      </SelectItem>
-                    );
-                  })}
+                  {statusData?.map(
+                    (status: OptionValuesDataBaseType, index: number) => {
+                      return (
+                        <SelectItem
+                          key={index}
+                          value={status.id}
+                          className="h-[44px]"
+                        >
+                          {status.value}
+                        </SelectItem>
+                      );
+                    }
+                  )}
                 </SelectItems>
               </SelectContent>
             </Select>
@@ -232,7 +235,11 @@ export const participantsColumns: ColumnDef<any>[] = [
     accessorKey: "participant_code",
     enableHiding: false,
     header: () => {
-      return <div className="min-w-[150px]">Registration ID</div>;
+      return (
+        <div className="min-w-[150px]">
+          <TableHeader className="!text-[16px]">Registration ID</TableHeader>
+        </div>
+      );
     },
     cell: ({ row }) => {
       return (
@@ -240,7 +247,9 @@ export const participantsColumns: ColumnDef<any>[] = [
           onClick={() => {}}
           className="min-w-[150px] text-[#7677F4] font-semibold cursor-pointer"
         >
-          {row?.original?.participant_code}
+          <Text className="!text-[#7677F4] font-semibold">
+            {row?.original?.participant_code}
+          </Text>
         </div>
       );
     },
@@ -249,14 +258,25 @@ export const participantsColumns: ColumnDef<any>[] = [
     accessorKey: "contact",
     enableHiding: false,
     header: () => {
-      return <div className="w-[150px]">Participant Name</div>;
+      return (
+        <div className="w-[150px]">
+          <TableHeader className="!text-[16px]">Participant Name</TableHeader>
+        </div>
+      );
     },
     cell: ({ row }) => {
       return (
         <div className="w-[150px]">
-          {row?.original?.contact?.full_name
-            ? row?.original?.contact?.full_name
-            : "-"}
+          <Text className="max-w-[120px] truncate">
+            <abbr
+              title={row?.original?.contact?.full_name}
+              className="no-underline"
+            >
+              {row?.original?.contact?.full_name
+                ? row?.original?.contact?.full_name
+                : "-"}
+            </abbr>
+          </Text>
         </div>
       );
     },
@@ -265,14 +285,20 @@ export const participantsColumns: ColumnDef<any>[] = [
     accessorKey: "payment-method",
     enableHiding: false,
     header: () => {
-      return <div className="min-w-[150px]">Payment method</div>;
+      return (
+        <div className="min-w-[150px]">
+          <TableHeader className="!text-[16px]"> Payment method</TableHeader>
+        </div>
+      );
     },
     cell: ({ row }) => {
       return (
         <div className="min-w-[150px]">
-          {row?.original?.payment_method?.value
-            ? row?.original?.payment_method?.value
-            : "-"}
+          <Text>
+            {row?.original?.payment_method?.value
+              ? row?.original?.payment_method?.value
+              : "-"}
+          </Text>
         </div>
       );
     },
@@ -281,10 +307,18 @@ export const participantsColumns: ColumnDef<any>[] = [
     id: "Actions",
     enableHiding: false,
     header: () => {
-      return <div className="min-w-[150px]">Required Action (s)</div>;
+      return (
+        <div className="min-w-[150px]">
+          <TableHeader className="!text-[16px]">
+            {" "}
+            Required Action (s)
+          </TableHeader>
+        </div>
+      );
     },
     cell: ({ row }) => {
       const actions: string[] = getActions({
+        //TODO will have few changes after settings data
         attendenceStatusId: row.original.participant_attendence_status_id,
         transactionStatusId: row.original.payment_status_id,
         isPPAConsentChecked: row.original.is_program_agreement_checked,
@@ -293,7 +327,7 @@ export const participantsColumns: ColumnDef<any>[] = [
       return (
         <div className="min-w-[150px]">
           {actions.map((action, index) => (
-            <div key={index}>{action}</div>
+            <Text key={index}>{action}</Text>
           ))}
         </div>
       );

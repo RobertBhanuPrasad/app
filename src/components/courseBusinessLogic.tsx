@@ -873,13 +873,14 @@ export const getActions = ({
   // Define conditions and corresponding actions
   const conditions = [
     {
-      condition:
-        attendenceStatusId === pendingAttendenceStatusId ||
-        attendenceStatusId === failedTransactionStatusId,
+      condition: attendenceStatusId === pendingAttendenceStatusId,
+      //TODO I need to add cancel attendance status also based on settings data
       action: "Update attendance status",
     },
     {
-      condition: transactionStatusId === pendingTransactionStatusId,
+      condition:
+        transactionStatusId === pendingTransactionStatusId ||
+        transactionStatusId === failedTransactionStatusId,
       action: "Update transaction status",
     },
     {
