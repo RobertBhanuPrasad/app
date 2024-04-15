@@ -5,7 +5,7 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function Index() {
+export default function Edit() {
     const { query } = useRouter();
     const [defaultValues, setDefaultValues] = useState({});
 

@@ -565,12 +565,12 @@ export const handleActions = (index: number, participant_id: any) => {
   switch (index) {
     case 0: {
       // TODO: Navigate to view participant page
-      router.push("/");
+      router.push(`/${participant_id}/View`);
       break;
     }
     case 1: {
       // TODO: Navigate to edit participant page
-      router.push("/");
+      router.push(`/${participant_id}/Edit`);
       break;
     }
     case 2: {
