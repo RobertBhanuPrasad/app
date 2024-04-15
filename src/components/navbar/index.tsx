@@ -14,6 +14,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "src/ui/navigation-menu";
+import { useTranslation } from 'next-i18next';
 
 function Navbar() {
   // Define navigation components and their respective routes
@@ -40,7 +41,7 @@ function Navbar() {
 
   // Extract the first segment of the pathname
   const firstRouteName = pathSegments.find((segment) => segment !== "");
-
+  const {t} = useTranslation("common")
   return (
     <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
       {/* Logo */}
@@ -111,7 +112,7 @@ function Navbar() {
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Teachers
+                  {t('teachers')}
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>

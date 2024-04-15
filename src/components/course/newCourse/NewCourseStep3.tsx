@@ -880,6 +880,7 @@ const ExistingVenueList = () => {
     }),
       setVenueData(allVenuesData)
   }
+  const {t} = useTranslation("common")
 
   return (
     <div>
@@ -907,6 +908,7 @@ const ExistingVenueList = () => {
           <div className=" mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 " id={"options"}>
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
             {filteredVenueData?.map((item: any, index: number) => {
+              
               return (
                 <div className="flex  flex-row !w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
                   <Checkbox
@@ -976,7 +978,7 @@ const ExistingVenueList = () => {
               handleSubmitVenueList()
             }}
           >
-            Submit
+            {t('submit_button')}
           </Button>
         </DialogClose>
       </div>
@@ -990,7 +992,7 @@ export const AddOrEditVenue = ({ handleSubmit }: { handleSubmit: () => void }) =
   const formData = watch()
 
   const isNewVenue = formData?.isNewVenue
-
+  const {t} = useTranslation("common")
   return (
     <div>
       {isNewVenue ? (
@@ -1017,7 +1019,7 @@ export const AddOrEditVenue = ({ handleSubmit }: { handleSubmit: () => void }) =
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
           <DialogClose>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button onClick={handleSubmit}>{t('submit_button')}</Button>
           </DialogClose>
         </div>
       </DialogFooter>
@@ -1224,6 +1226,7 @@ const TimeSelector = ({
   )
 }
 const DeleteVenueComponent = ({ handleDeleteVenue }: { handleDeleteVenue: () => void }) => {
+  const {t} = useTranslation("common")
   return (
     <div>
       <DialogHeader>
@@ -1235,12 +1238,12 @@ const DeleteVenueComponent = ({ handleDeleteVenue }: { handleDeleteVenue: () => 
       <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-            No
+          {t('no_button')}
           </Button>
         </DialogClose>
         <DialogClose>
           <Button className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold" onClick={handleDeleteVenue}>
-            Yes
+          {t('yes_button')}
           </Button>
         </DialogClose>
       </DialogFooter>

@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import { Button } from "src/ui/button";
 import { DialogContent, DialogFooter, DialogTrigger } from "src/ui/dialog";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-
+import { useTranslation } from 'next-i18next';
 /**
  * EditModalDialog Component
  *
@@ -37,6 +37,7 @@ export const EditModalDialog = ({
   open,
   openEdit,
 }: EditModalDialogProps) => {
+
   const { newCourseData, setNewCourseData } = newCourseStore();
 
   /**
@@ -58,6 +59,7 @@ export const EditModalDialog = ({
       // Close the dialog
       onClose();
     };
+    const {t} = useTranslation("common")
 
     return (
       <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
@@ -65,10 +67,10 @@ export const EditModalDialog = ({
           onClick={onClose}
           className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
         >
-          Cancel
+          {t('cancel_button')}
         </Button>
         <Button className="w-[100px]" onClick={onSubmit}>
-          Save
+          {t('save_button')}
         </Button>
       </DialogFooter>
     );

@@ -1,5 +1,6 @@
 import { BaseOption, CrudFilter, useSelect } from "@refinedev/core";
 import _ from "lodash";
+import { useTranslation } from "next-i18next";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { Input } from "src/ui/input";
@@ -12,6 +13,7 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { supabaseClient } from "src/utility";
+
 
 export const VenueNameComponent = () => {
   const {
@@ -117,6 +119,7 @@ export const StreetAddressComponent = () => {
 };
 
 export const CityDropDown = ({ name }: { name: string }) => {
+  const {t}=useTranslation("common")
   const [pageSize, setPageSize] = useState(10);
 
   const {
@@ -161,11 +164,11 @@ export const CityDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">City</div>
+      <div className="text-xs font-normal text-[#333333]">{t('city')}</div>
 
       <Select value={cityValue} onValueChange={cityValueOnChange}>
         <SelectTrigger className="w-full" error={cityValueError ? true : false}>
-          <SelectValue placeholder="Select City" />
+          <SelectValue placeholder={t("city_placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <Input
@@ -328,9 +331,11 @@ export const CenterDropDown = ({ name }: { name: string }) => {
     setPageSize((prevPageSize) => prevPageSize + 10);
   };
 
+  const {t} = useTranslation("common")
+
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Local Center</div>
+      <div className="text-xs font-normal text-[#333333]">{t('local_center')}</div>
       <Select value={centerValue} onValueChange={centerValueOnChange}>
         <SelectTrigger
           className="w-full"

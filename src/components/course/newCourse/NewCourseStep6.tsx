@@ -6,7 +6,7 @@ import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { NewCourseStep6FormNames } from "src/constants/CourseConstants";
 import { Input } from "src/ui/input";
 import { Textarea } from "src/ui/textarea";
-
+import { useTranslation } from 'next-i18next';
 function NewCourseStep6() {
   // Destructuring the necessary functions from react-hook-form
   const { append, fields, remove } = useFieldArray({
@@ -39,8 +39,10 @@ function NewCourseStep6() {
   const handleDeleteItem = (index: number) => {
     remove(index);
   };
+  const {t} = useTranslation("common")
 
   return (
+    
     <div className="p-2">
       {/* Mapping through each contact field */}
       {fields.map((contact, index) => (
@@ -81,7 +83,8 @@ function NewCourseStep6() {
                 className="text-[#7677F4] flex flex-row gap-1 justify-center items-center cursor-pointer"
               >
                 <Add />
-                Add
+                {t('add')}
+
               </div>
             )}
             {/* Except for first row we need to show delete icon */}
@@ -91,7 +94,7 @@ function NewCourseStep6() {
                 className="text-[#7677F4]  flex flex-row gap-1 justify-center items-center cursor-pointer"
               >
                 <Delete />
-                Delete
+              {t('delete_button')}
               </div>
             )}
           </div>

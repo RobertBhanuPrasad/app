@@ -11,6 +11,7 @@ import { PROGRAM_STATUS } from "src/constants/OptionLabels";
 import { CANCELED } from "src/constants/OptionValueOrder";
 import { useEffect, useState } from "react";
 import { Button } from "src/ui/button";
+import { useTranslation } from 'next-i18next';
 import {
   Dialog,
   DialogContent,
@@ -27,7 +28,7 @@ import {
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-
+const {t} = useTranslation("common")
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
 export const columns: ExtendedColumnDef<any>[] = [
@@ -36,7 +37,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Course ID",
     enableHiding: false,
     header: () => {
-      return <div className="w-[100px]">Course ID</div>;
+      return <div className="w-[100px]">{t('course_id')}</div>;
     },
     cell: ({ row }) => {
       const router = useRouter();
@@ -73,6 +74,7 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Course Name</div>;
     },
     cell: ({ row }) => {
+      
       return (
         <div className="min-w-[150px]">
           {row?.original?.program_type_alias_names?.alias_name}
@@ -135,7 +137,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "city",
     column_name: "City",
     header: () => {
-      return <div className="min-w-[150px]">City</div>;
+      return <div className="min-w-[150px]">{t('city')}</div>;
     },
     cell: ({ row }) => {
       return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
@@ -151,17 +153,20 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">{row?.original?.center?.name}</div>;
     },
   },
+  
   {
     accessorKey: "program_teachers",
     enableHiding: false,
     column_name: "Teachers",
     header: () => {
-      return <div className="min-w-[150px]">Teachers</div>;
+      
+      return <div className="min-w-[150px]">{t('teachers')}</div>;
     },
     cell: ({ row }) => {
       const teachers = row?.original?.program_teachers?.map(
         (teacher: any) => teacher?.users?.contact_id?.full_name
       );
+      
       return (
         <div className="flex flex-wrap min-w-[150px]">
           <div>{teachers && teachers.join(", ")}</div>
@@ -218,7 +223,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "course_accounting_status",
     column_name: "Course Accounting Status",
     header: () => {
-      return <div className="min-w-[200px]">Course Accounting Status</div>;
+      return <div className="min-w-[200px]">{t('course_accounting_status')}</div>;
     },
     cell: ({ row }: any) => {
       return (
@@ -402,6 +407,7 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
         }
       };
+      const {t} = useTranslation("common")
 
       return (
         <div className="">
@@ -458,7 +464,7 @@ export const columns: ExtendedColumnDef<any>[] = [
                                 setIsDialogOpen(false);
                               }}
                             >
-                              No
+                              {t('no_button')}
                             </Button>
                           </div>
                           <div>
@@ -469,7 +475,7 @@ export const columns: ExtendedColumnDef<any>[] = [
                                 cancelCourse();
                               }}
                             >
-                              Yes
+                              {t('yes_button')}
                             </Button>
                           </div>
                         </div>
@@ -494,7 +500,7 @@ export const columns: ExtendedColumnDef<any>[] = [
                             setCancelSuccessModalOpen(false);
                           }}
                         >
-                          Close
+                          {t('close')}
                         </Button>
                       </div>
                     </DialogContent>

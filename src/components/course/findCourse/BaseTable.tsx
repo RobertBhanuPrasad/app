@@ -40,7 +40,7 @@ import {
 } from "src/ui/select";
 
 import DropDown from "@public/assets/DropDown";
-
+import { useTranslation } from 'next-i18next';
 interface IBaseTable<TData, TValue> {
   /**
    * Columns defined for the table
@@ -291,7 +291,7 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
-
+  const {t} = useTranslation("common")
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
@@ -325,6 +325,8 @@ export function BaseTable<TData, TValue>({
                     .filter((column) => column?.accessorFn)
                     // Here we are filtering the columns which have accessorKey
                     .map((column: any) => {
+
+                      const {t} = useTranslation("common")
                       return (
                         <div className="flex flex-row gap-4 items-center">
                           <Checkbox
@@ -349,13 +351,13 @@ export function BaseTable<TData, TValue>({
                     className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
                   >
                     <ClearAll />
-                    <div>Clear All</div>
+                    <div>{t('clear_all')}</div>
                   </div>
                   <Button
                     onClick={applyColumnVisibilityChanges}
                     className="h-9 w-18 rounded-xl"
                   >
-                    Apply
+                    {t('apply_button')}
                   </Button>
                 </div>
               </div>
@@ -563,6 +565,7 @@ const DataPagination = ({
   current,
   pageCount,
 }: DataPaginationProps) => {
+  const {t} = useTranslation("common")
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
@@ -574,7 +577,7 @@ const DataPagination = ({
         }}
         disabled={current <= 1}
       >
-        <div>Prev</div>
+        <div>{t('prev')}</div>
       </Button>
 
       {/*pages buttons */}
@@ -602,7 +605,7 @@ const DataPagination = ({
         }}
         disabled={pageCount < current + 1}
       >
-        <div>Next</div>
+        <div>{t('next')}</div>
       </Button>
     </div>
   );

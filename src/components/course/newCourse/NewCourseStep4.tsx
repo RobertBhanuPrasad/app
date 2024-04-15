@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { format } from "date-fns";
+import { useTranslation } from 'next-i18next';
 
 // Define CourseTable component
 
@@ -189,6 +190,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   }, []);
 
   console.log(errors, "errors");
+  const {t} = useTranslation("common")
 
   //Normal Fee Columns
   let normalFeeColumns: ColumnDef<FeeLevelType>[] = [
@@ -198,7 +200,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Fee Level",
+      header: t('fee_level'),
     },
     {
       cell: ({ row }) => {
@@ -235,7 +237,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Fee Level",
+      header: t('fee_level'),
     },
     {
       cell: ({ row }) => {

@@ -9,6 +9,7 @@ import { Input } from "./input";
 import { useEffect } from "react";
 import isEqual from "lodash/isEqual";
 import _, { uniqBy } from "lodash";
+import { useTranslation } from 'next-i18next';
 
 // Define the shape of each data item
 export type DataItem = Record<"value" | "label", string>;
@@ -93,6 +94,8 @@ export function MultiSelect({
   const selectables = filteredData.filter(
     (obj) => !selected.includes(obj.value)
   );
+  const {t} = useTranslation("common")
+
 
   return (
     <div className={`grid w-full items-center ${headerStyles}`}>
@@ -115,7 +118,7 @@ export function MultiSelect({
                   };
               const { disable: noIcon } = optionProps;
               if (index > 1) return null;
-
+              
               return (
                 <Badge
                   key={item}
@@ -166,6 +169,7 @@ export function MultiSelect({
                 )}
               </div>
               <div className="flex self-end">
+                
                 <button
                   type="button"
                   className="ml-1 rounded-full text-[#7677F4] text-[12px] font-semibold"
@@ -173,7 +177,7 @@ export function MultiSelect({
                     setOpen(true);
                   }}
                 >
-                  + Add
+                  +  {t('add')}
                 </button>
               </div>
             </div>

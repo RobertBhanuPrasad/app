@@ -40,6 +40,8 @@ import {
 } from "src/ui/select";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { useTranslation } from 'next-i18next';
+
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -52,6 +54,7 @@ export default function NewCourseStep2() {
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
+  const {t} = useTranslation("common")
 
   return (
     <div className="pt-2 w-auto ">
@@ -112,7 +115,7 @@ export default function NewCourseStep2() {
       </div>
       <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          Course Description *
+          {t('course_description')} *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
@@ -129,7 +132,7 @@ export default function NewCourseStep2() {
           </HoverCard>
         </div>
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          Course Notes *
+        {t('course_notes')} *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
@@ -143,7 +146,7 @@ export default function NewCourseStep2() {
           </HoverCard>
         </div>
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          Course Description *
+         {t('course_description')}*
           <HoverCard>
             <HoverCardTrigger>
               <Important />
@@ -279,10 +282,12 @@ export const CourseTypeDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+
+  const {t} = useTranslation("common")
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Course Type <div className="text-[#7677F4]"> *</div>
+        {t("course_type")}<div className="text-[#7677F4]"> *</div>
       </div>
       <Select
         value={value}
@@ -664,11 +669,12 @@ const Visibility = () => {
     VISIBILITY,
     PRIVATE
   )?.id;
+  const {t} = useTranslation("common")
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Program Visibility <div className="text-[#7677F4]"> *</div>
+      {t('program_visibility')}<div className="text-[#7677F4]"> *</div>
         <HoverCard>
           <HoverCardTrigger>
             <Important />
@@ -677,7 +683,7 @@ const Visibility = () => {
             <div className="w-[231px] text-wrap !rounded-[15px]">
               <div className="flex flex-row gap-1 items-center">
                 <Globe />
-                Public
+                {t('public')}
               </div>
               <div>
                 There are a lot of things you can do in space, and space
@@ -688,7 +694,7 @@ const Visibility = () => {
               </div>
               <div className="flex flex-row gap-1 items-center">
                 <LockIcon />
-                Private
+                {t('private')} 
               </div>
               <div>
                 There are a lot of things you can do in space, and space
@@ -709,13 +715,13 @@ const Visibility = () => {
           <RadioButtonCard
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(value)}
-            label="Public"
+            label={t('public')}
             className="w-[112px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
             selectedRadioValue={JSON.stringify(value)}
-            label="Private"
+            label={t('private')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -767,11 +773,13 @@ const GeoRestriction = () => {
   } = useController({
     name: NewCourseStep2FormNames?.is_geo_restriction_applicable,
   });
-
+  const {t} = useTranslation("common")
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Is geo restriction applicable for registrations
+        
+ {t('is_geo_restriction')}
+
         <div className="text-[#7677F4]">*</div>
         <HoverCard>
           <HoverCardTrigger>
@@ -865,11 +873,12 @@ const LanguageDropDown = () => {
   const handleOnSearch = (value: any) => {
     onSearch(value);
   };
+  const {t} = useTranslation("common")
 
   return (
     <div className="flex gap-1 flex-col">
       <div className=" flex flex-row text-xs font-normal text-[#333333]">
-        Language(s) course is taught in
+      {t('language_course_is_taught_in')}
         <div className="text-[#7677F4]"> *</div>
       </div>
       <MultiSelect
@@ -943,11 +952,11 @@ const LanguageTranslationDropDown = () => {
   const handleOnSearch = (value: any) => {
     onSearch(value);
   };
-
+  const {t} = useTranslation("common")
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        Available language(s) for translation
+      {t('available_languages_for_translation')}
       </div>
       <MultiSelect
         value={value}
@@ -986,11 +995,13 @@ const AllowedCountriesDropDown = () => {
   } = useController({
     name: NewCourseStep2FormNames?.allowed_countries,
   });
+  const {t} = useTranslation("common")
+ 
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Country(s) from where registrations are allowed
+      {t('countries_from_where_registrations_are_allowed')}
         <div className="text-[#7677F4]">*</div>
       </div>
       <MultiSelect
@@ -1022,10 +1033,10 @@ const MaximumCapacity = () => {
     field: { value = maxAttendees, onChange },
     fieldState: { error },
   } = useController({ name: NewCourseStep2FormNames?.max_capacity });
-
+  const {t} = useTranslation("common")
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">Max Capacity</div>
+      <div className="text-xs font-normal text-[#333333]">{t('max_capacity')}</div>
       <Input
         placeholder="Enter no. of attendees"
         value={value}

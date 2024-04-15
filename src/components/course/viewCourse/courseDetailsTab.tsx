@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { Header2, ItemValue } from "src/commonComponents";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { formatDateTime } from "src/utility/DateFunctions";
+import { useTranslation } from 'next-i18next';
 interface fullNameObject {
   user_id?: {
     contact_id?: {
@@ -98,6 +99,7 @@ function CourseDetailsTab() {
       setCopiedRegistrationLink(false);
     }, 1000);
   };
+  const {t} = useTranslation("common")
 
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
@@ -108,13 +110,13 @@ function CourseDetailsTab() {
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] ">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Basic Details
+            {t('basic_details')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div>
-              <Header2>Organization</Header2>
+              <Header2>{t('organization')}</Header2>
               <ItemValue>{courseData?.data?.organization_id?.name}</ItemValue>
             </div>
             <div>
@@ -126,13 +128,13 @@ function CourseDetailsTab() {
               <ItemValue>{courseData?.data?.program_type_id?.name}</ItemValue>
             </div>
             <div>
-              <Header2>Course Accounting Status</Header2>
+              <Header2>{t('course_accounting_status')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_accounting_status_id?.value}
               </ItemValue>
             </div>
             <div>
-              <Header2>Teachers</Header2>
+              <Header2> {t('teacher')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_teachers?.map(
                   (item: fullNameObject) => {
@@ -152,7 +154,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Available language(s) for translation </Header2>
+              <Header2> {t('available_languages_for_translation')} </Header2>
               <ItemValue>
                 {courseData?.data?.program_translation_languages
                   ?.map(
@@ -162,7 +164,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Language(s) course is taught in </Header2>
+              <Header2>{t('language_course_is_taught_in')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_languages
                   ?.map(
@@ -172,11 +174,11 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Program Visibility</Header2>
+              <Header2>{t('program_visibility')}</Header2>
               <ItemValue>{courseData?.data?.visibility_id?.value}</ItemValue>
             </div>
             <div>
-              <Header2>Max Capacity</Header2>
+              <Header2>{t('max_capacity')}</Header2>
               <ItemValue>{courseData?.data?.max_capacity}</ItemValue>
             </div>
             <div>
@@ -238,13 +240,13 @@ function CourseDetailsTab() {
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Time and Venue
+              {t('time_and_venue')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div>
-              <Header2>Venue Address</Header2>
+              <Header2>{t('venue_address')}</Header2>
               <ItemValue>
                 {courseData?.data?.venue_id?.address},
                 {courseData?.data?.venue_id?.center_id?.name},
@@ -254,7 +256,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <Header2>
-              Sessions
+            {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
                 {courseData?.data?.program_schedules?.map(
                   (item: ProgramScheduleItem, index: number) => (

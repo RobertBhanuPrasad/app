@@ -7,6 +7,7 @@ import { getColorWithDecreasedOpacity } from "src/utility/GenerateColours";
 import _ from "lodash";
 import { supabaseClient } from "src/utility";
 import { useRouter } from "next/router";
+import { useTranslation } from 'next-i18next';
 
 function ParticipantsTab() {
   const router = useRouter();
@@ -37,17 +38,17 @@ function ParticipantsTab() {
   useEffect(() => {
     fetchData();
   }, []);
-
+  const {t} = useTranslation("common")
   return (
     <div className="my-[31px] mb-6 overscroll ">
       <div className="flex justify-between">
         <div className="text-[23px] font-semibold">Overall Participants</div>
         <div className="flex gap-4">
           <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">
-            Register Participant
+          {t('register_participant')},
           </Button>
           <Button className="w-[188px] h-[46px] rounded-[12px]">
-            View Participants
+          {t('view_participants')}
           </Button>
         </div>
       </div>

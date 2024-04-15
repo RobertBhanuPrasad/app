@@ -33,7 +33,11 @@ import {
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
+import { useTranslation } from 'next-i18next';
+
+
 function NewCourseStep1() {
+
   return (
     <div>
       <RadioCards />
@@ -53,6 +57,7 @@ function NewCourseStep1() {
 export default NewCourseStep1;
 
 const RegistrationGateway = () => {
+  const {t} = useTranslation("common")
   const {
     field: { value = false, onChange },
   } = useController({
@@ -69,7 +74,7 @@ const RegistrationGateway = () => {
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
       <div className="text-[14px] font-normal">
-        Registration via 3rd party gateway
+      {t('registration_via_3rd_party_gateway')}
       </div>
       <Switch
         id="registration"
@@ -122,7 +127,7 @@ const RadioCards = () => {
   const { data: loginUserData }: any = useGetIdentity();
   const user_roles: any[] = loginUserData?.userData?.user_roles;
   const hasTeacherRole =
-    user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
+    user_roles && user_roles.some((role) => role?.role_id?.order === TEACHER);
   const loginInTeacherData = loginUserData?.userData?.id;
   const {
     field: { value: teachers, onChange: teachersOnChange },
@@ -145,6 +150,7 @@ const RadioCards = () => {
       }
     }
   };
+  const {t} = useTranslation("course/view_course")
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
@@ -259,6 +265,7 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
+  const {t} = useTranslation("common")
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
@@ -297,7 +304,7 @@ const OrganizationDropDown = () => {
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333]">Organization *</div>
+        <div className="text-xs font-normal text-[#333333]">{t("organization")}*</div>
         <Select
           value={value}
           onValueChange={(value: any) => {
@@ -344,6 +351,7 @@ const OrganizationDropDown = () => {
 };
 
 const ProgramOrganizerDropDown = () => {
+  const {t} = useTranslation("common")
   const { data: loginUserData }: any = useGetIdentity();
 
   const [pageSize, setPageSize] = useState(10);
@@ -398,7 +406,7 @@ const ProgramOrganizerDropDown = () => {
   return (
     <div className="w-80 flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        Program Organizer *
+        {t("program_organizer")}
       </div>
       <MultiSelect
         value={value}
@@ -430,3 +438,7 @@ const ProgramOrganizerDropDown = () => {
     </div>
   );
 };
+
+
+
+

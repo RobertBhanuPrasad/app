@@ -25,7 +25,7 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-
+import { useTranslation } from 'next-i18next';
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
     newCourseStore();
@@ -34,6 +34,7 @@ export default function NewCourseReviewPage() {
     resource: "program_types",
     id: newCourseData?.program_type_id,
   });
+
 
   let stateId: number = 0,
     cityId: number = 0,
@@ -133,7 +134,7 @@ export default function NewCourseReviewPage() {
 
   const { data: organizationName } = useOne({
     resource: "organizations",
-    id: newCourseData?.organization_id,
+    id: newCourseData?._id,
   });
 
   const { data: ProgramOrganizer } = useMany({
@@ -200,10 +201,11 @@ export default function NewCourseReviewPage() {
   });
 
   const venueSessions = () => {
+
     return (
       <div className=" min-w-72 ">
         <p className="text-sm font-normal text-accent-light text-[#999999]">
-          Sessions
+          {t('sessions')}
         </p>
         {newCourseData?.schedules?.map((data: any) => {
           const schedule = `${formatDateString(data.date)} | ${
@@ -271,8 +273,10 @@ export default function NewCourseReviewPage() {
       setIsSubmitting(false);
     }
   };
+  const {t} = useTranslation("common")
 
   return (
+    
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold">
         Review Your Details Right Here
@@ -283,11 +287,11 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center">
             <p className="font-semibold text-accent-primary text-[#333333]">
-              Basic Details
+              {t('basic_details')}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of BasicDetails page */}
             <EditModalDialog
-              title="Basic Details"
+              title={t('basic_details')}
               content={<NewCourseStep1 />}
               onClose={() => setOpenBasicDetails(false)}
               open={openBasicDetails}
@@ -313,7 +317,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Organization
+              {t('organization')}
               </p>
               <abbr
                 className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
@@ -324,7 +328,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Program Organizer
+                {t('program_organizer')}
               </p>
               <abbr
                 className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
@@ -335,7 +339,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Registration via 3rd party gateway
+              {t('registration_via_3rd_party_gateway')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -346,7 +350,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Registration via 3rd party gateway
+              {t('registration_via_3rd_party_gateway')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -393,7 +397,7 @@ export default function NewCourseReviewPage() {
           <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Type
+              {t('')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -412,7 +416,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Language(s) course is taught in
+                {t('language_course_is_taught_in')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -423,7 +427,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Available language(s) for translation
+                {t('available_languages_for_translation')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -434,7 +438,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Max Capacity
+              {t('max_capacity')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -447,7 +451,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Program Visibility
+              {t('program_visibility')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -458,7 +462,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Country(s) from where registrations are allowed
+              {t('countries_from_where_registrations_are_allowed')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -469,7 +473,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Is geo restriction applicable for registrations
+              {t('is_geo_restriction')}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -481,7 +485,7 @@ export default function NewCourseReviewPage() {
             {/* // TODO need to do when the form filed is clear */}
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Description
+                {t('course_description')}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -497,7 +501,7 @@ export default function NewCourseReviewPage() {
 
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Notes
+                {t('course_notes')}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -513,7 +517,7 @@ export default function NewCourseReviewPage() {
 
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Email Notes
+                {t('email_notes')}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -532,7 +536,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-              Time and Venue
+              {t('time_and_venue')}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of VenueDetails page */}
             <EditModalDialog
@@ -552,7 +556,7 @@ export default function NewCourseReviewPage() {
             <div className="grid grid-cols-4 gap-4 mt-2">
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Online zoom URL
+                {t('online_zoom_url')}
                 </p>
                 <abbr
                   className="text-sm font-normal text-accent-light text-[#999999]"
@@ -571,7 +575,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  City
+                {t('city')}
                 </p>
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   {CityNames ? CityNames : "-"}
@@ -696,7 +700,7 @@ export default function NewCourseReviewPage() {
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title="Yes"
               >
-                Yes
+                {t('yes_button')}
               </abbr>
             </div>
           </div>
@@ -775,7 +779,7 @@ export default function NewCourseReviewPage() {
               <div className="grid grid-cols-4 gap-3 pb-4 mt-2 border-b">
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Email
+                  {t('contact_email')}
                   </p>
                   <abbr
                     className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -797,7 +801,7 @@ export default function NewCourseReviewPage() {
                 </div>
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Name
+                  {t('contact_name')}
                   </p>
                   <abbr
                     className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -832,7 +836,7 @@ export default function NewCourseReviewPage() {
               <LoadingIcon />
             </Button>
           ) : (
-            <Button onClick={handClickContinue}>Continue</Button>
+            <Button onClick={handClickContinue}>{t('continue_button')}</Button>
           )}
         </div>
       </div>

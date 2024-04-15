@@ -50,6 +50,10 @@ import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
 
+import { authProvider } from "src/authProvider"
+import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData,'loginUserData')
@@ -617,3 +621,23 @@ export const NewCourseTabs = () => {
     </div>
   );
 };
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common"])
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || "/")}`,
+        permanent: false,
+      },
+    }
+  }
+  return {
+    props: {
+      ...translateProps,
+    },
+  }
+}

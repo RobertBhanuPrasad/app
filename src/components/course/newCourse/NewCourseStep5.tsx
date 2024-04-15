@@ -30,6 +30,7 @@ import _ from "lodash";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PAYMENT_MODE } from "src/constants/OptionLabels";
 import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
+import { useTranslation } from 'next-i18next';
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -70,7 +71,7 @@ export const AccomdationComponent = () => {
   }, []);
 
   const accommodations = formData.accommodation || [];
-
+  const {t} = useTranslation("common")
   return (
     <div className="rounded-[12px]  border border-[#D6D7D8]">
       <div className="flex h-[48px]">
@@ -81,7 +82,7 @@ export const AccomdationComponent = () => {
         <div className="p-4  bg-[#7677F41A]  w-[288px]">
           Number of spots available
         </div>
-        <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">Actions</div>
+        <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">{t('actions')}</div>
       </div>
 
       <div className="my-[10px]">
@@ -129,11 +130,12 @@ export const ResidentialCourse = () => {
     resource: "program_types",
     id: program_type_id,
   });
+  const {t} = useTranslation("common")
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-sm font-normal text-[#333333]">
-        Residential Course <span className="text-[#7677F4]">*</span>
+      {t('residential_course')} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
         value={JSON.stringify(value)}
@@ -371,6 +373,8 @@ const AccomdationAction = ({
   const handleDeleteRow = (index: number) => {
     remove(index);
   };
+
+  const {t} = useTranslation("common")
   return (
     <div className="w-[150px] flex gap-4 ">
       {/* Button to add a new row */}
@@ -380,7 +384,7 @@ const AccomdationAction = ({
           className="flex flex-row gap-1 justify-center items-center cursor-pointer text-[#7677F4]"
         >
           <Add />
-          Add
+          {t('add')}
         </div>
       )}
       {/* Button to delete a row */}

@@ -20,6 +20,7 @@ import { Button } from "src/ui/button";
 import { formatDateTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useTranslation } from 'next-i18next';
 
 const NewCourseThankyouPage = () => {
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
@@ -95,6 +96,7 @@ const NewCourseThankyouPage = () => {
     PROGRAM_STATUS,
     ACTIVE
   )?.id;
+  const {t} = useTranslation("common")
 
   return (
     <div>
@@ -159,7 +161,7 @@ const NewCourseThankyouPage = () => {
               </p>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
-              <p className="text-accent-secondary">Teachers</p>
+              <p className="text-accent-secondary">{t('teachers')}</p>
               <p className="font-bold text-accent-primary">
                 {teachers ? teachers : "-"}
               </p>
@@ -199,13 +201,13 @@ const NewCourseThankyouPage = () => {
                   <Image src={linkedInIcon} alt="Linked in icon"></Image>
                 </div>
               </div>
-              <p className="mx-auto text-accent-secondary max-w-fit">Or</p>
+              <p className="mx-auto text-accent-secondary max-w-fit">{t('or')}</p>
               {/* Hyper links section */}
               {/* We have to display the links only when the course is active */}
                 <div className="flex items-center justify-center gap-4 mt-4 ">
                   <div className="relative">
                     <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
-                      Registration link
+                      {t('registration_link')}
                     </p>
                     <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                       <h4 id="textToCopy" className="">
@@ -230,7 +232,7 @@ const NewCourseThankyouPage = () => {
                   </div>
                   <div className="relative ">
                     <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
-                      Details page link
+                      {t('details_page_link')}
                     </p>
                     <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                       <h4 id="textToCopy1" className="">

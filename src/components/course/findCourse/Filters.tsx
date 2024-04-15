@@ -3,6 +3,7 @@ import ClearAllIcon from "@public/assets/ClearAllIcon";
 import CrossIcon from "@public/assets/CrossIcon";
 import { useSelect } from "@refinedev/core";
 import { format } from "date-fns";
+import { useTranslation } from "next-i18next";
 import {
   CountComponent,
   CourseTypeComponent,
@@ -46,7 +47,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
   const { watch, setValue } = useFormContext();
 
   const formData = watch();
-
+  const {t} = useTranslation("common")
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -98,7 +99,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
           <AccordionItem value="item-14" className="border-none">
             <AccordionTrigger className="text-base font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Course Type</div>
+                <div> {t('course_type')}</div>
                 {formData?.temporaryadvancefilter.course_type && (
                   <CountComponent count={1} />
                 )}
@@ -134,7 +135,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
           <AccordionItem value="item-3" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Course Accounting Status</div>
+                <div>{t('course_accounting_status')}</div>
                 {formData?.temporaryadvancefilter.course_accounting_status
                   ?.length > 0 && (
                   <CountComponent
@@ -205,7 +206,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
           <AccordionItem value="item-7" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>City</div>
+                <div>{t('city')}</div>
                 {formData?.temporaryadvancefilter.city && (
                   <CountComponent count={1} />
                 )}
@@ -237,7 +238,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
           <AccordionItem value="item-9" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Residential Course</div>
+                <div>{t('residential_course')}</div>
                 {formData?.temporaryadvancefilter.is_residential_course && (
                   <CountComponent count={1} />
                 )}
@@ -340,7 +341,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary"> Clear All</p>
+          <p className="text-primary">{t('clear_all')}</p>
         </div>
         <Button
           onClick={() => {
@@ -355,7 +356,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
             setAdvanceFilterOpen(false);
           }}
         >
-          Apply
+           {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -454,6 +455,7 @@ export const State = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
+  const {t} = useTranslation("common")
   return (
     <Select
       value={temporaryValue}
@@ -462,7 +464,7 @@ export const State = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select State " />
+        <SelectValue placeholder={t('select_state')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -488,6 +490,7 @@ export const State = () => {
 };
 
 export const City = () => {
+  const {t} = useTranslation("common")
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
@@ -523,7 +526,7 @@ export const City = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select City " />
+        <SelectValue placeholder={t("city_placeholder")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -749,6 +752,7 @@ export const Visibility = () => {
     VISIBILITY,
     PRIVATE
   )?.id;
+  const {t} = useTranslation("common")
 
   return (
     <div>
@@ -762,13 +766,13 @@ export const Visibility = () => {
           <RadioButtonCard
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label="Public"
+            label= {t('public')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label="Private"
+            label={t('private')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
