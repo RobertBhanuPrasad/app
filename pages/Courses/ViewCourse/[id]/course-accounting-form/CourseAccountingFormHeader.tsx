@@ -80,7 +80,7 @@ function HeaderSection() {
         <div className="  ">
           <Line />
         </div>
-        <div className=" text-[#333333]">
+        <div className="text-[#333333] text-[14px]">
           {startDate} to {endDate}
         </div>
         <div className="">

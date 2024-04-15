@@ -44,8 +44,7 @@ function index() {
   return (
     <div>
       <section>
-        {/* //TODO: here we have to keep header section code here */}
-        {/* //TODO: The people we are doing header section US team is already done please dont do again ask them take code and use all only one componet */}
+        {/*  here we are showing header section  */}
 
         <HeaderSection />
       </section>
