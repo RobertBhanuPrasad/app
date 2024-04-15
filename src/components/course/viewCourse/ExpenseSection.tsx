@@ -1,7 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { Button } from "src/ui/button";
-import { ExpenseDetails } from "../newCourse/ExpenseDetailsTable";
+import { ExpenseDetails } from "./ExpenseDetailsTable";
 
 function ExpenseSection() {
   const searchParams = useSearchParams();
