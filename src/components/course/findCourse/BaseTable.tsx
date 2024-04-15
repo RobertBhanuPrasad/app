@@ -459,7 +459,7 @@ export function BaseTable<TData, TValue>({
                     <TableRow
                       className={`{${tableStyles?.rowStyles}`}
                       key={row?.id}
-                      data-state={row?.getIsSelected() && "selected"}
+                      // data-state={row?.getIsSelected() && "selected"}
                     >
                       {/* If the checkboxSelection is true then we need to show checkboxes  */}
                       {checkboxSelection && (
@@ -470,9 +470,9 @@ export function BaseTable<TData, TValue>({
                         >
                           <Checkbox
                             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
-                            checked={row.getIsSelected()}
+                            checked={row?.getIsSelected()}
                             onCheckedChange={(value) =>
-                              row.toggleSelected(!!value)
+                              row?.toggleSelected(!!value)
                             }
                             aria-label="Select row"
                           />
@@ -530,7 +530,7 @@ export function BaseTable<TData, TValue>({
                 value={`${pageSize}`}
                 onValueChange={(value) => {
                   setPageSize(Number(value));
-                  table.setPageSize(Number(value));
+                  table?.setPageSize(Number(value));
                 }}
               >
                 <SelectTrigger className="h-8 w-[131px]">
