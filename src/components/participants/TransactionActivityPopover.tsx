@@ -56,6 +56,25 @@ export default function TransactionActivity({transactionHistory}) {
     }
   };
 
+  const getTransactionStatusName = (status) => {
+    switch (status) {
+      case "Success":
+        return (
+          <div>Completed</div>
+        );
+      case "Pending":
+        return (
+          <div>Pending</div>
+        );
+      case "Canceled":
+        return (
+          <div>Cancel</div>
+        );
+      default:
+        return null; // Default case if no matching transaction type is found
+    }
+  };
+
   return (
     <Sheet open={open} onClose={() => setOpen(false)}>
       <SheetTrigger onClick={() => setOpen(true)}>
@@ -145,8 +164,7 @@ export default function TransactionActivity({transactionHistory}) {
                         : "#EC7357",
                   }}
                 >
-                    {/* // TODO:  Updated this transaction_status_id's value */}
-                  {transaction.transaction_status_id}
+                  {getTransactionStatusName(transaction.transaction_status_id.value)}
                 </span>
               </div>
             </div>
