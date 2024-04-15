@@ -46,7 +46,7 @@ function ParticipantsTab() {
           <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">
             Register Participant
           </Button>
-          <Button className="w-[188px] h-[46px] rounded-[12px]">
+          <Button className="w-[188px] h-[46px] rounded-[12px]" onClick={()=>router.push(`${router}/Participants/list/`)}>
             View Participants
           </Button>
         </div>

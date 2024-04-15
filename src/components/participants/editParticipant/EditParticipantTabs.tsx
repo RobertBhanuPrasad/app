@@ -8,11 +8,13 @@ import AccomodationDetails from './AccomodationDetails'
 import CourseFee from './CourseFee'
 import ParticipantInformation from './ParticipantInformation'
 import PaymentDetails from './PaymentDetails'
+import { useRouter } from 'next/router'
 
 export default function EditParticipantTabs() {
   const { watch, getValues } = useFormContext()
   const formData = watch()
   const accommodationData = getValues()
+  const { query } = useRouter();
 
   // participant_payment_history contains numerous records of same participant, getting the latest history record
 
@@ -23,7 +25,7 @@ export default function EditParticipantTabs() {
         'id,participant_id!inner(id,contact_id!inner(full_name),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,total_amount,participant_code,participant_attendence_status_id,discount_code),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee'
     },
     // TODO:replace value with participant_id
-    filters: [{ field: 'participant_id', operator: 'eq', value: 2 }],
+    filters: [{ field: 'participant_id', operator: 'eq', value: query?.id }],
     sorters: [{ field: 'created_at', order: 'desc' }]
   })
   const participantData = queryResult?.data?.data[0]
