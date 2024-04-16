@@ -1068,10 +1068,6 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
     setApproveModalOpen(false);
   };
 
-
-
-
-
   /**
    * Function to reject a course
    * Set state to display a rejected modal
