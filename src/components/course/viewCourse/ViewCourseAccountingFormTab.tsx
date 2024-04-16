@@ -20,12 +20,7 @@ const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
             </div>
             <Accordion type="multiple">
                 {/* Course Information Accordion */}
-                <AccordionItem value="courseDetails" className="px-4 mt-6 border rounded-3xl">
-                    <AccordionTrigger className="font-semibold border-b hover:no-underline text-primary">
-                        Course Information
-                    </AccordionTrigger>
-                    <AccordionContent className="py-2">Course Information content</AccordionContent>
-                </AccordionItem>
+                {/** // TODO integrate the course details accordion */}
                 {/* Revenue details Accordion */}
                 <AccordionItem value="revenueDetails" className="px-4 mt-6 border rounded-3xl">
                     <AccordionTrigger className="font-semibold border-b hover:no-underline text-primary">
@@ -184,6 +179,8 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
             ],
         },
     });
+
+    // TODO need to do api call for expense details after tables are came
     return (
         <div>
             {changeLogData?.isLoading ? (
