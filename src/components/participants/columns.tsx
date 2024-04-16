@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
+import TransactionActivity from "./TransactionActivityPopover";
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -286,9 +287,13 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.transaction_type?.value
-            ? row?.original?.transaction_type?.value
-            : "-"}
+          {row?.original?.participant_payment_history?.length > 0 ? (
+            <TransactionActivity
+              transactionHistory={row?.original?.participant_payment_history}
+            />
+          ) : (
+            "-"
+          )}
         </div>
       );
     },
