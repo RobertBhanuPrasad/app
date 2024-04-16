@@ -50,7 +50,7 @@ function ParticipantsTab() {
                     <Button
                         className="w-[188px] h-[46px] rounded-[12px]"
                         onClick={() =>
-                            router.push(`${router.pathname}/Participants/list/`)
+                            router.push(`${router.asPath}/participant/list/`)
                         }
                     >
                         View Participants

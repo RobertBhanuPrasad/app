@@ -100,7 +100,6 @@ import CourseAccountingFormTab from "../../../../src/components/course/viewCours
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
-
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   } else {
@@ -110,7 +109,6 @@ function index() {
 
 function ViewDetails() {
   const router = useRouter();
-
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
@@ -123,7 +121,6 @@ function ViewDetails() {
         "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
     },
   });
-
   const [participantData, setParticipantData] = useState<any>();
 
   const fetchData = async () => {
