@@ -610,7 +610,7 @@ interface ProgramDataBaseType {
     contact_email?: string;
     contact_number?: number;
   }[];
-  modified_at: Date
+  modified_at: Date;
 }
 
 interface NewCourseFormFieldTypes {
@@ -677,4 +677,29 @@ interface NewCourseFormFieldTypes {
     contact_number?: number;
   }[];
   bcc_registration_confirmation_email?: string;
+}
+
+/**
+ * This is are form names where we are mantaining in course-accounting-form tab.
+ * This can be helpful to give specified form name for a field instead of giving random names to useControllers.
+ * When you are registering a field in useController assign this type to useController<CourseAccountingFormFieldTypes>({name:"program_id"}) like this example
+ * This will be helpful in edit course accounting form also where we need to prefill at that time also we will do
+ */
+interface CourseAccountingFormFieldTypes {
+  program_id?: number;
+  program_expenses?: {
+    id?: number;
+    expense_category?: number;
+    details?:string;
+    recipt_id?: number;
+    purchase_date?: string;
+    amount?:number;
+    reimbursable?:boolean;
+    name_of_person_to_reimbursable?:number;
+    payment_method?: number;
+    vat_condition?: number;
+    vat_tax_id?: number;
+    vendor_name?: string;
+    vat_rate?: string
+  }[];
 }
