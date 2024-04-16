@@ -106,10 +106,10 @@ export const ExpenseDetails = () => {
               <IsReimbursable index={index} />
             </div>
             <div className="min-w-[220px] px-[12px]">
-              <PaymentMethod index={index} />
+              -{/* <PaymentMethod index={index} /> */}
             </div>
             <div className="min-w-[220px] px-[12px]">
-              <VatCondition index={index} />
+              -{/* <VatCondition index={index} /> */}
             </div>
             <div className="min-w-[220px] px-[12px]">
               <VendorTaxId index={index} />
@@ -118,7 +118,7 @@ export const ExpenseDetails = () => {
               <VendorName index={index} />
             </div>
             <div className="min-w-[220px] px-[12px]">
-              <VatRate index={index} />
+              -{/* <VatRate index={index} /> */}
             </div>
             <div className="w-[180px]">
               <Action index={index} remove={remove} append={append} />
@@ -211,12 +211,12 @@ const Details = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
-  } = useController({
+  } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.details`,
   });
   return (
     <div className="">
-      <Input value={value} onChange={onChange} error={error ? true : false} />
+      <Input value={value as string} onChange={onChange} error={error ? true : false} />
     </div>
   );
 };
@@ -251,12 +251,12 @@ const Amount = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
-  } = useController({
+  } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.amount`,
   });
   return (
     <div className="">
-      <Input value={value} onChange={onChange} error={error ? true : false} />
+      <Input value={value as number} onChange={onChange} error={error ? true : false} />
     </div>
   );
 };
@@ -267,71 +267,71 @@ const Amount = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const PaymentMethod = ({ index }: { index: number }) => {
-  const {
-    field: { value, onChange },
-    fieldState: { error },
-  } = useController({
-    name: `program_expenses.${index}.payment_method`,
-  });
+// const PaymentMethod = ({ index }: { index: number }) => {
+//   const {
+//     field: { value, onChange },
+//     fieldState: { error },
+//   } = useController<CourseAccountingFormFieldTypes>({
+//     name: `program_expenses.${index}.payment_method`,
+//   });
 
-  const { data } = useList<any>({
-    resource: "option_labels",
-    filters: [
-      {
-        field: "name",
-        operator: "eq",
-        value: "Payment Method",
-      },
-    ],
-  });
+//   const { data } = useList<any>({
+//     resource: "option_labels",
+//     filters: [
+//       {
+//         field: "name",
+//         operator: "eq",
+//         value: "Payment Method",
+//       },
+//     ],
+//   });
 
-  const { options } = useSelect({
-    resource: "option_values",
-    optionLabel: "value",
-    optionValue: "id",
-    filters: [
-      {
-        field: "option_label_id",
-        operator: "eq",
-        value: data?.data[0]?.id,
-      },
-    ],
-  });
+//   const { options } = useSelect({
+//     resource: "option_values",
+//     optionLabel: "value",
+//     optionValue: "id",
+//     filters: [
+//       {
+//         field: "option_label_id",
+//         operator: "eq",
+//         value: data?.data[0]?.id,
+//       },
+//     ],
+//   });
 
-  return (
-    <div className="">
-      <Select
-        value={value}
-        onValueChange={(val: any) => {
-          onChange(val);
-        }}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItems>
-            {options.map((option: any, index: number) => (
-              <>
-                <SelectItem
-                  key={option.value}
-                  value={option.value}
-                  className="h-[44px]"
-                >
-                  {option.label}
-                </SelectItem>
-                {index < options?.length - 1 && (
-                  <hr className="border-[#D6D7D8]" />
-                )}
-              </>
-            ))}
-          </SelectItems>
-        </SelectContent>
-      </Select>
-    </div>
-  );
-};
+//   return (
+//     <div className="">
+//       <Select
+//         value={value}
+//         onValueChange={(val: any) => {
+//           onChange(val);
+//         }}
+//       >
+//         <SelectTrigger>
+//           <SelectValue placeholder="Select" />
+//         </SelectTrigger>
+//         <SelectContent>
+//           <SelectItems>
+//             {options.map((option: any, index: number) => (
+//               <>
+//                 <SelectItem
+//                   key={option.value}
+//                   value={option.value}
+//                   className="h-[44px]"
+//                 >
+//                   {option.label}
+//                 </SelectItem>
+//                 {index < options?.length - 1 && (
+//                   <hr className="border-[#D6D7D8]" />
+//                 )}
+//               </>
+//             ))}
+//           </SelectItems>
+//         </SelectContent>
+//       </Select>
+//     </div>
+//   );
+// };
 
 /**
  * @function VatCondition
@@ -339,64 +339,64 @@ const PaymentMethod = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const VatCondition = ({ index }: { index: number }) => {
-  const {
-    field: { value, onChange },
-    fieldState: { error },
-  } = useController({
-    name: `program_expenses.${index}.vat_condition`,
-  });
-  const options = [
-    {
-      value: "creditcard",
-      label: "Creditcard",
-    },
-    {
-      value: "creditcard",
-      label: "Creditcard",
-    },
-    {
-      value: "creditcard",
-      label: "Creditcard",
-    },
-    {
-      value: "creditcard",
-      label: "Creditcard",
-    },
-  ];
-  return (
-    <div className="">
-      <Select
-        value={value}
-        onValueChange={(val: any) => {
-          onChange(val);
-        }}
-      >
-        <SelectTrigger className="">
-          <SelectValue placeholder="Select" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItems>
-            {options.map((option: any, index: number) => (
-              <>
-                <SelectItem
-                  key={option.value}
-                  value={option.value}
-                  className="h-[44px]"
-                >
-                  {option.label}
-                </SelectItem>
-                {index < options?.length - 1 && (
-                  <hr className="border-[#D6D7D8]" />
-                )}
-              </>
-            ))}
-          </SelectItems>
-        </SelectContent>
-      </Select>
-    </div>
-  );
-};
+// const VatCondition = ({ index }: { index: number }) => {
+//   const {
+//     field: { value, onChange },
+//     fieldState: { error },
+//   } = useController<CourseAccountingFormFieldTypes>({
+//     name: `program_expenses.${index}.vat_condition`,
+//   });
+//   const options = [
+//     {
+//       value: "creditcard",
+//       label: "Creditcard",
+//     },
+//     {
+//       value: "creditcard",
+//       label: "Creditcard",
+//     },
+//     {
+//       value: "creditcard",
+//       label: "Creditcard",
+//     },
+//     {
+//       value: "creditcard",
+//       label: "Creditcard",
+//     },
+//   ];
+//   return (
+//     <div className="">
+//       <Select
+//         value={value}
+//         onValueChange={(val: any) => {
+//           onChange(val);
+//         }}
+//       >
+//         <SelectTrigger className="">
+//           <SelectValue placeholder="Select" />
+//         </SelectTrigger>
+//         <SelectContent>
+//           <SelectItems>
+//             {options.map((option: any, index: number) => (
+//               <>
+//                 <SelectItem
+//                   key={option.value}
+//                   value={option.value}
+//                   className="h-[44px]"
+//                 >
+//                   {option.label}
+//                 </SelectItem>
+//                 {index < options?.length - 1 && (
+//                   <hr className="border-[#D6D7D8]" />
+//                 )}
+//               </>
+//             ))}
+//           </SelectItems>
+//         </SelectContent>
+//       </Select>
+//     </div>
+//   );
+// };
 
 /**
  * @function VendorTaxId
@@ -408,12 +408,12 @@ const VendorTaxId = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
-  } = useController({
+  } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.vat_tax_id`,
   });
   return (
     <div className="">
-      <Input value={value} onChange={onChange} error={error ? true : false} />
+      <Input value={value as number} onChange={onChange} error={error ? true : false} />
     </div>
   );
 };
@@ -428,12 +428,12 @@ const VendorName = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
-  } = useController({
-    name: `program_expenses.${index}.vendar_name`,
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.vendor_name`,
   });
   return (
     <div className="">
-      <Input value={value} onChange={onChange} error={error ? true : false} />
+      <Input value={value as string} onChange={onChange} error={error ? true : false} />
     </div>
   );
 };
@@ -444,64 +444,64 @@ const VendorName = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const VatRate = ({ index }: { index: number }) => {
-  const {
-    field: { value, onChange },
-    fieldState: { error },
-  } = useController({
-    name: `program_expenses.${index}.vat_rate`,
-  });
-  const options = [
-    {
-      value: "creditcard",
-      label: "Creditcard",
-    },
-    {
-      value: "creditcard",
-      label: "Creditcard",
-    },
-    {
-      value: "creditcard",
-      label: "Creditcard",
-    },
-    {
-      value: "creditcard",
-      label: "Creditcard",
-    },
-  ];
-  return (
-    <div className="">
-      <Select
-        value={value}
-        onValueChange={(val: any) => {
-          onChange(val);
-        }}
-      >
-        <SelectTrigger className="">
-          <SelectValue placeholder="Select" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItems>
-            {options.map((option: any, index: number) => (
-              <>
-                <SelectItem
-                  key={option.value}
-                  value={option.value}
-                  className="h-[44px]"
-                >
-                  {option.label}
-                </SelectItem>
-                {index < options?.length - 1 && (
-                  <hr className="border-[#D6D7D8]" />
-                )}
-              </>
-            ))}
-          </SelectItems>
-        </SelectContent>
-      </Select>
-    </div>
-  );
-};
+// const VatRate = ({ index }: { index: number }) => {
+//   const {
+//     field: { value, onChange },
+//     fieldState: { error },
+//   } = useController<CourseAccountingFormFieldTypes>({
+//     name: `program_expenses.${index}.vat_rate`,
+//   });
+//   const options = [
+//     {
+//       value: "creditcard",
+//       label: "Creditcard",
+//     },
+//     {
+//       value: "creditcard",
+//       label: "Creditcard",
+//     },
+//     {
+//       value: "creditcard",
+//       label: "Creditcard",
+//     },
+//     {
+//       value: "creditcard",
+//       label: "Creditcard",
+//     },
+//   ];
+//   return (
+//     <div className="">
+//       <Select
+//         value={value}
+//         onValueChange={(val: any) => {
+//           onChange(val);
+//         }}
+//       >
+//         <SelectTrigger className="">
+//           <SelectValue placeholder="Select" />
+//         </SelectTrigger>
+//         <SelectContent>
+//           <SelectItems>
+//             {options.map((option: any, index: number) => (
+//               <>
+//                 <SelectItem
+//                   key={option.value}
+//                   value={option.value}
+//                   className="h-[44px]"
+//                 >
+//                   {option.label}
+//                 </SelectItem>
+//                 {index < options?.length - 1 && (
+//                   <hr className="border-[#D6D7D8]" />
+//                 )}
+//               </>
+//             ))}
+//           </SelectItems>
+//         </SelectContent>
+//       </Select>
+//     </div>
+//   );
+// };
 
 /**
  * @function Action
@@ -533,16 +533,7 @@ const Action = ({
    * @description This function is used to add a row
    */
   const handleAddRow = () => {
-    append({
-      details: "",
-      receipt_id: "",
-      amount: "",
-      payment_method: "",
-      vat_condition: "",
-      vendor_tax_id: "",
-      vendor_name: "",
-      vat_rate: "",
-    });
+    append({});
   };
 
   /**
@@ -625,20 +616,20 @@ const Action = ({
 /**
  * @function PurchaseDate
  * @description this function is used to select the date of the purchase of the expense
- * @param index 
- * @returns 
+ * @param index
+ * @returns
  */
 const PurchaseDate = ({ index }: { index: number }) => {
   const {
     field: { value = new Date(), onChange },
     fieldState: { error },
-  } = useController({
+  } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.purchase_date`,
   });
   return (
     <div>
       <DateField
-        value={value}
+        value={value as Date}
         onChange={onChange}
         placeholder=" "
         className="!w-[150px]"
@@ -650,18 +641,17 @@ const PurchaseDate = ({ index }: { index: number }) => {
 /**
  * @function IsReimbursable
  * @description This function is used to get the radio buttons for the make reimburs or not buttons
- * @param index 
- * @returns 
+ * @param index
+ * @returns
  */
 const IsReimbursable = ({ index }: { index: number }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
-  } = useController({
+  } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.reimbursable`,
   });
 
-  console.log(value, "value");
   return (
     <div className="flex gap-1 flex-col">
       <RadioGroup

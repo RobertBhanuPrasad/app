@@ -699,7 +699,7 @@ interface CourseAccountingFormFieldTypes {
     payment_method?: number;
     vat_condition?: number;
     vat_tax_id?: number;
-    vendar_name?: string;
+    vendor_name?: string;
     vat_rate?: string
   }[];
 }
