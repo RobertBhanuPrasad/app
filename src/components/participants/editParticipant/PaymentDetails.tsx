@@ -23,19 +23,19 @@ export default function PaymentDetails() {
         // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
-        field: { value: expense_fee},
+        field: { value: expense_fee },
     } = useController({
         name: "expense_fee",
         // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
-        field: { value: accommodation_fee},
+        field: { value: accommodation_fee },
     } = useController({
         name: "accommodation_fee",
         // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
-        field: { value: total_amount},
+        field: { value: total_amount },
     } = useController({
         name: "total_amount",
         // defaultValue: participantData?.participant_id?.discount_code,
@@ -67,11 +67,11 @@ export default function PaymentDetails() {
             {
                 field: "option_label_id",
                 operator: "eq",
-                value:data?.data[0]?.id,
+                value: data?.data[0]?.id,
             },
         ],
     });
-    return (
+   return (
         <div className="flex-row pb-[5px]" id="Payment">
             <Text className="font-semibold text-[18px] py-[25px]">
                 Payment Details
@@ -82,10 +82,8 @@ export default function PaymentDetails() {
                         Course Fee
                     </Text>
                     <Text className="text-[16px] font-semibold">
-                    {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
-                         {expense_fee
-                            ? expense_fee
-                            : "-"}
+                        {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
+                        {expense_fee ? expense_fee : "-"}
                     </Text>
                 </div>
                 <div className="w-[303px]">
@@ -93,10 +91,8 @@ export default function PaymentDetails() {
                         Accomodation Fee
                     </Text>
                     <Text className="text-[16px] font-semibold">
-                    {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
-                       {accommodation_fee
-                            ? accommodation_fee
-                            : "-"}
+                        {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
+                        {accommodation_fee ? accommodation_fee : "-"}
                     </Text>
                 </div>
                 <div className="w-[303px]">
@@ -104,10 +100,8 @@ export default function PaymentDetails() {
                         Total Fee {`(Includes VAT)`}
                     </Text>
                     <Text className="text-[16px] font-semibold">
-                    {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
-                        {total_amount
-                            ? total_amount
-                            : "-"}
+                        {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
+                        {total_amount ? total_amount : "-"}
                     </Text>
                 </div>
             </div>
