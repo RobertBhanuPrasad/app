@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "src/ui/button";
+import { ExpenseDetails } from "./ExpenseDetailsTable";
 import {
   Dialog,
   DialogContent,
@@ -17,11 +18,14 @@ import {
   DialogFooter,
 } from "src/ui/dialog";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { handleSaveCourseAccountingFormData } from "./CourseAccountingFormUtil";
+import LoadingIcon from "@public/assets/LoadingIcon";
 
 function ExpenseSection() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+  const [isSaving, setIsSaving] = useState(false); // state variable for save button
 
   const [cancelOpenDialog, setCancelOpenDialog] = useState(false);
 
@@ -62,8 +66,22 @@ function ExpenseSection() {
   };
 
   /**
-   * This function is used to navigate to stay on same page when user click on No button
+   * This function is called when user clicks on Save button
+   * It sets the state variable isSaving to true and after await it sets isSaving to false
    */
+  const handleSaveClick = async () => {
+    // set isSaving to true when user clicks on Save button
+    setIsSaving(true);
+
+    await handleSaveCourseAccountingFormData(
+      getValues() as CourseAccountingFormFieldTypes
+    );
+
+    setIsSaving(false); // set isSaving to false after await
+  };
+
+  // Function to render Save button
+
   const handleCancelDialogNoClick = () => {
     setCancelOpenDialog(false);
   };
@@ -71,7 +89,7 @@ function ExpenseSection() {
   return (
     <div>
       <div>
-        expense
+        <ExpenseDetails/>
         <section className="space-x-4 p-2 w-full flex justify-center">
           <Button
             className="w-[118px] h-[46px] border border-[#7677F4] rounded-[12px] bg-[white] text-[#7677F4]"
@@ -88,6 +106,13 @@ function ExpenseSection() {
             type="button"
           >
             Cancel
+          </Button>
+
+          <Button
+            className={`w-[86px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white] `}
+            onClick={handleSaveClick}
+          >
+            {isSaving ? <LoadingIcon /> : "Save"}
           </Button>
         </section>
         {/* It will open when user click on cancel button and if user changed any details */}
