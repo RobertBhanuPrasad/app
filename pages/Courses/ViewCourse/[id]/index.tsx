@@ -361,10 +361,10 @@ function ViewDetails() {
               {isCourseAccountingFormApprovalNeeded(
                 courseData?.data?.program_accounting_status_id,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
-              ) && Id && <PendingCourseAccountingFormApprovalDropDown courseId={Id} />}
+              ) && <PendingCourseAccountingFormApprovalDropDown courseId={Id as number} />}
  
               <ViewCourseAccountingSuccessModalOpen />
-              {Id && (<ViewCourseAccountingRejectedModalOpen courseId={Id} />)}
+              <ViewCourseAccountingRejectedModalOpen courseId={Id as number} />
 
               <ActionsDropDown courseData={courseData?.data} />
             </div>
@@ -1060,9 +1060,9 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
     .update({ program_accounting_status_id:accountingClosedStatusId})
     .eq('id', courseId)
 
-    await supabaseClient
+      await supabaseClient
       .from('program_accounting_activity')
-      .insert([{ caf_status_id: accountingClosedStatusId, user_id: loginUserData?.userData?.id }])
+      .insert({ caf_status_id: accountingClosedStatusId, user_id: loginUserData?.userData?.id })
 
     setViewCourseAccountingSuccessModal(true);
     setApproveModalOpen(false);
