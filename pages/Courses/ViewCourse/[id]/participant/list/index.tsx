@@ -32,16 +32,6 @@ import { CountComponent } from "pages/Courses/FindCourse";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "src/ui/alert-dialog";
 
 function index() {
   const router = useRouter();

@@ -14,11 +14,7 @@ import {
 } from "src/ui/accordion";
 import { Label } from "src/ui/label";
 import { Input } from "src/ui/input";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import CalenderIcon from "@public/assets/CalenderIcon";
-import { DateRangePicker } from "src/ui/DateRangePicker";
 import React, { useState } from "react";
-import { format } from "date-fns";
 import { Checkbox } from "src/ui/checkbox";
 import { Separator } from "src/ui/separator";
 import FilterIcon from "@public/assets/FilterIcon";
@@ -29,7 +25,6 @@ import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptio
 import {
   FEE_LEVEL,
   PARTICIPANT_ATTENDANCE_STATUS,
-  PARTICIPANT_PAYMENT_STATUS,
   PAYMENT_METHOD,
   TRANSACTION_TYPE,
 } from "src/constants/OptionLabels";
@@ -39,7 +34,7 @@ import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 
 export function ParticipantsAdvanceFilter() {
   const { setParticpantFiltersData } = ParticipantStore();
-  const { watch, setValue } = useFormContext();
+  const { watch, setValue, getValues } = useFormContext();
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
   const count =
@@ -63,7 +58,9 @@ export function ParticipantsAdvanceFilter() {
           variant="outline"
           className="flex gap-4 px-10 pl-5"
           onClick={() => {
-            setValue("formData.tempFilters", "formData.advanceFilter");
+            const advanceFilterValues = { ...formData };
+
+            setValue("tempFilters", advanceFilterValues.advanceFilter);
           }}
         >
           {" "}
@@ -102,40 +99,6 @@ export function ParticipantsAdvanceFilter() {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            {/* <Accordion type="single" collapsible defaultValue="item-2">
-              <AccordionItem value="item-2">
-                <AccordionTrigger>
-                  <div className="flex flex-row gap-3 items-center">
-                    <div>Registration Date</div>
-                    {formData?.tempFilters?.registration_date_range && (
-                      <CountComponent count={1} />
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <RegistrationDate />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion> */}
-            {/* <Accordion type="single" collapsible defaultValue="item-3">
-              <AccordionItem value="item-3">
-                <AccordionTrigger>
-                  <div className="flex gap-3 items-center">
-                    <div>Transaction Status</div>
-                    {formData?.tempFilters?.transaction_status?.length > 0 && (
-                      <CountComponent
-                        count={
-                          formData?.tempFilters?.transaction_status?.length
-                        }
-                      />
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <TransactionStatus />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion> */}
             <Accordion type="single" collapsible defaultValue="item-4">
               <AccordionItem value="item-4">
                 <AccordionTrigger>
@@ -263,8 +226,6 @@ export function ParticipantsAdvanceFilter() {
                     setValue("tempFilters.full_name", "");
                     setValue("tempFilters.email", "");
                     setValue("tempFilters.mobile", "");
-                    // setValue("tempFilters.registration_date_range", "");
-                    // setValue("tempFilters.transaction_status", "");
                     setValue("tempFilters.transaction_type", "");
                     setValue("tempFilters.payment_method", []);
                     setValue("tempFilters.fee_level", []);
@@ -287,14 +248,10 @@ export function ParticipantsAdvanceFilter() {
                 <Button
                   className=" font-bold"
                   onClick={() => {
-                    const tempFilterData = { ...formData };
+                    const tempFilterData = getValues();
 
                     setValue("advanceFilter", tempFilterData?.tempFilters);
-                    setParticpantFiltersData(formData);
-                    // setValue(
-                    //   "registration_date",
-                    //   tempFilterData?.tempFilters?.registration_date_range
-                    // );
+                    setParticpantFiltersData(getValues());
                     setOpenAdvFilter(false);
                   }}
                 >
@@ -367,102 +324,6 @@ export const ContactDetails = () => {
     </div>
   );
 };
-
-// Removed redundant filters
-// export const RegistrationDate = () => {
-//   const [open, setOpen] = useState(false);
-//   const {
-//     field: { value: RegistrationDate, onChange: RegistrationDateChange },
-//   } = useController({
-//     name: "tempFilters.registration_date_range",
-//   });
-
-//   const { watch, setValue } = useFormContext();
-//   const formData = watch();
-
-//   return (
-//     <div className="flex flex-col gap-2">
-//       <div>Date Range</div>{" "}
-//       <Dialog open={open}>
-//         <DialogTrigger asChild>
-//           <Button
-//             onClick={() => setOpen(true)}
-//             className="w-full h-[40px] flex flex-row items-center justify-start gap-3"
-//             variant="outline"
-//           >
-//             <div>
-//               <CalenderIcon color="#666666" />
-//             </div>
-//             <div>
-//               {RegistrationDate?.from ? (
-//                 RegistrationDate.to ? (
-//                   <>
-//                     {format(RegistrationDate.from, "MM/dd/yyyy")} -{" "}
-//                     {format(RegistrationDate.to, "MM/dd/yyyy")}
-//                   </>
-//                 ) : (
-//                   format(RegistrationDate.from, "MM/dd/yyyy")
-//                 )
-//               ) : (
-//                 <span className="font-normal">Select Registration Date</span>
-//               )}
-//             </div>
-//           </Button>
-//         </DialogTrigger>
-//         <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
-//           <DateRangePickerComponent
-//             setOpen={setOpen}
-//             value={RegistrationDate}
-//             onSelect={RegistrationDateChange}
-//           />
-//         </DialogContent>
-//       </Dialog>
-//     </div>
-//   );
-// };
-
-// export const TransactionStatus = () => {
-//   const { getValues } = useFormContext();
-//   const formData = getValues();
-
-//   const {
-//     field: { value: statusValues = [], onChange: onStatusChange },
-//   } = useController({
-//     name: "tempFilters.transaction_status",
-//   });
-
-//   const transactionStatusOptions = getOptionValuesByOptionLabel(
-//     PARTICIPANT_PAYMENT_STATUS
-//   )?.[0]?.option_values;
-
-//   const toggleTransactionStatus = (id: number) => {
-//     const selectedValues = statusValues?.includes(id)
-//       ? statusValues?.filter((val: number) => val !== id)
-//       : [...statusValues, id];
-
-//     onStatusChange(selectedValues);
-//   };
-
-//   return (
-//     <div className="flex gap-2 flex-wrap">
-//       {transactionStatusOptions?.map((status: any, index: number) => (
-//         <div key={index}>
-//           <Button
-//             className={`rounded-full h-[28px] text-sm font-normal ${
-//               statusValues?.includes(status?.id)
-//                 ? "bg-primary text-white"
-//                 : "bg-white border border-[#D6D7D8]"
-//             }`}
-//             variant="outline"
-//             onClick={() => toggleTransactionStatus(status?.id)}
-//           >
-//             {status?.value}
-//           </Button>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
 
 export const TransactionType = () => {
   const {
@@ -721,37 +582,6 @@ export const ProgramAgreementStatus = () => {
         >
           {"Pending"}
         </label>
-      </div>
-    </div>
-  );
-};
-
-const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
-  return (
-    <div className="relative">
-      <DateRangePicker
-        mode="range"
-        defaultMonth={value?.from}
-        selected={value}
-        onSelect={onSelect}
-        numberOfMonths={2}
-        captionLayout="dropdown-buttons"
-        fromYear={2000}
-        toYear={2025}
-      />
-      <div className="flex flex-row gap-4 justify-center items-center fixed p-2 rounded-b-3xl bottom-0 left-0 w-full shadow-[rgba(0,_0,_0,_0.24)_0px_2px_8px]">
-        <Button
-          onClick={() => onSelect({})}
-          className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
-        >
-          Reset
-        </Button>
-        <Button
-          onClick={() => setOpen(false)}
-          className=" w-[94px] h-10 rounded-xl"
-        >
-          Apply
-        </Button>
       </div>
     </div>
   );
