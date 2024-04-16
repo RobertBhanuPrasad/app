@@ -679,6 +679,7 @@ const HeaderSection = () => {
           onBottomReached={() => {}}
           onSearch={() => {}}
           onChange={onSelectChange}
+          searchBar={false}
         />
       </div>
       {/* Clear, Apply Filters Section */}

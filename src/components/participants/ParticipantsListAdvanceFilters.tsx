@@ -390,6 +390,7 @@ export const PaymentMethod = () => {
         onBottomReached={() => {}}
         onSearch={() => {}}
         onChange={onSelectChange}
+        searchBar={false}
       />
     </div>
   );
@@ -421,6 +422,7 @@ export const FeeLevel = () => {
         onBottomReached={() => {}}
         onSearch={() => {}}
         onChange={onSelectChange}
+        searchBar={false}
       />
     </div>
   );
