@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "src/ui/button";
+import { ExpenseDetails } from "./ExpenseDetailsTable";
 import {
   Dialog,
   DialogContent,
@@ -71,7 +72,7 @@ function ExpenseSection() {
   return (
     <div>
       <div>
-        expense
+        <ExpenseDetails/>
         <section className="space-x-4 p-2 w-full flex justify-center">
           <Button
             className="w-[118px] h-[46px] border border-[#7677F4] rounded-[12px] bg-[white] text-[#7677F4]"

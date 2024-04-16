@@ -689,5 +689,17 @@ interface CourseAccountingFormFieldTypes {
   program_id?: number;
   program_expenses?: {
     id?: number;
+    expense_category?: number;
+    details?:string;
+    recipt_id?: number;
+    purchase_date?: string;
+    amount?:number;
+    reimbursable?:boolean;
+    name_of_person_to_reimbursable?:number;
+    payment_method?: number;
+    vat_condition?: number;
+    vat_tax_id?: number;
+    vendor_name?: string;
+    vat_rate?: string
   }[];
 }
