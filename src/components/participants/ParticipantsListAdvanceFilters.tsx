@@ -37,15 +37,28 @@ export function ParticipantsAdvanceFilter() {
   const { watch, setValue, getValues } = useFormContext();
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
-  const count =
-    (formData?.advanceFilter &&
-      Object.keys(formData?.advanceFilter).filter(
-        (key) =>
-          formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== "" &&
-          formData.advanceFilter[key].length > 0
-      ).length) ||
-    0;
+  const [count, setCount] = useState(0);
+  console.log("Form data", formData);
+  const filterCount = () => {
+    const { advanceFilter } = getValues();
+    let res = 0;
+
+    if (advanceFilter?.full_name?.length) res += 1;
+    if (advanceFilter?.email?.length) res += 1;
+    if (advanceFilter?.mobile?.length) res += 1;
+    if (advanceFilter?.transaction_type?.length)
+      res += advanceFilter?.transaction_type?.length;
+    if (advanceFilter?.fee_level?.length)
+      res += advanceFilter?.fee_level?.length;
+    if (advanceFilter?.attendance_status?.length)
+      res += advanceFilter?.attendance_status?.length;
+    if (advanceFilter?.health_consent_status?.completed) res += 1;
+    if (advanceFilter?.health_consent_status?.pending) res += 1;
+    if (advanceFilter?.program_agreement_status?.completed) res += 1;
+    if (advanceFilter?.program_agreement_status?.pending) res += 1;
+
+    return res;
+  };
 
   return (
     <Sheet open={openAdvFilter}>
@@ -253,6 +266,7 @@ export function ParticipantsAdvanceFilter() {
                     setValue("advanceFilter", tempFilterData?.tempFilters);
                     setParticpantFiltersData(getValues());
                     setOpenAdvFilter(false);
+                    setCount(filterCount);
                   }}
                 >
                   Apply
