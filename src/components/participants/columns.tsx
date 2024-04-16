@@ -416,9 +416,9 @@ export const columns: ExtendedColumnDef<any>[] = [
             return (
                 <div className="text-left">
                     {row?.original?.participant_payment_history[0]
-                        ?.payment_method_id?.value
+                        ?.payment_method
                         ? row?.original?.participant_payment_history[0]
-                              ?.payment_method_id?.value
+                              ?.payment_method
                         : "-"}
                 </div>
             );
@@ -688,13 +688,13 @@ export const handleActions = (
         case 0: {
             // TODO: Navigate to view participant page
             const routePath=router.asPath.split('?')[0]
-            router.push(`/${routePath}/${participant_id}/View`);
+            router.push(`/${routePath}/${participant_id}/view`);
             break;
         }
         case 1: {
             // TODO: Navigate to edit participant page
             const routePath=router.asPath.split('?')[0]
-            router.push(`/${routePath}/${participant_id}/Edit`);
+            router.push(`/${routePath}/${participant_id}/edit`);
             break;
         }
         case 2: {

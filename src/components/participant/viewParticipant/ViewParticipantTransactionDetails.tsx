@@ -28,7 +28,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
       resource: 'participant_payment_history', // Resource name for fetching data
       meta: {
         select:
-          '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*),accommodation_type_id(*,accommodation_type_id(*))' // Selecting specific fields
+          '*,transaction_type_id(*),payment_method,transaction_fee_level_id(*),transaction_status_id(*),accommodation_type_id(*,accommodation_type_id(*))' // Selecting specific fields
       },
       filters: {
         permanent: [
@@ -134,7 +134,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
       },
   
       cell: ({ row }) => {
-        return <Text className="lowercase">{row?.original?.payment_method_id?.value}</Text>
+        return <Text className="lowercase">{row?.original?.payment_method}</Text>
       }
     },
     {

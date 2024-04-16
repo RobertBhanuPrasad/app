@@ -33,7 +33,7 @@ function ScrollableTabs({ tabs }) {
   return (
     <div className="sticky top-0 z-50 bg-white ">
       <div className="h-[800px] overflow-y-auto">
-        <div className="flex sticky top-0 gap-4 py-2 bg-white overflow-x-auto ">
+        <div className="flex sticky z-50 top-0 gap-4 py-2 bg-white overflow-x-auto ">
           {/* Ensure horizontal overflow */}
           {tabs.map((tab, index) => (
             <button
