@@ -792,20 +792,17 @@ export const isViewCourseAccountingTabDisplay = (
  * @param {number} roleId The role ID of the user
  * @returns {boolean} True if the course accounting form is approved, false otherwise
  */
-export const isCourseAccountingFormApproved = (courseAccountingStatusId: number, roleId: number) => {
+export const isCourseAccountingFormApprovalNeeded = (courseAccountingStatusId: number, roleId: number) => {
   // Get the status ID for the 'Pending Review' status of course accounting
   const courseAccountingPendingReviewStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, ACCOUNTING_PENDING_REVIEW)?.id;
-  
-  // Get the role ID for the 'Super Admin' role
-  const superAdminRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, SUPER_ADMIN)?.id;
-  
-  // Get the role ID for the 'National Admin' role
-  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, NATIONAL_ADMIN)?.id;
-  
+
+  //TODO Get the role ID for the 'National Admin' role to compare whether the logged in user is national admin or not
+
+
   // Check if the course accounting form is in 'Pending Review' status and the user is a Super Admin or National Admin
   if (
-    courseAccountingPendingReviewStatusId === courseAccountingStatusId &&
-    roleId === nationalAdminRoleId
+    courseAccountingPendingReviewStatusId === courseAccountingStatusId
+
   ) {
     return true; // Return true if the conditions are met
   } else {

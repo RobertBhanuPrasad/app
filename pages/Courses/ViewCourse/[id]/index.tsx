@@ -88,7 +88,7 @@ import {
   DisplayOptions,
   handleTabsBasedOnStatus,
   isApproved,
-  isCourseAccountingFormApproved,
+  isCourseAccountingFormApprovalNeeded,
   isViewCourseAccountingTabDisplay,
 } from "@components/courseBusinessLogic";
 import {
@@ -358,13 +358,13 @@ function ViewDetails() {
               <SuccessModalOpen />
               <RejectedModalOpen />
 
-              {isCourseAccountingFormApproved (
+              {isCourseAccountingFormApprovalNeeded(
                 courseData?.data?.program_accounting_status_id,
-                 loginUserData?.userData?.user_roles[0]?.role_id?.id
-                ) && Id && <PendingCourseAccountingFormApprovalDropDown courseId={Id }/>}
-
-                <ViewCourseAccountingSuccessModalOpen />
-               {Id && ( <ViewCourseAccountingRejectedModalOpen courseId={Id} /> )}
+                loginUserData?.userData?.user_roles[0]?.role_id?.id
+              ) && Id && <PendingCourseAccountingFormApprovalDropDown courseId={Id} />}
+ 
+              <ViewCourseAccountingSuccessModalOpen />
+              {Id && (<ViewCourseAccountingRejectedModalOpen courseId={Id} />)}
 
               <ActionsDropDown courseData={courseData?.data} />
             </div>
@@ -1044,7 +1044,6 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
 
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { mutate } = useUpdate();
 
   /**
    * Function to approve a course for accounting
@@ -1056,13 +1055,10 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
    * Close the approve modal
    */
   const approveCourseAccountingForm = async () => {
-    await mutate({
-      resource: "program",
-      values: {
-        program_accounting_status_id: accountingClosedStatusId,
-      },
-      id: courseId,
-    });
+    await supabaseClient
+    .from('program')
+    .update({ program_accounting_status_id:accountingClosedStatusId})
+    .eq('id', courseId)
 
     await supabaseClient
       .from('program_accounting_activity')
@@ -1118,21 +1114,17 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
           </SelectItems>
         </SelectContent>
       </Select>
-      <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
-        <DialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6" 
-        closeIconOnclick={()=> {
-          setSelectApprovalOrReject(null)
-          setApproveModalOpen(false)
-          }}>
-          <DialogHeader>
+      <AlertDialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
+        <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
+          <AlertDialogHeader>
             <div className="flex items-center w-full justify-center">
               <Exclamation />
             </div>
-            <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
+            <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
               Are you sure you want to approve this Accounting Form
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
             <div className="w-full flex justify-center items-center gap-5">
               <div>
                 <Button
@@ -1159,21 +1151,21 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
                 </Button>
               </div>
             </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <Dialog open={viewCourseAccountingRejectedModal} onOpenChange={setViewCourseAccountingRejectedModal}>
-        <DialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6" hideCloseButton={true}>
-          <DialogHeader>
+      <AlertDialog open={viewCourseAccountingRejectedModal} onOpenChange={setViewCourseAccountingRejectedModal}>
+        <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
+          <AlertDialogHeader>
             <div className="flex items-center w-full justify-center">
               <Cross />
             </div>
-            <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
+            <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
               Are you sure you want to reject this Accounting Form
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
             <div className="w-full flex justify-center items-center gap-5">
               <div>
                 <Button
@@ -1198,9 +1190,9 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
                 </Button>
               </div>
             </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
@@ -1213,9 +1205,8 @@ const ViewCourseAccountingSuccessModalOpen = () => {
   const { viewCourseAccountingSuccessModal, setViewCourseAccountingSuccessModal } = newCourseStore();
 
   return (
-    <Dialog open={viewCourseAccountingSuccessModal}>
-      <DialogTrigger></DialogTrigger>
-      <DialogContent className="w-[414px] h-[301px]">
+    <AlertDialog open={viewCourseAccountingSuccessModal}>
+      <AlertDialogContent className="w-[414px] h-[301px]">
         <div className="flex flex-col  items-center">
           <div className="flex justify-center">
             <Image src={Tick} alt="tick" />
@@ -1235,8 +1226,8 @@ const ViewCourseAccountingSuccessModalOpen = () => {
             Close
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
@@ -1254,7 +1245,6 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
 
   const accountingRejectedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, REJECTED)?.id
 
-  const { mutate } = useUpdate();
 
   /**
  * Function to reject a course's accounting form
@@ -1266,17 +1256,12 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
  */
   const rejectCourse = async () => {
     // Make an asynchronous call to update the program resource
-    await mutate({
-      resource: "program",
-      values: {
-        // Set the status ID to indicate the accounting form is rejected
-        program_accounting_status_id: accountingRejectedStatusId,
-      },
-      // Specify the ID of the course to be rejected
-      id: courseId,
-    });
-
     await supabaseClient
+     .from('program')
+     .update({ program_accounting_status_id:accountingRejectedStatusId})
+     .eq('id', courseId)
+
+      await supabaseClient
       .from('program_accounting_activity')
       .insert({ caf_status_id: accountingRejectedStatusId, user_id: loginUserData?.userData?.id, comment: rejectionFeedback })
 
@@ -1287,18 +1272,18 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
 
 
   return (
-    <Dialog open={viewCourseAccountingRejectedDescriptionModal}>
-      <DialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6" hideCloseButton={true}>
-        <DialogHeader className="text-center">
+    <AlertDialog open={viewCourseAccountingRejectedDescriptionModal}>
+      <AlertDialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6">
+        <AlertDialogHeader className="text-center">
           <div className="flex items-center w-full justify-center">
             <Cross />{" "}
           </div>
-          <DialogTitle className="text-gray-500 text-sm font-normal pt-2">
+          <AlertDialogTitle className="text-gray-500 text-sm font-normal pt-2">
             {" "}
             Describe your rejection reason
             <span className="text-blue-500">(optional)</span>
-          </DialogTitle>
-          <DialogDescription>
+          </AlertDialogTitle>
+          <AlertDialogDescription>
             <Textarea
               placeholder="Comment"
               className="border-[#E1E1E1]  h-[132px] w-[366px]"
@@ -1306,9 +1291,9 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
                 setRejectionFeedback(e.target.value);
               }}
             />
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="flex justify-center items-center">
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="flex justify-center items-center">
           <div className="flex flex-row gap-5 items-center">
             <div>
               <Button
@@ -1332,9 +1317,9 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
               </Button>
             </div>
           </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
