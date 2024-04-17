@@ -20,15 +20,15 @@ function Navbar() {
   const components = [
     {
       title: "New Course",
-      href: "/Courses/NewCourse",
+      href: "/courses/NewCourse",
     },
     {
       title: "Find Course",
-      href: "/Courses/FindCourse",
+      href: "/courses/FindCourse",
     },
     {
       title: "Discount Codes",
-      href: "/Courses/DiscountCodes",
+      href: "/courses/DiscountCodes",
     },
   ];
 
@@ -78,11 +78,11 @@ function Navbar() {
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
-            {/* Courses Navigation */}
+            {/* courses Navigation */}
             <NavigationMenuItem>
               <NavigationMenuTrigger
                 className={
-                  firstRouteName === "Courses"
+                  firstRouteName === "courses"
                     ? "!text-[#7677F4] font-semibold"
                     : ""
                 }
