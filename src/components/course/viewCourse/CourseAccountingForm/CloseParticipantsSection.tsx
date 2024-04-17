@@ -1,4 +1,4 @@
-import { useList, useTable, useUpdateMany } from "@refinedev/core";
+import { useList, useOne, useTable, useUpdateMany } from "@refinedev/core";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import Image from "next/image";
@@ -21,23 +21,44 @@ import {
 } from "src/ui/select";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  PARTICIPANT_FAILED_PAYMENT_STATUS,
   PARTICIPANT_PENDING_PAYMENT_STATUS,
   PENDING_ATTENDANCE_STATUS,
   UPDATE_ATTENDENCE_STATUS,
 } from "src/constants/OptionValueOrder";
 import { useController, useFormContext } from "react-hook-form";
-import { ActionProps, getActions } from "@components/courseBusinessLogic";
+import { getActions } from "@components/courseBusinessLogic";
 import { BaseTable } from "@components/course/findCourse/BaseTable";
 import { TableHeader, Text } from "src/ui/TextTags";
-import { supabaseClient } from "src/utility";
 import { Dialog, DialogContent } from "src/ui/dialog";
+import { useRouter as useNextRouter } from "next/router";
 import Tick from "@public/assets/Tick.png";
 
 function CloseParticipantsSection() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  const { query } = useNextRouter();
+
+  const { data: programData } = useOne({
+    resource: "program",
+    id: query?.id as string,
+  });
+
+
+  //TODO settings in progress
+  const { data: courseAccountingSettingsData } = useList({
+    resource: "course_accounting_config",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: programData?.data?.organization_id,
+      },
+    ],
+  });
+
+
 
   const { setValue } = useFormContext();
 
@@ -105,7 +126,7 @@ function CloseParticipantsSection() {
         {
           field: "program_id",
           operator: "eq",
-          value: 11, //TODO will remove after wards
+          value: query?.id as string, 
         },
       ],
     },
@@ -262,6 +283,7 @@ function CloseParticipantsSection() {
                     <Button
                       onClick={() => {
                         setOpen(false);
+                        //clearing all the fields after updating
                         setValue("action_id", "");
                         setValue("status_id", "");
                         setRowSelection({});
