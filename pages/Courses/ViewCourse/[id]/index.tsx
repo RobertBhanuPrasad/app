@@ -81,6 +81,7 @@ import {
 import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 import CurrencyIcon from '@public/assets/CurrencyIcon'
+import ViewCourseAccountingFormTab from '@components/course/viewCourse/ViewCourseAccountingFormTab'
 
 function index() {
   const { viewPreviewPage } = newCourseStore()
@@ -333,7 +334,7 @@ function ViewDetails() {
             <CourseAccountingFormTab />
           </TabsContent>
           <TabsContent value={JSON.stringify(VIEW_COURSE_ACCOUNTING_FORM_TAB)}>
-            <div>View Course Accounting Form Tab</div>
+            <ViewCourseAccountingFormTab programId={Id as number}/>
           </TabsContent>
         </Tabs>
       </div>
