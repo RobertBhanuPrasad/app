@@ -877,11 +877,11 @@ export const getActions = ({
     },
     {
       condition: isPPAConsentChecked,
-      action: "PPA consent required",
+      action: "Pending PPA consent",
     },
     {
       condition: isHealthDeclarationChecked,
-      action: "Health declaration required",
+      action: "pending Health consent",
     },
   ];
 

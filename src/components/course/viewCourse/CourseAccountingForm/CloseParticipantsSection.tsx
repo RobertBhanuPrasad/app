@@ -122,13 +122,13 @@ function CloseParticipantsSection() {
   const {
     field: { value: actionValue, onChange: actionOnChange },
   } = useController({
-    name: "actions",
+    name: "action_id",
   });
 
   const {
     field: { value: statusValue, onChange: statusOnChange },
   } = useController({
-    name: "status",
+    name: "status_id",
   });
 
   //Getting attendance status data from option values
@@ -244,31 +244,33 @@ function CloseParticipantsSection() {
             </Select>
 
             <Dialog open={open} onOpenChange={setOpen}>
-              <DialogContent className="w-[414px] h-[325px]">
-                <div className="flex flex-col gap-4 items-center">
+              <DialogContent className="w-[414px] h-[325px] !p-4 !rounded-xl">
+                <div className="flex flex-col gap-4">
                   <div className="flex justify-center">
                     <Image src={Tick} alt="tick" />
                   </div>
-                  <div className="font-semibold text-center text-[20px]">
+                  <Text className="font-semibold text-center text-[20px]">
                     {Object.keys(rowSelection).length} Records Successfully
                     Updated{" "}
+                  </Text>
+                  <Text className="text-center text-[17px]">
+                    The updates have been saved. Attendance status <br />
+                    for participants with pending transfer request <br />
+                    cannot be changed.
+                  </Text>
+                  <div className="flex flex-row justify-center">
+                    <Button
+                      onClick={() => {
+                        setOpen(false);
+                        setValue("action_id", "");
+                        setValue("status_id", "");
+                        setRowSelection({});
+                      }}
+                      className="w-[91px] h-[46px] rounded-[12px]"
+                    >
+                      Close
+                    </Button>
                   </div>
-                  <div className="text-center text-[16px]">
-                    The updates have been saved. Attendance status for
-                    participants with pending transfer request cannot be
-                    changed.
-                  </div>
-                  <Button
-                    onClick={() => {
-                      setOpen(false);
-                      setValue("actions", "");
-                      setValue("status", "");
-                      setRowSelection({});
-                    }}
-                    className="w-[91px] h-[46px] rounded-[12px]"
-                  >
-                    Close
-                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
