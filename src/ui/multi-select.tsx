@@ -69,7 +69,18 @@ export function MultiSelect({
     console.log(data, selected, selectables, "selectables");
   };
 
+  //When prop values changes from external functions, we have to keep the selected state and prop value in sync.
+  //How use effect will work was when dependency was changed, it will run
+  //here we are doing stringify of propvalue becuase of below reasons
+  // reason 1: initially propValue is an empty array []==[] is false it will think like false so it willrun again and again.
+  // solution 1: keeping JSON.stringify(propValue) it means "[]"=="[]" is true it will not run again.
+  // solution 2: //TODO: In FUTURE we will do complete controlled component without any useEffects
+  useEffect(() => {
+    setSelected(propValue);
+  }, [JSON.stringify(propValue)]);
+
   // Handle clicks outside the dropdown to close it
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
