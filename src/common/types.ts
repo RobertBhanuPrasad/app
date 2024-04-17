@@ -681,13 +681,13 @@ interface ProgramDataBaseType {
   program_offline_revenue?: ProgramOfflineRevenueDatabaseType[];
   bcc_registration_confirmation_email?: string;
   program_contact_detials?: {
-    prgram_id?: number
-    id?: number
-    contact_name?: string
-    contact_email?: string
-    contact_number?: number
-  }[]
-  modified_at: Date
+    prgram_id?: number;
+    id?: number;
+    contact_name?: string;
+    contact_email?: string;
+    contact_number?: number;
+  }[];
+  modified_at?: Date;
 }
 
 interface NewCourseFormFieldTypes {
