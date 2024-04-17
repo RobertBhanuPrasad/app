@@ -180,8 +180,20 @@ export function BaseTable<TData, TValue>({
 
   const [selectAll, setSelectAll] = useState(initialSelectAll);
 
-  const getRowId = (originalRow: any) => originalRow.id.toString();
-
+  /**
+   * @function getRowId
+   * @description this function return id if the row have the id else it will return the index as id
+   * @param originalRow 
+   * @param index 
+   * @returns index in string format
+   */
+  const getRowId = (originalRow: any, index: number) => {
+    if (checkboxSelection) {
+      return originalRow.id.toString();
+    } else {
+      return index.toString();
+    }
+  };
   // table hook
   const table = useReactTable({
     data,

@@ -621,51 +621,62 @@ interface ParticipantRegistrationDataBaseType {
   accommodation_snore?: boolean
 }
 
+interface ProgramOfflineRevenueDatabaseType {
+  id?: number;
+  created_at?: Date;
+  program_id?: number;
+  organization_id?: number;
+  date?: Date;
+  amount?: number;
+  notes?: string;
+}
+
 interface ProgramDataBaseType {
-  id?: number
-  created_at?: Date
-  organization_id?: number | OrganizationsDataBaseType
-  venue_id?: number | VenueDataBaseType
-  registration_link?: string
-  program_code?: string
-  program_fee_settings_id?: number | ProgramFeeSettingsDataBaseType
-  program_type_id?: number | ProgramTypesDataBaseType
-  visibility_id?: number | OptionValuesDataBaseType
-  status_id?: number | OptionValuesDataBaseType
-  is_registration_via_3rd_party?: boolean
-  registration_via_3rd_party_url?: string
-  hour_format_id?: number | OptionValuesDataBaseType
-  time_zone_id?: number | OptionValuesDataBaseType
-  disable_bank_transfer_paylater?: boolean
-  early_bird_cut_off_period?: number
-  is_geo_restriction_applicable?: boolean
-  is_language_translation_for_participants?: boolean
-  is_registration_required?: boolean
-  max_capacity?: number
-  online_url?: string
-  accommodation_fee_payment_mode?: number
-  center_id?: number | CenterDataBaseType
-  city_id?: number | CityDataBaseType
-  details_page_link?: string
-  is_early_bird_enabled?: boolean
-  is_residential_program?: boolean
-  program_alias_name_id?: number | ProgramTypeAliasNamesDataBaseType
-  program_created_by?: number | UsersDataBaseType
-  state_id?: number | StateDataBaseType
-  use_default_fee?: boolean
-  program_accommodations?: AccommodationTypesDataBaseType[]
-  program_assistant_teachers?: ProgramAssistantTeachersDataBaseType[]
-  program_contact_details?: ProgramContactDetailsDataBaseType[]
-  program_details_info?: ProgramDetailsInfoDataBaseType
-  program_fee_level_settings?: ProgramFeeLevelSettingsDataBaseType[]
-  program_schedules?: ProgramSchedulesDataBaseType[]
-  program_teachers?: ProgramTeachersDataBaseType[]
-  program_translation_languages?: ProgramTranslationLanguagesDataBaseType[]
-  program_languages?: ProgramLanguagesDataBaseType[]
-  program_organizers?: ProgramOrganizersDataBaseType[]
-  last_modified_by_user_id?: number | UsersDataBaseType
-  allowed_countries?: string[]
-  bcc_registration_confirmation_email?: string
+  id?: number;
+  created_at?: Date;
+  organization_id?: number | OrganizationsDataBaseType;
+  venue_id?: number | VenueDataBaseType;
+  registration_link?: string;
+  program_code?: string;
+  program_fee_settings_id?: number | ProgramFeeSettingsDataBaseType;
+  program_type_id?: number | ProgramTypesDataBaseType;
+  visibility_id?: number | OptionValuesDataBaseType;
+  status_id?: number | OptionValuesDataBaseType;
+  is_registration_via_3rd_party?: boolean;
+  registration_via_3rd_party_url?: string;
+  hour_format_id?: number | OptionValuesDataBaseType;
+  time_zone_id?: number | OptionValuesDataBaseType;
+  disable_bank_transfer_paylater?: boolean;
+  early_bird_cut_off_period?: number;
+  is_geo_restriction_applicable?: boolean;
+  is_language_translation_for_participants?: boolean;
+  is_registration_required?: boolean;
+  max_capacity?: number;
+  online_url?: string;
+  accommodation_fee_payment_mode?: number;
+  center_id?: number | CenterDataBaseType;
+  city_id?: number | CityDataBaseType;
+  details_page_link?: string;
+  is_early_bird_enabled?: boolean;
+  is_residential_program?: boolean;
+  program_alias_name_id?: number | ProgramTypeAliasNamesDataBaseType;
+  program_created_by?: number | UsersDataBaseType;
+  state_id?: number | StateDataBaseType;
+  use_default_fee?: boolean;
+  program_accommodations?: AccommodationTypesDataBaseType[];
+  program_assistant_teachers?: ProgramAssistantTeachersDataBaseType[];
+  program_contact_details?: ProgramContactDetailsDataBaseType[];
+  program_details_info?: ProgramDetailsInfoDataBaseType;
+  program_fee_level_settings?: ProgramFeeLevelSettingsDataBaseType[];
+  program_schedules?: ProgramSchedulesDataBaseType[];
+  program_teachers?: ProgramTeachersDataBaseType[];
+  program_translation_languages?: ProgramTranslationLanguagesDataBaseType[];
+  program_languages?: ProgramLanguagesDataBaseType[];
+  program_organizers?: ProgramOrganizersDataBaseType[];
+  last_modified_by_user_id?: number | UsersDataBaseType;
+  allowed_countries?: string[];
+  program_offline_revenue?: ProgramOfflineRevenueDatabaseType[];
+  bcc_registration_confirmation_email?: string;
   program_contact_detials?: {
     prgram_id?: number
     id?: number
@@ -820,5 +831,19 @@ interface CourseAccountingFormFieldTypes {
   program_id?: number;
   program_expenses?: {
     id?: number;
+    expense_category?: number;
+    details?:string;
+    recipt_id?: number;
+    purchase_date?: string;
+    amount?:number;
+    reimbursable?:boolean;
+    name_of_person_to_reimbursable?:number;
+    payment_method?: number;
+    vat_condition?: number;
+    vat_tax_id?: number;
+    vendor_name?: string;
+    vat_rate?: string
   }[];
+  program_offline_revenue?: ProgramOfflineRevenueDatabaseType[];
+  course_accounting_user_consent?: boolean;
 }
