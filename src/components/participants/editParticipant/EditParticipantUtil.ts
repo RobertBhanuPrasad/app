@@ -1,13 +1,15 @@
-import { supabaseClient } from "src/utility";
+import { supabaseClient } from "src/utility/supabaseClient";
 
 export const handleEditParticipantValues=async(participantId:number)=>{
-    const { data, error } = await supabaseClient
+    const { data, error } = 
+    await supabaseClient
     .from("participant_payment_history")
     .select(
-        "id,participant_id!inner(id,program_id!inner(id,program_type_id!inner(is_online_program)),contact_id!inner(full_name,email,mobile,identification_num,postal_code,date_of_birth,street_address),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,participant_code,participant_attendence_status_id,discount_code,organisation_id!inner(name),donation_type!inner(value),donation_date,payment_method!inner(value),transaction_type!inner(value)),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee,total_amount,transaction_status_id,transaction_id,error_message,response_message,payment_method_id,payment_date,send_payment_confirmation",
-    )
-    .eq("id", participantId); 
-
+        "id,transaction_id,participant_id!inner(id,program_id!inner(id,program_type_id!inner(is_online_program)),contact_id!inner(full_name,email,mobile,identification_num,postal_code,date_of_birth,street_address),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,participant_code,participant_attendence_status_id,discount_code,organisation_id!inner(name),donation_type!inner(value),donation_date,payment_method,transaction_type!inner(value)),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee,total_amount,transaction_status_id,error_message,response_message,payment_method,payment_date,send_payment_confirmation"
+        ) 
+    .order("created_at",{ ascending: false })
+    .eq("participant_id", participantId);
+    
     if (!error) {
         const defaultValues = await getDefaultValues(data[0]);
         return defaultValues;
@@ -22,7 +24,7 @@ export const getDefaultValues = async (data:ParticipantPaymentHistoryDataBaseTyp
     if (typeof data.participant_id === 'object' && data.participant_id !== null) {
     // full_name
     if (data.participant_id.contact_id && typeof data.participant_id.contact_id === 'object') {
-        defaultValues.full_name = data.participant_id.contact_id.full_name ;
+        defaultValues.full_name = data.participant_id.contact_id.full_name  ;
         defaultValues.email=data.participant_id.contact_id.email
         defaultValues.postal_code=data.participant_id.contact_id.postal_code
         defaultValues.street_address=data.participant_id.contact_id.street_address
@@ -104,8 +106,8 @@ if(data.participant_id.program_id)
         defaultValues.payment_date = data.payment_date;
 
     // payment_method_id
-    if (data.payment_method_id)
-        defaultValues.payment_method_id = data.payment_method_id;
+    if (data.payment_method)
+        defaultValues.payment_method = data.payment_method;
 
     // send_payment_confirmation
     if (data.send_payment_confirmation)
@@ -113,8 +115,11 @@ if(data.participant_id.program_id)
 
     // payment_transaction_id
     if (data.payment_transaction_id)
-        defaultValues.payment_transaction_id = data.payment_transaction_id;
 
+        defaultValues.payment_transaction_id = data.payment_transaction_id;
+// transaction_id
+        if(data.transaction_id)
+    defaultValues.transaction_id=data.transaction_id
     // response_message
     if (data.response_message)
         defaultValues.response_message = data.response_message;

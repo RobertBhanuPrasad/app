@@ -28,7 +28,7 @@ export default function CourseFee() {
             <Text className="font-semibold text-[18px] pt-[25px]">
                 Course Fees
             </Text>
-
+{/* TODO: need confirmation about which date need to display */}
             <div className="flex py-[20px]">
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px]">Registartion Date</Text>
@@ -51,7 +51,7 @@ export default function CourseFee() {
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px] ">Course Fee</Text>
                     <Text className="font-semibold text-[16px]">
-                        {currency_code?currency_code:'-'} {total_amount?total_amount:'-'}
+                        {currency_code?currency_code:''} {total_amount?total_amount:'-'}
                     </Text>
                 </div>
             </div>

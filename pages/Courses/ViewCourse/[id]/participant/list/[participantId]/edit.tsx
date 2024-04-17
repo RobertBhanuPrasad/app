@@ -5,26 +5,28 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function Index() {
+export default function Edit() {
     const { query } = useRouter();
     const [defaultValues, setDefaultValues] = useState({});
+    const Id: number | undefined = query?.participantId
+        ? parseInt(query.participantId as string)
+        : undefined;
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const values = await handleEditParticipantValues(
-                    Number(query?.id)
-                );
+                const values = await handleEditParticipantValues(Number(Id));
                 setDefaultValues(values);
             } catch (error) {
                 console.error("An error occurred:", error);
             }
         }
 
-        if (query?.id) {
+        if (Id) {
             fetchData();
         }
-    }, [query?.id]);
+    }, [Id]);
+    console.log(defaultValues, query, "defaultValues");
     return (
         <div>
             <div>
@@ -39,5 +41,4 @@ export default function Index() {
             </div>
         </div>
     );
-    
 }

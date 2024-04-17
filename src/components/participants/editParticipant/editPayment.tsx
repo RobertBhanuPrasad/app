@@ -3,6 +3,7 @@ import { Button } from "src/ui/button";
 
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { useList, useSelect, useUpdate } from "@refinedev/core";
+import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { Calendar } from "src/ui/calendar";
@@ -19,20 +20,11 @@ import {
 import { Textarea } from "src/ui/textarea";
 import { formatDateString } from "src/utility/DateFunctions";
 export default function EditPayment({ setEditPayment }) {
-    const queryResult = useList({
-        resource: "participant_payment_history",
-        meta: {
-            select: "id,currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
-        },
-        // TODO: replace id with participnat_id
-        filters: [{ field: "participant_id", operator: "eq", value: 2 }],
-        sorters: [{ field: "created_at", order: "desc" }],
-    });
-    const paymentData = queryResult?.data?.data[0];
+    const { query } = useRouter();
     const { mutate } = useUpdate();
-    const { watch } = useFormContext();
+    const { watch, getValues } = useFormContext();
+    const defaultData = getValues();
     const formData = watch();
-
     const onFormSubmission = (data: any) => {
         mutate({
             resource: "participant_payment_history",
@@ -43,7 +35,7 @@ export default function EditPayment({ setEditPayment }) {
                 transaction_status_id: formData?.transaction,
             },
             // TODO: replace with participant_paymente_history id
-            id: paymentData?.id,
+            id: defaultData?.id,
         });
         setEditPayment(false);
     };
@@ -64,7 +56,7 @@ export default function EditPayment({ setEditPayment }) {
     const {
         field: { value: payment_method_id, onChange: paymentMethodOnchange },
     } = useController({
-        name: "payment_method_id",
+        name: "payment_method",
         // defaultValue: paymentData?.payment_method_id?.id,
     });
     const {
@@ -115,8 +107,7 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-
-    // Getting option label for payment method
+   // Getting option label for payment method
     const { data: payment_data } = useList<any>({
         resource: "option_labels",
         filters: [
@@ -141,9 +132,7 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-    const { getValues } = useFormContext();
-    const defaultData = getValues();
-    return (
+       return (
         <div>
             <div>
                 <div>

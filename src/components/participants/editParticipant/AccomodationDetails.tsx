@@ -1,6 +1,7 @@
 import { useList } from "@refinedev/core";
 import { useController, useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
+import { Input } from "src/ui/input";
 import { RadioGroup } from "src/ui/radio-group";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import {
@@ -11,7 +12,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "src/ui/select";
-import { Textarea } from "src/ui/textarea";
 
 export default function AccomodationDetails() {
     const { getValues } = useFormContext();
@@ -19,7 +19,6 @@ export default function AccomodationDetails() {
     const {
         field: {
             value: accommodation_type_id,
-            onChange: accommodationTypeChange,
         },
     } = useController({
         name: "accommodation_type_id",
@@ -56,20 +55,20 @@ export default function AccomodationDetails() {
     });
     // TODO: need to get the api data for accomodation types for particular program_id
 
-    const { data:accommodationOptions } = useList<any>({
+    const { data: accommodationOptions } = useList<any>({
         resource: "program_accommodations",
         filters: [
             {
                 field: "program_id",
                 operator: "eq",
-                value: FormData?.program_id,
+                value: FormData?.program_id?.id,
             },
         ],
-        meta:{
-            select:'accommodation_type_id!inner(id,name)'
-        }
+        meta: {
+            select: "accommodation_type_id!inner(id,name)",
+        },
     });
-       return (
+    return (
         <div id="Accomodation">
             <Text className="font-semibold text-[18px] py-[25px]">
                 Accomodation Details
@@ -84,10 +83,8 @@ export default function AccomodationDetails() {
                     <div className="py-[5px]">
                         {/* TODO: need to disable this accommodation type select */}
                         <Select
+                        disabled={true}
                             value={accommodation_type_id}
-                            onValueChange={(val) => {
-                                accommodationTypeChange(val);
-                            }}
                         >
                             <SelectTrigger className="w-[278px] border text-[#999999] font-semibold !border-[#999999]">
                                 <SelectValue placeholder="Select accomodation type" />
@@ -98,11 +95,23 @@ export default function AccomodationDetails() {
                                         (option: any, index: number) => (
                                             <>
                                                 <SelectItem
-                                                    key={option.accommodation_type_id.id}
-                                                    value={option.accommodation_type_id.id}
+                                                    key={
+                                                        option
+                                                            .accommodation_type_id
+                                                            .id
+                                                    }
+                                                    value={
+                                                        option
+                                                            .accommodation_type_id
+                                                            .id
+                                                    }
                                                     className="h-[44px]"
                                                 >
-                                                    {option.accommodation_type_id.name}
+                                                    {
+                                                        option
+                                                            .accommodation_type_id
+                                                            .name
+                                                    }
                                                 </SelectItem>
                                             </>
                                         )
@@ -125,7 +134,7 @@ export default function AccomodationDetails() {
                     <Text className="text-[#999999] text-[14px]">
                         Roommate Preferences 1
                     </Text>
-                    <Textarea
+                    <Input
                         value={
                             roommate_preferences_1
                                 ? roommate_preferences_1
@@ -140,7 +149,7 @@ export default function AccomodationDetails() {
                     <Text className="text-[#999999] text-[14px]">
                         Roommate Preferences 2
                     </Text>
-                    <Textarea
+                    <Input
                         value={
                             roommate_preferences_2
                                 ? roommate_preferences_2
@@ -153,7 +162,7 @@ export default function AccomodationDetails() {
                     <Text className="text-[#999999] text-[14px]">
                         Roommate Preferences 3
                     </Text>
-                    <Textarea
+                    <Input
                         value={
                             roommate_preferences_3
                                 ? roommate_preferences_3
@@ -162,6 +171,7 @@ export default function AccomodationDetails() {
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
                     />
                 </div>
+                {/* TODOD: need to amke it editable and store default values */}
                 <div className="text-[#999999] ">
                     <Text className="text-[#999999] text-[14px]">
                         Do you snore?

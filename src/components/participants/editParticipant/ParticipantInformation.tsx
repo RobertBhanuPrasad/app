@@ -1,6 +1,6 @@
 import Star from "@public/assets/star";
 import { useController } from "react-hook-form";
-import { Textarea } from "src/ui/textarea";
+import { Input } from "src/ui/input";
 import { Text } from "src/ui/TextTags";
 
 export default function ParticipantInformation() {
@@ -23,9 +23,11 @@ export default function ParticipantInformation() {
                     <Text className="text-[#999999] text-[14px] ">
                         Participants
                     </Text>
-                    <Text className="text-[16px] font-semibold">{full_name ? full_name : "-"}</Text>
+                    <Text className="text-[16px] font-semibold">
+                        {full_name ? full_name : "-"}
+                    </Text>
                 </div>
-
+                {/* TODO: need to make this required field */}
                 <div className="flex">
                     <div className="w-[303px]">
                         <div className="flex gap-2">
@@ -38,7 +40,7 @@ export default function ParticipantInformation() {
                         </div>
 
                         <div>
-                            <Textarea
+                            <Input
                                 value={memo}
                                 onChange={(val) => {
                                     participantMemoChange(val?.target?.value);

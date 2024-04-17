@@ -1,4 +1,4 @@
-import ScrollableTabs from '@components/participant/viewParticipant/ScrollableTabs'
+import SampleTabs from '@components/participant/viewParticipant/ScrollableTabs'
 import ViewParticipantCourseInformation from '@components/participant/viewParticipant/ViewParticipantCourseInformation'
 import ViewParticipantCustomerDeviceDetails from '@components/participant/viewParticipant/ViewParticipantCustomerDeviceDetails'
 import ViewParticipantEmailDeliveryLogs from '@components/participant/viewParticipant/ViewParticipantEmailDeliveryLogs'
@@ -20,7 +20,7 @@ import {
 function index() {
   const router = useRouter()
 
-  const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
+  const Id: number | undefined = router?.query?.participantId ? parseInt(router.query.participantId as string) : undefined
 
   const tabTriggers: any = [
     {
@@ -55,7 +55,7 @@ function index() {
       label: 'Course Information ',
       content: (
         <div>
-          <ViewParticipantCourseInformation participantId={12} />
+          <ViewParticipantCourseInformation participantId={Id} />
         </div>
       )
     },
@@ -65,13 +65,13 @@ function index() {
       content: (
         <div>
           {' '}
-          <ViewParticipantTransactionDetails participantId={12} />
+          <ViewParticipantTransactionDetails participantId={Id} />
         </div>
       )
     },
-    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={12} /> },
-    { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={12} /> },
-    { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={12} /> }
+    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={Id} /> },
+    { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={Id} /> },
+    { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={Id} /> }
   ]
   return (
     <div className="flex p-[20px]">
@@ -79,7 +79,7 @@ function index() {
         <ViewParticipantInformation participantId={Id} />
       </div>
       <div className="sticky w-full p-[20px]">
-        <ScrollableTabs tabs={tabs} />
+        <SampleTabs tabs={tabs} />
       </div>
     </div>
   )

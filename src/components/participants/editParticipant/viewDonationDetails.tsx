@@ -1,4 +1,5 @@
 import { useList } from "@refinedev/core";
+import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
@@ -7,13 +8,14 @@ import { formatDateString } from "src/utility/DateFunctions";
 export default function ViewDonationDetails({ setViewDonation }) {
     const { getValues } = useFormContext();
     const formData = getValues();
+    const {query}=useRouter()
     const queryResult = useList({
         resource: "participant_payment_history",
         meta: {
             select: "currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
         },
         // TODO: replace with particpant_id from router
-        filters: [{ field: "participant_id", operator: "eq", value: 2 }],
+        filters: [{ field: "participant_id", operator: "eq", value: query.participantId }],
         sorters: [{ field: "created_at", order: "desc" }],
     });
     const {

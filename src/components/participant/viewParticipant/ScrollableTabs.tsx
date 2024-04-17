@@ -1,13 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import ViewParticipantCourseInformation from './ViewParticipantCourseInformation'
-import ViewParticipantCustomerDeviceDetails from './ViewParticipantCustomerDeviceDetails'
-import ViewParticipantEmailDeliveryLogs from './ViewParticipantEmailDeliveryLogs'
-import ViewParticipantTransactionDetails from './ViewParticipantTransactionDetails'
-import ViewParticipantUtmParameters from './ViewParticipantUtmParameters'
 
-function SampleTabs({tabs}) {
-
-
+function ScrollableTabs({ tabs }) {
   const [activeTab, setActiveTab] = useState(0)
   const tabRefs = useRef([])
 
@@ -40,7 +33,7 @@ function SampleTabs({tabs}) {
   return (
     <div className="sticky top-0 z-50 bg-white ">
       <div className="h-[800px] overflow-y-auto">
-        <div className="flex sticky top-0 gap-4 py-2 bg-white overflow-x-auto ">
+        <div className="flex sticky z-50 top-0 gap-4 py-2 bg-white overflow-x-auto ">
           {/* Ensure horizontal overflow */}
           {tabs.map((tab, index) => (
             <button
@@ -78,4 +71,4 @@ function SampleTabs({tabs}) {
   )
 }
 
-export default SampleTabs
+export default ScrollableTabs
