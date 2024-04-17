@@ -558,6 +558,16 @@ interface ParticipantRegistrationDataBaseType {
   payment_status_id?: number;
 }
 
+interface ProgramOfflineRevenueDatabaseType {
+  id?: number;
+  created_at?: Date;
+  program_id?: number;
+  organization_id?: number;
+  date?: Date;
+  amount?: number;
+  notes?: string;
+}
+
 interface ProgramDataBaseType {
   id?: number;
   created_at?: Date;
@@ -602,6 +612,7 @@ interface ProgramDataBaseType {
   program_organizers?: ProgramOrganizersDataBaseType[];
   last_modified_by_user_id?: number | UsersDataBaseType;
   allowed_countries?: string[];
+  program_offline_revenue?: ProgramOfflineRevenueDatabaseType[];
   bcc_registration_confirmation_email?: string;
   program_contact_detials?: {
     prgram_id?: number;
@@ -689,7 +700,21 @@ interface CourseAccountingFormFieldTypes {
   program_id?: number;
   program_expenses?: {
     id?: number;
+    expense_category?: number;
+    details?:string;
+    recipt_id?: number;
+    purchase_date?: string;
+    amount?:number;
+    reimbursable?:boolean;
+    name_of_person_to_reimbursable?:number;
+    payment_method?: number;
+    vat_condition?: number;
+    vat_tax_id?: number;
+    vendor_name?: string;
+    vat_rate?: string
   }[];
   action_id?: number;
   status_id?: number;
+  program_offline_revenue?: ProgramOfflineRevenueDatabaseType[];
+  course_accounting_user_consent?: boolean;
 }
