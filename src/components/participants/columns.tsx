@@ -1,27 +1,22 @@
-import { CaretSortIcon } from "@radix-ui/react-icons";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
-import { useRouter } from "next/router";
-import { Button } from "src/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "src/ui/dropdown-menu";
-import TransactionActivity from "./TransactionActivityPopover";
+import { CaretSortIcon } from '@radix-ui/react-icons'
+import { ColumnDef } from '@tanstack/react-table'
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from 'lucide-react'
+import { useRouter } from 'next/router'
+import { Button } from 'src/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
+import TransactionActivity from './TransactionActivityPopover'
 
 // Use an intersection type to combine with ColumnDef
-type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
+type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string }
 
 export const columns: ExtendedColumnDef<any>[] = [
   {
-    accessorKey: "participant_code",
-    column_name: "Registration ID",
+    accessorKey: 'participant_code',
+    column_name: 'Registration ID',
     enablePinning: true,
     enableHiding: false,
     header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Registration ID</div>;
+      return <div className="min-w-[150px] text-left">Registration ID</div>
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -30,209 +25,169 @@ export const columns: ExtendedColumnDef<any>[] = [
       return (
         // TODO: Write onClick to redirect to view participant page
         <a className="cursor-pointer">
-          <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
-            {row?.original?.participant_code}
-          </div>
+          <div className="min-w-[150px] text-left font-bold text-[#7677F4]">{row?.original?.participant_code}</div>
         </a>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "created_at",
-    column_name: "Registration Date",
+    accessorKey: 'created_at',
+    column_name: 'Registration Date',
     header: ({ column }) => {
       return (
         <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Registration Date
-            {column.getIsSorted() === "desc" ? (
+            {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
+            ) : column.getIsSorted() === 'asc' ? (
               <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
             ) : (
               <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     cell: ({ row }: any) => {
-      const db_date = formatDate(row?.original?.created_at);
-      return <div className="text-left pl-4">{db_date}</div>;
-    },
+      const db_date = formatDate(row?.original?.created_at)
+      return <div className="text-left pl-4">{db_date}</div>
+    }
   },
   {
-    accessorKey: "Name",
-    column_name: "Name",
+    accessorKey: 'Name',
+    column_name: 'Name',
     enableHiding: false,
     enableSorting: true,
     header: ({ column }) => {
       return (
         <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Name
-            {column.getIsSorted() === "desc" ? (
+            {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
+            ) : column.getIsSorted() === 'asc' ? (
               <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
             ) : (
               <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     cell: ({ row }: any) => {
-      return (
-        <div className="text-left pl-4 !min-w-[175px] capitalize">
-          {row?.original?.contact_id?.full_name}
-        </div>
-      );
-    },
+      return <div className="text-left pl-4 !min-w-[175px] capitalize">{row?.original?.contact_id?.full_name}</div>
+    }
   },
   {
-    accessorKey: "NIF",
-    column_name: "NIF",
+    accessorKey: 'NIF',
+    column_name: 'NIF',
     header: ({ column }) => {
-      return <div className="text-left">NIF</div>;
+      return <div className="text-left">NIF</div>
     },
 
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      return (
-        <div className="text-left !min-w-[125px]">
-          {row?.original?.contact_id?.nif}
-        </div>
-      );
-    },
+      return <div className="text-left !min-w-[125px]">{row?.original?.contact_id?.nif}</div>
+    }
   },
   {
-    accessorKey: "Date of Birth",
-    column_name: "Date of Birth",
+    accessorKey: 'Date of Birth',
+    column_name: 'Date of Birth',
     header: ({ column }) => {
       return (
         <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Date of Birth
-            {column.getIsSorted() === "desc" ? (
+            {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
+            ) : column.getIsSorted() === 'asc' ? (
               <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
             ) : (
               <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     cell: ({ row }: any) => {
-      const db_date = formatDate(row?.original?.contact_id?.date_of_birth);
-      return (
-        <div className="text-left !min-w-[150px] pl-4">
-          {db_date.length ? db_date : "-"}
-        </div>
-      );
-    },
+      const db_date = formatDate(row?.original?.contact_id?.date_of_birth)
+      return <div className="text-left !min-w-[150px] pl-4">{db_date.length ? db_date : '-'}</div>
+    }
   },
   {
-    accessorKey: "Phone",
-    column_name: "Phone",
+    accessorKey: 'Phone',
+    column_name: 'Phone',
     enableHiding: false,
     header: ({ column }) => {
       return (
         <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Phone
-            {column.getIsSorted() === "desc" ? (
+            {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
+            ) : column.getIsSorted() === 'asc' ? (
               <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
             ) : (
               <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     cell: ({ row }: any) => {
-      return (
-        <div className="text-left !min-w-[150px] pl-4">
-          {row?.original?.contact_id?.mobile}
-        </div>
-      );
-    },
+      return <div className="text-left !min-w-[150px] pl-4">{row?.original?.contact_id?.mobile}</div>
+    }
   },
   {
-    accessorKey: "Email",
-    column_name: "Email",
+    accessorKey: 'Email',
+    column_name: 'Email',
     enableHiding: false,
     header: ({ column }) => {
       return (
         <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Email
-            {column.getIsSorted() === "desc" ? (
+            {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
+            ) : column.getIsSorted() === 'asc' ? (
               <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
             ) : (
               <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     cell: ({ row }: any) => {
-      return (
-        <div className="lowercase text-left !min-w-[150px] pl-4">
-          {row?.original?.contact_id?.email}
-        </div>
-      );
-    },
+      return <div className="lowercase text-left !min-w-[150px] pl-4">{row?.original?.contact_id?.email}</div>
+    }
   },
   {
-    accessorKey: "Fee Level",
-    column_name: "Fee Level",
+    accessorKey: 'Fee Level',
+    column_name: 'Fee Level',
     enableHiding: false,
     header: ({ column }) => {
       return (
         <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Fee Level
-            {column.getIsSorted() === "desc" ? (
+            {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
+            ) : column.getIsSorted() === 'asc' ? (
               <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
             ) : (
               <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     cell: ({ row }: any) => {
@@ -240,46 +195,39 @@ export const columns: ExtendedColumnDef<any>[] = [
         <div className=" capitalize text-left !min-w-[150px] pl-4">
           {row?.original?.price_category_id?.fee_level_id?.value}
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "Amount",
-    column_name: "Amount",
+    accessorKey: 'Amount',
+    column_name: 'Amount',
     enableHiding: false,
     header: ({ column }) => {
       return (
         <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Amount
-            {column.getIsSorted() === "desc" ? (
+            {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
+            ) : column.getIsSorted() === 'asc' ? (
               <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
             ) : (
               <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     cell: ({ row }: any) => {
-      return (
-        <div className="text-left !min-w-[150px] pl-4">
-          {row?.original?.price_category_id?.total}
-        </div>
-      );
-    },
+      return <div className="text-left !min-w-[150px] pl-4">{row?.original?.price_category_id?.total}</div>
+    }
   },
   {
-    accessorKey: "Transaction Type",
-    column_name: "Transaction Type",
+    accessorKey: 'Transaction Type',
+    column_name: 'Transaction Type',
     header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Transaction Type</div>;
+      return <div className="min-w-[150px] text-left">Transaction Type</div>
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -288,21 +236,19 @@ export const columns: ExtendedColumnDef<any>[] = [
       return (
         <div className="text-left">
           {row?.original?.participant_payment_history?.length > 0 ? (
-            <TransactionActivity
-              transactionHistory={row?.original?.participant_payment_history}
-            />
+            <TransactionActivity transactionHistory={row?.original?.participant_payment_history} />
           ) : (
-            "-"
+            '-'
           )}
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "Transaction ID",
-    column_name: "Transaction ID",
+    accessorKey: 'Transaction ID',
+    column_name: 'Transaction ID',
     header: ({ column }) => {
-      return <div className=" min-w-[200px] text-left">Transaction ID</div>;
+      return <div className=" min-w-[200px] text-left">Transaction ID</div>
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -311,18 +257,17 @@ export const columns: ExtendedColumnDef<any>[] = [
       return (
         <div className="text-left">
           {row?.original?.participant_payment_history[0]?.payment_transaction_id
-            ? row?.original?.participant_payment_history[0]
-                ?.payment_transaction_id
-            : "-"}
+            ? row?.original?.participant_payment_history[0]?.payment_transaction_id
+            : '-'}
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "Payment Method",
-    column_name: "Payment Method",
+    accessorKey: 'Payment Method',
+    column_name: 'Payment Method',
     header: ({ column }) => {
-      return <div className="min-w-[200px] text-left">Payment Method</div>;
+      return <div className="min-w-[200px] text-left">Payment Method</div>
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -332,16 +277,16 @@ export const columns: ExtendedColumnDef<any>[] = [
         <div className="text-left">
           {row?.original?.participant_payment_history[0]?.payment_method
             ? row?.original?.participant_payment_history[0]?.payment_method
-            : "-"}
+            : '-'}
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "Balance",
-    column_name: "Balance",
+    accessorKey: 'Balance',
+    column_name: 'Balance',
     header: ({ column }) => {
-      return <div className="text-left">Balance</div>;
+      return <div className="text-left">Balance</div>
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -349,19 +294,17 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status?.balance
-            ? row?.original?.payment_status?.balance
-            : "-"}
+          {row?.original?.payment_status?.balance ? row?.original?.payment_status?.balance : '-'}
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "Transaction Status",
-    column_name: "Transaction Status",
+    accessorKey: 'Transaction Status',
+    column_name: 'Transaction Status',
     enableHiding: false,
     header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Transaction Status</div>;
+      return <div className="min-w-[150px] text-left">Transaction Status</div>
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -369,35 +312,30 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status_id?.value
-            ? row?.original?.payment_status_id?.value
-            : "-"}
+          {row?.original?.payment_status_id?.value ? row?.original?.payment_status_id?.value : '-'}
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "Attendance Status",
-    column_name: "Attendance Status",
+    accessorKey: 'Attendance Status',
+    column_name: 'Attendance Status',
     enableHiding: false,
     header: ({ column }) => {
       return (
         <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Attendance Status
-            {column.getIsSorted() === "desc" ? (
+            {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
+            ) : column.getIsSorted() === 'asc' ? (
               <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
             ) : (
               <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </div>
-      );
+      )
     },
 
     cell: ({ row }: any) => {
@@ -405,16 +343,16 @@ export const columns: ExtendedColumnDef<any>[] = [
         <div className="text-left !min-w-[150px] pl-4">
           {row?.original?.participant_attendence_status_id?.value
             ? row?.original?.participant_attendence_status_id?.value
-            : "-"}
+            : '-'}
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "Program Agreement Version",
-    column_name: "Program Agreement Version",
+    accessorKey: 'Program Agreement Version',
+    column_name: 'Program Agreement Version',
     header: ({ column }) => {
-      return <div className="text-left">Program Agreement Version</div>;
+      return <div className="text-left">Program Agreement Version</div>
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -422,110 +360,86 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="min-w-[150px] text-left">
-          {row?.original?.legal_agreement_version
-            ? row?.original?.legal_agreement_version
-            : "-"}
+          {row?.original?.legal_agreement_version ? row?.original?.legal_agreement_version : '-'}
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "Program Agreement Status",
-    column_name: "Program Agreement Status",
+    accessorKey: 'Program Agreement Status',
+    column_name: 'Program Agreement Status',
     header: ({ column }) => {
-      return (
-        <div className="min-w-[150px] text-left">Program Agreement Status</div>
-      );
+      return <div className="min-w-[150px] text-left">Program Agreement Status</div>
     },
 
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      const toggle = row?.original?.is_program_agreement_checked
-        ? "Completed"
-        : "Pending";
-      return <div className="min-w-[150px] text-left">{toggle}</div>;
-    },
+      const toggle = row?.original?.is_program_agreement_checked ? 'Completed' : 'Pending'
+      return <div className="min-w-[150px] text-left">{toggle}</div>
+    }
   },
   {
-    accessorKey: "Program Agreement Date",
-    column_name: "Program Agreement Date",
+    accessorKey: 'Program Agreement Date',
+    column_name: 'Program Agreement Date',
     header: ({ column }) => {
-      return (
-        <div className="min-w-[150px] text-left">Program Agreement Date</div>
-      );
+      return <div className="min-w-[150px] text-left">Program Agreement Date</div>
     },
 
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      const db_date = formatDate(row?.original?.program_agreement_date);
-      return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.program_agreement_date ? db_date : "-"}
-        </div>
-      );
-    },
+      const db_date = formatDate(row?.original?.program_agreement_date)
+      return <div className="min-w-[150px] text-left">{row?.original?.program_agreement_date ? db_date : '-'}</div>
+    }
   },
   {
-    accessorKey: "Health Declaration Status",
-    column_name: "Health Declaration Status",
+    accessorKey: 'Health Declaration Status',
+    column_name: 'Health Declaration Status',
     header: ({ column }) => {
-      return (
-        <div className="min-w-[150px] text-left">Health Declaration Status</div>
-      );
+      return <div className="min-w-[150px] text-left">Health Declaration Status</div>
     },
 
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      const toggle = row?.original?.is_health_declaration_checked
-        ? "Completed"
-        : "Pending";
-      return <div className="min-w-[150px] text-left">{toggle}</div>;
-    },
+      const toggle = row?.original?.is_health_declaration_checked ? 'Completed' : 'Pending'
+      return <div className="min-w-[150px] text-left">{toggle}</div>
+    }
   },
   {
-    accessorKey: "Health Declaration Consent Date",
-    column_name: "Health Declaration Consent Date",
+    accessorKey: 'Health Declaration Consent Date',
+    column_name: 'Health Declaration Consent Date',
     header: ({ column }) => {
-      return (
-        <div className="min-w-[150px] text-left">
-          Health Declaration Consent Date
-        </div>
-      );
+      return <div className="min-w-[150px] text-left">Health Declaration Consent Date</div>
     },
 
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      const db_date = formatDate(
-        row?.original?.health_declaration_consent_date
-      );
+      const db_date = formatDate(row?.original?.health_declaration_consent_date)
       return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.health_declaration_consent_date ? db_date : "-"}
-        </div>
-      );
-    },
+        <div className="min-w-[150px] text-left">{row?.original?.health_declaration_consent_date ? db_date : '-'}</div>
+      )
+    }
   },
   {
-    id: "actions",
+    id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
       const optionsValues = [
-        "View Participant",
-        "Edit Participant",
-        "Transfer",
-        "Send Email",
-        "Perform sale with cash, check offline credit card payment",
-        "Send registration confirmation email",
-        "Upload offline payment receipt",
-        "Download receipt",
-        "Transaction Activity",
-      ];
+        'View Participant',
+        'Edit Participant',
+        'Transfer',
+        'Send Email',
+        'Perform sale with cash, check offline credit card payment',
+        'Send registration confirmation email',
+        'Upload offline payment receipt',
+        'Download receipt',
+        'Transaction Activity'
+      ]
 
-      const router = useRouter();
+      const router = useRouter()
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -539,7 +453,7 @@ export const columns: ExtendedColumnDef<any>[] = [
               {optionsValues.map((value, index) => (
                 <DropdownMenuItem
                   onClick={() => {
-                    handleActions(index, row?.original?.id, router);
+                    handleActions(index, row?.original?.id, router)
                   }}
                 >
                   {value}
@@ -548,65 +462,61 @@ export const columns: ExtendedColumnDef<any>[] = [
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
-      );
-    },
-  },
-];
+      )
+    }
+  }
+]
 
 export function formatDate(date: string): string {
   const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  };
-  return new Date(date).toLocaleDateString("en-US", options);
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  }
+  return new Date(date).toLocaleDateString('en-US', options)
 }
 
-export const handleActions = (
-  index: number,
-  participant_id: any,
-  router: any
-) => {
+export const handleActions = (index: number, participant_id: any, router: any) => {
   switch (index) {
     case 0: {
       // TODO: Navigate to view participant page
-      const routePath = router.asPath.split("?")[0];
-      router.push(`/${routePath}/${participant_id}/view`);
-      break;
+      const routePath = router.asPath.split('?')[0]
+      router.push(`/${routePath}/${participant_id}/view`)
+      break
     }
     case 1: {
       // TODO: Navigate to edit participant page
-      const routePath = router.asPath.split("?")[0];
-      router.push(`/${routePath}/${participant_id}/edit`);
-      break;
+      const routePath = router.asPath.split('?')[0]
+      router.push(`/${routePath}/${participant_id}/edit`)
+      break
     }
     case 2: {
       // TODO(Not in MVP scope): Transfer
-      break;
+      break
     }
     case 3: {
       // TODO: Send Email, dependency on harmony API
-      break;
+      break
     }
     case 4: {
       // TODO(Not in MVP scope): Perform Sale
-      break;
+      break
     }
     case 5: {
       // TODO: Send Registration confirmation email, dependency on Harmony API
-      break;
+      break
     }
     case 6: {
       // TODO(Not in MVP scope): Upload offline payment receipt
-      break;
+      break
     }
     case 7: {
       // TODO: Download Receipt, Tejaswini working on it
-      break;
+      break
     }
     case 8: {
       // TODO: Navigate to view participant page -> Transaction activity tab
-      break;
+      break
     }
   }
-};
+}
