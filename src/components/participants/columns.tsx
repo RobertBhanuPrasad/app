@@ -524,7 +524,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         "Download receipt",
         "Transaction Activity",
       ];
-      // console.log("ROW", row);
+
       const router = useRouter();
       return (
         <DropdownMenu>

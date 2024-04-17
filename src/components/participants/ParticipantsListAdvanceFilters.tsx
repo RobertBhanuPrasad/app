@@ -38,7 +38,7 @@ export function ParticipantsAdvanceFilter() {
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
   const [count, setCount] = useState(0);
-  console.log("Form data", formData);
+
   const filterCount = () => {
     const { advanceFilter } = getValues();
     let res = 0;

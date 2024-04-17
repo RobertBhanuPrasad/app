@@ -15,8 +15,6 @@ import RedReverseIcon from "@public/assets/RedReverseIcon";
 export default function TransactionActivity({ transactionHistory }: any) {
   const [open, setOpen] = useState(false);
 
-  console.log("transactionHistory", transactionHistory);
-
   const getTransactionIcon = (type: string) => {
     switch (type) {
       case "Sale":
