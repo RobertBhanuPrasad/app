@@ -3,6 +3,9 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import { useTable } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { CardValue, TableHeader, Text } from "src/ui/TextTags";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/ui/accordion";
 import { Button } from "src/ui/button";
@@ -11,14 +14,33 @@ import { BaseTable } from "../findCourse/BaseTable";
 
 
 const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
+    const searchParams = useSearchParams();
+    const pathname = usePathname()
+    const params = new URLSearchParams(searchParams);
+    const { replace } = useRouter();
+
+    function setParamValue(term: string) {
+        const params = new URLSearchParams(searchParams);
+        if (term) {
+            params.set("current_section", term);
+        }
+        replace(`${pathname}/course-accounting-form?${params.toString()}`);
+    }
+
+
     return (
         <div>
             {/* Edit button */}
             <div className="ml-auto max-w-fit">
-                <Button className="items-end gap-3 " variant={"link"}>
-                    <EditIcon />
-                    <p>Edit Accounting Form</p>
-                </Button>
+                {/* when we click on edit icon we are navigate to revenue section page*/}
+                    <Button className="items-end gap-3" variant={"link"}
+                        onClick={() => {
+                        setParamValue("revenue")
+                    }}
+                    >
+                        <EditIcon />
+                        <p>Edit Accounting Form</p>
+                    </Button>
             </div>
             <Accordion type="multiple">
                 {/* Course Information Accordion */}
@@ -358,7 +380,7 @@ export const reimbursementSummaryColumns: ExtendedColumnDef<any>[] = [
         cell: ({ row }) => {
             return (
                 <abbr className="no-underline" title="jhansi">
-                    <Text className="max-w-[250px] truncate">jhansiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii</Text>
+                    <Text className="max-w-[250px] truncate">jhansi</Text>
                 </abbr>
             );
         },
