@@ -198,8 +198,23 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                         data={changeLogData?.data?.data || []}
                     />
                     {/* Expense Total Calculations */}
+                    <div className="border flex mt-4 rounded-xl ">
+                        <div className="flex-1 flex border-r py-2 px-4">
+                            <p className="flex-[0.8] font-semibold">Reimbursable Total:</p>
+                            <p className="flex-[0.2]">0.00</p>
+                        </div>
+                        <div className="flex-1 flex border-r p-2">
+                            <p className="flex-[0.8] font-semibold">Reimbursable Total:</p>
+                            <p className="flex-[0.2]">0.00</p>
+                        </div>
+                        <div className="flex-1 flex  p-2">
+                            <p className="flex-[0.8] font-semibold">Reimbursable Total:</p>
+                            <p className="flex-[0.2]">0.00</p>
+                        </div>
+
+                    </div>
                     {/* Reimbursement Summary Table */}
-                    <p className="font-semibold">Reimbursement Summary</p>
+                    <p className="font-semibold mt-4">Reimbursement Summary</p>
                     <BaseTable
                         current={1}
                         tableStyles={{
@@ -214,9 +229,55 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                         information above for each person to be reimbursed to ensure that they receive their reimbursement.
                     </p>
                     {/* Reimbursement Summary Total  Calculations */}
+                    <div className="border flex mt-4 rounded-xl ">
+                        <div className="flex-[1.5] flex border-r py-2 px-4">
+                            <p className="flex-[0.8] font-semibold">Total Requested:</p>
+                            <p className="flex-[0.2]">0.00</p>
+                        </div>
+                        <div className="flex-1 flex p-2">
+                            <p className="flex-[0.8] font-semibold"></p>
+                        </div>
+                       
+
+                    </div>
                     {/* Expense Summary and Details */}
                     {/* Expense Summary */}
-                    <p className="font-semibold">Expense Summary and Details</p>
+                    <div className="mt-4">
+
+                        <p className="font-semibold">Expense Summary and Details</p>
+                        <div className="border rounded-lg px-4 py-6 mt-2">
+                            <p className="font-semibold">Expense Summary </p>
+                            <div className="flex border-b py-2">
+                                 <p className="flex-[0.4]">Expense category</p>
+                                 <p className="flex-[0.4]">Amount (EUR)</p>
+                             </div>
+                            {
+                               
+                                [1, 2].map(() => {
+                                    return (
+                                        <div className="flex border-b py-2">
+                                            <p className="flex-[0.4]">key</p>
+                                            <p className="flex-[0.4]">value</p>
+                                        </div>
+
+                                    )
+                                })
+                            }
+                            <div className="flex border-b py-2">
+                                <p className="flex-[0.4] font-semibold">Total</p>
+                                <p className="flex-[0.4]">value</p>
+                            </div>
+                            <div className="flex  py-2">
+                                <p className="flex-[0.4]">Current Expense:</p>
+                                <p className="flex-[0.4]">60.00 (10.00%)</p>
+                            </div>
+                            <div className="flex  py-2">
+                                <p className="flex-[0.4]">Allowed Expense Limit</p>
+                                <p className="flex-[0.4]">180.00 (30.00%)</p>
+                            </div>
+
+                        </div>
+                    </div>
                     {/* Expense  Details */}
                     <p className="font-semibold">Expense Summary and Details</p>
                     <BaseTable
@@ -276,7 +337,7 @@ export const changeLogSummaryColumns: ExtendedColumnDef<any>[] = [
         cell: ({ row }) => {
             return (
                 <div className="min-w-[150px]">
-                    {row.original.caf_status_id.value + "  " + "(" + row.original.comment + ")"}
+                    {`${row.original.caf_status_id.value} (${row.original.comment})`}
                 </div>
             );
         },
