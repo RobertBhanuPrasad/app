@@ -83,7 +83,8 @@ export default function PaymentDetails() {
                     </Text>
                     <Text className="text-[16px] font-semibold">
                         {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
-                        {FormData?.total_amount ? FormData?.total_amount : "-"}
+                        {total_amount? (FormData?.program_type_id ?total_amount-FormData.accommodation_fee:total_amount):'-'}
+                    
                     </Text>
                 </div>
                 <div className="w-[303px]">

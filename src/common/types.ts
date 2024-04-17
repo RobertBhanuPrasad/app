@@ -598,8 +598,10 @@ interface ParticipantRegistrationDataBaseType {
   is_payment_refunded?: boolean
   participant_attendence_status_id?: number | ParticipantAttendenceStatusDataBaseType
   price_category_id?: number
+  donation_type?:OptionValuesDataBaseType
+  donation_date?:Date
   program_category_id?: number
-  program_id?: number
+  program_id?: number|ProgramTypesDataBaseType
   discount_code?: string
   discounted_amount?: number
   discounted_tax?: number
@@ -619,6 +621,7 @@ interface ParticipantRegistrationDataBaseType {
   participant_code?: string
   roommate_snore?: boolean
   accommodation_snore?: boolean
+  organisation_id?:number|OrganizationsDataBaseType
 }
 
 interface ProgramOfflineRevenueDatabaseType {
@@ -791,11 +794,14 @@ interface EditParticipantDataBaseTypes {
 interface EditParticipantFormFieldTypes {
   id?: number | string
   full_name?: string
+  mobile?:number
   memo?: string
+  transaction_status?:number
   transaction_fee_level_id?: string
   created_at?: Date
   currency_code?: string
   email?: string
+  organisation_id?:number |OrganizationsDataBaseType
   transaction_id?:number
   postal_code?: string
   total_amount?: number
@@ -813,6 +819,7 @@ interface EditParticipantFormFieldTypes {
   discount_code?: string
   participant_attendence_status_id?: number | ParticipantAttendenceStatusDataBaseType
   transaction_status_id?: number | OptionValuesDataBaseType
+  transaction_status_value?:string
   payment_date?: string
   payment_method?:string
   payment_method_id?: number | OptionValuesDataBaseType
@@ -821,6 +828,13 @@ interface EditParticipantFormFieldTypes {
   response_message?: string
   error_message?: string
   expense_fee?: number
+  donation_type?:string
+  donation_date?:Date
+  transaction_type?:string
+  program_type_id?:boolean
+  state?:string
+  city?:string
+  country?:string
 }
 
 /**

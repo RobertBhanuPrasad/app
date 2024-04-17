@@ -8,32 +8,25 @@ import { formatDateString } from "src/utility/DateFunctions";
 export default function ViewDonationDetails({ setViewDonation }) {
     const { getValues } = useFormContext();
     const formData = getValues();
-    const {query}=useRouter()
+    const { query } = useRouter();
     const queryResult = useList({
         resource: "participant_payment_history",
         meta: {
             select: "currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
         },
         // TODO: replace with particpant_id from router
-        filters: [{ field: "participant_id", operator: "eq", value: query.participantId }],
+        filters: [
+            {
+                field: "participant_id",
+                operator: "eq",
+                value: query.participantId,
+            },
+        ],
         sorters: [{ field: "created_at", order: "desc" }],
     });
     const {
-        field: { value: email },
-    } = useController({ name: "email" });
-    const {
-        field: { value: mobile },
-    } = useController({ name: "mobile" });
-    const {
-        field: { value: date_of_birth },
-    } = useController({ name: "date_of_birth" });
-    const {
-        field: { value: street_address },
-    } = useController({ name: "street_address" });
-    const {
-        field: { value: postal_code },
-    } = useController({ name: "postal_code" });
-    const data = queryResult?.data?.data[0];
+        field: { value: organisation_id },
+    } = useController({ name: "organisation_id" });
     return (
         <div>
             <div>
@@ -52,10 +45,7 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     orgainization
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.organisation_id?.name
-                                        ? data?.participant_id?.organisation_id
-                                              ?.name
-                                        : "-"}
+                                    {organisation_id ? organisation_id : "-"}
                                 </Text>
                             </div>
 
@@ -64,9 +54,9 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Amount
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.currency_code && data?.currency_code}{" "}
-                                    {data?.total_amount
-                                        ? data?.total_amount
+                                    {formData?.currency_code && formData?.currency_code}{" "}
+                                    {formData?.total_amount
+                                        ? formData?.total_amount
                                         : "-"}
                                 </Text>
                             </div>
@@ -76,9 +66,7 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Donation Type
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.donation_type
-                                        ? data?.participant_id?.donation_type
-                                        : "-"}
+                                    {formData?.donation_type ? formData?.donation_type : "-"}
                                 </Text>
                             </div>
 
@@ -87,11 +75,9 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Donation Date
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.donation_date
+                                    {formData?.donation_date
                                         ? formatDateString(
-                                              new Date(
-                                                  data?.participant_id?.donation_date
-                                              )
+                                              new Date(formData?.donation_date)
                                           )
                                         : "-"}
                                 </Text>
@@ -115,8 +101,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Transaction Type
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.transaction_type_id?.value
-                                        ? data?.transaction_type_id?.value
+                                    {formData?.transaction_type
+                                        ? formData?.transaction_type
                                         : "-"}
                                 </Text>
                             </div>
@@ -126,8 +112,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Transaction Status
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.transaction_status_id?.value
-                                        ? data?.transaction_status_id?.value
+                                    {formData?.transaction_status_value
+                                        ? formData.transaction_status_value
                                         : "-"}
                                 </Text>
                             </div>
@@ -137,8 +123,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Transaction ID
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.payment_transaction_id
-                                        ? data?.payment_transaction_id
+                                    {formData?.payment_transaction_id
+                                        ? formData?.payment_transaction_id
                                         : "-"}
                                 </Text>
                             </div>
@@ -168,9 +154,9 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Date of Birth
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {date_of_birth
+                                    {formData?.date_of_birth
                                         ? formatDateString(
-                                              new Date(date_of_birth)
+                                              new Date(formData?.date_of_birth)
                                           )
                                         : "-"}
                                 </Text>
@@ -181,7 +167,7 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Address
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {street_address ? street_address : "-"}
+                                    {formData?.street_address ? formData?.street_address : "-"}
                                 </Text>
                             </div>
 
@@ -190,10 +176,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Country
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id
-                                        ?.country_id?.name
-                                        ? data?.participant_id?.contact_id
-                                              ?.country_id?.name
+                                {formData?.country
+                                        ? formData?.country
                                         : "-"}
                                 </Text>
                             </div>
@@ -205,7 +189,7 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Zip/Postal Code
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {postal_code ? postal_code : "-"}
+                                    {formData?.postal_code ? formData?.postal_code : "-"}
                                 </Text>
                             </div>
 
@@ -214,10 +198,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     State
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id?.state_id
-                                        ?.name
-                                        ? data?.participant_id?.contact_id
-                                              ?.state_id?.name
+                                    {formData?.state
+                                        ? formData?.state
                                         : "-"}
                                 </Text>
                             </div>
@@ -227,10 +209,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     City
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id?.city_id
-                                        ?.name
-                                        ? data?.participant_id?.contact_id
-                                              ?.city_id?.name
+                                {formData?.city
+                                        ? formData?.city
                                         : "-"}
                                 </Text>
                             </div>
@@ -240,7 +220,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Mobile
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {mobile ? mobile : "-"}
+                                    {formData?.mobile ? formData?.mobile
+                                     : "-"}
                                 </Text>
                             </div>
                         </div>
@@ -251,7 +232,7 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Email ID
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {email ? email : "-"}
+                                    {formData?.email ? formData?.email : "-"}
                                 </Text>
                             </div>
 

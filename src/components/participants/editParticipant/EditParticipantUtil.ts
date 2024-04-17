@@ -5,11 +5,10 @@ export const handleEditParticipantValues=async(participantId:number)=>{
     await supabaseClient
     .from("participant_payment_history")
     .select(
-        "id,transaction_id,participant_id!inner(id,program_id!inner(id,program_type_id!inner(is_online_program)),contact_id!inner(full_name,email,mobile,identification_num,postal_code,date_of_birth,street_address),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,participant_code,participant_attendence_status_id,discount_code,organisation_id!inner(name),donation_type!inner(value),donation_date,payment_method,transaction_type!inner(value)),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee,total_amount,transaction_status_id,error_message,response_message,payment_method,payment_date,send_payment_confirmation"
+        "id,transaction_id,payment_transaction_id,participant_id!inner(id,program_id!inner(id,program_type_id!inner(is_online_program)),contact_id!inner(full_name,email,mobile,identification_num,postal_code,date_of_birth,street_address,state_id!inner(name),city_id!inner(name),country_id!inner(name)),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,participant_code,participant_attendence_status_id,discount_code,organisation_id!inner(name),donation_type!inner(value),donation_date,payment_method,transaction_type!inner(value)),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee,total_amount,transaction_status_id!inner(value),error_message,response_message,payment_method,payment_date,send_payment_confirmation,transaction_status"
         ) 
     .order("created_at",{ ascending: false })
     .eq("participant_id", participantId);
-    
     if (!error) {
         const defaultValues = await getDefaultValues(data[0]);
         return defaultValues;
@@ -29,6 +28,10 @@ export const getDefaultValues = async (data:ParticipantPaymentHistoryDataBaseTyp
         defaultValues.postal_code=data.participant_id.contact_id.postal_code
         defaultValues.street_address=data.participant_id.contact_id.street_address
         defaultValues.date_of_birth=data.participant_id?.contact_id.date_of_birth
+        defaultValues.mobile=data.participant_id.contact_id.mobile
+        defaultValues.state=data.participant_id.contact_id.state_id?.name
+        defaultValues.country=data.participant_id.contact_id.country_id?.name
+        defaultValues.city=data.participant_id.contact_id.city_id?.name
     }
     // memo
     if (data.participant_id?.memo)
@@ -49,8 +52,25 @@ if(data.participant_id.program_id)
        // accommodation_snore
        if (data.participant_id?.accommodation_snore)
         defaultValues.accommodation_snore = data.participant_id.accommodation_snore;
-
-    // roommate_snore
+// organisation_id
+if(data?.participant_id?.organisation_id?.name)
+    defaultValues.organisation_id=data?.participant_id?.organisation_id?.name
+// donation_type
+if(data?.participant_id?.donation_type?.value)
+    defaultValues.donation_type=data?.participant_id?.donation_type?.value
+//    donation_date
+if(data?.participant_id?.donation_date)
+    defaultValues.donation_date=data?.participant_id?.donation_date
+// transaction_type
+if(data?.participant_id?.transaction_type?.value)
+    defaultValues.transaction_type=data?.participant_id?.transaction_type?.value
+// transaction_status
+if(data?.transaction_status)
+    defaultValues.transaction_status=data?.transaction_status
+// is_online_program
+if(data?.participant_id?.program_id?.program_type_id?.is_online_program)
+    defaultValues.program_type_id=data?.participant_id?.program_id?.program_type_id?.is_online_program
+// roommate_snore
     if (data.participant_id?.roommate_snore)
         defaultValues.roommate_snore = data.participant_id.roommate_snore;
 
@@ -100,7 +120,9 @@ if(data.participant_id.program_id)
     // transaction_status_id
     if (data.transaction_status_id)
         defaultValues.transaction_status_id = data.transaction_status_id;
-
+// transaction_status
+if(data.transaction_status_id?.value)
+    defaultValues.transaction_status_value=data.transaction_status_id?.value
     // payment_date
     if (data.payment_date)
         defaultValues.payment_date = data.payment_date;

@@ -1,8 +1,10 @@
-import { formatDateString } from "src/utility/DateFunctions";
+import { useController, useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
-import { useController } from "react-hook-form";
+import { formatDateString } from "src/utility/DateFunctions";
 
 export default function CourseFee() {
+    const{getValues}=useFormContext()
+    const defaultData=getValues()
     const {
         field: { value: created_at },
     } = useController({
@@ -51,7 +53,7 @@ export default function CourseFee() {
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px] ">Course Fee</Text>
                     <Text className="font-semibold text-[16px]">
-                        {currency_code?currency_code:''} {total_amount?total_amount:'-'}
+                        {currency_code?currency_code:''} {total_amount? (defaultData?.program_type_id ?total_amount-defaultData.accommodation_fee:total_amount):'-'}
                     </Text>
                 </div>
             </div>
