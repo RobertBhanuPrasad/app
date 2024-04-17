@@ -1,6 +1,7 @@
-import { useList, useTable } from "@refinedev/core";
+import { useList, useTable, useUpdateMany } from "@refinedev/core";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   PARTICIPANT_ATTENDANCE_STATUS,
   PARTICIPANT_PAYMENT_STATUS,
@@ -25,16 +26,20 @@ import {
   PENDING_ATTENDANCE_STATUS,
   UPDATE_ATTENDENCE_STATUS,
 } from "src/constants/OptionValueOrder";
-import { useController } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import { ActionProps, getActions } from "@components/courseBusinessLogic";
 import { BaseTable } from "@components/course/findCourse/BaseTable";
 import { TableHeader, Text } from "src/ui/TextTags";
 import { supabaseClient } from "src/utility";
+import { Dialog, DialogContent } from "src/ui/dialog";
+import Tick from "@public/assets/Tick.png";
 
 function CloseParticipantsSection() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  const { setValue } = useFormContext();
 
   /**
    * When user click on next button we have to change the close_registration section to revenue section
@@ -104,6 +109,14 @@ function CloseParticipantsSection() {
         },
       ],
     },
+    sorters: {
+      permanent: [
+        {
+          field: "participant_code",
+          order: "asc",
+        },
+      ],
+    },
   });
 
   const {
@@ -136,24 +149,36 @@ function CloseParticipantsSection() {
 
   const [rowSelection, setRowSelection] = useState({});
 
+  const [open, setOpen] = useState(false);
+  const { mutate } = useUpdateMany();
+
   const handleStatusChange = async (value: OptionValuesDataBaseType) => {
     statusOnChange(value);
     const participantIds = Object.keys(rowSelection).map((key) =>
       parseInt(key)
     );
-    console.log("heyy participant ids", participantIds);
 
     if (actionValue == UPDATE_ATTENDENCE_STATUS) {
-      const { error } = await supabaseClient
-        .from("participant_registration")
-        .update({ participant_attendence_status_id: value })
-        .in("id", participantIds);
+      await mutate({
+        resource: "participant_registration",
+        values: {
+          participant_attendence_status_id: value,
+        },
+        ids: participantIds,
+        invalidates: ["list"],
+      });
     } else {
-      const { error } = await supabaseClient
-        .from("participant_registration")
-        .update({ payment_status_id: value })
-        .in("id", participantIds);
+      await mutate({
+        resource: "participant_registration",
+        values: {
+          payment_status_id: value,
+        },
+        ids: participantIds,
+        invalidates: ["list"],
+      });
     }
+
+    setOpen(true);
   };
 
   return (
@@ -190,7 +215,7 @@ function CloseParticipantsSection() {
           <div>
             <Select
               //disabled when no action is selected
-              disabled={actionValue == undefined}
+              disabled={actionValue == undefined || actionValue == ""}
               value={statusValue}
               onValueChange={(val: any) => {
                 handleStatusChange(val);
@@ -217,6 +242,36 @@ function CloseParticipantsSection() {
                 </SelectItems>
               </SelectContent>
             </Select>
+
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogContent className="w-[414px] h-[325px]">
+                <div className="flex flex-col gap-4 items-center">
+                  <div className="flex justify-center">
+                    <Image src={Tick} alt="tick" />
+                  </div>
+                  <div className="font-semibold text-center text-[20px]">
+                    {Object.keys(rowSelection).length} Records Successfully
+                    Updated{" "}
+                  </div>
+                  <div className="text-center text-[16px]">
+                    The updates have been saved. Attendance status for
+                    participants with pending transfer request cannot be
+                    changed.
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setOpen(false);
+                      setValue("actions", "");
+                      setValue("status", "");
+                      setRowSelection({});
+                    }}
+                    className="w-[91px] h-[46px] rounded-[12px]"
+                  >
+                    Close
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
         <BaseTable

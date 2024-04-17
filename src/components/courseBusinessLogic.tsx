@@ -864,12 +864,6 @@ export const getActions = ({
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
 
-  // Get the ID for failed transaction status
-  const failedTransactionStatusId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_PAYMENT_STATUS,
-    PARTICIPANT_FAILED_PAYMENT_STATUS
-  )?.id;
-
   // Define conditions and corresponding actions
   const conditions = [
     {
@@ -878,9 +872,7 @@ export const getActions = ({
       action: "Update attendance status",
     },
     {
-      condition:
-        transactionStatusId === pendingTransactionStatusId ||
-        transactionStatusId === failedTransactionStatusId,
+      condition: transactionStatusId === pendingTransactionStatusId,
       action: "Update transaction status",
     },
     {
