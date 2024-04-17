@@ -3,29 +3,81 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import { useTable } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { CardValue, TableHeader, Text } from "src/ui/TextTags";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/ui/accordion";
 import { Button } from "src/ui/button";
+import { supabaseClient } from "src/utility";
 import { formatDateString } from "src/utility/DateFunctions";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { BaseTable } from "../findCourse/BaseTable";
 
 
 const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
     const searchParams = useSearchParams();
     const pathname = usePathname()
-    const params = new URLSearchParams(searchParams);
     const { replace } = useRouter();
 
+    const { setCourseAccountingFormDefaultValues } = newCourseStore();
+
+    /**
+    * Sets a parameter value in the URL and updates the browser history.
+    * @param term The term to set as the value for the parameter.
+    */
     function setParamValue(term: string) {
+        // Parse the current search parameters from the URL
         const params = new URLSearchParams(searchParams);
+
+        // If a valid term is provided
         if (term) {
+            // Set the value of the specified parameter
             params.set("current_section", term);
         }
+
+        // Replace the current URL with the updated search parameters
         replace(`${pathname}/course-accounting-form?${params.toString()}`);
     }
+
+    /**
+    * Fetches offline revenue data from the database for a specific program ID.
+    * @returns An array of objects containing offline revenue data, including date, amount, and notes.
+    */
+    const fetchOfflineRevenueData = async () => {
+        // Query the Supabase database for offline revenue data for the specified program ID
+        const { data: offlineRevenueData } = await supabaseClient
+            .from("program_offline_revenue")
+            .select("id, created_at, program_id, organization_id, date, amount, notes")
+            .eq("program_id", programId);
+
+        // Return the fetched offline revenue data
+        return offlineRevenueData;
+    }
+
+    // TODO fetch program expense data and add to default values
+
+
+    /**
+    * Handles the onClick event for editing the course accounting form.
+    * Sets the current section parameter in the URL to 'revenue', fetches offline revenue data,
+    * and sets the default values for the course accounting form based on the fetched data.
+    * If no data is fetched, handles the case by either setting default values or showing an error message.
+    */
+    const editCourseAccountingFormOnClick = async () => {
+        // Set the current section parameter in the URL to 'revenue'
+        setParamValue("revenue");
+
+        // Fetch offline revenue data
+        const data = await fetchOfflineRevenueData();
+
+        // If data is fetched successfully
+        if (data) {
+            // Set the default values for the course accounting form with the fetched offline revenue data
+            setCourseAccountingFormDefaultValues({
+                program_offline_revenue: data
+            });
+        }
+    };
 
 
     return (
@@ -33,14 +85,12 @@ const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
             {/* Edit button */}
             <div className="ml-auto max-w-fit">
                 {/* when we click on edit icon we are navigate to revenue section page*/}
-                    <Button className="items-end gap-3" variant={"link"}
-                        onClick={() => {
-                        setParamValue("revenue")
-                    }}
-                    >
-                        <EditIcon />
-                        <p>Edit Accounting Form</p>
-                    </Button>
+                <Button className="items-end gap-3" variant={"link"}
+                    onClick={editCourseAccountingFormOnClick}
+                >
+                    <EditIcon />
+                    <p>Edit Accounting Form</p>
+                </Button>
             </div>
             <Accordion type="multiple">
                 {/* Course Information Accordion */}
