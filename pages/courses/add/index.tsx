@@ -54,7 +54,7 @@ function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData,'loginUserData')
 
-  const { viewPreviewPage, viewThankyouPage } = newCourseStore();
+  const { viewThankyouPage } = newCourseStore();
 
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;

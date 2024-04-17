@@ -22,6 +22,26 @@ import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesBy
 import { handleCourseDefaultValues } from '@components/course/newCourse/EditCourseUtil'
 import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
 
+import CourseDetailsTab from '@components/course/viewCourse/courseDetailsTab'
+import ParticipantsTab from '@components/course/viewCourse/participantsTab'
+import {
+  DisplayOptions,
+  handleTabsBasedOnStatus,
+  isApproved,
+  isCourseAccountingFormApprovalNeeded,
+  isViewCourseAccountingTabDisplay
+} from '@components/courseBusinessLogic'
+import CopyIcon from '@public/assets/CopyIcon'
+import Cross from '@public/assets/Cross'
+import CurrencyIcon from '@public/assets/CurrencyIcon'
+import Exclamation from '@public/assets/Exclamation'
+import FaceBookIcon from '@public/assets/FaceBookIcon'
+import Instagram from '@public/assets/Instagram'
+import LinkedInIcon from '@public/assets/LinkedInIcon'
+import ShareIcon from '@public/assets/ShareIcon'
+import Tick from '@public/assets/Tick.png'
+import TwitterIcon from '@public/assets/TwitterIcon'
+import WhatsappIcon from '@public/assets/WhatsappIcon'
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
@@ -30,69 +50,31 @@ import {
   VIEW_COURSE_ACCOUNTING_FORM_TAB
 } from 'src/constants/CourseConstants'
 import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from 'src/ui/alert-dialog'
+import { Button } from 'src/ui/button'
+import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "src/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "src/ui/alert-dialog";
-import { Button } from "src/ui/button";
-import { Textarea } from "src/ui/textarea";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import ShareIcon from "@public/assets/ShareIcon";
-import CopyIcon from "@public/assets/CopyIcon";
-import WhatsappIcon from "@public/assets/WhatsappIcon";
-import FaceBookIcon from "@public/assets/FaceBookIcon";
-import TwitterIcon from "@public/assets/TwitterIcon";
-import Instagram from "@public/assets/Instagram";
-import LinkedInIcon from "@public/assets/LinkedInIcon";
-import Exclamation from "@public/assets/Exclamation";
-import Cross from "@public/assets/Cross";
-import Tick from "@public/assets/Tick.png";
-import ParticipantsTab from "@components/course/viewCourse/participantsTab";
-import { supabaseClient } from "src/utility/supabaseClient";
-import {
-  DisplayOptions,
-  handleTabsBasedOnStatus,
-  isApproved,
-  isCourseAccountingFormApprovalNeeded,
-  isViewCourseAccountingTabDisplay,
-} from "@components/courseBusinessLogic";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectItems,
-  SelectTrigger,
-  SelectValue,
-} from "src/ui/select";
-import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
-import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
-import CurrencyIcon from '@public/assets/CurrencyIcon'
+  DialogTrigger
+} from 'src/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
+import { Textarea } from 'src/ui/textarea'
+import { supabaseClient } from 'src/utility/supabaseClient'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+import CourseAccountingFormTab from '../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab'
+
 
 function index() {
-  const { viewPreviewPage } = newCourseStore()
-
-  if (viewPreviewPage) {
-    return <NewCourseReviewPage />
-  } else {
-    return <ViewDetails />
-  }
-}
-
-function ViewDetails() {
   const router = useRouter()
 
   const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
@@ -314,7 +296,7 @@ function ViewDetails() {
                 courseData?.data?.program_accounting_status_id,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && <PendingCourseAccountingFormApprovalDropDown courseId={Id as number} />}
- 
+
               <ViewCourseAccountingSuccessModalOpen />
               <ViewCourseAccountingRejectedModalOpen courseId={Id as number} />
 
@@ -571,7 +553,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false)
   const [cancelSuccessModalOpen, setCancelSuccessModalOpen] = useState(false)
 
-  const { setNewCourseData, setViewPreviewPage } = newCourseStore()
+  const { setNewCourseData } = newCourseStore()
   const options = DisplayOptions(
     courseData?.status_id?.id,
     courseData?.program_accounting_status_id,
@@ -590,7 +572,8 @@ export const ActionsDropDown = ({ courseData }: any) => {
     if (courseId) {
       const defaultValues = await handleCourseDefaultValues(courseId)
       setNewCourseData(defaultValues)
-      setViewPreviewPage(true)
+      router.push(`/courses/${courseId}/edit`);
+
     }
   }
 
@@ -608,7 +591,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       setNewCourseData(defaultValues)
-      router.push('/Courses/NewCourse')
+      router.push("/courses/add");
     }
   }
 
@@ -657,8 +640,8 @@ export const ActionsDropDown = ({ courseData }: any) => {
             }
             case 6: {
               // TODO - navigate to course accounting form
-              router.push('/')
-              break
+              router.push(`/courses/${courseId}`);
+            break;
             }
             default: {
               router.push('/')
@@ -911,12 +894,10 @@ export const getServerSideProps: GetServerSideProps<{}> = async context => {
 
   return {
     props: {
-      ...translateProps,
-    },
-  };
-};
-
-
+      ...translateProps
+    }
+  }
+}
 
 /**
  * Component for managing the dropdown to approve or reject a pending course accounting form
@@ -927,19 +908,17 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
 
   const options = [
     {
-      label: "Approve",
-      value: 1,
+      label: 'Approve',
+      value: 1
     },
     {
-      label: "Reject",
-      value: 2,
-    },
-  ];
-
+      label: 'Reject',
+      value: 2
+    }
+  ]
 
   // Initialize state for whether the approve modal is open or not
-  const [approveModalOpen, setApproveModalOpen] = useState(false);
-
+  const [approveModalOpen, setApproveModalOpen] = useState(false)
 
   /**
    * Initialize state for the selected approval  or reject
@@ -948,10 +927,14 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
    * in that modal we have no button if we click on no button then we have to clear the value at reset to the initial state.
    */
   const [selectApprovalOrReject, setSelectApprovalOrReject] = useState(null)
-  const { setViewCourseAccountingSuccessModal, setViewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedModal, viewCourseAccountingRejectedModal } = newCourseStore();
+  const {
+    setViewCourseAccountingSuccessModal,
+    setViewCourseAccountingRejectedDescriptionModal,
+    setViewCourseAccountingRejectedModal,
+    viewCourseAccountingRejectedModal
+  } = newCourseStore()
 
-  const { data: loginUserData }: any = useGetIdentity();
-
+  const { data: loginUserData }: any = useGetIdentity()
 
   /**
    * Function to approve a course for accounting
@@ -964,17 +947,17 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
    */
   const approveCourseAccountingForm = async () => {
     await supabaseClient
-    .from('program')
-    .update({ program_accounting_status_id:accountingClosedStatusId})
-    .eq('id', courseId)
+      .from('program')
+      .update({ program_accounting_status_id: accountingClosedStatusId })
+      .eq('id', courseId)
 
-      await supabaseClient
+    await supabaseClient
       .from('program_accounting_activity')
       .insert({ caf_status_id: accountingClosedStatusId, user_id: loginUserData?.userData?.id })
 
-    setViewCourseAccountingSuccessModal(true);
-    setApproveModalOpen(false);
-  };
+    setViewCourseAccountingSuccessModal(true)
+    setApproveModalOpen(false)
+  }
 
   /**
    * Function to reject a course
@@ -982,8 +965,8 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
    * Close the reject modal
    */
   const rejectCourse = async () => {
-    setViewCourseAccountingRejectedDescriptionModal(true);
-  };
+    setViewCourseAccountingRejectedDescriptionModal(true)
+  }
 
   return (
     <div>
@@ -991,13 +974,12 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
         onValueChange={(val: any) => {
           setSelectApprovalOrReject(val)
           if (val == 1) {
-            setApproveModalOpen(true);
+            setApproveModalOpen(true)
           } else {
-            setViewCourseAccountingRejectedModal(true);
+            setViewCourseAccountingRejectedModal(true)
           }
         }}
         value={selectApprovalOrReject}
-
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
           <SelectValue placeholder="Pending CAF Approval" />
@@ -1006,11 +988,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
           <SelectItems>
             {options?.map((option: any, index: number) => (
               <>
-                <SelectItem
-                  key={option.value}
-                  value={option.value}
-                  className="h-[44px]"
-                >
+                <SelectItem key={option.value} value={option.value} className="h-[44px]">
                   {option.label}
                 </SelectItem>
               </>
@@ -1036,7 +1014,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
                   variant="outline"
                   className="text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px]"
                   onClick={() => {
-                    setApproveModalOpen(false);
+                    setApproveModalOpen(false)
                     setSelectApprovalOrReject(null)
                   }}
                 >
@@ -1048,7 +1026,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
                   type="button"
                   className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
                   onClick={() => {
-                    approveCourseAccountingForm();
+                    approveCourseAccountingForm()
                   }}
                 >
                   Yes
@@ -1077,7 +1055,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
                   variant="outline"
                   className="text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px]"
                   onClick={() => {
-                    setViewCourseAccountingRejectedModal(false);
+                    setViewCourseAccountingRejectedModal(false)
                     setSelectApprovalOrReject(null)
                   }}
                 >
@@ -1098,15 +1076,14 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
-};
-
+  )
+}
 
 /**
  * Component to display a success modal when the accounting form for a course is approved
-*/
+ */
 const ViewCourseAccountingSuccessModalOpen = () => {
-  const { viewCourseAccountingSuccessModal, setViewCourseAccountingSuccessModal } = newCourseStore();
+  const { viewCourseAccountingSuccessModal, setViewCourseAccountingSuccessModal } = newCourseStore()
 
   return (
     <AlertDialog open={viewCourseAccountingSuccessModal}>
@@ -1115,15 +1092,11 @@ const ViewCourseAccountingSuccessModalOpen = () => {
           <div className="flex justify-center">
             <Image src={Tick} alt="tick" />
           </div>
-          <div className="font-semibold text-center mt-2">
-            Accounting Form Approved Successfully
-          </div>
-          <div className="text-center my-4">
-            Thank you for contribution in the course approval process.
-          </div>
+          <div className="font-semibold text-center mt-2">Accounting Form Approved Successfully</div>
+          <div className="text-center my-4">Thank you for contribution in the course approval process.</div>
           <Button
             onClick={() => {
-              setViewCourseAccountingSuccessModal(false);
+              setViewCourseAccountingSuccessModal(false)
             }}
             className="w-[91px] h-[46px] rounded-[12px]"
           >
@@ -1132,58 +1105,62 @@ const ViewCourseAccountingSuccessModalOpen = () => {
         </div>
       </AlertDialogContent>
     </AlertDialog>
-  );
-};
-
-
+  )
+}
 
 /**
  * Component to display a reject modal when the accounting form for a course is rejected
-*/
+ */
 const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number }) => {
-  const { viewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedModal } = newCourseStore();
+  const {
+    viewCourseAccountingRejectedDescriptionModal,
+    setViewCourseAccountingRejectedDescriptionModal,
+    setViewCourseAccountingRejectedModal
+  } = newCourseStore()
 
-  const [rejectionFeedback, setRejectionFeedback] = useState(false);
+  const [rejectionFeedback, setRejectionFeedback] = useState(false)
 
-  const { data: loginUserData }: any = useGetIdentity();
+  const { data: loginUserData }: any = useGetIdentity()
 
   const accountingRejectedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, REJECTED)?.id
 
-
   /**
- * Function to reject a course's accounting form
- * Makes an asynchronous call to mutate the program resource
- * Sets the status ID to indicate the accounting form is rejected
- * Provides rejection feedback if available
- * Specifies the ID of the course to be rejected
- * Closes the modal for viewing the rejected accounting form
- */
+   * Function to reject a course's accounting form
+   * Makes an asynchronous call to mutate the program resource
+   * Sets the status ID to indicate the accounting form is rejected
+   * Provides rejection feedback if available
+   * Specifies the ID of the course to be rejected
+   * Closes the modal for viewing the rejected accounting form
+   */
   const rejectCourse = async () => {
     // Make an asynchronous call to update the program resource
     await supabaseClient
-     .from('program')
-     .update({ program_accounting_status_id:accountingRejectedStatusId})
-     .eq('id', courseId)
+      .from('program')
+      .update({ program_accounting_status_id: accountingRejectedStatusId })
+      .eq('id', courseId)
 
-      await supabaseClient
+    await supabaseClient
       .from('program_accounting_activity')
-      .insert({ caf_status_id: accountingRejectedStatusId, user_id: loginUserData?.userData?.id, comment: rejectionFeedback })
+      .insert({
+        caf_status_id: accountingRejectedStatusId,
+        user_id: loginUserData?.userData?.id,
+        comment: rejectionFeedback
+      })
 
     // Close the modal for viewing the rejected accounting form
-    setViewCourseAccountingRejectedDescriptionModal(false);
-    setViewCourseAccountingRejectedModal(false);
-  };
-
+    setViewCourseAccountingRejectedDescriptionModal(false)
+    setViewCourseAccountingRejectedModal(false)
+  }
 
   return (
     <AlertDialog open={viewCourseAccountingRejectedDescriptionModal}>
       <AlertDialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6">
         <AlertDialogHeader className="text-center">
           <div className="flex items-center w-full justify-center">
-            <Cross />{" "}
+            <Cross />{' '}
           </div>
           <AlertDialogTitle className="text-gray-500 text-sm font-normal pt-2">
-            {" "}
+            {' '}
             Describe your rejection reason
             <span className="text-blue-500">(optional)</span>
           </AlertDialogTitle>
@@ -1192,7 +1169,7 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
               placeholder="Comment"
               className="border-[#E1E1E1]  h-[132px] w-[366px]"
               onChange={(e: any) => {
-                setRejectionFeedback(e.target.value);
+                setRejectionFeedback(e.target.value)
               }}
             />
           </AlertDialogDescription>
@@ -1205,7 +1182,7 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
                 variant="outline"
                 className="text-[#7677F4] w-[71px] h-[46px] border border-[#7677F4] rounded-[12px] "
                 onClick={() => {
-                  setViewCourseAccountingRejectedDescriptionModal(false);
+                  setViewCourseAccountingRejectedDescriptionModal(false)
                 }}
               >
                 No
@@ -1224,6 +1201,5 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
-};
-
+  )
+}

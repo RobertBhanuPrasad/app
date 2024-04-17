@@ -7,7 +7,7 @@ import {
   CountComponent,
   CourseTypeComponent,
   DateRangePickerComponent,
-} from "pages/courses/FindCourse";
+} from "pages/courses/list";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import {
