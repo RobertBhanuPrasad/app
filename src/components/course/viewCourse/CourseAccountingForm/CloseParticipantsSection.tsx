@@ -37,14 +37,13 @@ function CloseParticipantsSection() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-
   const { query } = useNextRouter();
 
+  //Getting the program Data using the id from the url
   const { data: programData } = useOne({
     resource: "program",
     id: query?.id as string,
   });
-
 
   //TODO settings in progress
   const { data: courseAccountingSettingsData } = useList({
@@ -57,8 +56,6 @@ function CloseParticipantsSection() {
       },
     ],
   });
-
-
 
   const { setValue } = useFormContext();
 
@@ -87,35 +84,42 @@ function CloseParticipantsSection() {
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
 
-  //Getting participant data
+  // Retrieving participant data from the 'participant_registration' table
   const { tableQueryResult: participantData } = useTable({
     resource: "participant_registration",
     meta: {
-      select: "*,contact(full_name) ,payment_method(id,value)",
+      // Selecting all columns along with the participant's full name and payment method details
+      select: "*, contact(full_name), payment_method(id, value)",
     },
     pagination: {
+      // Setting pagination to fetch a maximum of 1000 records per page
       pageSize: 1000,
     },
     filters: {
       permanent: [
+        // Applying OR condition for filtering participants who meet any of the following criteria:
         {
           operator: "or",
           value: [
+            // Participants who haven't checked the program agreement
             {
               field: "is_program_agreement_checked",
               operator: "eq",
               value: false,
             },
+            // Participants who haven't completed the health declaration
             {
               field: "is_health_declaration_checked",
               operator: "eq",
               value: false,
             },
+            // Participants with pending payment status
             {
               field: "payment_status_id",
               operator: "eq",
               value: pendingTransactionStatusId,
             },
+            // Participants with pending attendance status
             {
               field: "participant_attendence_status_id",
               operator: "eq",
@@ -124,28 +128,29 @@ function CloseParticipantsSection() {
           ],
         },
         {
+          // Filtering participants by the program ID
           field: "program_id",
           operator: "eq",
-          value: query?.id as string, 
+          value: query?.id as string,
         },
       ],
     },
     sorters: {
       permanent: [
-        {
-          field: "participant_code",
-          order: "asc",
-        },
+        // Sorting the participant data based on their participant code in ascending order
+        { field: "participant_code", order: "asc" },
       ],
     },
   });
 
+  // useController hook  for action dropdown to get value and onChange
   const {
     field: { value: actionValue, onChange: actionOnChange },
   } = useController({
     name: "action_id",
   });
 
+  // useController hook  for status dropdown to get value and onChange
   const {
     field: { value: statusValue, onChange: statusOnChange },
   } = useController({
@@ -162,23 +167,35 @@ function CloseParticipantsSection() {
     PARTICIPANT_PAYMENT_STATUS
   )?.[0]?.option_values;
 
-  //updating the status data based on
+  //updating the status data based on action selected
   const statusData =
     actionValue == UPDATE_ATTENDENCE_STATUS
       ? attendanceStatusData
       : paymentStatusData;
 
+  // state variable for row selection
   const [rowSelection, setRowSelection] = useState({});
 
+  // state variable to open and close the dialog after updating the recirds
   const [open, setOpen] = useState(false);
+
+  // The hook for bulk update
   const { mutate } = useUpdateMany();
 
+  /**
+   * Function to handle the bulk update of attendance and transaction status
+   */
   const handleStatusChange = async (value: OptionValuesDataBaseType) => {
     statusOnChange(value);
+
+    //retrieving participant ids from rowSelection data
     const participantIds = Object.keys(rowSelection).map((key) =>
       parseInt(key)
     );
 
+    // Conditionally update the participant registration based on the action value:
+    // If actionValue is UPDATE_ATTENDENCE_STATUS, update the participant_attendence_status_id;
+    // Otherwise, update the payment_status_id.
     if (actionValue == UPDATE_ATTENDENCE_STATUS) {
       await mutate({
         resource: "participant_registration",
@@ -199,6 +216,7 @@ function CloseParticipantsSection() {
       });
     }
 
+    //Opening the dialog that shows that we have successfully updated the records
     setOpen(true);
   };
 
@@ -207,6 +225,7 @@ function CloseParticipantsSection() {
       <div className="m-6 flex flex-col gap-4">
         <div className="ml-auto flex flex-row gap-4">
           <div>
+            {/* select dropdown for displaying actions */}
             <Select
               //Disabled when i havent select any row from the table
               disabled={Object.keys(rowSelection).length === 0}
@@ -234,6 +253,7 @@ function CloseParticipantsSection() {
             </Select>
           </div>
           <div>
+            {/* select dropdown for displaying status */}
             <Select
               //disabled when no action is selected
               disabled={actionValue == undefined || actionValue == ""}
@@ -264,6 +284,7 @@ function CloseParticipantsSection() {
               </SelectContent>
             </Select>
 
+            {/* Dialog definition when we have updated the records it should open */}
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogContent className="w-[414px] h-[325px] !p-4 !rounded-xl">
                 <div className="flex flex-col gap-4">
@@ -282,10 +303,13 @@ function CloseParticipantsSection() {
                   <div className="flex flex-row justify-center">
                     <Button
                       onClick={() => {
+                        //closing the dialog when we click on close
                         setOpen(false);
-                        //clearing all the fields after updating
+                        //clearing all the fields because we have updated the selected rows status
                         setValue("action_id", "");
+                        //clearing the selected status field if no rows are selected then it should be disabled and to be in default state
                         setValue("status_id", "");
+                        //setting the row selcection empty beause we have updated the status for seleted rows now it should be empty
                         setRowSelection({});
                       }}
                       className="w-[91px] h-[46px] rounded-[12px]"
@@ -354,6 +378,7 @@ export const participantsColumns: ColumnDef<any>[] = [
           className="min-w-[150px] text-[#7677F4] font-semibold cursor-pointer"
         >
           <Text className="!text-[#7677F4] font-semibold">
+            {/* getting the participant_code from the row data */}
             {row?.original?.participant_code}
           </Text>
         </div>
@@ -373,11 +398,13 @@ export const participantsColumns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return (
         <div className="w-[150px]">
+          {/* truncating the column if the value overflows and adding abbr tag */}
           <Text className="max-w-[130px] truncate">
             <abbr
               title={row?.original?.contact?.full_name}
               className="no-underline"
             >
+              {/* getting the full_name from the row data */}
               {row?.original?.contact?.full_name
                 ? row?.original?.contact?.full_name
                 : "-"}
@@ -400,6 +427,7 @@ export const participantsColumns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return (
         <div className="min-w-[150px]">
+          {/* getting the payment_method from the row data */}
           <Text>
             {row?.original?.payment_method?.value
               ? row?.original?.payment_method?.value
@@ -423,6 +451,7 @@ export const participantsColumns: ColumnDef<any>[] = [
       );
     },
     cell: ({ row }) => {
+      //Getting actions based on participant status , transaction status , ppa consent , health declaration consent
       const actions: string[] = getActions({
         //TODO will have few changes after settings data
         attendenceStatusId: row.original.participant_attendence_status_id,
