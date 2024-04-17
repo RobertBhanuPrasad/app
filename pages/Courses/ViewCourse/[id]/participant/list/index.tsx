@@ -32,16 +32,6 @@ import { CountComponent } from "pages/Courses/FindCourse";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "src/ui/alert-dialog";
 
 function index() {
   const router = useRouter();
@@ -292,7 +282,7 @@ function index() {
     resource: "participant_registration",
     meta: {
       select:
-        "*, contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method, transaction_status_id(*)))",
+        "*, transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method, transaction_status_id(*)))",
     },
     filters: filters,
     sorters: {
@@ -689,6 +679,7 @@ const HeaderSection = () => {
           onBottomReached={() => {}}
           onSearch={() => {}}
           onChange={onSelectChange}
+          searchBar={false}
         />
       </div>
       {/* Clear, Apply Filters Section */}
@@ -830,7 +821,7 @@ const handleExportExcel = async () => {
     const params = new URLSearchParams({
       table_name: "participant_registration",
       select:
-        ", contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*)))",
+        ", contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method))",
       columns: JSON.stringify(excelColumns),
     });
 
