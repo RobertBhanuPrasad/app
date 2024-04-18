@@ -1,15 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 
-function ScrollableTabs({ tabs }) {
-  const [activeTab, setActiveTab] = useState(0)
-  const tabRefs = useRef([])
+interface Tab {
+  id: number
+  label: string
+  content: JSX.Element
+}
+
+function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
+  const [activeTab, setActiveTab] = useState<number>(0)
+  const tabRefs = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            setActiveTab(parseInt(entry.target.dataset.tabIndex))
+            const target = entry.target as HTMLElement
+            const tabIndex = parseInt(target.dataset.tabIndex || '0')
+            setActiveTab(tabIndex)
           }
         })
       },
@@ -25,17 +33,17 @@ function ScrollableTabs({ tabs }) {
     }
   }, [])
 
-  const scrollToTab = tabIndex => {
+  const scrollToTab = (tabIndex: number) => {
     const tabElement = tabRefs.current[tabIndex]
-    tabElement.scrollIntoView({ behavior: 'smooth', block: 'start' }) // Scroll to the start of the tab
+    tabElement?.scrollIntoView({ behavior: 'smooth', block: 'start' }) // Scroll to the start of the tab
   }
 
   return (
-    <div className="sticky top-0 z-50 bg-white ">
+    <div className="sticky top-0 z-50 bg-white">
       <div className="h-[800px] overflow-y-auto">
-        <div className="flex sticky z-50 top-0 gap-4 py-2 bg-white overflow-x-auto ">
+        <div className="flex sticky z-50 top-0 gap-4 py-2 bg-white overflow-x-auto">
           {/* Ensure horizontal overflow */}
-          {tabs.map((tab, index) => (
+          {tabs.map((tab, index: number) => (
             <button
               key={tab.id}
               className={`px-4 py-2 border-b-2 text-[16px] font-[600] ${
@@ -54,12 +62,12 @@ function ScrollableTabs({ tabs }) {
 
         <div className="py-4 px-4">
           {/* Ensure vertical overflow */}
-          {tabs.map((tab, index) => (
+          {tabs.map((tab, index: number) => (
             <div
               className="mb-[20px]"
               key={tab.id}
               id={`tab-${tab.id}`}
-              ref={el => (tabRefs.current[index] = el)}
+              ref={el => (tabRefs.current[index] = el as HTMLDivElement)}
               data-tab-index={index}
             >
               {tab.content}

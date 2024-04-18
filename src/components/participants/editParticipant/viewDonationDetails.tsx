@@ -5,25 +5,13 @@ import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
 
-export default function ViewDonationDetails({ setViewDonation }) {
+interface ViewDonationDetailsProps {
+    setViewDonation: React.Dispatch<React.SetStateAction<any>>;
+}
+export default function ViewDonationDetails({ setViewDonation }:ViewDonationDetailsProps) {
     const { getValues } = useFormContext();
     const formData = getValues();
     const { query } = useRouter();
-    const queryResult = useList({
-        resource: "participant_payment_history",
-        meta: {
-            select: "currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
-        },
-        // TODO: replace with particpant_id from router
-        filters: [
-            {
-                field: "participant_id",
-                operator: "eq",
-                value: query.participantId,
-            },
-        ],
-        sorters: [{ field: "created_at", order: "desc" }],
-    });
     const {
         field: { value: organisation_id },
     } = useController({ name: "organisation_id" });
@@ -90,8 +78,8 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Payment Method
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.payment_method_id?.value
-                                        ? data?.payment_method_id?.value
+                                    {formData?.payment_method
+                                        ?formData?.payment_method
                                         : "-"}
                                 </Text>
                             </div>
@@ -238,19 +226,13 @@ export default function ViewDonationDetails({ setViewDonation }) {
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[16px]">
-                                    {data?.participant_id?.contact_id
-                                        ?.identification_type_id?.name
-                                        ? data?.participant_id?.contact_id
-                                              ?.identification_type_id?.name
-                                        : "-"}
+                                    {/* TODO:Identifiaction type */}
+                                    {"-"}
                                 </Text>
 
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id
-                                        ?.identification_num
-                                        ? data?.participant_id?.contact_id
-                                              ?.identification_num
-                                        : "-"}
+                                    {/* TODO:Identification number */}
+                                    {"-"}
                                 </Text>
                             </div>
                         </div>
