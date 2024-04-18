@@ -147,7 +147,7 @@ export const ExpenseDetails = () => {
   const expense_details_fields_list =
     settingsData?.data?.[0]?.expense_details_fields_list;
 
-  // filteredColumns are the filtered columns 
+  // filteredColumns are the filtered columns
   // we need to filter the colums because as per the requirement we need to display the columns which are coming from the course_accounting_config table based on the settings
   // we will filter based on the field_name coming from the api and our columns field name
   const filteredColumns = expense_details_fields_list?.map((item: any) => {
@@ -212,7 +212,6 @@ export const ExpenseDetails = () => {
  * @returns
  */
 const ExpenseCategory = ({ index }: { index: number }) => {
-
   // query is the destructured query data in the useRouter
   const { query } = useRouter();
 
@@ -262,11 +261,11 @@ const ExpenseCategory = ({ index }: { index: number }) => {
   // });
 
   // TODO need to change the options after finalising from which tabel we need to get the expense category dropdown options
-  const options: any[] = []
+  const options: any[] = [];
 
   /**
    * @function handleOnBottomReached
-   * @description this function is used to increase the page size when we scroll the options in the dropdown 
+   * @description this function is used to increase the page size when we scroll the options in the dropdown
    */
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
@@ -345,7 +344,11 @@ const ReceiptId = ({ index }: { index: number }) => {
   });
   return (
     <div>
-      <Input value={value as number} onChange={onChange} error={error ? true : false} />
+      <Input
+        value={value as number}
+        onChange={onChange}
+        error={error ? true : false}
+      />
     </div>
   );
 };
@@ -385,7 +388,7 @@ const Amount = ({ index }: { index: number }) => {
 //   const {
 //     field: { value, onChange },
 //     fieldState: { error },
-    // We give the type here because we will get the name as per the types we have in the form
+// We give the type here because we will get the name as per the types we have in the form
 //   } = useController<CourseAccountingFormFieldTypes>({
 //     name: `program_expenses.${index}.payment_method`,
 //   });
@@ -458,7 +461,7 @@ const Amount = ({ index }: { index: number }) => {
 //   const {
 //     field: { value, onChange },
 //     fieldState: { error },
-    // We give the type here because we will get the name as per the types we have in the form
+// We give the type here because we will get the name as per the types we have in the form
 //   } = useController<CourseAccountingFormFieldTypes>({
 //     name: `program_expenses.${index}.vat_condition`,
 //   });
@@ -557,7 +560,7 @@ const VendorName = ({ index }: { index: number }) => {
 //   const {
 //     field: { value, onChange },
 //     fieldState: { error },
-    // We give the type here because we will get the name as per the types we have in the form
+// We give the type here because we will get the name as per the types we have in the form
 //   } = useController<CourseAccountingFormFieldTypes>({
 //     name: `program_expenses.${index}.vat_rate`,
 //   });
@@ -817,8 +820,8 @@ const RadioItem: React.FC<RadioItemProps> = ({
  * @function NameOfPersonToReimburse
  * @description This function is used to store the person to whom we are reimbursing the amount in the form
  * REQUIRMENT If we click on the other in the select dropdown then we need to display the input for taking the name of the person who are not in the dropdown
- * @param index 
- * @returns 
+ * @param index
+ * @returns
  */
 const NameOfPersonToReimburse = ({ index }: { index: number }) => {
   const {
@@ -878,10 +881,9 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
     fetchData();
   }, [query?.id]);
 
-
   /**
    * @constant filterFinalPersonToReimburseOptionsData
-   * @description in this const we filter the data based on the searchValue and we return the filtered data using the .filter 
+   * @description in this const we filter the data based on the searchValue and we return the filtered data using the .filter
    * the search filter can be done without considering the case sensitive
    */
   const filterFinalPersonToReimburseOptionsData =
@@ -923,6 +925,11 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
                 </>
               )
             )}
+            {/* 
+            As per the requirement if we click on the other then we will assign 0 id which will not present in the any data base table
+            so we can easily differentiate
+            we assign this value to the controller value
+            */}
             <SelectItem className="h-[44px]" value={0}>
               Other
             </SelectItem>
@@ -930,6 +937,9 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
         </SelectContent>
       </Select>
 
+      {/* 
+          here value is the controller value if the value is equal to the 0 then only we need to display the input fiels to take the name of the person who is not in the dropdown
+      */}
       {value == 0 && (
         <Input
           value={newPersonToReimburse as string}
