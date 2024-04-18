@@ -344,10 +344,11 @@ const RegistrationGateway = () => {
   } = useController({
     name: NewCourseStep2FormNames?.is_registration_required,
   });
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div className="flex flex-row items-center gap-[19px]">
       <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">
-        Registration is mandatory for this course
+      {t("course.new_course:course_details_tab.registration_mandatory")}
       </div>
       <Switch
         id="registration"
@@ -406,11 +407,11 @@ const CourseNameDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
-
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Course Name <div className="text-[#7677F4]">*</div>
+      Course Name <div className="text-[#7677F4]">*</div>
       </div>
 
       <Select
@@ -519,15 +520,16 @@ const TeachersDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row">
-        Teacher <div className="text-[#7677F4]">*</div>
+{t("course.new_course:course_details_tab.teacher")} <div className="text-[#7677F4]">*</div>
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Teacher Name"
+placeholder={t("course.new_course:course_details_tab.teacher_placeholder")}
         data={options}
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
@@ -628,15 +630,16 @@ const AssistantTeachersDropDown = () => {
   } = useController({
     name: NewCourseStep2FormNames?.assistant_teacher_ids,
   });
+const { t } = useTranslation( [ "common", 'course.new_course']); 
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        Assistant Teacher
+{t("course.new_course:course_details_tab.assistant_teacher")}
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Teacher Name"
+        placeholder={t("course.new_course:course_details_tab.teacher_placeholder")}
         data={teachers}
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
@@ -736,11 +739,12 @@ const DisplayLanguage = () => {
   } = useController({
     name: NewCourseStep2FormNames?.is_language_translation_for_participants,
   });
+const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        Display language translation option for participants *
+      {t("course.new_course:course_details_tab.display_language_option")} *
       </div>
       <RadioGroup
         value={JSON.stringify(value)}
@@ -873,7 +877,7 @@ const LanguageDropDown = () => {
   const handleOnSearch = (value: any) => {
     onSearch(value);
   };
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     <div className="flex gap-1 flex-col">
@@ -883,7 +887,7 @@ const LanguageDropDown = () => {
       </div>
       <MultiSelect
         value={value}
-        placeholder="Select Language"
+        placeholder={t("course.new_course:course_details_tab.languages_taught_placeholder")}
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
@@ -952,7 +956,7 @@ const LanguageTranslationDropDown = () => {
   const handleOnSearch = (value: any) => {
     onSearch(value);
   };
-  const {t} = useTranslation("common")
+const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
@@ -960,7 +964,7 @@ const LanguageTranslationDropDown = () => {
       </div>
       <MultiSelect
         value={value}
-        placeholder="Select translation languages"
+        placeholder={t("course.new_course:course_details_tab.available_languages_placeholder")}
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
@@ -995,7 +999,7 @@ const AllowedCountriesDropDown = () => {
   } = useController({
     name: NewCourseStep2FormNames?.allowed_countries,
   });
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
  
 
   return (
@@ -1006,7 +1010,7 @@ const AllowedCountriesDropDown = () => {
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Countries"
+        placeholder={t("course.new_course:course_details_tab.country_registrations_allowed_placeholder")}
         data={allowedCountriesData}
         onBottomReached={() => {}}
         onSearch={() => {}}
@@ -1033,12 +1037,12 @@ const MaximumCapacity = () => {
     field: { value = maxAttendees, onChange },
     fieldState: { error },
   } = useController({ name: NewCourseStep2FormNames?.max_capacity });
-  const {t} = useTranslation("common")
+const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">{t('max_capacity')}</div>
       <Input
-        placeholder="Enter no. of attendees"
+        placeholder={t("course.new_course:course_details_tab.max_capacity_placeholder")}
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);

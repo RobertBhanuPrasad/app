@@ -28,20 +28,20 @@ import {
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-const {t} = useTranslation("common")
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-export const columns: ExtendedColumnDef<any>[] = [
+export const columns: ExtendedColumnDef<any>[] = [ 
   {
     accessorKey: "program_code",
     column_name: "Course ID",
     enableHiding: false,
     header: () => {
+      const {t} = useTranslation("common")
       return <div className="w-[100px]">{t('course_id')}</div>;
     },
     cell: ({ row }) => {
       const router = useRouter();
-      return (
+       return (
         <div
           onClick={() => {
             router.push(`/Courses/ViewCourse/${row?.original?.id}`);
@@ -137,6 +137,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "city",
     column_name: "City",
     header: () => {
+      const {t} = useTranslation("common")
       return <div className="min-w-[150px]">{t('city')}</div>;
     },
     cell: ({ row }) => {
@@ -159,7 +160,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     enableHiding: false,
     column_name: "Teachers",
     header: () => {
-      
+      const {t} = useTranslation("common")
       return <div className="min-w-[150px]">{t('teachers')}</div>;
     },
     cell: ({ row }) => {
@@ -223,6 +224,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "course_accounting_status",
     column_name: "Course Accounting Status",
     header: () => {
+      const {t} = useTranslation("common")
       return <div className="min-w-[200px]">{t('course_accounting_status')}</div>;
     },
     cell: ({ row }: any) => {
@@ -407,7 +409,7 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
         }
       };
-      const {t} = useTranslation("common")
+ const {t} = useTranslation("common")
 
       return (
         <div className="">

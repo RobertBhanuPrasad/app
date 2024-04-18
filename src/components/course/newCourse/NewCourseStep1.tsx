@@ -57,7 +57,7 @@ function NewCourseStep1() {
 export default NewCourseStep1;
 
 const RegistrationGateway = () => {
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   const {
     field: { value = false, onChange },
   } = useController({
@@ -84,7 +84,7 @@ const RegistrationGateway = () => {
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">
           <div className="text-xs font-normal text-[#333333]">
-            Please input the site's URL *
+          Please input the site's URL *
           </div>
           <div className="w-[320px] h-[40px] rounded-[1px] text-[#999999] font-normal">
             <Input
@@ -150,7 +150,7 @@ const RadioCards = () => {
       }
     }
   };
-  const {t} = useTranslation("course/view_course")
+  const {t} = useTranslation([ "common", 'course.new_course'])
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
@@ -183,7 +183,7 @@ const RadioCards = () => {
                 <Teacher
                   color={` ${value === iAmTeachingId ? "#7677F4" : "#999999"}`}
                 />
-                I am teaching this course
+                {t("course.new_course:basic_details_tab.teaching_course")}
               </div>
             </Card>
           </Label>
@@ -217,7 +217,7 @@ const RadioCards = () => {
                     value === iAmCoTeachingId ? "#7677F4" : "#999999"
                   }`}
                 />
-                I am co-teaching this course
+                {t("course.new_course:basic_details_tab.co_teaching")}
               </div>
             </Card>
           </Label>
@@ -249,7 +249,7 @@ const RadioCards = () => {
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
               <div className="w-[240px] text-wrap text-center justify-center">
-                I am organizing this course for another teacher
+                {t("course.new_course:basic_details_tab.organizing_this_course")}
               </div>
             </div>
           </Card>
@@ -265,7 +265,7 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
-  const {t} = useTranslation("common")
+const { t } = useTranslation( [ "common", 'course.new_course']);
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
@@ -299,7 +299,7 @@ const OrganizationDropDown = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize) {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
-  };
+  }; 
 
   return (
     <div className="w-80 h-20">
@@ -315,7 +315,7 @@ const OrganizationDropDown = () => {
             className="w-[320px]"
             error={organizationError ? true : false}
           >
-            <SelectValue placeholder="Select Organization" />
+            <SelectValue placeholder={t("course.new_course:basic_details_tab.select_organization")} />
           </SelectTrigger>
           <SelectContent>
             <Input value={searchValue} onChange={handleSearch} />
@@ -351,7 +351,7 @@ const OrganizationDropDown = () => {
 };
 
 const ProgramOrganizerDropDown = () => {
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   const { data: loginUserData }: any = useGetIdentity();
 
   const [pageSize, setPageSize] = useState(10);
@@ -410,7 +410,7 @@ const ProgramOrganizerDropDown = () => {
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Program organizer Name"
+        placeholder={t("course.new_course:basic_details_tab.program_organizer_placeholder")}
         data={options}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {

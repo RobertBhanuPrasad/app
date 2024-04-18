@@ -1,5 +1,5 @@
 {
-    "organization":"Organization",
+  "organization":"Organization",
     "city_placeholder": "Select City",
     "local_center": "Local Center",
     "fees": "Fees",
@@ -70,7 +70,7 @@
     "student": "Student",
     "cancel_course": "Cancel Course",
     "overall_information": "Overall Information"
-
+    
   }
 
 

@@ -3,16 +3,16 @@
     "basic_details_tab": {
         "teaching_course": "I am teaching this course",
         "co_teaching": "I am co-teaching this course",
-        "organizing_this_course": "I am organizing this course",
+        "organizing_this_course": "I am organizing this course for another teacher",
         "organization": "Organizatio",
-        "organization_placeholder": "Select Organization",
         "program_organizer": "Program Organizer",
         "program_organizer_placeholder": "Enter Program organizer Name",
+        "select_organization":"Select Organization"
         
     },
     "course_details_tab": {
         "course_type": "Course Type",
-        "teacher": "Teacher",
+        "teacher": "Teacher ",
         "teacher_placeholder": "Enter Teacher Name",
         "assistant_teacher": "Assistant Teacher",
         "languages_taught_placeholder": "Select Language",
@@ -53,7 +53,8 @@
         "course": "Course",
         "online_meeting_url": "Online Meeting URL",
         "online_meeting_url_placeholder": "Enter Online Meeting URL",
-        "online_meeting_note": "Note: Participants will join online course through your virtual venue",
+        "online_meeting_note": "Note: Participants will join online course through your",
+        "virtual_venue":"virtual venue",
         "specific_location": "Please associate your course with a specific location for reporting purposes",
         "state": "State"
     },
@@ -72,12 +73,15 @@
     },
     "accommodation_tab": {
         "accommodation_type": "Accommodation Type",
-        "fee_per_person": "Fee per person Inc. VAT",
+        "fee_per_person": "Fee per person (MYR) Inc. VAT",
         "number_of_spots": "Number of spots available",
         "note": "Note : If the Number of spots available is blank, then it is unlimited.",
         "accommodation_fee": "Accommodation fee payment mode",
         "pay_online": "Pay Online",
-        "pay_offline": "Pay Offline"
+        "pay_offline": "Pay Offline",
+        "select_accommodation":"Select Accommodation"
+        
+
     },
     "contact_info_tab": {
         "contact_number": "Contact Number",
@@ -86,7 +90,8 @@
         "select_contact_number": "Select contact number",
         "send_bcc": "Send BCC registration confirmation email to",
         "select_course": "Select course email",
-        "note_enter_comma": "Note: Enter comma separated list of email addresses.",
+        "note": "Note",
+        "enter_comma_separated":"Enter comma separated list of email addresses.",
         "review_details": "Review Details"
     },
     "review_post_details": {
@@ -96,7 +101,9 @@
         "time_zone": "Time Zone",
         "fee_information": "Fee Information",
         "there_is_no_price": "There is no price for current settings.Select course type and city/center."
-    },
+        
+        
+ },
     "congratulations_page": {
         "congratulations": "Congratulations!",
         "you_have_successfully": "You have successfully announced a course",
@@ -106,5 +113,6 @@
         "share_in_social": "Share in Social Platforms",
         "your_course_has_been_submitted": "Your Course has been submitted for approval",
         "review_pending": "Review Pending"
+        
     }
 }

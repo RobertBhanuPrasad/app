@@ -39,7 +39,7 @@ function NewCourseStep6() {
   const handleDeleteItem = (index: number) => {
     remove(index);
   };
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     
@@ -68,7 +68,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Number */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Number" : `Contact Number ${index + 1}`}{" "}
+              {index === 0 ? t("course.new_course:contact_info_tab.contact_number") : `Contact Number ${index + 1}`}{" "}
               <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactMobile index={index} />
@@ -104,7 +104,7 @@ function NewCourseStep6() {
       {/* Additional section for BCC registration confirmation email */}
       <div className="w-80 h-24 flex gap-1 flex-col ">
         <div className="flex flex-row text-xs font-normal text-[#333333]">
-          Send BCC registration confirmation email to{" "}
+        {t("course.new_course:contact_info_tab.send_bcc")}{" "}
           <div className="text-[#7677F4]"> *</div>
         </div>
         <Textarea
@@ -120,9 +120,9 @@ function NewCourseStep6() {
           <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
         )}
         <div className="flex flex-row gap-1 text-[#666666] text-[12px] italic">
-          <span className="font-semibold">Note:</span>{" "}
+          <span className="font-semibold">{t("course.new_course:contact_info_tab.note")}:</span>{" "}
           <div className="font-[400]">
-            Enter comma separated list of email addresses.
+          {t("course.new_course:contact_info_tab.enter_comma_separated")}
           </div>
         </div>
       </div>
@@ -137,10 +137,11 @@ export const ContactName = ({ index }: any) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({ name: `contact[${index}].contact_name` });
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div>
       <Input
-        placeholder="Enter contact name"
+        placeholder={t("course.new_course:contact_info_tab.select_contact")}
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
@@ -159,10 +160,12 @@ export const ContactEmail = ({ index }: any) => {
     fieldState: { error },
   } = useController({ name: `contact[${index}].contact_email` });
 
+  const { t } = useTranslation( [ "common", 'course.new_course']);
+
   return (
     <div>
       <Input
-        placeholder="Enter contact email"
+        placeholder={t("course.new_course:contact_info_tab.select_contact_email")}
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
@@ -181,10 +184,12 @@ export const ContactMobile = ({ index }: any) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({ name: `contact[${index}].contact_number` });
+
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div>
       <Input
-        placeholder="Enter contact mobile"
+        placeholder={t("course.new_course:contact_info_tab.select_contact_number")}
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);

@@ -71,16 +71,16 @@ export const AccomdationComponent = () => {
   }, []);
 
   const accommodations = formData.accommodation || [];
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div className="rounded-[12px]  border border-[#D6D7D8]">
       <div className="flex h-[48px]">
-        <div className="p-4 bg-[#7677F41A] w-[288px] ">Accommodation Type</div>
+        <div className="p-4 bg-[#7677F41A] w-[288px] ">{t("course.new_course:accommodation_tab.accommodation_type")}</div>
         <div className="p-4 bg-[#7677F41A]  w-[288px]">
-          Fee per person (MYR) Inc. VAT
+        {t("course.new_course:accommodation_tab.fee_per_person")}
         </div>
         <div className="p-4  bg-[#7677F41A]  w-[288px]">
-          Number of spots available
+        {t("course.new_course:accommodation_tab.number_of_spots")}
         </div>
         <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">{t('actions')}</div>
       </div>
@@ -181,11 +181,12 @@ export const AccommodationFeeMode = () => {
     PAYMENT_MODE,
     PAY_OFFLINE
   )?.id;
+  const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     <div className="flex gap-1 flex-col mt-[32px]">
       <div className="text-sm font-normal text-[#333333]">
-        Accommodation fee payment mode <span className="text-[#7677F4]">*</span>
+        {t("course.new_course:accommodation_tab.accommodation_fee")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
         value={JSON.stringify(value)}
@@ -197,13 +198,13 @@ export const AccommodationFeeMode = () => {
           <RadioButtonCard
             value={JSON.stringify(payOnlineId)}
             selectedRadioValue={JSON.stringify(value)}
-            label="Pay Online"
+            label={t("course.new_course:accommodation_tab.pay_online")}
             className="w-[131px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
             value={JSON.stringify(payOfflineId)}
             selectedRadioValue={JSON.stringify(value)}
-            label="Pay Offline"
+            label={t("course.new_course:accommodation_tab.pay_offline")}
             className="w-[131px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -282,6 +283,7 @@ export const AccommodationType = ({ index }: { index: number }) => {
   const filteredOptions = options.filter(
     (option) => !existingAccommodationValues?.includes(option.value)
   );
+  const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     <div className="w-full ">
@@ -292,7 +294,7 @@ export const AccommodationType = ({ index }: { index: number }) => {
         }}
       >
         <SelectTrigger error={error ? true : false}>
-          <SelectValue placeholder="Select Accommodation" />
+          <SelectValue placeholder= "Select Accommodation" />
         </SelectTrigger>
         <SelectContent>
           <Input onChange={(val) => onSearch(val.target.value)} />
@@ -374,7 +376,7 @@ const AccomdationAction = ({
     remove(index);
   };
 
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
   return (
     <div className="w-[150px] flex gap-4 ">
       {/* Button to add a new row */}
@@ -394,7 +396,7 @@ const AccomdationAction = ({
           className="flex flex-row gap-1 justify-center items-center text-[#7677F4] cursor-pointer"
         >
           <Delete />
-          <div>Delete</div>
+          <div>{t("new_strings:delete")}</div>
         </div>
       )}
     </div>

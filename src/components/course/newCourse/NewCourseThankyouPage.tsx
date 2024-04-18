@@ -96,7 +96,7 @@ const NewCourseThankyouPage = () => {
     PROGRAM_STATUS,
     ACTIVE
   )?.id;
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
 
   return (
     <div>
@@ -125,7 +125,7 @@ const NewCourseThankyouPage = () => {
                 className="text-indigo-600 border-indigo-600 "
                 onClick={() => {}}
               >
-                Go to Course Listing
+                {t("course.new_course:congratulations_page.go_to_course_listing")}
               </Button>
             </Link>
           </div>
@@ -138,16 +138,16 @@ const NewCourseThankyouPage = () => {
           />
           <div className="mx-auto text-center max-w-fit ">
             <p className="text-2xl font-semibold text-accent-primary">
-              Congratulations!
+            {t("course.new_course:congratulations_page.congratulations")}
             </p>
             <p className="text-accent-secondary">
-              You have successfully announced a course
+            {t("course.new_course:congratulations_page.you_have_successfully")}
             </p>
           </div>
           {/* body: Course details view section */}
           <div className="flex h-auto px-4 py-4 m-5 text-base border-2 border-indigo-600 border-dashed rounded-2xl bg-indigo-50">
             <div className="flex-[1] p-4 border-r border-light">
-              <p className=" text-accent-secondary">Course ID</p>
+              <p className=" text-accent-secondary">{t("new_strings:course_id")}</p>
               <Link href={`/Courses/ViewCourse/${programId}`}>
                 <p className="font-bold cursor-pointer text-accent-primary">
                   {data?.data?.program_code}
@@ -155,7 +155,7 @@ const NewCourseThankyouPage = () => {
               </Link>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
-              <p className="text-accent-secondary">Course Name</p>
+              <p className="text-accent-secondary">{t("new_strings:course_name")}</p>
               <p className="font-bold text-accent-primary">
                 {data?.data?.program_type_id?.name}
               </p>
@@ -168,13 +168,13 @@ const NewCourseThankyouPage = () => {
             </div>
             {/* // TODO need to do when the form filed is clear */}
             <div className="flex-[2.5] p-4 border-r border-light">
-              <p className="text-accent-secondary">Venue</p>
+              <p className="text-accent-secondary">{t("course.new_course:congratulations_page.venue")}</p>
               <p className="font-bold text-accent-primary">
                 {venue ? venue : "-"}
               </p>
             </div>
             <div className="flex-[2.5] p-4 ">
-              <p className="text-accent-secondary">Course Date (UTC 05:00)</p>
+              <p className="text-accent-secondary">{t("course.new_course:congratulations_page.course_date")} (UTC 05:00)</p>
               {data?.data?.program_schedules?.map((data: any) => {
                 return (
                   <p className="font-semibold truncate text-accent-secondary">
@@ -190,7 +190,7 @@ const NewCourseThankyouPage = () => {
             <section>
               <div className="">
                 <p className="mx-auto text-accent-secondary max-w-fit">
-                  Share in Social Platforms
+                {t("course.new_course:congratulations_page.share_in_social")}
                 </p>
                 {/* Social media icons */}
                 <div className="flex items-center justify-center gap-4 my-4">
@@ -265,7 +265,7 @@ const NewCourseThankyouPage = () => {
                       variant="outline"
                       className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
                     >
-                      Copy 2 Links
+                       Copy 2 Links
                     </Button>
                   </div>
                 </div>

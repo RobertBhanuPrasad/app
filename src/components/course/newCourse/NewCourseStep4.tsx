@@ -102,10 +102,10 @@ export default function CourseTable() {
 function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   //If Fee is not found based on users selection then need to show this
   if (courseFeeSettings?.length == 0) {
+    const { t } = useTranslation( [ "common", 'course.new_course']);
     return (
       <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
-        There is no price set for current settings. Select course type and
-        city/center.
+        {t("course.new_course:review_post_details.there_is_no_price")}
       </div>
     );
   }
@@ -190,7 +190,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   }, []);
 
   console.log(errors, "errors");
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
 
   //Normal Fee Columns
   let normalFeeColumns: ColumnDef<FeeLevelType>[] = [
@@ -208,7 +208,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Normal Fee",
+      header: t("course.new_course:fees_tab.normal_fee"),
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
@@ -225,7 +225,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Total Fee",
+      header: t("course.new_course:fees_tab.fee"),
     },
   ];
 
@@ -375,7 +375,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         });
 
         const [earlyBirdTotal, setEarlyBirdTotal] = useState(value);
-
+const { t } = useTranslation( [ "common", 'course.new_course']);
         return (
           <div className="w-[75px]">
             <Input
@@ -418,7 +418,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
     feeColumns = [
       {
         id: "select",
-        header: () => <div>Enable fees</div>,
+        header: () => <div>{t("course.new_course:fees_tab.enable_fees")}</div>,
         cell: ({ row }) => {
           const {
             field: { value, onChange },
@@ -481,7 +481,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             }}
             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
           />
-          <div>Enable early bird fees?</div>
+          <div>{t("course.new_course:fees_tab.enable_early")}</div>
         </div>
       )}
       {/* Rendering DataTable component */}
@@ -502,10 +502,10 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             <div className="w-80">
               <div className="flex justify-between">
                 <div className="font-normal text-base text-sm">
-                  Early bird cut-off period
+                {t("course.new_course:fees_tab.early_bird_cutoff")}
                 </div>
                 <div className="font-normal italic text-base text-sm text-[#7677F4]">
-                  {earlyBirdCutOff} Days left
+                  {earlyBirdCutOff} {t("course.new_course:fees_tab.days_left")}
                 </div>
               </div>
               <div>

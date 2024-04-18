@@ -86,13 +86,13 @@ function NewCourseStep3() {
 export default NewCourseStep3
 
 const OnlineProgram = () => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
     name: NewCourseStep3FormNames?.online_url,
-  })
+  }) 
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
@@ -109,13 +109,13 @@ const OnlineProgram = () => {
           />
           {error && <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>}
           <div className="text-xs font-normal text-[#666666] italic w-[320px] overflow-hidden">
-            <div>Note: Participants will join your online course through your</div>
-            <div>virtual venue</div>
+            <div>{t("course.new_course:time_and_venue_tab.online_meeting_note")}</div>
+            <div>{t("course.new_course:time_and_venue_tab.virtual_venue")}</div>
           </div>
         </div>
       </div>
       <div className="flex gap-2 flex-col">
-        <div>Please associate your course with a specific location for reporting purposes</div>
+        <div>{t("course.new_course:time_and_venue_tab.specific_location")}</div>
         <div className="flex gap-7">
           <div className="w-80">
             <StateDropDown name="state_id" />
@@ -408,6 +408,7 @@ const Venue = () => {
     isNewVenueOnchange(true)
     setOpenAddNewVenue(true)
   }
+  const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     <div>
@@ -426,7 +427,7 @@ const Venue = () => {
                   value == "existing-venue" ? "!bg-[#7677F4] " : "border !border-[#D6D7D8] border-[1.5px] "
                 }`}
               />
-              <div>Existing Venue</div>
+              <div>{t("course.new_course:time_and_venue_tab.existing_venue")}</div>
             </div>
             {data ? (
               <div>
@@ -442,7 +443,7 @@ const Venue = () => {
                         variant="outline"
                         className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
                       >
-                        View All
+                        {t("course.new_course:time_and_venue_tab.view_all")}
                       </Badge>
                     </DialogTrigger>
                     <DialogContent className="w-[858px] h-[585px] rounded-[24px] ">
@@ -472,7 +473,7 @@ const Venue = () => {
                       value == "new-venue" ? "!bg-[#7677F4] " : "border !border-[#D6D7D8] border-[1.5px] "
                     }`}
                   />
-                  <div>New Venue</div>
+                  <div>{t("course.new_course:time_and_venue_tab.new_venue")}</div>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
@@ -505,7 +506,7 @@ const Venue = () => {
           <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue}>
               <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
-                + Add New Venue
+                + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
             <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
@@ -880,15 +881,15 @@ const ExistingVenueList = () => {
     }),
       setVenueData(allVenuesData)
   }
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     <div>
       <div className="rounded-[24px] ">
-        <div className="flex justify-center text-[24px] font-semibold">Existing Venues</div>
+        <div className="flex justify-center text-[24px] font-semibold">{t("course.new_course:time_and_venue_tab.existing_venues")}</div>
         <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto mt-4">
           <Input
-            placeholder="Search by Venue Name, City or state"
+            placeholder={t("course.new_course:time_and_venue_tab.search_by_venue_name")}
             className="border border-gray-400 rounded-lg pl-10"
             value={searchValue}
             onChange={(val) => {
@@ -992,11 +993,11 @@ export const AddOrEditVenue = ({ handleSubmit }: { handleSubmit: () => void }) =
   const formData = watch()
 
   const isNewVenue = formData?.isNewVenue
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div>
       {isNewVenue ? (
-        <div className="flex justify-center text-[24px] font-semibold">New Venue</div>
+        <div className="flex justify-center text-[24px] font-semibold">{t("course.new_course:time_and_venue_tab.new_venue")}</div>
       ) : (
         <div className="flex justify-center text-[24px] font-semibold">Edit Venue</div>
       )}
@@ -1226,11 +1227,11 @@ const TimeSelector = ({
   )
 }
 const DeleteVenueComponent = ({ handleDeleteVenue }: { handleDeleteVenue: () => void }) => {
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_string"]);
   return (
     <div>
       <DialogHeader>
-        <DialogTitle className="flex justify-center">Delete</DialogTitle>
+        <DialogTitle className="flex justify-center">{t("new_strings:delete")}</DialogTitle>
         <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
           Are you sure you want to delete the address
         </DialogDescription>

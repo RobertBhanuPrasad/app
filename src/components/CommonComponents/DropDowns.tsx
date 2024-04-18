@@ -22,7 +22,9 @@ export const VenueNameComponent = () => {
   } = useController({
     name: "name",
   });
-  return (
+const { t } = useTranslation( [ "common", 'course.new_course']); 
+
+return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
         Venue <div className="text-[#7677F4]"> *</div>
@@ -30,7 +32,7 @@ export const VenueNameComponent = () => {
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={venueName}
-          placeholder="Enter Venue Name"
+          placeholder= {t("course.new_course:time_and_venue_tab.venue_name_placeholder")}
           className="placeholder:text-[#999999]"
           onChange={venueOnchange}
           error={venueError ? true : false}
@@ -69,13 +71,15 @@ export const PostalCodeComponent = () => {
   useEffect(() => {
     fetchCityStateData();
   }, [postalCodeValue]);
+
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Postal Code</div>
+      <div className="text-xs font-normal text-[#333333]"> {t("course.new_course:time_and_venue_tab.postal_code")}</div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={postalCodeValue}
-          placeholder="Enter Postal Code"
+          placeholder={t("course.new_course:time_and_venue_tab.postal_code_placeholder")}
           className="placeholder:text-[#999999]"
           onChange={postalCodeOnchange}
           error={error ? true : false}
@@ -97,9 +101,11 @@ export const StreetAddressComponent = () => {
   } = useController({
     name: "address",
   });
+
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Street Address</div>
+      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.street_address")}</div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={streetAddressValue}
