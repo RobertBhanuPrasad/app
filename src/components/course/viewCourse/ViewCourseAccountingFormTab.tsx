@@ -1,5 +1,6 @@
 import EditIcon from "@public/assets/EditIcon";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { useList, useOne, useTable } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
@@ -7,9 +8,10 @@ import { ChevronDown } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { CardValue, Header, TableHeader, Text } from "src/ui/TextTags";
+import { Header, TableHeader, Text } from "src/ui/TextTags";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/ui/accordion";
 import { Button } from "src/ui/button";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "src/ui/hover-card";
 import { supabaseClient } from "src/utility";
 import { formatDateString } from "src/utility/DateFunctions";
 import { BaseTable } from "../findCourse/BaseTable";
@@ -461,9 +463,21 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                             </div>
                             <div className="flex  py-2">
                                 <Text className="flex-[0.4] text-[#383838] font-normal text-base">Allowed Expense Limit</Text>
-                                <Text className="flex-[0.4]">
-                                    {allowedExpenseAmount} ({expenseLimitPercentage}%)
-                                </Text>
+                                <div className="flex-[0.4] flex items-center gap-1">
+                                    <Text className={` ${allowedExpenseAmount >= totalExpense ? 'text-[#15AF53]' : 'text-[#EC7357]'}`}>
+                                        {allowedExpenseAmount} ({expenseLimitPercentage}%)
+                                    </Text>
+                                    {allowedExpenseAmount < totalExpense &&
+                                        <HoverCard>
+                                            <HoverCardTrigger>
+                                                <InfoCircledIcon className="text-[#EC7357] mt-[2px]" />
+                                                <HoverCardContent className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                                                    {/* //TODO need to integrate the content after given by requirement  */}
+                                                </HoverCardContent>
+                                            </HoverCardTrigger>
+                                        </HoverCard>
+                                    }
+                                </div>
                             </div>
 
                         </div>
