@@ -1,22 +1,23 @@
 import EditIcon from "@public/assets/EditIcon";
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useTable } from "@refinedev/core";
+import { useList, useOne, useTable } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
+import _ from "lodash";
 import { ChevronDown } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { CardValue, TableHeader, Text } from "src/ui/TextTags";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/ui/accordion";
 import { Button } from "src/ui/button";
+import { supabaseClient } from "src/utility";
 import { formatDateString } from "src/utility/DateFunctions";
 import { BaseTable } from "../findCourse/BaseTable";
-
 
 const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
     const searchParams = useSearchParams();
     const pathname = usePathname()
-    const params = new URLSearchParams(searchParams);
+
     const { replace } = useRouter();
 
     function setParamValue(term: string) {
@@ -184,29 +185,191 @@ export const offlineRevenueTableColumns: ExtendedColumnDef<any>[] = [
 ];
 
 const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) => {
+
+    /**
+     * To fetch data from the "program_accounting_activity" table to show the change log table.
+     * Retrieves accounting activity data related to a specific program ID.
+     */
     const { tableQueryResult: changeLogData } = useTable({
+        // Specify the resource (table) from which to fetch data
         resource: "program_accounting_activity",
+        // Define metadata options for the query
         meta: {
-            select: "*,user_id(contact_id(full_name)), caf_status_id(id,value) ,created_at ,comment",
+            // Specify fields to select, including user information, status, timestamps, and comments
+            select: "*, user_id(contact_id(full_name)), caf_status_id(id, value), created_at, comment",
         },
+        // Set pagination options, such as the page size
         pagination: {
             pageSize: 1000,
         },
+        // Define filters to apply to the query
         filters: {
+            // Apply permanent filters to retrieve data related to a specific program ID
             permanent: [
                 {
+                    // Filter by the "program_id" field
                     field: "program_id",
+                    // Use the equality operator to match the program ID
                     operator: "eq",
+                    // Specify the program ID value
                     value: programId,
                 },
             ],
         },
     });
 
-    // TODO need to do api call for expense details after tables are came
+
+    /**
+     * To fetch data from the "program_expenses" table to show data at expense details table.
+     * Retrieves expense data related to a specific program ID.
+     */
+    const { tableQueryResult: programExpensesData } = useTable({
+        // Specify the resource (table) from which to fetch data
+        resource: "program_expenses",
+        // Define metadata options for the query
+        meta: {
+            // Select all fields from the "program_expenses" table
+            select: "*",
+        },
+        // Set pagination options, such as the page size
+        pagination: {
+            pageSize: 1000,
+        },
+        // Define filters to apply to the query
+        filters: {
+            // Apply permanent filters to retrieve data related to a specific program ID
+            permanent: [
+                {
+                    // Filter by the "program_id" field
+                    field: "program_id",
+                    // Use the equality operator to match the program ID
+                    operator: "eq",
+                    // Specify the program ID value
+                    value: programId,
+                },
+            ],
+        },
+    });
+
+    /**
+     * To fetch data for a specific program from the "program" table.
+     * Retrieves information about the program's organization ID.
+     */
+    const { data: courseData } = useOne({
+        // Specify the resource (table) from which to fetch data
+        resource: 'program',
+        // Provide the ID of the program to fetch data for
+        id: programId,
+        // Define metadata options for the query
+        meta: {
+            // Select the organization ID field
+            select: 'organization_id'
+        }
+    });
+
+    /**
+     * To fetch data from the "course_accounting_config" table.
+     * Retrieves expense limit percentage data based on the organization ID retrieved from the program data.
+     */
+    const { data: expenseLimitPercentageData } = useList({
+        // Specify the resource (table) from which to fetch data
+        resource: 'course_accounting_config',
+        // Define configuration options for the query, including filters
+        config: {
+            // Define filters to retrieve data related to the organization ID
+            filters: [
+                {
+                    // Filter by the "organization_id" field
+                    field: 'organization_id',
+                    // Use the equality operator to match the organization ID from the program data
+                    operator: 'eq',
+                    // Specify the organization ID obtained from the program data
+                    value: courseData?.data?.organization_id
+                }
+            ]
+        },
+        // Define metadata options for the query
+        meta: {
+            // Select the individual expense limit field
+            select: 'Individual_expense_limit'
+        }
+    });
+
+    // Define state for holding participant data
+    const [participantData, setParticipantData] = useState<any>()
+    // Function to fetch participant data from server
+    const fetchParticipantSummaryData = async () => {
+        try {
+            // Invoke serverless function to get participant summary data
+            const { data } = await supabaseClient.functions.invoke('get_program_participant_summary', {
+                method: 'POST',
+                body: {
+                    program_id: programId
+                }
+            })
+            // Set fetched participant data to state
+            setParticipantData(data)
+        } catch (error) {
+            // Handle any errors that occur during fetching data
+            console.error('Error fetching fee data:', error)
+        }
+    }
+    // Fetch participant data when component mounts
+    useEffect(() => {
+        fetchParticipantSummaryData()
+    }, [])
+
+    // Get total revenue from participant data
+    const totalRevenue = participantData?.income
+
+    /**
+     * Filter program expenses data to retrieve reimbursable expenses.
+     * It filters the program expenses data to include only expenses that are marked as reimbursable.
+     * Uses lodash's _.filter() method for filtering.
+     */
+    const reimbursableExpenseData = _.filter(programExpensesData?.data?.data, (obj) => obj.is_reimbursable === true);
+
+    /**
+    * Calculate the total amount of reimbursable expenses.
+    * It calculates the total amount of expenses that are marked as reimbursable.
+    * Uses lodash's _.sumBy() method to sum the "amount" property of each expense in the reimbursable expense data.
+    */
+    const reimbursableTotal = _.sumBy(reimbursableExpenseData, "amount");
+
+    /**
+     * Calculate the total amount of expenses.
+     * It calculates the total amount of all expenses in the program expenses data.
+     * Uses lodash's _.sumBy() method to sum the "amount" property of each expense in the program expenses data.
+     */
+    const totalExpense = _.sumBy(programExpensesData?.data?.data, "amount");
+
+    /**
+     * Retrieve the expense limit percentage.
+     * It retrieves the individual expense limit percentage from the expense limit percentage data.
+     * The percentage value is typically stored in the "Individual_expense_limit" property of the first item in the data array.
+     */
+    const expenseLimitPercentage = expenseLimitPercentageData?.data?.[0]?.Individual_expense_limit;
+
+    /**
+     * Calculate the allowed expense amount based on total revenue and expense limit percentage.
+     * It calculates the maximum allowed expense amount based on the total revenue and the expense limit percentage.
+     * If both total revenue and expense limit percentage are available, it computes the allowed amount as a percentage of the total revenue.
+     * If either total revenue or expense limit percentage is unavailable, the allowed amount is set to 0.
+     */
+    const allowedExpenseAmount = totalRevenue && expenseLimitPercentage ? (totalRevenue / 100) * expenseLimitPercentage : 0;
+
+    /**
+     * Calculate the current expense percentage relative to total revenue.
+     * It computes the percentage of total revenue that represents the current total expenses.
+     * If both total expense and total revenue are available, it calculates the ratio of total expense to total revenue.
+     * The result is expressed as a percentage.
+     * If either total expense or total revenue is unavailable, the current expense percentage is set to 0.
+     */
+    const currentExpensePercentage = totalExpense && totalRevenue ? (totalExpense / totalRevenue) * 100 : 0;
+
     return (
         <div>
-            {changeLogData?.isLoading ? (
+            {changeLogData?.isLoading || programExpensesData?.isLoading ? (
                 <LoadingIcon />
             ) : (
                 <div>
@@ -218,21 +381,21 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                             rowStyles: "!important border-none",
                         }}
                         columns={expenseDetailsColumns}
-                        data={changeLogData?.data?.data || []}
+                        data={programExpensesData?.data?.data || []}
                     />
                     {/* Expense Total Calculations */}
                     <div className="border flex mt-4 rounded-xl ">
                         <div className="flex-1 flex border-r py-2 px-4">
                             <TableHeader className="flex-[0.8]">Reimbursable Total:</TableHeader>
-                            <p className="flex-[0.2]">0.00</p>
+                            <p className="flex-[0.2]">{reimbursableTotal}</p>
                         </div>
-                        <div className="flex-1 flex border-r p-2">
-                            <TableHeader className="flex-[0.8]">Reimbursable Total:</TableHeader>
-                            <p className="flex-[0.2]">0.00</p>
+                        <div className="flex flex-1 p-2 border-r">
+                            <TableHeader className="flex-[0.8]">Non-reimbursable Total</TableHeader>
+                            <p className="flex-[0.2]">{totalExpense - reimbursableTotal}</p>
                         </div>
-                        <div className="flex-1 flex  p-2">
-                            <TableHeader className="flex-[0.8]">Reimbursable Total:</TableHeader>
-                            <p className="flex-[0.2]">0.00</p>
+                        <div className="flex flex-1 p-2">
+                            <TableHeader className="flex-[0.8]">Total:</TableHeader>
+                            <p className="flex-[0.2]">{totalExpense}</p>
                         </div>
 
                     </div>
@@ -245,7 +408,7 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                             rowStyles: "!important border-none",
                         }}
                         columns={reimbursementSummaryColumns}
-                        data={changeLogData?.data?.data || []}
+                        data={reimbursableExpenseData || []}
                     />
                     <p className="text-xs">
                         <span className="font-medium ">Note:</span> Please enter a complete and accurate your bank account
@@ -255,7 +418,7 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                     <div className="border flex mt-4 rounded-xl ">
                         <div className="flex-[1.5] flex border-r py-2 px-4">
                             <TableHeader className="flex-[0.8] font-semibold">Total Requested:</TableHeader>
-                            <p className="flex-[0.2]">0.00</p>
+                            <p className="flex-[0.2]">{reimbursableTotal}</p>
                         </div>
                         <div className="flex-1 flex p-2">
                             <p className="flex-[0.8]"></p>
@@ -274,29 +437,29 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                                 <Text className="flex-[0.4]">Expense category</Text>
                                 <Text className="flex-[0.4]">Amount (EUR)</Text>
                             </div>
-                            {
-
-                                [1, 2].map(() => {
-                                    return (
-                                        <div className="flex border-b py-2">
-                                            <Text className="flex-[0.4]">key</Text>
-                                            <Text className="flex-[0.4]">value</Text>
-                                        </div>
-
-                                    )
-                                })
-                            }
-                            <div className="flex border-b py-2">
+                            {programExpensesData?.data?.data?.map((expense) => {
+                                return (
+                                    <div className="flex py-2 border-b" key={expense?.id}>
+                                        <Text className="flex-[0.4]">{expense?.expense_category_id}</Text>
+                                        <Text className="flex-[0.4]">{expense?.amount}</Text>
+                                    </div>
+                                );
+                            })}
+                            <div className="flex py-2 border-b">
                                 <TableHeader className="flex-[0.4]">Total</TableHeader>
-                                <CardValue className="flex-[0.4]">value</CardValue>
+                                <CardValue className="flex-[0.4]">{totalExpense}</CardValue>
                             </div>
                             <div className="flex  py-2">
                                 <Text className="flex-[0.4]">Current Expense:</Text>
-                                <Text className="flex-[0.4]">60.00 (10.00%)</Text>
+                                <Text className="flex-[0.4]">
+                                    {totalExpense} ({currentExpensePercentage}%)
+                                </Text>
                             </div>
                             <div className="flex  py-2">
                                 <Text className="flex-[0.4]">Allowed Expense Limit</Text>
-                                <Text className="flex-[0.4]">180.00 (30.00%)</Text>
+                                <Text className="flex-[0.4]">
+                                    {allowedExpenseAmount} ({expenseLimitPercentage}%)
+                                </Text>
                             </div>
 
                         </div>
@@ -380,7 +543,7 @@ export const reimbursementSummaryColumns: ExtendedColumnDef<any>[] = [
         cell: ({ row }) => {
             return (
                 <abbr className="no-underline" title="jhansi">
-                    <Text className="max-w-[250px] truncate">jhansi</Text>
+                    <Text className="max-w-[250px] truncate">{row.original.reimburse_person_user_id}</Text>
                 </abbr>
             );
         },
@@ -395,7 +558,7 @@ export const reimbursementSummaryColumns: ExtendedColumnDef<any>[] = [
         cell: ({ row }) => {
             return (
                 <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">jhansi@gmail.com</Text>
+                    <Text className="max-w-[150px] truncate">{row.original.email}</Text>
                 </abbr>
             );
         },
@@ -410,7 +573,7 @@ export const reimbursementSummaryColumns: ExtendedColumnDef<any>[] = [
         cell: ({ row }) => {
             return (
                 <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">9701295781</Text>
+                    <Text className="max-w-[150px] truncate">{row.original.phone}</Text>
                 </abbr>
             );
         },
@@ -425,7 +588,7 @@ export const reimbursementSummaryColumns: ExtendedColumnDef<any>[] = [
         cell: ({ row }) => {
             return (
                 <abbr className="no-underline">
-                    <Text className="max-w-[300px] truncate">jhansi,nagarajuuuuuuuuuuuu</Text>
+                    <Text className="max-w-[300px] truncate">{row.original.mailing_address}</Text>
                 </abbr>
             );
         },
@@ -440,7 +603,7 @@ export const reimbursementSummaryColumns: ExtendedColumnDef<any>[] = [
         cell: ({ row }) => {
             return (
                 <abbr className="no-underline">
-                    <Text className="max-w-[250px] truncate">4000</Text>
+                    <Text className="max-w-[250px] truncate">{row.original.amount}</Text>
                 </abbr>
             );
         },
@@ -450,7 +613,7 @@ export const reimbursementSummaryColumns: ExtendedColumnDef<any>[] = [
 
 export const expenseDetailsColumns: ExtendedColumnDef<any>[] = [
     {
-        accessorKey: "expense_category",
+        accessorKey: "expense_category_id",
         column_name: "Expense Category",
         enableHiding: false,
         header: () => {
@@ -458,8 +621,8 @@ export const expenseDetailsColumns: ExtendedColumnDef<any>[] = [
         },
         cell: ({ row }) => {
             return (
-                <abbr className="no-underline">
-                    <Text className="max-w-[200px] truncate">jhansi</Text>
+                <abbr className="no-underline" title={row.original.expense_category_id}>
+                    <Text className="max-w-[200px] truncate">{row.original.expense_category_id}</Text>
                 </abbr>
             );
         },
@@ -473,8 +636,8 @@ export const expenseDetailsColumns: ExtendedColumnDef<any>[] = [
         },
         cell: ({ row }) => {
             return (
-                <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">Jhansi</Text>
+                <abbr className="no-underline" title={row.original.details}>
+                    <Text className="max-w-[150px] truncate">{row.original.details}</Text>
                 </abbr>
             );
         },
@@ -488,8 +651,8 @@ export const expenseDetailsColumns: ExtendedColumnDef<any>[] = [
         },
         cell: ({ row }) => {
             return (
-                <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">Jhansi</Text>
+                <abbr className="no-underline" title={row.original.receipt_id}>
+                    <Text className="max-w-[150px] truncate">{row.original.receipt_id}</Text>
                 </abbr>
             );
         },
@@ -503,8 +666,8 @@ export const expenseDetailsColumns: ExtendedColumnDef<any>[] = [
         },
         cell: ({ row }) => {
             return (
-                <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">jhansi</Text>
+                <abbr className="no-underline" title={row.original.purchase_date}>
+                    <Text className="max-w-[150px] truncate">{row.original.purchase_date}</Text>
                 </abbr>
             );
         },
@@ -518,29 +681,14 @@ export const expenseDetailsColumns: ExtendedColumnDef<any>[] = [
         },
         cell: ({ row }) => {
             return (
-                <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">jhansi</Text>
+                <abbr className="no-underline" title={row.original.amount}>
+                    <Text className="max-w-[150px] truncate">{row.original.amount}</Text>
                 </abbr>
             );
         },
     },
     {
-        accessorKey: "amount",
-        column_name: "Amount Requested (EUR)",
-        enableHiding: false,
-        header: () => {
-            return <TableHeader className="min-w-[150px]">Amount Requested (EUR)</TableHeader>;
-        },
-        cell: ({ row }) => {
-            return (
-                <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">jhansi</Text>
-                </abbr>
-            );
-        },
-    },
-    {
-        accessorKey: "reimbursable",
+        accessorKey: "is_reimbursable",
         column_name: "Reimbursable",
         enableHiding: false,
         header: () => {
@@ -548,14 +696,14 @@ export const expenseDetailsColumns: ExtendedColumnDef<any>[] = [
         },
         cell: ({ row }) => {
             return (
-                <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">jhansi</Text>
+                <abbr className="no-underline" title={row.original.is_reimbursable ? 'Yes' : 'No'}>
+                    <Text className="max-w-[150px] truncate">{row.original.is_reimbursable ? 'Yes' : 'No'}</Text>
                 </abbr>
             );
         },
     },
     {
-        accessorKey: "Name of Person to Reimburse",
+        accessorKey: "reimburse_person_user_id",
         column_name: "Name of Person to Reimburse",
         enableHiding: false,
         header: () => {
@@ -563,11 +711,100 @@ export const expenseDetailsColumns: ExtendedColumnDef<any>[] = [
         },
         cell: ({ row }) => {
             return (
-                <abbr className="no-underline">
-                    <Text className="max-w-[150px] truncate">Jhansi</Text>
+                <abbr className="no-underline" title={row.original.reimburse_person_user_id}>
+                    <Text className="max-w-[150px] truncate">{row.original.reimburse_person_user_id}</Text>
                 </abbr>
             );
         },
     },
-
+    {
+        accessorKey: "payment_method_id",
+        column_name: "Payment Method",
+        enableHiding: false,
+        header: () => {
+            return <TableHeader className="min-w-[150px]">Payment Method</TableHeader>;
+        },
+        cell: ({ row }) => {
+            return (
+                <abbr className="no-underline" title={row.original.payment_method_id}>
+                    <Text className="max-w-[150px] truncate">{row.original.payment_method_id}</Text>
+                </abbr>
+            );
+        },
+    },
+    {
+        accessorKey: "vat_condition_id",
+        column_name: "VAT Condition",
+        enableHiding: false,
+        header: () => {
+            return <TableHeader className="min-w-[150px]">VAT Condition</TableHeader>;
+        },
+        cell: ({ row }) => {
+            return (
+                <abbr className="no-underline" title={row.original.vat_condition_id}>
+                    <Text className="max-w-[150px] truncate">{row.original.vat_condition_id}</Text>
+                </abbr>
+            );
+        },
+    },
+    {
+        accessorKey: "vendor_tax_id",
+        column_name: "VAT Tax ID",
+        enableHiding: false,
+        header: () => {
+            return <TableHeader className="min-w-[150px]">VAT Tax ID</TableHeader>;
+        },
+        cell: ({ row }) => {
+            return (
+                <abbr className="no-underline" title={row.original.vendor_tax_id}>
+                    <Text className="max-w-[150px] truncate">{row.original.vendor_tax_id}</Text>
+                </abbr>
+            );
+        },
+    },
+    {
+        accessorKey: "vendor_name",
+        column_name: "Vendor Name",
+        enableHiding: false,
+        header: () => {
+            return <TableHeader className="min-w-[150px]">Vendor Name</TableHeader>;
+        },
+        cell: ({ row }) => {
+            return (
+                <abbr className="no-underline" title={row.original.vendor_name}>
+                    <Text className="max-w-[150px] truncate">{row.original.vendor_name}</Text>
+                </abbr>
+            );
+        },
+    },
+    {
+        accessorKey: "vat_rate_id",
+        column_name: "VAT Rate",
+        enableHiding: false,
+        header: () => {
+            return <TableHeader className="min-w-[150px]">VAT Rate</TableHeader>;
+        },
+        cell: ({ row }) => {
+            return (
+                <abbr className="no-underline" title={row.original.vat_rate_id}>
+                    <Text className="max-w-[150px] truncate">{row.original.vat_rate_id}</Text>
+                </abbr>
+            );
+        },
+    },
+    {
+        accessorKey: "expense_reciept_url",
+        column_name: "Receipt Image",
+        enableHiding: false,
+        header: () => {
+            return <TableHeader className="min-w-[150px]">Receipt Image</TableHeader>;
+        },
+        cell: ({ row }) => {
+            return (
+                <abbr className="no-underline" title={row.original.expense_reciept_url}>
+                    <Text className="max-w-[150px] truncate">{row.original.expense_reciept_url}</Text>
+                </abbr>
+            );
+        },
+    },
 ]
