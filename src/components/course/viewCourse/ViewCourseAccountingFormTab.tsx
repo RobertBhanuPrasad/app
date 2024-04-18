@@ -7,7 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { CardValue, TableHeader, Text } from "src/ui/TextTags";
+import { CardValue, Header, TableHeader, Text } from "src/ui/TextTags";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/ui/accordion";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
@@ -104,13 +104,15 @@ const RevenueDetailsAccordionContent = ({ programId }: { programId: number }) =>
     return (
         <div>
             {offlineRevenueData?.isLoading ? (
-                <LoadingIcon />
+                <div className="flex justify-center items-center h-32">
+                    <LoadingIcon />
+                </div>
             ) : (
                 <div>
                     {/* Summary cards */}
                     {/* //Todo : Requirement is not clear  */}
                     {/* Deposit of Offline Revenue Table */}
-                    <TableHeader>Deposit of Offline Revenue</TableHeader>
+                    <Header>Deposit of Offline Revenue</Header>
                     <BaseTable
                         current={1}
                         tableStyles={{
@@ -121,7 +123,7 @@ const RevenueDetailsAccordionContent = ({ programId }: { programId: number }) =>
                         data={offlineRevenueData?.data?.data || []}
                     />
                     {/* Revenue Details - Participants table */}
-                    <TableHeader className="mt-[10px]">Revenue Details - Participants</TableHeader>
+                    <Header className="mt-[10px]">Revenue Details - Participants</Header>
                     {/* //Todo : Requirement is not clear */}
                 </div>
             )}
@@ -320,35 +322,35 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
     }, [])
 
     // Get total revenue from participant data
-    const totalRevenue = participantData?.income
+    const totalRevenue: number = participantData?.income
 
     /**
      * Filter program expenses data to retrieve reimbursable expenses.
      * It filters the program expenses data to include only expenses that are marked as reimbursable.
      * Uses lodash's _.filter() method for filtering.
      */
-    const reimbursableExpenseData = _.filter(programExpensesData?.data?.data, (obj) => obj.is_reimbursable === true);
+    const reimbursableExpenseData: any[] = _.filter(programExpensesData?.data?.data, (obj) => obj.is_reimbursable === true);
 
     /**
     * Calculate the total amount of reimbursable expenses.
     * It calculates the total amount of expenses that are marked as reimbursable.
     * Uses lodash's _.sumBy() method to sum the "amount" property of each expense in the reimbursable expense data.
     */
-    const reimbursableTotal = _.sumBy(reimbursableExpenseData, "amount");
+    const reimbursableTotal: number = _.sumBy(reimbursableExpenseData, "amount");
 
     /**
      * Calculate the total amount of expenses.
      * It calculates the total amount of all expenses in the program expenses data.
      * Uses lodash's _.sumBy() method to sum the "amount" property of each expense in the program expenses data.
      */
-    const totalExpense = _.sumBy(programExpensesData?.data?.data, "amount");
+    const totalExpense: number = _.sumBy(programExpensesData?.data?.data, "amount");
 
     /**
      * Retrieve the expense limit percentage.
      * It retrieves the individual expense limit percentage from the expense limit percentage data.
      * The percentage value is typically stored in the "Individual_expense_limit" property of the first item in the data array.
      */
-    const expenseLimitPercentage = expenseLimitPercentageData?.data?.[0]?.Individual_expense_limit;
+    const expenseLimitPercentage: number = expenseLimitPercentageData?.data?.[0]?.Individual_expense_limit;
 
     /**
      * Calculate the allowed expense amount based on total revenue and expense limit percentage.
@@ -356,7 +358,7 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
      * If both total revenue and expense limit percentage are available, it computes the allowed amount as a percentage of the total revenue.
      * If either total revenue or expense limit percentage is unavailable, the allowed amount is set to 0.
      */
-    const allowedExpenseAmount = totalRevenue && expenseLimitPercentage ? (totalRevenue / 100) * expenseLimitPercentage : 0;
+    const allowedExpenseAmount: number = totalRevenue && expenseLimitPercentage ? (totalRevenue / 100) * expenseLimitPercentage : 0;
 
     /**
      * Calculate the current expense percentage relative to total revenue.
@@ -365,12 +367,14 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
      * The result is expressed as a percentage.
      * If either total expense or total revenue is unavailable, the current expense percentage is set to 0.
      */
-    const currentExpensePercentage = totalExpense && totalRevenue ? (totalExpense / totalRevenue) * 100 : 0;
+    const currentExpensePercentage: number = totalExpense && totalRevenue ? (totalExpense / totalRevenue) * 100 : 0;
 
     return (
         <div>
             {changeLogData?.isLoading || programExpensesData?.isLoading ? (
-                <LoadingIcon />
+                <div className="flex justify-center items-center h-32">
+                    <LoadingIcon />
+                </div>
             ) : (
                 <div>
                     {/* Expense Details table */}
@@ -384,23 +388,23 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                         data={programExpensesData?.data?.data || []}
                     />
                     {/* Expense Total Calculations */}
-                    <div className="border flex mt-4 rounded-xl ">
+                    <div className="border flex mt-6 rounded-xl ">
                         <div className="flex-1 flex border-r py-2 px-4">
-                            <TableHeader className="flex-[0.8]">Reimbursable Total:</TableHeader>
-                            <p className="flex-[0.2]">{reimbursableTotal}</p>
+                            <Text className="flex-[0.8] font-semibold text-[#383838] text-base">Reimbursable Total:</Text>
+                            <p className="flex-[0.2] font-semibold text-[#383838] text-base">{reimbursableTotal}</p>
                         </div>
                         <div className="flex flex-1 p-2 border-r">
-                            <TableHeader className="flex-[0.8]">Non-reimbursable Total</TableHeader>
-                            <p className="flex-[0.2]">{totalExpense - reimbursableTotal}</p>
+                            <Text className="flex-[0.8] font-semibold text-[#383838] text-base">Non-reimbursable Total:</Text>
+                            <p className="flex-[0.2] font-semibold text-[#383838] text-base">{totalExpense - reimbursableTotal}</p>
                         </div>
                         <div className="flex flex-1 p-2">
-                            <TableHeader className="flex-[0.8]">Total:</TableHeader>
-                            <p className="flex-[0.2]">{totalExpense}</p>
+                            <Text className="flex-[0.8] font-semibold text-[#383838] text-base">Total:</Text>
+                            <p className="flex-[0.2] font-semibold text-[#383838] text-base">{totalExpense}</p>
                         </div>
 
                     </div>
                     {/* Reimbursement Summary Table */}
-                    <p className="font-semibold mt-4">Reimbursement Summary</p>
+                    <Header className="mt-6">Reimbursement Summary</Header>
                     <BaseTable
                         current={1}
                         tableStyles={{
@@ -410,15 +414,15 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                         columns={reimbursementSummaryColumns}
                         data={reimbursableExpenseData || []}
                     />
-                    <p className="text-xs">
-                        <span className="font-medium ">Note:</span> Please enter a complete and accurate your bank account
+                    <p className="text-xs text-[#666666] font-medium italic mt-2">
+                        <span className="font-semi-bold text-[#666666] text-xs">Note:</span> Please enter a complete and accurate your bank account
                         information above for each person to be reimbursed to ensure that they receive their reimbursement.
                     </p>
                     {/* Reimbursement Summary Total  Calculations */}
                     <div className="border flex mt-4 rounded-xl ">
                         <div className="flex-[1.5] flex border-r py-2 px-4">
-                            <TableHeader className="flex-[0.8] font-semibold">Total Requested:</TableHeader>
-                            <p className="flex-[0.2]">{reimbursableTotal}</p>
+                            <Text className="flex-[0.8] font-semibold text-[#383838] text-base">Total Requested:</Text>
+                            <Text className="flex-[0.2] font-semibold text-[#383838] text-base">{reimbursableTotal}</Text>
                         </div>
                         <div className="flex-1 flex p-2">
                             <p className="flex-[0.8]"></p>
@@ -428,9 +432,9 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                     </div>
                     {/* Expense Summary and Details */}
                     {/* Expense Summary */}
-                    <div className="mt-4">
+                    <div className="mt-6">
 
-                        <p className="font-semibold">Expense Summary and Details</p>
+                        <Header>Expense Summary and Details</Header>
                         <div className="border rounded-lg px-4 py-6 mt-2">
                             <TableHeader className="font-semibold">Expense Summary </TableHeader>
                             <div className="flex border-b py-2">
@@ -465,7 +469,7 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                         </div>
                     </div>
                     {/* Expense  Details */}
-                    <p className="font-semibold">Expense Summary and Details</p>
+                    <Header className="mt-6">Expense Summary and Details</Header>
                     <BaseTable
                         current={1}
                         tableStyles={{
