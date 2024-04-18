@@ -1,7 +1,7 @@
 import LoadingIcon from "@public/assets/LoadingIcon"
 import { useGetIdentity, useMany, useOne } from "@refinedev/core"
 import _ from "lodash"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { PAYMENT_MODE, PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from "src/constants/OptionLabels"
 import countryCodes from "src/data/CountryCodes"
@@ -18,8 +18,10 @@ import NewCourseStep4 from "./NewCourseStep4"
 import NewCourseStep5 from "./NewCourseStep5"
 import NewCourseStep6 from "./NewCourseStep6"
 import { handlePostProgramData } from "./NewCourseUtil";
+import { useRouter } from "next/router";
 
 export default function NewCourseReviewPage() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const { replace } = useRouter()
@@ -223,6 +225,8 @@ export default function NewCourseReviewPage() {
   const [clickedButton, setClickedButton] = useState<string | null>(null)
 
   const { setProgramId } = newCourseStore()
+
+  
 
   const handClickContinue = async () => {
     setIsSubmitting(true);

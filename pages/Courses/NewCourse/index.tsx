@@ -27,6 +27,8 @@ import {
   NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
+  preview_page,
+  thankyou_page,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/CourseConstants";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
@@ -50,13 +52,21 @@ import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
 import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 
 function index() {
+  const router = useRouter();
+  const {current_section} = router.query
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData,'loginUserData')
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
-  }else{
+  }if(current_section == preview_page){
+    return <NewCourseReviewPage/>
+  }if(current_section == thankyou_page){
+    return <NewCourseThankyouPage/>
+  }
+  else{
     return <NewCourse/>
   }
 
@@ -136,7 +146,7 @@ export default index;
 
 export const NewCourseTabs = () => {
   const router = useRouter();
-  const { watch, getValues } = useFormContext();
+    const { watch, getValues } = useFormContext();
   const { setNewCourseData, currentStep, setCurrentStep } =
     newCourseStore();
 
@@ -272,7 +282,7 @@ export const NewCourseTabs = () => {
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
       router.push(
-        `${router.asPath}/new-course?current_section=preview_page`
+        `${router.asPath}?current_section=preview_page`
       );
       setNewCourseData(formData);
     }

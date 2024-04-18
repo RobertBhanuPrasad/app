@@ -78,3 +78,6 @@ export const NewCourseStep6FormNames = {
   contact_number: "contact_number",
   bcc_registration_confirmation_email: "bcc_registration_confirmation_email",
 };
+
+export const preview_page = "preview_page";
+export const thankyou_page = "thankyou_page";
