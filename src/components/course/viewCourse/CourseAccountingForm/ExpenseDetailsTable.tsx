@@ -27,7 +27,6 @@ import { DateField } from "src/ui/DateField";
 import {
   RadioGroup,
   RadioGroupCircleItem,
-  RadioGroupItem,
 } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
 import classNames from "classnames";
@@ -172,7 +171,7 @@ export const ExpenseDetails = () => {
   return (
     <div>
       <Header className="py-4" children={"Expense Details"} />
-      <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto w-fit">
+      <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
         <div className="flex h-[48px] w-fit bg-[#7677F41A]">
           <TableHeader className="min-w-[50px] px-[12px]">#</TableHeader>
           {filteredColumns?.map((field: any) => (
@@ -236,32 +235,29 @@ const ExpenseCategory = ({ index }: { index: number }) => {
   // will get in the options format by the useSelect hook
   // we get that based on the program organizer_id
   // we can give the search also for the useSelect
-  // const { options, onSearch } = useSelect({
-  //   resource: "program_expense_category_master",
-  //   optionLabel: "name",
-  //   optionValue: "id",
-  //   pagination: {
-  //     pageSize: pageSize,
-  //     mode: "server",
-  //   },
-  //   filters: [
-  //     {
-  //       field: "organization_id",
-  //       operator: "eq",
-  //       value: data?.data?.organization_id,
-  //     },
-  //   ],
-  //   onSearch: (value) => [
-  //     {
-  //       field: "name",
-  //       operator: "contains",
-  //       value,
-  //     },
-  //   ],
-  // });
-
-  // TODO need to change the options after finalising from which tabel we need to get the expense category dropdown options
-  const options: any[] = [];
+  const { options, onSearch } = useSelect({
+    resource: "program_expense_category_master",
+    optionLabel: "name",
+    optionValue: "id",
+    pagination: {
+      pageSize: pageSize,
+      mode: "server",
+    },
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: data?.data?.organization_id,
+      },
+    ],
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
 
   /**
    * @function handleOnBottomReached
@@ -281,7 +277,7 @@ const ExpenseCategory = ({ index }: { index: number }) => {
         <SelectValue placeholder="Select" />
       </SelectTrigger>
       <SelectContent>
-        {/* <Input onChange={(val) => onSearch(val.target.value)} /> */}
+        <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options.map((option: any, index: number) => (
             <>
