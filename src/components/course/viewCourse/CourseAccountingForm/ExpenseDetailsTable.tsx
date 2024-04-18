@@ -865,13 +865,13 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
       // from the api call we get the data in the array of objects and in the object we have the three more array of object so flattening of these we are flattening the data we have using the lodash .flatMap function
       const combinedArray = _.flatMap(data?.[0]);
 
-      // We need to unique the objects
+      // We need to unique the objects based on the contact id
       const uniqueData = _.uniqBy(
         combinedArray,
         (item) => item.user_id.contact_id.id
       );
 
-      // setting the flattened data to the
+      // setting the flattened data to the setPersonToReimburseOptionsData
       setPersonToReimburseOptionsData(uniqueData);
     };
 
