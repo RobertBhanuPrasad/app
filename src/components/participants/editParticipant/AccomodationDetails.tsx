@@ -178,18 +178,18 @@ export default function AccomodationDetails() {
                     </Text>
                     <div className=""></div>
                     <RadioGroup
-                        value={accommodation_snore}
-                        onValueChange={(value) => snoreChange(value)}
+                        value={JSON.stringify(accommodation_snore)}
+                        onValueChange={(value) => snoreChange(parseInt(value),console.log(value))}
                     >
                         <div className="flex flex-row gap-6 ">
                             <RadioButtonCard
-                                value={accommodation_snore}
+                                value={JSON.stringify(FormData?.accommodation_snore)}
                                 selectedRadioValue={accommodation_snore}
                                 label="Yes"
                                 className="w-[112px] !h-[40px] rounded-[12px]"
                             />
                             <RadioButtonCard
-                                value={String(accommodation_snore)}
+                                value={JSON.stringify(!FormData?.accommodation_snore)}
                                 selectedRadioValue={accommodation_snore}
                                 label="No"
                                 className="w-[112px] !h-[40px] rounded-[12px]"

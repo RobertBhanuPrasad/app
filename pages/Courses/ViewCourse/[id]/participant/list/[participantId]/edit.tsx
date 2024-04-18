@@ -26,7 +26,6 @@ export default function Edit() {
             fetchData();
         }
     }, [Id]);
-    console.log(defaultValues,query,"defaultValues")
     return (
         <div>
             <div>

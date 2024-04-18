@@ -5,6 +5,8 @@ import CalenderIcon from "@public/assets/CalenderIcon";
 import { useList, useSelect, useUpdate } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
+import { TRANSACTION_STATUS } from "src/constants/OptionLabels";
+import { CONFIRMED, FAILED } from "src/constants/OptionValueOrder";
 import { Text } from "src/ui/TextTags";
 import { Calendar } from "src/ui/calendar";
 import { Checkbox } from "src/ui/checkbox";
@@ -19,10 +21,11 @@ import {
 } from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
 import { formatDateString } from "src/utility/DateFunctions";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 interface EditPaymentProps {
     setEditPayment: React.Dispatch<React.SetStateAction<any>>;
 }
-export default function EditPayment({ setEditPayment }:EditPaymentProps) {
+export default function EditPayment({ setEditPayment }: EditPaymentProps) {
     const { query } = useRouter();
     const { mutate } = useUpdate();
     const { watch, getValues } = useFormContext();
@@ -97,6 +100,14 @@ export default function EditPayment({ setEditPayment }:EditPaymentProps) {
             },
         ],
     });
+    const CONFIRMED_ID = getOptionValueObjectByOptionOrder(
+        TRANSACTION_STATUS,
+        CONFIRMED
+    )?.id;
+    const FAILED_ID = getOptionValueObjectByOptionOrder(
+        TRANSACTION_STATUS,
+        FAILED
+    )?.id;
     // Getting option values for transaction status
     const { options: transactionStatus } = useSelect({
         resource: "option_values",
@@ -171,11 +182,16 @@ export default function EditPayment({ setEditPayment }:EditPaymentProps) {
                                             <Select
                                                 disabled={
                                                     transaction_status_id?.id ==
-                                                        77||78
+                                                    FAILED_ID
+                                                        ? true
+                                                        : transaction_status_id?.id ==
+                                                          CONFIRMED_ID
                                                         ? true
                                                         : false
                                                 }
-                                                value={transaction_status_id?.id}
+                                                value={
+                                                    transaction_status_id?.id
+                                                }
                                                 onValueChange={(val: any) => {
                                                     transactionOnchange(val);
                                                 }}
@@ -295,6 +311,15 @@ export default function EditPayment({ setEditPayment }:EditPaymentProps) {
                                         <div className="!w-[278px]">
                                             {/* TODO:need to disable select for confimed and failed transaction ids */}
                                             <Select
+                                              disabled={
+                                                transaction_status_id?.id ==
+                                                FAILED_ID
+                                                    ? true
+                                                    : transaction_status_id?.id ==
+                                                      CONFIRMED_ID
+                                                    ? true
+                                                    : false
+                                            }
                                                 value={payment_method_id}
                                                 onValueChange={(val: any) => {
                                                     paymentMethodOnchange(val);
