@@ -6,6 +6,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'sr
 import { formatDate } from 'src/utility/DateFunctions'
 import { supabaseClient } from 'src/utility/supabaseClient'
 
+/**
+ * CourseDetails component fetches and displays detailed information about a course.
+ * It fetches course data and participant summary data from the server,
+ * calculates revenue, and renders the information in a structured format.
+ * 
+ * @returns {JSX.Element} Detailed information about the course including ID, type, dates, teacher(s), status, venue, etc.
+ */
 const CourseDetails = () => {
   interface fullNameObject {
     user_id?: {
@@ -209,11 +216,18 @@ const CourseDetails = () => {
   )
 }
 
-export const CourseInformationAccordion = (courseData: any) => {
+/**
+ * CourseInformationAccordion component renders an accordion UI element 
+ * to display course information.
+ * 
+ * @returns {JSX.Element} Accordion UI component for displaying course information.
+ */
+
+export const CourseInformationAccordion = () => {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="information" className="border rounded-[10px] ">
-        <AccordionTrigger className="text-base border-b-2 ">
+        <AccordionTrigger className="text-base border-b pr-4">
           <MainHeader className="ml-4 text-[18px]" children="Course Information" />
         </AccordionTrigger>
         <AccordionContent className="ml-4 pt-4">{CourseDetails()}</AccordionContent>
