@@ -72,13 +72,17 @@ function CloseParticipantsSection() {
     replace(`${pathname}?${params.toString()}`);
   }
 
-  //getting pending attendence status id
+  /**
+   * variable for getting the pending attendence status id
+   */
   const pendingAttendenceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     PENDING_ATTENDANCE_STATUS
   )?.id;
 
-  //getting pending transacion status id
+  /**
+   * variable for getting the pending transaction status id
+   */
   const pendingTransactionStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_PENDING_PAYMENT_STATUS
@@ -157,18 +161,23 @@ function CloseParticipantsSection() {
     name: "status_id",
   });
 
-  //Getting attendance status data from option values
+  /**
+   * variable for getting the attendence status data
+   */
   const attendanceStatusData = getOptionValuesByOptionLabel(
     PARTICIPANT_ATTENDANCE_STATUS
   )?.[0]?.option_values;
 
-  //Getting payment status data from option values
+  /**
+   * variable for getting the payment status data
+   */
   const paymentStatusData = getOptionValuesByOptionLabel(
     PARTICIPANT_PAYMENT_STATUS
   )?.[0]?.option_values;
 
-  //updating the status data based on action selected
-  const statusData =
+  /**
+   * variable for getting status data based on action
+   */ const statusData =
     actionValue == UPDATE_ATTENDENCE_STATUS
       ? attendanceStatusData
       : paymentStatusData;
@@ -188,7 +197,9 @@ function CloseParticipantsSection() {
   const handleStatusChange = async (value: OptionValuesDataBaseType) => {
     statusOnChange(value);
 
-    //retrieving participant ids from rowSelection data
+    /**
+     * variable for retrieving participant ids
+     */
     const participantIds = Object.keys(rowSelection).map((key) =>
       parseInt(key)
     );
