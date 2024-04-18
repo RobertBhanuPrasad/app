@@ -1245,5 +1245,5 @@ const DeleteVenueComponent = ({ handleDeleteVenue }: { handleDeleteVenue: () => 
         </DialogClose>
       </DialogFooter>
     </div>
-  )
-}
+  );
+};
