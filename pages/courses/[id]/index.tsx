@@ -617,7 +617,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
           switch (val) {
             case 1: {
               // TODO - navigate to view participants page
-              router.push('/')
+              router.push(`/courses/${courseId}/participants/list`)
               break
             }
             case 2: {

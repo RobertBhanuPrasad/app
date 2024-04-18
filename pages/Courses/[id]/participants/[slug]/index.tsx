@@ -20,7 +20,7 @@ import {
 function index() {
   const router = useRouter()
 
-  const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
+  const Id: number | undefined = router?.query?.slug ? parseInt(router.query.slug as string) : undefined
 
   const tabTriggers: any = [
     {

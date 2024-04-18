@@ -359,7 +359,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         switch (value) {
           case 1: {
             // TODO - Navigate to Participant Listing page
-            router.push("/");
+            router.push(`/courses/${[row.original.id]}/participants/list`);
             break;
           }
           case 2: {

@@ -20,7 +20,7 @@ import { Separator } from "src/ui/separator";
 import FilterIcon from "@public/assets/FilterIcon";
 import CrossIcon from "@public/assets/CrossIcon";
 import { useController, useFormContext } from "react-hook-form";
-import { CountComponent } from "pages/Courses/FindCourse";
+import { CountComponent } from "pages/courses/list";
 import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 import {
   FEE_LEVEL,
