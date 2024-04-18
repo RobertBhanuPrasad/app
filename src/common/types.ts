@@ -591,7 +591,7 @@ interface ParticipantUtmParametersDataBaseType {
 }
 
 interface ParticipantRegistrationDataBaseType {
-  transaction_type: any;
+  transaction_type: number|OptionValuesDataBaseType;
   id?: number;
   created_at?: Date;
   contact_id?: number | ContactDataBaseType;
@@ -842,6 +842,8 @@ interface EditParticipantFormFieldTypes {
   city?: string;
   country?: string;
   program_type_id?:boolean
+  identification_num?:string
+  identification_type_id?:string
 }
 
 /**

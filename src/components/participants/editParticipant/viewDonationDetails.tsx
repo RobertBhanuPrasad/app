@@ -226,13 +226,15 @@ export default function ViewDonationDetails({ setViewDonation }:ViewDonationDeta
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[16px]">
-                                    {/* TODO:Identifiaction type */}
-                                    {"-"}
+                                    {
+                                        formData?.identification_type_id??formData?.identification_type_id
+                                    }
                                 </Text>
 
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {/* TODO:Identification number */}
-                                    {"-"}
+                                {
+                                        formData?.identification_num?formData?.identification_num:'-'
+                                    }
                                 </Text>
                             </div>
                         </div>

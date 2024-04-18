@@ -4,16 +4,67 @@ export const handleEditParticipantValues=async(participantId:number)=>{
     const { data, error } = 
     await supabaseClient
     .from("participant_payment_history")
-    .select(
-        "id,transaction_id,payment_transaction_id,participant_id!inner(id,program_id!inner(id,program_type_id!inner(is_online_program)),contact_id!inner(full_name,email,mobile,identification_num,postal_code,date_of_birth,street_address,state_id!inner(name),city_id!inner(name),country_id!inner(name)),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,participant_code,participant_attendence_status_id,discount_code,organisation_id!inner(name),donation_type!inner(value),donation_date,payment_method,transaction_type!inner(value)),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee,total_amount,transaction_status_id!inner(id,value),error_message,response_message,payment_method,payment_date,send_payment_confirmation,transaction_status"
-        ) 
+    .select("id,transaction_id,payment_transaction_id,participant_id!inner(id,program_id!inner(id,program_type_id!inner(is_online_program)),contact_id!inner(full_name,email,mobile,identification_num,identification_type_id,date_of_birth,street_address,state_id!inner(name),city_id!inner(name),country_id!inner(name)),memo,created_at,roommate_preferences_1,roommate_preferences_2,roommate_preferences_3,accommodation_snore,roommate_snore,participant_code,participant_attendence_status_id,discount_code,organisation_id!inner(name),donation_type!inner(value),donation_date,payment_method,transaction_type!inner(value)),transaction_fee_level_id!inner(value),expense_fee,currency_code,accommodation_type_id,accommodation_fee,total_amount,transaction_status_id!inner(id,value),error_message,response_message,payment_method,payment_date,send_payment_confirmation,transaction_status") 
+    
+    // .select(
+    //     "id,
+    //     transaction_id,
+    //     payment_transaction_id,
+    //     participant_id!inner(
+    //         id,
+    //         program_id!inner(
+    //             id,
+    //             program_type_id!inner(is_online_program)
+    //         ),
+    //         contact_id!inner(
+    //             full_name,
+    //             email,mobile,
+    //             identification_num,
+    //             identification_type_id,
+    //             date_of_birth,
+    //             street_address,
+    //             state_id!inner(name),
+    //             city_id!inner(name),
+    //             country_id!inner(name)
+    //         ),
+    //         memo,
+    //         created_at,
+    //         roommate_preferences_1,
+    //         roommate_preferences_2,
+    //         roommate_preferences_3,
+    //         accommodation_snore,
+    //         roommate_snore,
+    //         participant_code,
+    //         participant_attendence_status_id,
+    //         discount_code,
+    //         organisation_id!inner(name),
+    //         donation_type!inner(value),
+    //         donation_date,
+    //         payment_method,
+    //         transaction_type!inner(value)
+    //     ),
+    //     transaction_fee_level_id!inner(value),
+    //     expense_fee,
+    //     currency_code,
+    //     accommodation_type_id,
+    //     accommodation_fee,
+    //     total_amount,
+    //     transaction_status_id!inner(id,value),
+    //     error_message,
+    //     response_message,
+    //     payment_method,
+    //     payment_date,
+    //     send_payment_confirmation,
+    //     transaction_status"
+    //     ) 
     .order("created_at",{ ascending: false })
     .eq("participant_id", participantId);
     if (!error) {
         const defaultValues = await getDefaultValues(data[0]);
+       
         return defaultValues;
       }
-    
+      console.log(data,"data")
       return {};
 }
 export const getDefaultValues = async (data:ParticipantPaymentHistoryDataBaseType) => {
@@ -32,6 +83,8 @@ export const getDefaultValues = async (data:ParticipantPaymentHistoryDataBaseTyp
         defaultValues.state = (data.participant_id.contact_id.state_id as StateDataBaseType)?.name
         defaultValues.country=(data.participant_id.contact_id.country_id as StateDataBaseType)?.name
         defaultValues.city=(data.participant_id.contact_id.city_id as CityDataBaseType)?.name
+        defaultValues.identification_num=data.participant_id.contact_id.identification_num
+        defaultValues.identification_type_id=(data.participant_id.contact_id.identification_type_id as OptionValuesDataBaseType) ?.value
     }
     // memo
     if (data.participant_id?.memo)
