@@ -41,7 +41,7 @@ export default function EditParticipantTabs() {
                 accommodation_type_id: formData?.accommodationType,
             },
             // TODO: integrate with participant_payment_history id
-            id: Id,
+            id: Number(Id),
         });
     };
 

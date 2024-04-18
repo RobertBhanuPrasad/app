@@ -20,25 +20,21 @@ export default function PaymentDetails() {
         field: { value: participant_code, onChange: specialCodeChange },
     } = useController({
         name: "participant_code",
-        // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
         field: { value: expense_fee },
     } = useController({
         name: "expense_fee",
-        // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
         field: { value: accommodation_fee },
     } = useController({
         name: "accommodation_fee",
-        // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
         field: { value: total_amount },
     } = useController({
         name: "total_amount",
-        // defaultValue: participantData?.participant_id?.discount_code,
     });
     const {
         field: {
@@ -127,7 +123,7 @@ export default function PaymentDetails() {
                             <Button
                                 onClick={(e) => {
                                     e.preventDefault(),
-                                        specialCodeChange(e?.target?.value);
+                                    specialCodeChange((e?.target as HTMLInputElement)?.value);
                                 }}
                             >
                                 Apply

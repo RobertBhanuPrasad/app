@@ -29,9 +29,9 @@ export const getDefaultValues = async (data:ParticipantPaymentHistoryDataBaseTyp
         defaultValues.street_address=data.participant_id.contact_id.street_address
         defaultValues.date_of_birth=data.participant_id?.contact_id.date_of_birth
         defaultValues.mobile=data.participant_id.contact_id.mobile
-        defaultValues.state=data.participant_id.contact_id.state_id?.name
-        defaultValues.country=data.participant_id.contact_id.country_id?.name
-        defaultValues.city=data.participant_id.contact_id.city_id?.name
+        defaultValues.state = (data.participant_id.contact_id.state_id as StateDataBaseType)?.name
+        defaultValues.country=(data.participant_id.contact_id.country_id as StateDataBaseType)?.name
+        defaultValues.city=(data.participant_id.contact_id.city_id as CityDataBaseType)?.name
     }
     // memo
     if (data.participant_id?.memo)
@@ -53,8 +53,8 @@ if(data.participant_id.program_id)
        if (data.participant_id?.accommodation_snore)
         defaultValues.accommodation_snore = data.participant_id.accommodation_snore;
 // organisation_id
-if(data?.participant_id?.organisation_id?.name)
-    defaultValues.organisation_id=data?.participant_id?.organisation_id?.name
+if((data?.participant_id?.organisation_id as OrganizationsDataBaseType)?.name)
+    defaultValues.organisation_id=(data?.participant_id?.organisation_id as OrganizationsDataBaseType)?.name
 // donation_type
 if(data?.participant_id?.donation_type?.value)
     defaultValues.donation_type=data?.participant_id?.donation_type?.value
@@ -68,7 +68,7 @@ if(data?.participant_id?.transaction_type?.value)
 if(data?.transaction_status)
     defaultValues.transaction_status=data?.transaction_status
 // is_online_program
-if(data?.participant_id?.program_id?.program_type_id?.is_online_program)
+if( (data?.participant_id?.program_id?.program_type_id as unknown as ProgramDataBaseType)?.is_online_program)
     defaultValues.program_type_id=data?.participant_id?.program_id?.program_type_id?.is_online_program
 // roommate_snore
     if (data.participant_id?.roommate_snore)

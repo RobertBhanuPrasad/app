@@ -19,7 +19,10 @@ import {
 } from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
 import { formatDateString } from "src/utility/DateFunctions";
-export default function EditPayment({ setEditPayment }) {
+interface EditPaymentProps {
+    setEditPayment: React.Dispatch<React.SetStateAction<any>>;
+}
+export default function EditPayment({ setEditPayment }:EditPaymentProps) {
     const { query } = useRouter();
     const { mutate } = useUpdate();
     const { watch, getValues } = useFormContext();

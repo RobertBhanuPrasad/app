@@ -189,7 +189,7 @@ export default function AccomodationDetails() {
                                 className="w-[112px] !h-[40px] rounded-[12px]"
                             />
                             <RadioButtonCard
-                                value={!accommodation_snore}
+                                value={String(accommodation_snore)}
                                 selectedRadioValue={accommodation_snore}
                                 label="No"
                                 className="w-[112px] !h-[40px] rounded-[12px]"
@@ -214,7 +214,7 @@ export default function AccomodationDetails() {
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
                         <RadioButtonCard
-                            value={!roommate_snore}
+                            value={String(roommate_snore)}
                             selectedRadioValue={roommate_snore}
                             label="No"
                             className="w-[112px] !h-[40px] rounded-[12px]"
