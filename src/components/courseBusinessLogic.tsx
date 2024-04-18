@@ -997,3 +997,24 @@ export const isCourseAccountingFormApprovalNeeded = (
     return false; // Return false otherwise
   }
 };
+
+/**
+ * Requirement: Submit CTA must be displayed (enabled form) only when the Course Status is 'Completed' .
+ * @param {number} courseStatusId The status ID of the course
+ * if returns true show submut button
+ * if returns false don't show submut button
+ */
+export const isCAFSubmitButtonVisible = (courseStatusId: number) => {
+  // Get the status ID for the 'Pending Review' status of course accounting
+  const courseCompleteStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    COMPLETED
+  )?.id;
+
+  // Check if the course status is 'Completed'
+  if (courseCompleteStatusId === courseStatusId) {
+    return true; // Return true if the conditions are met
+  } else {
+    return false; // Return false otherwise
+  }
+};
