@@ -24,7 +24,6 @@ const Signup = () => {
       },
     ],
   });
-
   const { options } = useSelect({
     resource: "option_values",
     optionLabel: "value",
@@ -37,7 +36,7 @@ const Signup = () => {
       },
     ],
   });
-
+console.log(data,options,"options")
   const handleSignup = async () => {
     const { data, error } = await supabaseClient.auth.signUp({
       email,
