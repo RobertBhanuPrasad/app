@@ -390,16 +390,16 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                     {/* Expense Total Calculations */}
                     <div className="border flex mt-6 rounded-xl ">
                         <div className="flex-1 flex border-r py-2 px-4">
-                            <Text className="flex-[0.8] font-semibold text-[#383838] text-base">Reimbursable Total:</Text>
-                            <p className="flex-[0.2] font-semibold text-[#383838] text-base">{reimbursableTotal}</p>
+                            <Text className="flex-[0.8] font-bold text-[#383838] text-base">Reimbursable Total:</Text>
+                            <p className="flex-[0.2] font-bold text-[#383838] text-base">{reimbursableTotal}</p>
                         </div>
                         <div className="flex flex-1 p-2 border-r">
-                            <Text className="flex-[0.8] font-semibold text-[#383838] text-base">Non-reimbursable Total:</Text>
-                            <p className="flex-[0.2] font-semibold text-[#383838] text-base">{totalExpense - reimbursableTotal}</p>
+                            <Text className="flex-[0.8] font-bold text-[#383838] text-base">Non-reimbursable Total:</Text>
+                            <p className="flex-[0.2] font-bold text-[#383838] text-base">{totalExpense - reimbursableTotal}</p>
                         </div>
                         <div className="flex flex-1 p-2">
-                            <Text className="flex-[0.8] font-semibold text-[#383838] text-base">Total:</Text>
-                            <p className="flex-[0.2] font-semibold text-[#383838] text-base">{totalExpense}</p>
+                            <Text className="flex-[0.8] font-bold text-[#383838] text-base">Total:</Text>
+                            <p className="flex-[0.2] font-bold text-[#383838] text-base">{totalExpense}</p>
                         </div>
 
                     </div>
@@ -421,8 +421,8 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
                     {/* Reimbursement Summary Total  Calculations */}
                     <div className="border flex mt-4 rounded-xl ">
                         <div className="flex-[1.5] flex border-r py-2 px-4">
-                            <Text className="flex-[0.8] font-semibold text-[#383838] text-base">Total Requested:</Text>
-                            <Text className="flex-[0.2] font-semibold text-[#383838] text-base">{reimbursableTotal}</Text>
+                            <Text className="flex-[0.8] font-bold text-[#383838] text-base">Total Requested:</Text>
+                            <Text className="flex-[0.2] font-bold text-[#383838] text-base">{reimbursableTotal}</Text>
                         </div>
                         <div className="flex-1 flex p-2">
                             <p className="flex-[0.8]"></p>
@@ -436,31 +436,31 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
 
                         <Header>Expense Summary and Details</Header>
                         <div className="border rounded-lg px-4 py-6 mt-2">
-                            <TableHeader className="font-semibold">Expense Summary </TableHeader>
-                            <div className="flex border-b py-2">
-                                <Text className="flex-[0.4]">Expense category</Text>
-                                <Text className="flex-[0.4]">Amount (EUR)</Text>
+                            <Text className="font-semibold text-[#454545] text-lg">Expense Summary </Text>
+                            <div className="flex border-b py-2 mt-2">
+                                <Text className="flex-[0.4] text-[#383838] font-normal text-base">Expense category</Text>
+                                <Text className="flex-[0.4] text-[#898989] font-normal text-base">Amount (EUR)</Text>
                             </div>
                             {programExpensesData?.data?.data?.map((expense) => {
                                 return (
                                     <div className="flex py-2 border-b" key={expense?.id}>
-                                        <Text className="flex-[0.4]">{expense?.expense_category_id}</Text>
-                                        <Text className="flex-[0.4]">{expense?.amount}</Text>
+                                        <Text className="flex-[0.4] text-[#383838] font-normal text-base">{expense?.expense_category_id}</Text>
+                                        <Text className="flex-[0.4] text-[#898989] font-normal text-base">{expense?.amount}</Text>
                                     </div>
                                 );
                             })}
-                            <div className="flex py-2 border-b">
-                                <TableHeader className="flex-[0.4]">Total</TableHeader>
-                                <CardValue className="flex-[0.4]">{totalExpense}</CardValue>
+                            <div className="flex py-2 border-b mt-2">
+                                <Text className="flex-[0.4] text-[#383838] font-bold text-base">Total</Text>
+                                <Text className="flex-[0.4] text-[#898989] font-bold text-base">{totalExpense}</Text>
                             </div>
                             <div className="flex  py-2">
-                                <Text className="flex-[0.4]">Current Expense:</Text>
-                                <Text className="flex-[0.4]">
+                                <Text className="flex-[0.4] text-[#383838] font-normal text-base">Current Expense:</Text>
+                                <Text className="flex-[0.4] text-[#898989] font-normal text-base">
                                     {totalExpense} ({currentExpensePercentage}%)
                                 </Text>
                             </div>
                             <div className="flex  py-2">
-                                <Text className="flex-[0.4]">Allowed Expense Limit</Text>
+                                <Text className="flex-[0.4] text-[#383838] font-normal text-base">Allowed Expense Limit</Text>
                                 <Text className="flex-[0.4]">
                                     {allowedExpenseAmount} ({expenseLimitPercentage}%)
                                 </Text>
