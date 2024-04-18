@@ -107,7 +107,7 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-   // Getting option label for payment method
+    // Getting option label for payment method
     const { data: payment_data } = useList<any>({
         resource: "option_labels",
         filters: [
@@ -132,7 +132,7 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-       return (
+    return (
         <div>
             <div>
                 <div>
@@ -166,7 +166,13 @@ export default function EditPayment({ setEditPayment }) {
                                         <div>
                                             {/* TODO: need to disable select for confirmed and failed transaction ids */}
                                             <Select
-                                                value={transaction_status_id}
+                                                disabled={
+                                                    transaction_status_id?.id ==
+                                                        77||78
+                                                        ? true
+                                                        : false
+                                                }
+                                                value={transaction_status_id?.id}
                                                 onValueChange={(val: any) => {
                                                     transactionOnchange(val);
                                                 }}
