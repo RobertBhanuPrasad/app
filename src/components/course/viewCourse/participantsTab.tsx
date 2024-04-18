@@ -38,11 +38,11 @@ function ParticipantsTab() {
   useEffect(() => {
     fetchData();
   }, []);
-  const {t} = useTranslation("common")
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <div className="my-[31px] mb-6 overscroll ">
       <div className="flex justify-between">
-        <div className="text-[23px] font-semibold">Overall Participants</div>
+        <div className="text-[23px] font-semibold">{t('course.view_course:participants_tab.overall_participants')}</div>
         <div className="flex gap-4">
           <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">
           {t('register_participant')},
@@ -83,11 +83,12 @@ const FeeLevelPieChart = ({ participantData }: any) => {
       };
     }
   );
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Fee Level Breakup</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.fee_level_breakup')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -150,12 +151,12 @@ const AttendancePieChart = ({ participantData }: any) => {
       };
     }
   );
-
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Attendance Status</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.attendance_status')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -217,12 +218,12 @@ const GenderPieChart = ({ participantData }: any) => {
       ),
     };
   });
-
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Gender Breakdown</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.gender_breakdown')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">

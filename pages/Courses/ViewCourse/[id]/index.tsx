@@ -158,7 +158,7 @@ function ViewDetails() {
 
   const countryName = "India";
 
-  const { t } = useTranslation("common");
+  const {t} = useTranslation(["common", "course.view_course"])
 
   const [selectedValue, setSelectedValue] = useState(
     JSON.stringify(COURSE_DETAILS_TAB)
@@ -359,13 +359,14 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
     PROGRAM_STATUS,
     DECLINED
   )?.id;
+  const {t} = useTranslation(["common", "course.view_course"])
   const options = [
     {
-      label: "Approve Course",
+      label: t('course.view_course:basic_details_tab.approve_course'),
       value: 1,
     },
     {
-      label: "Reject Course",
+      label: t('course.view_course:basic_details_tab.reject_course'),
       value: 2,
     },
   ];
@@ -480,12 +481,12 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
             </div>
             <DialogTitle className="text-gray-500 text-sm font-normal pt-2">
               {" "}
-              Describe your rejection reason
-              <span className="text-blue-500">(optional)</span>
+              {t('course.view_course:basic_details_tab.describe_your_rejection_reason')}
+              <span className="text-blue-500">{t('course.view_course:basic_details_tab.(optional)')}</span>
             </DialogTitle>
             <DialogDescription>
               <Textarea
-                placeholder="Comment"
+                placeholder={t('course.view_course:basic_details_tab.comment')}
                 className="border-[#E1E1E1]  h-[132px] w-[366px]"
                 onChange={(e: any) => {
                   setRejectionFeedback(e.target.value);
@@ -526,7 +527,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
 
 const RejectedModalOpen = () => {
   const { viewRejectedModal, setViewRejectedModal } = newCourseStore();
-
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <Dialog open={viewRejectedModal}>
       <DialogContent className="w-[414px] h-[279px]">
@@ -538,7 +539,7 @@ const RejectedModalOpen = () => {
             Course Rejected
           </DialogTitle>
           <DialogDescription className="text-center">
-            The Course got rejected successfully
+            {t('course.view_course:basic_details_tab.the_course_got_rejected')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -558,7 +559,7 @@ const RejectedModalOpen = () => {
 
 const SuccessModalOpen = () => {
   const { viewSuccessModal, setViewSuccessModal } = newCourseStore();
-
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <Dialog open={viewSuccessModal}>
       <DialogTrigger></DialogTrigger>
@@ -568,10 +569,10 @@ const SuccessModalOpen = () => {
             <Image src={Tick} alt="tick" />
           </div>
           <div className="font-semibold text-center mt-2">
-            Course approved Successfully
+            {t('course.view_course:basic_details_tab.course_approved_successfully')}
           </div>
           <div className="text-center my-4">
-            Thank you for contribution in the course approval process.
+            {t('course.view_course:basic_details_tab.thank_you_for_contribution')}
           </div>
           <Button
             onClick={() => {
@@ -654,7 +655,7 @@ const ActionsDropDown = ({ courseData }: any) => {
     });
     setCancelSuccessModalOpen(true);
   };
-
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <div>
       <Select
@@ -723,7 +724,7 @@ const ActionsDropDown = ({ courseData }: any) => {
               <Exclamation />
             </div>
             <DialogDescription className="font-bold text-black text-lg items-center text-center">
-              Are you sure you want to cancel this course?
+              {t('course.view_course:basic_details_tab.are_you_sure_you_want_to_cancel')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -863,7 +864,7 @@ const ShareButton = () => {
   };
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
   const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
-
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <Dialog>
       <DialogTrigger>
@@ -874,7 +875,7 @@ const ShareButton = () => {
       <DialogContent className="w-[414px] h-[310px] !rounded-[24px] !p-6 ">
         <div className="flex items-center gap-5 flex-col">
           <div className="text-[24px] font-semibold items-center">
-            Share in Social
+            {t('course.view_course:basic_details_tab.share_in_social')}
           </div>
           <div className="flex flex-row gap-6 ">
             <WhatsappIcon />
@@ -940,7 +941,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
+    "common", "course.view_course"
   ]);
 
   if (!authenticated) {

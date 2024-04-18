@@ -99,7 +99,7 @@ function CourseDetailsTab() {
       setCopiedRegistrationLink(false);
     }, 1000);
   };
-  const {t} = useTranslation("common")
+   const {t} = useTranslation(["common", "course.view_course"])
 
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
@@ -124,7 +124,7 @@ function CourseDetailsTab() {
               <ItemValue>{courseData?.data?.program_code}</ItemValue>
             </div>
             <div>
-              <Header2>Course type</Header2>
+              <Header2>{t('course.view_course:basic_details_tab.course_type')}</Header2>
               <ItemValue>{courseData?.data?.program_type_id?.name}</ItemValue>
             </div>
             <div>
@@ -144,7 +144,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Assistant Teachers</Header2>
+              <Header2>{t('course.view_course:basic_details_tab.assistant_teachers')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_assistant_teachers?.map(
                   (item: fullNameObject) => {
@@ -182,7 +182,7 @@ function CourseDetailsTab() {
               <ItemValue>{courseData?.data?.max_capacity}</ItemValue>
             </div>
             <div>
-              <Header2>Program organizer</Header2>
+              <Header2>{t('course.view_course:basic_details_tab.program_organizer')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_organizers
                   ?.map(
@@ -203,7 +203,7 @@ function CourseDetailsTab() {
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Fee and Accommodation
+              {t('course.view_course:basic_details_tab.fee_and_accommodation')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -280,14 +280,14 @@ function CourseDetailsTab() {
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Registration Links
+              {t('course.view_course:basic_details_tab.registration_links')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div className="gap-[23px] flex flex-col">
               <div>
-                <Header2>Course Details URL</Header2>
+                <Header2>{t('course.view_course:basic_details_tab.course_details_url')}</Header2>
                 <ItemValue>
                   <div className="flex flex-row gap-4">
                     <div className="w-[90%] break-words">
@@ -314,7 +314,7 @@ function CourseDetailsTab() {
                 </ItemValue>
               </div>
               <div>
-                <Header2>Registration URL</Header2>
+                <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">
                   <div className="text-[16px] font-semibold w-[90%] break-words">
                     {courseData?.data?.registration_link}
@@ -348,7 +348,7 @@ function CourseDetailsTab() {
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Contact Details
+              {t('course.view_course:basic_details_tab.contact_details')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -366,7 +366,7 @@ function CourseDetailsTab() {
                       <ItemValue>{item.contact_email}</ItemValue>
                     </div>
                     <div>
-                      <Header2>Contact Phone</Header2>
+                      <Header2>{t('course.view_course:basic_details_tab.contact_phone')}</Header2>
                       <ItemValue>{item.contact_number}</ItemValue>
                     </div>
                   </div>
