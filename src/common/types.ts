@@ -865,6 +865,11 @@ interface CourseAccountingFormFieldTypes {
     vat_rate?: string;
     new_person_to_reimburse?: string;
   }[];
+
+  // close registrations form names
+  action_id?: number;
+  status_id?: number;
+
   program_offline_revenue?: ProgramOfflineRevenueDatabaseType[];
   course_accounting_user_consent?: boolean;
 }
