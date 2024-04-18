@@ -498,6 +498,7 @@ function index() {
             columns={columns}
             data={participantData?.data?.data || []}
             columnPinning={true}
+            columnSelector={true}
           />
         </div>
       </div>
