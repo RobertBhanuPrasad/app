@@ -396,7 +396,7 @@ interface ProgramTypesDataBaseType {
   has_alias_name?: boolean;
   health_type_name?: string;
   health_declaration?: string;
-  program_type_id?:number |ProgramDataBaseType
+  program_type_id?:ProgramDataBaseType
 }
 
 interface RegistrationFieldGroupsDataBaseType {
@@ -524,7 +524,7 @@ interface ParticipantPaymentHistoryDataBaseType {
   payment_transaction_id?: number | null;
   currency_code?: string | null;
   participant_id?: ParticipantRegistrationDataBaseType | number;
-  program_id?: number | ProgramDataBaseType;
+  program_id?:  ProgramDataBaseType;
   total_amount?: number;
   transaction_status_id?: OptionValuesDataBaseType;
   transaction_date?: string | null;
@@ -591,7 +591,7 @@ interface ParticipantUtmParametersDataBaseType {
 }
 
 interface ParticipantRegistrationDataBaseType {
-  transaction_type: any;
+  transaction_type?: any;
   id?: number;
   created_at?: Date;
   contact_id?: number | ContactDataBaseType;
@@ -605,7 +605,7 @@ interface ParticipantRegistrationDataBaseType {
   donation_type?: OptionValuesDataBaseType;
   donation_date?: Date;
   program_category_id?: number;
-  program_id?: number | ProgramTypesDataBaseType;
+  program_id?:  ProgramTypesDataBaseType;
   discount_code?: string;
   discounted_amount?: number;
   discounted_tax?: number;
