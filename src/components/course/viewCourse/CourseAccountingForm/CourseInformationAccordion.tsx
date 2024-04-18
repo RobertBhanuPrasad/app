@@ -196,12 +196,12 @@ const CourseDetails = () => {
       <div className="grid grid-cols-4 gap-11 pt-7">
         <div>
           <CardLabel className=" text-[14px] font-normal" children="Course Expenses" />
-
+          {/* Todo need to update the total Course Expense when we enter into expense tab */}
           <div className="text-[#666666] text-[16px]">EUR 60.00</div>
         </div>
         <div>
           <CardLabel className=" text-[14px] font-normal" children="Net Revenue" />
-
+          {/* Todo need to update Net Revenue when we enter into expense tab totalRevenue - total Course Expense */}
           <div className="text-[#666666] text-[16px]">EUR 540.00</div>
         </div>
       </div>
