@@ -65,7 +65,7 @@ interface IBaseTable<TData, TValue> {
      */
     rowStyles?: string;
     /**
-     * Additional CSS classes to pass to table container
+     * Additional CSS classes to pass to table container 
      */
     tableContainer?: string;
     /**
@@ -422,7 +422,7 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableHead
                           className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
+                            columnPinning && "sticky left-0 z-10 bg-[#F1F1FE]"
                           }`}
                         >
                           <Checkbox
@@ -444,11 +444,11 @@ export function BaseTable<TData, TValue>({
                               index === 0 &&
                               `sticky ${
                                 checkboxSelection ? "left-10" : "left-0"
-                              } z-10 bg-[#E9E9F5] drop-shadow-right`
+                              } z-10 bg-[#F1F1FE] drop-shadow-right`
                             } ${
                               columnPinning &&
                               index === headerGroup.headers.length - 1 &&
-                              `sticky right-0 z-10 bg-[#E9E9F5] drop-shadow-left w-[50px]`
+                              `sticky right-0 z-10 bg-[#F1F1FE] drop-shadow-left w-[50px]`
                             } text-[#333333] `}
                             key={header?.id}
                           >

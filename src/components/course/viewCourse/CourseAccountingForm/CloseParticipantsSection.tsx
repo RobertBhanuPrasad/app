@@ -334,7 +334,6 @@ function CloseParticipantsSection() {
           </div>
         </div>
 
-        {/* TODO need to add the vertical scroll for the table */}
         <div>
           <BaseTable
             checkboxSelection={true}
@@ -343,7 +342,7 @@ function CloseParticipantsSection() {
               table: "",
               rowStyles: "!important border-none",
               tableContainer: "!h-[350px] !rounded-xl",
-              tableHeader: "bg-[#E9E9F5] sticky top-0 z-10",
+              tableHeader: "bg-[#F1F1FE] sticky top-0 z-10",
             }}
             columns={participantsColumns}
             data={participantData?.data?.data || []}
