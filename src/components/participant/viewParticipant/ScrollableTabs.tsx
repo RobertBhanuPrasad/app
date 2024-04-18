@@ -1,42 +1,42 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from "react";
 
 interface Tab {
-  id: number
-  label: string
-  content: JSX.Element
+  id: number;
+  label: string;
+  content: JSX.Element;
 }
 
 function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
-  const [activeTab, setActiveTab] = useState<number>(0)
-  const tabRefs = useRef<HTMLDivElement[]>([])
+  const [activeTab, setActiveTab] = useState<number>(0);
+  const tabRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const target = entry.target as HTMLElement
-            const tabIndex = parseInt(target.dataset.tabIndex || '0')
-            setActiveTab(tabIndex)
+            const target = entry.target as HTMLElement;
+            const tabIndex = parseInt(target.dataset.tabIndex || "0");
+            setActiveTab(tabIndex);
           }
-        })
+        });
       },
       { threshold: 0.5 }
-    )
+    );
 
-    tabRefs.current.forEach(ref => {
-      observer.observe(ref)
-    })
+    tabRefs.current.forEach((ref) => {
+      observer.observe(ref);
+    });
 
     return () => {
-      observer.disconnect()
-    }
-  }, [])
+      observer.disconnect();
+    };
+  }, []);
 
   const scrollToTab = (tabIndex: number) => {
-    const tabElement = tabRefs.current[tabIndex]
-    tabElement?.scrollIntoView({ behavior: 'smooth', block: 'start' }) // Scroll to the start of the tab
-  }
+    const tabElement = tabRefs.current[tabIndex];
+    tabElement?.scrollIntoView({ behavior: "smooth", block: "start" }); // Scroll to the start of the tab
+  };
 
   return (
     <div className="sticky top-0 z-50 bg-white">
@@ -47,11 +47,13 @@ function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
             <button
               key={tab.id}
               className={`px-4 py-2 border-b-2 text-[16px] font-[600] ${
-                activeTab === index ? 'border-[#7677F4] text-[#7677F4]' : 'border-transparent'
+                activeTab === index
+                  ? "border-[#7677F4] text-[#7677F4]"
+                  : "border-transparent"
               } focus:outline-none`}
               onClick={() => {
-                setActiveTab(index)
-                scrollToTab(index)
+                setActiveTab(index);
+                scrollToTab(index);
               }}
             >
               {tab.label}
@@ -67,7 +69,7 @@ function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
               className="mb-[20px]"
               key={tab.id}
               id={`tab-${tab.id}`}
-              ref={el => (tabRefs.current[index] = el as HTMLDivElement)}
+              ref={(el) => (tabRefs.current[index] = el as HTMLDivElement)}
               data-tab-index={index}
             >
               {tab.content}
@@ -76,7 +78,7 @@ function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ScrollableTabs
+export default ScrollableTabs;
