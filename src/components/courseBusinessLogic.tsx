@@ -864,32 +864,31 @@ export const getActions = ({
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
 
-  // Get the ID for failed transaction status
-  const failedTransactionStatusId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_PAYMENT_STATUS,
-    PARTICIPANT_FAILED_PAYMENT_STATUS
-  )?.id;
-
   // Define conditions and corresponding actions
   const conditions = [
     {
+      // If the attendance status is pending then i need an action Update attendance status
       condition: attendenceStatusId === pendingAttendenceStatusId,
       //TODO I need to add cancel attendance status also based on settings data
       action: "Update attendance status",
     },
+
+    // If the transaction status is pending then i need an action Update transaction status
     {
-      condition:
-        transactionStatusId === pendingTransactionStatusId ||
-        transactionStatusId === failedTransactionStatusId,
+      condition: transactionStatusId === pendingTransactionStatusId,
       action: "Update transaction status",
     },
+
+    // If the PPA consent is unchecked then i need an action Pending PPA consent
     {
-      condition: isPPAConsentChecked,
-      action: "PPA consent required",
+      condition: !isPPAConsentChecked,
+      action: "Pending PPA consent",
     },
+
+    // If the Health consent is unchecked then i need an action Pending Health consent
     {
-      condition: isHealthDeclarationChecked,
-      action: "Health declaration required",
+      condition: !isHealthDeclarationChecked,
+      action: "Pending Health consent",
     },
   ];
 
@@ -972,29 +971,50 @@ export const isViewCourseAccountingTabDisplay = (
   }
 };
 
-
-
 /**
  * Check if the course accounting form is approved based on its status ID and the user's role ID
  * @param {number} courseAccountingStatusId The status ID of the course accounting form
  * @param {number} roleId The role ID of the user
  * @returns {boolean} True if the course accounting form is approved, false otherwise
  */
-export const isCourseAccountingFormApprovalNeeded = (courseAccountingStatusId: number, roleId: number) => {
+export const isCourseAccountingFormApprovalNeeded = (
+  courseAccountingStatusId: number,
+  roleId: number
+) => {
   // Get the status ID for the 'Pending Review' status of course accounting
-  const courseAccountingPendingReviewStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, ACCOUNTING_PENDING_REVIEW)?.id;
+  const courseAccountingPendingReviewStatusId =
+    getOptionValueObjectByOptionOrder(
+      COURSE_ACCOUNTING_STATUS,
+      ACCOUNTING_PENDING_REVIEW
+    )?.id;
 
   //TODO Get the role ID for the 'National Admin' role to compare whether the logged in user is national admin or not
 
-
   // Check if the course accounting form is in 'Pending Review' status and the user is a Super Admin or National Admin
-  if (
-    courseAccountingPendingReviewStatusId === courseAccountingStatusId
-
-  ) {
+  if (courseAccountingPendingReviewStatusId === courseAccountingStatusId) {
     return true; // Return true if the conditions are met
   } else {
     return false; // Return false otherwise
   }
-}
+};
 
+/**
+ * Requirement: Submit CTA must be displayed (enabled form) only when the Course Status is 'Completed' .
+ * @param {number} courseStatusId The status ID of the course
+ * if returns true show submut button
+ * if returns false don't show submut button
+ */
+export const isCAFSubmitButtonVisible = (courseStatusId: number) => {
+  // Get the status ID for the 'Pending Review' status of course accounting
+  const courseCompleteStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    COMPLETED
+  )?.id;
+
+  // Check if the course status is 'Completed'
+  if (courseCompleteStatusId === courseStatusId) {
+    return true; // Return true if the conditions are met
+  } else {
+    return false; // Return false otherwise
+  }
+};

@@ -20,7 +20,6 @@ import { formatDate, formatDateString } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 
 import { handleCourseDefaultValues } from '@components/course/newCourse/EditCourseUtil'
-import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
 
 import CourseDetailsTab from '@components/course/viewCourse/courseDetailsTab'
 import ParticipantsTab from '@components/course/viewCourse/participantsTab'
@@ -73,6 +72,7 @@ import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import CourseAccountingFormTab from '../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab'
 
+import ViewCourseAccountingFormTab from '@components/course/viewCourse/ViewCourseAccountingFormTab'
 
 function index() {
   const router = useRouter()
@@ -315,7 +315,7 @@ function index() {
             <CourseAccountingFormTab />
           </TabsContent>
           <TabsContent value={JSON.stringify(VIEW_COURSE_ACCOUNTING_FORM_TAB)}>
-            <div>View Course Accounting Form Tab</div>
+            <ViewCourseAccountingFormTab programId={Id as number} />
           </TabsContent>
         </Tabs>
       </div>
@@ -572,8 +572,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
     if (courseId) {
       const defaultValues = await handleCourseDefaultValues(courseId)
       setNewCourseData(defaultValues)
-      router.push(`/courses/${courseId}/edit`);
-
+      router.push(`/courses/${courseId}/edit`)
     }
   }
 
@@ -591,7 +590,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       setNewCourseData(defaultValues)
-      router.push("/courses/add");
+      router.push('/courses/add')
     }
   }
 
@@ -640,8 +639,8 @@ export const ActionsDropDown = ({ courseData }: any) => {
             }
             case 6: {
               // TODO - navigate to course accounting form
-              router.push(`/courses/${courseId}`);
-            break;
+              router.push(`/courses/${courseId}`)
+              break
             }
             default: {
               router.push('/')
@@ -1139,13 +1138,11 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
       .update({ program_accounting_status_id: accountingRejectedStatusId })
       .eq('id', courseId)
 
-    await supabaseClient
-      .from('program_accounting_activity')
-      .insert({
-        caf_status_id: accountingRejectedStatusId,
-        user_id: loginUserData?.userData?.id,
-        comment: rejectionFeedback
-      })
+    await supabaseClient.from('program_accounting_activity').insert({
+      caf_status_id: accountingRejectedStatusId,
+      user_id: loginUserData?.userData?.id,
+      comment: rejectionFeedback
+    })
 
     // Close the modal for viewing the rejected accounting form
     setViewCourseAccountingRejectedDescriptionModal(false)
