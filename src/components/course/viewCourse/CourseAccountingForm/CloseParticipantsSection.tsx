@@ -322,6 +322,8 @@ function CloseParticipantsSection() {
             </Dialog>
           </div>
         </div>
+
+        {/* TODO need to add the vertical scroll for the table */}
         <BaseTable
           checkboxSelection={true}
           pagination={false}
