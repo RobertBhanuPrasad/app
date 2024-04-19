@@ -343,7 +343,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         // we have to delete schedules when user click on cipy course and other we need to prefill
         defaultValues = _.omit(defaultValues, ["id","schedules"]);
         setNewCourseData(defaultValues);
-        router.push({pathname:"/courses/add",query:{header:'Copy Course'}});
+        router.push({pathname:"/courses/add",query:{action:'Copy'}});
       };
 
       dropDownMenuData?.unshift({ label: "View Course", value: 9 });
@@ -358,7 +358,7 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
           case 2: {
             // TODO - Navigate to Register Participant page
-            router.push("/");
+            router.push("/courses/add");
             break;
           }
           case 3: {

@@ -412,7 +412,7 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
-      <p className="font-semibold text-2xl">{router.query.header ? router.query.header : 'New Course'}</p>
+      <p className="font-semibold text-2xl">{router.query.header ? router.query.header  : 'New'} Course</p>
       <div className="mt-4">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row">
