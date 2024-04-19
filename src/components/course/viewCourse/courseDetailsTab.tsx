@@ -102,7 +102,7 @@ function CourseDetailsTab() {
    const {t} = useTranslation(["common", "course.view_course"])
 
   return (
-    <div className="flex flex-row gap-[41px] mt-[30px]">
+    <div className="flex flex-row gap-[41px] mt-[30px] bg-black">
       {/**
        * Basic details card
        */}

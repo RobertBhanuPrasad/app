@@ -170,6 +170,7 @@ function index() {
 
   const [rowSelection, setRowSelection] = React.useState({});
 
+
   const {
     tableQueryResult: programData,
     pageCount,
@@ -352,6 +353,7 @@ function index() {
             columns={columns}
             data={programData?.data?.data || []}
             columnPinning={true}
+            columnSelector={true}
           />
         </div>
       </div>

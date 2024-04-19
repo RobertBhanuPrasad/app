@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { Circle } from "lucide-react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { PieChart } from "react-minimal-pie-chart";
 import { Button } from "src/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
-import { PieChart } from "react-minimal-pie-chart";
-import { Circle } from "lucide-react";
+import { supabaseClient } from "src/utility";
 import { getColorWithDecreasedOpacity } from "src/utility/GenerateColours";
 import _ from "lodash";
 import { supabaseClient } from "src/utility";
@@ -10,30 +12,30 @@ import { useRouter } from "next/router";
 import { useTranslation } from 'next-i18next';
 
 function ParticipantsTab() {
-  const router = useRouter();
+    const router = useRouter();
 
-  const Id: number | undefined = router?.query?.id
-    ? parseInt(router.query.id as string)
-    : undefined;
+    const Id: number | undefined = router?.query?.id
+        ? parseInt(router.query.id as string)
+        : undefined;
 
-  const [participantData, setParticipantData] = useState<any>();
+    const [participantData, setParticipantData] = useState<any>();
 
-  const fetchData = async () => {
-    try {
-      const { data, error } = await supabaseClient.functions.invoke(
-        "get_program_participant_summary",
-        {
-          method: "POST",
-          body: {
-            program_id: Id,
-          },
+    const fetchData = async () => {
+        try {
+            const { data, error } = await supabaseClient.functions.invoke(
+                "get_program_participant_summary",
+                {
+                    method: "POST",
+                    body: {
+                        program_id: Id,
+                    },
+                }
+            );
+            setParticipantData(data);
+        } catch (error) {
+            console.error("Error fetching fee data:", error);
         }
-      );
-      setParticipantData(data);
-    } catch (error) {
-      console.error("Error fetching fee data:", error);
-    }
-  };
+    };
 
   useEffect(() => {
     fetchData();
@@ -64,7 +66,7 @@ function ParticipantsTab() {
 export default ParticipantsTab;
 
 const FeeLevelPieChart = ({ participantData }: any) => {
-  const baseColor = "#7677F4";
+    const baseColor = "#7677F4";
 
   const feeLevelData = participantData?.FeeLevelBreakUp?.map(
     (item: any, index: any) => {
@@ -132,7 +134,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
 };
 
 const AttendancePieChart = ({ participantData }: any) => {
-  const baseColor = "#7677F4";
+    const baseColor = "#7677F4";
 
   const attendanceData = participantData?.AttendanceStatus?.map(
     (item: any, index: any) => {
@@ -201,7 +203,7 @@ const AttendancePieChart = ({ participantData }: any) => {
 };
 
 const GenderPieChart = ({ participantData }: any) => {
-  const baseColor = "#7677F4";
+    const baseColor = "#7677F4";
 
   const genderData = participantData?.Gender?.map((item: any, index: any) => {
     // Extract the title from the object key

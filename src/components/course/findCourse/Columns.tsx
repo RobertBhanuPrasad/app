@@ -348,7 +348,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         
         let defaultValues = await handleCourseDefaultValues(row.original.id);
         // we have to delete schedules when user click on cipy course and other we need to prefill
-        defaultValues = _.omit(defaultValues, ["schedules"]);
+        defaultValues = _.omit(defaultValues, ["id","schedules"]);
         setNewCourseData(defaultValues);
         router.push("/Courses/NewCourse");
       };
