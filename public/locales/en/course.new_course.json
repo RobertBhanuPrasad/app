@@ -4,8 +4,6 @@
         "teaching_course": "I am teaching this course",
         "co_teaching": "I am co-teaching this course",
         "organizing_this_course": "I am organizing this course for another teacher",
-        "organization": "Organizatio",
-        "program_organizer": "Program Organizer",
         "program_organizer_placeholder": "Enter Program organizer Name",
         "select_organization":"Select Organization"
         
@@ -13,7 +11,7 @@
     "course_details_tab": {
         "teacher": "Teacher ",
         "teacher_placeholder": "Enter Teacher Name",
-        "assistant_teacher": "Assistant Teacher",
+        "assistant_gteacher": "Assistant Teacher",
         "languages_taught_placeholder": "Select Language",
         "display_language_option": "Display language translation option for participants",
         "available_languages_placeholder": "Select translation languages",

@@ -7,8 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { supabaseClient } from "src/utility";
 import { getColorWithDecreasedOpacity } from "src/utility/GenerateColours";
 import _ from "lodash";
-import { supabaseClient } from "src/utility";
-import { useRouter } from "next/router";
+
 import { useTranslation } from 'next-i18next';
 
 function ParticipantsTab() {

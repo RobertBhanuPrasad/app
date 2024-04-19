@@ -388,7 +388,7 @@ export function BaseTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
+        )}
         {/* If pagination set true then we have to show pagination  */}
         <div>
           {pagination && (
