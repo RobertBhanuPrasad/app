@@ -59,11 +59,19 @@ interface IBaseTable<TData, TValue> {
     /**
      * Additional CSS classes to pass to the table container
      */
-    table: string;
+    table?: string;
     /**
      * Additional CSS classes to pass to each row
      */
-    rowStyles: string;
+    rowStyles?: string;
+    /**
+     * Additional CSS classes to pass to table container 
+     */
+    tableContainer?: string;
+    /**
+     * Additional CSS classes to pass to table header
+     */
+    tableHeader?: string;
   };
 
   /**
@@ -183,8 +191,8 @@ export function BaseTable<TData, TValue>({
   /**
    * @function getRowId
    * @description this function return id if the row have the id else it will return the index as id
-   * @param originalRow 
-   * @param index 
+   * @param originalRow
+   * @param index
    * @returns index in string format
    */
   const getRowId = (originalRow: any, index: number) => {
@@ -395,10 +403,15 @@ export function BaseTable<TData, TValue>({
 
       {/* Table */}
       <div>
-        <div className="border border-[1px] overflow-hidden">
-          <div ref={tableRef} className={`w-full overflow-auto scrollbar`}>
+        <div className="border border-[1px] overflow-hidden rounded-xl">
+          <div
+            ref={tableRef}
+            className={`w-full ${tableStyles?.tableContainer} overflow-auto scrollbar`}
+          >
             <Table className={`${tableStyles?.table}`}>
-              <TableHeader className="bg-[#7677F41B] w-full">
+              <TableHeader
+                className={`bg-[#7677F41B] w-full ${tableStyles?.tableHeader}`}
+              >
                 {table &&
                   table?.getHeaderGroups()?.map((headerGroup) => (
                     <TableRow
@@ -409,7 +422,7 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableHead
                           className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#E9E9F5]"
+                            columnPinning && "sticky left-0 z-10 bg-[#F1F1FE]"
                           }`}
                         >
                           <Checkbox
@@ -431,11 +444,11 @@ export function BaseTable<TData, TValue>({
                               index === 0 &&
                               `sticky ${
                                 checkboxSelection ? "left-10" : "left-0"
-                              } z-10 bg-[#E9E9F5] drop-shadow-right`
+                              } z-10 bg-[#F1F1FE] drop-shadow-right`
                             } ${
                               columnPinning &&
                               index === headerGroup.headers.length - 1 &&
-                              `sticky right-0 z-10 bg-[#E9E9F5] drop-shadow-left w-[50px]`
+                              `sticky right-0 z-10 bg-[#F1F1FE] drop-shadow-left w-[50px]`
                             } text-[#333333] `}
                             key={header?.id}
                           >
