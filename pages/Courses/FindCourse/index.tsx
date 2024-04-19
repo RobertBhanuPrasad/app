@@ -34,6 +34,11 @@ import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { columns } from "../../../src/components/course/findCourse/Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
+import { useTranslation } from "next-i18next";
+import { authProvider } from "src/authProvider"
+import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+
 
 function index() {
   const { viewPreviewPage, AllFilterData } = newCourseStore();
@@ -328,7 +333,7 @@ function index() {
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
-
+  const { t } = useTranslation( [ "common", 'course.find_course']);
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="mx-8 flex flex-col gap-4">
@@ -363,12 +368,12 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>Select All</div>
+            <div>{t("course.find_course:select_all")}</div>
             <div className="font-semibold">{programData?.data?.total || 0}</div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            Selected: {allSelected ? programData?.data?.total : rowCount} Out of{" "}
+          {t("course.find_course:selected")}: {allSelected ? programData?.data?.total : rowCount} {t("course.find_course:out_of")}{" "}
             <div className="font-semibold">{programData?.data?.total || 0}</div>{" "}
           </div>
         </div>
@@ -381,7 +386,7 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl"
                 disabled={!allSelected}
               >
-                Export <ChevronDownIcon className="w-5 h-5" />
+                {t("course.find_course:export")}<ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
@@ -558,7 +563,7 @@ export const BasicFilters = () => {
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
   };
-
+  const { t } = useTranslation( [ "common", 'course.find_course']);
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
@@ -568,7 +573,7 @@ export const BasicFilters = () => {
           onChange={onChange}
           type="text"
           className="border-none focus:outline-none"
-          placeholder={`Search by Course ID`}
+          placeholder={t("course.find_course:search_by_course_id")}
         />
       </div>
       <div>
@@ -648,7 +653,7 @@ const AdvanceFilter = () => {
           formData.advanceFilter[key].length > 0
       ).length) ||
     0;
-
+    const { t } = useTranslation( [ "common", 'course.find_course']);
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">
@@ -663,7 +668,7 @@ const AdvanceFilter = () => {
           className="flex flex-row gap-2 !rounded-xl"
           variant="outline"
         >
-          All Filters
+          {t("course.find_course:all_filters")}
           <FilterIcon />
           {count > 0 && <CountComponent count={count} />}
         </Button>
@@ -674,3 +679,23 @@ const AdvanceFilter = () => {
     </Sheet>
   );
 };
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common","course.find_course"])
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || "/")}`,
+        permanent: false,
+      },
+    }
+  }
+  return {
+    props: {
+      ...translateProps,
+    },
+  }
+}

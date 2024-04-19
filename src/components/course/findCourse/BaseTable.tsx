@@ -304,7 +304,7 @@ export function BaseTable<TData, TValue>({
                 variant="outline"
                 className="flex flex-row justify-between w-[192px] h-10"
               >
-                Columns
+                {t("course.find_course:columns")}
                 <DropDown />
               </Button>
             </DropdownMenuTrigger>
