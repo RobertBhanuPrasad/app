@@ -21,7 +21,6 @@ export default function EditParticipantTabs() {
     const Id: number | undefined = query?.id
         ? parseInt(query.id as string)
         : undefined;
-
     const { mutate } = useUpdate();
     const onFormSubmission = (formData: any) => {
         mutate({
