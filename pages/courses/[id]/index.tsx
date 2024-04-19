@@ -590,7 +590,8 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       setNewCourseData(defaultValues)
-      router.push('/courses/add')
+      router.push({pathname:"/courses/add",query:{header:'Copy Course'}});
+      
     }
   }
 

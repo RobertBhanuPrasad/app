@@ -317,7 +317,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         data?.data?.program_accounting_status_id,
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
- 
+
       const handleEditCourse = async () => {
 
         /**
@@ -328,7 +328,6 @@ export const columns: ExtendedColumnDef<any>[] = [
         setNewCourseData(defaultValues);
 
         router.push(`/courses/${row.original.id}/edit`);
-
       };
 
       /**
@@ -344,7 +343,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         // we have to delete schedules when user click on cipy course and other we need to prefill
         defaultValues = _.omit(defaultValues, ["id","schedules"]);
         setNewCourseData(defaultValues);
-        router.push("/courses/add");
+        router.push({pathname:"/courses/add",query:{header:'Copy Course'}});
       };
 
       dropDownMenuData?.unshift({ label: "View Course", value: 9 });

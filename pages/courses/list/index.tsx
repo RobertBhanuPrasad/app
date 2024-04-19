@@ -172,8 +172,6 @@ function index() {
     filters: filters
   })
 
-  console.log('heyyy dattttaaa', programData)
-
   const [allSelected, setAllSelected] = useState()
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
@@ -305,10 +303,11 @@ function index() {
   const rowCount = Object.values(rowSelection).filter(value => value === true).length
 const router=useRouter()
  const {courseId} = router.query
- console.log("courseId is",courseId)
 
   return (
-    <div className="flex flex-col justify-between relative h-screen">
+    <div>
+      <p className="font-semibold text-2xl ml-8">Find Courses</p>
+    <div className="flex flex-col justify-between relative h-screen mt-4">
       <div className="mx-8 flex flex-col gap-4">
         <HeaderSection />
         <div className="w-full">
@@ -373,6 +372,7 @@ const router=useRouter()
           </DropdownMenu>
         </div>
       </div>
+    </div>
     </div>
   )
 }
