@@ -317,19 +317,17 @@ export const columns: ExtendedColumnDef<any>[] = [
         data?.data?.program_accounting_status_id,
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
-
+ 
       const handleEditCourse = async () => {
-        console.log("clicking on edit course");
 
         /**
          * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
          */
         const defaultValues = await handleCourseDefaultValues(row.original.id);
-        console.log("default values are", defaultValues);
 
         setNewCourseData(defaultValues);
 
-        router.push(`/courses/${[row.original.id]}/edit`);
+        router.push(`/courses/${row.original.id}/edit`);
 
       };
 
@@ -351,15 +349,12 @@ export const columns: ExtendedColumnDef<any>[] = [
 
       dropDownMenuData?.unshift({ label: "View Course", value: 9 });
 
-      console.log("dropdownMenuData",dropDownMenuData)
-
       const handleSelected = (value: number) => {
-        console.log("clicked on", value);
 
         switch (value) {
           case 1: {
             // TODO - Navigate to Participant Listing page
-            router.push(`/courses/${[row.original.id]}/participants/list`);
+            router.push(`/courses/${row.original.id}/participants/list`);
             break;
           }
           case 2: {
@@ -381,7 +376,7 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
           case 6: {
             // TODO - Navigate to submit course accounting page
-            router.push(`/courses/${[row.original.id]}`);
+            router.push(`/courses/${row.original.id}`);
             break;
           }
           case 7: {
@@ -395,7 +390,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 9: {
-            router.push(`/courses/${[row.original.id]}`);
+            router.push(`/courses/${row.original.id}`);
             break;
           }
         }

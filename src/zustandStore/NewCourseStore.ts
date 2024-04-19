@@ -4,6 +4,7 @@ interface NewCourseStore {
   viewThankyouPage: boolean;
   viewSuccessModal: boolean;
   viewRejectedModal: boolean;
+  viewPreviewPage: boolean;
   viewCourseAccountingSuccessModal: boolean;
   viewCourseAccountingRejectedDescriptionModal: boolean;
   viewCourseAccountingRejectedModal: boolean
@@ -11,6 +12,7 @@ interface NewCourseStore {
   setViewRejectedModal: (by: boolean) => void;
   setViewThankyouPage: (by: boolean) => void;
   setViewSuccessModal: (by: boolean) => void;
+  setViewPreviewPage: (by: boolean) => void;
   setViewCourseAccountingSuccessModal: (by: boolean) => void;
   setViewCourseAccountingRejectedDescriptionModal: (by: boolean) => void;
   setViewCourseAccountingRejectedModal: (by: boolean) => void;
@@ -48,6 +50,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   programId: 1,
   viewSuccessModal: false,
   viewRejectedModal: false,
+  viewPreviewPage: false,
   viewCourseAccountingSuccessModal: false,
   viewCourseAccountingRejectedDescriptionModal: false,
   viewCourseAccountingRejectedModal:false,
@@ -65,6 +68,11 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   setViewThankyouPage: (data: boolean) => {
     set(() => ({
       viewThankyouPage: data,
+    }));
+  },
+  setViewPreviewPage: (data: boolean) => {
+    set(() => ({
+      viewPreviewPage: data,
     }));
   },
   setNewCourseData: (data: any) => {
