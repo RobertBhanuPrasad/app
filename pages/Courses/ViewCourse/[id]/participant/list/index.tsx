@@ -618,7 +618,7 @@ const HeaderSection = () => {
 
   const handleClearAll = () => {
     setValue("participant_code", "");
-    setValue("registration_date", {});
+    setValue("registration_date", { from: "", to: "" });
     setValue("transaction_status", []);
   };
 
