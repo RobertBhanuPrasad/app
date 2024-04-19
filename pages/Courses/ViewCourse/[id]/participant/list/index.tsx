@@ -221,54 +221,70 @@ function index() {
     });
   }
 
-  if (
-    ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_health_declaration_checked",
-      operator: "eq",
-      value:
-        ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed,
-    });
+  if (ParticpantFiltersData?.advanceFilter?.health_consent_status) {
+    if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ==
+        true &&
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ==
+        true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "in",
+        value: [true, false],
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "eq",
+        value: true,
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "eq",
+        value: false,
+      });
+    }
   }
 
-  if (
-    ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_health_declaration_checked",
-      operator: "eq",
-      value:
-        !ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending,
-    });
-  }
-
-  if (
-    ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_program_agreement_checked",
-      operator: "eq",
-      value:
-        !ParticpantFiltersData?.advanceFilter?.program_agreement_status
-          ?.pending,
-    });
-  }
-
-  if (
-    ParticpantFiltersData?.advanceFilter?.program_agreement_status
-      ?.completed === true
-  ) {
-    filters.permanent.push({
-      field: "is_program_agreement_checked",
-      operator: "eq",
-      value:
-        ParticpantFiltersData?.advanceFilter?.program_agreement_status
-          ?.completed,
-    });
+  if (ParticpantFiltersData?.advanceFilter?.program_agreement_status) {
+    if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status
+        ?.completed == true &&
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ==
+        true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "in",
+        value: [true, false],
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status
+        ?.completed == true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "eq",
+        value: true,
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "eq",
+        value: false,
+      });
+    }
   }
 
   const {
