@@ -24,31 +24,29 @@ import { useList, useOne, useSelect } from "@refinedev/core";
 import { Header } from "src/ui/TextTags";
 import { TableHeader } from "src/ui/TextTags";
 import { DateField } from "src/ui/DateField";
-import {
-  RadioGroup,
-  RadioGroupCircleItem,
-} from "src/ui/radio-group";
+import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
 import classNames from "classnames";
 import { supabaseClient } from "src/utility";
 import _ from "lodash";
 import React from "react";
 import { useRouter } from "next/router";
+
+
 export const ExpenseDetails = () => {
   const { fields, append, remove } = useFieldArray({
     name: "program_expenses",
   });
+
   const { watch } = useFormContext();
+  const [totalTeachersOfProgram, setTotalTeachersOfProgram] = useState<any>();
+  const [revenueData, setRevenueData] = useState<any>();
 
-  // formData is a constant we can store the form data which is getting from the watch() from useFormContext
+  /**
+   * @constant formData
+   * @description this is a constant we can store the form data which is getting from the watch() from useFormContext
+   */
   const formData = watch();
-
-  useEffect(() => {
-    // If there is no data for the program_expenses in form then we will append fields with undefined
-    if (!formData?.program_expenses || formData?.program_expenses.length <= 0) {
-      append(undefined);
-    }
-  }, []);
 
   // query is the destructured query data in the useRouter
   const { query } = useRouter();
@@ -59,7 +57,15 @@ export const ExpenseDetails = () => {
     id: query?.id as string,
   });
 
-  // settingsData is the will get from the course_accounting_config table based on the organization from the programData
+  /**
+   * @constant settingsData
+   * REQUIRMENT as per the settings data from the hormony we need to manupulate the data in the expense details tab
+   * 1. If we have the honorarium is enabled then we need to prefill the data in the expense category, amount, name of the person to reimburse
+   * 2. we have the espense details block in the harmony system settings so what are present in that we need to display in the expense details part
+   * 3. For the reciept upload, we have check box in then we need to display and upload the file 
+   * All these data will get from the course_accounting_config table based on the organization id
+   * 
+   */
   const { data: settingsData } = useList({
     resource: "course_accounting_config",
     config: {
@@ -73,66 +79,96 @@ export const ExpenseDetails = () => {
     },
   });
 
+  /**
+   * @constant honorariumExpenseCategoryData
+   * REQUIRMENT we need to disable all the fields in the in the row where we are having the expense is honorarium
+   * For that disabling we are using this honorarium expense category data 
+   * we are geting this from the program_expense_category_master of particular organization which name is equal to the Honorarium
+   */
+  const {data: honorariumExpenseCategoryData} = useList({
+    resource: "program_expense_category_master",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: programData?.data?.organization_id,
+      },
+      {
+        field: "name",
+        operator: "eq",
+        value: "Honorarium",
+
+      }
+    ],
+  });
+
+
   //These are the columns to display in the Expense Details part
+  /**
+   * @constant columns
+   * @description this const we store the field name, component and className
+   * we have different stylins for the different colum
+   * all these details of a perticular column are stored in the objects and all the objects are stored in the columns array 
+   */
   const columns = [
     {
       field_name: "Expense_category",
-      component: <ExpenseCategory index={0} />,
+      component: <ExpenseCategory index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,
       className: "min-w-[250px] px-[12px]",
     },
     {
       field_name: "Details",
-      component: <Details index={0} />,
+      component: <Details index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,
       className: "min-w-[250px] px-[12px]",
     },
     {
       field_name: "Receipt_Id",
-      component: <ReceiptId index={0} />,
+      component: <ReceiptId index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,
       className: "min-w-[130px] max-w-[130px] px-[12px]",
     },
     {
       field_name: "Purchase_date",
-      component: <PurchaseDate index={0} />,
+      component: <PurchaseDate index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,
       className: "min-w-[180px] px-[12px]",
     },
     {
       field_name: "Amount",
-      component: <Amount index={0} />,
+      component: <Amount index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,  
       className: "min-w-[130px] max-w-[130px] px-[12px]",
     },
     {
       field_name: "Reimbursable",
-      component: <IsReimbursable index={0} />,
+      component: <IsReimbursable index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,
       className: "min-w-[120px] px-[12px]",
     },
     {
       field_name: "Payment_method",
-      component: "-",
+      component: "-", //TODO after getting the payment method dropdown list
       className: "min-w-[220px] px-[12px]",
     },
     {
       field_name: "Vat_condition",
-      component: "-",
+      component: "-", //TODO after getting the vat condition dropdown list
       className: "min-w-[220px] px-[12px]",
     },
     {
       field_name: "Vendor_tax_id",
-      component: <VendorTaxId index={0} />,
+      component: <VendorTaxId index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,
       className: "min-w-[220px] px-[12px]",
     },
     {
       field_name: "Vendor_name",
-      component: <VendorName index={0} />,
+      component: <VendorName index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,
       className: "min-w-[220px] px-[12px]",
     },
     {
       field_name: "Vat_rate",
-      component: "-",
+      component: "-", //TODO after getting the vat rate dropdown list
       className: "min-w-[220px] px-[12px]",
     },
     {
       field_name: "Name_of_person_to_reimburse",
-      component: <NameOfPersonToReimburse index={0} />,
+      component: <NameOfPersonToReimburse index={0} settingsData = {settingsData} honorariumExpenseId={honorariumExpenseCategoryData?.data?.[0]?.id as number}/>,
       className: "min-w-[250px] px-[12px]",
     },
     {
@@ -142,20 +178,31 @@ export const ExpenseDetails = () => {
     },
   ];
 
-  // expense_details_fields_list is the list coming from the course_accounting_config table
+  /**
+   * @const expense_details_fields_list
+   * @description here we are storing the list of the expense details fields which will come from the settingsData
+   * In the settings data we have all the data what we have in the hormony testing
+   * in the settings we have the expense columns list 
+   * that list we are storing in this const
+   */
   const expense_details_fields_list =
     settingsData?.data?.[0]?.expense_details_fields_list;
 
-  // filteredColumns are the filtered columns
-  // we need to filter the colums because as per the requirement we need to display the columns which are coming from the course_accounting_config table based on the settings
-  // we will filter based on the field_name coming from the api and our columns field name
+  
+  /**
+   * @constant filteredColumns
+   * from the settings data we have the expense fields list those columns only we need to display in the expense details 
+   * so here we need to filter the columns based on expense details block in the harmony system settingd 
+   * @description we are filtering based on the field_name of the expense_details_fields_list of the settings
+   */
   const filteredColumns = expense_details_fields_list?.map((item: any) => {
     const column: any = _.find(columns, { field_name: item.field_name }) || {};
     return {
       ...item,
       componentName: (index: number) => {
+        // If component is a string, return it directly
         if (typeof column.component === "string") {
-          return column.component; // If component is a string, return it directly
+          return column.component;
         } else {
           // If component is a React element, clone it and pass index as a prop
           return React.cloneElement(column.component, { index });
@@ -165,8 +212,56 @@ export const ExpenseDetails = () => {
     };
   });
 
-  // the toatal program expenses in the form
-  const program_expenses = formData.program_expenses || [];
+  useEffect(() => {
+    const fetchData = async () => {
+      // Fetch program data from the Supabase client
+      const { data } = await supabaseClient
+        .from("program")
+        .select("program_teachers(user_id(*,contact_id(*)))")
+        .eq("id", parseInt(query?.id as string));
+  
+      // Call a Supabase function to get revenue data
+      const { data: revenue } = await supabaseClient.functions.invoke(
+        "get_program_participant_summary",
+        {
+          method: "POST",
+          body: {
+            program_id: programData?.data?.id,
+          },
+        }
+      );
+  
+      setTotalTeachersOfProgram(data?.[0]);
+      setRevenueData(revenue);
+    };
+  
+    fetchData();
+  
+    const is_honorarium_enabled = true;
+    const honorarium_percentage = 1000 * 0.1;
+    const amountOfHonorarium =
+      honorarium_percentage / totalTeachersOfProgram?.program_teachers?.length;  
+    // If there are no program expenses in the form and honorarium is enabled, append fields
+    if (
+      (!formData?.program_expenses || formData?.program_expenses.length <= 0) &&
+      is_honorarium_enabled === true
+    ) {
+      totalTeachersOfProgram?.program_teachers?.map(
+        (item: { user_id: { id:number, contact_id: { id: number } } }, index: number) => {
+           append({
+            "expense_category": 4,
+            "amount": amountOfHonorarium?.toString(),
+            "name_of_person_to_reimbursable": item?.user_id?.id,
+          });
+        }        
+      );
+    } else if (
+      !formData?.program_expenses ||
+      formData?.program_expenses.length <= 0
+    ) {
+      append(undefined);
+    }
+  }, [totalTeachersOfProgram]);
 
   return (
     <div>
@@ -194,7 +289,7 @@ export const ExpenseDetails = () => {
               ))}
 
               <div className="w-[180px] px-[12px]">
-                <Action index={index} remove={remove} append={append} />
+                <Action index={index} remove={remove} append={append} teachersLength={totalTeachersOfProgram?.program_teachers?.length || 0}/>
               </div>
             </div>
           ))}
@@ -210,7 +305,7 @@ export const ExpenseDetails = () => {
  * @param index
  * @returns
  */
-const ExpenseCategory = ({ index }: { index: number }) => {
+const ExpenseCategory = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  }) => {
   // query is the destructured query data in the useRouter
   const { query } = useRouter();
 
@@ -266,12 +361,14 @@ const ExpenseCategory = ({ index }: { index: number }) => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
+
   return (
     <Select
       value={value}
       onValueChange={(val: any) => {
         onChange(val);
       }}
+      disabled={value === honorariumExpenseId && true}
     >
       <SelectTrigger>
         <SelectValue placeholder="Select" />
@@ -305,7 +402,7 @@ const ExpenseCategory = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const Details = ({ index }: { index: number }) => {
+const Details = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  })=> {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -313,12 +410,21 @@ const Details = ({ index }: { index: number }) => {
   } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.details`,
   });
+
+  const {
+    field: { value : expenseValue},
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
+  });
+
   return (
     <div>
       <Input
         value={value as string}
         onChange={onChange}
         error={error ? true : false}
+        disabled={expenseValue == honorariumExpenseId && true}
       />
     </div>
   );
@@ -330,7 +436,7 @@ const Details = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const ReceiptId = ({ index }: { index: number }) => {
+const ReceiptId = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -338,12 +444,22 @@ const ReceiptId = ({ index }: { index: number }) => {
   } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.recipt_id`,
   });
+
+  const {
+    field: { value : expenseValue},
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
+  });
+
   return (
     <div>
       <Input
         value={value as number}
         onChange={onChange}
         error={error ? true : false}
+        disabled={expenseValue === honorariumExpenseId && true}
+
       />
     </div>
   );
@@ -355,7 +471,7 @@ const ReceiptId = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const Amount = ({ index }: { index: number }) => {
+const Amount = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  })=> {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -363,12 +479,22 @@ const Amount = ({ index }: { index: number }) => {
   } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.amount`,
   });
+
+  const {
+    field: { value : expenseValue},
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
+  });
+
   return (
     <div>
       <Input
         value={value as number}
         onChange={onChange}
         error={error ? true : false}
+        disabled={expenseValue === honorariumExpenseId && true}
+
       />
     </div>
   );
@@ -380,7 +506,7 @@ const Amount = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-// const PaymentMethod = ({ index }: { index: number }) => {
+// const PaymentMethod = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  }) => {
 //   const {
 //     field: { value, onChange },
 //     fieldState: { error },
@@ -388,6 +514,13 @@ const Amount = ({ index }: { index: number }) => {
 //   } = useController<CourseAccountingFormFieldTypes>({
 //     name: `program_expenses.${index}.payment_method`,
 //   });
+
+// const {
+//   field: { value : expenseValue},
+//   // We give the type here because we will get the name as per the types we have in the form
+// } = useController<CourseAccountingFormFieldTypes>({
+//   name: `program_expenses.${index}.expense_category`,
+// });
 
 //   const { data } = useList<any>({
 //     resource: "option_labels",
@@ -420,6 +553,8 @@ const Amount = ({ index }: { index: number }) => {
 //         onValueChange={(val: any) => {
 //           onChange(val);
 //         }}
+// disabled={expenseValue === honorariumExpenseId && true}
+
 //       >
 //         <SelectTrigger>
 //           <SelectValue placeholder="Select" />
@@ -453,7 +588,7 @@ const Amount = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-// const VatCondition = ({ index }: { index: number }) => {
+// const VatCondition = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  }) => {
 //   const {
 //     field: { value, onChange },
 //     fieldState: { error },
@@ -461,6 +596,12 @@ const Amount = ({ index }: { index: number }) => {
 //   } = useController<CourseAccountingFormFieldTypes>({
 //     name: `program_expenses.${index}.vat_condition`,
 //   });
+// const {
+//   field: { value : expenseValue},
+//   // We give the type here because we will get the name as per the types we have in the form
+// } = useController<CourseAccountingFormFieldTypes>({
+//   name: `program_expenses.${index}.expense_category`,
+// });
 //   const options = [];
 //   return (
 //     <div className="">
@@ -469,6 +610,7 @@ const Amount = ({ index }: { index: number }) => {
 //         onValueChange={(val: any) => {
 //           onChange(val);
 //         }}
+// disabled={expenseValue === honorariumExpenseId && true}     
 //       >
 //         <SelectTrigger className="">
 //           <SelectValue placeholder="Select" />
@@ -502,7 +644,7 @@ const Amount = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const VendorTaxId = ({ index }: { index: number }) => {
+const VendorTaxId = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -510,12 +652,20 @@ const VendorTaxId = ({ index }: { index: number }) => {
   } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.vat_tax_id`,
   });
+  const {
+    field: { value : expenseValue},
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
+  });
   return (
     <div className="">
       <Input
         value={value as number}
         onChange={onChange}
         error={error ? true : false}
+        disabled={expenseValue === honorariumExpenseId && true}
+
       />
     </div>
   );
@@ -527,7 +677,7 @@ const VendorTaxId = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const VendorName = ({ index }: { index: number }) => {
+const VendorName = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  }) => {
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -535,12 +685,21 @@ const VendorName = ({ index }: { index: number }) => {
   } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.vendor_name`,
   });
+
+  const {
+    field: { value : expenseValue},
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
+  });
   return (
     <div className="">
       <Input
         value={value as string}
         onChange={onChange}
         error={error ? true : false}
+        disabled={expenseValue === honorariumExpenseId && true}
+
       />
     </div>
   );
@@ -552,7 +711,7 @@ const VendorName = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-// const VatRate = ({ index }: { index: number }) => {
+// const VatRate = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  }) => {
 //   const {
 //     field: { value, onChange },
 //     fieldState: { error },
@@ -560,6 +719,13 @@ const VendorName = ({ index }: { index: number }) => {
 //   } = useController<CourseAccountingFormFieldTypes>({
 //     name: `program_expenses.${index}.vat_rate`,
 //   });
+
+// const {
+//   field: { value : expenseValue},
+//   // We give the type here because we will get the name as per the types we have in the form
+// } = useController<CourseAccountingFormFieldTypes>({
+//   name: `program_expenses.${index}.expense_category`,
+// });
 //   const options = [ ];
 //   return (
 //     <div className="">
@@ -568,6 +734,7 @@ const VendorName = ({ index }: { index: number }) => {
 //         onValueChange={(val: any) => {
 //           onChange(val);
 //         }}
+// disabled={expenseValue === honorariumExpenseId && true}
 //       >
 //         <SelectTrigger className="">
 //           <SelectValue placeholder="Select" />
@@ -608,17 +775,21 @@ const Action = ({
   index,
   append,
   remove,
+  teachersLength
 }: {
   index: number;
   append: any;
   remove: any;
+  teachersLength:number
 }) => {
   const { watch } = useFormContext();
   const formData = watch().program_expenses || [];
   const isLastRow = index === formData?.length - 1;
   const isFirstRow = index === 0;
 
+
   const [deleteExpenseModalOpen, setDeleteExpenseModalOpen] = useState(false);
+
 
   /**
    * @function handleAddRow
@@ -639,7 +810,7 @@ const Action = ({
   return (
     <div className="w-[150px] flex gap-4 ">
       {/* Button to add a new row */}
-      {isLastRow && (
+      {isLastRow  && (
         <div
           onClick={handleAddRow}
           className="flex flex-row gap-1 justify-center items-center cursor-pointer text-[#7677F4]"
@@ -649,7 +820,7 @@ const Action = ({
         </div>
       )}
       {/* Button to delete a row */}
-      {!isFirstRow && (
+      {!isFirstRow &&  (
         <div
           onClick={() => setDeleteExpenseModalOpen(true)}
           className="flex flex-row gap-1 justify-center items-center text-[#7677F4] cursor-pointer"
@@ -711,13 +882,20 @@ const Action = ({
  * @param index
  * @returns
  */
-const PurchaseDate = ({ index }: { index: number }) => {
+const PurchaseDate =({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  })=> {
   const {
     field: { value = new Date(), onChange },
     fieldState: { error },
     // We give the type here because we will get the name as per the types we have in the form
   } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.purchase_date`,
+  });
+
+  const {
+    field: { value : expenseValue},
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
   });
   return (
     <div>
@@ -726,6 +904,7 @@ const PurchaseDate = ({ index }: { index: number }) => {
         onChange={onChange}
         placeholder=" "
         className="!w-[156px]"
+        disabled={expenseValue === honorariumExpenseId && true}
       />
     </div>
   );
@@ -737,13 +916,20 @@ const PurchaseDate = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-const IsReimbursable = ({ index }: { index: number }) => {
+const IsReimbursable = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  }) => {
   const {
     field: { value = 1, onChange },
     fieldState: { error },
     // We give the type here because we will get the name as per the types we have in the form
   } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.reimbursable`,
+  });
+
+  const {
+    field: { value : expenseValue},
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
   });
 
   return (
@@ -753,6 +939,7 @@ const IsReimbursable = ({ index }: { index: number }) => {
           onChange(parseInt(val));
         }}
         value={JSON.stringify(value)}
+        disabled={expenseValue === honorariumExpenseId && true}
       >
         <div className="flex flex-row gap-2 ">
           <RadioItem
@@ -787,7 +974,6 @@ const RadioItem: React.FC<RadioItemProps> = ({
   selectedRadioValue,
   value,
   label,
-  className,
 }) => {
   return (
     <>
@@ -819,13 +1005,20 @@ const RadioItem: React.FC<RadioItemProps> = ({
  * @param index
  * @returns
  */
-const NameOfPersonToReimburse = ({ index }: { index: number }) => {
+const NameOfPersonToReimburse = ({ index, settingsData, honorariumExpenseId }: { index: number, settingsData:any ,honorariumExpenseId : number  })=> {
   const {
     field: { value, onChange },
     fieldState: { error },
     // We give the type here because we will get the name as per the types we have in the form
   } = useController<CourseAccountingFormFieldTypes>({
     name: `program_expenses.${index}.name_of_person_to_reimbursable`,
+  });
+
+  const {
+    field: { value : expenseValue},
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.expense_category`,
   });
 
   const {
@@ -857,7 +1050,7 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
       const { data } = await supabaseClient
         .from("program")
         .select(
-          "program_organizers(user_id(contact_id(*))),program_assistant_teachers(*,user_id(contact_id(*))),program_teachers(*,user_id(contact_id(*)))"
+          "program_organizers(user_id(*,contact_id(*))),program_assistant_teachers(*,user_id(*,contact_id(*))),program_teachers(*,user_id(*,contact_id(*)))"
         )
         .eq("id", parseInt(query?.id as string));
 
@@ -873,7 +1066,6 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
       // setting the flattened data to the setPersonToReimburseOptionsData
       setPersonToReimburseOptionsData(uniqueData);
     };
-
     fetchData();
   }, [query?.id]);
 
@@ -896,6 +1088,7 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
         onValueChange={(val: any) => {
           onChange(val);
         }}
+      disabled={expenseValue === honorariumExpenseId && true}
       >
         <SelectTrigger>
           <SelectValue placeholder="Select" />
@@ -910,7 +1103,7 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
                 <>
                   <SelectItem
                     key={index}
-                    value={index + 1}
+                    value={option?.user_id?.id}
                     className="h-[44px]"
                   >
                     {option?.user_id?.contact_id?.full_name}
