@@ -864,32 +864,31 @@ export const getActions = ({
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
 
-  // Get the ID for failed transaction status
-  const failedTransactionStatusId = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_PAYMENT_STATUS,
-    PARTICIPANT_FAILED_PAYMENT_STATUS
-  )?.id;
-
   // Define conditions and corresponding actions
   const conditions = [
     {
+      // If the attendance status is pending then i need an action Update attendance status
       condition: attendenceStatusId === pendingAttendenceStatusId,
       //TODO I need to add cancel attendance status also based on settings data
       action: "Update attendance status",
     },
+
+    // If the transaction status is pending then i need an action Update transaction status
     {
-      condition:
-        transactionStatusId === pendingTransactionStatusId ||
-        transactionStatusId === failedTransactionStatusId,
+      condition: transactionStatusId === pendingTransactionStatusId,
       action: "Update transaction status",
     },
+
+    // If the PPA consent is unchecked then i need an action Pending PPA consent
     {
-      condition: isPPAConsentChecked,
-      action: "PPA consent required",
+      condition: !isPPAConsentChecked,
+      action: "Pending PPA consent",
     },
+
+    // If the Health consent is unchecked then i need an action Pending Health consent
     {
-      condition: isHealthDeclarationChecked,
-      action: "Health declaration required",
+      condition: !isHealthDeclarationChecked,
+      action: "Pending Health consent",
     },
   ];
 
