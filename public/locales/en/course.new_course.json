@@ -50,7 +50,7 @@
         "online_meeting_url_placeholder": "Enter Online Meeting URL",
         "online_meeting_note": "Note: Participants will join online course through your",
         "virtual_venue":"virtual venue",
-        "specific_location": "Please associate your course with a specific location for reporting purposes",
+        "specific_location": "Please  your course with a specific location for reporting purposes",
         "state": "State"
     },
     "fees_tab": {
