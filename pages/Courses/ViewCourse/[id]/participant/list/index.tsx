@@ -618,7 +618,7 @@ const HeaderSection = () => {
 
   const handleClearAll = () => {
     setValue("participant_code", "");
-    setValue("registration_date", "");
+    setValue("registration_date", {});
     setValue("transaction_status", []);
   };
 
@@ -738,7 +738,7 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
       />
       <div className="flex flex-row gap-4 justify-center items-center fixed p-2 rounded-b-3xl bottom-0 left-0 w-full shadow-[rgba(0,_0,_0,_0.24)_0px_2px_8px]">
         <Button
-          onClick={() => onSelect({})}
+          onClick={() => onSelect({ from: "", to: "" })}
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
           Reset
