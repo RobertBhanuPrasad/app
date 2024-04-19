@@ -1,32 +1,48 @@
-import { useList } from "@refinedev/core";
+import { useList, useOne } from "@refinedev/core";
 import { useRouter } from "next/router";
-import { useController, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
 
-export default function ViewDonationDetails({ setViewDonation }) {
+interface ViewDonationDetailsProps {
+    setViewDonation: React.Dispatch<React.SetStateAction<any>>;
+}
+export default function ViewDonationDetails({
+    setViewDonation,
+}: ViewDonationDetailsProps) {
     const { getValues } = useFormContext();
     const formData = getValues();
     const { query } = useRouter();
-    const queryResult = useList({
+    const Id: number | undefined = query?.participantId
+        ? parseInt(query.participantId as string)
+        : undefined;
+    const { data: donationData } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "currency_code,payment_date,error_message,response_message,send_payment_confirmation,total_amount,payment_method_id!inner(id,value),transaction_type_id!inner(id,value),transaction_status_id!inner(id,value),payment_transaction_id,participant_id!inner(id,contact_id!inner(id,full_name,date_of_birth,street_address,postal_code,country_id!inner(name),state_id!inner(name),city_id!inner(name),mobile,email,identification_num,identification_type_id!inner(id,name)),organisation_id!inner(id,name),donation_type,donation_date)",
+            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(value),transaction_status_id(value),payment_transaction_id",
         },
-        // TODO: replace with particpant_id from router
         filters: [
             {
                 field: "participant_id",
                 operator: "eq",
-                value: query.participantId,
+                value: Id,
             },
         ],
-        sorters: [{ field: "created_at", order: "desc" }],
+        sorters: [
+            {
+                field: "created_at",
+                order: "desc",
+            },
+        ],
     });
-    const {
-        field: { value: organisation_id },
-    } = useController({ name: "organisation_id" });
+    const { data: contactData } = useOne({
+        resource: "participant_registration",
+        id: Number(Id),
+        meta: {
+            select: "contact_id(id,full_name,email,mobile,identification_num,identification_type_id,date_of_birth,street_address,state_id!inner(name),city_id!inner(name),country_id!inner(name),postal_code)",
+        },
+    });
     return (
         <div>
             <div>
@@ -45,7 +61,11 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     orgainization
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {organisation_id ? organisation_id : "-"}
+                                    {donationData?.data[0]?.participant_id
+                                        ?.organisation_id?.name
+                                        ? donationData?.data[0]?.participant_id
+                                              ?.organisation_id?.name
+                                        : "-"}
                                 </Text>
                             </div>
 
@@ -54,9 +74,11 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Amount
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.currency_code && formData?.currency_code}{" "}
-                                    {formData?.total_amount
-                                        ? formData?.total_amount
+                                    {donationData?.data[0]?.currency_code &&
+                                        donationData?.data[0]
+                                            ?.currency_code}{" "}
+                                    {donationData?.data[0]?.total_amount
+                                        ? donationData?.data[0]?.total_amount
                                         : "-"}
                                 </Text>
                             </div>
@@ -66,7 +88,11 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Donation Type
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.donation_type ? formData?.donation_type : "-"}
+                                    {donationData?.data[0]?.participant_id
+                                        ?.donation_type?.value
+                                        ? donationData?.data[0]?.participant_id
+                                              ?.donation_type?.value
+                                        : "-"}
                                 </Text>
                             </div>
 
@@ -75,9 +101,12 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Donation Date
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.donation_date
+                                    {donationData?.data[0]?.participant_id
+                                        ?.donation_date
                                         ? formatDateString(
-                                              new Date(formData?.donation_date)
+                                              new Date(
+                                                  donationData?.data[0]?.participant_id?.donation_date
+                                              )
                                           )
                                         : "-"}
                                 </Text>
@@ -90,8 +119,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Payment Method
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.payment_method_id?.value
-                                        ? data?.payment_method_id?.value
+                                    {donationData?.data[0]?.payment_method_id
+                                        ?.value
+                                        ? donationData?.data[0]
+                                              ?.payment_method_id?.value
                                         : "-"}
                                 </Text>
                             </div>
@@ -101,8 +132,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Transaction Type
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.transaction_type
-                                        ? formData?.transaction_type
+                                    {donationData?.data[0]?.participant_id
+                                        ?.transaction_type?.value
+                                        ? donationData?.data[0]?.participant_id
+                                              ?.transaction_type?.value
                                         : "-"}
                                 </Text>
                             </div>
@@ -112,8 +145,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Transaction Status
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.transaction_status_value
-                                        ? formData.transaction_status_value
+                                    {donationData?.data[0]
+                                        ?.transaction_status_id?.value
+                                        ? donationData?.data[0]
+                                              ?.transaction_status_id?.value
                                         : "-"}
                                 </Text>
                             </div>
@@ -123,8 +158,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Transaction ID
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.payment_transaction_id
-                                        ? formData?.payment_transaction_id
+                                    {donationData?.data[0]
+                                        ?.payment_transaction_id
+                                        ? donationData?.data[0]
+                                              ?.payment_transaction_id
                                         : "-"}
                                 </Text>
                             </div>
@@ -143,8 +180,9 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Name
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.full_name
-                                        ? formData.full_name
+                                    {contactData?.data?.contact_id?.full_name
+                                        ? contactData?.data?.contact_id
+                                              ?.full_name
                                         : "-"}
                                 </Text>
                             </div>
@@ -154,9 +192,12 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Date of Birth
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.date_of_birth
+                                    {contactData?.data?.contact_id
+                                        ?.date_of_birth
                                         ? formatDateString(
-                                              new Date(formData?.date_of_birth)
+                                              new Date(
+                                                  contactData?.data?.contact_id?.date_of_birth
+                                              )
                                           )
                                         : "-"}
                                 </Text>
@@ -167,7 +208,11 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Address
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.street_address ? formData?.street_address : "-"}
+                                    {contactData?.data?.contact_id
+                                        ?.street_address
+                                        ? contactData?.data?.contact_id
+                                              ?.street_address
+                                        : "-"}
                                 </Text>
                             </div>
 
@@ -176,8 +221,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Country
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                {formData?.country
-                                        ? formData?.country
+                                    {contactData?.data?.contact_id?.country_id
+                                        ?.name
+                                        ? contactData?.data?.contact_id
+                                              ?.country_id?.name
                                         : "-"}
                                 </Text>
                             </div>
@@ -189,7 +236,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Zip/Postal Code
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.postal_code ? formData?.postal_code : "-"}
+                                    {contactData?.data?.contact_id?.postal_code
+                                        ? contactData?.data?.contact_id
+                                              ?.postal_code
+                                        : "-"}
                                 </Text>
                             </div>
 
@@ -198,8 +248,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     State
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.state
-                                        ? formData?.state
+                                    {contactData?.data?.contact_id?.state_id
+                                        ?.name
+                                        ? contactData?.data?.contact_id
+                                              ?.state_id?.name
                                         : "-"}
                                 </Text>
                             </div>
@@ -209,8 +261,10 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     City
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                {formData?.city
-                                        ? formData?.city
+                                    {contactData?.data?.contact_id?.city_id
+                                        ?.name
+                                        ? contactData?.data?.contact_id?.city_id
+                                              ?.name
                                         : "-"}
                                 </Text>
                             </div>
@@ -220,8 +274,9 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Mobile
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.mobile ? formData?.mobile
-                                     : "-"}
+                                    {contactData?.data?.contact_id?.mobile
+                                        ? contactData?.data?.contact_id?.mobile
+                                        : "-"}
                                 </Text>
                             </div>
                         </div>
@@ -232,23 +287,24 @@ export default function ViewDonationDetails({ setViewDonation }) {
                                     Email ID
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {formData?.email ? formData?.email : "-"}
+                                    {contactData?.data?.contact_id?.email
+                                        ? contactData?.data?.contact_id?.email
+                                        : "-"}
                                 </Text>
                             </div>
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[16px]">
-                                    {data?.participant_id?.contact_id
-                                        ?.identification_type_id?.name
-                                        ? data?.participant_id?.contact_id
-                                              ?.identification_type_id?.name
-                                        : "-"}
+                                    {contactData?.data?.contact_id
+                                        ?.identification_type_id?.value ??
+                                        contactData?.data?.contact_id
+                                            ?.identification_type_id?.value}
                                 </Text>
 
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {data?.participant_id?.contact_id
+                                    {contactData?.data?.contact_id
                                         ?.identification_num
-                                        ? data?.participant_id?.contact_id
+                                        ? contactData?.data?.contact_id
                                               ?.identification_num
                                         : "-"}
                                 </Text>
