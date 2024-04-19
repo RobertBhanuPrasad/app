@@ -21,7 +21,6 @@ export default function EditParticipantTabs() {
     const Id: number | undefined = query?.id
         ? parseInt(query.id as string)
         : undefined;
-
     const { mutate } = useUpdate();
     const onFormSubmission = (formData: any) => {
         mutate({
@@ -41,7 +40,7 @@ export default function EditParticipantTabs() {
                 accommodation_type_id: formData?.accommodationType,
             },
             // TODO: integrate with participant_payment_history id
-            id: Id,
+            id: Number(Id),
         });
     };
 
@@ -104,7 +103,7 @@ export default function EditParticipantTabs() {
         },
     ];
     // Check if accommodation should be rendered
-    if (!accommodationData?.program_id?.program_type_id?.is_online_program) {
+    if (accommodationData?.program_id?.program_type_id?.is_online_program) {
         tabs = tabs.filter((tab) => tab.label !== "Accommodation Details");
     }
 

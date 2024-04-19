@@ -33,7 +33,7 @@ interface ContactDataBaseType {
   email?: string;
   mobile?: number;
   street_address?: string;
-  identification_num?: number;
+  identification_num?: string;
   state_id?: number | StateDataBaseType;
   city_id?: number | CityDataBaseType;
   postal_code?: string;
@@ -396,6 +396,7 @@ interface ProgramTypesDataBaseType {
   has_alias_name?: boolean;
   health_type_name?: string;
   health_declaration?: string;
+  program_type_id?:ProgramDataBaseType | 
 }
 
 interface RegistrationFieldGroupsDataBaseType {
@@ -523,7 +524,7 @@ interface ParticipantPaymentHistoryDataBaseType {
   payment_transaction_id?: number | null;
   currency_code?: string | null;
   participant_id?: ParticipantRegistrationDataBaseType | number;
-  program_id?: number;
+  program_id?:  ProgramDataBaseType| number;
   total_amount?: number;
   transaction_status_id?: OptionValuesDataBaseType;
   transaction_date?: string | null;
@@ -590,6 +591,8 @@ interface ParticipantUtmParametersDataBaseType {
 }
 
 interface ParticipantRegistrationDataBaseType {
+  // TODO: transaction_type will change to transaction_type_id 
+  transaction_type: number|OptionValuesDataBaseType;
   id?: number;
   created_at?: Date;
   contact_id?: number | ContactDataBaseType;
@@ -603,7 +606,7 @@ interface ParticipantRegistrationDataBaseType {
   donation_type?: OptionValuesDataBaseType;
   donation_date?: Date;
   program_category_id?: number;
-  program_id?: number | ProgramTypesDataBaseType;
+  program_id?:  number|ProgramTypesDataBaseType;
   discount_code?: string;
   discounted_amount?: number;
   discounted_tax?: number;
@@ -690,6 +693,7 @@ interface ProgramDataBaseType {
     contact_number?: number;
   }[];
   modified_at?: Date;
+  is_online_program?:boolean
 }
 
 interface NewCourseFormFieldTypes {
@@ -795,29 +799,14 @@ interface EditParticipantDataBaseTypes {
 
 interface EditParticipantFormFieldTypes {
   id?: number | string;
-  full_name?: string;
-  mobile?: number;
   memo?: string;
-  transaction_status?: number;
-  transaction_fee_level_id?: string;
-  created_at?: Date;
-  currency_code?: string;
-  email?: string;
-  organisation_id?: number | OrganizationsDataBaseType;
+  transaction_status?: string;
   transaction_id?: number;
-  postal_code?: string;
-  total_amount?: number;
-  date_of_birth?: Date;
-  street_address?: string;
   accommodation_type_id?: number | ProgramAccommodationsDataBaseType;
   accommodation_snore?: boolean;
   roommate_snore?: boolean;
   participant_code?: string;
-  program_id?: number;
-  accommodation_fee?: number;
-  roommate_preferences_1?: string;
-  roommate_preferences_2?: string;
-  roommate_preferences_3?: string;
+  program_id?: number | ProgramTypesDataBaseType;
   discount_code?: string;
   participant_attendence_status_id?:
     | number
@@ -825,20 +814,9 @@ interface EditParticipantFormFieldTypes {
   transaction_status_id?: number | OptionValuesDataBaseType;
   transaction_status_value?: string;
   payment_date?: string;
-  payment_method?: string;
   payment_method_id?: number | OptionValuesDataBaseType;
   send_payment_confirmation?: boolean;
-  payment_transaction_id?: number;
-  response_message?: string;
-  error_message?: string;
-  expense_fee?: number;
-  donation_type?: string;
-  donation_date?: Date;
-  transaction_type?: string;
-  program_type_id?: boolean;
-  state?: string;
-  city?: string;
-  country?: string;
+  program_type_id?:boolean
 }
 
 /**

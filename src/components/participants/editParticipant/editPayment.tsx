@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Button } from "src/ui/button";
 
 import CalenderIcon from "@public/assets/CalenderIcon";
-import { useList, useSelect, useUpdate } from "@refinedev/core";
+import { useList, useOne, useSelect, useUpdate } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
+import { TRANSACTION_STATUS } from "src/constants/OptionLabels";
+import { CONFIRMED, FAILED } from "src/constants/OptionValueOrder";
 import { Text } from "src/ui/TextTags";
 import { Calendar } from "src/ui/calendar";
 import { Checkbox } from "src/ui/checkbox";
@@ -19,7 +21,11 @@ import {
 } from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
 import { formatDateString } from "src/utility/DateFunctions";
-export default function EditPayment({ setEditPayment }) {
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+interface EditPaymentProps {
+    setEditPayment: React.Dispatch<React.SetStateAction<any>>;
+}
+export default function EditPayment({ setEditPayment }: EditPaymentProps) {
     const { query } = useRouter();
     const { mutate } = useUpdate();
     const { watch, getValues } = useFormContext();
@@ -60,11 +66,6 @@ export default function EditPayment({ setEditPayment }) {
         // defaultValue: paymentData?.payment_method_id?.id,
     });
     const {
-        field: { value: transaction_id },
-    } = useController({
-        name: "transaction_id",
-    });
-    const {
         field: { value: response_message },
     } = useController({
         name: "response_message",
@@ -94,6 +95,14 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
+    const CONFIRMED_ID = getOptionValueObjectByOptionOrder(
+        TRANSACTION_STATUS,
+        CONFIRMED
+    )?.id;
+    const FAILED_ID = getOptionValueObjectByOptionOrder(
+        TRANSACTION_STATUS,
+        FAILED
+    )?.id;
     // Getting option values for transaction status
     const { options: transactionStatus } = useSelect({
         resource: "option_values",
@@ -107,7 +116,7 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-   // Getting option label for payment method
+    // Getting option label for payment method
     const { data: payment_data } = useList<any>({
         resource: "option_labels",
         filters: [
@@ -132,7 +141,36 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-       return (
+    const Id: number | undefined = query?.participantId
+        ? parseInt(query.participantId as string)
+        : undefined;
+    const { data } = useOne({
+        resource: "participant_registration",
+        id: Number(Id),
+        meta: {
+            select: "contact_id(full_name)",
+        },
+    });
+    const transactionData = useList({
+        resource: "participant_payment_history",
+        meta: {
+            select: "transaction_id,response_message,error_message",
+        },
+        filters: [
+            {
+                field: "participant_id",
+                operator: "eq",
+                value: Id,
+            },
+        ],
+        sorters: [
+            {
+                field: "created_at",
+                order: "desc",
+            },
+        ],
+    });
+    return (
         <div>
             <div>
                 <div>
@@ -150,9 +188,11 @@ export default function EditPayment({ setEditPayment }) {
                                         <div>
                                             <Textarea
                                                 value={
-                                                    defaultData?.full_name
-                                                        ? defaultData?.full_name
-                                                        : ""
+                                                    data?.data?.contact_id
+                                                        ?.full_name
+                                                        ? data?.data?.contact_id
+                                                              ?.full_name
+                                                        : "-"
                                                 }
                                                 className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed"
                                             />
@@ -166,7 +206,18 @@ export default function EditPayment({ setEditPayment }) {
                                         <div>
                                             {/* TODO: need to disable select for confirmed and failed transaction ids */}
                                             <Select
-                                                value={transaction_status_id}
+                                                disabled={
+                                                    transaction_status_id?.id ==
+                                                    FAILED_ID
+                                                        ? true
+                                                        : transaction_status_id?.id ==
+                                                          CONFIRMED_ID
+                                                        ? true
+                                                        : false
+                                                }
+                                                value={
+                                                    transaction_status_id?.id
+                                                }
                                                 onValueChange={(val: any) => {
                                                     transactionOnchange(val);
                                                 }}
@@ -210,7 +261,11 @@ export default function EditPayment({ setEditPayment }) {
                                         </Text>
                                         <div>
                                             <Textarea
-                                                value={transaction_id}
+                                                value={
+                                                    transactionData?.data
+                                                        ?.data[0]
+                                                        ?.transaction_id
+                                                }
                                                 className="!w-[278px] resize-none !important h-[40px]"
                                             />
                                         </div>
@@ -286,6 +341,15 @@ export default function EditPayment({ setEditPayment }) {
                                         <div className="!w-[278px]">
                                             {/* TODO:need to disable select for confimed and failed transaction ids */}
                                             <Select
+                                                disabled={
+                                                    transaction_status_id?.id ==
+                                                    FAILED_ID
+                                                        ? true
+                                                        : transaction_status_id?.id ==
+                                                          CONFIRMED_ID
+                                                        ? true
+                                                        : false
+                                                }
                                                 value={payment_method_id}
                                                 onValueChange={(val: any) => {
                                                     paymentMethodOnchange(val);
@@ -335,7 +399,11 @@ export default function EditPayment({ setEditPayment }) {
                                         </Text>
                                         <div>
                                             <Textarea
-                                                value={response_message}
+                                                value={
+                                                    transactionData?.data
+                                                        ?.data[0]
+                                                        ?.response_message
+                                                }
                                                 className="!w-[278px] resize-none !important h-[40px]"
                                             />
                                         </div>
@@ -347,7 +415,10 @@ export default function EditPayment({ setEditPayment }) {
                                 <Text className="py-[5px]">Error Message</Text>
                                 <div>
                                     <Textarea
-                                        value={error_message}
+                                        value={
+                                            transactionData?.data?.data[0]
+                                                ?.error_message
+                                        }
                                         className=" resize-none !important !h-[40px] !w-[578px]"
                                     />
                                 </div>

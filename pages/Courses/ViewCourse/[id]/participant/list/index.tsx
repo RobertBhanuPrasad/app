@@ -221,54 +221,70 @@ function index() {
     });
   }
 
-  if (
-    ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_health_declaration_checked",
-      operator: "eq",
-      value:
-        ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed,
-    });
+  if (ParticpantFiltersData?.advanceFilter?.health_consent_status) {
+    if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ==
+        true &&
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ==
+        true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "in",
+        value: [true, false],
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "eq",
+        value: true,
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "eq",
+        value: false,
+      });
+    }
   }
 
-  if (
-    ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_health_declaration_checked",
-      operator: "eq",
-      value:
-        !ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending,
-    });
-  }
-
-  if (
-    ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_program_agreement_checked",
-      operator: "eq",
-      value:
-        !ParticpantFiltersData?.advanceFilter?.program_agreement_status
-          ?.pending,
-    });
-  }
-
-  if (
-    ParticpantFiltersData?.advanceFilter?.program_agreement_status
-      ?.completed === true
-  ) {
-    filters.permanent.push({
-      field: "is_program_agreement_checked",
-      operator: "eq",
-      value:
-        ParticpantFiltersData?.advanceFilter?.program_agreement_status
-          ?.completed,
-    });
+  if (ParticpantFiltersData?.advanceFilter?.program_agreement_status) {
+    if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status
+        ?.completed == true &&
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ==
+        true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "in",
+        value: [true, false],
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status
+        ?.completed == true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "eq",
+        value: true,
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "eq",
+        value: false,
+      });
+    }
   }
 
   const {
@@ -282,7 +298,7 @@ function index() {
     resource: "participant_registration",
     meta: {
       select:
-        "*, transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method, transaction_status_id(*)))",
+        "*, transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
     sorters: {
@@ -498,6 +514,7 @@ function index() {
             columns={columns}
             data={participantData?.data?.data || []}
             columnPinning={true}
+            columnSelector={true}
           />
         </div>
       </div>
@@ -601,7 +618,7 @@ const HeaderSection = () => {
 
   const handleClearAll = () => {
     setValue("participant_code", "");
-    setValue("registration_date", "");
+    setValue("registration_date", { from: "", to: "" });
     setValue("transaction_status", []);
   };
 
@@ -721,7 +738,7 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
       />
       <div className="flex flex-row gap-4 justify-center items-center fixed p-2 rounded-b-3xl bottom-0 left-0 w-full shadow-[rgba(0,_0,_0,_0.24)_0px_2px_8px]">
         <Button
-          onClick={() => onSelect({})}
+          onClick={() => onSelect({ from: "", to: "" })}
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
           Reset
