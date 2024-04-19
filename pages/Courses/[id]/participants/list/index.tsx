@@ -4,7 +4,7 @@ import ClearAll from "@public/assets/ClearAll";
 import React, { useEffect, useState } from "react";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Button } from "src/ui/button";
-import { columns } from "../../../../../../src/components/participants/columns";
+import { columns } from "../../../../../src/components/participants/columns";
 import { CrudFilters, useTable } from "@refinedev/core";
 import { Input } from "src/ui/input";
 import { SearchIcon } from "lucide-react";
@@ -16,7 +16,7 @@ import {
 } from "src/ui/dropdown-menu";
 import DropDown from "@public/assets/DropDown";
 import { format } from "date-fns";
-import { ParticipantsAdvanceFilter } from "../../../../../../src/components/participants/ParticipantsListAdvanceFilters";
+import { ParticipantsAdvanceFilter } from "../../../../../src/components/participants/ParticipantsListAdvanceFilters";
 import { useController, useFormContext } from "react-hook-form";
 import Form from "@components/Formfield";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
@@ -28,7 +28,7 @@ import {
   PARTICIPANT_PAYMENT_STATUS,
 } from "src/constants/OptionLabels";
 import { MultiSelect } from "src/ui/multi-select";
-import { CountComponent } from "pages/Courses/FindCourse";
+import { CountComponent } from "pages/courses/list";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";

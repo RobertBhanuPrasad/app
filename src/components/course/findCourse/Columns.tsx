@@ -43,7 +43,7 @@ export const columns: ExtendedColumnDef<any>[] = [
       return (
         <div
           onClick={() => {
-            router.push(`/Courses/ViewCourse/${row?.original?.id}`);
+            router.push(`/courses/${row?.original?.id}`);
           }}
           className="w-[100px] text-[#7677F4] font-semibold"
         >
@@ -278,7 +278,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setViewPreviewPage, setNewCourseData,setViewThankyouPage } = newCourseStore();
+      const { setNewCourseData,setViewThankyouPage } = newCourseStore();
 
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -317,19 +317,18 @@ export const columns: ExtendedColumnDef<any>[] = [
         data?.data?.program_accounting_status_id,
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
-
+ 
       const handleEditCourse = async () => {
-        console.log("clicking on edit course");
 
         /**
          * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
          */
         const defaultValues = await handleCourseDefaultValues(row.original.id);
-        console.log("default values are", defaultValues);
 
         setNewCourseData(defaultValues);
 
-        setViewPreviewPage(true);
+        router.push(`/courses/${row.original.id}/edit`);
+
       };
 
       /**
@@ -345,18 +344,17 @@ export const columns: ExtendedColumnDef<any>[] = [
         // we have to delete schedules when user click on cipy course and other we need to prefill
         defaultValues = _.omit(defaultValues, ["id","schedules"]);
         setNewCourseData(defaultValues);
-        router.push("/Courses/NewCourse");
+        router.push("/courses/add");
       };
 
-      dropDownMenuData?.unshift({ label: "View Course", value: 10 });
+      dropDownMenuData?.unshift({ label: "View Course", value: 9 });
 
       const handleSelected = (value: number) => {
-        console.log("clicked on", value);
 
         switch (value) {
           case 1: {
             // TODO - Navigate to Participant Listing page
-            router.push("/");
+            router.push(`/courses/${row.original.id}/participants/list`);
             break;
           }
           case 2: {
@@ -378,7 +376,7 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
           case 6: {
             // TODO - Navigate to submit course accounting page
-            router.push("/");
+            router.push(`/courses/${row.original.id}`);
             break;
           }
           case 7: {
@@ -392,12 +390,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 9: {
-            // TODO - Navigate to edit course accounting page
-            router.push("/");
-            break;
-          }
-          case 10: {
-            router.push(`/Courses/ViewCourse/${[row.original.id]}`);
+            router.push(`/courses/${row.original.id}`);
             break;
           }
         }
