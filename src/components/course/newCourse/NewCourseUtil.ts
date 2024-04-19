@@ -90,7 +90,7 @@ export const handlePostProgramData = async (
 
   //We have to create a venue when the program is offline .no need to create venue for online program
   if (programTypeData?.is_online_program === false) {
-    const venuId = await handlePostVenueData(body);
+    const venuId = await handlePostVenueData(body, loggedInUserId);
 
     if (venuId === false) {
       return false;
@@ -857,7 +857,7 @@ export const handlePostProgramContactDetailsData = async (
  * We need to update existing venue table if it is already present
  * @param body formData
  */
-const handlePostVenueData = async (body: any) => {
+const handlePostVenueData = async (body: any, loggedInUserId: number) => {
   // if body.isNewVenue true then first we have to create a new venue and then add it to program table with created venue_id
   // if user select and created new venue in step-3 then we have to create new venue and add it to program table
   // if user sleect existed venue and updated the venue details by clicking edit icon in existed venue popup then we have to update existing venue table right
@@ -901,6 +901,8 @@ const handlePostVenueData = async (body: any) => {
   if (venueData.postal_code) {
     venueBody.postal_code = venueData.postal_code;
   }
+
+  venueBody.created_by_user_id = loggedInUserId;
 
   //TODO: Need to post latitude and longitude also when map component was done.
 
@@ -1013,7 +1015,10 @@ export const handleProgramFeeLevelSettingsData = async (
   body: any,
   programId: number
 ) => {
-  if (body?.program_fee_level_settings?.length == 0 || !body?.program_fee_level_settings) {
+  if (
+    body?.program_fee_level_settings?.length == 0 ||
+    !body?.program_fee_level_settings
+  ) {
     return true;
   }
   // Fetching the existing fee level settings data

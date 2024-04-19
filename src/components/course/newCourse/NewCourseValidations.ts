@@ -130,8 +130,8 @@ const newVenueSchedules = z.object({
 const feelLevelsValidationSchema = z.array(
   z.object({
     is_enable: z.boolean(),
-    total: z.string().regex(/^\d+$/),
-    early_bird_total: z.string().regex(/^\d+$/),
+    total: z.union([z.string().regex(/^\d+$/), z.number()]),
+    early_bird_total: z.union([z.string().regex(/^\d+$/), z.number()]),
   })
 );
 
@@ -143,9 +143,12 @@ const contactValidationSchema = z.array(
     contact_email: z
       .string({ required_error: "Contact email is a required field." })
       .email({ message: "Please enter correct Email" }),
-    contact_number: z
-      .string({ required_error: "Contact mobile is a required field." })
-      .regex(/^\d+$/),
+    contact_number: z.union([
+      z
+        .string({ required_error: "Contact mobile is a required field." })
+        .regex(/^\d+$/),
+      z.number(),
+    ]),
   })
 );
 const accommodationValidationSchema = z.array(
