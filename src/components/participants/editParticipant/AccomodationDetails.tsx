@@ -1,4 +1,5 @@
 import { useList } from "@refinedev/core";
+import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { Input } from "src/ui/input";
@@ -17,9 +18,7 @@ export default function AccomodationDetails() {
     const { getValues } = useFormContext();
     const FormData = getValues();
     const {
-        field: {
-            value: accommodation_type_id,
-        },
+        field: { value: accommodation_type_id },
     } = useController({
         name: "accommodation_type_id",
     });
@@ -28,31 +27,13 @@ export default function AccomodationDetails() {
     } = useController({
         name: "accommodation_snore",
     });
-    const {
-        field: { value: accommodation_fee },
-    } = useController({
-        name: "accommodation_fee",
-    });
-    const {
-        field: { value: roommate_preferences_1 },
-    } = useController({
-        name: "roommate_preferences_1",
-    });
-    const {
-        field: { value: roommate_preferences_2 },
-    } = useController({
-        name: "roommate_preferences_2",
-    });
-    const {
-        field: { value: roommate_preferences_3 },
-    } = useController({
-        name: "roommate_preferences_3",
-    });
+
     const {
         field: { value: roommate_snore, onChange: roomateSnoreChange },
     } = useController({
         name: "roommate_snore",
     });
+
     // TODO: need to get the api data for accomodation types for particular program_id
 
     const { data: accommodationOptions } = useList<any>({
@@ -68,6 +49,30 @@ export default function AccomodationDetails() {
             select: "accommodation_type_id!inner(id,name)",
         },
     });
+    const { query } = useRouter();
+    const Id: number | undefined = query?.participantId
+        ? parseInt(query.id as string)
+        : undefined;
+    const { data } = useList({
+        resource: "participant_payment_history",
+        meta: {
+            select: "accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)),roommate_preferences_1,roommate_preferences_2,roommate_preferences_3)",
+        },
+        filters: [
+            {
+                field: "participant_id",
+                operator: "eq",
+                value: Id,
+            },
+        ],
+        sorters: [
+            {
+                field: "created_at",
+                order: "desc",
+            },
+        ],
+    });
+    const accommodationData = data?.data[0];
     return (
         <div id="Accomodation">
             <Text className="font-semibold text-[18px] py-[25px]">
@@ -82,10 +87,7 @@ export default function AccomodationDetails() {
                     </div>
                     <div className="py-[5px]">
                         {/* TODO: need to disable this accommodation type select */}
-                        <Select
-                        disabled={true}
-                            value={accommodation_type_id}
-                        >
+                        <Select disabled={true} value={accommodation_type_id}>
                             <SelectTrigger className="w-[278px] border text-[#999999] font-semibold !border-[#999999]">
                                 <SelectValue placeholder="Select accomodation type" />
                             </SelectTrigger>
@@ -126,8 +128,12 @@ export default function AccomodationDetails() {
                         Fee per Person
                     </Text>
                     <Text className="py-[5px] font-semibold">
-                        {FormData?.currency_code ? FormData?.currency_code : ""}{" "}
-                        {accommodation_fee ? accommodation_fee : "-"}
+                        {accommodationData?.currency_code
+                            ? accommodationData?.currency_code
+                            : ""}{" "}
+                        {accommodationData?.accommodation_fee
+                            ? accommodationData?.accommodation_fee
+                            : "-"}
                     </Text>
                 </div>
                 <div className="text-[#999999] ">
@@ -136,8 +142,10 @@ export default function AccomodationDetails() {
                     </Text>
                     <Input
                         value={
-                            roommate_preferences_1
-                                ? roommate_preferences_1
+                            accommodationData?.participant_id
+                                ?.roommate_preferences_1
+                                ? accommodationData?.participant_id
+                                      ?.roommate_preferences_1
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
@@ -151,8 +159,10 @@ export default function AccomodationDetails() {
                     </Text>
                     <Input
                         value={
-                            roommate_preferences_2
-                                ? roommate_preferences_2
+                            accommodationData?.participant_id
+                                ?.roommate_preferences_2
+                                ? accommodationData?.participant_id
+                                      ?.roommate_preferences_2
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
@@ -164,8 +174,10 @@ export default function AccomodationDetails() {
                     </Text>
                     <Input
                         value={
-                            roommate_preferences_3
-                                ? roommate_preferences_3
+                            accommodationData?.participant_id
+                                ?.roommate_preferences_3
+                                ? accommodationData?.participant_id
+                                      ?.roommate_preferences_3
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
@@ -178,21 +190,29 @@ export default function AccomodationDetails() {
                     </Text>
                     <div className=""></div>
                     <RadioGroup
-                        value={accommodation_snore}
-                        onValueChange={(value) => snoreChange(value)}
+                        value={JSON.stringify(accommodation_snore)}
+                        onValueChange={(value) => {
+                            value === "true"
+                                ? snoreChange(true)
+                                : snoreChange(false);
+                        }}
                     >
-                        <div className="flex flex-row gap-6 ">
+                        <div className="flex flex-row gap-6">
                             <RadioButtonCard
-                                value={accommodation_snore}
-                                selectedRadioValue={accommodation_snore}
+                                value="true" // Use boolean value directly
+                                selectedRadioValue={JSON.stringify(
+                                    accommodation_snore
+                                )} // Use the actual value, no need to stringify
                                 label="Yes"
-                                className="w-[112px] !h-[40px] rounded-[12px]"
+                                className="w-[112px] h-[40px] rounded-[12px]" // Removed unnecessary ! from className
                             />
                             <RadioButtonCard
-                                value={String(accommodation_snore)}
-                                selectedRadioValue={accommodation_snore}
+                                value="false" // Use boolean value directly
+                                selectedRadioValue={JSON.stringify(
+                                    accommodation_snore
+                                )} // Use the actual value, no need to stringify
                                 label="No"
-                                className="w-[112px] !h-[40px] rounded-[12px]"
+                                className="w-[112px] h-[40px] rounded-[12px]" // Removed unnecessary ! from className
                             />
                         </div>
                     </RadioGroup>
@@ -203,19 +223,23 @@ export default function AccomodationDetails() {
                     Would you object to having room mate who snores?
                 </Text>
                 <RadioGroup
-                    value={roommate_snore}
-                    onValueChange={(value) => roomateSnoreChange(value)}
+                    value={JSON.stringify(FormData?.roommate_snore)}
+                    onValueChange={(value) => {
+                        value === "true"
+                            ? roomateSnoreChange(true)
+                            : roomateSnoreChange(false);
+                    }}
                 >
                     <div className="flex flex-row gap-6 ">
                         <RadioButtonCard
-                            value={roommate_snore}
-                            selectedRadioValue={roommate_snore}
+                            value="true"
+                            selectedRadioValue={JSON.stringify(FormData?.roommate_snore)}
                             label="Yes"
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
                         <RadioButtonCard
-                            value={String(roommate_snore)}
-                            selectedRadioValue={roommate_snore}
+                            value="false"
+                            selectedRadioValue={JSON.stringify(roommate_snore)}
                             label="No"
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
