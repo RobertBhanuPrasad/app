@@ -333,7 +333,7 @@ function index() {
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
-  const { t } = useTranslation();
+  const { t } = useTranslation( [ "common", 'course.find_course']);
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="mx-8 flex flex-col gap-4">
@@ -564,7 +564,7 @@ export const BasicFilters = () => {
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
   };
-  const { t } = useTranslation();
+  const { t } = useTranslation( [ "common", 'course.find_course']);
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
@@ -654,7 +654,7 @@ const AdvanceFilter = () => {
           formData.advanceFilter[key].length > 0
       ).length) ||
     0;
-    const { t } = useTranslation();
+    const { t } = useTranslation( [ "common", 'course.find_course']);
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">
@@ -682,7 +682,7 @@ const AdvanceFilter = () => {
 };
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common","course.find_course","new_strings"])
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common","course.find_course"])
   if (!authenticated) {
     return {
       props: {
