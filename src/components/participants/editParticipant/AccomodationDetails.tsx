@@ -27,12 +27,13 @@ export default function AccomodationDetails() {
     } = useController({
         name: "accommodation_snore",
     });
-   
+
     const {
         field: { value: roommate_snore, onChange: roomateSnoreChange },
     } = useController({
         name: "roommate_snore",
     });
+
     // TODO: need to get the api data for accomodation types for particular program_id
 
     const { data: accommodationOptions } = useList<any>({
@@ -52,7 +53,7 @@ export default function AccomodationDetails() {
     const Id: number | undefined = query?.participantId
         ? parseInt(query.id as string)
         : undefined;
-    const {data} = useList({
+    const { data } = useList({
         resource: "participant_payment_history",
         meta: {
             select: "accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)),roommate_preferences_1,roommate_preferences_2,roommate_preferences_3)",
@@ -71,7 +72,7 @@ export default function AccomodationDetails() {
             },
         ],
     });
-    const accommodationData=data?.data[0]
+    const accommodationData = data?.data[0];
     return (
         <div id="Accomodation">
             <Text className="font-semibold text-[18px] py-[25px]">
@@ -141,8 +142,10 @@ export default function AccomodationDetails() {
                     </Text>
                     <Input
                         value={
-                            accommodationData?.participant_id?.roommate_preferences_1
-                                ?  accommodationData?.participant_id?.roommate_preferences_1
+                            accommodationData?.participant_id
+                                ?.roommate_preferences_1
+                                ? accommodationData?.participant_id
+                                      ?.roommate_preferences_1
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
@@ -156,8 +159,10 @@ export default function AccomodationDetails() {
                     </Text>
                     <Input
                         value={
-                            accommodationData?.participant_id?.roommate_preferences_2
-                                ?  accommodationData?.participant_id?.roommate_preferences_2
+                            accommodationData?.participant_id
+                                ?.roommate_preferences_2
+                                ? accommodationData?.participant_id
+                                      ?.roommate_preferences_2
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
@@ -169,8 +174,10 @@ export default function AccomodationDetails() {
                     </Text>
                     <Input
                         value={
-                            accommodationData?.participant_id?.roommate_preferences_3
-                                ?  accommodationData?.participant_id?.roommate_preferences_3
+                            accommodationData?.participant_id
+                                ?.roommate_preferences_3
+                                ? accommodationData?.participant_id
+                                      ?.roommate_preferences_3
                                 : "-"
                         }
                         className="w-[278px] !h-[40px] resize-none py-[5px]"
@@ -184,26 +191,28 @@ export default function AccomodationDetails() {
                     <div className=""></div>
                     <RadioGroup
                         value={JSON.stringify(accommodation_snore)}
-                        onValueChange={(value) =>
-                            snoreChange(parseInt(value), console.log(value))
-                        }
+                        onValueChange={(value) => {
+                            value === "true"
+                                ? snoreChange(true)
+                                : snoreChange(false);
+                        }}
                     >
-                        <div className="flex flex-row gap-6 ">
+                        <div className="flex flex-row gap-6">
                             <RadioButtonCard
-                                value={JSON.stringify(
-                                    FormData?.accommodation_snore
-                                )}
-                                selectedRadioValue={accommodation_snore}
+                                value="true" // Use boolean value directly
+                                selectedRadioValue={JSON.stringify(
+                                    accommodation_snore
+                                )} // Use the actual value, no need to stringify
                                 label="Yes"
-                                className="w-[112px] !h-[40px] rounded-[12px]"
+                                className="w-[112px] h-[40px] rounded-[12px]" // Removed unnecessary ! from className
                             />
                             <RadioButtonCard
-                                value={JSON.stringify(
-                                    !FormData?.accommodation_snore
-                                )}
-                                selectedRadioValue={accommodation_snore}
+                                value="false" // Use boolean value directly
+                                selectedRadioValue={JSON.stringify(
+                                    accommodation_snore
+                                )} // Use the actual value, no need to stringify
                                 label="No"
-                                className="w-[112px] !h-[40px] rounded-[12px]"
+                                className="w-[112px] h-[40px] rounded-[12px]" // Removed unnecessary ! from className
                             />
                         </div>
                     </RadioGroup>
@@ -214,19 +223,23 @@ export default function AccomodationDetails() {
                     Would you object to having room mate who snores?
                 </Text>
                 <RadioGroup
-                    value={roommate_snore}
-                    onValueChange={(value) => roomateSnoreChange(value)}
+                    value={JSON.stringify(FormData?.roommate_snore)}
+                    onValueChange={(value) => {
+                        value === "true"
+                            ? roomateSnoreChange(true)
+                            : roomateSnoreChange(false);
+                    }}
                 >
                     <div className="flex flex-row gap-6 ">
                         <RadioButtonCard
-                            value={roommate_snore}
-                            selectedRadioValue={roommate_snore}
+                            value="true"
+                            selectedRadioValue={JSON.stringify(FormData?.roommate_snore)}
                             label="Yes"
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
                         <RadioButtonCard
-                            value={String(roommate_snore)}
-                            selectedRadioValue={roommate_snore}
+                            value="false"
+                            selectedRadioValue={JSON.stringify(roommate_snore)}
                             label="No"
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />

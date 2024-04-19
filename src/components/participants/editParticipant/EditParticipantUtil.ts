@@ -15,7 +15,8 @@ export const handleEditParticipantValues=async(participantId:number)=>{
       return {};
 }
 export const getDefaultValues = async (data: ParticipantPaymentHistoryDataBaseType) => {
-  const defaultValues: EditParticipantFormFieldTypes = {}
+  
+ const defaultValues: EditParticipantFormFieldTypes = {}
   if (data.id) defaultValues.id = data.id
 
   if (typeof data.participant_id === 'object' && data.participant_id !== null) {
@@ -27,14 +28,14 @@ export const getDefaultValues = async (data: ParticipantPaymentHistoryDataBaseTy
     if (data.participant_id.program_id) defaultValues.program_id = data.participant_id.program_id
 
     // accommodation_snore
-    if (data.participant_id?.accommodation_snore)
+    if (data.participant_id)
       defaultValues.accommodation_snore = data.participant_id.accommodation_snore
 
     // transaction_status
     if (data?.transaction_status) defaultValues.transaction_status = data?.transaction_status
 
     // roommate_snore
-    if (data.participant_id?.roommate_snore) defaultValues.roommate_snore = data.participant_id.roommate_snore
+    if (data.participant_id) defaultValues.roommate_snore = data?.participant_id.roommate_snore
 
     // participant_code
     if (data.participant_id?.participant_code) defaultValues.participant_code = data.participant_id.participant_code

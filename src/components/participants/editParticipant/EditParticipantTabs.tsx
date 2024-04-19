@@ -103,7 +103,7 @@ export default function EditParticipantTabs() {
         },
     ];
     // Check if accommodation should be rendered
-    if (!accommodationData?.program_id?.program_type_id?.is_online_program) {
+    if (accommodationData?.program_id?.program_type_id?.is_online_program) {
         tabs = tabs.filter((tab) => tab.label !== "Accommodation Details");
     }
 
