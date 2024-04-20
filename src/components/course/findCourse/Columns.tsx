@@ -389,7 +389,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 9: {
-            router.push(`/courses/${row.original.id}`);
+            router.push({pathname:`/courses/${row.original.id}`,query:{"current_section":"course_details"}});
             break;
           }
         }

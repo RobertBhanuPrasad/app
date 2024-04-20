@@ -90,6 +90,7 @@ function index() {
 
   const [participantData, setParticipantData] = useState<any>()
 
+
   const fetchData = async () => {
     try {
       const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
@@ -105,6 +106,7 @@ function index() {
   }
 
   useEffect(() => {
+  router.push({pathname:`/courses/${Id}`,query:{"current_section":"course_details"}})
     fetchData()
   }, [])
 
@@ -259,6 +261,25 @@ function index() {
         <Tabs
           onValueChange={(val: string) => {
             setSelectedValue(val)
+            switch(val){
+              case '1':{
+                router.push({pathname:`/courses/${Id}`,query:{"current_section":"course_details"}})
+                break
+              }
+              case '2':{
+                router.push({pathname:`/courses/${Id}`,query:{"current_section":"participants"}})
+                break
+              }
+              case '3':{
+                router.push({pathname:`/courses/${Id}`,query:{"current_section":"revenue_summary"}})
+                break
+              }
+              case '4':{
+                router.push({pathname:`/courses/${Id}`,query:{"current_section":"course_accounting_form"}})
+                break
+              }
+
+            }
           }}
           value={selectedValue}
         >
