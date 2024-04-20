@@ -64,12 +64,12 @@ function CloseParticipantsSection() {
    * For that we are updating current_section params
    */
   function handleNextClick() {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams)
 
-    params.set("current_section", "revenue");
+    params.set('current_section', 'revenue')
 
     // we have to use this replace method
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`)
   }
 
   /**
@@ -78,7 +78,7 @@ function CloseParticipantsSection() {
   const pendingAttendenceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     PENDING_ATTENDANCE_STATUS
-  )?.id;
+  )?.id
 
   /**
    * variable for getting the pending transaction status id
@@ -86,11 +86,11 @@ function CloseParticipantsSection() {
   const pendingTransactionStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_PENDING_PAYMENT_STATUS
-  )?.id;
+  )?.id
 
   // Retrieving participant data from the 'participant_registration' table
   const { tableQueryResult: participantData } = useTable({
-    resource: "participant_registration",
+    resource: 'participant_registration',
     meta: {
       // Selecting all columns along with the participant's full name and payment method details
       select: "*, contact(full_name), payment_method(id, value)",
@@ -103,33 +103,33 @@ function CloseParticipantsSection() {
       permanent: [
         // Applying OR condition for filtering participants who meet any of the following criteria:
         {
-          operator: "or",
+          operator: 'or',
           value: [
             // Participants who haven't checked the program agreement
             {
-              field: "is_program_agreement_checked",
-              operator: "eq",
-              value: false,
+              field: 'is_program_agreement_checked',
+              operator: 'eq',
+              value: false
             },
             // Participants who haven't completed the health declaration
             {
-              field: "is_health_declaration_checked",
-              operator: "eq",
-              value: false,
+              field: 'is_health_declaration_checked',
+              operator: 'eq',
+              value: false
             },
             // Participants with pending payment status
             {
-              field: "payment_status_id",
-              operator: "eq",
-              value: pendingTransactionStatusId,
+              field: 'payment_status_id',
+              operator: 'eq',
+              value: pendingTransactionStatusId
             },
             // Participants with pending attendance status
             {
-              field: "participant_attendence_status_id",
-              operator: "eq",
-              value: pendingAttendenceStatusId,
-            },
-          ],
+              field: 'participant_attendence_status_id',
+              operator: 'eq',
+              value: pendingAttendenceStatusId
+            }
+          ]
         },
         {
           // Filtering participants by the program ID
@@ -149,14 +149,14 @@ function CloseParticipantsSection() {
 
   // useController hook  for action dropdown to get value and onChange
   const {
-    field: { value: actionValue, onChange: actionOnChange },
+    field: { value: actionValue, onChange: actionOnChange }
   } = useController({
     name: "action_id",
   });
 
   // useController hook  for status dropdown to get value and onChange
   const {
-    field: { value: statusValue, onChange: statusOnChange },
+    field: { value: statusValue, onChange: statusOnChange }
   } = useController({
     name: "status_id",
   });
@@ -278,19 +278,13 @@ function CloseParticipantsSection() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
-                  {statusData?.map(
-                    (status: OptionValuesDataBaseType, index: number) => {
-                      return (
-                        <SelectItem
-                          key={index}
-                          value={status.id}
-                          className="h-[44px]"
-                        >
-                          {status.value}
-                        </SelectItem>
-                      );
-                    }
-                  )}
+                  {statusData?.map((status: OptionValuesDataBaseType, index: number) => {
+                    return (
+                      <SelectItem key={index} value={status.id} className="h-[44px]">
+                        {status.value}
+                      </SelectItem>
+                    )
+                  })}
                 </SelectItems>
               </SelectContent>
             </Select>
@@ -358,34 +352,31 @@ function CloseParticipantsSection() {
         <Button
           className="w-[118px] h-[46px] border border-[#7677F4] rounded-[12px] bg-[white] text-[#7677F4]"
           onClick={() => {
-            replace("/Courses/ViewCourse/2");
+            replace('/Courses/ViewCourse/2')
           }}
         >
           Previous
         </Button>
-        <Button
-          className="w-[87px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white]"
-          onClick={handleNextClick}
-        >
+        <Button className="w-[87px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white]" onClick={handleNextClick}>
           Next
         </Button>
       </div>
     </div>
-  );
+  )
 }
 
-export default CloseParticipantsSection;
+export default CloseParticipantsSection
 
 export const participantsColumns: ColumnDef<any>[] = [
   {
-    accessorKey: "participant_code",
+    accessorKey: 'participant_code',
     enableHiding: false,
     header: () => {
       return (
         <div className="min-w-[150px]">
           <TableHeader className="!text-[16px]">Registration ID</TableHeader>
         </div>
-      );
+      )
     },
     cell: ({ row }) => {
       return (
@@ -398,18 +389,18 @@ export const participantsColumns: ColumnDef<any>[] = [
             {row?.original?.participant_code}
           </Text>
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "contact",
+    accessorKey: 'contact',
     enableHiding: false,
     header: () => {
       return (
         <div className="w-[150px]">
           <TableHeader className="!text-[16px]">Participant Name</TableHeader>
         </div>
-      );
+      )
     },
     cell: ({ row }) => {
       return (
@@ -427,18 +418,18 @@ export const participantsColumns: ColumnDef<any>[] = [
             </abbr>
           </Text>
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    accessorKey: "payment-method",
+    accessorKey: 'payment-method',
     enableHiding: false,
     header: () => {
       return (
         <div className="min-w-[150px]">
           <TableHeader className="!text-[16px]"> Payment method</TableHeader>
         </div>
-      );
+      )
     },
     cell: ({ row }) => {
       return (
@@ -450,21 +441,18 @@ export const participantsColumns: ColumnDef<any>[] = [
               : "-"}
           </Text>
         </div>
-      );
-    },
+      )
+    }
   },
   {
-    id: "Actions",
+    id: 'Actions',
     enableHiding: false,
     header: () => {
       return (
         <div className="min-w-[150px]">
-          <TableHeader className="!text-[16px]">
-            {" "}
-            Required Action (s)
-          </TableHeader>
+          <TableHeader className="!text-[16px]"> Required Action (s)</TableHeader>
         </div>
-      );
+      )
     },
     cell: ({ row }) => {
       //Getting actions based on participant status , transaction status , ppa consent , health declaration consent
@@ -473,15 +461,15 @@ export const participantsColumns: ColumnDef<any>[] = [
         attendenceStatusId: row.original.participant_attendence_status_id,
         transactionStatusId: row.original.payment_status_id,
         isPPAConsentChecked: row.original.is_program_agreement_checked,
-        isHealthDeclarationChecked: row.original.is_health_declaration_checked,
-      });
+        isHealthDeclarationChecked: row.original.is_health_declaration_checked
+      })
       return (
         <div className="min-w-[150px]">
           {actions.map((action, index) => (
             <Text key={index}>{action}</Text>
           ))}
         </div>
-      );
-    },
-  },
-];
+      )
+    }
+  }
+]

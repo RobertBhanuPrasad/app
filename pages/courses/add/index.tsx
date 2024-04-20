@@ -27,8 +27,6 @@ import {
   NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
-  preview_page,
-  thankyou_page,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/CourseConstants";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
@@ -51,26 +49,30 @@ import Success from "@public/assets/Success";
 import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useRouter } from "next/router";
-import { useSearchParams } from "next/navigation";
 
 function index() {
-  const router = useRouter();
-  const {current_section} = router.query
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData,'loginUserData')
+
+  const {viewPreviewPage, viewThankyouPage } = newCourseStore();
+
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
-  }if(current_section == preview_page){
-    return <NewCourseReviewPage/>
-  }if(current_section == thankyou_page){
-    return <NewCourseThankyouPage/>
-  }
-  else{
-    return <NewCourse/>
   }
 
- 
+  if (viewThankyouPage) {
+    return (
+      <div className="mb-8">
+        <NewCourseThankyouPage />;
+      </div>
+    );
+  }
+
+  if (viewPreviewPage) {
+    return <NewCourseReviewPage />;
+  } else {
+    return <NewCourse />;
+  }
 }
 function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -145,9 +147,8 @@ function NewCourse() {
 export default index;
 
 export const NewCourseTabs = () => {
-  const router = useRouter();
-    const { watch, getValues } = useFormContext();
-  const { setNewCourseData, currentStep, setCurrentStep } =
+  const { watch, getValues } = useFormContext();
+  const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
     newCourseStore();
 
   const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined);
@@ -278,12 +279,10 @@ export const NewCourseTabs = () => {
     currentStepFormNames: any[]
   ) => {
     const formData = watch();
-    
+
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
-      router.push(
-        `${router.asPath}?current_section=preview_page`
-      );
+      setViewPreviewPage(true);
       setNewCourseData(formData);
     }
     handelIsAllFieldsFilled(isAllFieldsFilled);

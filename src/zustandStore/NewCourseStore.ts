@@ -1,10 +1,10 @@
 import { create } from "zustand";
 
 interface NewCourseStore {
-  viewPreviewPage: boolean;
   viewThankyouPage: boolean;
   viewSuccessModal: boolean;
   viewRejectedModal: boolean;
+  viewPreviewPage: boolean;
   viewCourseAccountingSuccessModal: boolean;
   viewCourseAccountingRejectedDescriptionModal: boolean;
   viewCourseAccountingRejectedModal: boolean
@@ -12,6 +12,7 @@ interface NewCourseStore {
   setViewThankyouPage: (by: boolean) => void;
   setViewRejectedModal: (by: boolean) => void;
   setViewSuccessModal: (by: boolean) => void;
+  setViewPreviewPage: (by: boolean) => void;
   setViewCourseAccountingSuccessModal: (by: boolean) => void;
   setViewCourseAccountingRejectedDescriptionModal: (by: boolean) => void;
   setViewCourseAccountingRejectedModal: (by: boolean) => void;
@@ -44,16 +45,17 @@ interface NewCourseStore {
 }
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
+  viewThankyouPage: false,
   newCourseData: null,
   programId: 1,
   viewSuccessModal: false,
   viewRejectedModal: false,
   viewPreviewPage: false,
+  viewPreviewPage: false,
   viewThankyouPage: false,
   viewCourseAccountingSuccessModal: false,
   viewCourseAccountingRejectedDescriptionModal: false,
   viewCourseAccountingRejectedModal:false,
-
   courseAccountingFormDefaultValues: {},
   setViewRejectedModal: (data: boolean) => {
     set(() => ({
@@ -65,17 +67,16 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       viewSuccessModal: data,
     }));
   },
-  setViewPreviewPage: (data: boolean) => {
-    set(() => ({
-      viewPreviewPage: data,
-    }));
-  },
   setViewThankyouPage: (data: boolean) => {
     set(() => ({
       viewThankyouPage: data,
     }));
   },
-
+  setViewPreviewPage: (data: boolean) => {
+    set(() => ({
+      viewPreviewPage: data,
+    }));
+  },
   setNewCourseData: (data: any) => {
     set(() => ({
       newCourseData: data,
