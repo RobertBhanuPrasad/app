@@ -35,6 +35,10 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { columns } from "../../../src/components/course/findCourse/Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 
+import { authProvider } from "src/authProvider"
+import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+
 function index() {
   const { viewPreviewPage, AllFilterData } = newCourseStore();
 
@@ -676,3 +680,24 @@ const AdvanceFilter = () => {
     </Sheet>
   );
 };
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common", "course.new_course", "new_string"])
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || "/")}`,
+        permanent: false,
+      },
+    }
+  }
+  return {
+    props: {
+      ...translateProps,
+    },
+  }
+}

@@ -315,7 +315,7 @@ const { t } = useTranslation( [ "common", 'course.new_course']);
             className="w-[320px]"
             error={organizationError ? true : false}
           >
-            <SelectValue placeholder={t("course.new_course:basic_details_tab.select_organization")} />
+            <SelectValue placeholder={t("course.new_course:basic_details_tab.organization_placeholder")} />
           </SelectTrigger>
           <SelectContent>
             <Input value={searchValue} onChange={handleSearch} />
