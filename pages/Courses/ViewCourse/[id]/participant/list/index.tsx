@@ -32,6 +32,7 @@ import { CountComponent } from "pages/Courses/FindCourse";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";
+import { ParticipantsListMainHeader } from "@components/participants/ParticipantsListMainHeader";
 
 function index() {
   const router = useRouter();
@@ -403,11 +404,16 @@ function index() {
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
+      <div className="top-0 sticky z-[100] bg-white shadow-xl w-full">
+        <ParticipantsListMainHeader />
+      </div>
       <div className="flex flex-col gap-4 p-10">
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
+        {/* Bulk actions section */}
         <div className="flex gap-10 justify-end w-full">
+          {/* Bulk Actions Dropdown */}
           <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -425,13 +431,13 @@ function index() {
               <DropdownMenuContent align="end">
                 <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
                   {/* TODO (Not in MVP Scope): Print Registration Form */}
-                  <DropdownMenuItem
+                  {/* <DropdownMenuItem
                     onClick={() => {
                       setEnableBulkOptions(true);
                     }}
                   >
                     Print Registration Form
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuItem
                     onClick={() => {
                       setEnableBulkOptions(false);
@@ -454,6 +460,7 @@ function index() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          {/* Bulk actions options dropdown */}
           <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
