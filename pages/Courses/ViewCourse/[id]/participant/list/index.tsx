@@ -401,6 +401,8 @@ function index() {
       alert(`${participantIds.length} Record(s) updated successfully`);
     }
   };
+  const [bulkActionSelectedValue, setBulkActionSelectedValue] =
+    useState("Bulk Actions");
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
@@ -420,10 +422,10 @@ function index() {
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
-                  className="flex flex-row justify-between w-[192px] h-10"
+                  className="flex flex-row justify-between w-auto h-10 gap-2"
                   disabled={selectedTableRows > 0 ? false : true}
                 >
-                  Bulk Actions
+                  {bulkActionSelectedValue}
                   <CountComponent count={selectedTableRows} />
                   <DropDown />
                 </Button>
@@ -440,8 +442,8 @@ function index() {
                   </DropdownMenuItem> */}
                   <DropdownMenuItem
                     onClick={() => {
+                      setBulkActionSelectedValue("Update Attendance Status");
                       setEnableBulkOptions(false);
-
                       setBulkAction("attendance");
                     }}
                   >
@@ -449,8 +451,8 @@ function index() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
+                      setBulkActionSelectedValue("Update Transaction Status");
                       setEnableBulkOptions(false);
-
                       setBulkAction("transaction");
                     }}
                   >
