@@ -26,13 +26,14 @@ export default function EditParticipantTabs() {
         mutate({
             resource: "participant_registration",
             values: {
-                memo: formData?.participantMemo,
-                roommate_snore: formData?.roommatesnore,
-                discount_code: formData?.special_code,
-                participant_attendence_status_id: formData?.attendanceStatus,
+                memo: formData?.memo,
+                roommate_snore: formData?.roommate_snore,
+                accommodation_snore:formData?.accommodation_snore,
+                participant_code: formData?.participant_code,
+                participant_attendence_status_id: formData?.participant_attendence_status_id,
             },
             // TODO: integrate with participant_registration id
-            id: formData?.participant_id,
+            id: query?.participantId,
         });
         mutate({
             resource: "participant_payment_history",

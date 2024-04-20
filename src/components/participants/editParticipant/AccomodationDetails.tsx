@@ -1,3 +1,4 @@
+import Star from "@public/assets/star";
 import { useList } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
@@ -80,10 +81,15 @@ export default function AccomodationDetails() {
             </Text>
             <div className="flex gap-4">
                 <div className="text-[#999999] gap-2">
-                    <div>
-                        <Text className="text-[#999999] text-[14px]">
-                            Accomodation Type
-                        </Text>
+                    <div className="flex gap-2">
+                        <div>
+                            <Text className="text-[#999999] text-[14px]">
+                                Accomodation Type
+                            </Text>
+                        </div>
+                        <div>
+                            <Star />
+                        </div>
                     </div>
                     <div className="py-[5px]">
                         {/* TODO: need to disable this accommodation type select */}
@@ -137,7 +143,7 @@ export default function AccomodationDetails() {
                     </Text>
                 </div>
                 <div className="text-[#999999] ">
-                    <Text className="text-[#999999] text-[14px]">
+                    <Text className="text-[#999999] text-[14px] ">
                         Roommate Preferences 1
                     </Text>
                     <Input
@@ -148,7 +154,7 @@ export default function AccomodationDetails() {
                                       ?.roommate_preferences_1
                                 : "-"
                         }
-                        className="w-[278px] !h-[40px] resize-none py-[5px]"
+                        className="w-[278px] !h-[40px] resize-none py-[5px] outline-none "
                     />
                 </div>
             </div>
@@ -165,7 +171,7 @@ export default function AccomodationDetails() {
                                       ?.roommate_preferences_2
                                 : "-"
                         }
-                        className="w-[278px] !h-[40px] resize-none py-[5px]"
+                        className="w-[278px] !h-[40px] resize-none py-[5px] outline-none"
                     />
                 </div>
                 <div className="text-[#999999] ">
@@ -180,14 +186,23 @@ export default function AccomodationDetails() {
                                       ?.roommate_preferences_3
                                 : "-"
                         }
-                        className="w-[278px] !h-[40px] resize-none py-[5px]"
+                        className="w-[278px] !h-[40px] resize-none py-[5px] outline-none"
                     />
                 </div>
                 {/* TODOD: need to amke it editable and store default values */}
                 <div className="text-[#999999] ">
-                    <Text className="text-[#999999] text-[14px]">
-                        Do you snore?
-                    </Text>
+                    <div className="flex gap-2">
+                        <div>
+                            <Text className="text-[#999999] text-[14px]">
+                                {" "}
+                                Do you snore?
+                            </Text>
+                        </div>
+                        <div>
+                            <Star />
+                        </div>
+                    </div>
+
                     <div className=""></div>
                     <RadioGroup
                         value={JSON.stringify(accommodation_snore)}
@@ -219,9 +234,17 @@ export default function AccomodationDetails() {
                 </div>
             </div>
             <div className="text-[#999999] py-[10px]">
-                <Text className="text-[#999999] text-[14px] py-[5px]">
-                    Would you object to having room mate who snores?
-                </Text>
+                <div className="flex gap-2">
+                    <div>
+                        <Text className="text-[#999999] text-[14px] py-[5px]">
+                            Would you object to having room mate who snores?
+                        </Text>
+                    </div>
+                    <div>
+                        <Star />
+                    </div>
+                </div>
+
                 <RadioGroup
                     value={JSON.stringify(FormData?.roommate_snore)}
                     onValueChange={(value) => {
@@ -233,7 +256,9 @@ export default function AccomodationDetails() {
                     <div className="flex flex-row gap-6 ">
                         <RadioButtonCard
                             value="true"
-                            selectedRadioValue={JSON.stringify(FormData?.roommate_snore)}
+                            selectedRadioValue={JSON.stringify(
+                                FormData?.roommate_snore
+                            )}
                             label="Yes"
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
