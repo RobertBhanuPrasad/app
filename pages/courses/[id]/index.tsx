@@ -80,6 +80,8 @@ function index() {
 
   const searchParam = useSearchParams()
 
+  const params = new URLSearchParams(searchParam)
+
   const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
   const { data: courseData } = useOne({
@@ -123,45 +125,24 @@ function index() {
 
   const { t } = useTranslation('common')
 
-  const tab=()=>{
-    switch(searchParam.get('tab')){
-      case 'course_details':{
-        return JSON.stringify(COURSE_DETAILS_TAB)
-      }
-      case 'participants':{
-        return JSON.stringify(PARTICIPANTS_TAB)
-      }
-      case 'revenue_summary':{
-        return JSON.stringify(REVENUE_SUMMARY_TAB)
-      }
-      case 'course_accounting_form':{
-        return JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)
-      }
-      default :{
-        router.push({ pathname: `/courses/${Id}`, query: { tab: 'course_details' } })
-        return JSON.stringify(COURSE_DETAILS_TAB)
-      }
-    }
-  }
-
-  const [selectedValue, setSelectedValue] = useState(tab())
-
-
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
       label: t('pages.Tabs.CourseDetailsTab'),
-      disabled: false
+      disabled: false,
+      tab_query_name: 'course_details'
     },
     {
       value: PARTICIPANTS_TAB,
       label: t('pages.Tabs.participantTab'),
-      disabled: false
+      disabled: false,
+      tab_query_name: 'participants'
     },
     {
       value: REVENUE_SUMMARY_TAB,
       label: t('pages.Tabs.revenueSummaryTab'),
-      disabled: false
+      disabled: false,
+      tab_query_name: 'revenue_summary'
     }
   ]
 
@@ -180,13 +161,15 @@ function index() {
     tabTriggers.push({
       value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
       label: 'View Course Accounting Form',
-      disabled: true
+      disabled: true,
+      tab_query_name: 'view_course_accounting_form'
     })
   } else {
     tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
       label: t('pages.Tabs.courseAccountingFormTab'),
-      disabled: true
+      disabled: true,
+      tab_query_name: 'course_accounting_form'
     })
   }
 
@@ -195,6 +178,34 @@ function index() {
   const { data: countryConfigData } = useList({
     resource: 'country_config'
   })
+
+ /**
+ * When we change the tab, we need to retrieve the corresponding tab data to update the query name.
+ */
+  const getTabDataByTabTrigger = (val: string) => {
+    const tabData = tabTriggers.find((tab: any) => {
+      return JSON.stringify(tab.value) === val
+    })
+    return tabData
+  }
+
+ /**
+ * This function is primarily used for removing a state variable.
+ * It displays the tab corresponding to the query name.
+ * If the query name is not present, it displays the first tab.
+ */
+  const getTabQueryName = () => {
+    if (searchParam.get('tab') !== null) {
+      const tabData = tabTriggers.find((tab: any) => {
+        return tab.tab_query_name === searchParam.get('tab')
+      })
+
+      if (tabData) {
+        return JSON.stringify(tabData.value)
+      }
+    }
+    return '1'
+  }
 
   return (
     <div className="flex flex-col mx-8">
@@ -283,27 +294,13 @@ function index() {
       <div className="w-full mt-6 sticky">
         <Tabs
           onValueChange={(val: string) => {
-            setSelectedValue(val)
-            switch (val) {
-              case '1': {
-                router.push({ pathname: `/courses/${Id}`, query: { tab: 'course_details' } })
-                break
-              }
-              case '2': {
-                router.push({ pathname: `/courses/${Id}`, query: { tab: 'participants' } })
-                break
-              }
-              case '3': {
-                router.push({ pathname: `/courses/${Id}`, query: { tab: 'revenue_summary' } })
-                break
-              }
-              case '4': {
-                router.push({ pathname: `/courses/${Id}`, query: { tab: 'course_accounting_form' } })
-                break
-              }
-            }
+            // to store the tab Data 
+            const tabData = getTabDataByTabTrigger(val)
+            //change the queryname according to tabData
+            params.set('tab', tabData?.tab_query_name)
+            router.replace(`/courses/${Id}?${params.toString()}`)
           }}
-          value={selectedValue}
+          value={getTabQueryName()}
         >
           <TabsList className="flex flex-row gap-10 !flex-start !justify-start !bg-[white] !rounded-none">
             {tabTriggers.map((trigger: any, index: number) => (
@@ -317,7 +314,7 @@ function index() {
                   {trigger.label}
                   <div
                     className={`${
-                      selectedValue === JSON.stringify(trigger.value)
+                      getTabQueryName() === JSON.stringify(trigger.value)
                         ? 'bg-[#7677F4] rounded w-full h-[2px]'
                         : 'w-full h-[2px]'
                     }`}
@@ -682,7 +679,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
             }
             case 6: {
               // TODO - navigate to course accounting form
-              router.push(`/courses/${courseId}`)
+              router.push(`/courses/${courseId}?tab=course_accounting_form`)
               break
             }
             default: {
