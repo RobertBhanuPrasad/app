@@ -218,7 +218,7 @@ export const handlePostProgramData = async (
     .from("program")
     .upsert(programBody)
     .select();
-  console.log("course data is created", programData);
+  console.log("course data is created!", programData);
 
   if (programError) {
     console.log(programError);
