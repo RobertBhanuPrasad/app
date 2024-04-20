@@ -1,5 +1,10 @@
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity, useMany, useOne } from "@refinedev/core";
+import {
+  useGetIdentity,
+  useInvalidate,
+  useMany,
+  useOne,
+} from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
@@ -252,6 +257,11 @@ export default function NewCourseReviewPage() {
 
   const { setProgramId } = newCourseStore();
 
+  /**
+   * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
+   */
+  const invalidate = useInvalidate();
+
   const handClickContinue = async () => {
     setIsSubmitting(true);
 
@@ -265,6 +275,11 @@ export default function NewCourseReviewPage() {
     );
 
     if (isPosted) {
+      // invalidating the program list
+      await invalidate({
+        resource: "program",
+        invalidates: ["list"],
+      });
       setViewPreviewPage(false);
       setViewThankyouPage(true);
     } else {
@@ -720,35 +735,35 @@ export default function NewCourseReviewPage() {
               }}
             />{" "}
           </div>
-          {newCourseData?.is_residential_program &&
-          <div className="grid grid-cols-4 gap-4 mt-2">
-            {newCourseData?.accommodation?.map((data: any) => {
-              return (
-                <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    {" "}
-                    {courseAccomodationNames}
-                  </p>
-                  <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
-                    {data?.fee_per_person}
-                  </p>
-                </div>
-              );
-            })}
+          {newCourseData?.is_residential_program && (
+            <div className="grid grid-cols-4 gap-4 mt-2">
+              {newCourseData?.accommodation?.map((data: any) => {
+                return (
+                  <div className=" min-w-72">
+                    <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                      {" "}
+                      {courseAccomodationNames}
+                    </p>
+                    <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
+                      {data?.fee_per_person}
+                    </p>
+                  </div>
+                );
+              })}
 
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                Accommodation fee payment mode
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={paymentMethod?.value}
-              >
-                {paymentMethod?.value}
-              </abbr>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                  Accommodation fee payment mode
+                </p>
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={paymentMethod?.value}
+                >
+                  {paymentMethod?.value}
+                </abbr>
+              </div>
             </div>
-          </div>
-          }
+          )}
         </section>
         {/* Contact Info */}
         <section className="w-full py-8 text-base ">
