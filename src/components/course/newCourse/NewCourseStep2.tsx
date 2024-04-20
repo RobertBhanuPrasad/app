@@ -21,6 +21,7 @@ import {
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
+import { Text } from "src/ui/TextTags";
 import {
   HoverCard,
   HoverCardContent,
@@ -1016,7 +1017,10 @@ const MaximumCapacity = () => {
 
   const formData = watch();
 
-  const maxAttendees = formData?.courseTypeSettings?.maximum_capacity;
+  /**
+   * This variable is used to store the maximum_capacity from program_type settings
+   */
+  const maxAttendees = formData?.program_type?.maximum_capacity;
 
   const {
     field: { value = maxAttendees, onChange },
@@ -1025,7 +1029,21 @@ const MaximumCapacity = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">Max Capacity</div>
+      <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
+        <Text className="text-xs ">Max Capacity</Text>
+        <Text className="text-[#7677F4]">*</Text>
+        {/* popover to show the note to maximum capacity */}
+        <HoverCard>
+          <HoverCardTrigger>
+            <Important />
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
+              If this field is blank, then the course capacity is unlimited.
+            </Text>
+          </HoverCardContent>
+        </HoverCard>
+      </div>
       <Input
         placeholder="Enter no. of attendees"
         value={value}
