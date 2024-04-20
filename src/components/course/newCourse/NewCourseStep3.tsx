@@ -181,12 +181,15 @@ const SchedulesHeader = () => {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
     fieldState: { error: schedulesHeaderErrors },
   } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
+
   const {
     field: { value: timeZones, onChange: timeZonesOnChange },
     fieldState: { error: timeZoneError },
   } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
+
   let timeFormatOptions =
     getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
+
   timeFormatOptions = timeFormatOptions?.map(
     (val: { id: any; value: string }) => {
       return {
@@ -296,15 +299,68 @@ const Sessions = () => {
   const { errors } = useFormState();
   const [open, setOpen] = useState(false);
   const formData = watch();
-  const schedules = formData?.schedules;
+  const schedules = formData?.schedules || [];
+
+  console.log("schedules are", schedules);
+
+  /**
+   * We need to add a new session when user click on add session
+   * But here we have so much requirement
+   * Requirement: 1. If it is first session then we need to add a new session with date : today, startHour: 
+   * if the time format is 12 hour format
+      i need to append startHour=12, startMinute=00, endHour=12, endMinute=00.  
+    if the time format is 24 hour format
+    i need to append startHour=00, endHour=00, startMinute=00, endMinute=00
+    * Requirement 2 : If it is not first session then we need to add a new session with date : previous next date, startHour,endHour, startMinute, endMinute as same as above schedule
+    */
   const handleAddSession = () => {
-    append(undefined);
+    // we will take one temporary objetc initially with date and then based on timezone id we need to add proper startHour, startMinute, endHour, endMinute
+    const tempSchedule: {
+      date: Date;
+      startHour?: string;
+      startMinute?: string;
+      endHour?: string;
+      endMinute?: string;
+    } = {
+      date: new Date(),
+    };
+
+    if (formData?.hoursFormatId === timeFormat12HoursId) {
+      tempSchedule["startHour"] = "12";
+      tempSchedule["startMinute"] = "00";
+      tempSchedule["endHour"] = "12";
+      tempSchedule["endMinute"] = "00";
+    } else {
+      tempSchedule["startHour"] = "00";
+      tempSchedule["startMinute"] = "00";
+      tempSchedule["endHour"] = "00";
+      tempSchedule["endMinute"] = "00";
+    }
+
+    if (schedules?.length === 0) {
+      append(tempSchedule);
+    } else {
+      // date we need to increase to next day of previous date
+      const date = new Date(schedules[schedules?.length - 1]?.date);
+
+      date.setDate(date.getDate() + 1);
+
+      append({
+        date,
+        startHour: schedules[schedules?.length - 1]?.startHour,
+        startMinute: schedules[schedules?.length - 1]?.startMinute,
+        endHour: schedules[schedules?.length - 1]?.endHour,
+        endMinute: schedules[schedules?.length - 1]?.endMinute,
+      });
+    }
   };
+
   useEffect(() => {
     if (schedules?.length <= 0 || !schedules) {
       handleAddSession();
     }
   }, []);
+
   const handleRemoveSession = (index: number) => {
     remove(index);
   };
@@ -312,6 +368,7 @@ const Sessions = () => {
     TIME_FORMAT,
     TIME_FORMAT_12_HOURS
   )?.id;
+
   return (
     <div className="flex flex-col gap-4">
       {schedules?.map((schedule: any, index: number) => {
