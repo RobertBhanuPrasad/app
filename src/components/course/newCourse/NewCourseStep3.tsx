@@ -244,7 +244,12 @@ const SchedulesHeader = () => {
             </span>
           )}
         </div>
-        {options?.length > 0 && (
+
+        {/* Time Zone For each country we need to store their time zone in time_zones table.
+        So if a coutry have time zone as India then we need to store it in time_zones table
+        here we need to display the time zone dropdown only when it have more than one time zone
+        */}
+        {options?.length > 1 && (
           <div className="w-[257px]">
             <Select
               value={timeZones}
