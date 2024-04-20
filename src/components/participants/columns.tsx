@@ -27,9 +27,16 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
+      const router = useRouter();
       return (
         // TODO: Write onClick to redirect to view participant page
-        <a className="cursor-pointer">
+        <a
+          className="cursor-pointer"
+          onClick={() => {
+            const routePath = router.asPath.split("?")[0];
+            router.push(`/${routePath}/${row?.original?.id}/view`);
+          }}
+        >
           <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
             {row?.original?.participant_code}
           </div>
@@ -330,8 +337,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.payment_method
-            ? row?.original?.participant_payment_history[0]?.payment_method
+          {row?.original?.participant_payment_history[0]?.payment_method_id
+            ?.value
+            ? row?.original?.participant_payment_history[0]?.payment_method_id
+                ?.value
             : "-"}
         </div>
       );
@@ -439,9 +448,12 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      const toggle = row?.original?.is_program_agreement_checked
-        ? "Completed"
-        : "Pending";
+      const toggle =
+        row?.original?.is_program_agreement_checked === true
+          ? "Completed"
+          : row?.original?.is_program_agreement_checked === false
+          ? "Pending"
+          : "-";
       return <div className="min-w-[150px] text-left">{toggle}</div>;
     },
   },
@@ -477,9 +489,12 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      const toggle = row?.original?.is_health_declaration_checked
-        ? "Completed"
-        : "Pending";
+      const toggle =
+        row?.original?.is_health_declaration_checked === true
+          ? "Completed"
+          : row?.original?.is_health_declaration_checked === false
+          ? "Pending"
+          : "-";
       return <div className="min-w-[150px] text-left">{toggle}</div>;
     },
   },
@@ -514,13 +529,14 @@ export const columns: ExtendedColumnDef<any>[] = [
       const optionsValues = [
         "View Participant",
         "Edit Participant",
-        "Transfer",
-        "Send Email",
-        "Perform sale with cash, check offline credit card payment",
-        "Send registration confirmation email",
-        "Upload offline payment receipt",
-        "Download receipt",
-        "Transaction Activity",
+        // TODO(Not in MVP scope): Integrate these actions later
+        // "Transfer",
+        // "Send Email",
+        // "Perform sale with cash, check offline credit card payment",
+        // "Send registration confirmation email",
+        // "Upload offline payment receipt",
+        // "Download receipt",
+        // "Transaction Activity",
       ];
 
       const router = useRouter();
