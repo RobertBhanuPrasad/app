@@ -73,17 +73,15 @@ export const ParticipantsListMainHeader = () => {
   return (
     <div className="flex justify-between px-10 py-4">
       {/* Course Details Section */}
-      <div
-        className="flex gap-2"
-        onClick={() => {
-          router.back();
-        }}
-      >
+      <div className="flex gap-2">
         <ChevronLeftIcon
           color="#7677F4"
           height={50}
           width={50}
           className="cursor-pointer"
+          onClick={() => {
+            router.back();
+          }}
         />
         <div>
           {/* Course Name */}
