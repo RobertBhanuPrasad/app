@@ -680,7 +680,7 @@ const HeaderSection = () => {
                     format(RegistrationDate.from, "MM/dd/yyyy")
                   )
                 ) : (
-                  <span className="font-thin">Select Registration Date</span>
+                  <span className="font-thin">Search by Registration Date</span>
                 )}
               </div>
             </Button>
