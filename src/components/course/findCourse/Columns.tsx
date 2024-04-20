@@ -278,7 +278,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setViewPreviewPage, setNewCourseData } = newCourseStore();
+      const { setViewPreviewPage, setNewCourseData,setViewThankyouPage } = newCourseStore();
 
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -339,9 +339,11 @@ export const columns: ExtendedColumnDef<any>[] = [
        * switches the view to the new course page.
        */
       const handleCopyCourse = async () => {
+        setViewThankyouPage(false)
+        
         let defaultValues = await handleCourseDefaultValues(row.original.id);
         // we have to delete schedules when user click on cipy course and other we need to prefill
-        defaultValues = _.omit(defaultValues, ["schedules"]);
+        defaultValues = _.omit(defaultValues, ["id","schedules"]);
         setNewCourseData(defaultValues);
         router.push("/Courses/NewCourse");
       };

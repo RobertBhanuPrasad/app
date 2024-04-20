@@ -32,7 +32,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { columns } from "./Columns";
+import { columns } from "../../../src/components/course/findCourse/Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 
 function index() {
@@ -170,6 +170,7 @@ function index() {
 
   const [rowSelection, setRowSelection] = React.useState({});
 
+
   const {
     tableQueryResult: programData,
     pageCount,
@@ -181,7 +182,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner() , program_fee_level_settings!inner(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
     filters: filters,
   });
@@ -352,6 +353,7 @@ function index() {
             columns={columns}
             data={programData?.data?.data || []}
             columnPinning={true}
+            columnSelector={true}
           />
         </div>
       </div>

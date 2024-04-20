@@ -37,7 +37,7 @@ import {
   PUBLIC,
   TIME_FORMAT_24_HOURS,
 } from "src/constants/OptionValueOrder";
-import { validationSchema } from "./NewCourseValidations";
+import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { useState } from "react";
@@ -203,6 +203,7 @@ export const NewCourseTabs = () => {
       : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
+    ...(formData?.program_type?.is_geo_restriction_applicable ? []:["is_geo_restriction_applicable"])
   ]);
 
   let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
