@@ -396,7 +396,6 @@ interface ProgramTypesDataBaseType {
   has_alias_name?: boolean;
   health_type_name?: string;
   health_declaration?: string;
-  program_type_id?:ProgramDataBaseType
 }
 
 interface RegistrationFieldGroupsDataBaseType {

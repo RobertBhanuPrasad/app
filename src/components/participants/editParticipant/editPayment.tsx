@@ -31,21 +31,20 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
     const { watch, getValues } = useFormContext();
     const defaultData = getValues();
     const formData = watch();
-    const onFormSubmission = (data: any) => {
+    const onFormSubmission = () => {
         mutate({
             resource: "participant_payment_history",
             values: {
-                send_payment_confirmation: formData?.emailConfirmation,
-                payment_date: formData?.paymentDate,
-                payment_method_id: formData?.paymentMethod,
-                transaction_status_id: formData?.transaction,
+                send_payment_confirmation: formData?.send_payment_confirmation,
+                payment_date: formData?.payment_date,
+                payment_method_id: formData?.payment_method_id,
+                transaction_status_id: formData?.transaction_status_id,
             },
             // TODO: replace with participant_paymente_history id
-            id: defaultData?.id,
+            id: formData?.id,
         });
         setEditPayment(false);
     };
-
     // Form fileds useControllers
     const [open, setOpen] = useState(false);
     const {
@@ -62,18 +61,8 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
     const {
         field: { value: payment_method_id, onChange: paymentMethodOnchange },
     } = useController({
-        name: "payment_method",
+        name: "payment_method_id",
         // defaultValue: paymentData?.payment_method_id?.id,
-    });
-    const {
-        field: { value: response_message },
-    } = useController({
-        name: "response_message",
-    });
-    const {
-        field: { value: error_message },
-    } = useController({
-        name: "error_message",
     });
     const {
         field: {
@@ -215,9 +204,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                                         ? true
                                                         : false
                                                 }
-                                                value={
-                                                    transaction_status_id?.id
-                                                }
+                                                value={transaction_status_id}
                                                 onValueChange={(val: any) => {
                                                     transactionOnchange(val);
                                                 }}
