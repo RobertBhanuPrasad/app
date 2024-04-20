@@ -16,7 +16,7 @@ export const handlePostProgramData = async (
   loggedInUserId: number,
   setProgramId: (by: number) => void
 ) => {
-  console.log("i will post course data in this function", body);
+  console.log("i will post course data in this functions", body);
 
   let programId = body.id;
   // we have to create course only when we dont have id
@@ -218,7 +218,7 @@ export const handlePostProgramData = async (
     .from("program")
     .upsert(programBody)
     .select();
-  console.log("course data is created", programData);
+  console.log("course data is created!", programData);
 
   if (programError) {
     console.log(programError);
