@@ -523,7 +523,7 @@ interface ParticipantPaymentHistoryDataBaseType {
   payment_transaction_id?: number | null;
   currency_code?: string | null;
   participant_id?: ParticipantRegistrationDataBaseType | number;
-  program_id?:  ProgramDataBaseType;
+  program_id?: ProgramDataBaseType | number;
   total_amount?: number;
   transaction_status_id?: OptionValuesDataBaseType;
   transaction_date?: string | null;
@@ -590,7 +590,8 @@ interface ParticipantUtmParametersDataBaseType {
 }
 
 interface ParticipantRegistrationDataBaseType {
-  transaction_type: number|OptionValuesDataBaseType;
+  // TODO: transaction_type will change to transaction_type_id
+  transaction_type: number | OptionValuesDataBaseType;
   id?: number;
   created_at?: Date;
   contact_id?: number | ContactDataBaseType;
@@ -604,7 +605,7 @@ interface ParticipantRegistrationDataBaseType {
   donation_type?: OptionValuesDataBaseType;
   donation_date?: Date;
   program_category_id?: number;
-  program_id?:  ProgramTypesDataBaseType;
+  program_id?: number | ProgramTypesDataBaseType;
   discount_code?: string;
   discounted_amount?: number;
   discounted_tax?: number;
@@ -691,7 +692,7 @@ interface ProgramDataBaseType {
     contact_number?: number;
   }[];
   modified_at?: Date;
-  is_online_program?:boolean
+  is_online_program?: boolean;
 }
 
 interface NewCourseFormFieldTypes {
@@ -814,7 +815,7 @@ interface EditParticipantFormFieldTypes {
   payment_date?: string;
   payment_method_id?: number | OptionValuesDataBaseType;
   send_payment_confirmation?: boolean;
-  program_type_id?:boolean
+  program_type_id?: boolean;
 }
 
 /**

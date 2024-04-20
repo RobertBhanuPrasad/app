@@ -27,9 +27,16 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
+      const router = useRouter();
       return (
         // TODO: Write onClick to redirect to view participant page
-        <a className="cursor-pointer">
+        <a
+          className="cursor-pointer"
+          onClick={() => {
+            const routePath = router.asPath.split("?")[0];
+            router.push(`/${routePath}/${row?.original?.id}/view`);
+          }}
+        >
           <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
             {row?.original?.participant_code}
           </div>
@@ -522,13 +529,14 @@ export const columns: ExtendedColumnDef<any>[] = [
       const optionsValues = [
         "View Participant",
         "Edit Participant",
-        "Transfer",
-        "Send Email",
-        "Perform sale with cash, check offline credit card payment",
-        "Send registration confirmation email",
-        "Upload offline payment receipt",
-        "Download receipt",
-        "Transaction Activity",
+        // TODO(Not in MVP scope): Integrate these actions later
+        // "Transfer",
+        // "Send Email",
+        // "Perform sale with cash, check offline credit card payment",
+        // "Send registration confirmation email",
+        // "Upload offline payment receipt",
+        // "Download receipt",
+        // "Transaction Activity",
       ];
 
       const router = useRouter();
