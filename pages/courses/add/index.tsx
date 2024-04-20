@@ -28,6 +28,8 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
+  preview_page,
+  thankyou_page,
 } from "src/constants/CourseConstants";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
 import { Button } from "src/ui/button";
@@ -49,28 +51,23 @@ import Success from "@public/assets/Success";
 import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { useRouter } from "next/router";
+
 
 function index() {
+  const router = useRouter();
+  const {current_section} = router.query
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData,'loginUserData')
 
-  const {viewPreviewPage, viewThankyouPage } = newCourseStore();
 
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
-  }
-
-  if (viewThankyouPage) {
-    return (
-      <div className="mb-8">
-        <NewCourseThankyouPage />;
-      </div>
-    );
-  }
-
-  if (viewPreviewPage) {
-    return <NewCourseReviewPage />;
-  } else {
+  }if(current_section == preview_page){
+    return <NewCourseReviewPage/>
+  }if(current_section == thankyou_page){
+    return <NewCourseThankyouPage/>
+  }else {
     return <NewCourse />;
   }
 }
@@ -147,8 +144,9 @@ function NewCourse() {
 export default index;
 
 export const NewCourseTabs = () => {
+  const router = useRouter();
   const { watch, getValues } = useFormContext();
-  const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
+  const { setNewCourseData, currentStep, setCurrentStep } =
     newCourseStore();
 
   const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined);
@@ -282,7 +280,9 @@ export const NewCourseTabs = () => {
 
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
-      setViewPreviewPage(true);
+      router.push(
+        `${router.asPath}?current_section=preview_page`
+      );
       setNewCourseData(formData);
     }
     handelIsAllFieldsFilled(isAllFieldsFilled);
