@@ -73,9 +73,12 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import CourseAccountingFormTab from '../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab'
 
 import ViewCourseAccountingFormTab from '@components/course/viewCourse/ViewCourseAccountingFormTab'
+import { useSearchParams } from 'next/navigation'
 
 function index() {
   const router = useRouter()
+
+  const searchParam = useSearchParams()
 
   const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
@@ -89,7 +92,6 @@ function index() {
   })
 
   const [participantData, setParticipantData] = useState<any>()
-
 
   const fetchData = async () => {
     try {
@@ -106,7 +108,6 @@ function index() {
   }
 
   useEffect(() => {
-  router.push({pathname:`/courses/${Id}`,query:{"current_section":"course_details"}})
     fetchData()
   }, [])
 
@@ -122,7 +123,29 @@ function index() {
 
   const { t } = useTranslation('common')
 
-  const [selectedValue, setSelectedValue] = useState(JSON.stringify(COURSE_DETAILS_TAB))
+  const tab=()=>{
+    switch(searchParam.get('tab')){
+      case 'course_details':{
+        return JSON.stringify(COURSE_DETAILS_TAB)
+      }
+      case 'participants':{
+        return JSON.stringify(PARTICIPANTS_TAB)
+      }
+      case 'revenue_summary':{
+        return JSON.stringify(REVENUE_SUMMARY_TAB)
+      }
+      case 'course_accounting_form':{
+        return JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)
+      }
+      default :{
+        router.push({ pathname: `/courses/${Id}`, query: { tab: 'course_details' } })
+        return JSON.stringify(COURSE_DETAILS_TAB)
+      }
+    }
+  }
+
+  const [selectedValue, setSelectedValue] = useState(tab())
+
 
   const tabTriggers: any = [
     {
@@ -261,24 +284,23 @@ function index() {
         <Tabs
           onValueChange={(val: string) => {
             setSelectedValue(val)
-            switch(val){
-              case '1':{
-                router.push({pathname:`/courses/${Id}`,query:{"current_section":"course_details"}})
+            switch (val) {
+              case '1': {
+                router.push({ pathname: `/courses/${Id}`, query: { tab: 'course_details' } })
                 break
               }
-              case '2':{
-                router.push({pathname:`/courses/${Id}`,query:{"current_section":"participants"}})
+              case '2': {
+                router.push({ pathname: `/courses/${Id}`, query: { tab: 'participants' } })
                 break
               }
-              case '3':{
-                router.push({pathname:`/courses/${Id}`,query:{"current_section":"revenue_summary"}})
+              case '3': {
+                router.push({ pathname: `/courses/${Id}`, query: { tab: 'revenue_summary' } })
                 break
               }
-              case '4':{
-                router.push({pathname:`/courses/${Id}`,query:{"current_section":"course_accounting_form"}})
+              case '4': {
+                router.push({ pathname: `/courses/${Id}`, query: { tab: 'course_accounting_form' } })
                 break
               }
-
             }
           }}
           value={selectedValue}
@@ -611,8 +633,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       setNewCourseData(defaultValues)
-      router.push({pathname:"/courses/add",query:{action:'Copy'}});
-      
+      router.push({ pathname: '/courses/add', query: { action: 'Copy' } })
     }
   }
 

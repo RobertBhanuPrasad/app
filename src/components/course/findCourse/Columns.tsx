@@ -375,7 +375,7 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
           case 6: {
             // TODO - Navigate to submit course accounting page
-            router.push(`/courses/${row.original.id}`);
+            router.push(`/courses/${row.original.id}?tab=course_accounting_form`);
             break;
           }
           case 7: {
