@@ -358,7 +358,9 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.balance_due ? row?.original?.balance_due : "0.00"}
+          {row?.original?.balance_due
+            ? row?.original?.balance_due?.toFixed(2)
+            : "-"}
         </div>
       );
     },
