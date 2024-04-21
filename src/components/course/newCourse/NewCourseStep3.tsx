@@ -1251,21 +1251,46 @@ const TimeSelector = ({
   };
   // Event handler for incrementing hour
   const handleHourUpArrow = () => {
-    if (hourValue == "00") {
+    //if it is 12 hour format we need to check if it 01 or not if it is 01 then we need to set to maximum hours
+    if (is12HourFormat && hourValue == "01") {
       hourOnChange(maximumHours);
       return;
     }
+    //if it is 24 hour format we need to check if it 00 or not if it is 00 then we need to set to maximum hours
+    if (!is12HourFormat && hourValue == "00") {
+      hourOnChange(maximumHours);
+      return;
+    }
+
     let hour = (parseInt(hourValue) - 1).toString();
     hour = preProcessInputValue(hour);
     hourOnChange(hour);
   };
-  // Event handler for decrementing hour
+  /**
+   * Event handler for incrementing  the hour.
+   *
+   * If the current hour value is greater than or equal to the maximum hours,
+   * depending on whether the time format is 12-hour or not, it handles the
+   * increment accordingly.
+   */
   const handleHourDownArrow = () => {
-    if (hourValue >= maximumHours) {
-      hourOnChange("00");
-      return;
+    // Temporary variable to hold the hour value
+    let tempHourValue = hourValue;
+
+    // Check if the current hour is greater than or equal to the maximum hours
+    if (tempHourValue >= maximumHours) {
+      // If the time format is not 12-hour, set the hour to 00
+      if (is12HourFormat === false) {
+        hourOnChange("00");
+        return;
+      } else {
+        // If the time format is 12-hour, set the tempHourValue to 00
+        tempHourValue = "00";
+      }
     }
-    let hour = (parseInt(hourValue) + 1).toString();
+
+    // Increment the tempHourValue and update the hour value
+    let hour = (parseInt(tempHourValue) + 1).toString();
     hour = preProcessInputValue(hour);
     hourOnChange(hour);
   };
@@ -1310,7 +1335,7 @@ const TimeSelector = ({
         timeFormatOnChange("PM");
       } else {
         // but here one edge case if there in 24 hour format if hour is 00 then if i change to 12 hour format then i need to keep 12 right now
-        if(hourValue == "00"){
+        if (hourValue == "00") {
           const newHourValue = preProcessInputValue("12");
           hourOnChange(newHourValue);
         }
@@ -1319,22 +1344,33 @@ const TimeSelector = ({
         timeFormatOnChange("AM");
       }
     } else {
-      // Refactoring of the time format handling logic
-      let newHourValue;
-      if (is12HourFormat) {
-        if (timeFormat === "AM") {
-          newHourValue = hourValue === "12" ? "00" : hourValue;
-        } else {
-          newHourValue = hourValue === "12" ? "12" : String(parseInt(hourValue, 10) + 12);
-        }
-      } else {
-        if (timeFormat === "PM" && hourValue === "12") {
-          newHourValue = "00";
-        } else {
-          newHourValue = hourValue;
-        }
+      // this block will call if user selects 24 hour format.
+      // if timeFormat is AM and hourValue is 12 then we need to set 00
+      // if timeFormat is PM then we need to add 12
+      // If timeFormat is AM and hourValue is 12 then we set hourValue to 00
+      // because in 24 hour format 00 is same as 12 AM
+      if (timeFormat == "AM" && hourValue == 12) {
+        const newHourValue = preProcessInputValue("00");
+        hourOnChange(newHourValue);
+      } else if (timeFormat == "PM" && hourValue == 12) {
+        // If timeFormat is PM and hourValue is 12 then we need to keep it as it is
+        // because in 24 hour format 12 is same as 00 PM
+        const newHourValue = preProcessInputValue("12");
+        hourOnChange(newHourValue);
+      } else if (timeFormat == "PM" && hourValue < 12) {
+        // If timeFormat is PM and hourValue is less than 12
+        // then we need to add 12 to the hourValue
+        // because in 24 hour format PM starts from 12 to 23
+        const newHourValue = preProcessInputValue(
+          (parseInt(hourValue) + 12).toString()
+        );
+        hourOnChange(newHourValue);
+      } else if (timeFormat == "PM" && hourValue == 12) {
+        // If timeFormat is PM and hourValue is 12 then we set hourValue to 00
+        // because in 24 hour format 00 is same as 12 PM
+        const newHourValue = preProcessInputValue("00");
+        hourOnChange(newHourValue);
       }
-      hourOnChange(preProcessInputValue(newHourValue));
     }
   }, [is12HourFormat]);
   return (
