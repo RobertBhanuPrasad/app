@@ -143,7 +143,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
     const transactionData = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "transaction_id,response_message,error_message",
+            select: "id,transaction_id,response_message,error_message",
         },
         filters: [
             {
@@ -151,6 +151,11 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                 operator: "eq",
                 value: Id,
             },
+            {
+                field:"program_id",
+                operator:"eq",
+                value:query?.id
+            }
         ],
         sorters: [
             {
@@ -159,6 +164,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             },
         ],
     });
+    console.log(transactionData,"transactionData")
     return (
         <div>
             <div>
@@ -242,8 +248,8 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                         </div>
                                     </div>
 
-                                    <div className="py-[5px]">
-                                        <Text className="py-[5px]">
+                                    <div className="py-[5px] ">
+                                        <Text className="py-[5px] outline-none">
                                             Transaction ID
                                         </Text>
                                         <div>
@@ -381,7 +387,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                     </div>
 
                                     <div className="py-[5px]">
-                                        <Text className="py-[5px]">
+                                        <Text className="py-[5px] outline-none">
                                             Response Message
                                         </Text>
                                         <div>
@@ -399,7 +405,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                             </div>
 
                             <div className="flex flex-col py-[5px]">
-                                <Text className="py-[5px]">Error Message</Text>
+                                <Text className="py-[5px] outline-none">Error Message</Text>
                                 <div>
                                     <Textarea
                                         value={
