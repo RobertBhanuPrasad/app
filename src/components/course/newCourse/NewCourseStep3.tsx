@@ -14,7 +14,7 @@ import _ from "lodash";
 import Add from "@public/assets/Add";
 import Clock from "@public/assets/Clock";
 import DropDown from "@public/assets/DropDown";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useController,
   useFieldArray,
@@ -1223,6 +1223,21 @@ const TimeSelector = ({
   is12HourFormat: Boolean;
   error: boolean;
 }) => {
+  /**
+   * Why we have taken this ref
+   * problems
+   * 1. We have taken useEffect where it will run every time when user add a new session or any state change.
+   * 2. but the useEffect what ever we have written ideally need to run only when time format option change
+   * 3. not on initial render
+   * Solutions:
+   * 1. For this i have taken one isMountingRef variable
+   * 2. initially it is false
+   * 3. i will not render the useEffect when it is false i will render only isMountingRef is true.
+   * 4. The main goal behind this we are already adding a new session when user click on Add button in handleAddSession() function
+   * 5. at that its better to not to run the useEffect
+   */
+  const isMountingRef = useRef(false);
+
   // Maximum hours depending on the time format
   const maximumHours = is12HourFormat ? 12 : 23;
   // Extracting hour value and onChange function using useController hook
@@ -1330,6 +1345,8 @@ const TimeSelector = ({
 
   // Effect to handle hour format change
   useEffect(() => {
+    if (isMountingRef.current === false) return;
+
     if (is12HourFormat == true) {
       if (hourValue >= 12) {
         // if hourValue is 12 then we dont need to subtract
@@ -1381,6 +1398,13 @@ const TimeSelector = ({
       }
     }
   }, [is12HourFormat]);
+
+  // if you observe i have written condition on above useEffect
+  // and now i will do true so the useEffect will not run initial render
+  // but from next render it will run automatically
+  useEffect(() => {
+    isMountingRef.current = true;
+  }, []);
 
   return (
     <Popover>
