@@ -406,7 +406,7 @@ function index() {
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
-      <div className="top-0 sticky z-[100] bg-white shadow-xl w-full">
+      <div className="top-0 sticky z-[50] bg-white shadow-xl w-full">
         <ParticipantsListMainHeader />
       </div>
       <div className="flex flex-col gap-4 p-10">
