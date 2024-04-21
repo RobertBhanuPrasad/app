@@ -86,25 +86,10 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
   {
     accessorKey: "payment_transaction_id",
     enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Transaction ID
-            {column.getIsSorted() === 'desc' ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
+    header: () => {
+        return <TableHeader className="  min-w-[100px]">Transaction ID</TableHeader>; 
     },
-
     // This any will be removed after internal dataStructure implementation
-
     cell: ({ row }) => {
       return <div>{row?.original?.payment_transaction_id}</div>;
     },
