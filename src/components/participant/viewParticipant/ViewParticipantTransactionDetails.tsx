@@ -88,28 +88,10 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
   {
     accessorKey: "payment_transaction_id",
     enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Transaction Id
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
+    header: () => {
+        return <TableHeader className="  min-w-[100px]">Transaction ID</TableHeader>; 
     },
-
     // This any will be removed after internal dataStructure implementation
-
     cell: ({ row }) => {
       return <div>{row?.original?.payment_transaction_id}</div>;
     },
@@ -268,7 +250,16 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
   },
   {
-    accessorKey: "transaction_fee_level_id",
+    accessorKey: 'source',
+    header: () => {
+      return <TableHeader className="min-w-[120px]">Source</TableHeader>
+    },
+    cell: ({ row }) => {
+      return <Text className="lowercase">{row?.original?.source_text}</Text>
+    }
+  },
+  {
+    accessorKey: 'transaction_fee_level_id',
     header: () => {
       return <TableHeader className="min-w-[120px]">Fee level</TableHeader>;
     },
