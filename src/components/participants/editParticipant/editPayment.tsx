@@ -164,7 +164,6 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             },
         ],
     });
-    console.log(transactionData,"transactionData")
     return (
         <div>
             <div>
