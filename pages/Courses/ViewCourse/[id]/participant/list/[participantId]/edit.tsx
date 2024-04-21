@@ -4,6 +4,7 @@ import { handleEditParticipantValues } from "@components/participants/editPartic
 import LoadingIcon from "@public/assets/LoadingIcon";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import {editParticipantSchema} from '@components/participants/editParticipant/EditParticipantValidations'
 
 export default function Edit() {
     const { query } = useRouter();
@@ -32,8 +33,7 @@ export default function Edit() {
                 {!defaultValues || Object.keys(defaultValues).length === 0 ? (
                     <LoadingIcon />
                 ) : (
-                    // Add schema for form validations
-                    <Form onSubmit={() => {}} defaultValues={defaultValues}>
+                    <Form onSubmit={() => {}} defaultValues={defaultValues} schema={editParticipantSchema()}>
                         <EditParticipantTabs />
                     </Form>
                 )}

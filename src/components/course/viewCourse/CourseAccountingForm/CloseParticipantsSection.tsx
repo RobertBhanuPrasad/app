@@ -334,21 +334,24 @@ function CloseParticipantsSection() {
           </div>
         </div>
 
-        {/* TODO need to add the vertical scroll for the table */}
-        <BaseTable
-          checkboxSelection={true}
-          pagination={false}
-          tableStyles={{
-            table: "",
-            rowStyles: "!important border-none",
-          }}
-          columns={participantsColumns}
-          data={participantData?.data?.data || []}
-          columnPinning={false}
-          columnSelector={false}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
-        />
+        <div>
+          <BaseTable
+            checkboxSelection={true}
+            pagination={false}
+            tableStyles={{
+              table: "",
+              rowStyles: "!important border-none",
+              tableContainer: "!h-[350px] !rounded-xl",
+              tableHeader: "bg-[#F1F1FE] sticky top-0 z-10",
+            }}
+            columns={participantsColumns}
+            data={participantData?.data?.data || []}
+            columnPinning={false}
+            columnSelector={false}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+          />
+        </div>
       </div>
 
       <div className="flex flex-row gap-4 items-center justify-center">
