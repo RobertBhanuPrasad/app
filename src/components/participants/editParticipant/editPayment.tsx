@@ -41,7 +41,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                 transaction_status_id: formData?.transaction_status_id,
             },
             // TODO: replace with participant_paymente_history id
-            id: formData?.id,
+            id: defaultData?.id,
         });
         setEditPayment(false);
     };
@@ -437,7 +437,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                             <Button
                                 className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
                                 onClick={() => {
-                                    onFormSubmission(formData);
+                                    onFormSubmission();
                                 }}
                             >
                                 Save
