@@ -1226,10 +1226,12 @@ const TimeSelector = ({
   const {
     field: { value: minuteValue = "00", onChange: minuteOnChange },
   } = useController({ name: `${name}Minute` });
+
   // Extracting time format value and onChange function using useController hook
   const {
     field: { value: timeFormat = "AM", onChange: timeFormatOnChange },
   } = useController({ name: `${name}TimeFormat` });
+
   // Function to preprocess input value (add leading zeros and remove non-numeric characters)
   const preProcessInputValue = (value: string): string => {
     while (value.length < 2) {
@@ -1296,18 +1298,43 @@ const TimeSelector = ({
   // Effect to handle hour format change
   useEffect(() => {
     if (is12HourFormat == true) {
-      if (hourValue > 12) {
-        const hours = parseInt(hourValue) - 12;
-        const newHourValue = preProcessInputValue(hours.toString());
-        hourOnChange(newHourValue);
+      if (hourValue >= 12) {
+        // if hourValue is 12 then we dont need to subtract
+        // if hourValue is not 12 then we need to subtract
+        if (hourValue != 12) {
+          const hours = parseInt(hourValue) - 12;
+          const newHourValue = preProcessInputValue(hours.toString());
+          hourOnChange(newHourValue);
+        }
+
         timeFormatOnChange("PM");
+      } else {
+        // but here one edge case if there in 24 hour format if hour is 00 then if i change to 12 hour format then i need to keep 12 right now
+        if(hourValue == "00"){
+          const newHourValue = preProcessInputValue("12");
+          hourOnChange(newHourValue);
+        }
+
+        // if time is less than 12 then we just need to set AM.
+        timeFormatOnChange("AM");
       }
     } else {
-      if (timeFormat == "PM" && hourValue != 12) {
-        const hours = parseInt(hourValue) + 12;
-        const newHourValue = preProcessInputValue(hours.toString());
-        hourOnChange(newHourValue);
+      // Refactoring of the time format handling logic
+      let newHourValue;
+      if (is12HourFormat) {
+        if (timeFormat === "AM") {
+          newHourValue = hourValue === "12" ? "00" : hourValue;
+        } else {
+          newHourValue = hourValue === "12" ? "12" : String(parseInt(hourValue, 10) + 12);
+        }
+      } else {
+        if (timeFormat === "PM" && hourValue === "12") {
+          newHourValue = "00";
+        } else {
+          newHourValue = hourValue;
+        }
       }
+      hourOnChange(preProcessInputValue(newHourValue));
     }
   }, [is12HourFormat]);
   return (
