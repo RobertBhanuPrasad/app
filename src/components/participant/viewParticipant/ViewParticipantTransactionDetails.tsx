@@ -88,7 +88,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return (
         <div>
           <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Transaction Id
+            Transaction ID
             {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === 'asc' ? (
@@ -218,6 +218,15 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.total_amount}</Text>
+    }
+  },
+  {
+    accessorKey: 'total_amount',
+    header: () => {
+      return <TableHeader className="min-w-[120px]">Source</TableHeader>
+    },
+    cell: ({ row }) => {
+      return <Text className="lowercase">{row?.original?.source_text}</Text>
     }
   },
   {
