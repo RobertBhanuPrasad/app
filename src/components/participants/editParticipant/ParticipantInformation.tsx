@@ -9,9 +9,6 @@ export default function ParticipantInformation() {
     const { query } = useRouter();
     // Use useController to control the participantMemo field
     const {
-        field: { value: full_name },
-    } = useController({ name: "full_name" });
-    const {
         field: { value: memo, onChange: participantMemoChange },
     } = useController({
         name: "memo",
