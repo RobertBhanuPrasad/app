@@ -35,6 +35,10 @@ export default function AccomodationDetails() {
         name: "roommate_snore",
     });
 
+    const { query } = useRouter();
+    const Id: number | undefined = query?.participantId
+        ? parseInt(query.participantId as string)
+        : undefined;
     // TODO: need to get the api data for accomodation types for particular program_id
 
     const { data: accommodationOptions } = useList<any>({
@@ -43,27 +47,28 @@ export default function AccomodationDetails() {
             {
                 field: "program_id",
                 operator: "eq",
-                value: FormData?.program_id?.id,
+                value: query?.id,
             },
         ],
         meta: {
             select: "accommodation_type_id!inner(id,name)",
         },
     });
-    const { query } = useRouter();
-    const Id: number | undefined = query?.participantId
-        ? parseInt(query.id as string)
-        : undefined;
     const { data } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)),roommate_preferences_1,roommate_preferences_2,roommate_preferences_3)",
+            select: "accommodation_fee,accommodation_type_id(accommodation_type_id(id,name)),currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)),roommate_preferences_1,roommate_preferences_2,roommate_preferences_3)",
         },
         filters: [
             {
                 field: "participant_id",
                 operator: "eq",
                 value: Id,
+            },
+            {
+                field: "program_id",
+                operator: "eq",
+                value: query?.id,
             },
         ],
         sorters: [
@@ -74,6 +79,7 @@ export default function AccomodationDetails() {
         ],
     });
     const accommodationData = data?.data[0];
+    
     return (
         <div id="Accomodation">
             <Text className="font-semibold text-[18px] py-[25px]">

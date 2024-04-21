@@ -33,7 +33,7 @@ export default function EditParticipantTabs() {
                 participant_attendence_status_id: formData?.participant_attendence_status_id,
             },
             // TODO: integrate with participant_registration id
-            id: query?.participantId,
+            id: Number(query?.participantId),
         });
         mutate({
             resource: "participant_payment_history",

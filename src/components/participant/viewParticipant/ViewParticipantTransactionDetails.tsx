@@ -1,6 +1,8 @@
+import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable"; // Importing BaseTable component for displaying table
 import TransactionActivity from "@components/participants/TransactionActivityPopover";
 import EditPayment from "@components/participants/editParticipant/editPayment";
+import { editPaymentSchema } from "@components/participants/editParticipant/editPaymentValidations";
 import ViewDonationDetails from "@components/participants/editParticipant/viewDonationDetails";
 import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
 import { CaretSortIcon } from "@radix-ui/react-icons"; // Importing CaretSortIcon for sorting indicator
@@ -338,7 +340,9 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                         </div>
                       </DialogTrigger>
                       <DialogContent>
+                        <Form  onSubmit={()=>{} } defaultValues={editPaymentSchema()}>
                         <EditPayment setEditPayment={setEditPayment} />
+                        </Form>
                       </DialogContent>
                     </Dialog>
                   </div>

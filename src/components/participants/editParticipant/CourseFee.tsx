@@ -1,25 +1,28 @@
 import { useList } from "@refinedev/core";
 import { useRouter } from "next/router";
-import { useController } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { formatDateString } from "src/utility/DateFunctions";
 
 export default function CourseFee() {
-    
     const { query } = useRouter();
     const Id: number | undefined = query?.participantId
-        ? parseInt(query.id as string)
+        ? parseInt(query?.participantId as string)
         : undefined;
     const { data } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "id,created_at,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)))",
+            select: "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(id,created_at,program_id(id,program_type_id!inner(is_online_program)))",
         },
         filters: [
             {
                 field: "participant_id",
                 operator: "eq",
                 value: Id,
+            },
+            {
+                field: "program_id",
+                operator: "eq",
+                value: query?.id,
             },
         ],
         sorters: [
@@ -30,6 +33,7 @@ export default function CourseFee() {
         ],
     });
     const courseFeedata = data?.data[0];
+    
     return (
         <div className="" id="Course">
             <Text className="font-semibold text-[18px] pt-[25px]">
@@ -42,9 +46,11 @@ export default function CourseFee() {
                         Registartion Date
                     </Text>
                     <Text className="font-semibold text-[16px]">
-                        {courseFeedata?.created_at
+                        {courseFeedata?.participant_id?.created_at
                             ? formatDateString(
-                                  new Date(courseFeedata?.created_at)
+                                  new Date(
+                                      courseFeedata?.participant_id?.created_at
+                                  )
                               )
                             : "-"}
                     </Text>
