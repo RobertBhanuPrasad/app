@@ -12,7 +12,14 @@ import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
-import { useGetIdentity, useList } from "@refinedev/core";
+import { QueryObserverResult } from "@tanstack/react-query";
+import {
+  GetListResponse,
+  HttpError,
+  UseLoadingOvertimeReturnType,
+  useGetIdentity,
+  useList,
+} from "@refinedev/core";
 import Form from "@components/Formfield";
 import { useFormContext, useFormState } from "react-hook-form";
 import {
@@ -52,7 +59,7 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
-  console.log(loginUserData,'loginUserData')
+  console.log(loginUserData, "loginUserData");
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
@@ -121,13 +128,42 @@ function NewCourse() {
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
           [NewCourseStep5FormNames?.is_residential_program]: false,
-          [NewCourseStep3FormNames?.hour_format_id]: timeFormat24HoursId,
         }
       : newCourseData;
 
+  // fetch data from country_config table for time format
+  const {
+    data,
+    isLoading,
+  }: QueryObserverResult<
+    GetListResponse<CountryConfigDataBaseType>,
+    HttpError
+  > &
+    UseLoadingOvertimeReturnType = useList({
+    resource: "country_config",
+  });
+
+  console.log("data is", data?.data[0]);
+
+  //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
+  // and same we need to set only if newCourseData is null
+  if (newCourseData === null) {
+    if (data?.data[0]?.hour_format_id) {
+      defaultValues[NewCourseStep3FormNames?.hour_format_id] =
+        data?.data[0]?.hour_format_id;
+    } else {
+      defaultValues[NewCourseStep3FormNames?.hour_format_id] =
+        timeFormat24HoursId;
+    }
+  }
+
   // If the form is still loading, display a loading message
   // we have to display loading icon until the below variables will be get from database
-  if (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) {
+  // isLoading also we need becuase we need to set the data right
+  if (
+    (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) ||
+    isLoading
+  ) {
     return <LoadingIcon />;
   }
 
@@ -203,7 +239,9 @@ export const NewCourseTabs = () => {
       : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
-    ...(formData?.program_type?.is_geo_restriction_applicable ? []:["is_geo_restriction_applicable"])
+    ...(formData?.program_type?.is_geo_restriction_applicable
+      ? []
+      : ["is_geo_restriction_applicable"]),
   ]);
 
   let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
@@ -213,10 +251,8 @@ export const NewCourseTabs = () => {
     ...(formData?.courseTypeSettings?.is_online_program
       ? ["is_existing_venue", "newVenue", "existingVenue"]
       : []),
-    ...(formData?.is_existing_venue == "new-venue"
-      ? []
-      : ["newVenue"]),
-      ...(formData?.is_existing_venue == "existing-venue"
+    ...(formData?.is_existing_venue == "new-venue" ? [] : ["newVenue"]),
+    ...(formData?.is_existing_venue == "existing-venue"
       ? []
       : ["existingVenue"]),
     //If country does not have multiple time zones no need to validate time zone drop down

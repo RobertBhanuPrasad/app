@@ -73,6 +73,7 @@ interface CountryConfigDataBaseType {
   default_currency_code?: string;
   default_language_name?: string;
   default_language_code?: string;
+  hour_format_id?: number;
 }
 
 interface CountryCurrenciesDataBaseType {
