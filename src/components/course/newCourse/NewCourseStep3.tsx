@@ -320,12 +320,15 @@ const Sessions = () => {
     */
   const handleAddSession = () => {
     // we will take one temporary objetc initially with date and then based on timezone id we need to add proper startHour, startMinute, endHour, endMinute
+    // we need to store startTimeFormat and endTimeFormat also because it is 12 hour or 24 hour format right we need to store wether it is AM or PM.
     const tempSchedule: {
       date: Date;
       startHour?: string;
       startMinute?: string;
       endHour?: string;
       endMinute?: string;
+      startTimeFormat?: string;
+      endTimeFormat?: string;
     } = {
       date: new Date(),
     };
@@ -335,6 +338,8 @@ const Sessions = () => {
       tempSchedule["startMinute"] = "00";
       tempSchedule["endHour"] = "12";
       tempSchedule["endMinute"] = "00";
+      tempSchedule["startTimeFormat"] = "AM";
+      tempSchedule["endTimeFormat"] = "AM";
     } else {
       tempSchedule["startHour"] = "00";
       tempSchedule["startMinute"] = "00";
@@ -356,6 +361,8 @@ const Sessions = () => {
         startMinute: schedules[schedules?.length - 1]?.startMinute,
         endHour: schedules[schedules?.length - 1]?.endHour,
         endMinute: schedules[schedules?.length - 1]?.endMinute,
+        startTimeFormat: schedules[schedules?.length - 1]?.startTimeFormat,
+        endTimeFormat: schedules[schedules?.length - 1]?.endTimeFormat,
       });
     }
   };
@@ -1320,6 +1327,7 @@ const TimeSelector = ({
     minute = preProcessInputValue(minute);
     minuteOnChange(minute);
   };
+
   // Effect to handle hour format change
   useEffect(() => {
     if (is12HourFormat == true) {
@@ -1373,6 +1381,7 @@ const TimeSelector = ({
       }
     }
   }, [is12HourFormat]);
+
   return (
     <Popover>
       <PopoverTrigger name={`TimeSelector ${name}`}>
