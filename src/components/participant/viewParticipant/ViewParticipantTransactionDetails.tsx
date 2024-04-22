@@ -1,6 +1,8 @@
+import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable"; // Importing BaseTable component for displaying table
 import TransactionActivity from "@components/participants/TransactionActivityPopover";
 import EditPayment from "@components/participants/editParticipant/editPayment";
+import { editPaymentSchema } from "@components/participants/editParticipant/editPaymentValidations";
 import ViewDonationDetails from "@components/participants/editParticipant/viewDonationDetails";
 import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
 import { CaretSortIcon } from "@radix-ui/react-icons"; // Importing CaretSortIcon for sorting indicator
@@ -86,28 +88,10 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
   {
     accessorKey: "payment_transaction_id",
     enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Transaction Id
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
+    header: () => {
+        return <TableHeader className="  min-w-[100px]">Transaction ID</TableHeader>; 
     },
-
     // This any will be removed after internal dataStructure implementation
-
     cell: ({ row }) => {
       return <div>{row?.original?.payment_transaction_id}</div>;
     },
@@ -266,7 +250,16 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
   },
   {
-    accessorKey: "transaction_fee_level_id",
+    accessorKey: 'source',
+    header: () => {
+      return <TableHeader className="min-w-[120px]">Source</TableHeader>
+    },
+    cell: ({ row }) => {
+      return <Text className="lowercase">{row?.original?.source_text}</Text>
+    }
+  },
+  {
+    accessorKey: 'transaction_fee_level_id',
     header: () => {
       return <TableHeader className="min-w-[120px]">Fee level</TableHeader>;
     },
@@ -338,7 +331,9 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                         </div>
                       </DialogTrigger>
                       <DialogContent>
+                        <Form  onSubmit={()=>{} } defaultValues={editPaymentSchema()}>
                         <EditPayment setEditPayment={setEditPayment} />
+                        </Form>
                       </DialogContent>
                     </Dialog>
                   </div>
