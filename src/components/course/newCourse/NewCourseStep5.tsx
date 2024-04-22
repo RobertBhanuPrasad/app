@@ -149,7 +149,6 @@ export const ResidentialCourse = () => {
             selectedRadioValue={JSON.stringify(value)}
             label="Yes"
             className="w-[112px] h-[40px] rounded-[12px]"
-            disabled={programTypeData?.data?.is_online_program}
             
           />
           <RadioButtonCard
