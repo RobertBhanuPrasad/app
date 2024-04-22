@@ -357,9 +357,9 @@ export const columns: ExtendedColumnDef<any>[] = [
         // we have to delete schedules when user click on cipy course and other we need to prefill
         defaultValues = _.omit(defaultValues, ["id", "schedules"]);
         setNewCourseData(defaultValues);
-        router.push("/Courses/NewCourse");
         // when we do copy course we have to set the current step to first step
         setCurrentStep(1);
+        router.push("/Courses/NewCourse");
       };
 
       dropDownMenuData?.unshift({ label: "View Course", value: 10 });

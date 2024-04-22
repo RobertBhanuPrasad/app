@@ -275,7 +275,7 @@ export default function NewCourseReviewPage() {
     );
 
     if (isPosted) {
-      // invalidating the program list
+      // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
       await invalidate({
         resource: "program",
         invalidates: ["list"],

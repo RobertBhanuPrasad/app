@@ -55,11 +55,14 @@ export const handlePostProgramData = async (
       body[NewCourseStep1FormNames.is_registration_via_3rd_party];
   }
 
-  if (body[NewCourseStep1FormNames.registration_via_3rd_party_url]) {
+  if (
+    (body[NewCourseStep1FormNames.registration_via_3rd_party_url]! = undefined)
+  ) {
     programBody.registration_via_3rd_party_url =
       body[NewCourseStep1FormNames.registration_via_3rd_party_url];
   }
 
+  //we are getting the form data of step - 2 and assigining them to programBody for posting the data
   if (body[NewCourseStep2FormNames.program_alias_name_id]) {
     programBody.program_alias_name_id =
       body[NewCourseStep2FormNames.program_alias_name_id];
@@ -72,6 +75,11 @@ export const handlePostProgramData = async (
 
   if (body[NewCourseStep2FormNames.max_capacity]) {
     programBody.max_capacity = body[NewCourseStep2FormNames.max_capacity];
+  }
+
+  if (body[NewCourseStep2FormNames.is_registration_required]) {
+    programBody.is_registration_required =
+      body[NewCourseStep2FormNames.is_registration_required];
   }
 
   //allowed_countries
@@ -197,10 +205,12 @@ export const handlePostProgramData = async (
   }
 
   //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
-  if(programTypeData?.is_online_program === false && body[NewCourseStep5FormNames.is_residential_program])
-    {
-      if (!(await handlePostAccommodations(body, programId))) return false;
-    }
+  if (
+    programTypeData?.is_online_program === false &&
+    body[NewCourseStep5FormNames.is_residential_program]
+  ) {
+    if (!(await handlePostAccommodations(body, programId))) return false;
+  }
 
   //accommodation_fee_payment_mode
   if (
