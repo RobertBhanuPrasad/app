@@ -285,7 +285,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setViewPreviewPage, setNewCourseData, setViewThankyouPage } =
+      const { setNewCourseData } =
         newCourseStore();
 
       const router = useRouter();
@@ -345,7 +345,6 @@ export const columns: ExtendedColumnDef<any>[] = [
        * switches the view to the new course page.
        */
       const handleCopyCourse = async () => {
-        setViewThankyouPage(false);
 
         let defaultValues = await handleCourseDefaultValues(row.original.id);
         // we have to delete schedules when user click on cipy course and other we need to prefill

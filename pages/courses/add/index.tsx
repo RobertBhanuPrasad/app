@@ -14,7 +14,6 @@ import Info from '@public/assets/Info'
 import Profile from '@public/assets/Profile'
 import Venue from '@public/assets/Venue'
 import { useGetIdentity, useList } from '@refinedev/core'
-import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   ACCOMMODATION_STEP_NUMBER,
@@ -29,7 +28,7 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
-  preview_page,
+  review_course_details,
   thankyou_page,
 } from "src/constants/CourseConstants";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
@@ -57,16 +56,15 @@ import { useRouter } from "next/router";
 
 function index() {
   const router = useRouter();
-  const {current_section} = router.query
+  const {header}=router.query
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData,'loginUserData')
 
-
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
-  }if(current_section == preview_page){
+  }if(header == review_course_details){
     return <NewCourseReviewPage/>
-  }if(current_section == thankyou_page){
+  }if(header == thankyou_page){
     return <NewCourseThankyouPage/>
   }else {
     return <NewCourse />;
@@ -247,9 +245,8 @@ export const NewCourseTabs = () => {
 
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames)
     if (isAllFieldsFilled) {
-      router.push(
-        `${router.asPath}?current_section=preview_page`
-      );
+      router.push({ query: { header: 'review_course_details' } })
+
       setNewCourseData(formData);
     }
     handelIsAllFieldsFilled(isAllFieldsFilled)
@@ -492,7 +489,6 @@ export const NewCourseTabs = () => {
                     <Button
                       className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
                       onClick={async () => {
-                        router.push({ query: { header: 'Review Course Details' } })
                         await handleClickReviewDetailsButton(validationFieldsStepWise[currentStep - 1])
                       }}
                     >

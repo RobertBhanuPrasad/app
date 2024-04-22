@@ -65,13 +65,14 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       newCourseData: data,
     }))
   },
+
   newAdvanceFilterData: {},
   setNewAdvanceFilterData: (data: any) => {
     set(() => ({
       newAdvanceFilterData: data,
     }))
   },
-  currentStep: 6,
+  currentStep: 1,
   setCurrentStep: (data: number) => {
     set(() => ({
       currentStep: data,

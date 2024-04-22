@@ -81,7 +81,6 @@ export const isApproved = (
  * @param {any} roleId - The ID representing the role of the user.
  * @returns {Array} Array of options available based on the provided conditions and user roles.
  */
-
 export const DisplayOptions = (
   courseStatusId: any,
   courseAccountingStatusId: any,

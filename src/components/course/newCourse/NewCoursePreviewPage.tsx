@@ -229,6 +229,7 @@ export default function NewCourseReviewPage() {
   
 
   const handClickContinue = async () => {
+  
     setIsSubmitting(true);
 
     /**
@@ -243,7 +244,7 @@ export default function NewCourseReviewPage() {
     if (isPosted) {
       const params = new URLSearchParams(searchParams);
 
-    params.set("current_section", "thankyou_page");
+    params.set("header", "thankyou_page");
 
     // we have to use this replace method
     replace(`${pathname}?${params.toString()}`);
