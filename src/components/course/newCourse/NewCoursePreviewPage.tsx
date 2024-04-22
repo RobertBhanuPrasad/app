@@ -1,5 +1,5 @@
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity, useMany, useOne } from "@refinedev/core";
+import { useGetIdentity, useList, useMany, useOne } from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
@@ -261,6 +261,24 @@ export default function NewCourseReviewPage() {
       setIsSubmitting(false);
     }
   };
+
+  /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the accommodation details
+   * we will get the currency code in the country config
+   *
+   */
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: 1,
+      },
+    ],
+  });
 
   return (
     <div className="pb-12">
@@ -713,7 +731,14 @@ export default function NewCourseReviewPage() {
           {newCourseData?.is_residential_program && (
             <div className="grid grid-cols-4 gap-4 mt-2">
               {newCourseData?.accommodation?.map((data: any) => {
-                return <Accommodation accomdationData={data} />;
+                return (
+                  <Accommodation
+                    accomdationData={data}
+                    currencyCode={
+                      countryConfigData?.data?.[0]?.default_currency_code
+                    }
+                  />
+                );
               })}
 
               <div className=" min-w-72">
@@ -830,8 +855,10 @@ export default function NewCourseReviewPage() {
 
 const Accommodation = ({
   accomdationData,
+  currencyCode,
 }: {
   accomdationData: { accommodation_type_id: number; fee_per_person: number };
+  currencyCode: string;
 }) => {
   /**
    * @constant data
@@ -847,9 +874,19 @@ const Accommodation = ({
   });
 
   return (
-    <div className=" min-w-72">
-      <CardLabel>{data?.data?.name}</CardLabel>
-      <CardValue>{accomdationData?.fee_per_person}</CardValue>
+    <div className=" min-w-[72px]">
+      <abbr title={data?.data?.name} className="no-underline">
+        <CardLabel className="truncate">{data?.data?.name}</CardLabel>
+      </abbr>
+      <abbr
+        title={currencyCode + accomdationData?.fee_per_person}
+        className="no-underline"
+      >
+        <CardValue className="truncate">
+          {currencyCode}
+          {accomdationData?.fee_per_person}
+        </CardValue>
+      </abbr>
     </div>
   );
 };
