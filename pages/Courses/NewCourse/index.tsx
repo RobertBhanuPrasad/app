@@ -52,7 +52,7 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
-  console.log(loginUserData,'loginUserData')
+  console.log(loginUserData, "loginUserData");
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
@@ -117,6 +117,8 @@ function NewCourse() {
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
           [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
+          //For registration required field will be visibile to super admin only and it should be set to true by default
+          [NewCourseStep2FormNames?.is_registration_required]: true,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
@@ -203,7 +205,9 @@ export const NewCourseTabs = () => {
       : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
-    ...(formData?.program_type?.is_geo_restriction_applicable ? []:["is_geo_restriction_applicable"])
+    ...(formData?.program_type?.is_geo_restriction_applicable
+      ? []
+      : ["is_geo_restriction_applicable"]),
   ]);
 
   let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
@@ -213,10 +217,8 @@ export const NewCourseTabs = () => {
     ...(formData?.courseTypeSettings?.is_online_program
       ? ["is_existing_venue", "newVenue", "existingVenue"]
       : []),
-    ...(formData?.is_existing_venue == "new-venue"
-      ? []
-      : ["newVenue"]),
-      ...(formData?.is_existing_venue == "existing-venue"
+    ...(formData?.is_existing_venue == "new-venue" ? [] : ["newVenue"]),
+    ...(formData?.is_existing_venue == "existing-venue"
       ? []
       : ["existingVenue"]),
     //If country does not have multiple time zones no need to validate time zone drop down
