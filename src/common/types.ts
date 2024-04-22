@@ -640,6 +640,7 @@ interface ProgramOfflineRevenueDatabaseType {
 
 interface ProgramDataBaseType {
   id?: number;
+  created_by_user_id?: number | UsersDataBaseType;
   created_at?: Date;
   organization_id?: number | OrganizationsDataBaseType;
   venue_id?: number | VenueDataBaseType;

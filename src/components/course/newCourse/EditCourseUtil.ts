@@ -24,7 +24,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
-
+ 
   // Step 1
 
   //organization_id

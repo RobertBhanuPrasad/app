@@ -4,6 +4,7 @@ import {
   useInvalidate,
   useMany,
   useOne,
+  useList,
 } from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
@@ -30,6 +31,7 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
+import { CardLabel, CardValue } from "src/ui/TextTags";
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
@@ -165,17 +167,6 @@ export default function NewCourseReviewPage() {
     })
     .join(", ");
 
-  const { data: CourseAccomidation } = useMany({
-    resource: "accomdation_types",
-    ids: _.map(newCourseData?.accommodation, "accommodation_type_id") || [],
-  });
-
-  const courseAccomodationNames = CourseAccomidation?.data?.map(
-    (accomdation: any) => {
-      if (accomdation?.name) return accomdation?.name;
-    }
-  );
-
   const { data: CourseTranslation } = useMany({
     resource: "languages",
     ids: newCourseData?.translation_language_ids || [],
@@ -286,6 +277,24 @@ export default function NewCourseReviewPage() {
       setIsSubmitting(false);
     }
   };
+
+  /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the accommodation details
+   * we will get the currency code in the country config
+   *
+   */
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: newCourseData?.organization_id,
+      },
+    ],
+  });
 
   return (
     <div className="pb-12">
@@ -739,15 +748,12 @@ export default function NewCourseReviewPage() {
             <div className="grid grid-cols-4 gap-4 mt-2">
               {newCourseData?.accommodation?.map((data: any) => {
                 return (
-                  <div className=" min-w-72">
-                    <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                      {" "}
-                      {courseAccomodationNames}
-                    </p>
-                    <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
-                      {data?.fee_per_person}
-                    </p>
-                  </div>
+                  <Accommodation
+                    accomdationData={data}
+                    currencyCode={
+                      countryConfigData?.data?.[0]?.default_currency_code
+                    }
+                  />
                 );
               })}
 
@@ -854,3 +860,51 @@ export default function NewCourseReviewPage() {
     </div>
   );
 }
+
+/**
+ * @function Accommodation
+ * REQUIRMENT we need to show the both name and the fee of the accommodation name
+ * @description this function is used to display both the accommodation type name and the fee which we will give in the creation of the course
+ * @param accomdationData
+ * @returns
+ */
+
+const Accommodation = ({
+  accomdationData,
+  currencyCode,
+}: {
+  accomdationData: { accommodation_type_id: number; fee_per_person: number };
+  currencyCode: string;
+}) => {
+  /**
+   * @constant data
+   * REQUIRMENT we need to show the both name and the fee of the accommodation name
+   * we have the accommodation type id and we need the name of the type
+   * For that we are doing appi call for the accomdation_types table and we are getting the data in that data we have the accommodation type name
+   * @description this data const is used to store the accommodation type api data with respective to the accommodation type id
+   *
+   */
+  const { data } = useOne({
+    resource: "accomdation_types",
+    id: accomdationData?.accommodation_type_id,
+  });
+
+  return (
+    <div className=" min-w-[72px]">
+      <abbr title={data?.data?.name} className="no-underline">
+        <CardLabel className="truncate">{data?.data?.name}</CardLabel>
+      </abbr>
+      <abbr
+        title={`${currencyCode ? currencyCode : ""} ${
+          accomdationData?.fee_per_person
+        }`}
+        className="no-underline"
+      >
+        <CardValue className="truncate">
+          {currencyCode ? currencyCode : ""}
+          {accomdationData?.fee_per_person}
+        </CardValue>
+      </abbr>
+    </div>
+  );
+};
