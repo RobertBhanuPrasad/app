@@ -57,7 +57,7 @@ function NewCourseStep1() {
 export default NewCourseStep1;
 
 const RegistrationGateway = () => {
-  const { t } = useTranslation( [ "common", 'course.new_course']);
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
   const {
     field: { value = false, onChange },
   } = useController({
@@ -84,11 +84,11 @@ const RegistrationGateway = () => {
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">
           <div className="text-xs font-normal text-[#333333]">
-          Please input the site's URL *
+          {t("new_strings:please_input_the_sites_url")} *
           </div>
           <div className="w-[320px] h-[40px] rounded-[1px] text-[#999999] font-normal">
             <Input
-              placeholder="Enter URL"
+              placeholder={t("new_strings:enter_url")}
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
               className="placeholder:text-[#999999]"

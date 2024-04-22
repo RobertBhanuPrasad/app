@@ -54,7 +54,7 @@ export default function NewCourseStep2() {
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course',"new_strings"]);
 
   return (
     <div className="pt-2 w-auto ">
@@ -122,11 +122,7 @@ export default function NewCourseStep2() {
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                Course Description text is managed by National Admin. If the
-                National Admin has allowed Organizers / Teachers to edit Course
-                description then only this field will be editable. If you want
-                to change the course description and this field is not editable
-                kindly contact your National Admin.
+                {t("new_strings:course_description_text")}
               </div>
             </HoverCardContent>
           </HoverCard>
@@ -139,8 +135,7 @@ export default function NewCourseStep2() {
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                Text entered in the 'Course Notes' field will be shown only on
-                the Art of Living Website course details page.
+              {t("new_strings:text_entered")}
               </div>
             </HoverCardContent>
           </HoverCard>
@@ -153,10 +148,7 @@ export default function NewCourseStep2() {
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                Text entered in the 'Email Notes' field will be included in the
-                registration confirmation email only irrespective of the
-                transaction status (Email notes will not be shown on the Art of
-                Living Website)
+              {t("new_strings:text_entered_in_the_email_notes")}
               </div>
             </HoverCardContent>
           </HoverCard>
@@ -407,11 +399,11 @@ const CourseNameDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
-  const { t } = useTranslation( [ "common", 'course.new_course']);
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-      Course Name <div className="text-[#7677F4]">*</div>
+      {t("new_strings:course_name")} <div className="text-[#7677F4]">*</div>
       </div>
 
       <Select
@@ -672,7 +664,7 @@ const Visibility = () => {
     VISIBILITY,
     PRIVATE
   )?.id;
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
 
   return (
     <div className="flex gap-1 flex-col">
@@ -689,8 +681,7 @@ const Visibility = () => {
                 {t('public')}
               </div>
               <div>
-                There are a lot of things you can do in space, and space
-                essentially is unlimited resources.
+                {t("new_strings:there_are_a_lot_of_things")}
               </div>
               <div className="my-2">
                 <hr></hr>
@@ -700,8 +691,7 @@ const Visibility = () => {
                 {t('private')} 
               </div>
               <div>
-                There are a lot of things you can do in space, and space
-                essentially is unlimited resources.
+              {t("new_strings:there_are_a_lot_of_things")}
               </div>
             </div>
           </HoverCardContent>
@@ -756,13 +746,13 @@ const { t } = useTranslation( [ "common", 'course.new_course']);
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
-            label="Yes"
+            label={t("yes")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label="No"
+            label={t("no")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -791,10 +781,7 @@ const GeoRestriction = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Text entered in the 'Email Notes' field will be included in the
-              registration confirmation email only irrespective of the
-              transaction status (Email notes will not be shown on the Art of
-              Living Website)
+            {t("new_strings:text_entered_in_the_email_notes")}
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -810,13 +797,13 @@ const GeoRestriction = () => {
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
-            label="Yes"
+            label={t("yes")}
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label="No"
+            label={t("no")}
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
         </div>

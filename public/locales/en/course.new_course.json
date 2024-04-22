@@ -83,8 +83,7 @@
         "select_contact_number": "Select contact number",
         "send_bcc": "Send BCC registration confirmation email to",
         "select_course": "Select course email",
-        "note": "Note",
-        "enter_comma_separated":"Enter comma separated list of email addresses.",
+        "note_enter_comma": " Enter comma separated list of email addresses.",
         "review_details": "Review Details"
     },
     "review_post_details": {

@@ -87,7 +87,7 @@ export const DisplayOptions = (
   courseAccountingStatusId: any,
   roleId: any
 ) => {
-  const {t} = useTranslation("common")
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
   // Getting all the course status ID's
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
@@ -203,11 +203,11 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "Submit Course Accounting Form",
+          label: t("new_strings:submit_course_accounting_form"),
           value: 6,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t("new_strings:edit_course_accounting_form"),
           value: 8,
         },
       ];
@@ -234,11 +234,11 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "Submit Course Accounting Form",
+          label: t("new_strings:submit_course_accounting_form"),
           value: 6,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t("new_strings:edit_course_accounting_form"),
           value: 8,
         },
       ];
@@ -279,11 +279,11 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "Submit Course Accounting Form",
+          label: t("new_strings:submit_course_accounting_form"),
           value: 6,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t("new_strings:edit_course_accounting_form"),
           value: 8,
         },
       ];
@@ -316,7 +316,7 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "View Course Accounting Form",
+          label:t("new_strings:view_ourse_accounting_form"),
           value: 7,
         },
       ];
@@ -339,7 +339,7 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "View Course Accounting Form",
+          label: t("new_strings:view_ourse_accounting_form"),
           value: 7,
         },
       ];
@@ -372,7 +372,7 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t("new_strings:edit_course_accounting_form"),
           value: 8,
         },
       ];
@@ -403,7 +403,7 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t("new_strings:edit_course_accounting_form"),
           value: 8,
         },
       ];
@@ -428,7 +428,7 @@ export const DisplayOptions = (
           value: 4
         },
         {
-          label: "View Course Accounting Form",
+          label: t("new_strings:view_ourse_accounting_form"),
           value: 7,
         },
       ];
@@ -447,7 +447,7 @@ export const DisplayOptions = (
           value: 4
         },
         {
-          label: "View Course Accounting Form",
+          label: t("new_strings:view_ourse_accounting_form"),
           value: 7,
         },
       ];
@@ -488,11 +488,11 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "Submit Course Accounting Form",
+          label: t("new_strings:submit_course_accounting_form"),
           value: 6,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t("new_strings:edit_course_accounting_form"),
           value: 8,
         },
       ];
@@ -525,7 +525,7 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "View Course Accounting Form",
+          label:t("new_strings:view_ourse_accounting_form"),
           value: 7,
         },
       ];
@@ -548,7 +548,7 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "View Course Accounting Form",
+          label: t("new_strings:view_ourse_accounting_form"),
           value: 7,
         },
       ];
@@ -579,7 +579,7 @@ export const DisplayOptions = (
           value: 5
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t("new_strings:edit_course_accounting_form"),
           value: 8,
         },
       ];
@@ -605,7 +605,7 @@ export const DisplayOptions = (
           value: 4
         },
         {
-          label: "View Course Accounting Form",
+          label: t("new_strings:view_ourse_accounting_form"),
           value: 7,
         },
         'View Participants',
@@ -628,7 +628,7 @@ export const DisplayOptions = (
           value: 4
         },
         {
-          label: "View Course Accounting Form",
+          label: t("new_strings:view_ourse_accounting_form"),
           value: 7,
         },
       ];
@@ -651,7 +651,7 @@ export const DisplayOptions = (
      
       return [
         {
-          label: 'View Participants',
+          label: t('view_participants'),
           value: 1
         }
       ]
@@ -668,11 +668,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Edit course",
+          label:  t('edit_course'),
           value: 3,
         },
         {
-          label: "Cancel course",
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -684,7 +684,7 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Cancel course",
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -694,11 +694,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Edit course",
+          label:  t('edit_course'),
           value: 3,
         },
         {
-          label: "Cancel course",
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -718,11 +718,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Edit course",
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: "Cancel course",
+          label:  t('cancel_course'),
           value: 5,
         },
       ];

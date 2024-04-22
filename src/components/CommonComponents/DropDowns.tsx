@@ -109,7 +109,7 @@ export const StreetAddressComponent = () => {
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={streetAddressValue}
-          placeholder="Enter Street Address"
+          placeholder={t("course.new_course:time_and_venue_tab.street_address_placeholder")}
           className="placeholder:text-[#999999]"
           onChange={streetAddressOnchange}
           error={error ? true : false}
@@ -239,17 +239,18 @@ export const StateDropDown = ({ name }: { name: string }) => {
   const handleOnBottomReached = () => {
     setPageSize((pageSize) => pageSize + 10);
   };
+  const { t } = useTranslation( [ "common", 'course.new_course']);
 
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
-      <div className="text-xs font-normal text-[#333333]">Province</div>
+      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.province")}</div>
 
       <Select value={stateValue} onValueChange={stateValueOnchange}>
         <SelectTrigger
           className="w-full"
           error={stateValueError ? true : false}
         >
-          <SelectValue placeholder="Select Province" />
+          <SelectValue placeholder={t("course.new_course:time_and_venue_tab.province_placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <Input
@@ -337,7 +338,7 @@ export const CenterDropDown = ({ name }: { name: string }) => {
     setPageSize((prevPageSize) => prevPageSize + 10);
   };
 
-  const {t} = useTranslation("common")
+  const {t} = useTranslation(["common","new_strings"])
 
   return (
     <div className="flex gap-1 flex-col h-[60px]">
@@ -347,7 +348,7 @@ export const CenterDropDown = ({ name }: { name: string }) => {
           className="w-full"
           error={centerValueError ? true : false}
         >
-          <SelectValue placeholder="Select Local center" />
+          <SelectValue placeholder={t('new_strings:select_local_center')}/>
         </SelectTrigger>
         <SelectContent>
           <Input

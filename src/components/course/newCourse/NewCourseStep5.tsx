@@ -149,13 +149,13 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
-            label="Yes"
+            label={t("yes")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label="No"
+            label={t("no")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -294,7 +294,7 @@ export const AccommodationType = ({ index }: { index: number }) => {
         }}
       >
         <SelectTrigger error={error ? true : false}>
-          <SelectValue placeholder= "Select Accommodation" />
+          <SelectValue placeholder= {t("course.new_course:accommodation_tab.accommodation_type")} />
         </SelectTrigger>
         <SelectContent>
           <Input onChange={(val) => onSearch(val.target.value)} />

@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from 'src/ui/dropdown-menu' // Importing components for dropdown menu
 import { formatDateAndTime } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
+import { useTranslation } from 'next-i18next';
 // Component for viewing participant transaction details
 function ViewParticipantTransactionDetails({ participantId }: any) {
   // Fetching table data using useTable hook
@@ -78,6 +79,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
 }
 
 export default ViewParticipantTransactionDetails
+const { t } = useTranslation( [ "common", 'course.new_course']);
 
 // Array of table columns
 const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
@@ -100,7 +102,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
         </div>
       )
     },
-
+    
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }) => {
@@ -194,7 +196,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
   {
     accessorKey: 'accommodation_type',
     header: () => {
-      return <TableHeader className=" min-w-[170px]">Accommodation Type</TableHeader>
+      return <TableHeader className=" min-w-[170px]">{t("course.new_course:accommodation_tab.accommodation_type")}</TableHeader>
     },
 
     cell: ({ row }) => {
@@ -214,7 +216,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
   {
     accessorKey: 'total_amount',
     header: () => {
-      return <TableHeader className="min-w-[120px]">Total fee (EUR)</TableHeader>
+      return <TableHeader className="min-w-[120px]">{t("course.new_course:fees_tab.fee")}(EUR)</TableHeader>
     },
     cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.total_amount}</Text>

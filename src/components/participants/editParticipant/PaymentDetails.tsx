@@ -4,6 +4,7 @@ import { useController, useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Input } from "src/ui/input";
+import { useTranslation } from 'next-i18next';
 import {
     Select,
     SelectContent,
@@ -71,6 +72,7 @@ export default function PaymentDetails() {
             },
         ],
     });
+    const { t } = useTranslation( [ "common", 'course.new_course']);
    return (
         <div className="flex-row pb-[5px]" id="Payment">
             <Text className="font-semibold text-[18px] py-[25px]">
@@ -98,7 +100,7 @@ export default function PaymentDetails() {
                 </div>
                 <div className="w-[303px]">
                     <Text className="text-[#999999]  text-[14px] ">
-                        Total Fee {`(Includes VAT)`}
+                    {t("course.new_course:fees_tab.fee")}{`(Includes VAT)`}
                     </Text>
                     <Text className="text-[16px] font-semibold">
                         {FormData?.currency_code ? FormData?.currency_code : ""}{" "}

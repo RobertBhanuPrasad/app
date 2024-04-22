@@ -273,13 +273,13 @@ export default function NewCourseReviewPage() {
       setIsSubmitting(false);
     }
   };
-  const { t } = useTranslation( [ "common", 'course.new_course', ""]);
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
 
   return (
     
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold">
-      Review Your Details Right Here
+      {t("new_strings:review_your_details_right_here")}
       </div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
@@ -362,7 +362,7 @@ export default function NewCourseReviewPage() {
             {newCourseData?.is_registration_via_3rd_party ? (
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Registration via 3rd party gateway url
+                {t("new_strings:registration_via")}
                 </p>
                 <abbr
                   className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -493,8 +493,7 @@ export default function NewCourseReviewPage() {
                   "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
                 }
               >
-                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-                aut fugit, sed quia consequuntur ma
+            {t("new_strings:nemo_enim_ipsam_voluptatem_quia")}
               </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
@@ -509,8 +508,7 @@ export default function NewCourseReviewPage() {
                   "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
                 }
               >
-                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-                aut fugit, sed quia consequuntur ma{" "}
+              {t("new_strings:nemo_enim_ipsam_voluptatem_quia")}{" "}
               </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
@@ -567,7 +565,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Province
+                {t("course.new_course:time_and_venue_tab.province")}
                 </p>
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   {StateNames ? StateNames : "-"}
@@ -710,7 +708,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-            Accommodation Information
+            {t("new_strings:accommodation_information")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of AccomidationDetails page */}
             <EditModalDialog
@@ -759,7 +757,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-            Contact Info
+            {t("new_strings:contact_info")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of ContactDetails page */}
             <EditModalDialog
@@ -790,7 +788,7 @@ export default function NewCourseReviewPage() {
                 </div>
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                  Contact Phone
+                  {t("new_strings:contact_phone")}
                   </p>
                   <abbr
                     className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -816,7 +814,7 @@ export default function NewCourseReviewPage() {
 
           <div className="mt-4 min-w-72">
             <p className="text-sm font-normal text-accent-light text-[#999999]">
-            BCC registration confirmation email
+            {t("new_strings:bcc_registration_confirmation")}
             </p>
             <div className="truncate">
               <abbr

@@ -39,7 +39,7 @@ function NewCourseStep6() {
   const handleDeleteItem = (index: number) => {
     remove(index);
   };
-  const { t } = useTranslation( [ "common", 'course.new_course']);
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
 
   return (
     
@@ -112,7 +112,7 @@ function NewCourseStep6() {
           onChange={(val) => {
             courseEmailOnChange(val?.target?.value);
           }}
-          placeholder="Enter course emails"
+          placeholder={t("new_strings:enter_course_emails")}
           className="!w-58"
           error={error ? true : false} // TODO need to change after integrating the form names
         />
@@ -120,9 +120,9 @@ function NewCourseStep6() {
           <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
         )}
         <div className="flex flex-row gap-1 text-[#666666] text-[12px] italic">
-          <span className="font-semibold">{t("course.new_course:contact_info_tab.note")}:</span>{" "}
+          <span className="font-semibold">{t("new_strings:note")} :</span>{" "}
           <div className="font-[400]">
-          {t("course.new_course:contact_info_tab.enter_comma_separated")}
+          {t("course.new_course:contact_info_tab.note_enter_comma")}
           </div>
         </div>
       </div>

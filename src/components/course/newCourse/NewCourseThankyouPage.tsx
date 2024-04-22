@@ -222,7 +222,7 @@ const NewCourseThankyouPage = () => {
                         <CopyIcon />
                         {copiedDetailsPageLink ? (
                           <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                            copied
+                            {t('new_strings:copied')}
                           </div>
                         ) : (
                           ""
@@ -247,7 +247,7 @@ const NewCourseThankyouPage = () => {
                         <CopyIcon />
                         {copiedRegistrationLink ? (
                           <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                            copied
+                            {t('new_strings:copied')}
                           </div>
                         ) : (
                           ""
@@ -265,7 +265,7 @@ const NewCourseThankyouPage = () => {
                       variant="outline"
                       className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
                     >
-                       Copy 2 Links
+                       {t("new_strings:copy_lnks")}
                     </Button>
                   </div>
                 </div>

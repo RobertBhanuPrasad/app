@@ -53,6 +53,7 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import { authProvider } from "src/authProvider"
 import { GetServerSideProps } from "next"
 import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import { useTranslation } from 'next-i18next';
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -312,12 +313,13 @@ export const NewCourseTabs = () => {
   const handleClickPrevious = () => {
     setCurrentStep(currentStep - 1);
   };
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
 
   // Array of step titles, icons, and colors
   const stepTitles = [
     {
       value: BASIC_DETAILS_STEP_NUMBER,
-      label: "Basic Details",
+      label: t("basic_details"),
       // If the current step is BASIC_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === BASIC_DETAILS_STEP_NUMBER ||
@@ -344,7 +346,7 @@ export const NewCourseTabs = () => {
     },
     {
       value: COURSE_DETAILS_STEP_NUMBER,
-      label: "Course Details",
+      label: t("basic_details"),
       // If the current step is COURSE_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === COURSE_DETAILS_STEP_NUMBER ||
@@ -377,7 +379,7 @@ export const NewCourseTabs = () => {
     },
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
-      label: "Time and Venue",
+      label: t("time_and_venue"),
       // If the current step is TIME_AND_VENUE_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === TIME_AND_VENUE_STEP_NUMBER ||
@@ -410,7 +412,7 @@ export const NewCourseTabs = () => {
     },
     {
       value: FEE_STEP_NUMBER,
-      label: "Fees",
+      label:t("fees"),
       // If the current step is FEE_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === FEE_STEP_NUMBER || isAllFieldsValid4 !== undefined
@@ -437,7 +439,7 @@ export const NewCourseTabs = () => {
     },
     {
       value: ACCOMMODATION_STEP_NUMBER,
-      label: "Accommodation",
+      label: t("new_strings:accommodation"),
       // If the current step is ACCOMMODATION_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === ACCOMMODATION_STEP_NUMBER ||
@@ -470,7 +472,7 @@ export const NewCourseTabs = () => {
     },
     {
       value: CONTACT_INFO_STEP_NUMBER,
-      label: "Contact Info",
+      label: t("new_strings:contact_info"),
       // If the current step is CONTACT_INFO_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === CONTACT_INFO_STEP_NUMBER ||
@@ -584,7 +586,7 @@ export const NewCourseTabs = () => {
                     }}
                     className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
                   >
-                    Previous
+                    {t("previous_button")}
                   </Button>
                 )}
 
@@ -598,7 +600,7 @@ export const NewCourseTabs = () => {
                       );
                     }}
                   >
-                    Next
+                    {t("next_button")}
                   </Button>
                 )}
 
@@ -611,7 +613,7 @@ export const NewCourseTabs = () => {
                       );
                     }}
                   >
-                    Review Details
+                    {t("course.new_course:contact_info_tab.review_details")}
                   </Button>
                 )}
               </div>
@@ -624,7 +626,7 @@ export const NewCourseTabs = () => {
 };
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common", "course.new_course", "new_string"])
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common", "course.new_course", "new_strings"])
   if (!authenticated) {
     return {
       props: {
