@@ -190,8 +190,8 @@ export const handlePostProgramData = async (
 
   // step 5
 
-  //is_residential_program
-  if (body[NewCourseStep5FormNames.is_residential_program]) {
+  //is_residential_program is not undefined in the body then add to the programBody objetc
+  if (body[NewCourseStep5FormNames.is_residential_program] !== undefined) {
     programBody.is_residential_program =
       body[NewCourseStep5FormNames.is_residential_program];
   }

@@ -14,7 +14,7 @@ import {
 } from "src/ui/accordion";
 import { Label } from "src/ui/label";
 import { Input } from "src/ui/input";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Checkbox } from "src/ui/checkbox";
 import { Separator } from "src/ui/separator";
 import FilterIcon from "@public/assets/FilterIcon";
@@ -60,6 +60,24 @@ export function ParticipantsAdvanceFilter() {
     return res;
   };
 
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sheetRef.current &&
+        !sheetRef.current.contains(event.target as Node)
+      ) {
+        setOpenAdvFilter(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [sheetRef]);
+
   return (
     <Sheet open={openAdvFilter}>
       <SheetTrigger
@@ -82,7 +100,7 @@ export function ParticipantsAdvanceFilter() {
           {count > 0 && <CountComponent count={count} />}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[446px] rounded-l-xl">
+      <SheetContent className="w-[446px] rounded-l-xl" ref={sheetRef}>
         <div className="flex flex-col gap-4">
           <div className="max-h-[90vh] overflow-y-auto scrollbar pr-4">
             <SheetHeader className="p-3 text-2xl font-semibold flex flex-row">
@@ -299,7 +317,8 @@ export const ContactDetails = () => {
     name: "tempFilters.mobile",
   });
 
-  const emailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const emailRegex: RegExp =
+    /^[^\s]+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   return (
     <div className="flex flex-col gap-4">
@@ -328,7 +347,9 @@ export const ContactDetails = () => {
           (emailRegex.test(contactEmail) ? (
             ""
           ) : (
-            <div className="text-red-600">Enter valid email id</div>
+            <div className="text-red-600">
+              Enter valid email id and Enter only one email at a time
+            </div>
           ))}
       </div>
       <div className="flex flex-col gap-2">
