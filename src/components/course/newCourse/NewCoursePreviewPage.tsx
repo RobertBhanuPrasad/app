@@ -275,7 +275,7 @@ export default function NewCourseReviewPage() {
       {
         field: "organization_id",
         operator: "eq",
-        value: 1,
+        value: newCourseData?.organization_id,
       },
     ],
   });
