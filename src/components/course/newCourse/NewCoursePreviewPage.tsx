@@ -879,10 +879,13 @@ const Accommodation = ({
         <CardLabel className="truncate">{data?.data?.name}</CardLabel>
       </abbr>
       <abbr
+          // If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined 
+          // we need to display the currency code when the code is present for the organization
         title={`${currencyCode ? currencyCode : ""} ${accomdationData?.fee_per_person}`}
         className="no-underline"
       >
         <CardValue className="truncate">
+          {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
           {currencyCode ? currencyCode : ""}
           {accomdationData?.fee_per_person}
         </CardValue>
