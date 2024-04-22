@@ -257,7 +257,7 @@ function CourseDetailsTab() {
           <CardContent className="gap-[23px] flex flex-col">
             <div>
               <Header2>Venue Address</Header2>
-              {courseData?.data?.venue_id && 
+              {courseData?.data?.venue_id ?
               <ItemValue>
                 {courseData?.data?.venue_id?.address},
                 {courseData?.data?.venue_id?.center_id?.name},
@@ -265,7 +265,7 @@ function CourseDetailsTab() {
                 {courseData?.data?.venue_id?.state_id?.name}{" "}
                 {courseData?.data?.venue_id?.postal_code}
               </ItemValue>
-              }
+              : '-'}
             </div>
             <Header2>
               Sessions
