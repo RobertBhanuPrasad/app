@@ -46,7 +46,7 @@ function ParticipantsTab() {
         <div className="text-[23px] font-semibold">Overall Participants</div>
         <div className="flex gap-4">
           <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">
-          {t('register_participant')},
+          {t('register_participant')}
           </Button>
           <Button className="w-[188px] h-[46px] rounded-[12px]">
           {t('view_participants')}

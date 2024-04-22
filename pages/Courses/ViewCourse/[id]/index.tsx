@@ -893,29 +893,6 @@ const ShareButton = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async context => {
-  const { authenticated, redirectTo } = await authProvider.check(context)
-
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
-
-  if (!authenticated) {
-    return {
-      props: {
-        ...translateProps
-      },
-      redirect: {
-        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
-        permanent: false
-      }
-    }
-  }
-
-  return {
-    props: {
-      ...translateProps,
-    },
-  };
-};
 
 
 
@@ -1228,3 +1205,52 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
   );
 };
 
+
+
+// export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+//   const { authenticated, redirectTo } = await authProvider.check(context)
+//   const translateProps = await serverSideTranslations(context.locale ?? "en", ["common", "course.new_course", "new_strings"])
+//   if (!authenticated) {
+//     return {
+//       props: {
+//         ...translateProps,
+//       },
+//       redirect: {
+//         destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || "/")}`,
+//         permanent: false,
+//       },
+//     }
+//   }
+//   return {
+//     props: {
+//       ...translateProps,
+//     },
+//   }
+// }
+
+
+
+
+export const getServerSideProps: GetServerSideProps<{}> = async context => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
+
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
+        permanent: false
+      }
+    }
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};
