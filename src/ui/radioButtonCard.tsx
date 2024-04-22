@@ -8,12 +8,17 @@ interface RadioItemProps {
   value: string;
   className?: string;
   label: string;
+  disabled?: boolean;
 }
 export const RadioButtonCard: React.FC<RadioItemProps> = ({
   selectedRadioValue,
   value,
   label,
   className,
+  /**
+   * this is boolean to diable the radio button
+   */
+  disabled,
 }) => {
   const cardClassName = classNames(
     "flex pl-4 items-center gap-2 ",
@@ -32,6 +37,7 @@ export const RadioButtonCard: React.FC<RadioItemProps> = ({
           "border !border-[#D6D7D8] border-[1.5px] ":
             selectedRadioValue !== value,
         })}
+        disabled={disabled}
       />
       <Label
         htmlFor={value}
