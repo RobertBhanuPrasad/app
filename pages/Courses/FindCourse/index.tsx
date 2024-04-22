@@ -170,7 +170,6 @@ function index() {
 
   const [rowSelection, setRowSelection] = React.useState({});
 
-
   const {
     tableQueryResult: programData,
     pageCount,
@@ -185,6 +184,12 @@ function index() {
         "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
     filters: filters,
+    sorters: {
+      permanent: [
+        // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
+        { field: "created_at", order: "desc" },
+      ],
+    },
   });
 
   console.log("heyyy dattttaaa", programData);
