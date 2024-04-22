@@ -143,7 +143,7 @@ function CourseDetailsTab() {
             <div>
               <Header2>Teachers</Header2>
               <ItemValue>
-              {courseData?.data?.program_teachers
+              {courseData?.data?.program_teachers?.length > 0
               ? courseData?.data?.program_teachers.map((item: fullNameObject) => {
                return item?.user_id?.contact_id?.full_name;
               }).join(", ")
@@ -153,8 +153,8 @@ function CourseDetailsTab() {
             <div>
               <Header2>Assistant Teachers</Header2>
               <ItemValue>
-                {courseData?.data?.program_assistant_teachers 
-                ?  courseData?.data?.program_assistant_teachers?.map((item: fullNameObject) => {
+                {courseData?.data?.program_assistant_teachers?.length > 0
+                ? courseData?.data?.program_assistant_teachers?.map((item: fullNameObject) => {
                   return item?.user_id?.contact_id?.full_name;
                   }).join(',')
                : '-' }
@@ -163,7 +163,7 @@ function CourseDetailsTab() {
             <div>
               <Header2>Available language(s) for translation </Header2>
               <ItemValue>
-                {courseData?.data?.program_translation_languages
+                {courseData?.data?.program_translation_languages?.length > 0
                  ? courseData?.data?.program_translation_languages?.map((item: LanguageItem) => {
                   return item?.language_id?.language_name
                  }).join(", ") 
@@ -173,7 +173,7 @@ function CourseDetailsTab() {
             <div>
               <Header2>Language(s) course is taught in </Header2>
               <ItemValue>
-                {courseData?.data?.program_languages 
+                {courseData?.data?.program_languages?.length > 0
                 ? courseData?.data?.program_languages?.map(
                     (item: LanguageItem) => {
                       return item?.language_id?.language_name
@@ -192,7 +192,7 @@ function CourseDetailsTab() {
             <div>
               <Header2>Program organizer</Header2>
               <ItemValue>
-                {courseData?.data?.program_organizers
+                {courseData?.data?.program_organizers?.length > 0
                  ? courseData?.data?.program_organizers?.map((item: fullNameObject) => {
                      return  item?.user_id?.contact_id?.full_name
                     }).join(", ") 
@@ -215,7 +215,7 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {programFees 
+            {programFees?.length > 0 
             ? programFees?.map((item: ProgramFeeItem) => {
               return (
                 <div className="flex flex-col gap-1">
@@ -228,7 +228,7 @@ function CourseDetailsTab() {
               );
             }) 
             : '-'}
-            {courseData?.data?.program_accommodations 
+            {courseData?.data?.program_accommodations?.length > 0 
             ? courseData?.data?.program_accommodations?.map(
               (item: AccommodationItem) => {
                 return (
@@ -270,7 +270,7 @@ function CourseDetailsTab() {
             <Header2>
               Sessions
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
-                {courseData?.data?.program_schedules ? courseData?.data?.program_schedules?.map(
+                {courseData?.data?.program_schedules?.length > 0 ? courseData?.data?.program_schedules?.map(
                   (item: ProgramScheduleItem, index: number) => (
                     <div key={index}>
                       <div className="flex flex-col">
@@ -367,7 +367,7 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {courseData?.data?.program_contact_details ? courseData?.data?.program_contact_details?.map(
+            {courseData?.data?.program_contact_details?.length > 0 ? courseData?.data?.program_contact_details?.map(
               (item: ContactDetailsItem) => {
                 return (
                   <div className="gap-[23px] flex flex-col">
