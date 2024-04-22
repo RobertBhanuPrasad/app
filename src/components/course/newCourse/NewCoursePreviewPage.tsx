@@ -1,5 +1,11 @@
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity, useList, useMany, useOne } from "@refinedev/core";
+import {
+  useGetIdentity,
+  useInvalidate,
+  useMany,
+  useOne,
+  useList,
+} from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
@@ -242,6 +248,11 @@ export default function NewCourseReviewPage() {
 
   const { setProgramId } = newCourseStore();
 
+  /**
+   * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
+   */
+  const invalidate = useInvalidate();
+
   const handClickContinue = async () => {
     setIsSubmitting(true);
 
@@ -255,6 +266,11 @@ export default function NewCourseReviewPage() {
     );
 
     if (isPosted) {
+      // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+      await invalidate({
+        resource: "program",
+        invalidates: ["list"],
+      });
       setViewPreviewPage(false);
       setViewThankyouPage(true);
     } else {
@@ -879,7 +895,9 @@ const Accommodation = ({
         <CardLabel className="truncate">{data?.data?.name}</CardLabel>
       </abbr>
       <abbr
-        title={`${currencyCode ? currencyCode : ""} ${accomdationData?.fee_per_person}`}
+        title={`${currencyCode ? currencyCode : ""} ${
+          accomdationData?.fee_per_person
+        }`}
         className="no-underline"
       >
         <CardValue className="truncate">
