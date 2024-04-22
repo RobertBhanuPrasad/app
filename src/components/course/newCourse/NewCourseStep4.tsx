@@ -342,7 +342,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
 
         //Requirement: Early Bird Sub Total is (Early Bird Total - Tax )
-        const earlyBirdSubTotal = earlyBirdTotal - earlyBirdTotal * taxRate;
+        const earlyBirdSubTotal = earlyBirdTotal - (earlyBirdTotal * taxRate);
 
         return <div className="">{earlyBirdSubTotal}</div>;
       },
