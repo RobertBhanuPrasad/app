@@ -24,7 +24,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
-
+ 
   // Step 1
 
   //organization_id
@@ -43,7 +43,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   }
 
   //is_registration_via_3rd_party
-  if (data.is_registration_via_3rd_party)
+  if (data.is_registration_via_3rd_party != undefined)
     defaultValues.is_registration_via_3rd_party =
       data.is_registration_via_3rd_party;
 
@@ -106,13 +106,18 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   }
 
   //is_geo_restriction_applicable
-  if (data.is_geo_restriction_applicable)
+  if (data.is_geo_restriction_applicable != undefined)
     defaultValues.is_geo_restriction_applicable =
       data.is_geo_restriction_applicable;
 
   //allowed_countries
   if (data?.allowed_countries) {
     defaultValues.allowed_countries = data.allowed_countries;
+  }
+
+  //registration required for program
+  if (data?.is_registration_required != undefined) {
+    defaultValues.is_registration_required = data.is_registration_required;
   }
 
   //TODO: Need to do for course notes,description and emial notes
@@ -153,7 +158,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
       }
     }
   }
- 
+
   if (data?.hour_format_id)
     defaultValues.hour_format_id = data.hour_format_id as number;
 
@@ -214,6 +219,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data?.bcc_registration_confirmation_email)
     defaultValues.bcc_registration_confirmation_email =
       data.bcc_registration_confirmation_email;
+
 
   return defaultValues;
 };
