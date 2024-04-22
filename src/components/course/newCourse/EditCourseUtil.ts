@@ -24,7 +24,6 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
-  if (data.created_by_user_id) defaultValues.created_by_user_id = data.created_by_user_id as number;
  
   // Step 1
 

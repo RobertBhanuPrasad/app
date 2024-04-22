@@ -698,7 +698,6 @@ interface ProgramDataBaseType {
 
 interface NewCourseFormFieldTypes {
   id?: number;
-  created_by_user_id?: number;
 
   //step 1
   organization_id?: number;

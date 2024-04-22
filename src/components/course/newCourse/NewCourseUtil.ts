@@ -32,12 +32,6 @@ export const handlePostProgramData = async (
     programBody.id = body.id;
   }
  
-  // here we have to post the created_by_user_id with loggedInUserId because this field is required
-  // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
-  if(loggedInUserId) {
-    programBody.created_by_user_id = loggedInUserId
-  }
-
   // step 1
   if (body[NewCourseStep1FormNames.program_created_by]) {
     programBody.program_created_by =
@@ -226,6 +220,7 @@ export const handlePostProgramData = async (
     .select();
   console.log("course data is created!", programData);
 
+
   if (programError) {
     console.log(programError);
     return false;
@@ -234,6 +229,15 @@ export const handlePostProgramData = async (
     //call zustand function to store created programId
     // so that it can be helpful in thankyou page
     setProgramId(programId);
+
+  // here we have to update the created_by_user_id with loggedInUserId because this field is required
+  // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
+  if(loggedInUserId && programData[0].created_by_user_id == null) {
+    await supabaseClient
+    .from("program")
+    .update({created_by_user_id: loggedInUserId })
+    .eq("id", programId)
+  } 
 
     //TODO: We are doing this in backend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
