@@ -220,7 +220,6 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
     defaultValues.bcc_registration_confirmation_email =
       data.bcc_registration_confirmation_email;
 
-  console.log("heyy default data", data, defaultValues);
 
   return defaultValues;
 };
