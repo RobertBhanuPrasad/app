@@ -69,3 +69,9 @@ export const ACCOUNTING_CANCELED = 5;
 //Payment mode
 export const PAY_ONLINE = 1;
 export const PAY_OFFLINE = 2;
+
+// Transaction status
+export const NOT_RECIEVED=4;
+ export const CONFIRMED=2
+ export const PENDING=1
+ export const FAILED=3

@@ -22,7 +22,7 @@ function ViewParticipantInformation({ participantId }: any) {
 
   // Fetching participant data using useOne hook
   const { data: participantData, isLoading, isError } = useOne(query)
-  
+
   // Extracting contact data from participantData
   const contactData = participantData?.data?.contact_id
 
@@ -43,13 +43,19 @@ function ViewParticipantInformation({ participantId }: any) {
           ''
         : '-'
     },
-    { key: 'Phone Number', value: contactData?.mobile_country_code + ' ' + contactData?.mobile ?? '-' },
+    {
+      key: 'Phone Number',
+      value:
+        contactData?.mobile_country_code && contactData?.mobile
+          ? contactData?.mobile_country_code + ' ' + contactData?.mobile
+          : '-'
+    },
     { key: 'Home/Work Phone', value: contactData?.work_phone ?? '-' },
     { key: 'Occupation', value: contactData?.occupation ?? '-' },
     { key: 'Email', value: contactData?.email ?? '-' },
     {
       key: 'Url for registration completion',
-      value: (
+      value: participantData?.data?.program_id?.registration_link ? (
         <div className="flex ">
           <div className="text-[14px] font-semibold text-[#7677F4] underline pr-[10px] truncate">
             {participantData?.data?.program_id?.registration_link}
@@ -73,6 +79,8 @@ function ViewParticipantInformation({ participantId }: any) {
             )}
           </div>
         </div>
+      ) : (
+        '-'
       )
     },
     {

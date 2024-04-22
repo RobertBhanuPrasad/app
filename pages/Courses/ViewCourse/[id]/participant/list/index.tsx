@@ -32,6 +32,7 @@ import { CountComponent } from "pages/Courses/FindCourse";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";
+import { ParticipantsListMainHeader } from "@components/participants/ParticipantsListMainHeader";
 
 function index() {
   const router = useRouter();
@@ -221,54 +222,70 @@ function index() {
     });
   }
 
-  if (
-    ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_health_declaration_checked",
-      operator: "eq",
-      value:
-        ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed,
-    });
+  if (ParticpantFiltersData?.advanceFilter?.health_consent_status) {
+    if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ==
+        true &&
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ==
+        true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "in",
+        value: [true, false],
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "eq",
+        value: true,
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_health_declaration_checked",
+        operator: "eq",
+        value: false,
+      });
+    }
   }
 
-  if (
-    ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_health_declaration_checked",
-      operator: "eq",
-      value:
-        !ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending,
-    });
-  }
-
-  if (
-    ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ===
-    true
-  ) {
-    filters.permanent.push({
-      field: "is_program_agreement_checked",
-      operator: "eq",
-      value:
-        !ParticpantFiltersData?.advanceFilter?.program_agreement_status
-          ?.pending,
-    });
-  }
-
-  if (
-    ParticpantFiltersData?.advanceFilter?.program_agreement_status
-      ?.completed === true
-  ) {
-    filters.permanent.push({
-      field: "is_program_agreement_checked",
-      operator: "eq",
-      value:
-        ParticpantFiltersData?.advanceFilter?.program_agreement_status
-          ?.completed,
-    });
+  if (ParticpantFiltersData?.advanceFilter?.program_agreement_status) {
+    if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status
+        ?.completed == true &&
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ==
+        true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "in",
+        value: [true, false],
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status
+        ?.completed == true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "eq",
+        value: true,
+      });
+    } else if (
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ==
+      true
+    ) {
+      filters.permanent.push({
+        field: "is_program_agreement_checked",
+        operator: "eq",
+        value: false,
+      });
+    }
   }
 
   const {
@@ -282,7 +299,7 @@ function index() {
     resource: "participant_registration",
     meta: {
       select:
-        "*, transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method, transaction_status_id(*)))",
+        "*, transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
     sorters: {
@@ -384,24 +401,31 @@ function index() {
       alert(`${participantIds.length} Record(s) updated successfully`);
     }
   };
+  const [bulkActionSelectedValue, setBulkActionSelectedValue] =
+    useState("Bulk Actions");
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
+      <div className="top-0 sticky z-[50] bg-white shadow-xl w-full">
+        <ParticipantsListMainHeader />
+      </div>
       <div className="flex flex-col gap-4 p-10">
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
+        {/* Bulk actions section */}
         <div className="flex gap-10 justify-end w-full">
+          {/* Bulk Actions Dropdown */}
           <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
-                  className="flex flex-row justify-between w-[192px] h-10"
+                  className="flex flex-row justify-between w-auto h-10 gap-2"
                   disabled={selectedTableRows > 0 ? false : true}
                 >
-                  Bulk Actions
+                  {bulkActionSelectedValue}
                   <CountComponent count={selectedTableRows} />
                   <DropDown />
                 </Button>
@@ -409,17 +433,17 @@ function index() {
               <DropdownMenuContent align="end">
                 <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
                   {/* TODO (Not in MVP Scope): Print Registration Form */}
-                  <DropdownMenuItem
+                  {/* <DropdownMenuItem
                     onClick={() => {
                       setEnableBulkOptions(true);
                     }}
                   >
                     Print Registration Form
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuItem
                     onClick={() => {
+                      setBulkActionSelectedValue("Update Attendance Status");
                       setEnableBulkOptions(false);
-
                       setBulkAction("attendance");
                     }}
                   >
@@ -427,8 +451,8 @@ function index() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
+                      setBulkActionSelectedValue("Update Transaction Status");
                       setEnableBulkOptions(false);
-
                       setBulkAction("transaction");
                     }}
                   >
@@ -438,6 +462,7 @@ function index() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          {/* Bulk actions options dropdown */}
           <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -498,6 +523,7 @@ function index() {
             columns={columns}
             data={participantData?.data?.data || []}
             columnPinning={true}
+            columnSelector={true}
           />
         </div>
       </div>
@@ -601,7 +627,7 @@ const HeaderSection = () => {
 
   const handleClearAll = () => {
     setValue("participant_code", "");
-    setValue("registration_date", "");
+    setValue("registration_date", { from: "", to: "" });
     setValue("transaction_status", []);
   };
 
@@ -656,7 +682,7 @@ const HeaderSection = () => {
                     format(RegistrationDate.from, "MM/dd/yyyy")
                   )
                 ) : (
-                  <span className="font-thin">Select Registration Date</span>
+                  <span className="font-thin">Search by Registration Date</span>
                 )}
               </div>
             </Button>
@@ -721,7 +747,7 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
       />
       <div className="flex flex-row gap-4 justify-center items-center fixed p-2 rounded-b-3xl bottom-0 left-0 w-full shadow-[rgba(0,_0,_0,_0.24)_0px_2px_8px]">
         <Button
-          onClick={() => onSelect({})}
+          onClick={() => onSelect({ from: "", to: "" })}
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
           Reset

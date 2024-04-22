@@ -1,6 +1,8 @@
 import Form from "@components/Formfield";
+import { ParticipantsListMainHeader } from "@components/participants/ParticipantsListMainHeader";
 import EditParticipantTabs from "@components/participants/editParticipant/EditParticipantTabs";
 import { handleEditParticipantValues } from "@components/participants/editParticipant/EditParticipantUtil";
+import { editParticipantSchema } from "@components/participants/editParticipant/EditParticipantValidations";
 import LoadingIcon from "@public/assets/LoadingIcon";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -28,15 +30,24 @@ export default function Edit() {
     }, [Id]);
     return (
         <div>
+            <div className="top-0 sticky z-[100] bg-white shadow-xl w-full">
+                <ParticipantsListMainHeader />
+            </div>
             <div>
-                {!defaultValues || Object.keys(defaultValues).length === 0 ? (
-                    <LoadingIcon />
-                ) : (
-                    // Add schema for form validations
-                    <Form onSubmit={() => {}} defaultValues={defaultValues}>
-                        <EditParticipantTabs />
-                    </Form>
-                )}
+                <div>
+                    {!defaultValues ||
+                    Object.keys(defaultValues).length === 0 ? (
+                        <LoadingIcon />
+                    ) : (
+                        <Form
+                            onSubmit={() => {}}
+                            defaultValues={defaultValues}
+                            schema={editParticipantSchema()}
+                        >
+                            <EditParticipantTabs />
+                        </Form>
+                    )}
+                </div>
             </div>
         </div>
     );
