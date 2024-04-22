@@ -31,6 +31,12 @@ export const handlePostProgramData = async (
   if (body.id) {
     programBody.id = body.id;
   }
+ 
+  // here we have to post the created_by_user_id with loggedInUserId because this field is required
+  // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
+  if(loggedInUserId) {
+    programBody.created_by_user_id = loggedInUserId
+  }
 
   // step 1
   if (body[NewCourseStep1FormNames.program_created_by]) {
