@@ -143,7 +143,7 @@ function NewCourse() {
     resource: "country_config",
   });
 
-  console.log("data is", data?.data[0]);
+  console.log("country config data is", data?.data[0]);
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
   // and same we need to set only if newCourseData is null

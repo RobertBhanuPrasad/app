@@ -86,10 +86,10 @@ function NewCourseStep3() {
     id: program_type_id,
   });
 
-  if (isLoading) {
-    return <LoadingIcon />;
-  }
-  
+  // if (isLoading) {
+  //   return <LoadingIcon />;
+  // }
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -163,9 +163,13 @@ const OnlineProgram = () => {
 
 const Schedules = () => {
   const { errors } = useFormState();
+
+  console.log("errors are", errors?.schedules);
+
   return (
     <div className="flex flex-col gap-4 w-[1016px]">
       <SchedulesHeader />
+
       <Sessions />
       {errors?.schedules && (
         <span className="text-[#FF6D6D] text-[12px]">
@@ -297,11 +301,12 @@ const SchedulesHeader = () => {
 };
 
 const Sessions = () => {
-  const { append, remove } = useFieldArray({
+  const { append, remove, fields } = useFieldArray({
     name: "schedules",
   });
+
   const { watch } = useFormContext();
-  const { errors } = useFormState();
+  const { errors }: any = useFormState();
   const [open, setOpen] = useState(false);
   const formData = watch();
   const schedules = formData?.schedules || [];
@@ -383,7 +388,7 @@ const Sessions = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      {schedules?.map((schedule: any, index: number) => {
+      {fields?.map((schedule: any, index: number) => {
         return (
           <div
             className="h-15 flex flex-col gap-1 justify-between"
@@ -399,7 +404,7 @@ const Sessions = () => {
                   <Button
                     onClick={() => setOpen(true)}
                     className={`w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 ${
-                      errors?.schedules && "border-[#FF6D6D]"
+                      errors?.schedules?.[index] && "border-[#FF6D6D]"
                     }`}
                     variant="outline"
                   >
@@ -446,6 +451,14 @@ const Sessions = () => {
                 )}
               </div>
             </div>
+
+            {errors?.schedules &&
+              errors?.schedules?.length > 0 &&
+              errors?.schedules?.[index] && (
+                <span className="text-[#FF6D6D] text-[12px]">
+                  {errors?.schedules?.[index]?.message as string}
+                </span>
+              )}
           </div>
         );
       })}
@@ -737,7 +750,7 @@ const TimePicker = ({
   index: number;
   is12HourFormat: Boolean;
 }) => {
-  const { errors } = useFormState();
+  const { errors }: any = useFormState();
   return (
     <div className="flex items-center gap-6">
       <div className="text-sm text-[#999999] font-normal">From</div>
@@ -745,7 +758,7 @@ const TimePicker = ({
         <TimeSelector
           name={`${NewCourseStep3FormNames?.schedules}[${index}].start`}
           is12HourFormat={is12HourFormat}
-          error={errors?.schedules ? true : false}
+          error={errors?.schedules?.[index] ? true : false}
         />
       </div>
       <div className="text-sm text-[#999999] font-normal">To</div>
@@ -753,7 +766,7 @@ const TimePicker = ({
         <TimeSelector
           name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
           is12HourFormat={is12HourFormat}
-          error={errors?.schedules ? true : false}
+          error={errors?.schedules?.[index] ? true : false}
         />
       </div>
     </div>
@@ -1396,6 +1409,10 @@ const TimeSelector = ({
         const newHourValue = preProcessInputValue("00");
         hourOnChange(newHourValue);
       }
+
+      // when user change timeFormat from 12 hour format to 24 hour format we need to set timeFormat to null
+      // becuase in 24 hour format we dont need to store AM or PM in startTimeFormat and endTimeFormat
+      timeFormatOnChange(null);
     }
   }, [is12HourFormat]);
 
