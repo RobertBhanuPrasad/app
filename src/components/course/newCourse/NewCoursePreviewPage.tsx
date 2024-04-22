@@ -254,8 +254,10 @@ export default function NewCourseReviewPage() {
 
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold">Review Your Details Right Here</div>
-      <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
+      <div className="text-[24px] ml-8 my-4 font-semibold">
+        Review Course Details
+      </div>
+      <div className="w-full px-8 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
           {/* title section */}

@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 export default function index() {
   const { query } = useRouter()
   const [defaultValues, setDefaultValues] = useState({})
-  const Id: number | undefined = query?.slug ? parseInt(query.slug as string) : undefined
+  const Id: number | undefined = query?.participantId ? parseInt(query.participantId as string) : undefined
 
   // State variable to manage loading state while fetching data
   const [isLoading, setIsLoading] = useState(false)
