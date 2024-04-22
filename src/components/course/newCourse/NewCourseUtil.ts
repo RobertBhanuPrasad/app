@@ -232,6 +232,11 @@ export const handlePostProgramData = async (
 
   // here we have to update the created_by_user_id with loggedInUserId because this field is required
   // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
+  // here we have to update when we are creating the program that is when created_by_user_id is null
+  // other wise no need to update the created_by_user_id 
+  // when one user create one program at that time we have to post created_by_user_id 
+  // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
+  // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
   if(loggedInUserId && programData[0].created_by_user_id == null) {
     await supabaseClient
     .from("program")
