@@ -879,11 +879,11 @@ const Accommodation = ({
         <CardLabel className="truncate">{data?.data?.name}</CardLabel>
       </abbr>
       <abbr
-        title={currencyCode + accomdationData?.fee_per_person}
+        title={`${currencyCode ? currencyCode : ""} ${accomdationData?.fee_per_person}`}
         className="no-underline"
       >
         <CardValue className="truncate">
-          {currencyCode}
+          {currencyCode ? currencyCode : ""}
           {accomdationData?.fee_per_person}
         </CardValue>
       </abbr>
