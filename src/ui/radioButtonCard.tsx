@@ -8,7 +8,6 @@ interface RadioItemProps {
   value: string;
   className?: string;
   label: string;
-  disabled?: boolean;
 }
 export const RadioButtonCard: React.FC<RadioItemProps> = ({
   selectedRadioValue,
