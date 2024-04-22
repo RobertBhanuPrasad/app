@@ -95,6 +95,7 @@ import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab";
 import CourseAccountingFormTab from "../../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 import CurrencyIcon from "@public/assets/CurrencyIcon";
 import ViewCourseAccountingFormTab from "@components/course/viewCourse/ViewCourseAccountingFormTab";
+import { Separator } from "src/ui/separator";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -118,7 +119,7 @@ function ViewDetails() {
     id: Id,
     meta: {
       select:
-        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
+        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))",
     },
   });
 
@@ -296,15 +297,23 @@ function ViewDetails() {
             <Important />
           </HoverCardTrigger>
           <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Approved by:{" "}
-              {courseData?.data?.approved_by_user_id?.contact_id?.full_name} ({" "}
-              {formatDateString(
-                new Date(courseData?.data?.program_approved_date)
-              )}
-              )<br></br>
-              Last Modified by: National Admin(17 Mar, 2022)
-            </div>
+          <div className="w-[231px] text-wrap !rounded-[15px] font-normal flex flex-col">
+           <p>Approved by:</p>
+           <p>
+           {courseData?.data?.approved_by_user_id && courseData?.data?.program_approved_date 
+           ? `${courseData?.data?.approved_by_user_id?.contact_id?.full_name} (${formatDateString(new Date(courseData?.data?.program_approved_date))})`
+            : "-"}
+            </p>
+            <Separator/>
+           <p>Last Modified by:</p>
+           <p>
+            {courseData?.data?.last_modified_by_user_id && courseData?.data?.modified_at
+           ? `${courseData?.data?.last_modified_by_user_id?.contact_id?.full_name} (${formatDateString(new Date(courseData?.data?.modified_at
+            ))})`
+            : "-"}
+            </p>
+          </div>
+
           </HoverCardContent>
         </HoverCard>
       </div>
