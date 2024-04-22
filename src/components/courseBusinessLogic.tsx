@@ -87,6 +87,7 @@ export const DisplayOptions = (
   courseAccountingStatusId: any,
   roleId: any
 ) => {
+  const {t} = useTranslation("common")
   // Getting all the course status ID's
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
@@ -179,7 +180,7 @@ export const DisplayOptions = (
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -214,7 +215,7 @@ export const DisplayOptions = (
       courseAccountingStatusId === accountingRejectedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -255,7 +256,7 @@ export const DisplayOptions = (
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -292,7 +293,7 @@ export const DisplayOptions = (
         roleId === nationalAdminRoleId ||
         roleId === financeAdminRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -323,7 +324,7 @@ export const DisplayOptions = (
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -348,7 +349,7 @@ export const DisplayOptions = (
         roleId === nationalAdminRoleId ||
         roleId === financeAdminRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -379,7 +380,7 @@ export const DisplayOptions = (
       courseAccountingStatusId === accountingRejectedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -412,7 +413,7 @@ export const DisplayOptions = (
         roleId === nationalAdminRoleId ||
         roleId === financeAdminRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -435,7 +436,7 @@ export const DisplayOptions = (
       courseAccountingStatusId === accountingClosedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -464,7 +465,7 @@ export const DisplayOptions = (
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -501,7 +502,7 @@ export const DisplayOptions = (
         roleId === nationalAdminRoleId ||
         roleId === financeAdminRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -532,7 +533,7 @@ export const DisplayOptions = (
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -559,7 +560,7 @@ export const DisplayOptions = (
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -589,7 +590,7 @@ export const DisplayOptions = (
         roleId === financeAdminRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -616,7 +617,7 @@ export const DisplayOptions = (
       courseAccountingStatusId === accountingClosedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),
@@ -647,7 +648,7 @@ export const DisplayOptions = (
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-      const {t} = useTranslation("common")
+      
       return [
         {
           label: t('view_participants'),

@@ -16,8 +16,8 @@ export const UPDATE_ATTENDENCE_STATUS = 1;
 export const UPDATE_TRANSACTION_STATUS = 2;
 
 //Time format
-export const TIME_FORMAT_12_HOURS = 1;
-export const TIME_FORMAT_24_HOURS = 2;
+export const TIME_FORMAT_12_= 1;
+export const TIME_FORMAT_24_= 2;
 
 //Time format
 export const MALE = 1;

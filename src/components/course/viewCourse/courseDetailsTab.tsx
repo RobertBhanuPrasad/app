@@ -124,7 +124,7 @@ function CourseDetailsTab() {
               <ItemValue>{courseData?.data?.program_code}</ItemValue>
             </div>
             <div>
-              <Header2>{t('course.view_course:basic_details_tab.course_type')}</Header2>
+              <Header2>{t('course_type')}</Header2>
               <ItemValue>{courseData?.data?.program_type_id?.name}</ItemValue>
             </div>
             <div>

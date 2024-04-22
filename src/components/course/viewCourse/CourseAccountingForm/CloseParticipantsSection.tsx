@@ -38,6 +38,7 @@ function CloseParticipantsSection() {
   const pathname = usePathname();
   const { replace } = useRouter();
   const { query } = useNextRouter();
+  
 
   //Getting the program Data using the id from the url
   const { data: programData } = useOne({
@@ -117,13 +118,13 @@ function CloseParticipantsSection() {
               operator: "eq",
               value: false,
             },
-            // Participants with pending payment status
-            {
+            // participants with pending payment status
+            { 
               field: "payment_status_id",
               operator: "eq",
               value: pendingTransactionStatusId,
             },
-            // Participants with pending attendance status
+            // participants with pending attendance status
             {
               field: "participant_attendence_status_id",
               operator: "eq",
@@ -203,7 +204,7 @@ function CloseParticipantsSection() {
     const participantIds = Object.keys(rowSelection).map((key) =>
       parseInt(key)
     );
-
+    
     // Conditionally update the participant registration based on the action value:
     // If actionValue is UPDATE_ATTENDENCE_STATUS, update the participant_attendence_status_id;
     // Otherwise, update the payment_status_id.
@@ -229,6 +230,7 @@ function CloseParticipantsSection() {
 
     //Opening the dialog that shows that we have successfully updated the records
     setOpen(true);
+    
   };
 
   return (

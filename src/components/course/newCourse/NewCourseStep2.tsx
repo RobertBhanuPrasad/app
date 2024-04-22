@@ -155,7 +155,7 @@ export default function NewCourseStep2() {
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 Text entered in the 'Email Notes' field will be included in the
                 registration confirmation email only irrespective of the
-                transaction status (Email notes will not be shown on the Art of
+                 transaction status (Email notes will not be shown on the Art of
                 Living Website)
               </div>
             </HoverCardContent>
