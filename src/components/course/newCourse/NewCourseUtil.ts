@@ -230,6 +230,10 @@ export const handlePostProgramData = async (
     // so that it can be helpful in thankyou page
     setProgramId(programId);
 
+  // TODO need to integrate with country code and language code
+  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
+
   // here we have to update the created_by_user_id with loggedInUserId because this field is required
   // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
   // here we have to update when we are creating the program that is when created_by_user_id is null
@@ -240,7 +244,7 @@ export const handlePostProgramData = async (
   if(loggedInUserId && programData[0].created_by_user_id == null) {
     await supabaseClient
     .from("program")
-    .update({created_by_user_id: loggedInUserId })
+    .update({created_by_user_id: loggedInUserId, details_page_link: CX_BASE_URL, registration_link: RX_BASE_URL })
     .eq("id", programId)
   } 
 
