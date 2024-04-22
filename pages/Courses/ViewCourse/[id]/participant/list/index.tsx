@@ -332,6 +332,7 @@ function index() {
     ).length;
     setSelectedTableRows(tempCount);
     setSelectedRowObjects(rowSelection);
+    tempCount == 0 && setBulkActionSelectedValue("Bulk Actions");
   }, [rowSelection]);
 
   const handleSelectAll = (val: any) => {
@@ -470,7 +471,7 @@ function index() {
                   onClick={() => setOpen(true)}
                   variant="outline"
                   className="flex flex-row justify-between w-[152px] h-10"
-                  disabled={disableBulkOptions}
+                  disabled={selectedTableRows > 0 ? disableBulkOptions : true}
                 >
                   Select Status
                   <DropDown />
