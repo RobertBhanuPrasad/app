@@ -140,7 +140,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   //Checking Weather a fee is editable or not
   const isFeeEditable =
     isUserNationAdminOrSuperAdmin ||
-    courseFeeSettings?.[0]?.is_program_fee_editable ? true :false;
+    courseFeeSettings?.[0]?.is_program_fee_editable
+      ? true
+      : false;
 
   const {
     field: {
@@ -338,7 +340,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
         });
 
-        const earlyBirdSubTotal = earlyBirdTotal * taxRate;
+        const earlyBirdSubTotal = earlyBirdTotal - earlyBirdTotal * taxRate;
 
         //TODO need to calculate based on organization tax
         return <div className="">{earlyBirdSubTotal}</div>;
