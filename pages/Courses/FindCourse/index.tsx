@@ -36,13 +36,22 @@ import { columns } from "../../../src/components/course/findCourse/Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 
 function index() {
+  interface ExcelColumn {
+    column_name: string;
+    path: string[];
+  }
+
   const { viewPreviewPage, AllFilterData } = newCourseStore();
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
 
+  /**
+   *This holds the all the filters when we select any filters
+   */
   const filters: any = { permanent: [] };
 
+  //If we select course_name then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.course_name) {
     filters.permanent.push({
       field: "program_alias_name_id",
@@ -51,6 +60,7 @@ function index() {
     });
   }
 
+  //If we select course_type then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.course_type) {
     filters.permanent.push({
       field: "program_type_id",
@@ -59,14 +69,7 @@ function index() {
     });
   }
 
-  if (AllFilterData?.course_type) {
-    filters.permanent.push({
-      field: "program_type_id",
-      operator: "eq",
-      value: AllFilterData?.course_type,
-    });
-  }
-
+  //If we select state then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.state) {
     filters.permanent.push({
       field: "state_id",
@@ -75,6 +78,7 @@ function index() {
     });
   }
 
+  //If we select city then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.city) {
     filters.permanent.push({
       field: "city_id",
@@ -83,6 +87,7 @@ function index() {
     });
   }
 
+  //If we select center then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.center) {
     filters.permanent.push({
       field: "center_id",
@@ -91,6 +96,7 @@ function index() {
     });
   }
 
+  //If we select teacher then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.course_teacher) {
     filters.permanent.push({
       field: "program_teachers.user_id",
@@ -99,6 +105,7 @@ function index() {
     });
   }
 
+  //If we select program_organiser then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.program_organiser) {
     filters.permanent.push({
       field: "program_organizers.user_id",
@@ -106,6 +113,8 @@ function index() {
       value: AllFilterData?.advanceFilter?.program_organiser,
     });
   }
+
+  //If we select visibility then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.visibility) {
     filters.permanent.push({
       field: "visibility_id",
@@ -114,6 +123,7 @@ function index() {
     });
   }
 
+  //If we select visibility then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.is_residential_course) {
     filters.permanent.push({
       field: "is_residential_program",
@@ -122,6 +132,7 @@ function index() {
     });
   }
 
+  //If we select course_status then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.course_status) {
     filters.permanent.push({
       field: "status_id",
@@ -129,6 +140,8 @@ function index() {
       value: AllFilterData?.advanceFilter?.course_status,
     });
   }
+
+  //If we serach for particular course then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.course_id) {
     filters.permanent.push({
       field: "program_code",
@@ -136,6 +149,8 @@ function index() {
       value: AllFilterData?.course_id,
     });
   }
+
+  //If we select course fee then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.is_course_fee) {
     filters.permanent.push({
       field: "program_fee_level_settings.is_custom_fee",
@@ -143,6 +158,8 @@ function index() {
       value: AllFilterData?.advanceFilter?.is_course_fee,
     });
   }
+
+  //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
     filters.permanent?.push(
       {
@@ -168,9 +185,21 @@ function index() {
     );
   }
 
+  //If we select course_accounting_status then we need to write a filter to the data query , here if it presents we will push to filters array
+  if (AllFilterData?.advanceFilter?.course_accounting_status) {
+    filters.permanent.push({
+      field: "program_accounting_status_id",
+      operator: "in",
+      value: AllFilterData?.advanceFilter?.course_accounting_status,
+    });
+  }
+
+  /**
+   * This holds the records of which rows are selected
+   */
   const [rowSelection, setRowSelection] = React.useState({});
 
-
+  // Data query to fetch the program data
   const {
     tableQueryResult: programData,
     pageCount,
@@ -187,8 +216,9 @@ function index() {
     filters: filters,
   });
 
-  console.log("heyyy dattttaaa", programData);
-
+  /**
+   * The variable holds whether all rows are selected or not
+   */
   const [allSelected, setAllSelected] = useState();
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
@@ -205,10 +235,15 @@ function index() {
     setAllSelected(val);
   };
 
-  //function to handle exportexcel
+  /**
+   * This function is to handle export excel
+   */
   const handleExportExcel = async () => {
     try {
-      const excelColumns = [
+      /**
+       * This holds the column_name and path of all columns of table
+       */
+      const excelColumns: ExcelColumn[] = [
         {
           column_name: "Course ID",
           path: ["program_code"],
@@ -255,6 +290,9 @@ function index() {
         },
       ];
 
+      /**
+       * This holds the params need to send for export excel function like table name , select query , columns
+       */
       const params = new URLSearchParams({
         table_name: "program",
         select:
@@ -322,7 +360,10 @@ function index() {
     }
   };
 
-  const rowCount = Object.values(rowSelection).filter(
+  /**
+   * The variable holds the count of rows
+   */
+  const rowCount: number = Object.values(rowSelection).filter(
     (value) => value === true
   ).length;
 
