@@ -105,8 +105,8 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
     defaultValues.visibility_id = data.visibility_id as number;
   }
 
-  //is_geo_restriction_applicable
-  if (data.is_geo_restriction_applicable)
+  //is_geo_restriction_applicable 
+  if (data.is_geo_restriction_applicable != undefined)
     defaultValues.is_geo_restriction_applicable =
       data.is_geo_restriction_applicable;
 
@@ -153,7 +153,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
       }
     }
   }
- 
+
   if (data?.hour_format_id)
     defaultValues.hour_format_id = data.hour_format_id as number;
 
