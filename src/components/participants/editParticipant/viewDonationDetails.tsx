@@ -1,6 +1,5 @@
 import { useList, useOne } from "@refinedev/core";
 import { useRouter } from "next/router";
-import { useFormContext } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
@@ -11,8 +10,6 @@ interface ViewDonationDetailsProps {
 export default function ViewDonationDetails({
     setViewDonation,
 }: ViewDonationDetailsProps) {
-    const { getValues } = useFormContext();
-    const formData = getValues();
     const { query } = useRouter();
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)

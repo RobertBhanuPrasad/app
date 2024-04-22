@@ -15,8 +15,6 @@ import {
 } from "src/ui/select";
 
 export default function PaymentDetails() {
-    const { getValues } = useFormContext();
-    const FormData = getValues();
     const {
         field: { value: participant_code, onChange: specialCodeChange },
     } = useController({
@@ -56,18 +54,23 @@ export default function PaymentDetails() {
     });
     const { query } = useRouter();
     const Id: number | undefined = query?.participantId
-        ? parseInt(query.id as string)
+        ? parseInt(query.participantId as string)
         : undefined;
     const paymentData  = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)))",
+            select: "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(participant_code,program_id(id,program_type_id!inner(is_online_program)))",
         },
         filters: [
             {
                 field: "participant_id",
                 operator: "eq",
                 value: Id,
+            },
+            {
+                field: "program_id",
+                operator: "eq",
+                value: query?.id,
             },
         ],
         sorters: [
@@ -119,8 +122,8 @@ export default function PaymentDetails() {
                 </div>
             </div>
             <div className="flex py-[10px] gap-8">
-                <div className="">
-                    {/* TODO: need to hide it for particular requirement */}
+               {paymentDetailData?.participant_id?.participant_code && <div className="">
+                    {/* TODO: need to change once requirement is clear*/}
                     <Text className="text-[#999999]  text-[14px] ">
                         Enter Special Code
                     </Text>
@@ -129,13 +132,13 @@ export default function PaymentDetails() {
                         <div>
                             <Input
                                 value={participant_code}
-                                className="w-[178px] !h-[40px] resize-none"
-                                onChange={(val) =>
-                                    specialCodeChange(val?.target?.value)
-                                }
+                                className="w-[268px] !h-[40px] resize-none font-semibold"
+                                // onChange={(val) =>
+                                //     specialCodeChange(val?.target?.value)
+                                // }
                             />
                         </div>
-                        <div>
+                        {/* <div>
                             <Button
                                 onClick={(e) => {
                                     e.preventDefault(),
@@ -144,9 +147,9 @@ export default function PaymentDetails() {
                             >
                                 Apply
                             </Button>
-                        </div>
+                        </div> */}
                     </div>
-                </div>
+                </div>}
                 <div className="w-[305px]">
                     <div className="flex gap-2">
                         <div>

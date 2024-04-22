@@ -34,6 +34,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "program_code",
     column_name: "Course ID",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
       return <div className="w-[100px]">Course ID</div>;
@@ -55,6 +56,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "program_types",
     column_name: "Course Type Name",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
       return <div className="w-[150px]">Course Type Name</div>;
@@ -68,6 +70,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "program_type_alias_names",
     column_name: "Course Name",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
       return <div className="min-w-[150px]">Course Name</div>;
@@ -83,6 +86,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "status",
     column_name: "Course Status",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
       return <div className="min-w-[150px]">Course Status</div>;
@@ -95,6 +99,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "program_schedules",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     column_name: "Start Date",
     header: () => {
@@ -153,6 +158,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "program_teachers",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     column_name: "Teachers",
     header: () => {
@@ -189,6 +195,8 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "participant_registration",
     column_name: "Attendees",
+    //These columns are default columns and shouldnt be editable
+    enableHiding: false,
     header: () => {
       return <div>Attendees</div>;
     },
@@ -245,7 +253,6 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "revenue",
     column_name: "Revenue",
-    enableHiding: false,
     header: () => {
       return <div className="min-w-[150px]">Revenue</div>;
     },
@@ -278,7 +285,12 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setViewPreviewPage, setNewCourseData,setViewThankyouPage } = newCourseStore();
+      const {
+        setViewPreviewPage,
+        setNewCourseData,
+        setViewThankyouPage,
+        setCurrentStep,
+      } = newCourseStore();
 
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -339,12 +351,14 @@ export const columns: ExtendedColumnDef<any>[] = [
        * switches the view to the new course page.
        */
       const handleCopyCourse = async () => {
-        setViewThankyouPage(false)
-        
+        setViewThankyouPage(false);
+
         let defaultValues = await handleCourseDefaultValues(row.original.id);
         // we have to delete schedules when user click on cipy course and other we need to prefill
-        defaultValues = _.omit(defaultValues, ["id","schedules"]);
+        defaultValues = _.omit(defaultValues, ["id", "schedules"]);
         setNewCourseData(defaultValues);
+        // when we do copy course we have to set the current step to first step
+        setCurrentStep(1);
         router.push("/Courses/NewCourse");
       };
 
@@ -355,8 +369,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
         switch (value) {
           case 1: {
-            // TODO - Navigate to Participant Listing page
-            router.push("/");
+            router.push(`/${router.asPath}/participant/list`);
             break;
           }
           case 2: {
