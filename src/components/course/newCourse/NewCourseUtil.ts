@@ -190,11 +190,17 @@ export const handlePostProgramData = async (
 
   // step 5
 
-  //is_residential_program
-  if (body[NewCourseStep5FormNames.is_residential_program]) {
+  //is_residential_program is not undefined in the body then add to the programBody objetc
+  if (body[NewCourseStep5FormNames.is_residential_program] !== undefined) {
     programBody.is_residential_program =
       body[NewCourseStep5FormNames.is_residential_program];
   }
+
+  //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
+  if(programTypeData?.is_online_program === false && body[NewCourseStep5FormNames.is_residential_program])
+    {
+      if (!(await handlePostAccommodations(body, programId))) return false;
+    }
 
   //accommodation_fee_payment_mode
   if (
