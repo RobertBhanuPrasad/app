@@ -79,6 +79,8 @@ function NewCourse() {
 
   const loggedUserData = loginUserData?.userData?.id;
 
+  console.log("heyy logged user data", loggedUserData);
+
   const onSubmit = (formData: any) => {
     // console.log(formData);
   };
@@ -104,6 +106,13 @@ function NewCourse() {
   const { newCourseData } = newCourseStore();
 
   /**
+   *variable that holds whether the logged in user has super admin role or not
+   */
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  );
+
+  /**
    * default values are used to prefill the course data
    * There are two different scenarios are there
    * 1. User will click new course button at that time we need to prefill the form with below object
@@ -117,8 +126,10 @@ function NewCourse() {
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
           [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
-          //For registration required field will be visibile to super admin only and it should be set to true by default
-          [NewCourseStep2FormNames?.is_registration_required]: true,
+          //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
+          [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
+            ? true
+            : undefined,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
