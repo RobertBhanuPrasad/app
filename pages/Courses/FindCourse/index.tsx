@@ -192,7 +192,6 @@ function index() {
     },
   });
 
-  console.log("heyyy dattttaaa", programData);
 
   const [allSelected, setAllSelected] = useState();
 

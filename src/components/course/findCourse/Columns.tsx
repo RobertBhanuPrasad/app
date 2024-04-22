@@ -278,7 +278,12 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setViewPreviewPage, setNewCourseData,setViewThankyouPage } = newCourseStore();
+      const {
+        setViewPreviewPage,
+        setNewCourseData,
+        setViewThankyouPage,
+        setCurrentStep,
+      } = newCourseStore();
 
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -339,13 +344,15 @@ export const columns: ExtendedColumnDef<any>[] = [
        * switches the view to the new course page.
        */
       const handleCopyCourse = async () => {
-        setViewThankyouPage(false)
-        
+        setViewThankyouPage(false);
+
         let defaultValues = await handleCourseDefaultValues(row.original.id);
         // we have to delete schedules when user click on cipy course and other we need to prefill
-        defaultValues = _.omit(defaultValues, ["id","schedules"]);
+        defaultValues = _.omit(defaultValues, ["id", "schedules"]);
         setNewCourseData(defaultValues);
         router.push("/Courses/NewCourse");
+        // when we do copy course we have to set the current step to first step
+        setCurrentStep(1);
       };
 
       dropDownMenuData?.unshift({ label: "View Course", value: 10 });
