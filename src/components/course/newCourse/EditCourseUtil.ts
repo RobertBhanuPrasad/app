@@ -43,7 +43,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   }
 
   //is_registration_via_3rd_party
-  if (data.is_registration_via_3rd_party)
+  if (data.is_registration_via_3rd_party != undefined)
     defaultValues.is_registration_via_3rd_party =
       data.is_registration_via_3rd_party;
 
