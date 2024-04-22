@@ -50,7 +50,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Name */}
           <div className="w-80 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Name" : `Contact Name ${index + 1}`}{" "}
+              {index === 0 ? t('contact_name') : `Contact Name ${index + 1}`}{" "}
               <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactName index={index} />
@@ -59,7 +59,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Email */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Email" : `Contact Email ${index + 1}`}{" "}
+              {index === 0 ? t('contact_email') : `Contact Email ${index + 1}`}{" "}
               <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactEmail index={index} />

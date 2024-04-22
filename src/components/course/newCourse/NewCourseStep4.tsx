@@ -89,9 +89,10 @@ export default function CourseTable() {
   if (courseFeeSettings == undefined || isLoading) {
     return <LoadingIcon />;
   }
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   return (
     <div className="flex flex-col gap-[18px]">
-      <div className="font-semibold text-base text-[#333333]">Fee</div>
+      <div className="font-semibold text-base text-[#333333]">{t("fees")}</div>
       <CourseFeeTable
         courseFeeSettings={courseFeeSettings}
         organizationData={organizationData?.data}

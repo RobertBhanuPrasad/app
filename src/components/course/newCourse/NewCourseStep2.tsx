@@ -292,7 +292,7 @@ export const CourseTypeDropDown = () => {
           className="w-[320px]"
           error={courseTypeError ? true : false}
         >
-          <SelectValue placeholder="Select course type" />
+          <SelectValue placeholder={t("select_course_type")} />
         </SelectTrigger>
         <SelectContent>
           <Input
