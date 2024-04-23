@@ -55,11 +55,14 @@ export const handlePostProgramData = async (
       body[NewCourseStep1FormNames.is_registration_via_3rd_party];
   }
 
-  if (body[NewCourseStep1FormNames.registration_via_3rd_party_url]) {
+  if (
+    (body[NewCourseStep1FormNames.registration_via_3rd_party_url]! = undefined)
+  ) {
     programBody.registration_via_3rd_party_url =
       body[NewCourseStep1FormNames.registration_via_3rd_party_url];
   }
 
+  //we are getting the form data of step - 2 and assigining them to programBody for posting the data
   if (body[NewCourseStep2FormNames.program_alias_name_id]) {
     programBody.program_alias_name_id =
       body[NewCourseStep2FormNames.program_alias_name_id];
@@ -72,6 +75,11 @@ export const handlePostProgramData = async (
 
   if (body[NewCourseStep2FormNames.max_capacity]) {
     programBody.max_capacity = body[NewCourseStep2FormNames.max_capacity];
+  }
+
+  if (body[NewCourseStep2FormNames.is_registration_required] != undefined) {
+    programBody.is_registration_required =
+      body[NewCourseStep2FormNames.is_registration_required];
   }
 
   //allowed_countries
@@ -190,11 +198,12 @@ export const handlePostProgramData = async (
 
   // step 5
 
-  //is_residential_program
-  if (body[NewCourseStep5FormNames.is_residential_program]) {
+  //is_residential_program is not undefined in the body then add to the programBody objetc
+  if (body[NewCourseStep5FormNames.is_residential_program] !== undefined) {
     programBody.is_residential_program =
       body[NewCourseStep5FormNames.is_residential_program];
   }
+
 
   //accommodation_fee_payment_mode
   if (
@@ -229,6 +238,20 @@ export const handlePostProgramData = async (
     // so that it can be helpful in thankyou page
     setProgramId(programId);
 
+    // here we have to update the created_by_user_id with loggedInUserId because this field is required
+    // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
+    // here we have to update when we are creating the program that is when created_by_user_id is null
+    // other wise no need to update the created_by_user_id
+    // when one user create one program at that time we have to post created_by_user_id
+    // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
+    // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
+    if (loggedInUserId && programData[0].created_by_user_id == null) {
+      await supabaseClient
+        .from("program")
+        .update({ created_by_user_id: loggedInUserId })
+        .eq("id", programId);
+    }
+
     //TODO: We are doing this in backend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
     if (!programData[0]?.program_code) {
@@ -260,6 +283,14 @@ export const handlePostProgramData = async (
   if (!(await handlePostProgramContactDetailsData(body, programId)))
     return false;
 
+   //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
+   if (
+    programTypeData?.is_online_program === false &&
+    body[NewCourseStep5FormNames.is_residential_program]
+  ) {
+    if (!(await handlePostAccommodations(body, programId))) return false;
+  }
+  
   //now after all data was stored into respective table we have to update status of program
   //Requirement: If the slected program_type of the program contains is_approval_required:true then we have to update status of program to "pending_approval"
   //Requirement: If the slected program_type of the program contains is_approval_required:false then we have to update status of program to "active"

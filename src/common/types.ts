@@ -641,6 +641,7 @@ interface ProgramOfflineRevenueDatabaseType {
 
 interface ProgramDataBaseType {
   id?: number;
+  created_by_user_id?: number | UsersDataBaseType;
   created_at?: Date;
   organization_id?: number | OrganizationsDataBaseType;
   venue_id?: number | VenueDataBaseType;
@@ -714,6 +715,7 @@ interface NewCourseFormFieldTypes {
   is_language_translation_for_participants?: boolean;
   program_alias_name_id?: number;
   is_geo_restriction_applicable?: boolean;
+  is_registration_required?:boolean
   language_ids?: number[];
   translation_language_ids?: number[];
   allowed_countries?: string[];

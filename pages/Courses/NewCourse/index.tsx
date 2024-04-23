@@ -86,6 +86,8 @@ function NewCourse() {
 
   const loggedUserData = loginUserData?.userData?.id;
 
+  console.log("heyy logged user data", loggedUserData);
+
   const onSubmit = (formData: any) => {
     // console.log(formData);
   };
@@ -111,6 +113,13 @@ function NewCourse() {
   const { newCourseData } = newCourseStore();
 
   /**
+   *variable that holds whether the logged in user has super admin role or not
+   */
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  );
+
+  /**
    * default values are used to prefill the course data
    * There are two different scenarios are there
    * 1. User will click new course button at that time we need to prefill the form with below object
@@ -124,6 +133,10 @@ function NewCourse() {
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
           [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
+          //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
+          [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
+            ? true
+            : undefined,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
@@ -244,22 +257,20 @@ export const NewCourseTabs = () => {
       : ["is_geo_restriction_applicable"]),
   ]);
 
-  let RequiredNewCourseStep3FormNames = ["schedules"];
-  // _.omit(NewCourseStep3FormNames, [
-  //   "schedules",
-  //   // ...(formData?.courseTypeSettings?.is_online_program
-  //   //   ? []
-  //   //   : ["online_url", "state_id", "city_id", "center_id"]),
-  //   // ...(formData?.courseTypeSettings?.is_online_program
-  //   //   ? ["is_existing_venue", "newVenue", "existingVenue"]
-  //   //   : []),
-  //   // ...(formData?.is_existing_venue == "new-venue" ? [] : ["newVenue"]),
-  //   // ...(formData?.is_existing_venue == "existing-venue"
-  //   //   ? []
-  //   //   : ["existingVenue"]),
-  //   // //If country does not have multiple time zones no need to validate time zone drop down
-  //   // ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
-  // ]);
+  let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
+    ...(formData?.courseTypeSettings?.is_online_program
+      ? []
+      : ["online_url", "state_id", "city_id", "center_id"]),
+    ...(formData?.courseTypeSettings?.is_online_program
+      ? ["is_existing_venue", "newVenue", "existingVenue"]
+      : []),
+    ...(formData?.is_existing_venue == "new-venue" ? [] : ["newVenue"]),
+    ...(formData?.is_existing_venue == "existing-venue"
+      ? []
+      : ["existingVenue"]),
+    //If country does not have multiple time zones no need to validate time zone drop down
+    ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
+  ]);
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false

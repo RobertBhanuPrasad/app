@@ -140,15 +140,15 @@ export const ResidentialCourse = () => {
         onValueChange={(value) => {
           value === "true" ? onChange(true) : onChange(false);
         }}
-        // we have to do disable this field when the selected program_type_id has in_online_program to true
-        disabled={programTypeData?.data?.in_online_program === true}
+        // we have to do disable this field when the selected program_type_id has is_online_program to true
+        disabled={programTypeData?.data?.is_online_program === true}
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
             label="Yes"
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]"            
           />
           <RadioButtonCard
             value="false"
