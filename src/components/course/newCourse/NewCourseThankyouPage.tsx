@@ -20,8 +20,11 @@ import { Button } from "src/ui/button";
 import { formatDateTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useRouter } from "next/router";
 
 const NewCourseThankyouPage = () => {
+  const router = useRouter();
+  const {id} = router.query;
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
   const { programId } = newCourseStore();
@@ -117,7 +120,7 @@ const NewCourseThankyouPage = () => {
               />
               {data?.data?.status_id?.value}
             </Button>
-            <Link href="/courses/FindCourse">
+            <Link href={`/courses/list`}>
               <Button
                 variant="outline"
                 className="text-indigo-600 border-indigo-600 "
