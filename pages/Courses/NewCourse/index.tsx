@@ -49,7 +49,6 @@ import Success from "@public/assets/Success";
 import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useTranslation } from "next-i18next";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
