@@ -91,6 +91,7 @@ export default function EditParticipantTabs() {
                 // TODO: integrate with participant_payment_history id
                 id: Number(Id),
             });
+            router.back()
     };
 
     // TODO: need to integrated with efficient tabs component
