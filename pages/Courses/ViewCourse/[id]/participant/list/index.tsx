@@ -589,6 +589,7 @@ const HeaderSection = () => {
     setParticpantFiltersData,
     selectedTableRows,
     selectedRowObjects,
+    setAdvanceFilterCount,
   } = ParticipantStore();
   const [open, setOpen] = useState(false);
   const { watch, setValue } = useFormContext();
@@ -630,6 +631,24 @@ const HeaderSection = () => {
     setValue("participant_code", "");
     setValue("registration_date", { from: "", to: "" });
     setValue("transaction_status", []);
+
+    setValue("advanceFilter.full_name", "");
+    setValue("advanceFilter.email", "");
+    setValue("advanceFilter.mobile", "");
+    setValue("advanceFilter.transaction_type", []);
+    setValue("advanceFilter.payment_method", []);
+    setValue("advanceFilter.fee_level", []);
+    setValue("advanceFilter.attendance_status", "");
+    setValue("advanceFilter.health_consent_status", {
+      completed: false,
+      pending: false,
+    });
+    setValue("advanceFilter.program_agreement_status", {
+      completed: false,
+      pending: false,
+    });
+
+    setAdvanceFilterCount(0);
   };
 
   return (
