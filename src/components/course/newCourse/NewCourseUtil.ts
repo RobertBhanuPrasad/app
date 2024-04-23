@@ -78,6 +78,15 @@ export const handlePostProgramData = async (
     programBody.max_capacity = body[NewCourseStep2FormNames.max_capacity];
   }
 
+  // is_geo_restriction_applicable
+  if (
+    body[NewCourseStep2FormNames.is_geo_restriction_applicable] != undefined
+  ) {
+    programBody.is_geo_restriction_applicable =
+      body[NewCourseStep2FormNames.is_geo_restriction_applicable];
+  }
+
+  // is_registration_required
   if (body[NewCourseStep2FormNames.is_registration_required] != undefined) {
     programBody.is_registration_required =
       body[NewCourseStep2FormNames.is_registration_required];
