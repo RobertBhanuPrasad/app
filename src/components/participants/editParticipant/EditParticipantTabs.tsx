@@ -1,12 +1,21 @@
 import ScrollableTabs from "@components/participant/viewParticipant/ScrollableTabs";
 import ViewParticipantTransactionDetails from "@components/participant/viewParticipant/ViewParticipantTransactionDetails";
 import ViewParticipantUtmParameters from "@components/participant/viewParticipant/ViewParticipantUtmParameters";
+import Exclamation from "@public/assets/Exclamation";
 import { useList, useUpdate } from "@refinedev/core";
 import _ from "lodash";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { EditParticipantFormNames } from "src/constants/CourseConstants";
 import { Button } from "src/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+} from "src/ui/dialog";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import AccomodationDetails from "./AccomodationDetails";
 import CourseFee from "./CourseFee";
@@ -17,6 +26,7 @@ export default function EditParticipantTabs() {
     const { watch } = useFormContext();
     const formData = watch();
     const { query } = useRouter();
+    const [cancelEditParticipant, setcancelEditParticipant] = useState(false);
 
     // participant_payment_history contains numerous records of same participant, getting the latest history record
 
@@ -140,13 +150,20 @@ export default function EditParticipantTabs() {
     if (!accommodationData) {
         tabs = tabs.filter((tab) => tab.label !== "Accommodation Details");
     }
-
+    const cancelEditParticipantHandler = () => {
+        // TODO: need add the action here
+    };
     return (
         <div onClick={(e) => e.preventDefault()}>
             <ScrollableTabs tabs={tabs} />
             <div className="flex justify-center gap-4">
                 <div>
-                    <Button className="border border-[#7677F4] bg-[white] w-[101px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]">
+                    <Button
+                        onClick={() => {
+                            setcancelEditParticipant(true);
+                        }}
+                        className="border border-[#7677F4] bg-[white] w-[101px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]"
+                    >
                         Cancel
                     </Button>
                 </div>
@@ -160,6 +177,46 @@ export default function EditParticipantTabs() {
                         Save
                     </Button>
                 </div>
+                <Dialog
+                    open={cancelEditParticipant}
+                    onOpenChange={setcancelEditParticipant}
+                >
+                    <DialogContent className="flex flex-col h-[200px] w-[425px]">
+                        <DialogHeader>
+                            <DialogDescription className="font-bold text-black text-lg items-center text-center ">
+                                Changes made will be lost. Are you sure you want
+                                to continue?
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <div className="w-full flex justify-center items-center gap-5">
+                                <div>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className=" w-[71px] h-[46px] rounded-[12px]"
+                                        onClick={() => {
+                                            setcancelEditParticipant(false);
+                                        }}
+                                    >
+                                        No
+                                    </Button>
+                                </div>
+                                <div>
+                                    <Button
+                                        type="button"
+                                        className=" text-white px-4 py-2 w-[71px] h-[46px] rounded-[12px]"
+                                        onClick={() => {
+                                            cancelEditParticipantHandler();
+                                        }}
+                                    >
+                                        Yes
+                                    </Button>
+                                </div>
+                            </div>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     );

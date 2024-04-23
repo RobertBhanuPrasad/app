@@ -3,6 +3,7 @@ import { useList, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
+import { Button } from "src/ui/button";
 import { Input } from "src/ui/input";
 import {
     Select,
@@ -19,15 +20,13 @@ export default function PaymentDetails() {
     } = useController({
         name: "participant_code",
     });
-
     const {
         field: {
             value: participant_attendence_status_id,
             onChange: attendanceStatusChange,
-        },  
-        fieldState: { error: attendanceError },  
-        }
-     = useController({
+        },
+        fieldState: { error: attendanceError },
+    } = useController({
         name: "participant_attendence_status_id",
     });
     const { data } = useList<any>({
@@ -135,36 +134,39 @@ export default function PaymentDetails() {
                 </div>
             </div>
             <div className="flex py-[10px] gap-8">
-                {paymentDetailData?.participant_id?.participant_code && (
-                    <div className="">
-                        {/* TODO: need to change once requirement is clear*/}
-                        <Text className="text-[#999999]  text-[14px] ">
-                            Enter Special Code
-                        </Text>
+                <div className="">
+                    {/* TODO: need to change once requirement is clear*/}
+                    <Text className="text-[#999999]  text-[14px] ">
+                        Enter Special Code
+                    </Text>
 
-                        <div className="flex gap-4">
-                            <div>
-                                <Input
-                                    value={participant_code}
-                                    className="w-[268px] !h-[40px] resize-none font-semibold"
-                                    // onChange={(val) =>
-                                    //     specialCodeChange(val?.target?.value)
-                                    // }
-                                />
-                            </div>
-                            {/* <div>
+                    <div className="flex gap-4">
+                        <div>
+                            <Input
+                                value={participant_code}
+                                className="w-[268px] !h-[40px] resize-none font-semibold"
+                                onChange={(val) =>
+                                    specialCodeChange(val?.target?.value)
+                                }
+                            />
+                        </div>
+                        <div>
                             <Button
                                 onClick={(e) => {
                                     e.preventDefault(),
-                                    specialCodeChange((e?.target as HTMLInputElement)?.value);
+                                        specialCodeChange(
+                                            (e?.target as HTMLInputElement)
+                                                ?.value
+                                        );
                                 }}
+                                // TODO: need to wirte the valid condition to enable the button
+                                disabled={!participant_code && true}
                             >
                                 Apply
                             </Button>
-                        </div> */}
                         </div>
                     </div>
-                )}
+                </div>
                 <div className="w-[305px]">
                     <div className="flex gap-2">
                         <div>
@@ -207,10 +209,10 @@ export default function PaymentDetails() {
                             </SelectContent>
                         </Select>
                         {attendanceError && (
-                                <span className="text-[#FF6D6D] text-[14px]">
-                                    {attendanceError?.message}
-                                </span>
-                            )}
+                            <span className="text-[#FF6D6D] text-[14px]">
+                                {attendanceError?.message}
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>

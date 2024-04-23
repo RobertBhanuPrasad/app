@@ -319,7 +319,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
               <div className="p-[10px]">
                 {/* Edit Payment option */}
                 <div>
-                  <div className="p-[5px]">
+                  <div className="p-[5px] cursor-pointer">
                     <Dialog open={editPayment} onOpenChange={setEditPayment}>
                       <DialogTrigger asChild>
                         <div
@@ -340,7 +340,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                 </div>
                 {/* View Donation option */}
                 <div>
-                  <div className="p-[5px]">
+                  <div className="p-[5px] cursor-pointer">
                     <Dialog open={viewDonation} onOpenChange={setViewDonation}>
                       <DialogTrigger asChild>
                         <div
