@@ -170,156 +170,126 @@ const accommodationValidationSchema = z.array(
   })
 );
 
-const scheduleValidationSchema = z.array(
-  z
-    .object({
-      date: z.date(),
-      startHour: z.string(),
-      startMinute: z.string(),
-      endHour: z.string(),
-      endMinute: z.string(),
-      startTimeFormat: z.string().optional().nullable(),
-      endTimeFormat: z.string().optional().nullable(),
-    })
-    .transform((value) => {
-      // for validations its better to use standard format irrespective of startTimeFormat and endTimeFormat.
-      // modify startHour and endHour to 24 hour format based on startTimeFormat and endTimeFormat
-      // startTimeFormat and endTimeFormat can be AM or PM
-      // so that we dont need to write extra conditions for AM and PM
-      if (value.startTimeFormat === "PM") {
-        // if it is 12 PM then i need to set to 00
-        if (value.startHour === "12") {
-          value.startHour = "00";
-        } else {
-          value.startHour = JSON.stringify(parseInt(value.startHour) + 12);
+const scheduleValidationSchema = z
+  .array(
+    z
+      .object({
+        date: z.date(),
+        startHour: z.string(),
+        startMinute: z.string(),
+        endHour: z.string(),
+        endMinute: z.string(),
+        startTimeFormat: z.string().optional().nullable(),
+        endTimeFormat: z.string().optional().nullable(),
+      })
+      .transform((value) => {
+        // for validations its better to use standard format irrespective of startTimeFormat and endTimeFormat.
+        // modify startHour and endHour to 24 hour format based on startTimeFormat and endTimeFormat
+        // startTimeFormat and endTimeFormat can be AM or PM
+        // so that we dont need to write extra conditions for AM and PM
+        if (value.startTimeFormat === "PM") {
+          // if it is 12 PM then i need to set to 00
+          if (value.startHour === "12") {
+            value.startHour = "00";
+          } else {
+            value.startHour = JSON.stringify(parseInt(value.startHour) + 12);
+          }
         }
-      }
 
-      if (value.endTimeFormat === "PM") {
-        // if it is 12 PM then i need to set to 00
-        if (value.endHour === "12") {
-          value.endHour = "00";
-        } else {
-          value.endHour = JSON.stringify(parseInt(value.endHour) + 12);
+        if (value.endTimeFormat === "PM") {
+          // if it is 12 PM then i need to set to 00
+          if (value.endHour === "12") {
+            value.endHour = "00";
+          } else {
+            value.endHour = JSON.stringify(parseInt(value.endHour) + 12);
+          }
         }
-      }
-      return value;
-    })
-    // for single session we need to do check few cases
-    // the endHour must need to be greater than startHor
-    // if the start Hour and endHour are same then endMinute need to be greater than startMinute
+        return value;
+      })
+      // for single session we need to do check few cases
+      // the endHour must need to be greater than startHor
+      // if the start Hour and endHour are same then endMinute need to be greater than startMinute
 
-    // lets write some validation the endHour must need to be greater than startHor
-    .refine(
-      (value) => {
-        const { startHour, endHour } = value;
-        if (startHour === endHour) {
+      // lets write some validation the endHour must need to be greater than startHor
+      .refine(
+        (value) => {
+          const { startHour, endHour } = value;
+          if (startHour === endHour) {
+            return true;
+          }
+          return parseInt(endHour) > parseInt(startHour);
+        },
+        {
+          message: "End hour must be greater than start hour",
+        }
+      )
+      .refine(
+        (value) => {
+          const { startHour, endHour, startMinute, endMinute } = value;
+          if (startHour === endHour) {
+            return parseInt(endMinute) > parseInt(startMinute);
+          }
           return true;
-        }
-        return parseInt(endHour) > parseInt(startHour);
-      },
-      {
-        message: "End hour must be greater than start hour",
-      }
-    )
-    .refine(
-      (value) => {
-        const { startHour, endHour, startMinute, endMinute } = value;
-        if (startHour === endHour) {
-          return parseInt(endMinute) > parseInt(startMinute);
-        }
+        },
+        { message: "End minute must be greater than start minute" }
+      )
+  )
+  // now we will need to validations for array of objects.
+  // 1. the first schedule date must be greater than today date.
+  .refine(
+    (schedules: any) => {
+      console.log("schedules", schedules);
+
+      const firstDate = new Date(schedules[0].date);
+      firstDate.setHours(schedules[0]?.startHour, schedules[0]?.startHour);
+      const today = new Date();
+      return firstDate > today;
+    },
+    {
+      message: "First schedule date must be greater than today date",
+    }
+  )
+
+  //2. the current schedule from index should need to be greater than previous schedule
+  // we will use same refine method to throw an error
+
+  .refine(
+    (schedules: any) => {
+      // we dont need to run this if it contains only one session
+      if (schedules.length <= 1) {
         return true;
-      },
-      { message: "End minute must be greater than start minute" }
-    )
-);
+      }
 
-// .refine(
-//   (value) => {
-//     if (value.length <= 1) {
-//       return true;
-//     }
-//     for (let i = 1; i < value.length; i++) {
-//       const prev = value[i - 1];
-//       const current = value[i];
+      // we need to use loop and need to compare current with previous
+      for (let i = 1; i < schedules.length; i++) {
+        const prev = schedules[i - 1];
 
-//       const prevDate = new Date(prev.date);
-//       const currentDate = new Date(current.date);
+        const current = schedules[i];
 
-//       if (currentDate < prevDate) {
-//         return false;
-//       } else if (currentDate.getTime() === prevDate.getTime()) {
-//         const prevStartDateTime = new Date(prev.date);
-//         prevStartDateTime.setHours(
-//           parseInt(prev.startHour),
-//           parseInt(prev.startMinute)
-//         );
+        const prevDate = new Date(prev.date);
 
-//         const currentStartDateTime = new Date(current.date);
-//         currentStartDateTime.setHours(
-//           parseInt(current.startHour),
-//           parseInt(current.startMinute)
-//         );
+        prevDate.setHours(prev?.endHour, prev?.endMinute);
 
-//         if (currentStartDateTime < prevStartDateTime) {
-//           return false;
-//         }
-//       }
-//     }
-//     return true;
-//   },
-//   { message: "Dates and times must be in chronological order" }
-// )
-// .refine(
-//   (value) => {
-//     if (value.length <= 1) {
-//       if (value.length === 1) {
-//         const schedule = value[0];
-//         const scheduleDate = new Date(schedule.date);
-//         const startHour = parseInt(schedule.startHour);
-//         const startMinute = parseInt(schedule.startMinute);
-//         scheduleDate.setHours(startHour, startMinute, 0, 0);
-//         const todayDate = new Date();
+        const currentDate = new Date(current.date);
 
-//         if (scheduleDate.getTime() < todayDate.getTime()) {
-//           return false; // Schedule start time cannot be in the past
-//         }
-//       }
-//       return true; // Passes validation if there is only one schedule or none
-//     } else {
-//       for (let i = 0; i < value.length; i++) {
-//         const prev = value[i - 1];
-//         const current = value[i];
+        currentDate.setHours(current?.startHour, current?.startMinute);
 
-//         const prevEndDateTime = new Date(prev.date);
-//         prevEndDateTime.setHours(
-//           parseInt(prev.endHour),
-//           parseInt(prev.endMinute)
-//         );
+        console.log(
+          currentDate,
+          prevDate,
+          currentDate.getTime(),
+          prevDate.getTime(),
+          currentDate.getTime() <= prevDate.getTime(),
+          "index",
+          i
+        );
 
-//         const currentStartDateTime = new Date(current.date);
-//         currentStartDateTime.setHours(
-//           parseInt(current.startHour),
-//           parseInt(current.startMinute)
-//         );
+        if (currentDate.getTime() <= prevDate.getTime()) {
+          return false;
+        }
+      }
 
-//         if (currentStartDateTime <= prevEndDateTime) {
-//           return false; // Start hour of the current day must be greater than end hour of the previous day
-//         }
-//       }
-//       return true; // Passes validation if all subsequent schedules start after the end time of the previous schedule
-//     }
-//   },
-//   {
-//     message:
-//       "Start hour of the second day must be greater than end hour of the first day",
-//   }
-// )
-// .refine((value: any[]) => value.every((item) => item.date instanceof Date), {
-//   message: "Invalid date format",
-// })
-// .refine(
-//   (value: any[]) => value.every((item) => !isNaN(item.date.getTime())),
-//   { message: "Invalid date value" }
-// )
-// .refine((value: any[]) => value.every((item) => parseInt(item.startMinute)));
+      return true;
+    },
+    { message: "Dates should need to be in chronological order" }
+  );

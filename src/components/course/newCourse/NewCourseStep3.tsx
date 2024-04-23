@@ -306,8 +306,7 @@ const Sessions = () => {
   });
 
   const { watch } = useFormContext();
-  const { errors }: any = useFormState();
-  const [open, setOpen] = useState(false);
+
   const formData = watch();
   const schedules = formData?.schedules || [];
 
@@ -390,78 +389,113 @@ const Sessions = () => {
     <div className="flex flex-col gap-4">
       {fields?.map((schedule: any, index: number) => {
         return (
-          <div
-            className="h-15 flex flex-col gap-1 justify-between"
-            key={schedule?.id}
-          >
-            <div className="h-4 font-[#333333] font-normal flex text-xs">
-              <div>Session {index + 1} </div>
-              <div className="text-[#7677F4]">&nbsp;*</div>
-            </div>
-            <div className="h-10 flex items-center gap-6">
-              <Dialog open={open}>
-                <DialogTrigger asChild>
-                  <Button
-                    onClick={() => setOpen(true)}
-                    className={`w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 ${
-                      errors?.schedules?.[index] && "border-[#FF6D6D]"
-                    }`}
-                    variant="outline"
-                  >
-                    <div>
-                      <CalenderIcon color="#999999" />
-                    </div>
-                    <div>
-                      {schedule?.date &&
-                        format(new Date(schedule.date), "dd MMM, yyyy")}
-                    </div>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
-                  <CalenderComponent index={index} setOpen={setOpen} />
-                </DialogContent>
-              </Dialog>
-              <TimePicker
-                index={index}
-                is12HourFormat={
-                  formData?.hour_format_id == timeFormat12HoursId ? true : false
-                }
-              />
-              <div className="w-[127px] flex gap-4 ">
-                {index == formData?.schedules?.length - 1 && (
-                  <div
-                    onClick={() => {
-                      handleAddSession();
-                    }}
-                    className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
-                  >
-                    <Add /> Add
-                  </div>
-                )}
-                {index != 0 && (
-                  <div
-                    onClick={() => {
-                      handleRemoveSession(index);
-                    }}
-                    className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
-                  >
-                    <Delete />
-                    Delete
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {errors?.schedules &&
-              errors?.schedules?.length > 0 &&
-              errors?.schedules?.[index] && (
-                <span className="text-[#FF6D6D] text-[12px]">
-                  {errors?.schedules?.[index]?.message as string}
-                </span>
-              )}
+          <div key={schedule.id}>
+            <ScheduleComponent
+              index={index}
+              handleAddSession={handleAddSession}
+              handleRemoveSession={handleRemoveSession}
+            />
           </div>
         );
       })}
+    </div>
+  );
+};
+
+/**
+ * This is a component where we can call inside map
+ * we have taken because to get updated with useWatch and mapping with field
+ * @returns
+ */
+const ScheduleComponent = ({
+  index,
+  handleAddSession,
+  handleRemoveSession,
+}: {
+  index: number;
+  handleAddSession: any;
+  handleRemoveSession: any;
+}) => {
+  const { errors }: any = useFormState();
+  const [open, setOpen] = useState(false);
+
+  const { watch } = useFormContext();
+  const formData = watch();
+
+  const schedule = formData?.schedules[index];
+
+  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id;
+
+  return (
+    <div className="h-15 flex flex-col gap-1 justify-between">
+      <div className="h-4 font-[#333333] font-normal flex text-xs">
+        <div>Session {index + 1} </div>
+        <div className="text-[#7677F4]">&nbsp;*</div>
+      </div>
+      <div className="h-10 flex items-center gap-6">
+        <Dialog open={open}>
+          <DialogTrigger asChild>
+            <Button
+              onClick={() => setOpen(true)}
+              className={`w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 ${
+                errors?.schedules?.[index] && "border-[#FF6D6D]"
+              }`}
+              variant="outline"
+            >
+              <div>
+                <CalenderIcon color="#999999" />
+              </div>
+              <div>
+                {schedule?.date &&
+                  format(new Date(schedule.date), "dd MMM, yyyy")}
+              </div>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
+            <CalenderComponent index={index} setOpen={setOpen} />
+          </DialogContent>
+        </Dialog>
+        <TimePicker
+          index={index}
+          is12HourFormat={
+            formData?.hour_format_id == timeFormat12HoursId ? true : false
+          }
+        />
+        <div className="w-[127px] flex gap-4 ">
+          {index == formData?.schedules?.length - 1 && (
+            <div
+              onClick={() => {
+                handleAddSession();
+              }}
+              className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
+            >
+              <Add /> Add
+            </div>
+          )}
+          {index != 0 && (
+            <div
+              onClick={() => {
+                handleRemoveSession(index);
+              }}
+              className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
+            >
+              <Delete />
+              Delete
+            </div>
+          )}
+        </div>
+      </div>
+
+      {errors?.schedules &&
+        errors?.schedules?.length > 0 &&
+        errors?.schedules?.[index] && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            {errors?.schedules?.[index]?.message as string}
+          </span>
+        )}
     </div>
   );
 };
@@ -779,6 +813,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   } = useController({
     name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
+
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date
   const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
   // Fetch organization calendar settings
