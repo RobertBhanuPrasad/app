@@ -7,7 +7,7 @@ interface NewCourseStore {
   viewRejectedModal: boolean;
   viewCourseAccountingSuccessModal: boolean;
   viewCourseAccountingRejectedDescriptionModal: boolean;
-  viewCourseAccountingRejectedModal: boolean
+  viewCourseAccountingRejectedModal: boolean;
 
   setViewRejectedModal: (by: boolean) => void;
   setViewPreviewPage: (by: boolean) => void;
@@ -51,10 +51,10 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   programId: 1,
   viewSuccessModal: false,
   viewRejectedModal: false,
-  
+
   viewCourseAccountingSuccessModal: false,
   viewCourseAccountingRejectedDescriptionModal: false,
-  viewCourseAccountingRejectedModal:false,
+  viewCourseAccountingRejectedModal: false,
 
   courseAccountingFormDefaultValues: {},
   setViewRejectedModal: (data: boolean) => {
@@ -88,7 +88,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       newAdvanceFilterData: data,
     }));
   },
-  currentStep: 3,
+  currentStep: 1,
   setCurrentStep: (data: number) => {
     set(() => ({
       currentStep: data,
