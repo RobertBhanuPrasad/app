@@ -812,7 +812,7 @@ export const handlePostAccommodations = async (
   // Perform upsert operation
   const { data, error } = await supabaseClient
     .from("program_accommodations")
-    .upsert(accommodationsData)
+    .upsert(accommodationsData,{ defaultToNull: false })
     .select();
 
   // Handle upsert result
