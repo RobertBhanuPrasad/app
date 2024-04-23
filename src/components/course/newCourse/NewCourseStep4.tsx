@@ -140,7 +140,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   //Checking Weather a fee is editable or not
   const isFeeEditable =
     isUserNationAdminOrSuperAdmin ||
-    courseFeeSettings?.[0]?.is_program_fee_editable ? true :false;
+    courseFeeSettings?.[0]?.is_program_fee_editable
+      ? true
+      : false;
 
   const {
     field: {
@@ -338,9 +340,10 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
         });
 
-        const earlyBirdSubTotal = earlyBirdTotal * taxRate;
 
-        //TODO need to calculate based on organization tax
+        //Requirement: Early Bird Sub Total is (Early Bird Total - Tax )
+        const earlyBirdSubTotal = earlyBirdTotal - (earlyBirdTotal * taxRate);
+
         return <div className="">{earlyBirdSubTotal}</div>;
       },
       enableSorting: false,
@@ -483,7 +486,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         </div>
       )}
       {/* Rendering DataTable component */}
-      <div className="w-[1016px] h-60">
+      <div className="w-[1016px] h-auto">
         {isFeeEditable ? (
           feeLevels?.length > 0 && (
             <DataTable columns={feeColumns} data={courseFeeData} />
@@ -494,10 +497,15 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       </div>
 
       <div>
-        {isFeeEditable &&
+      {/* Requirment: Show the early bird calender when 
+      1.Super or National Admin is logged in 
+      2.Early bird fee enabled in settings
+      3.Early bird fee enabled by user
+      4.Early bird cut off editable in settings */}
+        {isFeeEditable && showEarlyBirdColumns &&
           courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
           courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
-            <div className="w-80">
+            <div className="w-80 mt-9">
               <div className="flex justify-between">
                 <div className="font-normal text-base text-sm">
                   Early bird cut-off period
