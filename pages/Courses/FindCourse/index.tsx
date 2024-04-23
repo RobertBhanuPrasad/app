@@ -163,15 +163,6 @@ function index() {
 
   //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
-    console.log(
-      "heyy date",
-      new Date(
-        new Date(
-          AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
-        ).getTime() +
-          24 * 60 * 60 * 1000
-      ).toISOString()
-    );
     filters.permanent?.push(
       {
         field: "start_date",
