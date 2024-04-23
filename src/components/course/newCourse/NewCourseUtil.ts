@@ -1,4 +1,3 @@
-
 import _ from "lodash";
 import {
   COURSE_ACTIVE_STATUS_ID,
@@ -218,7 +217,6 @@ export const handlePostProgramData = async (
       body[NewCourseStep5FormNames.is_residential_program];
   }
 
-
   //accommodation_fee_payment_mode
   if (
     body[NewCourseStep5FormNames.accommodation_fee_payment_mode] &&
@@ -252,35 +250,39 @@ export const handlePostProgramData = async (
     // so that it can be helpful in thankyou page
     setProgramId(programId);
 
-  // this RX base url coming from env file now.(need to change after proper table was there in backend)  
-  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+    // this RX base url coming from env file now.(need to change after proper table was there in backend)
+    const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
 
-  // Constructing the registration URL
-  // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
-  // The base URL where registration information is located
-  // Adding the country code to specify the country of the program
-  // Adding the language code to specify the language of the program
-  // Appending the program ID to identify the specific program
-  // Constructing the complete registration URL
-  // this url is now posted to the program api which is used to further usage in the details view or at any other place.
-  const registrationUrl = `${RX_BASE_URL}/${langCode}/programs/${programId}`;
+    // Constructing the registration URL
+    // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
+    // The base URL where registration information is located
+    // Adding the country code to specify the country of the program
+    // Adding the language code to specify the language of the program
+    // Appending the program ID to identify the specific program
+    // Constructing the complete registration URL
+    // this url is now posted to the program api which is used to further usage in the details view or at any other place.
+    const registrationUrl = `${RX_BASE_URL}/${langCode}/programs/${programId}`;
 
-  // TODO need to integrate with url provided by cx team -(kalyan)
-  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
+    // TODO need to integrate with url provided by cx team -(kalyan)
+    const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
 
-  // here we have to update the created_by_user_id with loggedInUserId because this field is required
-  // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
-  // here we have to update when we are creating the program that is when created_by_user_id is null
-  // other wise no need to update the created_by_user_id 
-  // when one user create one program at that time we have to post created_by_user_id 
-  // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
-  // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
-  if(loggedInUserId && programData[0].created_by_user_id == null) {
-    await supabaseClient
-    .from("program")
-    .update({created_by_user_id: loggedInUserId, details_page_link: CX_BASE_URL, registration_link: registrationUrl })
-    .eq("id", programId)
-  } 
+    // here we have to update the created_by_user_id with loggedInUserId because this field is required
+    // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
+    // here we have to update when we are creating the program that is when created_by_user_id is null
+    // other wise no need to update the created_by_user_id
+    // when one user create one program at that time we have to post created_by_user_id
+    // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
+    // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
+    if (loggedInUserId && programData[0].created_by_user_id == null) {
+      await supabaseClient
+        .from("program")
+        .update({
+          created_by_user_id: loggedInUserId,
+          details_page_link: CX_BASE_URL,
+          registration_link: registrationUrl,
+        })
+        .eq("id", programId);
+    }
 
     //TODO: We are doing this in backend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
@@ -313,20 +315,21 @@ export const handlePostProgramData = async (
   if (!(await handlePostProgramContactDetailsData(body, programId)))
     return false;
 
-   //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
-   if (
+  //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
+  if (
     programTypeData?.is_online_program === false &&
     body[NewCourseStep5FormNames.is_residential_program]
   ) {
     if (!(await handlePostAccommodations(body, programId))) return false;
   }
-  
+
   //now after all data was stored into respective table we have to update status of program
   //Requirement: If the slected program_type of the program contains is_approval_required:true then we have to update status of program to "pending_approval"
   //Requirement: If the slected program_type of the program contains is_approval_required:false then we have to update status of program to "active"
 
   if (!(await handleProgramStatusUpdate(programId))) return false;
 
+  // we have to update the accounting status of program to not submitted
   if (
     !(await handleProgramAccountingStatusUpdate(
       programId,
@@ -840,7 +843,7 @@ export const handlePostAccommodations = async (
   // Perform upsert operation
   const { data, error } = await supabaseClient
     .from("program_accommodations")
-    .upsert(accommodationsData,{ defaultToNull: false })
+    .upsert(accommodationsData, { defaultToNull: false })
     .select();
 
   // Handle upsert result
@@ -903,22 +906,22 @@ export const handlePostProgramContactDetailsData = async (
     "contactDetailsData need to create in databse",
     contactDetailsData
   );
-  
-/**
- * Upserts (inserts or updates) the contact data into the database.
- * This function ensures that if the data already exists, it will be updated;
- * otherwise, it will be inserted. It handles the process of inserting or updating
- * schedulesData based on the provided data.
- * @param contactDetailsData The data to be upserted into the database.
- * @param options Additional options for the upsert operation.
- * Here, the 'defaultToNull' option determines whether to default
- * unspecified fields to null or not during the upsert operation.
- * If set to 'false', unspecified fields will retain their current
- * values instead of being set to null.
- */
+
+  /**
+   * Upserts (inserts or updates) the contact data into the database.
+   * This function ensures that if the data already exists, it will be updated;
+   * otherwise, it will be inserted. It handles the process of inserting or updating
+   * schedulesData based on the provided data.
+   * @param contactDetailsData The data to be upserted into the database.
+   * @param options Additional options for the upsert operation.
+   * Here, the 'defaultToNull' option determines whether to default
+   * unspecified fields to null or not during the upsert operation.
+   * If set to 'false', unspecified fields will retain their current
+   * values instead of being set to null.
+   */
   const { data, error } = await supabaseClient
     .from("program_contact_details")
-    .upsert(contactDetailsData,{defaultToNull : false})
+    .upsert(contactDetailsData, { defaultToNull: false })
     .select();
 
   // Handle upsert result
@@ -1185,8 +1188,7 @@ const handleProgramAccountingStatusUpdate = async (
   programId: number,
   accountingNotSubmittedStatusId: number | undefined
 ) => {
-  console.log("heyy console idss", accountingNotSubmittedStatusId);
-
+  // updating the accounting status of program to not submitted initially when the program created
   const { data, error } = await supabaseClient
     .from("program")
     .update({
@@ -1195,13 +1197,12 @@ const handleProgramAccountingStatusUpdate = async (
     .eq("id", programId)
     .select();
 
-  console.log("heyy accounting", data, error);
-
+  // if there is error return false else true
   if (error) {
     console.log("erorr while updating program accounting status", error);
     return false;
   } else {
-    console.log("program accounting status updated successfully", error);
+    console.log("program accounting status updated successfully", data);
     return true;
   }
 };
