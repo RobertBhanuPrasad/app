@@ -27,6 +27,7 @@ import {
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { format } from "date-fns";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
@@ -108,9 +109,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       // Check if start_date exists or not
       if (row?.original?.start_date) {
-        const startDate = new Date(
-          row?.original?.start_date
-        ).toLocaleDateString();
+        const startDate = format(row?.original?.start_date, "dd MMM, yyyy");
         return (
           <div className="min-w-[150px]">{startDate ? startDate : "-"} </div>
         );

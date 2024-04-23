@@ -163,6 +163,7 @@ function index() {
 
   //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
+    //Here the date picker uses the GMT time so , iam adding  1 day that is next day for from and to of course date
     filters.permanent?.push(
       {
         field: "start_date",
@@ -233,8 +234,6 @@ function index() {
       ],
     },
   });
-
-  console.log("heyy program data", programData?.data?.data);
 
   /**
    * The variable holds whether all rows are selected or not
@@ -649,33 +648,24 @@ export const BasicFilters = () => {
               >
                 <CalenderIcon color="#666666" />
               </div>
-              {courseDate?.from ? (
-                courseDate?.to ? (
-                  <div className="flex gap-2 items-center">
-                    <div className="text-[14px]">
-                      {format(courseDate.from, "MM/dd/yyyy")} -{" "}
-                      {format(courseDate.to, "MM/dd/yyyy")}
-                    </div>
-                    <div
-                      onClick={() => {
-                        courseDateOnChange(undefined);
-                      }}
-                    >
-                      <CrossIcon fill="#7677F4" height={10} width={10} />
-                    </div>
+              {courseDate ? (
+                <div className="flex gap-2 items-center w-full">
+                  <div className="text-[14px]">
+                    {/* If the course from date and to date is present then only format and show the from date and to date */}
+                    {courseDate.from && format(courseDate.from, "MM/dd/yyyy")}{" "}
+                    {courseDate.to && <span>-</span>}{" "}
+                    {courseDate.to && format(courseDate.to, "MM/dd/yyyy")}
                   </div>
-                ) : (
-                  <div className="w-full flex flex-row justify-between items-center">
-                    <div>{format(courseDate.from, "MM/dd/yyyy")}</div>
-                    <div
-                      onClick={() => {
-                        courseDateOnChange(undefined);
-                      }}
-                    >
-                      <CrossIcon fill="#7677F4" height={10} width={10} />
-                    </div>
+                  <div
+                    onClick={() => {
+                      //when we click on cross icon we need to clear the date
+                      courseDateOnChange(undefined);
+                    }}
+                    className="ml-auto"
+                  >
+                    <CrossIcon fill="#7677F4" height={10} width={10} />
                   </div>
-                )
+                </div>
               ) : (
                 <div className="flex gap-2 font-normal">
                   Select the Date Range
