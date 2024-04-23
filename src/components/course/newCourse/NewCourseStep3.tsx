@@ -847,6 +847,10 @@ const ExistingVenueList = () => {
 
   const [venueData, setVenueData] = useState<any[]>([]);
 
+  const [openExistingVenue, setOpenExistingVenue] = useState(false);
+
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+
   const {
     field: { value: deletedVenueIds = [], onChange: deleteVenueIdOnChange },
   } = useController({
@@ -969,9 +973,18 @@ const ExistingVenueList = () => {
     setValue("postal_code", item?.postal_code);
   };
 
-  const handleSubmitExistingVenue = (index: number) => {
+  const handleSubmitExistingVenue = async (index: number) => {
+    const isAllFieldsFilled = await ValidateCurrentStepFields([
+      "city_id",
+      "center_id",
+      "state_id",
+      "name",
+      "address",
+      "postal_code",
+    ]);
+
     const allVenuesData = [...venueData];
-    (allVenuesData[index] = {
+    allVenuesData[index] = {
       ...allVenuesData[index],
       name: formData?.name,
       address: formData?.address,
@@ -979,9 +992,17 @@ const ExistingVenueList = () => {
       city_id: formData?.city_id,
       center_id: formData?.center_id,
       postal_code: formData?.postal_code,
-    }),
+    };
+
+    if (isAllFieldsFilled) {
       setVenueData(allVenuesData);
+      setOpenExistingVenue(false);
+    } else {
+      setOpenExistingVenue(true);
+    }
   };
+
+  console.log(openExistingVenue, "openExistingVenue");
 
   return (
     <div>
@@ -1009,7 +1030,7 @@ const ExistingVenueList = () => {
           }}
         >
           <div
-            className="h-[330px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
+            className="mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
             id={"options"}
           >
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
@@ -1040,10 +1061,15 @@ const ExistingVenueList = () => {
                           {item?.created_by_user_id ==
                             loginUserData?.userData?.id ||
                             (isUserNationAdminOrSuperAdmin && (
-                              <Dialog>
+                              <Dialog
+                                open={openExistingVenue}
+                                onOpenChange={setOpenExistingVenue}
+                              >
                                 <DialogTrigger
+                                  className={"cursor-not-allowed pointer-events-none opacity-50"}
                                   onClick={() => {
                                     handleOpenExistingVenue(item);
+                                    setOpenExistingVenue(true);
                                   }}
                                 >
                                   <EditIcon />
@@ -1146,9 +1172,7 @@ export const AddOrEditVenue = ({
       </div>
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
-          <DialogClose asChild>
-            <Button onClick={handleSubmit}>Save</Button>
-          </DialogClose>
+          <Button onClick={handleSubmit}>Save</Button>
         </div>
       </DialogFooter>
     </div>
