@@ -264,6 +264,9 @@ export default function NewCourseReviewPage() {
    */
   const invalidate = useInvalidate();
 
+  /**
+   * The variable holds the course accounting status not submitted id
+   */
   const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(
     COURSE_ACCOUNTING_STATUS,
     NOT_SUBMITTED
