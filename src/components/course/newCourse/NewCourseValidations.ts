@@ -237,8 +237,11 @@ const scheduleValidationSchema = z
       console.log("schedules", schedules);
 
       const firstDate = new Date(schedules[0].date);
-      firstDate.setHours(schedules[0]?.startHour, schedules[0]?.startHour);
+
+      firstDate.setHours(schedules[0]?.startHour, schedules[0]?.startMinute);
+
       const today = new Date();
+
       return firstDate > today;
     },
     {
