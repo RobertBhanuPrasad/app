@@ -206,18 +206,19 @@ export const NewCourseTabs = () => {
     ...(formData?.program_type?.is_geo_restriction_applicable ? []:["is_geo_restriction_applicable"])
   ]);
 
+
   let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
-    ...(formData?.courseTypeSettings?.is_online_program
+    ...(formData?.program_type?.is_online_program
       ? []
       : ["online_url", "state_id", "city_id", "center_id"]),
-    ...(formData?.courseTypeSettings?.is_online_program
+    ...(formData?.program_type?.is_online_program
       ? ["is_existing_venue", "newVenue", "existingVenue"]
       : []),
     ...(formData?.is_existing_venue == "new-venue"
-      ? []
+      ? ["existingVenue"]
       : ["newVenue"]),
       ...(formData?.is_existing_venue == "existing-venue"
-      ? []
+      ? ["newVenue"]
       : ["existingVenue"]),
     //If country does not have multiple time zones no need to validate time zone drop down
     ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),

@@ -388,7 +388,7 @@ const Venue = () => {
   const { watch, setValue, resetField } = useFormContext();
 
   const removeVenue = () => {
-    setValue("newVenue", null);
+    setValue("newVenue", undefined);
   };
 
   const formData = watch();
@@ -596,7 +596,7 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
-      {(errors?.is_existing_venue || errors?.existingVenue) && (
+      {(errors?.is_existing_venue || errors?.existingVenue || errors?.newVenue) && (
         <span className="text-[#FF6D6D] text-[14px]">
           {"Venue is a required field"}
         </span>
