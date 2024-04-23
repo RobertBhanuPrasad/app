@@ -1,6 +1,6 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { MainHeader } from 'src/ui/TextTags'
 import { Button } from 'src/ui/button'
+import DepositeOfOfflineRevenue from './CourseDepositeOfOfflineRevenue'
 import { CourseInformationAccordion } from './CourseInformationAccordion'
 import { QuestionInstructionModal } from './CourseQuestionAndInstruction'
 
@@ -29,8 +29,9 @@ function RevenueSection() {
         <div className="pt-5">
           <CourseInformationAccordion />
         </div>
-        <MainHeader className="pt-5 text-[18px]" children="Deposit of Offline Revenue" />
-
+        <div>
+          <DepositeOfOfflineRevenue />
+        </div>
         <div className="flex self-end justify-center gap-2 pt-10 pb-7">
           <Button
             className="w-[118px] h-[46px] border border-[#7677F4] rounded-[12px] bg-[white] text-[#7677F4]"
