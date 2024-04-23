@@ -1,3 +1,4 @@
+
 import _ from "lodash";
 import {
   COURSE_ACTIVE_STATUS_ID,
@@ -78,6 +79,15 @@ export const handlePostProgramData = async (
     programBody.max_capacity = body[NewCourseStep2FormNames.max_capacity];
   }
 
+  // is_geo_restriction_applicable
+  if (
+    body[NewCourseStep2FormNames.is_geo_restriction_applicable] != undefined
+  ) {
+    programBody.is_geo_restriction_applicable =
+      body[NewCourseStep2FormNames.is_geo_restriction_applicable];
+  }
+
+  // is_registration_required
   if (body[NewCourseStep2FormNames.is_registration_required] != undefined) {
     programBody.is_registration_required =
       body[NewCourseStep2FormNames.is_registration_required];
@@ -205,13 +215,6 @@ export const handlePostProgramData = async (
       body[NewCourseStep5FormNames.is_residential_program];
   }
 
-  //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
-  if (
-    programTypeData?.is_online_program === false &&
-    body[NewCourseStep5FormNames.is_residential_program]
-  ) {
-    if (!(await handlePostAccommodations(body, programId))) return false;
-  }
 
   //accommodation_fee_payment_mode
   if (
@@ -307,6 +310,14 @@ export const handlePostProgramData = async (
   if (!(await handlePostProgramContactDetailsData(body, programId)))
     return false;
 
+   //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
+   if (
+    programTypeData?.is_online_program === false &&
+    body[NewCourseStep5FormNames.is_residential_program]
+  ) {
+    if (!(await handlePostAccommodations(body, programId))) return false;
+  }
+  
   //now after all data was stored into respective table we have to update status of program
   //Requirement: If the slected program_type of the program contains is_approval_required:true then we have to update status of program to "pending_approval"
   //Requirement: If the slected program_type of the program contains is_approval_required:false then we have to update status of program to "active"
@@ -818,7 +829,7 @@ export const handlePostAccommodations = async (
   // Perform upsert operation
   const { data, error } = await supabaseClient
     .from("program_accommodations")
-    .upsert(accommodationsData)
+    .upsert(accommodationsData,{ defaultToNull: false })
     .select();
 
   // Handle upsert result
@@ -881,10 +892,22 @@ export const handlePostProgramContactDetailsData = async (
     "contactDetailsData need to create in databse",
     contactDetailsData
   );
-  // Perform upsert operation
+  
+/**
+ * Upserts (inserts or updates) the contact data into the database.
+ * This function ensures that if the data already exists, it will be updated;
+ * otherwise, it will be inserted. It handles the process of inserting or updating
+ * schedulesData based on the provided data.
+ * @param contactDetailsData The data to be upserted into the database.
+ * @param options Additional options for the upsert operation.
+ * Here, the 'defaultToNull' option determines whether to default
+ * unspecified fields to null or not during the upsert operation.
+ * If set to 'false', unspecified fields will retain their current
+ * values instead of being set to null.
+ */
   const { data, error } = await supabaseClient
     .from("program_contact_details")
-    .upsert(contactDetailsData)
+    .upsert(contactDetailsData,{defaultToNull : false})
     .select();
 
   // Handle upsert result
