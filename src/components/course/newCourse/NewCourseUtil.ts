@@ -9,12 +9,15 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
+import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
+import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
 
 export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
-  setProgramId: (by: number) => void
+  setProgramId: (by: number) => void,
+  accountingNotSubmittedStatusId: number | undefined
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -265,6 +268,14 @@ export const handlePostProgramData = async (
   //Requirement: If the slected program_type of the program contains is_approval_required:false then we have to update status of program to "active"
 
   if (!(await handleProgramStatusUpdate(programId))) return false;
+
+  if (
+    !(await handleProgramAccountingStatusUpdate(
+      programId,
+      accountingNotSubmittedStatusId
+    ))
+  )
+    return false;
 
   return true;
 };
@@ -1094,5 +1105,33 @@ const handleGenerateProgramCode = async (
     } else {
       console.log("program code updated successfully", programData);
     }
+  }
+};
+
+/**
+ * Function to update the status of course accounting status when we are posting the course data
+ */
+const handleProgramAccountingStatusUpdate = async (
+  programId: number,
+  accountingNotSubmittedStatusId: number | undefined
+) => {
+  console.log("heyy console idss", accountingNotSubmittedStatusId);
+
+  const { data, error } = await supabaseClient
+    .from("program")
+    .update({
+      program_accounting_status_id: accountingNotSubmittedStatusId,
+    })
+    .eq("id", programId)
+    .select();
+
+  console.log("heyy accounting", data, error);
+
+  if (error) {
+    console.log("erorr while updating program accounting status", error);
+    return false;
+  } else {
+    console.log("program accounting status updated successfully", error);
+    return true;
   }
 };

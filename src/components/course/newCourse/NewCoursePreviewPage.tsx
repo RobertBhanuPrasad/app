@@ -3,6 +3,7 @@ import { useGetIdentity, useMany, useOne } from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
+  COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
   PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
@@ -15,7 +16,7 @@ import {
   formatDateString,
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
-import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
+import { getOptionValueObjectById, getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
@@ -25,6 +26,7 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
+import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
@@ -252,6 +254,11 @@ export default function NewCourseReviewPage() {
 
   const { setProgramId } = newCourseStore();
 
+  const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(
+    COURSE_ACCOUNTING_STATUS,
+    NOT_SUBMITTED
+  )?.id 
+
   const handClickContinue = async () => {
     setIsSubmitting(true);
 
@@ -261,7 +268,8 @@ export default function NewCourseReviewPage() {
     const isPosted = await handlePostProgramData(
       newCourseData,
       data?.userData?.id,
-      setProgramId
+      setProgramId,
+      accountingNotSubmittedStatusId
     );
 
     if (isPosted) {
@@ -720,35 +728,35 @@ export default function NewCourseReviewPage() {
               }}
             />{" "}
           </div>
-          {newCourseData?.is_residential_program &&
-          <div className="grid grid-cols-4 gap-4 mt-2">
-            {newCourseData?.accommodation?.map((data: any) => {
-              return (
-                <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    {" "}
-                    {courseAccomodationNames}
-                  </p>
-                  <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
-                    {data?.fee_per_person}
-                  </p>
-                </div>
-              );
-            })}
+          {newCourseData?.is_residential_program && (
+            <div className="grid grid-cols-4 gap-4 mt-2">
+              {newCourseData?.accommodation?.map((data: any) => {
+                return (
+                  <div className=" min-w-72">
+                    <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                      {" "}
+                      {courseAccomodationNames}
+                    </p>
+                    <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
+                      {data?.fee_per_person}
+                    </p>
+                  </div>
+                );
+              })}
 
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                Accommodation fee payment mode
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={paymentMethod?.value}
-              >
-                {paymentMethod?.value}
-              </abbr>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                  Accommodation fee payment mode
+                </p>
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={paymentMethod?.value}
+                >
+                  {paymentMethod?.value}
+                </abbr>
+              </div>
             </div>
-          </div>
-          }
+          )}
         </section>
         {/* Contact Info */}
         <section className="w-full py-8 text-base ">
