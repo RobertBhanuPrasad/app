@@ -58,11 +58,6 @@ function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData, "loginUserData");
 
-  const { i18n } = useTranslation();
-  const lang = i18n.language;
-
-  console.log(lang, 'langCode')
-
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
   if (!loginUserData?.userData) {
@@ -641,7 +636,14 @@ export const NewCourseTabs = () => {
   );
 };
 
-
+/**
+ * Function to fetch server-side props.
+ * This function checks the authentication status using the auth provider and
+ * fetches translations for the current locale.
+ * If the user is not authenticated, it redirects them to the specified destination.
+ * @param context The context object containing information about the request.
+ * @returns Server-side props including translated props or redirection information.
+ */
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
