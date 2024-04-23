@@ -285,8 +285,12 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setViewPreviewPage, setNewCourseData, setViewThankyouPage } =
-        newCourseStore();
+      const {
+        setViewPreviewPage,
+        setNewCourseData,
+        setViewThankyouPage,
+        setCurrentStep,
+      } = newCourseStore();
 
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -353,6 +357,8 @@ export const columns: ExtendedColumnDef<any>[] = [
         // we have to delete schedules when user click on cipy course and other we need to prefill
         defaultValues = _.omit(defaultValues, ["id", "schedules"]);
         setNewCourseData(defaultValues);
+        // when we do copy course we have to set the current step to first step
+        setCurrentStep(1);
         router.push("/Courses/NewCourse");
       };
 

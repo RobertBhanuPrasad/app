@@ -56,7 +56,7 @@ import { authProvider } from "src/authProvider";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
-  console.log(loginUserData,'loginUserData')
+  console.log(loginUserData, "loginUserData");
 
   const { i18n } = useTranslation();
   const lang = i18n.language;
@@ -88,6 +88,8 @@ function NewCourse() {
 
   const loggedUserData = loginUserData?.userData?.id;
 
+  console.log("heyy logged user data", loggedUserData);
+
   const onSubmit = (formData: any) => {
     // console.log(formData);
   };
@@ -113,6 +115,13 @@ function NewCourse() {
   const { newCourseData } = newCourseStore();
 
   /**
+   *variable that holds whether the logged in user has super admin role or not
+   */
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  );
+
+  /**
    * default values are used to prefill the course data
    * There are two different scenarios are there
    * 1. User will click new course button at that time we need to prefill the form with below object
@@ -126,6 +135,10 @@ function NewCourse() {
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
           [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
+          //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
+          [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
+            ? true
+            : undefined,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
@@ -212,7 +225,9 @@ export const NewCourseTabs = () => {
       : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
-    ...(formData?.program_type?.is_geo_restriction_applicable ? []:["is_geo_restriction_applicable"])
+    ...(formData?.program_type?.is_geo_restriction_applicable
+      ? []
+      : ["is_geo_restriction_applicable"]),
   ]);
 
   let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
@@ -222,10 +237,8 @@ export const NewCourseTabs = () => {
     ...(formData?.courseTypeSettings?.is_online_program
       ? ["is_existing_venue", "newVenue", "existingVenue"]
       : []),
-    ...(formData?.is_existing_venue == "new-venue"
-      ? []
-      : ["newVenue"]),
-      ...(formData?.is_existing_venue == "existing-venue"
+    ...(formData?.is_existing_venue == "new-venue" ? [] : ["newVenue"]),
+    ...(formData?.is_existing_venue == "existing-venue"
       ? []
       : ["existingVenue"]),
     //If country does not have multiple time zones no need to validate time zone drop down

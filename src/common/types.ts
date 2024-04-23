@@ -714,6 +714,7 @@ interface NewCourseFormFieldTypes {
   is_language_translation_for_participants?: boolean;
   program_alias_name_id?: number;
   is_geo_restriction_applicable?: boolean;
+  is_registration_required?:boolean
   language_ids?: number[];
   translation_language_ids?: number[];
   allowed_countries?: string[];
