@@ -799,11 +799,11 @@ const TimePicker = ({
    * We are using this useEffect to trigger the validation
    * Reason 1: Because of we are prefilling next schedule with previous schedule this useEffect will not harm us
    * Reason 2: We need to validate the current changing schedule because we need red errors on the fly
-   * Implementation 1: We need to keep schedules[index] in dependency array so what ever i am changing the current schedule we will get only that error
-   * Implementation 2: We need to trigger the validation on schedules[index]
+   * Implementation 1: We need to keep schedules in dependency array so what ever i am changing the current schedule we will get only that error
+   * Implementation 2: We need to trigger the validation on schedules
    */
   useEffect(() => {
-    trigger(`${NewCourseStep3FormNames?.schedules}[${index}]`);
+    trigger(`${NewCourseStep3FormNames?.schedules}`);
   }, [schedules[index]]);
 
   return (
