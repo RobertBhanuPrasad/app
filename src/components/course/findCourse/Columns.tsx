@@ -36,9 +36,9 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Course ID",
     enableHiding: false,
     header: () => {
-const {t} = useTranslation("common")
 
-      return <div className="w-[100px]">{t('course_id')}</div>;
+      const {t} = useTranslation()
+      return <div className="w-[100px]">{t("new_strings:course_id")}</div>;
     },
     cell: ({ row }) => {
       const router = useRouter();
@@ -59,7 +59,8 @@ const {t} = useTranslation("common")
     column_name: "Course Type Name",
     enableHiding: false,
     header: () => {
-      return <div className="w-[150px]">Course Type Name</div>;
+      const {t} = useTranslation()
+      return <div className="w-[150px]">{t("new_strings:course_type_name")}</div>;
     },
     cell: ({ row }) => {
       return (
@@ -72,7 +73,8 @@ const {t} = useTranslation("common")
     column_name: "Course Name",
     enableHiding: false,
     header: () => {
-      return <div className="min-w-[150px]">Course Name</div>;
+      const {t} = useTranslation()
+      return <div className="min-w-[150px]">{t("new_strings:course_name")}</div>;
     },
     cell: ({ row }) => {
       
@@ -88,7 +90,8 @@ const {t} = useTranslation("common")
     column_name: "Course Status",
     enableHiding: false,
     header: () => {
-      return <div className="min-w-[150px]">Course Status</div>;
+      const {t} = useTranslation()
+      return <div className="min-w-[150px]">{t("course.find_course:course_status")}</div>;
     },
     cell: ({ row }) => {
       return (
@@ -101,7 +104,8 @@ const {t} = useTranslation("common")
     enableHiding: false,
     column_name: "Start Date",
     header: () => {
-      return <div className="min-w-[150px]">Start Date</div>;
+      const {t} = useTranslation()
+      return <div className="min-w-[150px]">{t("course.find_course:start_date")}</div>;
     },
     cell: ({ row }: any) => {
       // Check if program_schedules exists and has at least one record
@@ -128,7 +132,8 @@ const {t} = useTranslation("common")
     accessorKey: "state",
     column_name: "State",
     header: () => {
-      return <div className="min-w-[150px]">State</div>;
+      const {t} = useTranslation()
+      return <div className="min-w-[150px]">{t("course.find_course:state")}</div>;
     },
     cell: ({ row }) => {
       return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
@@ -138,9 +143,9 @@ const {t} = useTranslation("common")
     accessorKey: "city",
     column_name: "City",
     header: () => {
-const {t} = useTranslation("common")
 
-      return <div className="min-w-[150px]">{t('city')}</div>;
+      const {t} = useTranslation()
+      return <div className="min-w-[150px]">{t("common:city")}</div>;
     },
     cell: ({ row }) => {
       return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
@@ -150,7 +155,8 @@ const {t} = useTranslation("common")
     accessorKey: "center",
     column_name: "Center",
     header: () => {
-      return <div className="min-w-[150px]">Center</div>;
+      const {t} = useTranslation()
+      return <div className="min-w-[150px]">{t("course.find_course:center")}</div>;
     },
     cell: ({ row }) => {
       return <div className="min-w-[150px]">{row?.original?.center?.name}</div>;
@@ -162,9 +168,9 @@ const {t} = useTranslation("common")
     enableHiding: false,
     column_name: "Teachers",
     header: () => {
-const {t} = useTranslation("common")
+  const {t} = useTranslation()
       
-      return <div className="min-w-[150px]">{t('teachers')}</div>;
+      return <div className="min-w-[150px]">{t('course.find_course:teachers')}</div>;
     },
     cell: ({ row }) => {
       const teachers = row?.original?.program_teachers?.map(
@@ -182,7 +188,8 @@ const {t} = useTranslation("common")
     accessorKey: "program_organizers",
     column_name: "Organizers",
     header: () => {
-      return <div className="min-w-[150px]">Organizers</div>;
+      const {t} = useTranslation()
+      return <div className="min-w-[150px]">{t('new_strings:organizers')}</div>;
     },
     cell: ({ row }) => {
       const organizers = row?.original?.program_organizers?.map(
@@ -199,7 +206,8 @@ const {t} = useTranslation("common")
     accessorKey: "participant_registration",
     column_name: "Attendees",
     header: () => {
-      return <div>Attendees</div>;
+      const {t} = useTranslation()
+      return <div>{t("course.find_course:attendees")}</div>;
     },
     cell: ({ row }: any) => {
       return (
@@ -213,7 +221,8 @@ const {t} = useTranslation("common")
     accessorKey: "visibility_id",
     column_name: "Visibility",
     header: () => {
-      return <div>Visibility</div>;
+      const {t} = useTranslation()
+      return <div>{t('new_strings:visibility')}</div>;
     },
     cell: ({ row }: any) => {
       return (
@@ -227,10 +236,8 @@ const {t} = useTranslation("common")
     accessorKey: "course_accounting_status",
     column_name: "Course Accounting Status",
     header: () => {
-      const {t} = useTranslation("common")
-
-
-      return <div className="min-w-[200px]">{t('course_accounting_status')}</div>;
+      const {t} = useTranslation()
+      return <div className="min-w-[200px]">{t('new_strings:course_accounting_form')}</div>;
     },
     cell: ({ row }: any) => {
       return (
@@ -246,8 +253,9 @@ const {t} = useTranslation("common")
     accessorKey: "Course Accounting Closure Date",
     column_name: "Course Accounting Closure Date",
     header: () => {
+      const {t} = useTranslation()
       return (
-        <div className="min-w-[250px]">Course Accounting Closure Date</div>
+        <div className="min-w-[250px]">{t('course.find_course:course_accounting_closure_date') }</div>
       );
     },
     cell: ({ row }: any) => {
@@ -259,7 +267,8 @@ const {t} = useTranslation("common")
     column_name: "Revenue",
     enableHiding: false,
     header: () => {
-      return <div className="min-w-[150px]">Revenue</div>;
+      const {t} =useTranslation()
+      return <div className="min-w-[150px]">{t('new_strings:revenue')}</div>;
     },
     cell: ({ row }: any) => {
       const [revenue, setRevenue] = useState<any>();
@@ -359,8 +368,8 @@ const {t} = useTranslation("common")
         setNewCourseData(defaultValues);
         router.push("/Courses/NewCourse");
       };
-
-      dropDownMenuData?.unshift({ label: "View Course", value: 10 });
+      const {t} = useTranslation("course.find_course")
+      dropDownMenuData?.unshift({label:t('course.find_course:view_course_details'), value: 10 });
 
       const handleSelected = (value: number) => {
         console.log("clicked on", value);
@@ -414,8 +423,8 @@ const {t} = useTranslation("common")
           }
         }
       };
-const {t} = useTranslation("common")
-      
+
+     
 
       return (
         <div className="">
@@ -424,7 +433,7 @@ const {t} = useTranslation("common")
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
+                    <span className="sr-only">{t('new_strings:open_menu')}</span>
                     <MoreVertical className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -458,7 +467,7 @@ const {t} = useTranslation("common")
                           <Exclamation />
                         </div>
                         <DialogDescription className="font-bold text-black text-lg items-center text-center">
-                          Are you sure you want to cancel this course?
+                        {t('new_strings:cancel_course')}
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter>
@@ -473,7 +482,7 @@ const {t} = useTranslation("common")
                                 setIsDialogOpen(false);
                               }}
                             >
-                              {t('no_button')}
+                              {t('common:no_button')}
                             </Button>
                           </div>
                           <div>
@@ -484,7 +493,7 @@ const {t} = useTranslation("common")
                                 cancelCourse();
                               }}
                             >
-                              {t('yes_button')}
+                              {t('common:yes_button')}
                             </Button>
                           </div>
                         </div>
@@ -498,7 +507,7 @@ const {t} = useTranslation("common")
                           <Cross />
                         </div>
                         <div className="font-bold text-center my-5">
-                          Course canceled Successfully
+                          {t('new_strings:course_cancel_successful')}
                         </div>
                       </div>
 
@@ -509,7 +518,7 @@ const {t} = useTranslation("common")
                             setCancelSuccessModalOpen(false);
                           }}
                         >
-                          {t('close')}
+                          {t('common:close')}
                         </Button>
                       </div>
                     </DialogContent>

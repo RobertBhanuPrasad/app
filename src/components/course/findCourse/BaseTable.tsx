@@ -317,7 +317,7 @@ export function BaseTable<TData, TValue>({
                       checked={selectAll}
                       onCheckedChange={handleSelectAllChange}
                     />
-                    <div className="font-bold text-[14px]">Select All</div>
+                    <div className="font-bold text-[14px]">{t("course.find_course:select_all")}</div>
                   </div>
 
                   {table
@@ -326,7 +326,6 @@ export function BaseTable<TData, TValue>({
                     // Here we are filtering the columns which have accessorKey
                     .map((column: any) => {
 
-                      const {t} = useTranslation("common")
                       return (
                         <div className="flex flex-row gap-4 items-center">
                           <Checkbox
@@ -505,7 +504,7 @@ export function BaseTable<TData, TValue>({
                       colSpan={columns?.length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      {t("new_strings:no_results")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -540,13 +539,13 @@ export function BaseTable<TData, TValue>({
                     pageSize // Till now there is no limit will change after confirming TODO
                   ) => (
                     <SelectItem key={pageSize} value={`${pageSize}`}>
-                      Showing {pageSize}
+                      {t("course.find_course:showing")} {pageSize}
                     </SelectItem>
                   )
                 )}
               </SelectContent>
             </Select>
-            <div>of {total}</div>
+            <div>{t("course.find_course:of")} {total}</div>
           </div>
         </div>
       </div>

@@ -333,7 +333,7 @@ function index() {
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
-  const { t } = useTranslation( [ "common", 'course.find_course']);
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="mx-8 flex flex-col gap-4">
@@ -394,11 +394,11 @@ function index() {
                 onClick={handleExportExcel}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                Excel
+                {t("new_strings:excel")}
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
-                Csv
+              {t("new_strings:csv")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -429,6 +429,7 @@ const HeaderSection = () => {
 };
 
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
+  const {t} = useTranslation()
   return (
     <div className="relative ml-[-12px] mt-[-12px]">
       <DateRangePicker
@@ -451,13 +452,13 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
           }
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
-          Reset
+          {t('new_strings:reset_button')}
         </Button>
         <Button
           onClick={() => setOpen(false)}
           className=" w-[94px] h-10 rounded-xl"
         >
-          Apply
+          {t('common:apply_button')}
         </Button>
       </div>
     </div>
@@ -501,7 +502,7 @@ export const CourseTypeComponent = ({ name }: any) => {
   } = useController({
     name: name,
   });
-
+const {t} = useTranslation("common");
   return (
     <Select
       value={value}
@@ -510,7 +511,7 @@ export const CourseTypeComponent = ({ name }: any) => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select Course Type" />
+        <SelectValue placeholder={t('select_course_type')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -563,7 +564,7 @@ export const BasicFilters = () => {
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
   };
-  const { t } = useTranslation( [ "common", 'course.find_course']);
+  const { t } = useTranslation();
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
@@ -602,7 +603,7 @@ export const BasicFilters = () => {
                 )
               ) : (
                 <div className="flex gap-2 font-normal">
-                  Select the Date Range
+                  {t('new_strings:select_the_date_range')}
                 </div>
               )}
             </Button>
@@ -625,7 +626,7 @@ export const BasicFilters = () => {
           className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
-          <div>Clear All</div>
+          <div>{t('common:clear_all')}</div>
         </div>
         <Button
           onClick={() => {
@@ -633,7 +634,7 @@ export const BasicFilters = () => {
           }}
           className="h-9 w-18 rounded-xl"
         >
-          Apply
+          {t('common:apply_button')}
         </Button>
       </div>
     </div>
@@ -653,7 +654,7 @@ const AdvanceFilter = () => {
           formData.advanceFilter[key].length > 0
       ).length) ||
     0;
-    const { t } = useTranslation( [ "common", 'course.find_course']);
+    const { t } = useTranslation();
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">
@@ -681,7 +682,7 @@ const AdvanceFilter = () => {
 };
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common","course.find_course"])
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common","course.find_course","new_strings"])
   if (!authenticated) {
     return {
       props: {
