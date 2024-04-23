@@ -1,3 +1,4 @@
+
 import _ from "lodash";
 import {
   COURSE_ACTIVE_STATUS_ID,
@@ -865,10 +866,22 @@ export const handlePostProgramContactDetailsData = async (
     "contactDetailsData need to create in databse",
     contactDetailsData
   );
-  // Perform upsert operation
+  
+/**
+ * Upserts (inserts or updates) the contact data into the database.
+ * This function ensures that if the data already exists, it will be updated;
+ * otherwise, it will be inserted. It handles the process of inserting or updating
+ * schedulesData based on the provided data.
+ * @param contactDetailsData The data to be upserted into the database.
+ * @param options Additional options for the upsert operation.
+ * Here, the 'defaultToNull' option determines whether to default
+ * unspecified fields to null or not during the upsert operation.
+ * If set to 'false', unspecified fields will retain their current
+ * values instead of being set to null.
+ */
   const { data, error } = await supabaseClient
     .from("program_contact_details")
-    .upsert(contactDetailsData)
+    .upsert(contactDetailsData,{defaultToNull : false})
     .select();
 
   // Handle upsert result
