@@ -129,6 +129,9 @@ function NewCourse() {
           [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
             ? true
             : undefined,
+
+          // is_geo_restriction_applicable is visible to super admin and default it is no
+          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
