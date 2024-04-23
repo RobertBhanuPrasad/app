@@ -177,7 +177,10 @@ export default function NewCourseReviewPage() {
             data?.endMinute || '00'
           }  ${data?.endTimeFormat && data?.endTimeFormat}`
           return (
-            <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]" title={schedule}>
+            <abbr
+              className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+              title={schedule}
+            >
               {schedule}
             </abbr>
           )
@@ -293,7 +296,7 @@ export default function NewCourseReviewPage() {
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">Organization</p>
               <abbr
-                className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
                 title={organizationName?.data?.name}
               >
                 {organizationName?.data?.name}
@@ -332,7 +335,7 @@ export default function NewCourseReviewPage() {
                   Registration via 3rd party gateway url
                 </p>
                 <abbr
-                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.registration_via_3rd_party_url}
                 >
                   {newCourseData?.registration_via_3rd_party_url}
@@ -501,7 +504,7 @@ export default function NewCourseReviewPage() {
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">Online zoom URL</p>
                 <abbr
-                  className="text-sm font-normal text-accent-light text-[#999999]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.online_url}
                 >
                   {newCourseData?.online_url}
@@ -644,7 +647,7 @@ export default function NewCourseReviewPage() {
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999] ">Accommodation fee payment mode</p>
                 <abbr
-                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={paymentMethod?.value}
                 >
                   {paymentMethod?.value}
