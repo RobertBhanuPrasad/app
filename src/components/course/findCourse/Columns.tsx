@@ -34,6 +34,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "program_code",
     column_name: "Course ID",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
 
@@ -46,6 +47,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         <div
           onClick={() => {
             router.push(`/Courses/ViewCourse/${row?.original?.id}`);
+            console.log("View Course Route is",`/Courses/ViewCourse/${row?.original?.id}`)
           }}
           className="w-[100px] text-[#7677F4] font-semibold"
         >
@@ -57,6 +59,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "program_types",
     column_name: "Course Type Name",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
       const {t} = useTranslation()
@@ -71,6 +74,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "program_type_alias_names",
     column_name: "Course Name",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
       const {t} = useTranslation()
@@ -88,6 +92,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "status",
     column_name: "Course Status",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
       const {t} = useTranslation()
@@ -101,6 +106,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "program_schedules",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     column_name: "Start Date",
     header: () => {
@@ -165,6 +171,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   
   {
     accessorKey: "program_teachers",
+    //These columns are default columns and shouldnt be editable
     enableHiding: false,
     column_name: "Teachers",
     header: () => {
@@ -205,6 +212,8 @@ const {t} = useTranslation("common")
   {
     accessorKey: "participant_registration",
     column_name: "Attendees",
+    //These columns are default columns and shouldnt be editable
+    enableHiding: false,
     header: () => {
       const {t} = useTranslation()
       return <div>{t("course.find_course:attendees")}</div>;
@@ -265,7 +274,6 @@ const {t} = useTranslation("common")
   {
     accessorKey: "revenue",
     column_name: "Revenue",
-    enableHiding: false,
     header: () => {
       const {t} =useTranslation()
       return <div className="min-w-[150px]">{t('new_strings:revenue')}</div>;
@@ -299,7 +307,12 @@ const {t} = useTranslation("common")
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setViewPreviewPage, setNewCourseData,setViewThankyouPage } = newCourseStore();
+      const {
+        setViewPreviewPage,
+        setNewCourseData,
+        setViewThankyouPage,
+        setCurrentStep,
+      } = newCourseStore();
 
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -360,12 +373,14 @@ const {t} = useTranslation("common")
        * switches the view to the new course page.
        */
       const handleCopyCourse = async () => {
-        setViewThankyouPage(false)
-        
+        setViewThankyouPage(false);
+
         let defaultValues = await handleCourseDefaultValues(row.original.id);
         // we have to delete schedules when user click on cipy course and other we need to prefill
-        defaultValues = _.omit(defaultValues, ["schedules"]);
+        defaultValues = _.omit(defaultValues, ["id", "schedules"]);
         setNewCourseData(defaultValues);
+        // when we do copy course we have to set the current step to first step
+        setCurrentStep(1);
         router.push("/Courses/NewCourse");
       };
       const {t} = useTranslation("course.find_course")
@@ -376,8 +391,9 @@ const {t} = useTranslation("common")
 
         switch (value) {
           case 1: {
-            // TODO - Navigate to Participant Listing page
-            router.push("/");
+            //Need to navigate to participants list of select course.
+            router.push(`ViewCourse/${row.original.id}/participant/list`);
+            console.log("Participant route is",`ViewCourse/${row.original.id}/participant/list`)
             break;
           }
           case 2: {
@@ -418,7 +434,8 @@ const {t} = useTranslation("common")
             break;
           }
           case 10: {
-            router.push(`/Courses/ViewCourse/${[row.original.id]}`);
+            router.push(`/Courses/ViewCourse/${row.original.id}`);
+            console.log('View Course Route is',`/Courses/ViewCourse/${row.original.id}`)
             break;
           }
         }

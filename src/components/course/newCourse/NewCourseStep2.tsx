@@ -339,20 +339,24 @@ export const CourseTypeDropDown = () => {
 };
 
 const RegistrationGateway = () => {
+
   const {
     field: { value, onChange },
   } = useController({
     name: NewCourseStep2FormNames?.is_registration_required,
   });
+
+
+
   return (
     <div className="flex flex-row items-center gap-[19px]">
       <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">
         Registration is mandatory for this course
       </div>
       <Switch
-        id="registration"
+        id="is_registration_required"
         className="!w-[57px] !h-[24px]"
-        value={value}
+        checked={value}
         onCheckedChange={(value: boolean) => {
           onChange(value);
         }}

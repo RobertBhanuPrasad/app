@@ -25,7 +25,7 @@ export const VenueNameComponent = () => {
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Venue <div className="text-[#7677F4]"> *</div>
+        Venue Name <div className="text-[#7677F4]"> *</div>
       </div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
