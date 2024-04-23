@@ -216,7 +216,7 @@ const scheduleValidationSchema = z
           return parseInt(endHour) > parseInt(startHour);
         },
         {
-          message: "End hour must be greater than start hour",
+          message: "Session start time must be greater than end time",
         }
       )
       .refine(
@@ -227,7 +227,7 @@ const scheduleValidationSchema = z
           }
           return true;
         },
-        { message: "End minute must be greater than start minute" }
+        { message: "Session start time must be greater than end time" }
       )
   )
   // now we will need to validations for array of objects.
@@ -290,5 +290,5 @@ const scheduleValidationSchema = z
 
       return true;
     },
-    { message: "Dates should need to be in chronological order" }
+    { message: "Dates should need to be in order" }
   );
