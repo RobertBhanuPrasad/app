@@ -40,8 +40,7 @@ if(data.payment_method_id)
     if (data.participant_id) defaultValues.roommate_snore = data?.participant_id.roommate_snore
 
     // participant_code
-    if (data.participant_id?.participant_code) defaultValues.participant_code = data.participant_id.participant_code
-
+    if (data.participant_id) defaultValues.participant_code = data.participant_id.participant_code
     // discount_code
     if (data.participant_id?.discount_code) defaultValues.discount_code = data.participant_id.discount_code
 
@@ -65,7 +64,6 @@ if(data.payment_method_id)
   // send_payment_confirmation
   if (data.send_payment_confirmation) defaultValues.send_payment_confirmation = data.send_payment_confirmation
 
-  
 
   return defaultValues
 }
