@@ -20,6 +20,7 @@ import {
   useFieldArray,
   useFormContext,
   useFormState,
+  useWatch,
 } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { Badge } from "src/ui/badge";
@@ -171,6 +172,7 @@ const Schedules = () => {
       <SchedulesHeader />
 
       <Sessions />
+
       {errors?.schedules && (
         <span className="text-[#FF6D6D] text-[12px]">
           {errors?.schedules?.message as string}
@@ -785,6 +787,25 @@ const TimePicker = ({
   is12HourFormat: Boolean;
 }) => {
   const { errors }: any = useFormState();
+
+  const { trigger } = useFormContext();
+
+  const formData = useWatch();
+
+  const { schedules } = formData;
+
+  /**
+   * This useEffect we are writing on two reasons
+   * We are using this useEffect to trigger the validation
+   * Reason 1: Because of we are prefilling next schedule with previous schedule this useEffect will not harm us
+   * Reason 2: We need to validate the current changing schedule because we need red errors on the fly
+   * Implementation 1: We need to keep schedules[index] in dependency array so what ever i am changing the current schedule we will get only that error
+   * Implementation 2: We need to trigger the validation on schedules[index]
+   */
+  useEffect(() => {
+    trigger(`${NewCourseStep3FormNames?.schedules}[${index}]`);
+  }, [schedules[index]]);
+
   return (
     <div className="flex items-center gap-6">
       <div className="text-sm text-[#999999] font-normal">From</div>
@@ -810,9 +831,12 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },
+    formState: { dirtyFields },
   } = useController({
     name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
+
+  const { trigger } = useFormContext();
 
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date
   const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
@@ -939,6 +963,9 @@ const CalenderComponent = ({ index, setOpen }: any) => {
           onClick={() => {
             onChange(date);
             setOpen(false);
+
+            // we need to validate schedules after date changes to get instant errors
+            trigger("schedules");
           }}
           className="w-24 rounded-[12px]"
         >
@@ -1271,6 +1298,8 @@ const TimeSelector = ({
   is12HourFormat: Boolean;
   error: boolean;
 }) => {
+  const { trigger } = useFormContext();
+
   /**
    * Why we have taken this ref
    * problems

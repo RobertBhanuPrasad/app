@@ -190,13 +190,13 @@ const scheduleValidationSchema = z
 
         if (value.startTimeFormat === "AM" && value.startHour === "12") {
           value.startHour = "00";
-        } else if (value.startTimeFormat === "PM") {
+        } else if (value.startTimeFormat === "PM" && value.startHour !== "12") {
           value.startHour = JSON.stringify(parseInt(value.startHour) + 12);
         }
 
         if (value.endTimeFormat === "AM" && value.endHour === "12") {
           value.endHour = "00";
-        } else if (value.endTimeFormat === "PM") {
+        } else if (value.endTimeFormat === "PM" && value.endHour !== "12") {
           value.endHour = JSON.stringify(parseInt(value.endHour) + 12);
         }
 
