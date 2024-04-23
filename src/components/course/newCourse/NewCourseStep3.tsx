@@ -75,6 +75,7 @@ import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { SelectItems } from "src/ui/select";
 import LoadingIcon from "@public/assets/LoadingIcon";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -518,7 +519,7 @@ const Venue = () => {
                         View All
                       </Badge>
                     </DialogTrigger>
-                    <DialogContent className="w-[858px] h-[585px] rounded-[24px] ">
+                    <DialogContent className="!w-[858px] h-[585px] !rounded-[24px] !py-[24px] !pl-[24px] !pr-[8px]">
                       <ExistingVenueList />
                     </DialogContent>
                   </Dialog>
@@ -998,13 +999,14 @@ const ExistingVenueList = () => {
           }}
         >
           <div
-            className=" mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
+            className=" h-[330px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-x-[30px] gap-y-[24px] "
             id={"options"}
           >
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
             {filteredVenueData?.map((item: any, index: number) => {
               return (
-                <div className="flex  flex-row !w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
+                <ScrollArea rounded-md whitespace-nowrap>
+                <div className="flex  flex-row !w-[390px] h-[102px] rounded-[16px] items-start space-x-3 space-y-0 border p-4">
                   <Checkbox
                     id={item.id}
                     value={item.id}
@@ -1063,6 +1065,7 @@ const ExistingVenueList = () => {
                     </div>
                   </div>
                 </div>
+                </ScrollArea>
               );
             })}
             {/* </div> */}

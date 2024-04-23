@@ -125,11 +125,13 @@ function NewCourse() {
           [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
-          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
           //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
           [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
             ? true
             : undefined,
+
+          // is_geo_restriction_applicable is visible to super admin and default it is no
+          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
