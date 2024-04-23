@@ -157,9 +157,11 @@ export default function NewCourseReviewPage() {
     meta: { select: 'contact_id(full_name)' }
   })
 
-  const CourseTeachersNames = CourseTeachers?.data?.map(teacher_id => {
-    if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
-  })
+  const CourseTeachersNames: any = CourseTeachers?.data
+    ?.map(teacher_id => {
+      if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
+    })
+    .join(', ')
 
   const { data: courseType } = useOne({
     resource: 'program_types',
@@ -375,7 +377,10 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">Teacher</p>
-              <abbr className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]">
+              <abbr
+                title={CourseTeachersNames ? CourseTeachersNames : '-'}
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+              >
                 {CourseTeachersNames ? CourseTeachersNames : '-'}
               </abbr>
             </div>
@@ -536,7 +541,6 @@ export default function NewCourseReviewPage() {
                 >
                   {CenterNames ? CenterNames : '-'}
                 </abbr>
-                
               </div>
               <div>{venueSessions()}</div>
             </div>
