@@ -87,9 +87,9 @@ function NewCourseStep3() {
     id: program_type_id,
   });
 
-  // if (isLoading) {
-  //   return <LoadingIcon />;
-  // }
+  if (isLoading) {
+    return <LoadingIcon />;
+  }
 
   return (
     <div className="flex flex-col gap-8">
