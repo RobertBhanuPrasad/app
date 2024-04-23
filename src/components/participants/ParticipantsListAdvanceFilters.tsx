@@ -46,7 +46,6 @@ export function ParticipantsAdvanceFilter() {
   const filterCount = () => {
     const { advanceFilter } = getValues();
     let res = 0;
-
     if (
       advanceFilter?.full_name?.length ||
       advanceFilter?.email?.length ||
@@ -56,6 +55,7 @@ export function ParticipantsAdvanceFilter() {
     // if (advanceFilter?.email?.length) res += 1;
     // if (advanceFilter?.mobile?.length) res += 1;
     if (advanceFilter?.transaction_type?.length) res += 1;
+    if (advanceFilter?.payment_method?.length) res += 1;
     if (advanceFilter?.fee_level?.length) res += 1;
     if (advanceFilter?.attendance_status?.length) res += 1;
     if (

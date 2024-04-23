@@ -337,10 +337,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.payment_method_id
-            ?.value
-            ? row?.original?.participant_payment_history[0]?.payment_method_id
-                ?.value
+          {row?.original?.payment_method?.value
+            ? row?.original?.payment_method?.value
             : "-"}
         </div>
       );
