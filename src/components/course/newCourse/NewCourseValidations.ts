@@ -202,6 +202,29 @@ const scheduleValidationSchema = z
 
         return value;
       })
+      // the current schedule date must be greater than today date
+      .refine(
+        (schedule) => {
+          // not only date from schedule we need to take startHour and startMinute also
+          const { date, startHour, startMinute } = schedule;
+
+          // create adtae object and compare with today date with getTime method
+          const dateObj = new Date(date);
+
+          dateObj.setHours(parseInt(startHour), parseInt(startMinute), 0, 0);
+
+          if (dateObj.getTime() <= new Date().getTime()) {
+            return false;
+          }
+
+          return true;
+        },
+        {
+          message:
+            "A session date and time must be greater than today date and time",
+        }
+      )
+
       // for single session we need to do check few cases
       // the endHour must need to be greater than startHor
       // if the start Hour and endHour are same then endMinute need to be greater than startMinute
@@ -232,32 +255,44 @@ const scheduleValidationSchema = z
   )
   // now we will need to validations for array of objects.
   // 1. the first schedule date must be greater than today date.
-  .refine(
-    (schedules: any) => {
-      console.log("schedules", schedules);
+  // .refine(
+  //   (schedules: any) => {
+  //     console.log("schedules", schedules);
 
-      const firstDate = new Date(schedules[0].date);
+  //     const firstDate = new Date(schedules[0].date);
 
-      firstDate.setHours(schedules[0]?.startHour, schedules[0]?.startMinute);
+  //     firstDate.setHours(schedules[0]?.startHour, schedules[0]?.startMinute);
 
-      const today = new Date();
+  //     const today = new Date();
 
-      return firstDate > today;
-    },
-    {
-      message: "First schedule date must be greater than today date",
-    }
-  )
+  //     return firstDate > today;
+  //   },
+  // {
+  //   message: "First schedule date must be greater than today date",
+  // }
+  // );
 
-  //2. the current schedule from index should need to be greater than previous schedule
+  // 2. the current schedule from index should need to be greater than previous schedule
   // we will use same refine method to throw an error
-
   .refine(
     (schedules: any) => {
       // we dont need to run this if it contains only one session
       if (schedules.length <= 1) {
         return true;
       }
+
+      // we need to sort the schedules before we can compare
+      // Requirement: we can give schedules irrespective of order
+      // we will sort the schedules first
+      schedules = schedules.sort((a: any, b: any) => {
+        let aDate = new Date(a.date);
+        aDate.setHours(a?.startHour, a?.startMinute);
+
+        let bDate = new Date(b.date);
+        bDate.setHours(b?.startHour, b?.startMinute);
+
+        return aDate.getTime() - bDate.getTime();
+      });
 
       // we need to use loop and need to compare current with previous
       for (let i = 1; i < schedules.length; i++) {
@@ -273,16 +308,6 @@ const scheduleValidationSchema = z
 
         currentDate.setHours(current?.startHour, current?.startMinute);
 
-        console.log(
-          currentDate,
-          prevDate,
-          currentDate.getTime(),
-          prevDate.getTime(),
-          currentDate.getTime() <= prevDate.getTime(),
-          "index",
-          i
-        );
-
         if (currentDate.getTime() <= prevDate.getTime()) {
           return false;
         }
@@ -290,5 +315,5 @@ const scheduleValidationSchema = z
 
       return true;
     },
-    { message: "Dates should need to be in order" }
+    { message: "A session cannot start before ending another session" }
   );

@@ -88,7 +88,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       newAdvanceFilterData: data,
     }));
   },
-  currentStep: 3,
+  currentStep: 1,
   setCurrentStep: (data: number) => {
     set(() => ({
       currentStep: data,

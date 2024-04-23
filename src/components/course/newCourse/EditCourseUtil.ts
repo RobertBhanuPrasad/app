@@ -153,7 +153,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
       }
     }
   }
- 
+
   if (data?.hour_format_id)
     defaultValues.hour_format_id = data.hour_format_id as number;
 
@@ -173,12 +173,21 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
 
         const scheduleType: any = {
           date: schedule.start_time,
-          startHour: schedule.start_time.getHours(),
+          startHour: JSON.stringify(schedule.start_time.getHours()).padStart(
+            2,
+            "00"
+          ),
           startMinute: schedule.start_time
-            ? schedule.start_time.getMinutes()
-            : 0,
-          endHour: schedule.end_time.getHours(),
-          endMinute: schedule.end_time.getMinutes(),
+            ? JSON.stringify(schedule.start_time.getMinutes()).padStart(2, "0")
+            : "00",
+          endHour: JSON.stringify(schedule.end_time.getHours()).padStart(
+            2,
+            "00"
+          ),
+          endMinute: JSON.stringify(schedule.end_time.getMinutes()).padStart(
+            2,
+            "00"
+          ),
         };
         return scheduleType;
       }
