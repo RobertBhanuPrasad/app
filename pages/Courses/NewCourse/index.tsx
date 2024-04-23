@@ -49,6 +49,9 @@ import Success from "@public/assets/Success";
 import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -632,4 +635,40 @@ export const NewCourseTabs = () => {
       </Tabs>
     </div>
   );
+};
+
+/**
+ * Function to fetch server-side props.
+ * This function checks the authentication status using the auth provider and
+ * fetches translations for the current locale.
+ * If the user is not authenticated, it redirects them to the specified destination.
+ * @param context The context object containing information about the request.
+ * @returns Server-side props including translated props or redirection information.
+ */
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
 };

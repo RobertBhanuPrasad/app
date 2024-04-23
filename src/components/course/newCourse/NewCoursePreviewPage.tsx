@@ -1,26 +1,46 @@
-import LoadingIcon from '@public/assets/LoadingIcon'
-import { useGetIdentity, useInvalidate, useList, useMany, useOne } from '@refinedev/core'
-import _ from 'lodash'
-import { useEffect, useState } from 'react'
-import { PAYMENT_MODE, PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
-import countryCodes from 'src/data/CountryCodes'
-import { CardLabel, CardValue } from 'src/ui/TextTags'
-import { Button } from 'src/ui/button'
-import { supabaseClient } from 'src/utility'
-import { formatDateString, subtractDaysAndFormat } from 'src/utility/DateFunctions'
-import { getOptionValueObjectById } from 'src/utility/GetOptionValuesByOptionLabel'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
-import { EditModalDialog } from './NewCoursePreviewPageEditModal'
-import NewCourseStep1 from './NewCourseStep1'
-import NewCourseStep2 from './NewCourseStep2'
-import NewCourseStep3 from './NewCourseStep3'
-import NewCourseStep4 from './NewCourseStep4'
-import NewCourseStep5 from './NewCourseStep5'
-import NewCourseStep6 from './NewCourseStep6'
-import { handlePostProgramData } from './NewCourseUtil'
+import LoadingIcon from "@public/assets/LoadingIcon";
+import {
+  useGetIdentity,
+  useInvalidate,
+  useMany,
+  useOne,
+  useList,
+} from "@refinedev/core";
+import _ from "lodash";
+import { useEffect, useState } from "react";
+import {
+  PAYMENT_MODE,
+  PROGRAM_ORGANIZER_TYPE,
+  TIME_FORMAT,
+  VISIBILITY,
+} from "src/constants/OptionLabels";
+import countryCodes from "src/data/CountryCodes";
+import { Button } from "src/ui/button";
+import { supabaseClient } from "src/utility";
+import {
+  formatDateString,
+  subtractDaysAndFormat,
+} from "src/utility/DateFunctions";
+import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
+import NewCourseStep1 from "./NewCourseStep1";
+import NewCourseStep2 from "./NewCourseStep2";
+import NewCourseStep3 from "./NewCourseStep3";
+import NewCourseStep4 from "./NewCourseStep4";
+import NewCourseStep5 from "./NewCourseStep5";
+import NewCourseStep6 from "./NewCourseStep6";
+import { handlePostProgramData } from "./NewCourseUtil";
+import { CardLabel, CardValue } from "src/ui/TextTags";
+import { useTranslation } from "next-i18next";
 
 export default function NewCourseReviewPage() {
-  const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
+
+  const { i18n } = useTranslation();
+  const langCode = i18n.language;
+  
+  const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
+    newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: 'program_types',
@@ -228,7 +248,12 @@ export default function NewCourseReviewPage() {
     /**
      * This variable will retur true if all api calls has been successfully it will return false if any api call fails
      */
-    const isPosted = await handlePostProgramData(newCourseData, data?.userData?.id, setProgramId)
+    const isPosted = await handlePostProgramData(
+      newCourseData,
+      data?.userData?.id,
+      setProgramId,
+      langCode
+    );
 
     if (isPosted) {
       // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
