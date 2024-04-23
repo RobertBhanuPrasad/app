@@ -302,7 +302,7 @@ export default function NewCourseReviewPage() {
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">Program Organizer</p>
               <abbr
-                className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
                 title={programOrganizersNames}
               >
                 {programOrganizersNames ? programOrganizersNames : '-'}
@@ -364,7 +364,7 @@ export default function NewCourseReviewPage() {
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">Course Type</p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={courseType?.data?.name}
               >
                 {courseType?.data?.name ? courseType?.data?.name : '-'}
@@ -372,14 +372,14 @@ export default function NewCourseReviewPage() {
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">Teacher</p>
-              <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
+              <abbr className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]">
                 {CourseTeachersNames ? CourseTeachersNames : '-'}
               </abbr>
             </div>
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">Language(s) course is taught in</p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={courselLanguageName}
               >
                 {courselLanguageName ? courselLanguageName : '-'}
@@ -390,7 +390,7 @@ export default function NewCourseReviewPage() {
                 Available language(s) for translation
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={languagesTranslations}
               >
                 {languagesTranslations ? languagesTranslations : '-'}
@@ -419,7 +419,7 @@ export default function NewCourseReviewPage() {
                 Country(s) from where registrations are allowed
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={allowedCountries}
               >
                 {allowedCountries ? allowedCountries : '-'}
@@ -678,7 +678,7 @@ export default function NewCourseReviewPage() {
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">Contact Email</p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_email}
                   >
                     {data?.contact_email}
@@ -687,7 +687,7 @@ export default function NewCourseReviewPage() {
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">Contact Phone</p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_number}
                   >
                     {data?.contact_number}
@@ -696,7 +696,7 @@ export default function NewCourseReviewPage() {
                 <div className=" min-w-72">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">Contact Name</p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_name}
                   >
                     {data?.contact_name}
@@ -710,7 +710,7 @@ export default function NewCourseReviewPage() {
             <p className="text-sm font-normal text-accent-light text-[#999999]">BCC registration confirmation email</p>
             <div className="truncate">
               <abbr
-                className="font-semibold  no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.bcc_registration_confirmation_email}
               >
                 {newCourseData?.bcc_registration_confirmation_email
