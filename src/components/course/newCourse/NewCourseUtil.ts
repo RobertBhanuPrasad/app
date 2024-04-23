@@ -741,7 +741,7 @@ export const handleProgramSchedulesData = async (
   // Perform upsert operation for all schedules at once
   const { data, error } = await supabaseClient
     .from("program_schedules")
-    .upsert(schedulesData,{defaultToNull : false})
+    .upsert(schedulesData)
     .select();
 
   if (error) {
@@ -802,7 +802,7 @@ export const handlePostAccommodations = async (
   // Perform upsert operation
   const { data, error } = await supabaseClient
     .from("program_accommodations")
-    .upsert(accommodationsData,{defaultToNull : false})
+    .upsert(accommodationsData)
     .select();
 
   // Handle upsert result
@@ -1087,7 +1087,7 @@ export const handleProgramFeeLevelSettingsData = async (
   //upsert operation for program feeLevel settings data
   const { data, error } = await supabaseClient
     .from("program_fee_level_settings")
-    .upsert(modifiedProgramFeeLevel,{defaultToNull : false})
+    .upsert(modifiedProgramFeeLevel)
     .select();
 
   if (error) {
