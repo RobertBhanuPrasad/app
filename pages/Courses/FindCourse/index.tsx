@@ -170,7 +170,6 @@ function index() {
 
   const [rowSelection, setRowSelection] = React.useState({});
 
-
   const {
     tableQueryResult: programData,
     pageCount,
@@ -575,7 +574,7 @@ export const BasicFilters = () => {
       </div>
       <div>
         {" "}
-        <Dialog open={open}>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
               onClick={() => setOpen(true)}
@@ -604,7 +603,10 @@ export const BasicFilters = () => {
               )}
             </Button>
           </DialogTrigger>
-          <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
+          <DialogContent
+            closeIcon={false}
+            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"
+          >
             <DateRangePickerComponent
               setOpen={setOpen}
               value={courseDate}
