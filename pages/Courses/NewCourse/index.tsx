@@ -229,17 +229,11 @@ export const NewCourseTabs = () => {
     ...(formData?.program_type?.is_online_program
       ? ["is_existing_venue", "newVenue", "existingVenue"]
       : []),
-<<<<<<< HEAD
     ...(formData?.is_existing_venue == "new-venue"
       ? ["existingVenue"]
       : ["newVenue"]),
       ...(formData?.is_existing_venue == "existing-venue"
       ? ["newVenue"]
-=======
-    ...(formData?.is_existing_venue == "new-venue" ? [] : ["newVenue"]),
-    ...(formData?.is_existing_venue == "existing-venue"
-      ? []
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
       : ["existingVenue"]),
     //If country does not have multiple time zones no need to validate time zone drop down
     ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
