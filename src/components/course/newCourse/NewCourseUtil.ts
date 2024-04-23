@@ -17,7 +17,7 @@ export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
   setProgramId: (by: number) => void,
-  accountingNotSubmittedStatusId: number | undefined,
+  accountingNotSubmittedStatusId: number,
   langCode: string
 ) => {
   console.log("i will post course data in this functions", body);
@@ -1186,9 +1186,11 @@ const handleGenerateProgramCode = async (
  */
 const handleProgramAccountingStatusUpdate = async (
   programId: number,
-  accountingNotSubmittedStatusId: number | undefined
+  accountingNotSubmittedStatusId: number
 ) => {
   // updating the accounting status of program to not submitted initially when the program created
+
+  if (!accountingNotSubmittedStatusId) return null;
   const { data, error } = await supabaseClient
     .from("program")
     .update({
