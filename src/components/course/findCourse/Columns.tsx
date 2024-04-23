@@ -45,6 +45,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         <div
           onClick={() => {
             router.push(`/Courses/ViewCourse/${row?.original?.id}`);
+            console.log("View Course Route is",`/Courses/ViewCourse/${row?.original?.id}`)
           }}
           className="w-[100px] text-[#7677F4] font-semibold"
         >
@@ -369,7 +370,9 @@ export const columns: ExtendedColumnDef<any>[] = [
 
         switch (value) {
           case 1: {
-            router.push(`/${router.asPath}/participant/list`);
+            //Need to navigate to participants list of select course.
+            router.push(`ViewCourse/${row.original.id}/participant/list`);
+            console.log("Participant route is",`ViewCourse/${row.original.id}/participant/list`)
             break;
           }
           case 2: {
@@ -410,7 +413,8 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 10: {
-            router.push(`/Courses/ViewCourse/${[row.original.id]}`);
+            router.push(`/Courses/ViewCourse/${row.original.id}`);
+            console.log('View Course Route is',`/Courses/ViewCourse/${row.original.id}`)
             break;
           }
         }
