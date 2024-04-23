@@ -49,10 +49,19 @@ import Success from "@public/assets/Success";
 import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { useTranslation } from "next-i18next";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData,'loginUserData')
+
+  const { i18n } = useTranslation();
+  const lang = i18n.language;
+
+  console.log(lang, 'langCode')
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
@@ -617,4 +626,33 @@ export const NewCourseTabs = () => {
       </Tabs>
     </div>
   );
+};
+
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
 };

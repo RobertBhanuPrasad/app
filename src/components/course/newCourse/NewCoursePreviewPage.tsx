@@ -26,8 +26,13 @@ import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
 import { CardLabel, CardValue } from "src/ui/TextTags";
+import { useTranslation } from "next-i18next";
 
 export default function NewCourseReviewPage() {
+
+  const { i18n } = useTranslation();
+  const langCode = i18n.language;
+  
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
     newCourseStore();
 
@@ -251,7 +256,8 @@ export default function NewCourseReviewPage() {
     const isPosted = await handlePostProgramData(
       newCourseData,
       data?.userData?.id,
-      setProgramId
+      setProgramId,
+      langCode
     );
 
     if (isPosted) {

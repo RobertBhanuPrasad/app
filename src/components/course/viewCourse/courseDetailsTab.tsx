@@ -298,7 +298,7 @@ function CourseDetailsTab() {
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div className="gap-[23px] flex flex-col">
-              {courseData?.data?.visibility_id == publicVisibilityId && 
+              {courseData?.data?.visibility_id?.id == publicVisibilityId && 
               <div>
                 <Header2>Course Details URL</Header2>
                 <ItemValue>

@@ -14,7 +14,8 @@ import { supabaseClient } from "src/utility";
 export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
-  setProgramId: (by: number) => void
+  setProgramId: (by: number) => void,
+  langCode: string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -236,8 +237,21 @@ export const handlePostProgramData = async (
     // so that it can be helpful in thankyou page
     setProgramId(programId);
 
-  // TODO need to integrate with country code and language code
+
+  // this RX base url coming from env file now.(need to change after proper table was there in backend)  
   const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+
+  // Constructing the registration URL
+  // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
+  // The base URL where registration information is located
+  // Adding the country code to specify the country of the program
+  // Adding the language code to specify the language of the program
+  // Appending the program ID to identify the specific program
+  // Constructing the complete registration URL
+  // this url is now posted to the program api which is used to further usage in the details view or at any other place.
+  const registrationUrl = `${RX_BASE_URL}/${langCode}/programs/${programId}`;
+
+  // TODO need to integrate with url provided by cx team -(kalyan)
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
 
   // here we have to update the created_by_user_id with loggedInUserId because this field is required
@@ -250,7 +264,7 @@ export const handlePostProgramData = async (
   if(loggedInUserId && programData[0].created_by_user_id == null) {
     await supabaseClient
     .from("program")
-    .update({created_by_user_id: loggedInUserId, details_page_link: CX_BASE_URL, registration_link: RX_BASE_URL })
+    .update({created_by_user_id: loggedInUserId, details_page_link: CX_BASE_URL, registration_link: registrationUrl })
     .eq("id", programId)
   } 
 
