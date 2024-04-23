@@ -24,7 +24,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
- 
+
   // Step 1
 
   //organization_id
@@ -205,7 +205,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data.program_accommodations)
     defaultValues.accommodation = data.program_accommodations;
 
-  if (data.is_residential_program)
+  if (data.is_residential_program != undefined)
     defaultValues.is_residential_program = data.is_residential_program;
 
   if (data?.accommodation_fee_payment_mode)
@@ -219,7 +219,6 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data?.bcc_registration_confirmation_email)
     defaultValues.bcc_registration_confirmation_email =
       data.bcc_registration_confirmation_email;
-
 
   return defaultValues;
 };

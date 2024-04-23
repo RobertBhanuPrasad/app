@@ -34,6 +34,8 @@ import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { columns } from "../../../src/components/course/findCourse/Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
+import { X } from "lucide-react";
+import CrossIcon from "@public/assets/CrossIcon";
 
 function index() {
   interface ExcelColumn {
@@ -161,23 +163,42 @@ function index() {
 
   //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
+    console.log(
+      "heyy date",
+      new Date(
+        new Date(
+          AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
+        ).getTime() +
+          24 * 60 * 60 * 1000
+      ).toISOString()
+    );
     filters.permanent?.push(
       {
-        field: "program_schedules.start_time",
+        field: "start_date",
         operator: "gte",
         value:
           AllFilterData.course_date.from &&
-          new Date(AllFilterData.course_date.from?.setHours(0, 0, 0, 0))
-            ?.toISOString()
+          new Date(
+            new Date(
+              AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
+            ).getTime() +
+              24 * 60 * 60 * 1000
+          )
+            .toISOString()
             .replace("T", " ")
             .slice(0, -5) + "+00",
       },
       {
-        field: "program_schedules.start_time",
-        operator: "lt",
+        field: "start_date",
+        operator: "lte",
         value:
           AllFilterData.course_date.to &&
-          new Date(AllFilterData.course_date.to?.setHours(0, 0, 0, 0))
+          new Date(
+            new Date(
+              AllFilterData.course_date.to?.setUTCHours(23, 59, 0, 0)
+            ).getTime() +
+              24 * 60 * 60 * 1000
+          )
             ?.toISOString()
             .replace("T", " ")
             .slice(0, -5) + "+00",
@@ -221,6 +242,8 @@ function index() {
       ],
     },
   });
+
+  console.log("heyy program data", programData?.data?.data);
 
   /**
    * The variable holds whether all rows are selected or not
@@ -489,8 +512,8 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
         <Button
           onClick={() =>
             onSelect({
-              from: new Date(),
-              to: new Date(),
+              from: undefined,
+              to: undefined,
             })
           }
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
@@ -622,27 +645,45 @@ export const BasicFilters = () => {
       </div>
       <div>
         {" "}
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open}>
           <DialogTrigger asChild>
             <Button
-              onClick={() => setOpen(true)}
               className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
               variant="outline"
             >
-              <CalenderIcon color="#666666" />
+              <div
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                <CalenderIcon color="#666666" />
+              </div>
               {courseDate?.from ? (
                 courseDate?.to ? (
-                  <>
-                    {format(courseDate.from, "MM/dd/yyyy")} -{" "}
-                    {format(courseDate.to, "MM/dd/yyyy")}
+                  <div className="flex gap-2 items-center">
+                    <div className="text-[14px]">
+                      {format(courseDate.from, "MM/dd/yyyy")} -{" "}
+                      {format(courseDate.to, "MM/dd/yyyy")}
+                    </div>
                     <div
                       onClick={() => {
                         courseDateOnChange(undefined);
                       }}
-                    ></div>
-                  </>
+                    >
+                      <CrossIcon fill="#7677F4" height={10} width={10} />
+                    </div>
+                  </div>
                 ) : (
-                  format(courseDate.from, "MM/dd/yyyy")
+                  <div className="w-full flex flex-row justify-between items-center">
+                    <div>{format(courseDate.from, "MM/dd/yyyy")}</div>
+                    <div
+                      onClick={() => {
+                        courseDateOnChange(undefined);
+                      }}
+                    >
+                      <CrossIcon fill="#7677F4" height={10} width={10} />
+                    </div>
+                  </div>
                 )
               ) : (
                 <div className="flex gap-2 font-normal">
