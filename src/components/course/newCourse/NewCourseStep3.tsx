@@ -1298,8 +1298,6 @@ const TimeSelector = ({
   is12HourFormat: Boolean;
   error: boolean;
 }) => {
-  const { trigger } = useFormContext();
-
   /**
    * Why we have taken this ref
    * problems
@@ -1316,7 +1314,7 @@ const TimeSelector = ({
   const isMountingRef = useRef(false);
 
   // Maximum hours depending on the time format
-  const maximumHours = is12HourFormat ? 12 : 23;
+  const maximumHours = is12HourFormat ? "12" : "23";
   // Extracting hour value and onChange function using useController hook
   const {
     field: { value: hourValue = "00", onChange: hourOnChange },
