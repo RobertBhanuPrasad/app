@@ -204,13 +204,6 @@ export const handlePostProgramData = async (
       body[NewCourseStep5FormNames.is_residential_program];
   }
 
-  //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
-  if (
-    programTypeData?.is_online_program === false &&
-    body[NewCourseStep5FormNames.is_residential_program]
-  ) {
-    if (!(await handlePostAccommodations(body, programId))) return false;
-  }
 
   //accommodation_fee_payment_mode
   if (
@@ -290,6 +283,14 @@ export const handlePostProgramData = async (
   if (!(await handlePostProgramContactDetailsData(body, programId)))
     return false;
 
+   //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
+   if (
+    programTypeData?.is_online_program === false &&
+    body[NewCourseStep5FormNames.is_residential_program]
+  ) {
+    if (!(await handlePostAccommodations(body, programId))) return false;
+  }
+  
   //now after all data was stored into respective table we have to update status of program
   //Requirement: If the slected program_type of the program contains is_approval_required:true then we have to update status of program to "pending_approval"
   //Requirement: If the slected program_type of the program contains is_approval_required:false then we have to update status of program to "active"
