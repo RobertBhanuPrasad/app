@@ -512,17 +512,31 @@ export default function NewCourseReviewPage() {
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">Province</p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">{StateNames ? StateNames : '-'}</p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={StateNames ? StateNames : '-'}
+                >
+                  {StateNames ? StateNames : '-'}
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">City</p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">{CityNames ? CityNames : '-'}</p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={CityNames ? CityNames : '-'}
+                >
+                  {CityNames ? CityNames : '-'}
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">Center</p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={CenterNames ? CenterNames : '-'}
+                >
                   {CenterNames ? CenterNames : '-'}
-                </p>
+                </abbr>
+                
               </div>
               <div>{venueSessions()}</div>
             </div>
