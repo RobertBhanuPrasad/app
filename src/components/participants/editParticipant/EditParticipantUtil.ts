@@ -4,7 +4,7 @@ export const handleEditParticipantValues=async(participantId:number)=>{
     const { data, error } = 
     await supabaseClient
     .from("participant_payment_history")
-    .select("id, accommodation_type_id,payment_method_id,transaction_status_id!inner(id,value),payment_date,send_payment_confirmation,transaction_status,participant_id!inner(id,memo,roommate_snore,accommodation_snore,participant_code,participant_attendence_status_id,discount_code, payment_method)")
+    .select("id,payment_method_id,transaction_status_id!inner(id,value),payment_date,send_payment_confirmation,transaction_status,participant_id!inner(id,memo,roommate_snore,accommodation_snore,participant_code,participant_attendence_status_id,discount_code, payment_method)")
     .order("created_at",{ ascending: false })
     .eq("participant_id", participantId);
     if (!error) {
@@ -50,9 +50,7 @@ if(data.payment_method_id)
       defaultValues.participant_attendence_status_id = data.participant_id.participant_attendence_status_id
   }
 
-  // accommodation_type_id
-  if (data.accommodation_type_id) defaultValues.accommodation_type_id = data.accommodation_type_id
-
+  
 
   // transaction_status_id
   if (data.transaction_status_id) defaultValues.transaction_status_id = data.transaction_status_id?.id

@@ -1,19 +1,21 @@
 import ScrollableTabs from "@components/participant/viewParticipant/ScrollableTabs";
 import ViewParticipantTransactionDetails from "@components/participant/viewParticipant/ViewParticipantTransactionDetails";
 import ViewParticipantUtmParameters from "@components/participant/viewParticipant/ViewParticipantUtmParameters";
-import { useUpdate } from "@refinedev/core";
+import { useList, useUpdate } from "@refinedev/core";
+import _ from "lodash";
 import { useRouter } from "next/router";
 import { useFormContext } from "react-hook-form";
+import { EditParticipantFormNames } from "src/constants/CourseConstants";
 import { Button } from "src/ui/button";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import AccomodationDetails from "./AccomodationDetails";
 import CourseFee from "./CourseFee";
 import ParticipantInformation from "./ParticipantInformation";
 import PaymentDetails from "./PaymentDetails";
 
 export default function EditParticipantTabs() {
-    const { watch, getValues } = useFormContext();
+    const { watch } = useFormContext();
     const formData = watch();
-    const accommodationData = getValues();
     const { query } = useRouter();
 
     // participant_payment_history contains numerous records of same participant, getting the latest history record
@@ -21,16 +23,47 @@ export default function EditParticipantTabs() {
     const Id: number | undefined = query?.id
         ? parseInt(query.id as string)
         : undefined;
+    const { data } = useList({
+        resource: "participant_registration",
+        meta: {
+            select: "program_id(program_type_id(is_online_program))",
+        },
+        filters: [
+            {
+                field: "id",
+                operator: "eq",
+                value: query?.participantId,
+            },
+        ],
+    });
+    const accommodationData =
+        data?.data[0]?.program_id?.program_type_id?.is_online_program;
     const { mutate } = useUpdate();
-    const onFormSubmission = (formData: any) => {
+    const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+    const onFormSubmission = async (formData: any) => {
+        let isAllFieldsFilled;
+        if (accommodationData) {
+            isAllFieldsFilled = await ValidateCurrentStepFields(
+                Object.values(EditParticipantFormNames)
+            );
+        } else {
+            isAllFieldsFilled = await ValidateCurrentStepFields(
+                _.pull(
+                    Object.values(EditParticipantFormNames),
+                    "accommodation_snore",
+                    "roommate_snore"
+                )
+            );
+        }
         mutate({
             resource: "participant_registration",
             values: {
                 memo: formData?.memo,
                 roommate_snore: formData?.roommate_snore,
-                accommodation_snore:formData?.accommodation_snore,
+                accommodation_snore: formData?.accommodation_snore,
                 participant_code: formData?.participant_code,
-                participant_attendence_status_id: formData?.participant_attendence_status_id,
+                participant_attendence_status_id:
+                    formData?.participant_attendence_status_id,
             },
             // TODO: integrate with participant_registration id
             id: Number(query?.participantId),
@@ -104,7 +137,7 @@ export default function EditParticipantTabs() {
         },
     ];
     // Check if accommodation should be rendered
-    if (accommodationData?.program_id?.program_type_id?.is_online_program) {
+    if (!accommodationData) {
         tabs = tabs.filter((tab) => tab.label !== "Accommodation Details");
     }
 

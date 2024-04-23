@@ -19,18 +19,15 @@ export default function AccomodationDetails() {
     const { getValues } = useFormContext();
     const FormData = getValues();
     const {
-        field: { value: accommodation_type_id },
-    } = useController({
-        name: "accommodation_type_id",
-    });
-    const {
         field: { value: accommodation_snore, onChange: snoreChange },
+        fieldState: { error: accommodationSnoreError },
     } = useController({
         name: "accommodation_snore",
     });
 
     const {
         field: { value: roommate_snore, onChange: roomateSnoreChange },
+        fieldState: { error: roommateSnoreError },
     } = useController({
         name: "roommate_snore",
     });
@@ -79,7 +76,6 @@ export default function AccomodationDetails() {
         ],
     });
     const accommodationData = data?.data[0];
-    
     return (
         <div id="Accomodation">
             <Text className="font-semibold text-[18px] py-[25px]">
@@ -99,7 +95,13 @@ export default function AccomodationDetails() {
                     </div>
                     <div className="py-[5px]">
                         {/* TODO: need to disable this accommodation type select */}
-                        <Select disabled={true} value={accommodation_type_id}>
+                        <Select
+                            disabled={true}
+                            value={
+                                accommodationData?.accommodation_type_id
+                                    ?.accommodation_type_id?.id
+                            }
+                        >
                             <SelectTrigger className="w-[278px] border text-[#999999] font-semibold !border-[#999999]">
                                 <SelectValue placeholder="Select accomodation type" />
                             </SelectTrigger>
@@ -237,6 +239,11 @@ export default function AccomodationDetails() {
                             />
                         </div>
                     </RadioGroup>
+                    {accommodationSnoreError && (
+                        <span className="text-[#FF6D6D] text-[14px]">
+                            {accommodationSnoreError?.message}
+                        </span>
+                    )}
                 </div>
             </div>
             <div className="text-[#999999] py-[10px]">
@@ -276,6 +283,11 @@ export default function AccomodationDetails() {
                         />
                     </div>
                 </RadioGroup>
+                {roommateSnoreError && (
+                    <span className="text-[#FF6D6D] text-[14px]">
+                        {roommateSnoreError?.message}
+                    </span>
+                )}
             </div>
             <hr />
         </div>
