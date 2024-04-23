@@ -270,7 +270,7 @@ export default function NewCourseReviewPage() {
   const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(
     COURSE_ACCOUNTING_STATUS,
     NOT_SUBMITTED
-  )?.id;
+  )?.id ?? 0
 
   const handClickContinue = async () => {
     setIsSubmitting(true);
