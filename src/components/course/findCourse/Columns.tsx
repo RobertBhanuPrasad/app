@@ -369,7 +369,9 @@ export const columns: ExtendedColumnDef<any>[] = [
 
         switch (value) {
           case 1: {
-            router.push(`/${router.asPath}/participant/list`);
+            //Need to navigate to participants list of select course.
+            router.push(`ViewCourse/${row.original.id}/participant/list`);
+            console.log("Participant route is",`ViewCourse/${row.original.id}/participant/list`)
             break;
           }
           case 2: {
@@ -410,7 +412,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 10: {
-            router.push(`ViewCourse/${[row.original.id]}`);
+            router.push(`ViewCourse/${row.original.id}`);
             break;
           }
         }
