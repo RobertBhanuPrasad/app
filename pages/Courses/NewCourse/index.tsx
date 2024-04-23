@@ -244,20 +244,22 @@ export const NewCourseTabs = () => {
       : ["is_geo_restriction_applicable"]),
   ]);
 
-  let RequiredNewCourseStep3FormNames = _.omit(NewCourseStep3FormNames, [
-    ...(formData?.courseTypeSettings?.is_online_program
-      ? []
-      : ["online_url", "state_id", "city_id", "center_id"]),
-    ...(formData?.courseTypeSettings?.is_online_program
-      ? ["is_existing_venue", "newVenue", "existingVenue"]
-      : []),
-    ...(formData?.is_existing_venue == "new-venue" ? [] : ["newVenue"]),
-    ...(formData?.is_existing_venue == "existing-venue"
-      ? []
-      : ["existingVenue"]),
-    //If country does not have multiple time zones no need to validate time zone drop down
-    ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
-  ]);
+  let RequiredNewCourseStep3FormNames = ["schedules"];
+  // _.omit(NewCourseStep3FormNames, [
+  //   "schedules",
+  //   // ...(formData?.courseTypeSettings?.is_online_program
+  //   //   ? []
+  //   //   : ["online_url", "state_id", "city_id", "center_id"]),
+  //   // ...(formData?.courseTypeSettings?.is_online_program
+  //   //   ? ["is_existing_venue", "newVenue", "existingVenue"]
+  //   //   : []),
+  //   // ...(formData?.is_existing_venue == "new-venue" ? [] : ["newVenue"]),
+  //   // ...(formData?.is_existing_venue == "existing-venue"
+  //   //   ? []
+  //   //   : ["existingVenue"]),
+  //   // //If country does not have multiple time zones no need to validate time zone drop down
+  //   // ...(timeZoneData?.total == 0 ? ["time_zone_id"] : []),
+  // ]);
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false

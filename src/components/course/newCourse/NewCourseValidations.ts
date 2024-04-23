@@ -187,23 +187,19 @@ const scheduleValidationSchema = z
         // modify startHour and endHour to 24 hour format based on startTimeFormat and endTimeFormat
         // startTimeFormat and endTimeFormat can be AM or PM
         // so that we dont need to write extra conditions for AM and PM
-        if (value.startTimeFormat === "PM") {
-          // if it is 12 PM then i need to set to 00
-          if (value.startHour === "12") {
-            value.startHour = "00";
-          } else {
-            value.startHour = JSON.stringify(parseInt(value.startHour) + 12);
-          }
+
+        if (value.startTimeFormat === "AM" && value.startHour === "12") {
+          value.startHour = "00";
+        } else if (value.startTimeFormat === "PM") {
+          value.startHour = JSON.stringify(parseInt(value.startHour) + 12);
         }
 
-        if (value.endTimeFormat === "PM") {
-          // if it is 12 PM then i need to set to 00
-          if (value.endHour === "12") {
-            value.endHour = "00";
-          } else {
-            value.endHour = JSON.stringify(parseInt(value.endHour) + 12);
-          }
+        if (value.endTimeFormat === "AM" && value.endHour === "12") {
+          value.endHour = "00";
+        } else if (value.endTimeFormat === "PM") {
+          value.endHour = JSON.stringify(parseInt(value.endHour) + 12);
         }
+
         return value;
       })
       // for single session we need to do check few cases
