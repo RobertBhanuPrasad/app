@@ -27,56 +27,36 @@ import {
   FULL,
   NATIONAL_ADMIN,
   NOT_SUBMITTED,
-  PARTICIPANT_FAILED_PAYMENT_STATUS,
+PARTICIPANT_FAILED_PAYMENT_STATUS,
   PARTICIPANT_PENDING_PAYMENT_STATUS,
   PENDING_ATTENDANCE_STATUS,
   PENDING_REVIEW,
   PROGRAM_ORGANIZER,
   REJECTED,
   SUPER_ADMIN,
-<<<<<<< HEAD
   TEACHER
 } from 'src/constants/OptionValueOrder'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 import { useTranslation } from 'next-i18next';
-=======
-  TEACHER,
-} from "src/constants/OptionValueOrder";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
 /**
  * Is course approved
  */
-export const isApproved = (
-  isApprovalRequired: any,
-  courseStatusId: any,
-  roleId: any
-) => {
-  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    PENDING_REVIEW
-  )?.id;
-  const superAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    SUPER_ADMIN
-  )?.id;
+export const isApproved = (isApprovalRequired: any, courseStatusId: any, roleId: any) => {
+  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, PENDING_REVIEW)?.id
+  const superAdminRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, SUPER_ADMIN)?.id
 
-  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    NATIONAL_ADMIN
-  )?.id;
+  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, NATIONAL_ADMIN)?.id
 
   if (
     isApprovalRequired &&
     courseStatusId == coursePendingReviewStatusId &&
     (roleId === superAdminRoleId || roleId === nationalAdminRoleId)
   )
-    return true;
+    return true
   else {
-    return false;
+    return false
   }
-};
+}
 
 /**
  * Function to determine options available based on course status, accounting status, and user role.
@@ -89,97 +69,46 @@ export const isApproved = (
  * @returns {Array} Array of options available based on the provided conditions and user roles.
  */
 
-<<<<<<< HEAD
 export const DisplayOptions = (courseStatusId: any, courseAccountingStatusId: any, roleId: any) => {
-  const {t} = useTranslation()
-=======
-export const DisplayOptions = (
-  courseStatusId: any,
-  courseAccountingStatusId: any,
-  roleId: any
-) => {
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
   // Getting all the course status ID's
-  const courseActiveStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    ACTIVE
-  )?.id;
-  const courseCanceledStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    CANCELED
-  )?.id;
+  const courseActiveStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, ACTIVE)?.id
+  const courseCanceledStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, CANCELED)?.id
 
-  const courseFullStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    FULL
-  )?.id;
+  const courseFullStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, FULL)?.id
 
-  const courseCompletedStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    COMPLETED
-  )?.id;
+  const courseCompletedStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, COMPLETED)?.id
 
-  const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    DECLINED
-  )?.id;
+  const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, DECLINED)?.id
 
-  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    PENDING_REVIEW
-  )?.id;
+  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, PENDING_REVIEW)?.id
 
   //Getting course accounting status id
-  const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    NOT_SUBMITTED
-  )?.id;
+  const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)?.id
 
-  const accountingRejectedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    REJECTED
-  )?.id;
+  const accountingRejectedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, REJECTED)?.id
 
-  const accountingClosedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    CLOSED
-  )?.id;
+  const accountingClosedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, CLOSED)?.id
 
   const accountingPendingStatusId = getOptionValueObjectByOptionOrder(
     COURSE_ACCOUNTING_STATUS,
     ACCOUNTING_PENDING_REVIEW
-  )?.id;
+  )?.id
 
   const accountingCanceledStatusId = getOptionValueObjectByOptionOrder(
     COURSE_ACCOUNTING_STATUS,
     ACCOUNTING_CANCELED
-  )?.id;
+  )?.id
 
-  const teacherRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    TEACHER
-  )?.id;
+  const teacherRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, TEACHER)?.id
 
   //Getting roleId id
-  const programOrganizerRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    PROGRAM_ORGANIZER
-  )?.id;
+  const programOrganizerRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, PROGRAM_ORGANIZER)?.id
 
-  const superAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    SUPER_ADMIN
-  )?.id;
+  const superAdminRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, SUPER_ADMIN)?.id
 
-  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    NATIONAL_ADMIN
-  )?.id;
+  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, NATIONAL_ADMIN)?.id
 
-  const financeAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    FINANCE_ADMIN
-  )?.id;
+  const financeAdminRoleId = getOptionValueObjectByOptionOrder(USER_ROLE, FINANCE_ADMIN)?.id
 
   // If course status is Active
   if (courseStatusId === courseActiveStatusId) {
@@ -194,7 +123,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -219,40 +147,10 @@ export const DisplayOptions = (
           value: 6
         },
         {
-          label: t('new_strings:edit_course_accounting_form'),
+          label: 'Edit Course Accounting Form',
           value: 8
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "Submit Course Accounting Form",
-          value: 6,
-        },
-        {
-          label: "Edit Course Accounting Form",
-          value: 8,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
@@ -260,7 +158,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -281,38 +178,12 @@ export const DisplayOptions = (
           value: 6
         },
         {
-          label: t('new_strings:edit_course_accounting_form'),
+          label: 'Edit Course Accounting Form',
           value: 8
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "Submit Course Accounting Form",
-          value: 6,
-        },
-        {
-          label: "Edit Course Accounting Form",
-          value: 8,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else {
-      console.log("No options available for the given conditions.");
+      console.log('No options available for the given conditions.')
     }
   }
   //if course status is completed
@@ -328,7 +199,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -353,50 +223,17 @@ export const DisplayOptions = (
           value: 6
         },
         {
-          label: t('new_strings:edit_course_accounting_form'),
+          label: 'Edit Course Accounting Form',
           value: 8
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "Submit Course Accounting Form",
-          value: 6,
-        },
-        {
-          label: "Edit Course Accounting Form",
-          value: 8,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
-      (roleId === superAdminRoleId ||
-        roleId === nationalAdminRoleId ||
-        roleId === financeAdminRoleId)
+      (roleId === superAdminRoleId || roleId === nationalAdminRoleId || roleId === financeAdminRoleId)
     ) {
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -421,32 +258,6 @@ export const DisplayOptions = (
           value: 7
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "View Course Accounting Form",
-          value: 7,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
@@ -454,7 +265,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -471,34 +281,13 @@ export const DisplayOptions = (
           value: 7
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "View Course Accounting Form",
-          value: 7,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
-      (roleId === superAdminRoleId ||
-        roleId === nationalAdminRoleId ||
-        roleId === financeAdminRoleId)
+      (roleId === superAdminRoleId || roleId === nationalAdminRoleId || roleId === financeAdminRoleId)
     ) {
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -523,32 +312,6 @@ export const DisplayOptions = (
           value: 8
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "Edit Course Accounting Form",
-          value: 8,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
@@ -556,7 +319,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -581,42 +343,13 @@ export const DisplayOptions = (
           value: 8
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "Edit Course Accounting Form",
-          value: 8,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
-      (roleId === superAdminRoleId ||
-        roleId === nationalAdminRoleId ||
-        roleId === financeAdminRoleId)
+      (roleId === superAdminRoleId || roleId === nationalAdminRoleId || roleId === financeAdminRoleId)
     ) {
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -633,24 +366,6 @@ export const DisplayOptions = (
           value: 7
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "View Course Accounting Form",
-          value: 7,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
@@ -658,7 +373,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -671,22 +385,8 @@ export const DisplayOptions = (
           value: 7
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "View Course Accounting Form",
-          value: 7,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else {
-      console.log("No options available for the given conditions.");
+      console.log('No options available for the given conditions.')
     }
   }
   //if course status is full
@@ -702,7 +402,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -731,36 +430,6 @@ export const DisplayOptions = (
           value: 8
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "Submit Course Accounting Form",
-          value: 6,
-        },
-        {
-          label: "Edit Course Accounting Form",
-          value: 8,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === superAdminRoleId ||
@@ -770,7 +439,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -795,32 +463,6 @@ export const DisplayOptions = (
           value: 7
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "View Course Accounting Form",
-          value: 7,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
@@ -828,7 +470,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -845,24 +486,6 @@ export const DisplayOptions = (
           value: 7
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "View Course Accounting Form",
-          value: 7,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
       (roleId === superAdminRoleId ||
@@ -874,7 +497,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -895,28 +517,6 @@ export const DisplayOptions = (
           value: 8
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Register Participant",
-          value: 2,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "Cancel Course",
-          value: 5,
-        },
-        {
-          label: "Edit Course Accounting Form",
-          value: 8,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
       (roleId === superAdminRoleId ||
@@ -927,7 +527,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -944,28 +543,6 @@ export const DisplayOptions = (
           value: 7
         },
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Edit Course",
-          value: 3,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "View Course Accounting Form",
-          value: 7,
-        },
-        "View Participants",
-        "Edit Course",
-        "Copy Course",
-        "View Course Accounting Form",
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
       (roleId === teacherRoleId || roleId === programOrganizerRoleId)
@@ -973,7 +550,6 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         },
@@ -986,20 +562,6 @@ export const DisplayOptions = (
           value: 7
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-        {
-          label: "Copy Course",
-          value: 4,
-        },
-        {
-          label: "View Course Accounting Form",
-          value: 7,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else {
       console.log("No options available for the given conditions.");
     }
@@ -1019,19 +581,12 @@ export const DisplayOptions = (
       const {t} = useTranslation("common")
       return [
         {
-<<<<<<< HEAD
           label: t('view_participants'),
           value: 1
         }
       ]
-=======
-          label: "View Participants",
-          value: 1,
-        },
-      ];
->>>>>>> 8817e57d70fa9e4bb6e2bd49148dd5e80bc751d9
     } else {
-      console.log("No options available for the given conditions.");
+      console.log('No options available for the given conditions.')
     }
   }
   //if course status is pending review
@@ -1043,42 +598,37 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Edit course",
-          value: 3,
+          label: 'Edit course',
+          value: 3
         },
         {
-          label: "Cancel course",
-          value: 5,
-        },
-      ];
+          label: 'Cancel course',
+          value: 5
+        }
+      ]
     } else if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
-      (roleId === financeAdminRoleId ||
-        roleId === teacherRoleId ||
-        roleId === programOrganizerRoleId)
+      (roleId === financeAdminRoleId || roleId === teacherRoleId || roleId === programOrganizerRoleId)
     ) {
       return [
         {
-          label: "Cancel course",
-          value: 5,
-        },
-      ];
-    } else if (
-      courseAccountingStatusId == accountingPendingStatusId &&
-      roleId === financeAdminRoleId
-    ) {
+          label: 'Cancel course',
+          value: 5
+        }
+      ]
+    } else if (courseAccountingStatusId == accountingPendingStatusId && roleId === financeAdminRoleId) {
       return [
         {
-          label: "Edit course",
-          value: 3,
+          label: 'Edit course',
+          value: 3
         },
         {
-          label: "Cancel course",
-          value: 5,
-        },
-      ];
+          label: 'Cancel course',
+          value: 5
+        }
+      ]
     } else {
-      console.log("No options available for the given conditions.");
+      console.log('No options available for the given conditions.')
     }
   }
   //If course status is declined
@@ -1093,91 +643,70 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Edit course",
-          value: 3,
+          label: 'Edit course',
+          value: 3
         },
         {
-          label: "Cancel course",
-          value: 5,
-        },
-      ];
+          label: 'Cancel course',
+          value: 5
+        }
+      ]
     } else {
-      console.log("No options available for the given conditions.");
+      console.log('No options available for the given conditions.')
     }
   } else {
-    console.log("Course is not active.");
+    console.log('Course is not active.')
   }
-};
+}
 
 export const handleTabsBasedOnStatus = (courseStatusId: any, tabIndex: any) => {
-  const courseActiveStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    ACTIVE
-  )?.id;
-  const courseCanceledStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    CANCELED
-  )?.id;
+  const courseActiveStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, ACTIVE)?.id
+  const courseCanceledStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, CANCELED)?.id
 
-  const courseFullStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    FULL
-  )?.id;
+  const courseFullStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, FULL)?.id
 
-  const courseCompletedStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    COMPLETED
-  )?.id;
+  const courseCompletedStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, COMPLETED)?.id
 
-  const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    DECLINED
-  )?.id;
+  const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, DECLINED)?.id
 
-  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    PENDING_REVIEW
-  )?.id;
+  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, PENDING_REVIEW)?.id
   //Course status id is Active then course details tab,participant tab,revenue summary tab, course accounting tabs are enabled
   if (courseStatusId == courseActiveStatusId) {
-    if (COURSE_DETAILS_TAB == tabIndex) return false;
-    if (PARTICIPANTS_TAB == tabIndex) return false;
-    if (REVENUE_SUMMARY_TAB == tabIndex) return false;
-    if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false;
-    if (VIEW_COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false;
-    else return true;
+    if (COURSE_DETAILS_TAB == tabIndex) return false
+    if (PARTICIPANTS_TAB == tabIndex) return false
+    if (REVENUE_SUMMARY_TAB == tabIndex) return false
+    if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
+    else return true
     //Course status id is Pending then course details tab is enabled
   } else if (courseStatusId == coursePendingReviewStatusId) {
-    if (COURSE_DETAILS_TAB == tabIndex) return false;
-    else return true;
+    if (COURSE_DETAILS_TAB == tabIndex) return false
+    else return true
     //Course status id is Cancel then course details tab,participant tab,revenue summary tab are enabled
   } else if (courseStatusId == courseCanceledStatusId) {
-    if (COURSE_DETAILS_TAB == tabIndex) return false;
-    if (PARTICIPANTS_TAB == tabIndex) return false;
-    if (REVENUE_SUMMARY_TAB == tabIndex) return false;
-    else return true;
+    if (COURSE_DETAILS_TAB == tabIndex) return false
+    if (PARTICIPANTS_TAB == tabIndex) return false
+    if (REVENUE_SUMMARY_TAB == tabIndex) return false
+    else return true
     //Course status id is Declined then course details tab is enabled
   } else if (courseStatusId == courseDeclinedStatusId) {
-    if (COURSE_DETAILS_TAB == tabIndex) return false;
-    else return true;
+    if (COURSE_DETAILS_TAB == tabIndex) return false
+    else return true
     //Course status id is Completed then course details tab,participant tab,revenue summary tab, course accounting tabs are enabled
   } else if (courseStatusId == courseCompletedStatusId) {
-    if (COURSE_DETAILS_TAB == tabIndex) return false;
-    if (PARTICIPANTS_TAB == tabIndex) return false;
-    if (REVENUE_SUMMARY_TAB == tabIndex) return false;
-    if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false;
-    if (VIEW_COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false;
-    else return true;
+    if (COURSE_DETAILS_TAB == tabIndex) return false
+    if (PARTICIPANTS_TAB == tabIndex) return false
+    if (REVENUE_SUMMARY_TAB == tabIndex) return false
+    if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
+    else return true
     //Course status id is Completed then course details tab,participant tab,revenue summary tab, course accounting tabs are enabled
   } else if (courseStatusId == courseFullStatusId) {
-    if (COURSE_DETAILS_TAB == tabIndex) return false;
-    if (PARTICIPANTS_TAB == tabIndex) return false;
-    if (REVENUE_SUMMARY_TAB == tabIndex) return false;
-    if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false;
-    if (VIEW_COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false;
-    else return true;
+    if (COURSE_DETAILS_TAB == tabIndex) return false
+    if (PARTICIPANTS_TAB == tabIndex) return false
+    if (REVENUE_SUMMARY_TAB == tabIndex) return false
+    if (COURSE_ACCOUNTING_FORM_TAB == tabIndex) return false
+    else return true
   }
-};
+}
 
 /**
  * Determines the status color based on the provided status ID.
@@ -1185,24 +714,18 @@ export const handleTabsBasedOnStatus = (courseStatusId: any, tabIndex: any) => {
  * @returns An object containing the color code and styles for the status.
  */
 export const getCourseStatusColorBasedOnStatusId = (statusId: number) => {
-  const courseActiveStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    ACTIVE
-  )?.id;
-  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    PENDING_REVIEW
-  )?.id;
+  const courseActiveStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, ACTIVE)?.id
+  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, PENDING_REVIEW)?.id
 
   // Check if the status ID matches the active status ID
   if (statusId === courseActiveStatusId) {
     // Return color code and styles for active status
-    return { colorCode: "#15AF53", styles: "text-[#15AF53] bg-[#15AF53]/10" };
+    return { colorCode: '#15AF53', styles: 'text-[#15AF53] bg-[#15AF53]/10' }
   }
   // Check if the status ID matches the pending review status ID
   if (statusId === coursePendingReviewStatusId) {
     // Return color code and styles for pending review status
-    return { colorCode: "#FFB900", styles: "text-[#FFB900] bg-[#FFB900]/10" };
+    return { colorCode: '#FFB900', styles: 'text-[#FFB900] bg-[#FFB900]/10' }
   }
   // If status ID does not match any known status, return undefined
   // This may indicate an invalid or unknown status ID
