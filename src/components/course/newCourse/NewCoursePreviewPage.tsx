@@ -1,5 +1,11 @@
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity, useMany, useOne } from "@refinedev/core";
+import {
+  useGetIdentity,
+  useInvalidate,
+  useMany,
+  useOne,
+  useList,
+} from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
@@ -16,7 +22,10 @@ import {
   formatDateString,
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
-import { getOptionValueObjectById, getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import {
+  getOptionValueObjectById,
+  getOptionValueObjectByOptionOrder,
+} from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
@@ -27,8 +36,13 @@ import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
 import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
+import { CardLabel, CardValue } from "src/ui/TextTags";
+import { useTranslation } from "next-i18next";
 
 export default function NewCourseReviewPage() {
+  const { i18n } = useTranslation();
+  const langCode = i18n.language;
+
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
     newCourseStore();
 
@@ -162,17 +176,6 @@ export default function NewCourseReviewPage() {
     })
     .join(", ");
 
-  const { data: CourseAccomidation } = useMany({
-    resource: "accomdation_types",
-    ids: _.map(newCourseData?.accommodation, "accommodation_type_id") || [],
-  });
-
-  const courseAccomodationNames = CourseAccomidation?.data?.map(
-    (accomdation: any) => {
-      if (accomdation?.name) return accomdation?.name;
-    }
-  );
-
   const { data: CourseTranslation } = useMany({
     resource: "languages",
     ids: newCourseData?.translation_language_ids || [],
@@ -191,10 +194,12 @@ export default function NewCourseReviewPage() {
     meta: { select: "contact_id(full_name)" },
   });
 
-  const CourseTeachersNames = CourseTeachers?.data?.map((teacher_id) => {
-    if (teacher_id?.contact_id?.full_name)
-      return teacher_id?.contact_id?.full_name;
-  });
+  const CourseTeachersNames: any = CourseTeachers?.data
+    ?.map((teacher_id) => {
+      if (teacher_id?.contact_id?.full_name)
+        return teacher_id?.contact_id?.full_name;
+    })
+    .join(", ");
 
   const { data: courseType } = useOne({
     resource: "program_types",
@@ -217,7 +222,7 @@ export default function NewCourseReviewPage() {
           }`;
           return (
             <abbr
-              className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+              className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
               title={schedule}
             >
               {schedule}
@@ -254,10 +259,15 @@ export default function NewCourseReviewPage() {
 
   const { setProgramId } = newCourseStore();
 
+  /**
+   * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
+   */
+  const invalidate = useInvalidate();
+
   const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(
     COURSE_ACCOUNTING_STATUS,
     NOT_SUBMITTED
-  )?.id 
+  )?.id;
 
   const handClickContinue = async () => {
     setIsSubmitting(true);
@@ -269,16 +279,40 @@ export default function NewCourseReviewPage() {
       newCourseData,
       data?.userData?.id,
       setProgramId,
-      accountingNotSubmittedStatusId
+      accountingNotSubmittedStatusId,
+      langCode
     );
 
     if (isPosted) {
+      // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+      await invalidate({
+        resource: "program",
+        invalidates: ["list"],
+      });
       setViewPreviewPage(false);
       setViewThankyouPage(true);
     } else {
       setIsSubmitting(false);
     }
   };
+
+  /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the accommodation details
+   * we will get the currency code in the country config
+   *
+   */
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: newCourseData?.organization_id,
+      },
+    ],
+  });
 
   return (
     <div className="pb-12">
@@ -303,6 +337,7 @@ export default function NewCourseReviewPage() {
                 setOpenBasicDetails(true);
                 setClickedButton("Basic Details");
               }}
+              onOpenChange={setOpenBasicDetails}
             />{" "}
           </div>
           {/* body */}
@@ -324,7 +359,7 @@ export default function NewCourseReviewPage() {
                 Organization
               </p>
               <abbr
-                className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
                 title={organizationName?.data?.name}
               >
                 {organizationName?.data?.name}
@@ -335,7 +370,7 @@ export default function NewCourseReviewPage() {
                 Program Organizer
               </p>
               <abbr
-                className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
                 title={programOrganizersNames}
               >
                 {programOrganizersNames ? programOrganizersNames : "-"}
@@ -369,7 +404,7 @@ export default function NewCourseReviewPage() {
                   Registration via 3rd party gateway url
                 </p>
                 <abbr
-                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.registration_via_3rd_party_url}
                 >
                   {newCourseData?.registration_via_3rd_party_url}
@@ -395,6 +430,7 @@ export default function NewCourseReviewPage() {
                 setOpenCourseDetails(true);
                 setClickedButton("Course Details");
               }}
+              onOpenChange={setOpenCourseDetails}
             />{" "}
           </div>
           {/* body */}
@@ -404,7 +440,7 @@ export default function NewCourseReviewPage() {
                 Course Type
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={courseType?.data?.name}
               >
                 {courseType?.data?.name ? courseType?.data?.name : "-"}
@@ -414,7 +450,10 @@ export default function NewCourseReviewPage() {
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Teacher
               </p>
-              <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
+              <abbr
+                title={CourseTeachersNames ? CourseTeachersNames : "-"}
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+              >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
             </div>
@@ -423,7 +462,7 @@ export default function NewCourseReviewPage() {
                 Language(s) course is taught in
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={courselLanguageName}
               >
                 {courselLanguageName ? courselLanguageName : "-"}
@@ -434,7 +473,7 @@ export default function NewCourseReviewPage() {
                 Available language(s) for translation
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={languagesTranslations}
               >
                 {languagesTranslations ? languagesTranslations : "-"}
@@ -469,7 +508,7 @@ export default function NewCourseReviewPage() {
                 Country(s) from where registrations are allowed
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={allowedCountries}
               >
                 {allowedCountries ? allowedCountries : "-"}
@@ -552,6 +591,7 @@ export default function NewCourseReviewPage() {
                 setOpenVenueDetails(true);
                 setClickedButton("Venue Details");
               }}
+              onOpenChange={setOpenVenueDetails}
             />{" "}
           </div>
           {/* body */}
@@ -563,7 +603,7 @@ export default function NewCourseReviewPage() {
                   Online zoom URL
                 </p>
                 <abbr
-                  className="text-sm font-normal text-accent-light text-[#999999]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.online_url}
                 >
                   {newCourseData?.online_url}
@@ -573,25 +613,34 @@ export default function NewCourseReviewPage() {
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Province
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={StateNames ? StateNames : "-"}
+                >
                   {StateNames ? StateNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   City
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={CityNames ? CityNames : "-"}
+                >
                   {CityNames ? CityNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Center
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={CenterNames ? CenterNames : "-"}
+                >
                   {CenterNames ? CenterNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -635,6 +684,7 @@ export default function NewCourseReviewPage() {
                 setOpenFeesDetails(true);
                 setClickedButton("Venue Details");
               }}
+              onOpenChange={setOpenFeesDetails}
             />{" "}
           </div>
           {/* body */}
@@ -726,21 +776,19 @@ export default function NewCourseReviewPage() {
                 setOpenAccomidationDetails(true);
                 setClickedButton("Accomidation Details");
               }}
+              onOpenChange={setOpenAccomidationDetails}
             />{" "}
           </div>
           {newCourseData?.is_residential_program && (
             <div className="grid grid-cols-4 gap-4 mt-2">
               {newCourseData?.accommodation?.map((data: any) => {
                 return (
-                  <div className=" min-w-72">
-                    <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                      {" "}
-                      {courseAccomodationNames}
-                    </p>
-                    <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
-                      {data?.fee_per_person}
-                    </p>
-                  </div>
+                  <Accommodation
+                    accomdationData={data}
+                    currencyCode={
+                      countryConfigData?.data?.[0]?.default_currency_code
+                    }
+                  />
                 );
               })}
 
@@ -749,7 +797,7 @@ export default function NewCourseReviewPage() {
                   Accommodation fee payment mode
                 </p>
                 <abbr
-                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={paymentMethod?.value}
                 >
                   {paymentMethod?.value}
@@ -775,6 +823,7 @@ export default function NewCourseReviewPage() {
                 setOpenContactDetails(true);
                 setClickedButton("Contact Details");
               }}
+              onOpenChange={setOpenContactDetails}
             />{" "}
           </div>
           {/* body */}
@@ -786,7 +835,7 @@ export default function NewCourseReviewPage() {
                     Contact Email
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_email}
                   >
                     {data?.contact_email}
@@ -797,7 +846,7 @@ export default function NewCourseReviewPage() {
                     Contact Phone
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_number}
                   >
                     {data?.contact_number}
@@ -808,7 +857,7 @@ export default function NewCourseReviewPage() {
                     Contact Name
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_name}
                   >
                     {data?.contact_name}
@@ -824,7 +873,7 @@ export default function NewCourseReviewPage() {
             </p>
             <div className="truncate">
               <abbr
-                className="font-semibold  no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.bcc_registration_confirmation_email}
               >
                 {newCourseData?.bcc_registration_confirmation_email
@@ -847,3 +896,54 @@ export default function NewCourseReviewPage() {
     </div>
   );
 }
+
+/**
+ * @function Accommodation
+ * REQUIRMENT we need to show the both name and the fee of the accommodation name
+ * @description this function is used to display both the accommodation type name and the fee which we will give in the creation of the course
+ * @param accomdationData
+ * @returns
+ */
+
+const Accommodation = ({
+  accomdationData,
+  currencyCode,
+}: {
+  accomdationData: { accommodation_type_id: number; fee_per_person: number };
+  currencyCode: string;
+}) => {
+  /**
+   * @constant data
+   * REQUIRMENT we need to show the both name and the fee of the accommodation name
+   * we have the accommodation type id and we need the name of the type
+   * For that we are doing appi call for the accomdation_types table and we are getting the data in that data we have the accommodation type name
+   * @description this data const is used to store the accommodation type api data with respective to the accommodation type id
+   *
+   */
+  const { data } = useOne({
+    resource: "accomdation_types",
+    id: accomdationData?.accommodation_type_id,
+  });
+
+  return (
+    <div className=" min-w-[72px]">
+      <abbr title={data?.data?.name} className="no-underline">
+        <CardLabel className="truncate">{data?.data?.name}</CardLabel>
+      </abbr>
+      <abbr
+        // If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined
+        // we need to display the currency code when the code is present for the organization
+        title={`${currencyCode ? currencyCode : ""} ${
+          accomdationData?.fee_per_person
+        }`}
+        className="no-underline"
+      >
+        <CardValue className="truncate">
+          {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
+          {currencyCode ? currencyCode : ""}
+          {accomdationData?.fee_per_person}
+        </CardValue>
+      </abbr>
+    </div>
+  );
+};

@@ -27,6 +27,7 @@ import {
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { format } from "date-fns";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
@@ -45,6 +46,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         <div
           onClick={() => {
             router.push(`/Courses/ViewCourse/${row?.original?.id}`);
+            console.log("View Course Route is",`/Courses/ViewCourse/${row?.original?.id}`)
           }}
           className="w-[100px] text-[#7677F4] font-semibold"
         >
@@ -106,24 +108,13 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Start Date</div>;
     },
     cell: ({ row }: any) => {
-      // Check if program_schedules exists and has at least one record
-      if (
-        row?.original?.program_schedules &&
-        row.original.program_schedules.length > 0
-      ) {
-        // Get the record with order 1 (assuming order starts from 1)
-        const record = row.original.program_schedules.find(
-          (schedule: any) => schedule.order === 1
+      // Check if start_date exists or not
+      if (row?.original?.start_date) {
+        const startDate = format(row?.original?.start_date, "dd MMM, yyyy");
+        return (
+          <div className="min-w-[150px]">{startDate ? startDate : "-"} </div>
         );
-        // Check if record with order 1 exists
-        if (record) {
-          // Extract date from the timestamp (assuming it's stored in a property called 'timestamp')
-          const startDate = new Date(record.start_time).toLocaleDateString();
-          return <div className="min-w-[150px]">{startDate}</div>;
-        }
       }
-      // Return empty if no record found or if program_schedules is not available
-      return <div className="min-w-[150px]">-</div>;
     },
   },
   {
@@ -285,8 +276,12 @@ export const columns: ExtendedColumnDef<any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setViewPreviewPage, setNewCourseData, setViewThankyouPage } =
-        newCourseStore();
+      const {
+        setViewPreviewPage,
+        setNewCourseData,
+        setViewThankyouPage,
+        setCurrentStep,
+      } = newCourseStore();
 
       const router = useRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -353,6 +348,8 @@ export const columns: ExtendedColumnDef<any>[] = [
         // we have to delete schedules when user click on cipy course and other we need to prefill
         defaultValues = _.omit(defaultValues, ["id", "schedules"]);
         setNewCourseData(defaultValues);
+        // when we do copy course we have to set the current step to first step
+        setCurrentStep(1);
         router.push("/Courses/NewCourse");
       };
 
@@ -363,7 +360,9 @@ export const columns: ExtendedColumnDef<any>[] = [
 
         switch (value) {
           case 1: {
-            router.push(`/${router.asPath}/participant/list`);
+            //Need to navigate to participants list of select course.
+            router.push(`ViewCourse/${row.original.id}/participant/list`);
+            console.log("Participant route is",`ViewCourse/${row.original.id}/participant/list`)
             break;
           }
           case 2: {
@@ -404,7 +403,8 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 10: {
-            router.push(`/Courses/ViewCourse/${[row.original.id]}`);
+            router.push(`/Courses/ViewCourse/${row.original.id}`);
+            console.log('View Course Route is',`/Courses/ViewCourse/${row.original.id}`)
             break;
           }
         }
