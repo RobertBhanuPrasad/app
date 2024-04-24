@@ -14,6 +14,18 @@ export const handleEditParticipantValues=async(participantId:number)=>{
       }
       return {};
 }
+export const handleEditPaymentValues=async(paymentHistoryId:number)=>{
+const {data,error}=await supabaseClient
+.from("participant_payment_history")
+.select("id,payment_method_id,transaction_status_id!inner(id,value),payment_date,send_payment_confirmation")
+.eq("id", paymentHistoryId);
+if (!error) {
+    const defaultValues = await getDefaultValues(data[0] as unknown as ParticipantPaymentHistoryDataBaseType);
+   
+    return defaultValues;
+  }
+  return {};
+}
 export const getDefaultValues = async (data: ParticipantPaymentHistoryDataBaseType) => {
   
  const defaultValues: EditParticipantFormFieldTypes = {}

@@ -30,13 +30,16 @@ import { Textarea } from "src/ui/textarea";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 interface EditPaymentProps {
     setEditPayment: React.Dispatch<React.SetStateAction<any>>;
+    paymentId: number;
 }
-export default function EditPayment({ setEditPayment }: EditPaymentProps) {
+export default function EditPayment({
+    setEditPayment,
+    paymentId,
+}: EditPaymentProps) {
     const { query } = useRouter();
     const { mutate } = useUpdate();
-    const { watch, getValues } = useFormContext();
+    const { watch } = useFormContext();
     const [cancelEditPayment, setcancelEditPayment] = useState(false);
-    const defaultData = getValues();
     let formData = watch();
     const [initialValue, setinitialValue] = useState(formData);
     const onFormSubmission = () => {
@@ -49,7 +52,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                 transaction_status_id: formData?.transaction_status_id,
             },
             // TODO: replace with participant_paymente_history id
-            id: defaultData?.id,
+            id: paymentId,
         });
         setEditPayment(false);
     };
@@ -147,35 +150,17 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             select: "contact_id(full_name)",
         },
     });
-    const transactionData = useList({
+    const transactionData = useOne({
         resource: "participant_payment_history",
+        id: paymentId,
         meta: {
             select: "id,transaction_id,response_message,error_message",
         },
-        filters: [
-            {
-                field: "participant_id",
-                operator: "eq",
-                value: Id,
-            },
-            {
-                field: "program_id",
-                operator: "eq",
-                value: query?.id,
-            },
-        ],
-        sorters: [
-            {
-                field: "created_at",
-                order: "desc",
-            },
-        ],
     });
     const cancelConfirmation = () => {
         if (!_.isEqual(initialValue, formData)) {
             setcancelEditPayment(true);
-        }
-        else{
+        } else {
             setEditPayment(false);
         }
     };
@@ -312,7 +297,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                                     transaction_status_id ==
                                                     FAILED_ID
                                                         ? true
-                                                        : transaction_status_id==
+                                                        : transaction_status_id ==
                                                           CONFIRMED_ID
                                                         ? true
                                                         : false
