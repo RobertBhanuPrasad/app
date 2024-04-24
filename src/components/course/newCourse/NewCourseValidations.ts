@@ -128,16 +128,17 @@ export const validationSchema = () => {
     })
     .superRefine((val: any, ctx) => {
       const maxCapacityLimit = val?.program_type?.maximum_capacity;
-       const maxCapacity = parseInt(val.max_capacity);
-       if (maxCapacity && maxCapacityLimit && maxCapacity > maxCapacityLimit) {
-         ctx.addIssue({
-           code: z.ZodIssueCode.custom,
-           message: `Maximum capacity exceeds the allowed limit for ${val?.program_type?.maximum_capacity}`,
-         });
-       }
-       return true;
+      const maxCapacity = parseInt(val.max_capacity);
+      if (maxCapacity && maxCapacityLimit && maxCapacity > maxCapacityLimit) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Maximum capacity exceeds the allowed limit",
+          path: ["max_capacity"],
+        });
+        return false;
+      }
+      return true;
     });
- 
 };
 
 const existingVenueSchedules = z.object({
