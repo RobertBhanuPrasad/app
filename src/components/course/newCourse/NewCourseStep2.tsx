@@ -165,7 +165,7 @@ export default function NewCourseStep2() {
 }
 
 export const CourseTypeDropDown = () => {
-  const { watch } = useFormContext();
+  const { watch, setValue } = useFormContext();
 
   const [pageSize, setPageSize] = useState(10);
 
@@ -255,9 +255,17 @@ export const CourseTypeDropDown = () => {
     }) as { label: string; value: number }[];
 
   const {
-    field: { onChange: setCourseTypeSettings },
+    field: { value: courseSettings, onChange: setCourseTypeSettings },
   } = useController({
     name: NewCourseStep2FormNames?.program_type,
+  });
+
+  console.log("heyyyyy setttingss dataa", courseSettings);
+
+  const {
+    field: { onChange: maxCapacityOnChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.max_capacity,
   });
 
   /**
@@ -270,6 +278,19 @@ export const CourseTypeDropDown = () => {
     const courseSettings = queryResult?.data?.data.filter(
       (data) => data.id == val
     );
+
+    const maxAttendes = courseSettings?.[0].maximum_capacity
+      ? courseSettings?.[0].maximum_capacity.toString()
+      : undefined;
+
+    console.log("heyy max attendes", maxAttendes);
+
+    // when we change the course type and we get new settings we need to set the max capacity from the course type settings
+    if (maxAttendes) {
+      maxCapacityOnChange(maxAttendes);
+    } else {
+      setValue(NewCourseStep2FormNames?.max_capacity, "");
+    }
 
     setCourseTypeSettings(courseSettings?.[0]);
   };
@@ -1017,16 +1038,12 @@ const MaximumCapacity = () => {
 
   const formData = watch();
 
-  /**
-   * This variable is used to store the maximum_capacity from program_type settings
-   */
-  const maxAttendees = formData?.program_type?.maximum_capacity;
-
   const {
-    field: { value = maxAttendees, onChange },
+    field: { value, onChange },
     fieldState: { error },
-  } = useController({ name: NewCourseStep2FormNames?.max_capacity });
-
+  } = useController({
+    name: NewCourseStep2FormNames?.max_capacity,
+  });
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
