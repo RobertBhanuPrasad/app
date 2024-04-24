@@ -205,17 +205,20 @@ export default function NewCourseReviewPage() {
           const schedule = `${formatDateString(data.date)} | ${
             data?.startHour || "00"
           } : ${data?.startMinute || "00"}  ${
-            data?.startTimeFormat && data?.startTimeFormat
+            data?.startTimeFormat ? data?.startTimeFormat : ""
           } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
-            data?.endTimeFormat && data?.endTimeFormat
+            data?.endTimeFormat ? data?.endTimeFormat : ""
           }`;
+
           return (
-            <abbr
-              className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-              title={schedule}
-            >
-              {schedule}
-            </abbr>
+            <div>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={schedule}
+              >
+                {schedule}
+              </abbr>
+            </div>
           );
         })}
       </div>
