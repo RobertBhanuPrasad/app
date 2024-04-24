@@ -840,35 +840,55 @@ const ExistingVenueList = () => {
 
   const formData = watch();
 
+  const [venueData, setVenueData] = useState<any[]>([]);
+
   const [searchValue, searchOnChange] = useState<string>("");
 
   const debouncedSearchValue = useDebounce(searchValue, 500);
 
   const [otherVenueSkip, setOtherVenueSkip] = useState<number>(0);
 
-  const [venueData, setVenueData] = useState<any[]>([]);
-
-  const [openExistingVenue, setOpenExistingVenue] = useState(false);
-
-  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
-
-  const {
-    field: { value: deletedVenueIds = [], onChange: deleteVenueIdOnChange },
-  } = useController({
-    name: "deletedVenueID",
-  });
-
-  const {
-    field: { onChange: setIsNewVenue },
-  } = useController({
-    name: "isNewVenue",
-  });
-
   const {
     field: { onChange: isNewVenueSelectedOnchange },
   } = useController({
     name: "isNewVenueSelected",
   });
+
+  const {
+    field: { value: existingVenue, onChange: existingVenueOnChange },
+  } = useController({
+    name: "existingVenue",
+  });
+
+  const {
+    field: { value: deletedVenueIds = [] },
+  } = useController({
+    name: "deletedVenueID",
+  });
+
+  //Fetching initial Data of venues
+  useEffect(() => {
+    if (venueData?.length == 0) fetchVenueData();
+  }, []);
+
+  //Fetching venue data after search
+  useEffect(() => {
+    setVenueData([]);
+    setOtherVenueSkip(0);
+
+    fetchVenueData();
+  }, [debouncedSearchValue]);
+
+  const fetchVenueData = async () => {
+    const loginUserVenues = ((await fetchLoginUserVenue()) as any[]) ?? [];
+    const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
+    let modifiedVenueData = [...loginUserVenues, ...otherVenueData];
+    if (existingVenue) {
+      modifiedVenueData = [existingVenue, ...modifiedVenueData];
+      modifiedVenueData = _.uniqBy(modifiedVenueData, "id");
+    }
+    setVenueData(modifiedVenueData);
+  };
 
   const fetchLoginUserVenue = async () => {
     const { data } = await supabaseClient
@@ -895,38 +915,6 @@ const ExistingVenueList = () => {
     return data;
   };
 
-  const fetchVenueData = async () => {
-    const loginUserVenues = ((await fetchLoginUserVenue()) as any[]) ?? [];
-    const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
-    let modifiedVenueData = [...loginUserVenues, ...otherVenueData];
-    if (existingVenue) {
-      modifiedVenueData = [existingVenue, ...modifiedVenueData];
-      modifiedVenueData = _.uniqBy(modifiedVenueData, "id");
-    }
-    setVenueData(modifiedVenueData);
-  };
-
-  //Fetching initial Data of venues
-  useEffect(() => {
-    if (venueData?.length == 0) fetchVenueData();
-  }, []);
-
-  //Fetching venue data after search
-  useEffect(() => {
-    setVenueData([]);
-    setOtherVenueSkip(0);
-
-    fetchVenueData();
-  }, [debouncedSearchValue]);
-
-  let filteredVenueData = venueData.filter(
-    (obj: { id: number }) => !deletedVenueIds.includes(obj.id)
-  );
-
-  const deleteVenue = (id: any) => {
-    deleteVenueIdOnChange([...deletedVenueIds, id]);
-  };
-
   //fetching other venue data after scrolling
   useEffect(() => {
     const fetchOtherVenueDataAfterScroll = async () => {
@@ -936,19 +924,18 @@ const ExistingVenueList = () => {
     fetchOtherVenueDataAfterScroll();
   }, [otherVenueSkip]);
 
+  //Fetching venue data after search
+  useEffect(() => {
+    setVenueData([]);
+    setOtherVenueSkip(0);
+
+    fetchVenueData();
+  }, [debouncedSearchValue]);
+
   const onBottomReached = () => {
     if (filteredVenueData && filteredVenueData?.length >= 6)
       setOtherVenueSkip((previousLimit: number) => previousLimit + 6);
   };
-
-  const handleCheckboxChange = (item: any) => {
-    setValue(NewCourseStep3FormNames.venue_id, item.id);
-  };
-  const {
-    field: { value: existingVenue, onChange: existingVenueOnChange },
-  } = useController({
-    name: "existingVenue",
-  });
 
   const handleSubmitVenueList = () => {
     const existingVenueObject = venueData.filter(
@@ -957,53 +944,10 @@ const ExistingVenueList = () => {
     existingVenueOnChange(existingVenueObject?.[0]);
   };
 
-  const user_roles: any[] = loginUserData?.userData?.user_roles;
-
-  const isUserNationAdminOrSuperAdmin = user_roles?.find(
-    (role) =>
-      role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
+  let filteredVenueData = venueData.filter(
+    (obj: { id: number }) => !deletedVenueIds.includes(obj.id)
   );
 
-  const handleOpenExistingVenue = (item: any) => {
-    setIsNewVenue(false);
-    setValue("name", item?.name);
-    setValue("address", item?.address);
-    setValue("state_id", item?.state_id);
-    setValue("city_id", item?.city_id);
-    setValue("center_id", item?.center_id);
-    setValue("postal_code", item?.postal_code);
-  };
-
-  const handleSubmitExistingVenue = async (index: number) => {
-    const isAllFieldsFilled = await ValidateCurrentStepFields([
-      "city_id",
-      "center_id",
-      "state_id",
-      "name",
-      "address",
-      "postal_code",
-    ]);
-
-    const allVenuesData = [...venueData];
-    allVenuesData[index] = {
-      ...allVenuesData[index],
-      name: formData?.name,
-      address: formData?.address,
-      state_id: formData?.state_id,
-      city_id: formData?.city_id,
-      center_id: formData?.center_id,
-      postal_code: formData?.postal_code,
-    };
-
-    if (isAllFieldsFilled) {
-      setVenueData(allVenuesData);
-      setOpenExistingVenue(false);
-    } else {
-      setOpenExistingVenue(true);
-    }
-  };
-
-  console.log(openExistingVenue, "openExistingVenue");
 
   return (
     <div>
@@ -1042,74 +986,9 @@ const ExistingVenueList = () => {
                 <LoadingIcon></LoadingIcon>
               </div>
             ) : (
-              filteredVenueData?.map((item: any, index: number) => {
-                return (
-                  <div className="flex flex-row !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
-                    <Checkbox
-                      id={item.id}
-                      value={item.id}
-                      onCheckedChange={() => handleCheckboxChange(item)}
-                      checked={
-                        formData[NewCourseStep3FormNames.venue_id] == item.id
-                          ? true
-                          : false
-                      }
-                    />
-                    <div className="space-y-1 leading-none w-full">
-                      <div className="flex justify-between">
-                        <div className="font-semibold">{item.name}</div>
-                        <div className="flex flex-row gap-3">
-                          {item?.created_by_user_id ==
-                            loginUserData?.userData?.id ||
-                            (isUserNationAdminOrSuperAdmin && (
-                              <Dialog
-                                open={openExistingVenue}
-                                onOpenChange={setOpenExistingVenue}
-                              >
-                                <DialogTrigger
-                                  className={"cursor-not-allowed pointer-events-none opacity-50"}
-                                  onClick={() => {
-                                    handleOpenExistingVenue(item);
-                                    setOpenExistingVenue(true);
-                                  }}
-                                >
-                                  <EditIcon />
-                                </DialogTrigger>
-                                <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-                                  <AddOrEditVenue
-                                    handleSubmit={() => {
-                                      handleSubmitExistingVenue(index);
-                                    }}
-                                  />
-                                </DialogContent>
-                              </Dialog>
-                            ))}
-                          {isUserNationAdminOrSuperAdmin && (
-                            // isUserNationAdminOrSuperAdmin
-                            <Dialog>
-                              <DialogTrigger>
-                                <Delete />
-                              </DialogTrigger>
-                              <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                                <DeleteVenueComponent
-                                  handleDeleteVenue={() => {
-                                    deleteVenue(item?.id);
-                                  }}
-                                />
-                              </DialogContent>
-                            </Dialog>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="leading-tight">
-                        {item.name}, {item.address}, {item.city_name},{" "}
-                        {item.state_name}, {item.postal_code}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
+              filteredVenueData?.map((item: any, index: number) => 
+                 <ExistingVenueListSection venueData={venueData} setVenueData={setVenueData} item={item} index={index} />
+              )
             )}
 
             {/* </div> */}
@@ -1128,6 +1007,148 @@ const ExistingVenueList = () => {
             Submit
           </Button>
         </DialogClose>
+      </div>
+    </div>
+  );
+};
+
+export const ExistingVenueListSection = ({venueData, setVenueData, item , index}:any) => {
+
+  const { data: loginUserData }: any = useGetIdentity();
+  const { setValue, watch } = useFormContext();
+  const formData = watch();
+  const [openExistingVenue, setOpenExistingVenue] = useState(false);
+
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+  const isVenueSelected = formData[NewCourseStep3FormNames.venue_id] === item.id;
+
+  const {
+    field: { onChange: setIsNewVenue },
+  } = useController({
+    name: "isNewVenue",
+  });
+
+  const {
+    field: { value: deletedVenueIds = [], onChange: deleteVenueIdOnChange },
+  } = useController({
+    name: "deletedVenueID",
+  });
+
+  const handleCheckboxChange = (item: any) => {
+    setValue(NewCourseStep3FormNames.venue_id, item.id);
+  };
+
+  const handleOpenExistingVenue = (item: any) => {
+    setIsNewVenue(false);
+    setValue("name", item?.name);
+    setValue("address", item?.address);
+    setValue("state_id", item?.state_id);
+    setValue("city_id", item?.city_id);
+    setValue("center_id", item?.center_id);
+    setValue("postal_code", item?.postal_code);
+  };
+
+  const handleSubmitExistingVenue = async (index: number) => {
+    const isAllFieldsFilled = await ValidateCurrentStepFields([
+      "city_id",
+      "center_id",
+      "state_id",
+      "name",
+      "address",
+      "postal_code",
+    ]);
+    
+    const allVenuesData = [...venueData];
+    allVenuesData[index] = {
+      ...allVenuesData[index],
+      name: formData?.name,
+      address: formData?.address,
+      state_id: formData?.state_id,
+      city_id: formData?.city_id,
+      center_id: formData?.center_id,
+      postal_code: formData?.postal_code,
+    };
+    
+    if (isAllFieldsFilled) {
+      console.log("entered");
+      
+      setVenueData(allVenuesData);
+      setOpenExistingVenue(false);
+    } else {
+      setOpenExistingVenue(true);
+    }
+  };
+
+  const deleteVenue = (id: any) => {
+    deleteVenueIdOnChange([...deletedVenueIds, id]);
+  };
+
+  const user_roles: any[] = loginUserData?.userData?.user_roles;
+
+  const isUserNationAdminOrSuperAdmin = user_roles?.find(
+    (role) =>
+      role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
+  );
+  return (
+    <div className="flex flex-row !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
+      <Checkbox
+        id={item.id}
+        value={item.id}
+        onCheckedChange={() => handleCheckboxChange(item)}
+        checked={
+          formData[NewCourseStep3FormNames.venue_id] == item.id ? true : false
+        }
+      />
+      <div className="space-y-1 leading-none w-full">
+        <div className="flex justify-between">
+          <div className="font-semibold">{item.name}</div>
+          <div className="flex flex-row gap-3">
+            {item?.created_by_user_id == loginUserData?.userData?.id ||
+              (isUserNationAdminOrSuperAdmin && (
+                <Dialog
+                  open={openExistingVenue}
+                  onOpenChange={setOpenExistingVenue}
+                >
+                  <DialogTrigger
+                    className={!isVenueSelected ? "cursor-not-allowed pointer-events-none opacity-50" : "opacity-none"}
+                    disabled={!isVenueSelected}
+                    onClick={() => {
+                      handleOpenExistingVenue(item);
+                    }}
+                  >
+                    <EditIcon />
+                  </DialogTrigger>
+                  <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                    <AddOrEditVenue
+                      handleSubmit={() => {
+                        handleSubmitExistingVenue(index);
+                      }}
+                    />
+                  </DialogContent>
+                </Dialog>
+              ))}
+            {isUserNationAdminOrSuperAdmin && (
+              // isUserNationAdminOrSuperAdmin
+              <Dialog>
+                <DialogTrigger>
+                  <Delete />
+                </DialogTrigger>
+                <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+                  <DeleteVenueComponent
+                    handleDeleteVenue={() => {
+                      deleteVenue(item?.id);
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        </div>
+
+        <div className="leading-tight">
+          {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
+          {item.postal_code}
+        </div>
       </div>
     </div>
   );
