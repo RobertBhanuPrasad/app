@@ -203,6 +203,20 @@ export default function NewCourseReviewPage() {
   });
 
   const venueSessions = () => {
+    let schedules = newCourseData?.schedules;
+
+    // sort the schedules
+
+    schedules = schedules.sort((a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    });
+
     return (
       <div className=" min-w-72 ">
         <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -212,17 +226,20 @@ export default function NewCourseReviewPage() {
           const schedule = `${formatDateString(data.date)} | ${
             data?.startHour || "00"
           } : ${data?.startMinute || "00"}  ${
-            data?.startTimeFormat && data?.startTimeFormat
+            data?.startTimeFormat ? data?.startTimeFormat : ""
           } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
-            data?.endTimeFormat && data?.endTimeFormat
+            data?.endTimeFormat ? data?.endTimeFormat : ""
           }`;
+
           return (
-            <abbr
-              className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-              title={schedule}
-            >
-              {schedule}
-            </abbr>
+            <div>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={schedule}
+              >
+                {schedule}
+              </abbr>
+            </div>
           );
         })}
       </div>
@@ -654,7 +671,7 @@ export default function NewCourseReviewPage() {
                   Time Zone
                 </p>
                 <p className="font-semibold truncate text-accent-secondary">
-                  {timeZone?.data?.name}
+                  {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
                 </p>
               </div>
               <div>{venueSessions()}</div>
