@@ -410,7 +410,7 @@ function index() {
       <div className="top-0 sticky z-[50] bg-white shadow-xl w-full">
         <ParticipantsListMainHeader />
       </div>
-      <div className="flex flex-col gap-4 p-10">
+      <div className="flex flex-col gap-4 px-10 py-2">
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
@@ -528,7 +528,7 @@ function index() {
           />
         </div>
       </div>
-      <div className="bottom-0 sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+      <div className="bottom-0 sticky absolute flex flex-row px-8 py-2 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-row items-center gap-2">
             <Checkbox
