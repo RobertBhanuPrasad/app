@@ -200,7 +200,7 @@ function index() {
 
   if (ParticpantFiltersData?.advanceFilter?.payment_method?.length) {
     filters.permanent.push({
-      field: "participant_payment_history[0]?.payment_method_id",
+      field: "payment_method",
       operator: "in",
       value: ParticpantFiltersData?.advanceFilter?.payment_method,
     });
@@ -299,7 +299,7 @@ function index() {
     resource: "participant_registration",
     meta: {
       select:
-        "*, transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
     sorters: {
@@ -332,6 +332,7 @@ function index() {
     ).length;
     setSelectedTableRows(tempCount);
     setSelectedRowObjects(rowSelection);
+    tempCount == 0 && setBulkActionSelectedValue("Bulk Actions");
   }, [rowSelection]);
 
   const handleSelectAll = (val: any) => {
@@ -406,10 +407,10 @@ function index() {
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
-      <div className="top-0 sticky z-[50] bg-white shadow-xl w-full">
+      <div className="top-0 sticky z-[50] bg-white shadow-md w-full">
         <ParticipantsListMainHeader />
       </div>
-      <div className="flex flex-col gap-4 p-10">
+      <div className="flex flex-col gap-4 px-10 py-2">
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
@@ -470,7 +471,7 @@ function index() {
                   onClick={() => setOpen(true)}
                   variant="outline"
                   className="flex flex-row justify-between w-[152px] h-10"
-                  disabled={disableBulkOptions}
+                  disabled={selectedTableRows > 0 ? disableBulkOptions : true}
                 >
                   Select Status
                   <DropDown />
@@ -527,7 +528,7 @@ function index() {
           />
         </div>
       </div>
-      <div className="bottom-0 sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+      <div className="bottom-0 sticky absolute flex flex-row px-8 py-2 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-row items-center gap-2">
             <Checkbox
@@ -588,6 +589,7 @@ const HeaderSection = () => {
     setParticpantFiltersData,
     selectedTableRows,
     selectedRowObjects,
+    setAdvanceFilterCount,
   } = ParticipantStore();
   const [open, setOpen] = useState(false);
   const { watch, setValue } = useFormContext();
@@ -629,6 +631,24 @@ const HeaderSection = () => {
     setValue("participant_code", "");
     setValue("registration_date", { from: "", to: "" });
     setValue("transaction_status", []);
+
+    setValue("advanceFilter.full_name", "");
+    setValue("advanceFilter.email", "");
+    setValue("advanceFilter.mobile", "");
+    setValue("advanceFilter.transaction_type", []);
+    setValue("advanceFilter.payment_method", []);
+    setValue("advanceFilter.fee_level", []);
+    setValue("advanceFilter.attendance_status", "");
+    setValue("advanceFilter.health_consent_status", {
+      completed: false,
+      pending: false,
+    });
+    setValue("advanceFilter.program_agreement_status", {
+      completed: false,
+      pending: false,
+    });
+
+    setAdvanceFilterCount(0);
   };
 
   return (
