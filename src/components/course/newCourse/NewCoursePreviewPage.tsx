@@ -240,10 +240,8 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.time_zone_id,
   });
 
-  const { data: feeLevelData } = useMany({
-    resource: "option_values",
-    ids: _.map(newCourseData?.program_fee_level_settings, "fee_level_id"),
-  });
+ //Requirement: Need to show only enabled fee level.
+ const enabledFeeLevelData=newCourseData?.program_fee_level_settings?.filter((feeLevel: { is_enable: boolean; })=>(feeLevel.is_enable===true));
 
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
@@ -686,17 +684,16 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="grid grid-cols-3 gap-4 mt-2">
-            {newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
+            {enabledFeeLevelData?.map((feeLevel: any, index: number) => {
               return (
                <Fees feeLevelSettingsData={feeLevel}/>
               )
             })}
 
             {newCourseData?.is_early_bird_enabled &&
-              newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
+              enabledFeeLevelData?.map((feeLevel: any, index: number) => {
                 return (
                   <EarlyBirdFees feeLevelSettingsData={feeLevel}/>
-
                 )
               })}
             {courseFeeSettings?.[0]?.is_program_fee_editable &&
