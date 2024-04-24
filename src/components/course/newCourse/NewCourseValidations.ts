@@ -129,6 +129,7 @@ export const validationSchema = () => {
     })
     .superRefine((val: any, ctx) => {
       const maxCapacityLimit = val?.program_type?.maximum_capacity;
+      console.log("heyy capacity", maxCapacityLimit);
       const maxCapacity = parseInt(val.max_capacity);
       if (maxCapacity && maxCapacityLimit && maxCapacity > maxCapacityLimit) {
         ctx.addIssue({
@@ -136,9 +137,7 @@ export const validationSchema = () => {
           message: "Maximum capacity exceeds the allowed limit",
           path: ["max_capacity"],
         });
-        return false;
       }
-      return true;
     });
 };
 
