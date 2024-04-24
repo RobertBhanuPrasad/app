@@ -41,7 +41,6 @@ import {
 
 import DropDown from "@public/assets/DropDown";
 import { useTranslation } from 'next-i18next';
-import { useTranslation } from 'next-i18next';
 interface IBaseTable<TData, TValue> {
   /**
    * Columns defined for the table
@@ -174,6 +173,7 @@ export function BaseTable<TData, TValue>({
     },
     {}
   );
+
 
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -369,28 +369,29 @@ export function BaseTable<TData, TValue>({
                     <div className="font-bold text-[14px]">{t("course.find_course:select_all")}</div>
                   </div>
 
-                    {table
-                      .getAllColumns()
-                      .filter((column) => column?.accessorFn)
-                      // Here we are filtering the columns which have accessorKey
-                      .map((column: any) => {
-                        return (
-                          <div className="flex flex-row gap-4 items-center">
-                            <Checkbox
-                              key={column.id}
-                              disabled={!column.getCanHide()}
-                              //Disabling the checkbox if the column cannot be hidden
-                              className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
-                              checked={columnVisibilityChanges[column.id]}
-                              onCheckedChange={(value: boolean) => {
-                                handleColumnVisibilityChange(column.id, value);
-                              }}
-                            />
-                            {column?.columnDef?.column_name}
-                          </div>
-                        );
-                      })}
-                  </div>
+                  {table
+                    .getAllColumns()
+                    .filter((column) => column?.accessorFn)
+                    // Here we are filtering the columns which have accessorKey
+                    .map((column: any) => {
+
+                      return (
+                        <div className="flex flex-row gap-4 items-center">
+                          <Checkbox
+                            key={column.id}
+                            disabled={!column.getCanHide()}
+                            //Disabling the checkbox if the column cannot be hidden
+                            className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
+                            checked={columnVisibilityChanges[column.id]}
+                            onCheckedChange={(value: boolean) => {
+                              handleColumnVisibilityChange(column.id, value);
+                            }}
+                          />
+                          {column?.columnDef?.column_name}
+                        </div>
+                      );
+                    })}
+                </div>
 
                 <div className="flex flex-row gap-4 p-2 w-full items-center ">
                   <div
@@ -565,7 +566,7 @@ export function BaseTable<TData, TValue>({
             </Table>
           </div>
         </div>
-        {pagination && (
+          {pagination && (
           <div className="flex justify-center">
             <DataPagination
               setCurrent={setCurrent}
@@ -573,32 +574,32 @@ export function BaseTable<TData, TValue>({
               pageCount={pageCount}
             />
 
-            <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
-              <Select
-                value={`${pageSize}`}
-                onValueChange={(value) => {
-                  setPageSize(Number(value));
+          <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
+            <Select
+              value={`${pageSize}`}
+              onValueChange={(value) => {
+                setPageSize(Number(value));
                   table?.setPageSize(Number(value));
-                }}
-              >
-                <SelectTrigger className="h-8 w-[131px]">
-                  <SelectValue placeholder={`${pageSize}`} />
-                </SelectTrigger>
-                <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map(
-                    (
-                      pageSize // Till now there is no limit will change after confirming TODO
-                    ) => (
-                      <SelectItem key={pageSize} value={`${pageSize}`}>
-                        Showing {pageSize}
-                      </SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
-              <div>of {total}</div>
-            </div>
+              }}
+            >
+              <SelectTrigger className="h-8 w-[131px]">
+                <SelectValue placeholder={`${pageSize}`} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[10, 20, 30, 40, 50].map(
+                  (
+                    pageSize // Till now there is no limit will change after confirming TODO
+                  ) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      {t("course.find_course:showing")} {pageSize}
+                    </SelectItem>
+                  )
+                )}
+              </SelectContent>
+            </Select>
+            <div>{t("course.find_course:of")} {total}</div>
           </div>
+        </div>
         )}
       </div>
     </div>

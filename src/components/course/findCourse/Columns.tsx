@@ -175,7 +175,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     enableHiding: false,
     column_name: "Teachers",
     header: () => {
-const {t} = useTranslation("common")
+  const {t} = useTranslation()
       
       return <div className="min-w-[150px]">{t('course.find_course:teachers')}</div>;
     },
@@ -374,7 +374,7 @@ const {t} = useTranslation("common")
        */
       const handleCopyCourse = async () => {
         setViewThankyouPage(false);
-
+        
         let defaultValues = await handleCourseDefaultValues(row.original.id);
         // we have to delete schedules when user click on cipy course and other we need to prefill
         defaultValues = _.omit(defaultValues, ["id", "schedules"]);
@@ -441,7 +441,7 @@ const {t} = useTranslation("common")
         }
       };
 
-      
+     
 
       return (
         <div className="">
