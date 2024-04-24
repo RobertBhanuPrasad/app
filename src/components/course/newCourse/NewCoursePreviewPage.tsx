@@ -9,6 +9,7 @@ import {
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
+  COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
   PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
@@ -21,7 +22,10 @@ import {
   formatDateString,
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
-import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
+import {
+  getOptionValueObjectById,
+  getOptionValueObjectByOptionOrder,
+} from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
@@ -31,6 +35,7 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
+import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { CardLabel, CardValue } from "src/ui/TextTags";
 
 export default function NewCourseReviewPage() {
@@ -272,6 +277,13 @@ export default function NewCourseReviewPage() {
    */
   const invalidate = useInvalidate();
 
+  /**
+   * The variable holds the course accounting status not submitted id
+   */
+  const accountingNotSubmittedStatusId =
+    getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
+      ?.id ?? 0;
+
   const handClickContinue = async () => {
     setIsSubmitting(true);
 
@@ -281,7 +293,8 @@ export default function NewCourseReviewPage() {
     const isPosted = await handlePostProgramData(
       newCourseData,
       data?.userData?.id,
-      setProgramId
+      setProgramId,
+      accountingNotSubmittedStatusId
     );
 
     if (isPosted) {
