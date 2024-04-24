@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Text } from "src/ui/TextTags";
 import { formatDateString } from "src/utility/DateFunctions";
 
-export default function CourseFee() {
+export default function CourseFee({activeTab}:any) {
     const { query } = useRouter();
     const Id: number | undefined = query?.participantId
         ? parseInt(query?.participantId as string)

@@ -9,6 +9,7 @@ import { ParticipantsListMainHeader } from "@components/participants/Participant
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { authProvider } from "src/authProvider";
 import {
     VIEW_CUSTOMER_DEVICE_DETAILS,
@@ -20,6 +21,7 @@ import {
 
 function index() {
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState(0); 
 
     const Id: number | undefined = router?.query?.participantId
         ? parseInt(router.query.participantId as string)
@@ -58,7 +60,7 @@ function index() {
             label: "Course Information ",
             content: (
                 <div>
-                    <ViewParticipantCourseInformation participantId={Id} />
+                    <ViewParticipantCourseInformation participantId={Id} activeTab={activeTab} />
                 </div>
             ),
         },
@@ -68,26 +70,26 @@ function index() {
             content: (
                 <div>
                     {" "}
-                    <ViewParticipantTransactionDetails participantId={Id} />
+                    <ViewParticipantTransactionDetails participantId={Id} activeTab={activeTab} />
                 </div>
             ),
         },
         {
             id: 2,
             label: "Email Delivery Logs",
-            content: <ViewParticipantEmailDeliveryLogs participantId={Id} />,
+            content: <ViewParticipantEmailDeliveryLogs participantId={Id} activeTab={activeTab} />,
         },
         {
             id: 3,
             label: "Customer Device Details",
             content: (
-                <ViewParticipantCustomerDeviceDetails participantId={Id} />
+                <ViewParticipantCustomerDeviceDetails participantId={Id} activeTab={activeTab} />
             ),
         },
         {
             id: 4,
             label: "UTM Parameters",
-            content: <ViewParticipantUtmParameters participantId={Id} />,
+            content: <ViewParticipantUtmParameters participantId={Id} activeTab={activeTab} />,
         },
     ];
     return (
@@ -100,7 +102,7 @@ function index() {
                     <ViewParticipantInformation participantId={Id} />
                 </div>
                 <div className="sticky w-full p-[20px]">
-                    <SampleTabs tabs={tabs} />
+                    <SampleTabs tabs={tabs} activeTab={activeTab}  setActiveTab={setActiveTab}/>
                 </div>
             </div>
         </div>

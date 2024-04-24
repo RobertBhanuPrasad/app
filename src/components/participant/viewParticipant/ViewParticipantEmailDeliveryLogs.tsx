@@ -2,10 +2,11 @@ import { BaseTable } from '@components/course/findCourse/BaseTable'
 import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
+import { VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS } from 'src/constants/Tabs'
 import { TableHeader, Text } from 'src/ui/TextTags'
 import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant email delivery logs
-function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
+function ViewParticipantEmailDeliveryLogs({ participantId,activeTab }: any) {
   const query: any = {
     resource: 'participant_registration',
     id: participantId,
@@ -20,7 +21,7 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
   const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
-      <p className="text-[18px] font-[600] ">Email Delivery Logs</p>
+      <p className={`text-[18px] font-[600]  ${activeTab==VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS?'text-[#7677F4]':'text-[#333333]'}`}>Email Delivery Logs</p>
       <div>
         <BaseTable
           checkboxSelection={false}

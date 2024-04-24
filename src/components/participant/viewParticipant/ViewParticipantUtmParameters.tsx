@@ -1,10 +1,10 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
 import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
-import React from 'react'
+import { VIEW_PARTICIPANT_UTM_PARAMETERS } from 'src/constants/Tabs'
 import { TableHeader, Text } from 'src/ui/TextTags'
 // Component for viewing participant UTM parameters
-function ViewParticipantUtmParameters({ participantId }: any) {
+function ViewParticipantUtmParameters({ participantId, activeTab }: any) {
   const query: any = {
     resource: 'participant_registration',
     id: participantId,
@@ -18,7 +18,13 @@ function ViewParticipantUtmParameters({ participantId }: any) {
 
   return (
     <div>
-      <p className="text-[18px] font-[600] ">UTM Parameters</p>
+      <p
+        className={`text-[18px] font-[600]  ${
+          activeTab == VIEW_PARTICIPANT_UTM_PARAMETERS ? 'text-[#7677F4]' : 'text-[#333333]'
+        } `}
+      >
+        UTM Parameters
+      </p>
       <div>
         <BaseTable
           checkboxSelection={false}

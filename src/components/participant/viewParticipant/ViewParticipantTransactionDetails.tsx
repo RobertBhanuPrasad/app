@@ -12,6 +12,7 @@ import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react"; // Impo
 import { useState } from "react"; // Importing React
 import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
+import { VIEW_PARTICIPANT_TRANSACTION_DETAILS } from "src/constants/Tabs";
 import { TableHeader, Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button"; // Importing Button component
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
@@ -23,7 +24,7 @@ import {
 import { formatDateAndTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 // Component for viewing participant transaction details
-function ViewParticipantTransactionDetails({ participantId }: any) {
+function ViewParticipantTransactionDetails({ participantId,activeTab }: any) {
   // Fetching table data using useTable hook
   let {
     tableQueryResult: participantTransactionDetailsData, // Table data result
@@ -52,7 +53,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
   return (
     <div>
       <div className="flex">
-        <p className="text-[18px] font-[600] pr-[10px] ">Transaction Details</p>
+        <p className={`text-[18px] font-[600] pr-[10px]  ${activeTab==VIEW_PARTICIPANT_TRANSACTION_DETAILS?'text-[#7677F4]':'text-[#333333]'} `}>Transaction Details</p>
         <div className="cursor-pointer">
           <div className="text-left">
             <TransactionActivity
@@ -163,7 +164,6 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
         </TableHeader>
       );
     },
-
     cell: ({ row }) => {
       return (
         <Text className="lowercase ">{row?.original?.organization_fee}</Text>

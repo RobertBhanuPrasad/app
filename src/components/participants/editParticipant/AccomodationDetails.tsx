@@ -15,7 +15,7 @@ import {
     SelectValue,
 } from "src/ui/select";
 
-export default function AccomodationDetails() {
+export default function AccomodationDetails({activeTab}:any) {
     const { getValues } = useFormContext();
     const FormData = getValues();
     const {

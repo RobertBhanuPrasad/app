@@ -5,7 +5,7 @@ import { useController } from "react-hook-form";
 import { Input } from "src/ui/input";
 import { Text } from "src/ui/TextTags";
 
-export default function ParticipantInformation() {
+export default function ParticipantInformation({activeTab}:any) {
     const { query } = useRouter();
     // Use useController to control the participantMemo field
     const {

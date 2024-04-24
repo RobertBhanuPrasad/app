@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from "src/ui/select";
 
-export default function PaymentDetails() {
+export default function PaymentDetails({activeTab}:any) {
     const {
         field: { value: participant_code, onChange: specialCodeChange },
     } = useController({
