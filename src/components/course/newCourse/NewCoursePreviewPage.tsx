@@ -37,12 +37,8 @@ import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
 import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { CardLabel, CardValue } from "src/ui/TextTags";
-import { useTranslation } from "next-i18next";
 
 export default function NewCourseReviewPage() {
-  const { i18n } = useTranslation();
-  const langCode = i18n.language;
-
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
     newCourseStore();
 
@@ -267,10 +263,9 @@ export default function NewCourseReviewPage() {
   /**
    * The variable holds the course accounting status not submitted id
    */
-  const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    NOT_SUBMITTED
-  )?.id ?? 0
+  const accountingNotSubmittedStatusId =
+    getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
+      ?.id ?? 0;
 
   const handClickContinue = async () => {
     setIsSubmitting(true);
@@ -282,8 +277,7 @@ export default function NewCourseReviewPage() {
       newCourseData,
       data?.userData?.id,
       setProgramId,
-      accountingNotSubmittedStatusId,
-      langCode
+      accountingNotSubmittedStatusId
     );
 
     if (isPosted) {

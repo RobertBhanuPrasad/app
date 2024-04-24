@@ -18,7 +18,6 @@ export const handlePostProgramData = async (
   loggedInUserId: number,
   setProgramId: (by: number) => void,
   accountingNotSubmittedStatusId: number,
-  langCode: string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -253,15 +252,17 @@ export const handlePostProgramData = async (
     // this RX base url coming from env file now.(need to change after proper table was there in backend)
     const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
 
-    // Constructing the registration URL
-    // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
-    // The base URL where registration information is located
-    // Adding the country code to specify the country of the program
-    // Adding the language code to specify the language of the program
-    // Appending the program ID to identify the specific program
-    // Constructing the complete registration URL
-    // this url is now posted to the program api which is used to further usage in the details view or at any other place.
-    const registrationUrl = `${RX_BASE_URL}/${langCode}/programs/${programId}`;
+  // Constructing the registration URL
+  // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
+  // The base URL where registration information is located
+  // Adding the country code to specify the country of the program
+  // Adding the language code to specify the language of the program
+  // Appending the program ID to identify the specific program
+  // Constructing the complete registration URL
+  // this url is now posted to the program api which is used to further usage in the details view or at any other place.
+
+  // TODO : need to integrate with country code and language code after translations are done
+  const registrationUrl = `${RX_BASE_URL}/programs/${programId}`;
 
     // TODO need to integrate with url provided by cx team -(kalyan)
     const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
