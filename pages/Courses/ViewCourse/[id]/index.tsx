@@ -106,7 +106,7 @@ function ViewDetails() {
         '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)'
     }
   })
-
+  
   const [participantData, setParticipantData] = useState<any>()
 
   const fetchData = async () => {
@@ -126,7 +126,7 @@ function ViewDetails() {
   useEffect(() => {
     fetchData()
   }, [])
-
+  
   const totalRevenue = participantData?.income
 
   const startDate = formatDate(courseData?.data?.program_schedules[0]?.start_time)
@@ -183,7 +183,7 @@ function ViewDetails() {
       disabled: true
     })
   }
-
+  
   const { data: loginUserData }: any = useGetIdentity()
 
   const { data: countryConfigData } = useList({
@@ -246,7 +246,7 @@ function ViewDetails() {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Revenue from confirmed pending transaction participants revenue:
+            {t('course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction')} {t('course.view_course:basic_details_tab.participants_revenue')}:
               {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
             </div>
           </HoverCardContent>
@@ -259,16 +259,16 @@ function ViewDetails() {
       </div>
 
       <div className="flex flex-row items-center gap-2 w-full justify-end">
-        Announced by: {courseData?.data?.created_by_user_id?.contact_id?.full_name}
+      {t('course.view_course:course_accounting_form_tab.announced_by')} : {courseData?.data?.created_by_user_id?.contact_id?.full_name}
         <HoverCard>
           <HoverCardTrigger>
             <Important />
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Approved by: {courseData?.data?.approved_by_user_id?.contact_id?.full_name} ({' '}
+            {t('course.view_course:basic_details_tab.approved_by')}: {courseData?.data?.approved_by_user_id?.contact_id?.full_name} ({' '}
               {formatDateString(new Date(courseData?.data?.program_approved_date))})<br></br>
-              Last Modified by: National Admin(17 Mar, 2022)
+              {t('course.view_course:basic_details_tab.last_modified')}: National Admin(17 Mar, 2022)
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -346,12 +346,12 @@ export default index
 
 const PendingApprovalDropDown = ({ courseId }: any) => {
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, ACTIVE)?.id
-
+  const {t} = useTranslation(["common", "course.view_course"])
   const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
     DECLINED
   )?.id;
-  const {t} = useTranslation(["common", "course.view_course"])
+  
   const options = [
     {
       label: t('course.view_course:basic_details_tab.approve_course'),
@@ -394,7 +394,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
     })
     setViewRejectedModal(true)
   }
-
+  
   return (
     <div>
       <Select
@@ -428,7 +428,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
               <Exclamation />
             </div>
             <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-              Are you sure you want to approve this course?
+              {t('course.view_course:basic_details_tab.are_you_sure_you_want_to_approve')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -515,7 +515,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
 
 const RejectedModalOpen = () => {
   const { viewRejectedModal, setViewRejectedModal } = newCourseStore();
-  const {t} = useTranslation(["common", "course.view_course"])
+  const {t} = useTranslation(["common", "course.view_course","new_strings"])
   return (
     <Dialog open={viewRejectedModal}>
       <DialogContent className="w-[414px] h-[279px]">
@@ -524,7 +524,7 @@ const RejectedModalOpen = () => {
             <Cross />{' '}
           </div>
           <DialogTitle className="font-bold text-center">
-            Course Rejected
+            {t('new_strings:course rejected')}
           </DialogTitle>
           <DialogDescription className="text-center">
             {t('course.view_course:basic_details_tab.the_course_got_rejected')}
@@ -590,7 +590,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
     courseData?.program_accounting_status_id,
     loginUserData?.userData?.user_roles[0]?.role_id?.id
   )
-
+  
   /**
    * handle the Edit Course
    * Retrieves default values for the course with the given ID,
@@ -872,7 +872,7 @@ const ShareButton = () => {
                 <CopyIcon />
                 {copiedRegistrationLink ? (
                   <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                    copied
+                    {t('new_strings:copied')}
                   </div>
                 ) : (
                   ''
@@ -893,7 +893,7 @@ const ShareButton = () => {
                 <CopyIcon />
                 {copiedDetailsPageLink ? (
                   <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                    copied
+                    {t('new_strings:copied')}
                   </div>
                 ) : (
                   ''
@@ -909,7 +909,7 @@ const ShareButton = () => {
 
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-
+  
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
     "common", "course.view_course"
   ]);
@@ -925,7 +925,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async context => {
       }
     }
   }
-
+  
   return {
     props: {
       ...translateProps,
@@ -941,6 +941,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async context => {
  */
 const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: number }) => {
   const accountingClosedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, CLOSED)?.id
+  
 
   const options = [
     {
@@ -968,7 +969,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
   const { setViewCourseAccountingSuccessModal, setViewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedModal, viewCourseAccountingRejectedModal } = newCourseStore();
 
   const { data: loginUserData }: any = useGetIdentity();
-
+  
 
   /**
    * Function to approve a course for accounting
@@ -998,10 +999,11 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
    * Set state to display a rejected modal
    * Close the reject modal
    */
+  const {t} = useTranslation(["common", "course.view_course"])
   const rejectCourse = async () => {
     setViewCourseAccountingRejectedDescriptionModal(true);
   };
-
+  
   return (
     <div>
       <Select
@@ -1042,7 +1044,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
               <Exclamation />
             </div>
             <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-              Are you sure you want to approve this Accounting Form
+               Are you sure you want to approve this Accounting Form
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -1083,7 +1085,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
               <Cross />
             </div>
             <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-              Are you sure you want to reject this Accounting Form
+            Are you sure you want to reject this Accounting Form
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -1122,9 +1124,11 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
 /**
  * Component to display a success modal when the accounting form for a course is approved
 */
+
 const ViewCourseAccountingSuccessModalOpen = () => {
   const { viewCourseAccountingSuccessModal, setViewCourseAccountingSuccessModal } = newCourseStore();
-
+  
+  
   return (
     <AlertDialog open={viewCourseAccountingSuccessModal}>
       <AlertDialogContent className="w-[414px] h-[301px]">
@@ -1133,10 +1137,10 @@ const ViewCourseAccountingSuccessModalOpen = () => {
             <Image src={Tick} alt="tick" />
           </div>
           <div className="font-semibold text-center mt-2">
-            Accounting Form Approved Successfully
+          Accounting Form Approved Successfully
           </div>
           <div className="text-center my-4">
-            Thank you for contribution in the course approval process.
+           Thank you for contribution in the course approval process.
           </div>
           <Button
             onClick={() => {
@@ -1158,6 +1162,7 @@ const ViewCourseAccountingSuccessModalOpen = () => {
  * Component to display a reject modal when the accounting form for a course is rejected
 */
 const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number }) => {
+  const {t} = useTranslation(["common", "course.view_course"])  
   const { viewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedDescriptionModal, setViewCourseAccountingRejectedModal } = newCourseStore();
 
   const [rejectionFeedback, setRejectionFeedback] = useState(false);
@@ -1175,8 +1180,10 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
  * Specifies the ID of the course to be rejected
  * Closes the modal for viewing the rejected accounting form
  */
+  
   const rejectCourse = async () => {
     // Make an asynchronous call to update the program resource
+    
     await supabaseClient
      .from('program')
      .update({ program_accounting_status_id:accountingRejectedStatusId})
@@ -1189,6 +1196,7 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
     // Close the modal for viewing the rejected accounting form
     setViewCourseAccountingRejectedDescriptionModal(false);
     setViewCourseAccountingRejectedModal(false);
+    
   };
 
 
@@ -1201,12 +1209,12 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
           </div>
           <AlertDialogTitle className="text-gray-500 text-sm font-normal pt-2">
             {" "}
-            Describe your rejection reason
-            <span className="text-blue-500">(optional)</span>
+            {t('course.view_course:basic_details_tab.describe_your_rejection_reason')}
+            <span className="text-blue-500">{t('course.view_course:basic_details_tab.(optional)')}</span>
           </AlertDialogTitle>
           <AlertDialogDescription>
             <Textarea
-              placeholder="Comment"
+              placeholder={t('course.view_course:basic_details_tab.comment')}
               className="border-[#E1E1E1]  h-[132px] w-[366px]"
               onChange={(e: any) => {
                 setRejectionFeedback(e.target.value);

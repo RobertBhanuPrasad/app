@@ -39,7 +39,9 @@
       "attendance_status": "Attendance Status",
       "fee_level_breakup": "Fee Level Breakup",
       "gender_breakdown": "Gender Breakdown",
-      "view_participant": "View Participant"
+      "view_participant":"View Participant"
+      
+      
     },
     "revenue_summary_tab": {
       "revenue_summary": "Revenue Summary",
@@ -87,7 +89,7 @@
       "announced_by": "Announced By",
       "course_venue": "Course Venue",
       "center": "Center",
-      "contact_details": "Contact Details",
+      "contact_details":"Contact Details",
       "course_revenue": "Course Revenue",
       "course_expenses": "Course Expenses",
       "net_revenue": "Net Revenue",

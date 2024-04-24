@@ -102,7 +102,7 @@ function CourseDetailsTab() {
    const {t} = useTranslation(["common", "course.view_course"])
 
   return (
-    <div className="flex flex-row gap-[41px] mt-[30px] bg-black">
+    <div className="flex flex-row gap-[41px] mt-[30px]">
       {/**
        * Basic details card
        */}
@@ -134,7 +134,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2> {t('teacher')}</Header2>
+              <Header2> {t('teachers')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_teachers?.map(
                   (item: fullNameObject) => {

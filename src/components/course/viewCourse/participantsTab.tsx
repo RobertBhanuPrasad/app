@@ -49,7 +49,7 @@ function ParticipantsTab() {
           {t('register_participant')}
           </Button>
           <Button className="w-[188px] h-[46px] rounded-[12px]">
-          {t('view_participant')}
+          {t('course.view_course:participants_tab.view_participant')}
           </Button>
         </div>
       </div>
@@ -106,7 +106,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p>Total Participants</p>
+            <p>{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">
               {participantData?.totalParticipantCount}
             </p>
@@ -152,7 +152,7 @@ const AttendancePieChart = ({ participantData }: any) => {
       };
     }
   );
-  const {t} = useTranslation(["common", "course.view_course"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
@@ -175,7 +175,7 @@ const AttendancePieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p>Total Participants</p>
+            <p>{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">
               {participantData?.totalParticipantCount}
             </p>
@@ -242,7 +242,7 @@ const GenderPieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p>Total Participants</p>
+            <p>{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">
               {participantData?.totalParticipantCount}
             </p>
