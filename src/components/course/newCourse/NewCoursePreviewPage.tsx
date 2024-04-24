@@ -196,6 +196,20 @@ export default function NewCourseReviewPage() {
   });
 
   const venueSessions = () => {
+    let schedules = newCourseData?.schedules;
+
+    // sort the schedules
+
+    schedules = schedules.sort((a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    });
+
     return (
       <div className=" min-w-72 ">
         <p className="text-sm font-normal text-accent-light text-[#999999]">

@@ -1,7 +1,13 @@
 import _ from "lodash";
+import { TIME_FORMAT } from "src/constants/OptionLabels";
+import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
-export const handleCourseDefaultValues = async (programId: number) => {
+export const handleCourseDefaultValues = async (
+  programId: number,
+  timeFormat12HoursId: number
+) => {
   const { data, error } = await supabaseClient
     .from("program")
     .select(
@@ -12,7 +18,7 @@ export const handleCourseDefaultValues = async (programId: number) => {
   console.log("data was", data);
 
   if (!error) {
-    const defaultValues = await getDefaultValues(data[0]);
+    const defaultValues = await getDefaultValues(data[0], timeFormat12HoursId);
 
     return defaultValues;
   }
@@ -20,11 +26,14 @@ export const handleCourseDefaultValues = async (programId: number) => {
   return {};
 };
 
-export const getDefaultValues = async (data: ProgramDataBaseType) => {
+export const getDefaultValues = async (
+  data: ProgramDataBaseType,
+  timeFormat12HoursId: number
+) => {
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
- 
+
   // Step 1
 
   //organization_id
@@ -176,25 +185,73 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
           ? new Date(schedule.end_time)
           : new Date();
 
-        const scheduleType: any = {
+        const modiediedSchedule: any = {
           date: schedule.start_time,
-          startHour: JSON.stringify(schedule.start_time.getHours()).padStart(
-            2,
-            "00"
-          ),
-          startMinute: schedule.start_time
-            ? JSON.stringify(schedule.start_time.getMinutes()).padStart(2, "0")
-            : "00",
-          endHour: JSON.stringify(schedule.end_time.getHours()).padStart(
-            2,
-            "00"
-          ),
-          endMinute: JSON.stringify(schedule.end_time.getMinutes()).padStart(
-            2,
-            "00"
-          ),
         };
-        return scheduleType;
+
+        const startHour = JSON.stringify(
+          schedule.start_time.getHours()
+        ).padStart(2, "0");
+
+        const endHour = JSON.stringify(schedule.end_time.getHours()).padStart(
+          2,
+          "0"
+        );
+
+        const startMinute = JSON.stringify(
+          schedule.start_time.getMinutes()
+        ).padStart(2, "0");
+
+        const endMinute = JSON.stringify(
+          schedule.end_time.getMinutes()
+        ).padStart(2, "0");
+
+        // if data contains 12 hour format id we need to store AM or PM with 12 hour standard
+        if (timeFormat12HoursId === data.hour_format_id) {
+          // now we need store in 12 hour format with AM or PM
+
+          if (startHour === "00") {
+            modiediedSchedule.startHour = "12";
+            modiediedSchedule.startTimeFormat = "AM";
+          } else if (startHour > "12") {
+            modiediedSchedule.startHour = JSON.stringify(
+              parseInt(startHour) - 12
+            ).padStart(2, "0");
+
+            modiediedSchedule.startTimeFormat = "PM";
+          } else {
+            modiediedSchedule.startHour = startHour;
+            modiediedSchedule.startTimeFormat = "AM";
+          }
+
+          // for endHour we need to
+
+          if (endHour === "00") {
+            modiediedSchedule.endHour = "12";
+            modiediedSchedule.endTimeFormat = "AM";
+          } else if (endHour > "12") {
+            modiediedSchedule.endHour = JSON.stringify(
+              parseInt(endHour) - 12
+            ).padStart(2, "0");
+
+            modiediedSchedule.endTimeFormat = "PM";
+          } else {
+            modiediedSchedule.endHour = endHour;
+            modiediedSchedule.endTimeFormat = "AM";
+          }
+
+          modiediedSchedule.startMinute = startMinute;
+          modiediedSchedule.endMinute = endMinute;
+        } else {
+          modiediedSchedule.startHour = startHour;
+
+          modiediedSchedule.startMinute = startMinute;
+
+          modiediedSchedule.endHour = endHour;
+
+          modiediedSchedule.endMinute = endMinute;
+        }
+        return modiediedSchedule;
       }
     );
   }
@@ -228,7 +285,6 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data?.bcc_registration_confirmation_email)
     defaultValues.bcc_registration_confirmation_email =
       data.bcc_registration_confirmation_email;
-
 
   return defaultValues;
 };
