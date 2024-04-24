@@ -71,7 +71,7 @@ export const ParticipantsListMainHeader = () => {
   });
 
   return (
-    <div className="flex justify-between px-8 h-auto py-1">
+    <div className="flex justify-between px-8 h-auto pb-4">
       {/* Course Details Section */}
       <div className="flex gap-2">
         <ChevronLeftIcon
