@@ -1081,6 +1081,9 @@ const MaximumCapacity = () => {
   } = useController({
     name: NewCourseStep2FormNames?.max_capacity,
   });
+
+  console.log("heyy error", error);
+
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
