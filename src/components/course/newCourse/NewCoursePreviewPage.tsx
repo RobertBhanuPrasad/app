@@ -600,6 +600,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton('Venue Details')
               }}
               onOpenChange={setOpenFeesDetails}
+              className="h-[365px] overflow-y-auto"
             />{' '}
           </div>
           {/* body */}

@@ -29,9 +29,10 @@ interface EditModalDialogProps {
   open: boolean
   openEdit: () => void
   onOpenChange: any
+  className?: string
 }
 
-export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpenChange }: EditModalDialogProps) => {
+export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpenChange, className }: EditModalDialogProps) => {
   const { newCourseData, setNewCourseData } = newCourseStore()
 
   /**
@@ -78,7 +79,7 @@ export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpe
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="w-auto">
+      <DialogContent className={`w-auto ${className}`}>
         <Form
           defaultValues={newCourseData}
           onSubmit={function (data: any): void {
