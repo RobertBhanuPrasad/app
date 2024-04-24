@@ -90,7 +90,7 @@ function NewCourseStep3() {
   if (isLoading) {
     return <LoadingIcon />;
   }
-  
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -326,7 +326,7 @@ const Sessions = () => {
               <div className="text-[#7677F4]">&nbsp;*</div>
             </div>
             <div className="h-10 flex items-center gap-6">
-              <Dialog open={open}>
+              <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button
                     onClick={() => setOpen(true)}
@@ -788,17 +788,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         {/* Course details */}
         <div className="border-l border-gray-300 h-full"></div>
         <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
-          <div className="flex flex-row justify-between text-[20px] font-semibold">
-            Course
-            {/* Close button */}
-            <div
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
-              <X className="h-6 w-6" />
-            </div>
-          </div>
           <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
             {/* Display course details */}
             {data?.data?.map((course: any) => (
