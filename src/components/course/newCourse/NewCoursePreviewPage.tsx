@@ -185,10 +185,12 @@ export default function NewCourseReviewPage() {
     meta: { select: "contact_id(full_name)" },
   });
 
-  const CourseTeachersNames = CourseTeachers?.data?.map((teacher_id) => {
-    if (teacher_id?.contact_id?.full_name)
-      return teacher_id?.contact_id?.full_name;
-  });
+  const CourseTeachersNames: any = CourseTeachers?.data
+    ?.map((teacher_id) => {
+      if (teacher_id?.contact_id?.full_name)
+        return teacher_id?.contact_id?.full_name;
+    })
+    .join(", ");
 
   const { data: courseType } = useOne({
     resource: "program_types",
@@ -336,6 +338,7 @@ export default function NewCourseReviewPage() {
                 setOpenBasicDetails(true);
                 setClickedButton("Basic Details");
               }}
+              onOpenChange={setOpenBasicDetails}
             />{" "}
           </div>
           {/* body */}
@@ -357,7 +360,7 @@ export default function NewCourseReviewPage() {
                 Organization
               </p>
               <abbr
-                className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
                 title={organizationName?.data?.name}
               >
                 {organizationName?.data?.name}
@@ -368,7 +371,7 @@ export default function NewCourseReviewPage() {
                 Program Organizer
               </p>
               <abbr
-                className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
                 title={programOrganizersNames}
               >
                 {programOrganizersNames ? programOrganizersNames : "-"}
@@ -402,7 +405,7 @@ export default function NewCourseReviewPage() {
                   Registration via 3rd party gateway url
                 </p>
                 <abbr
-                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.registration_via_3rd_party_url}
                 >
                   {newCourseData?.registration_via_3rd_party_url}
@@ -428,6 +431,7 @@ export default function NewCourseReviewPage() {
                 setOpenCourseDetails(true);
                 setClickedButton("Course Details");
               }}
+              onOpenChange={setOpenCourseDetails}
             />{" "}
           </div>
           {/* body */}
@@ -437,7 +441,7 @@ export default function NewCourseReviewPage() {
                 Course Type
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={courseType?.data?.name}
               >
                 {courseType?.data?.name ? courseType?.data?.name : "-"}
@@ -447,7 +451,10 @@ export default function NewCourseReviewPage() {
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Teacher
               </p>
-              <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
+              <abbr
+                title={CourseTeachersNames ? CourseTeachersNames : "-"}
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+              >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
             </div>
@@ -456,7 +463,7 @@ export default function NewCourseReviewPage() {
                 Language(s) course is taught in
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={courselLanguageName}
               >
                 {courselLanguageName ? courselLanguageName : "-"}
@@ -467,7 +474,7 @@ export default function NewCourseReviewPage() {
                 Available language(s) for translation
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={languagesTranslations}
               >
                 {languagesTranslations ? languagesTranslations : "-"}
@@ -502,7 +509,7 @@ export default function NewCourseReviewPage() {
                 Country(s) from where registrations are allowed
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={allowedCountries}
               >
                 {allowedCountries ? allowedCountries : "-"}
@@ -585,6 +592,7 @@ export default function NewCourseReviewPage() {
                 setOpenVenueDetails(true);
                 setClickedButton("Venue Details");
               }}
+              onOpenChange={setOpenVenueDetails}
             />{" "}
           </div>
           {/* body */}
@@ -596,7 +604,7 @@ export default function NewCourseReviewPage() {
                   Online zoom URL
                 </p>
                 <abbr
-                  className="text-sm font-normal text-accent-light text-[#999999]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.online_url}
                 >
                   {newCourseData?.online_url}
@@ -606,25 +614,34 @@ export default function NewCourseReviewPage() {
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Province
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={StateNames ? StateNames : "-"}
+                >
                   {StateNames ? StateNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   City
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={CityNames ? CityNames : "-"}
+                >
                   {CityNames ? CityNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Center
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={CenterNames ? CenterNames : "-"}
+                >
                   {CenterNames ? CenterNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -668,6 +685,7 @@ export default function NewCourseReviewPage() {
                 setOpenFeesDetails(true);
                 setClickedButton("Venue Details");
               }}
+              onOpenChange={setOpenFeesDetails}
             />{" "}
           </div>
           {/* body */}
@@ -759,6 +777,7 @@ export default function NewCourseReviewPage() {
                 setOpenAccomidationDetails(true);
                 setClickedButton("Accomidation Details");
               }}
+              onOpenChange={setOpenAccomidationDetails}
             />{" "}
           </div>
           {newCourseData?.is_residential_program && (
@@ -779,7 +798,7 @@ export default function NewCourseReviewPage() {
                   Accommodation fee payment mode
                 </p>
                 <abbr
-                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={paymentMethod?.value}
                 >
                   {paymentMethod?.value}
@@ -805,6 +824,7 @@ export default function NewCourseReviewPage() {
                 setOpenContactDetails(true);
                 setClickedButton("Contact Details");
               }}
+              onOpenChange={setOpenContactDetails}
             />{" "}
           </div>
           {/* body */}
@@ -816,7 +836,7 @@ export default function NewCourseReviewPage() {
                     Contact Email
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_email}
                   >
                     {data?.contact_email}
@@ -827,7 +847,7 @@ export default function NewCourseReviewPage() {
                     Contact Phone
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_number}
                   >
                     {data?.contact_number}
@@ -838,7 +858,7 @@ export default function NewCourseReviewPage() {
                     Contact Name
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_name}
                   >
                     {data?.contact_name}
@@ -854,7 +874,7 @@ export default function NewCourseReviewPage() {
             </p>
             <div className="truncate">
               <abbr
-                className="font-semibold  no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.bcc_registration_confirmation_email}
               >
                 {newCourseData?.bcc_registration_confirmation_email

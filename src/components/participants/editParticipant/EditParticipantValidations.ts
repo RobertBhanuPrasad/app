@@ -2,7 +2,10 @@ import { z } from 'zod'
 export const editParticipantSchema=()=>{
     return z.object({
         memo:z.string({
-            required_error:"Memo is mandatory"
+            required_error:"Memo is required field"
+        })
+        .refine((value)=>!(value==""),{
+message:"Memo is required field"
         }),
         accommodation_type_id:z.number({
             required_error:"Select Accommodation Type"

@@ -76,6 +76,7 @@ import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { SelectItems } from "src/ui/select";
 import LoadingIcon from "@public/assets/LoadingIcon";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -446,7 +447,7 @@ const ScheduleComponent = ({
         <div className="text-[#7677F4]">&nbsp;*</div>
       </div>
       <div className="h-10 flex items-center gap-6">
-        <Dialog open={open}>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
               onClick={() => setOpen(true)}
@@ -644,7 +645,7 @@ const Venue = () => {
                         View All
                       </Badge>
                     </DialogTrigger>
-                    <DialogContent className="w-[858px] h-[585px] rounded-[24px] ">
+                    <DialogContent className="!w-[858px] h-[585px] !rounded-[24px] !py-[24px] !pl-[24px] !pr-[8px]">
                       <ExistingVenueList />
                     </DialogContent>
                   </Dialog>
@@ -936,17 +937,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         {/* Course details */}
         <div className="border-l border-gray-300 h-full"></div>
         <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
-          <div className="flex flex-row justify-between text-[20px] font-semibold">
-            Course
-            {/* Close button */}
-            <div
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
-              <X className="h-6 w-6" />
-            </div>
-          </div>
           <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
             {/* Display course details */}
             {data?.data?.map((course: any) => (
@@ -1161,71 +1151,73 @@ const ExistingVenueList = () => {
           }}
         >
           <div
-            className=" mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 "
+            className=" h-[330px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-x-[30px] gap-y-[24px] "
             id={"options"}
           >
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
             {filteredVenueData?.map((item: any, index: number) => {
               return (
-                <div className="flex  flex-row !w-[390px] h-[102px] rounded-4 items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <Checkbox
-                    id={item.id}
-                    value={item.id}
-                    onCheckedChange={() => handleCheckboxChange(item)}
-                    checked={
-                      formData[NewCourseStep3FormNames.venue_id] == item.id
-                        ? true
-                        : false
-                    }
-                  />
-                  <div className="space-y-1 leading-none w-full">
-                    <div className="flex justify-between">
-                      <div className="font-semibold">{item.name}</div>
-                      <div className="flex flex-row gap-3">
-                        {item?.created_by_user_id ==
-                          loginUserData?.userData?.id ||
-                          (isUserNationAdminOrSuperAdmin && (
+                <ScrollArea rounded-md whitespace-nowrap>
+                  <div className="flex  flex-row !w-[390px] h-[102px] rounded-[16px] items-start space-x-3 space-y-0 border p-4">
+                    <Checkbox
+                      id={item.id}
+                      value={item.id}
+                      onCheckedChange={() => handleCheckboxChange(item)}
+                      checked={
+                        formData[NewCourseStep3FormNames.venue_id] == item.id
+                          ? true
+                          : false
+                      }
+                    />
+                    <div className="space-y-1 leading-none w-full">
+                      <div className="flex justify-between">
+                        <div className="font-semibold">{item.name}</div>
+                        <div className="flex flex-row gap-3">
+                          {item?.created_by_user_id ==
+                            loginUserData?.userData?.id ||
+                            (isUserNationAdminOrSuperAdmin && (
+                              <Dialog>
+                                <DialogTrigger
+                                  onClick={() => {
+                                    handleOpenExistingVenue(item);
+                                  }}
+                                >
+                                  <EditIcon />
+                                </DialogTrigger>
+                                <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                                  <AddOrEditVenue
+                                    handleSubmit={() => {
+                                      handleSubmitExistingVenue(index);
+                                    }}
+                                  />
+                                </DialogContent>
+                              </Dialog>
+                            ))}
+                          {isUserNationAdminOrSuperAdmin && (
+                            // isUserNationAdminOrSuperAdmin
                             <Dialog>
-                              <DialogTrigger
-                                onClick={() => {
-                                  handleOpenExistingVenue(item);
-                                }}
-                              >
-                                <EditIcon />
+                              <DialogTrigger>
+                                <Delete />
                               </DialogTrigger>
-                              <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-                                <AddOrEditVenue
-                                  handleSubmit={() => {
-                                    handleSubmitExistingVenue(index);
+                              <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+                                <DeleteVenueComponent
+                                  handleDeleteVenue={() => {
+                                    deleteVenue(item?.id);
                                   }}
                                 />
                               </DialogContent>
                             </Dialog>
-                          ))}
-                        {isUserNationAdminOrSuperAdmin && (
-                          // isUserNationAdminOrSuperAdmin
-                          <Dialog>
-                            <DialogTrigger>
-                              <Delete />
-                            </DialogTrigger>
-                            <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                              <DeleteVenueComponent
-                                handleDeleteVenue={() => {
-                                  deleteVenue(item?.id);
-                                }}
-                              />
-                            </DialogContent>
-                          </Dialog>
-                        )}
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="leading-tight">
+                        {item.name}, {item.address}, {item.city_name},{" "}
+                        {item.state_name}, {item.postal_code}
                       </div>
                     </div>
-
-                    <div className="leading-tight">
-                      {item.name}, {item.address}, {item.city_name},{" "}
-                      {item.state_name}, {item.postal_code}
-                    </div>
                   </div>
-                </div>
+                </ScrollArea>
               );
             })}
             {/* </div> */}
