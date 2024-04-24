@@ -84,7 +84,7 @@ export default function NewCourseReviewPage() {
     id: centerId
   })
 
-  const CenterNames = venueCenter?.data?.name;
+  const CenterNames = venueCenter?.data?.name
 
   const VenueName = newCourseData?.is_existing_venue == "existing-venue" ? newCourseData?.existingVenue?.name : newCourseData?.newVenue?.name;
   const VenueAddress = newCourseData?.is_existing_venue == "existing-venue" ? newCourseData?.existingVenue?.address : newCourseData?.newVenue?.address;
