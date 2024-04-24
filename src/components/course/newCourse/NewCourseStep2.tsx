@@ -4,7 +4,7 @@ import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
+import { useController, useFormContext, useFormState } from "react-hook-form";
 import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
@@ -1035,6 +1035,10 @@ const AllowedCountriesDropDown = () => {
 
 const MaximumCapacity = () => {
   const { watch } = useFormContext();
+
+  const { errors } = useFormState();
+
+  console.log('heyy form errors', errors)
 
   const formData = watch();
 
