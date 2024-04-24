@@ -1,21 +1,21 @@
 import ScrollableTabs from "@components/participant/viewParticipant/ScrollableTabs";
 import ViewParticipantTransactionDetails from "@components/participant/viewParticipant/ViewParticipantTransactionDetails";
 import ViewParticipantUtmParameters from "@components/participant/viewParticipant/ViewParticipantUtmParameters";
-import Exclamation from "@public/assets/Exclamation";
+import CrossIcon from "@public/assets/CrossIcon";
 import { useList, useUpdate } from "@refinedev/core";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { EditParticipantFormNames } from "src/constants/CourseConstants";
-import { Button } from "src/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-} from "src/ui/dialog";
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+} from "src/ui/alert-dialog";
+import { Button } from "src/ui/button";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import AccomodationDetails from "./AccomodationDetails";
 import CourseFee from "./CourseFee";
@@ -24,7 +24,10 @@ import PaymentDetails from "./PaymentDetails";
 
 export default function EditParticipantTabs() {
     const { watch } = useFormContext();
-    const formData = watch();
+    const router = useRouter();
+    let formData = watch();
+    const [initialValue, setinitialValue] = useState(formData);
+
     const { query } = useRouter();
     const [cancelEditParticipant, setcancelEditParticipant] = useState(false);
 
@@ -65,27 +68,30 @@ export default function EditParticipantTabs() {
                 )
             );
         }
-        mutate({
-            resource: "participant_registration",
-            values: {
-                memo: formData?.memo,
-                roommate_snore: formData?.roommate_snore,
-                accommodation_snore: formData?.accommodation_snore,
-                participant_code: formData?.participant_code,
-                participant_attendence_status_id:
-                    formData?.participant_attendence_status_id,
-            },
-            // TODO: integrate with participant_registration id
-            id: Number(query?.participantId),
-        });
-        mutate({
-            resource: "participant_payment_history",
-            values: {
-                accommodation_type_id: formData?.accommodationType,
-            },
-            // TODO: integrate with participant_payment_history id
-            id: Number(Id),
-        });
+        isAllFieldsFilled &&
+            mutate({
+                resource: "participant_registration",
+                values: {
+                    memo: formData?.memo,
+                    roommate_snore: formData?.roommate_snore,
+                    accommodation_snore: formData?.accommodation_snore,
+                    participant_code: formData?.participant_code,
+                    participant_attendence_status_id:
+                        formData?.participant_attendence_status_id,
+                },
+                // TODO: integrate with participant_registration id
+                id: Number(query?.participantId),
+            });
+        isAllFieldsFilled &&
+            mutate({
+                resource: "participant_payment_history",
+                values: {
+                    accommodation_type_id: formData?.accommodationType,
+                },
+                // TODO: integrate with participant_payment_history id
+                id: Number(Id),
+            });
+            router.back()
     };
 
     // TODO: need to integrated with efficient tabs component
@@ -150,8 +156,17 @@ export default function EditParticipantTabs() {
     if (!accommodationData) {
         tabs = tabs.filter((tab) => tab.label !== "Accommodation Details");
     }
+    const cancelConfirmation = () => {
+        if (!_.isEqual(initialValue, formData)) {
+            setcancelEditParticipant(true);
+        }
+        else{
+            router.back();
+        }
+    };
     const cancelEditParticipantHandler = () => {
-        // TODO: need add the action here
+        setcancelEditParticipant(false);
+        router.back();
     };
     return (
         <div onClick={(e) => e.preventDefault()}>
@@ -160,7 +175,7 @@ export default function EditParticipantTabs() {
                 <div>
                     <Button
                         onClick={() => {
-                            setcancelEditParticipant(true);
+                            cancelConfirmation();
                         }}
                         className="border border-[#7677F4] bg-[white] w-[101px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]"
                     >
@@ -177,24 +192,30 @@ export default function EditParticipantTabs() {
                         Save
                     </Button>
                 </div>
-                <Dialog
+                <AlertDialog
                     open={cancelEditParticipant}
                     onOpenChange={setcancelEditParticipant}
                 >
-                    <DialogContent className="flex flex-col h-[200px] w-[425px]">
-                        <DialogHeader>
-                            <DialogDescription className="font-bold text-black text-lg items-center text-center ">
+                    <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
+                        <AlertDialogHeader>
+                            <div
+                                className="flex justify-end cursor-pointer"
+                                onClick={() => setcancelEditParticipant(false)}
+                            >
+                                <CrossIcon />
+                            </div>
+                            <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
                                 Changes made will be lost. Are you sure you want
                                 to continue?
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
                             <div className="w-full flex justify-center items-center gap-5">
                                 <div>
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        className=" w-[71px] h-[46px] rounded-[12px]"
+                                        className="rounded-[12px] w-[71px] h-[46px]"
                                         onClick={() => {
                                             setcancelEditParticipant(false);
                                         }}
@@ -205,7 +226,7 @@ export default function EditParticipantTabs() {
                                 <div>
                                     <Button
                                         type="button"
-                                        className=" text-white px-4 py-2 w-[71px] h-[46px] rounded-[12px]"
+                                        className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
                                         onClick={() => {
                                             cancelEditParticipantHandler();
                                         }}
@@ -214,9 +235,9 @@ export default function EditParticipantTabs() {
                                     </Button>
                                 </div>
                             </div>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </div>
     );

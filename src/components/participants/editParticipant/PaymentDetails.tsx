@@ -59,7 +59,7 @@ export default function PaymentDetails() {
     const paymentData = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(participant_code,program_id(id,program_type_id!inner(is_online_program)))",
+            select: "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)))",
         },
         filters: [
             {
@@ -146,7 +146,9 @@ export default function PaymentDetails() {
                                 value={participant_code}
                                 className="w-[268px] !h-[40px] resize-none font-semibold"
                                 onChange={(val) =>
-                                    specialCodeChange(val?.target?.value)
+                                    val?.target?.value == ""
+                                        ? specialCodeChange(undefined)
+                                        : specialCodeChange(val?.target?.value)
                                 }
                             />
                         </div>

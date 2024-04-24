@@ -56,9 +56,6 @@ export default function ParticipantInformation() {
                             <Input
                                 value={memo}
                                 onChange={(val) => {
-                                    val?.target.value === ""
-                                        ? participantMemoChange(undefined)
-                                        : 
                                         participantMemoChange(
                                               val?.target?.value
                                           );

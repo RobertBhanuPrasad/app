@@ -50,6 +50,9 @@ export default function AccomodationDetails() {
         meta: {
             select: "accommodation_type_id!inner(id,name)",
         },
+        pagination: {
+            mode: "off",
+        },
     });
     const { data } = useList({
         resource: "participant_payment_history",
