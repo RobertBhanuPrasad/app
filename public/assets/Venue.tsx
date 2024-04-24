@@ -1,6 +1,6 @@
 import React from "react";
 
-function Venue({color}:any) {
+function Venue({ color }: any) {
   return (
     <div>
       <svg

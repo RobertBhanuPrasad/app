@@ -9,7 +9,7 @@ interface FormProps {
   defaultValues: Record<string, any>;
   schema?: ZodSchema<any, any, any>;
   mode?: "all" | "onBlur" | "onChange" | "onSubmit" | "onTouched" | undefined;
-  useFormMethodsRef?: React.MutableRefObject<any>; 
+  useFormMethodsRef?: React.MutableRefObject<any>;
 }
 
 const Form: React.FC<FormProps> = ({
@@ -26,7 +26,6 @@ const Form: React.FC<FormProps> = ({
     mode: mode,
     defaultValues,
   });
-
 
   if (useFormMethodsRef) useFormMethodsRef.current = methods;
 

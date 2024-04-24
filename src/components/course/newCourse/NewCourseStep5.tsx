@@ -148,7 +148,7 @@ export const ResidentialCourse = () => {
             value="true"
             selectedRadioValue={JSON.stringify(value)}
             label="Yes"
-            className="w-[112px] h-[40px] rounded-[12px]"            
+            className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
@@ -165,7 +165,7 @@ export const ResidentialCourse = () => {
 export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
-    fieldState:{error}
+    fieldState: { error },
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
@@ -207,11 +207,8 @@ export const AccommodationFeeMode = () => {
         </div>
       </RadioGroup>
       {error && (
-  <span className="text-[#FF6D6D] text-[14px]">
-    {error?.message}
-  </span>
-)}
-
+        <span className="text-[#FF6D6D] text-[14px]">{error?.message}</span>
+      )}
     </div>
   );
 };

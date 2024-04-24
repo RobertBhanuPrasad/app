@@ -1,20 +1,20 @@
-import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { useOne } from '@refinedev/core'
-import { ColumnDef } from '@tanstack/react-table'
-import React from 'react'
-import { TableHeader, Text } from 'src/ui/TextTags'
+import { BaseTable } from "@components/course/findCourse/BaseTable";
+import { useOne } from "@refinedev/core";
+import { ColumnDef } from "@tanstack/react-table";
+import React from "react";
+import { TableHeader, Text } from "src/ui/TextTags";
 // Component for viewing participant UTM parameters
 function ViewParticipantUtmParameters({ participantId }: any) {
   const query: any = {
-    resource: 'participant_registration',
+    resource: "participant_registration",
     id: participantId,
     meta: {
-      select: 'utm_parameters_section' // Selecting specific fields
-    }
-  }
+      select: "utm_parameters_section", // Selecting specific fields
+    },
+  };
 
   // Fetching participant registration data
-  const { data: utmParametersData, isLoading, isError } = useOne(query)
+  const { data: utmParametersData, isLoading, isError } = useOne(query);
 
   return (
     <div>
@@ -25,8 +25,8 @@ function ViewParticipantUtmParameters({ participantId }: any) {
           total={utmParametersData?.data?.utm_parameters_section?.length || 0}
           pagination={false}
           tableStyles={{
-            table: '',
-            rowStyles: ''
+            table: "",
+            rowStyles: "",
           }}
           columns={columns as ColumnDef<any>[]}
           data={utmParametersData?.data?.utm_parameters_section || []}
@@ -34,73 +34,75 @@ function ViewParticipantUtmParameters({ participantId }: any) {
         />
       </div>
     </div>
-  )
+  );
 }
 
-export default ViewParticipantUtmParameters
+export default ViewParticipantUtmParameters;
 
 const columns: ColumnDef<ParticipantUtmParametersDataBaseType>[] = [
   {
-    accessorKey: 'program_type_id',
+    accessorKey: "program_type_id",
     header: () => {
-      return <TableHeader>ID</TableHeader>
+      return <TableHeader>ID</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.program_type_id}</Text>
-    }
+      return (
+        <Text className="lowercase">{row?.original?.program_type_id}</Text>
+      );
+    },
   },
   {
-    accessorKey: 'source',
+    accessorKey: "source",
     header: () => {
-      return <TableHeader>Source</TableHeader>
+      return <TableHeader>Source</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text>{row?.original?.source}</Text>
-    }
+      return <Text>{row?.original?.source}</Text>;
+    },
   },
   {
-    accessorKey: 'medium',
+    accessorKey: "medium",
     header: () => {
-      return <TableHeader>Medium</TableHeader>
+      return <TableHeader>Medium</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.medium}</Text>
-    }
+      return <Text className="lowercase">{row?.original?.medium}</Text>;
+    },
   },
   {
-    accessorKey: 'campaign',
+    accessorKey: "campaign",
     header: () => {
-      return <TableHeader>Campaign</TableHeader>
+      return <TableHeader>Campaign</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.campaign}</Text>
-    }
+      return <Text className="lowercase">{row?.original?.campaign}</Text>;
+    },
   },
   {
-    accessorKey: 'term',
+    accessorKey: "term",
     header: () => {
-      return <TableHeader>Term</TableHeader>
+      return <TableHeader>Term</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.term}</Text>
-    }
+      return <Text className="lowercase">{row?.original?.term}</Text>;
+    },
   },
   {
-    accessorKey: 'content',
+    accessorKey: "content",
     header: () => {
-      return <TableHeader>Content</TableHeader>
+      return <TableHeader>Content</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.content}</Text>
-    }
+      return <Text className="lowercase">{row?.original?.content}</Text>;
+    },
   },
   {
-    accessorKey: 'http_refer',
+    accessorKey: "http_refer",
     header: () => {
-      return <TableHeader>HTTP Refer</TableHeader>
+      return <TableHeader>HTTP Refer</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.http_refer}</Text>
-    }
-  }
-]
+      return <Text className="lowercase">{row?.original?.http_refer}</Text>;
+    },
+  },
+];

@@ -1,6 +1,6 @@
 import React from "react";
 
-function Info({color}:any) {
+function Info({ color }: any) {
   return (
     <div>
       <svg

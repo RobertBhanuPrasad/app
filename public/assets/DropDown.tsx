@@ -1,6 +1,6 @@
 import React from "react";
 
-function DropDown({fill="#333333"}) {
+function DropDown({ fill = "#333333" }) {
   return (
     <svg
       width="12"

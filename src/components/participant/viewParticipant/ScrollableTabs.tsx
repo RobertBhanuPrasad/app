@@ -76,9 +76,9 @@ function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
             </div>
           ))}
         </div>
-        </div>
-        </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default ScrollableTabs;

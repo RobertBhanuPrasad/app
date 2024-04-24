@@ -91,7 +91,9 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     accessorKey: "payment_transaction_id",
     enableHiding: false,
     header: () => {
-        return <TableHeader className="  min-w-[100px]">Transaction ID</TableHeader>; 
+      return (
+        <TableHeader className="  min-w-[100px]">Transaction ID</TableHeader>
+      );
     },
     // This any will be removed after internal dataStructure implementation
     cell: ({ row }) => {
@@ -252,16 +254,16 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
   },
   {
-    accessorKey: 'source',
+    accessorKey: "source",
     header: () => {
-      return <TableHeader className="min-w-[120px]">Source</TableHeader>
+      return <TableHeader className="min-w-[120px]">Source</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.source_text}</Text>
-    }
+      return <Text className="lowercase">{row?.original?.source_text}</Text>;
+    },
   },
   {
-    accessorKey: 'transaction_fee_level_id',
+    accessorKey: "transaction_fee_level_id",
     header: () => {
       return <TableHeader className="min-w-[120px]">Fee level</TableHeader>;
     },
@@ -311,22 +313,22 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       const { query } = useRouter();
       const [defaultValues, setDefaultValues] = useState({});
       const Id: number | undefined = query?.participantId
-          ? parseInt(query.participantId as string)
-          : undefined;
-  
+        ? parseInt(query.participantId as string)
+        : undefined;
+
       useEffect(() => {
         async function fetchData() {
           try {
-              const values = await handleEditParticipantValues(Number(Id));
-              setDefaultValues(values);
+            const values = await handleEditParticipantValues(Number(Id));
+            setDefaultValues(values);
           } catch (error) {
-              console.error("An error occurred:", error);
+            console.error("An error occurred:", error);
           }
-      }
+        }
 
-      if (Id) {
+        if (Id) {
           fetchData();
-      }
+        }
       }, [Id]);
       return (
         <div className="flex justify-center text-primary">
@@ -353,8 +355,8 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                         </div>
                       </DialogTrigger>
                       <DialogContent>
-                        <Form  onSubmit={() => { } }  defaultValues={defaultValues}>
-                        <EditPayment setEditPayment={setEditPayment} />
+                        <Form onSubmit={() => {}} defaultValues={defaultValues}>
+                          <EditPayment setEditPayment={setEditPayment} />
                         </Form>
                       </DialogContent>
                     </Dialog>
@@ -399,4 +401,3 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
   },
 ];
-

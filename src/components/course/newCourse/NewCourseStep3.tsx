@@ -1006,65 +1006,65 @@ const ExistingVenueList = () => {
             {filteredVenueData?.map((item: any, index: number) => {
               return (
                 <ScrollArea rounded-md whitespace-nowrap>
-                <div className="flex  flex-row !w-[390px] h-[102px] rounded-[16px] items-start space-x-3 space-y-0 border p-4">
-                  <Checkbox
-                    id={item.id}
-                    value={item.id}
-                    onCheckedChange={() => handleCheckboxChange(item)}
-                    checked={
-                      formData[NewCourseStep3FormNames.venue_id] == item.id
-                        ? true
-                        : false
-                    }
-                  />
-                  <div className="space-y-1 leading-none w-full">
-                    <div className="flex justify-between">
-                      <div className="font-semibold">{item.name}</div>
-                      <div className="flex flex-row gap-3">
-                        {item?.created_by_user_id ==
-                          loginUserData?.userData?.id ||
-                          (isUserNationAdminOrSuperAdmin && (
+                  <div className="flex  flex-row !w-[390px] h-[102px] rounded-[16px] items-start space-x-3 space-y-0 border p-4">
+                    <Checkbox
+                      id={item.id}
+                      value={item.id}
+                      onCheckedChange={() => handleCheckboxChange(item)}
+                      checked={
+                        formData[NewCourseStep3FormNames.venue_id] == item.id
+                          ? true
+                          : false
+                      }
+                    />
+                    <div className="space-y-1 leading-none w-full">
+                      <div className="flex justify-between">
+                        <div className="font-semibold">{item.name}</div>
+                        <div className="flex flex-row gap-3">
+                          {item?.created_by_user_id ==
+                            loginUserData?.userData?.id ||
+                            (isUserNationAdminOrSuperAdmin && (
+                              <Dialog>
+                                <DialogTrigger
+                                  onClick={() => {
+                                    handleOpenExistingVenue(item);
+                                  }}
+                                >
+                                  <EditIcon />
+                                </DialogTrigger>
+                                <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                                  <AddOrEditVenue
+                                    handleSubmit={() => {
+                                      handleSubmitExistingVenue(index);
+                                    }}
+                                  />
+                                </DialogContent>
+                              </Dialog>
+                            ))}
+                          {isUserNationAdminOrSuperAdmin && (
+                            // isUserNationAdminOrSuperAdmin
                             <Dialog>
-                              <DialogTrigger
-                                onClick={() => {
-                                  handleOpenExistingVenue(item);
-                                }}
-                              >
-                                <EditIcon />
+                              <DialogTrigger>
+                                <Delete />
                               </DialogTrigger>
-                              <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-                                <AddOrEditVenue
-                                  handleSubmit={() => {
-                                    handleSubmitExistingVenue(index);
+                              <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+                                <DeleteVenueComponent
+                                  handleDeleteVenue={() => {
+                                    deleteVenue(item?.id);
                                   }}
                                 />
                               </DialogContent>
                             </Dialog>
-                          ))}
-                        {isUserNationAdminOrSuperAdmin && (
-                          // isUserNationAdminOrSuperAdmin
-                          <Dialog>
-                            <DialogTrigger>
-                              <Delete />
-                            </DialogTrigger>
-                            <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                              <DeleteVenueComponent
-                                handleDeleteVenue={() => {
-                                  deleteVenue(item?.id);
-                                }}
-                              />
-                            </DialogContent>
-                          </Dialog>
-                        )}
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="leading-tight">
+                        {item.name}, {item.address}, {item.city_name},{" "}
+                        {item.state_name}, {item.postal_code}
                       </div>
                     </div>
-
-                    <div className="leading-tight">
-                      {item.name}, {item.address}, {item.city_name},{" "}
-                      {item.state_name}, {item.postal_code}
-                    </div>
                   </div>
-                </div>
                 </ScrollArea>
               );
             })}

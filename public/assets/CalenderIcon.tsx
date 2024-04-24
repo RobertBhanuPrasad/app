@@ -1,6 +1,6 @@
 import React from "react";
 
-function CalenderIcon({color}:any) {
+function CalenderIcon({ color }: any) {
   return (
     <div>
       <svg
@@ -25,4 +25,4 @@ function CalenderIcon({color}:any) {
   );
 }
 
-export default CalenderIcon
+export default CalenderIcon;

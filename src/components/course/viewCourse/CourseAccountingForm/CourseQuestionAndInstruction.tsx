@@ -1,60 +1,75 @@
-import QuestionInstruction from '@public/assets/QuestionInstructionIcon'
-import { useList, useOne } from '@refinedev/core'
-import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { MainHeader } from 'src/ui/TextTags'
-import { Button } from 'src/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogTrigger } from 'src/ui/dialog'
+import QuestionInstruction from "@public/assets/QuestionInstructionIcon";
+import { useList, useOne } from "@refinedev/core";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { MainHeader } from "src/ui/TextTags";
+import { Button } from "src/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "src/ui/dialog";
 
 export const QuestionInstructionData = () => {
+  const router = useRouter();
 
-  const router = useRouter()
-
-  const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
+  const Id: number | undefined = router?.query?.id
+    ? parseInt(router.query.id as string)
+    : undefined;
 
   const { data: courseData } = useOne({
-    resource: 'program',
+    resource: "program",
     id: Id,
     meta: {
-      select: 'organization_id'
-    }
-  })
+      select: "organization_id",
+    },
+  });
   const { data: questionInstructionData } = useList({
-    resource: 'course_accounting_config',
+    resource: "course_accounting_config",
     config: {
       filters: [
         {
-          field: 'organization_id',
-          operator: 'eq',
-          value: courseData?.data?.organization_id
-        }
-      ]
+          field: "organization_id",
+          operator: "eq",
+          value: courseData?.data?.organization_id,
+        },
+      ],
     },
     meta: {
-      select: 'caf_instructions_text'
-    }
-  })
-  
+      select: "caf_instructions_text",
+    },
+  });
 
   return (
     <div>
-      <MainHeader className="text-[24px] border-b" children="Questions & Instruction" />
+      <MainHeader
+        className="text-[24px] border-b"
+        children="Questions & Instruction"
+      />
       <div className="pt-5">
-        <div dangerouslySetInnerHTML={{ __html: questionInstructionData?.data?.[0]?.caf_instructions_text }} />
+        <div
+          dangerouslySetInnerHTML={{
+            __html: questionInstructionData?.data?.[0]?.caf_instructions_text,
+          }}
+        />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const QuestionInstructionModal = () => {
-  const [openQuestionDetails, setOpenQuestionDetails] = useState(false)
+  const [openQuestionDetails, setOpenQuestionDetails] = useState(false);
 
   return (
     <div className="pt-1 pr-2">
       <Dialog open={openQuestionDetails}>
         <DialogTrigger asChild>
           <div>
-            <div onClick={() => setOpenQuestionDetails(true)} className="cursor-pointer flex flex-row">
+            <div
+              onClick={() => setOpenQuestionDetails(true)}
+              className="cursor-pointer flex flex-row"
+            >
               <div className="pt-1 pr-2">
                 <QuestionInstruction />
               </div>
@@ -75,5 +90,5 @@ export const QuestionInstructionModal = () => {
         </DialogContent>
       </Dialog>
     </div>
-  )
-}
+  );
+};

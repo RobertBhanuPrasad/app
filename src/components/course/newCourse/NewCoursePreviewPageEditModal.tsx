@@ -1,10 +1,10 @@
-import Form from '@components/Formfield'
-import EditIcon from '@public/assets/EditIcon'
-import { Dialog } from '@radix-ui/react-dialog'
-import { useFormContext } from 'react-hook-form'
-import { Button } from 'src/ui/button'
-import { DialogContent, DialogFooter, DialogTrigger } from 'src/ui/dialog'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+import Form from "@components/Formfield";
+import EditIcon from "@public/assets/EditIcon";
+import { Dialog } from "@radix-ui/react-dialog";
+import { useFormContext } from "react-hook-form";
+import { Button } from "src/ui/button";
+import { DialogContent, DialogFooter, DialogTrigger } from "src/ui/dialog";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 /**
  * EditModalDialog Component
@@ -23,16 +23,23 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
  */
 
 interface EditModalDialogProps {
-  title: string
-  content: any
-  onClose: () => void
-  open: boolean
-  openEdit: () => void
-  onOpenChange: any
+  title: string;
+  content: any;
+  onClose: () => void;
+  open: boolean;
+  openEdit: () => void;
+  onOpenChange: any;
 }
 
-export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpenChange }: EditModalDialogProps) => {
-  const { newCourseData, setNewCourseData } = newCourseStore()
+export const EditModalDialog = ({
+  title,
+  content,
+  onClose,
+  open,
+  openEdit,
+  onOpenChange,
+}: EditModalDialogProps) => {
+  const { newCourseData, setNewCourseData } = newCourseStore();
 
   /**
    * ButtonsDialog Component

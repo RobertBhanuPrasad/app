@@ -4,7 +4,6 @@ import nookies from "nookies";
 import { supabaseClient } from "./utility";
 
 export const authProvider: AuthBindings = {
-
   login: async ({ email, password }) => {
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,

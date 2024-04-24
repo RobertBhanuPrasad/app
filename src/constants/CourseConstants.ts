@@ -53,8 +53,8 @@ export const NewCourseStep3FormNames = {
   center_id: "center_id",
   venue_id: "venue_id",
   is_existing_venue: "is_existing_venue",
-  existingVenue:"existingVenue",
-  newVenue:"newVenue"
+  existingVenue: "existingVenue",
+  newVenue: "newVenue",
 };
 
 export const NewCourseStep4FormNames = {
@@ -78,10 +78,10 @@ export const NewCourseStep6FormNames = {
   contact_number: "contact_number",
   bcc_registration_confirmation_email: "bcc_registration_confirmation_email",
 };
-export const EditParticipantFormNames={
-  memo:"memo",
-  accommodation_snore:"accommodation_snore",
-  roommate_snore:"roommate_snore",
-  participant_attendence_status_id:"participant_attendence_status_id",
-  participant_code:"participant_code"
-}
+export const EditParticipantFormNames = {
+  memo: "memo",
+  accommodation_snore: "accommodation_snore",
+  roommate_snore: "roommate_snore",
+  participant_attendence_status_id: "participant_attendence_status_id",
+  participant_code: "participant_code",
+};

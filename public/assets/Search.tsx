@@ -22,4 +22,4 @@ const SearchIcon = () => {
     </svg>
   );
 };
-export default SearchIcon
+export default SearchIcon;

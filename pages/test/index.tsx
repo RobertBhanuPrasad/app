@@ -45,7 +45,7 @@ export default function courseCreate({ pageProps }: any) {
     optionLabel: "name",
     optionValue: "id",
     onSearch: (value) => [
-    {
+      {
         field: "name",
         operator: "contains",
         value,

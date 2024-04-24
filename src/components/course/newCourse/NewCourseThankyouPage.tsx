@@ -202,71 +202,71 @@ const NewCourseThankyouPage = () => {
               <p className="mx-auto text-accent-secondary max-w-fit">Or</p>
               {/* Hyper links section */}
               {/* We have to display the links only when the course is active */}
-                <div className="flex items-center justify-center gap-4 mt-4 ">
-                  <div className="relative">
-                    <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
-                      Registration link
-                    </p>
-                    <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
-                      <h4 id="textToCopy" className="">
-                        {CX_BASE_URL}
-                      </h4>
-                      <div
-                        onClick={() => {
-                          handleCopyDetailsPageLink(CX_BASE_URL);
-                        }}
-                        className="relative mt-1 cursor-pointer"
-                      >
-                        <CopyIcon />
-                        {copiedDetailsPageLink ? (
-                          <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                            copied
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="relative ">
-                    <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
-                      Details page link
-                    </p>
-                    <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
-                      <h4 id="textToCopy1" className="">
-                        {RX_BASE_URL}
-                      </h4>
-                      <div
-                        onClick={() => {
-                          handleCopyRegistrationLink(RX_BASE_URL);
-                        }}
-                        className="relative mt-1 cursor-pointer"
-                      >
-                        <CopyIcon />
-                        {copiedRegistrationLink ? (
-                          <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                            copied
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pl-5">
-                    <Button
+              <div className="flex items-center justify-center gap-4 mt-4 ">
+                <div className="relative">
+                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+                    Registration link
+                  </p>
+                  <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
+                    <h4 id="textToCopy" className="">
+                      {CX_BASE_URL}
+                    </h4>
+                    <div
                       onClick={() => {
-                        handleCopyDetailsPageLink(RX_BASE_URL);
-                        handleCopyRegistrationLink(CX_BASE_URL);
-                        copyText(CX_BASE_URL + "," + RX_BASE_URL);
+                        handleCopyDetailsPageLink(CX_BASE_URL);
                       }}
-                      variant="outline"
-                      className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
+                      className="relative mt-1 cursor-pointer"
                     >
-                      Copy 2 Links
-                    </Button>
+                      <CopyIcon />
+                      {copiedDetailsPageLink ? (
+                        <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                          copied
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
                   </div>
                 </div>
+                <div className="relative ">
+                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+                    Details page link
+                  </p>
+                  <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
+                    <h4 id="textToCopy1" className="">
+                      {RX_BASE_URL}
+                    </h4>
+                    <div
+                      onClick={() => {
+                        handleCopyRegistrationLink(RX_BASE_URL);
+                      }}
+                      className="relative mt-1 cursor-pointer"
+                    >
+                      <CopyIcon />
+                      {copiedRegistrationLink ? (
+                        <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                          copied
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="pl-5">
+                  <Button
+                    onClick={() => {
+                      handleCopyDetailsPageLink(RX_BASE_URL);
+                      handleCopyRegistrationLink(CX_BASE_URL);
+                      copyText(CX_BASE_URL + "," + RX_BASE_URL);
+                    }}
+                    variant="outline"
+                    className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
+                  >
+                    Copy 2 Links
+                  </Button>
+                </div>
+              </div>
             </section>
           )}
         </div>

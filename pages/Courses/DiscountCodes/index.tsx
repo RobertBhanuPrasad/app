@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function index() {
-  return (
-    <div>discount codes</div>
-  )
+  return <div>discount codes</div>;
 }
 
-export default index
+export default index;

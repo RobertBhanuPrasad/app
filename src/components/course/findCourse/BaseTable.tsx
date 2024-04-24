@@ -65,7 +65,7 @@ interface IBaseTable<TData, TValue> {
      */
     rowStyles?: string;
     /**
-     * Additional CSS classes to pass to table container 
+     * Additional CSS classes to pass to table container
      */
     tableContainer?: string;
     /**

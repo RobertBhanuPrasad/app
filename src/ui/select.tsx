@@ -68,7 +68,9 @@ const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & { error?: boolean }
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
+    error?: boolean;
+  }
 >(({ className, children, error, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}

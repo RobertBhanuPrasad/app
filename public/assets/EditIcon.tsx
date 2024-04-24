@@ -17,7 +17,7 @@ function EditIcon() {
         />
       </svg>
     </div>
-  )
+  );
 }
 
-export default EditIcon
+export default EditIcon;

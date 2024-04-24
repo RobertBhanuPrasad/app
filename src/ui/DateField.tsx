@@ -22,12 +22,17 @@ interface DateFieldProps {
    * Placeholder text to display when no date is selected.
    */
   placeholder?: string;
- /**
+  /**
    * className to change stylings of the calendar.
    */
   className?: string;
 }
-export const DateField = ({ value, onChange, placeholder , className}: DateFieldProps) => {
+export const DateField = ({
+  value,
+  onChange,
+  placeholder,
+  className,
+}: DateFieldProps) => {
   // State to manage the visibility of the popover
   const [isOpen, setIsOpen] = useState(false);
 
@@ -65,7 +70,10 @@ export const DateField = ({ value, onChange, placeholder , className}: DateField
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
-          className={cn("w-[280px] flex flex-row gap-2 justify-start",className)}
+          className={cn(
+            "w-[280px] flex flex-row gap-2 justify-start",
+            className
+          )}
           onClick={() => setIsOpen(!isOpen)}
         >
           <CalenderIcon color="#666666" className="mr-2 h-4 w-4" />

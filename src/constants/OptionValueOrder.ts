@@ -10,7 +10,6 @@ export const NATIONAL_ADMIN = 3;
 export const SUPER_ADMIN = 4;
 export const FINANCE_ADMIN = 5;
 
-
 //Action Constants
 export const UPDATE_ATTENDENCE_STATUS = 1;
 export const UPDATE_TRANSACTION_STATUS = 2;
@@ -28,7 +27,6 @@ export const OTHER = 3;
 export const PARTICIPANT_SUCCESS_PAYMENT_STATUS = 1;
 export const PARTICIPANT_PENDING_PAYMENT_STATUS = 2;
 export const PARTICIPANT_FAILED_PAYMENT_STATUS = 3;
-
 
 //Participant Attendance Status
 export const PENDING_ATTENDANCE_STATUS = 1;
@@ -71,7 +69,7 @@ export const PAY_ONLINE = 1;
 export const PAY_OFFLINE = 2;
 
 // Transaction status
-export const NOT_RECIEVED=4;
- export const CONFIRMED=2
- export const PENDING=1
- export const FAILED=3
+export const NOT_RECIEVED = 4;
+export const CONFIRMED = 2;
+export const PENDING = 1;
+export const FAILED = 3;

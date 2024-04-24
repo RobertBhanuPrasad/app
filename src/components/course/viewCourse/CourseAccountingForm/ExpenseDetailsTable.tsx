@@ -24,10 +24,7 @@ import { useList, useOne, useSelect } from "@refinedev/core";
 import { Header } from "src/ui/TextTags";
 import { TableHeader } from "src/ui/TextTags";
 import { DateField } from "src/ui/DateField";
-import {
-  RadioGroup,
-  RadioGroupCircleItem,
-} from "src/ui/radio-group";
+import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
 import classNames from "classnames";
 import { supabaseClient } from "src/utility";

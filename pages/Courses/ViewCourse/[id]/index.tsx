@@ -297,23 +297,33 @@ function ViewDetails() {
             <Important />
           </HoverCardTrigger>
           <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
-          <div className="!rounded-[15px] font-normal flex flex-col">
-           <p>Approved by:</p>
-           <p>
-           {courseData?.data?.approved_by_user_id && courseData?.data?.program_approved_date 
-           ? `${courseData?.data?.approved_by_user_id?.contact_id?.full_name} (${formatDateString(new Date(courseData?.data?.program_approved_date))})`
-            : "-"}
-            </p>
-            <Separator className="my-2"/>
-           <p>Last Modified by:</p>
-           <p>
-            {courseData?.data?.last_modified_by_user_id && courseData?.data?.modified_at
-           ? `${courseData?.data?.last_modified_by_user_id?.contact_id?.full_name} (${formatDateString(new Date(courseData?.data?.modified_at
-            ))})`
-            : "-"}
-            </p>
-          </div>
-
+            <div className="!rounded-[15px] font-normal flex flex-col">
+              <p>Approved by:</p>
+              <p>
+                {courseData?.data?.approved_by_user_id &&
+                courseData?.data?.program_approved_date
+                  ? `${
+                      courseData?.data?.approved_by_user_id?.contact_id
+                        ?.full_name
+                    } (${formatDateString(
+                      new Date(courseData?.data?.program_approved_date)
+                    )})`
+                  : "-"}
+              </p>
+              <Separator className="my-2" />
+              <p>Last Modified by:</p>
+              <p>
+                {courseData?.data?.last_modified_by_user_id &&
+                courseData?.data?.modified_at
+                  ? `${
+                      courseData?.data?.last_modified_by_user_id?.contact_id
+                        ?.full_name
+                    } (${formatDateString(
+                      new Date(courseData?.data?.modified_at)
+                    )})`
+                  : "-"}
+              </p>
+            </div>
           </HoverCardContent>
         </HoverCard>
       </div>
@@ -398,8 +408,7 @@ function ViewDetails() {
 export default index;
 
 const PendingApprovalDropDown = ({ courseId }: any) => {
-
-  const today = new Date()
+  const today = new Date();
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
     ACTIVE
@@ -432,7 +441,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
       values: {
         status_id: courseActiveStatusId,
         approved_by_user_id: loginUserData?.userData?.id,
-        program_approved_date: today
+        program_approved_date: today,
       },
       id: courseId,
     });

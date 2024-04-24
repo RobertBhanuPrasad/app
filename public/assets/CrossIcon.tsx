@@ -1,11 +1,14 @@
-
 interface IconComponentPropType {
-  height?: number
-  width?: number
-  fill?: string
+  height?: number;
+  width?: number;
+  fill?: string;
 }
 
-const CrossIcon = ({width=20, height=19, fill='#7677F4'}:IconComponentPropType) => {
+const CrossIcon = ({
+  width = 20,
+  height = 19,
+  fill = "#7677F4",
+}: IconComponentPropType) => {
   return (
     <svg
       width={width}
@@ -24,6 +27,6 @@ const CrossIcon = ({width=20, height=19, fill='#7677F4'}:IconComponentPropType) 
       />
     </svg>
   );
-}
+};
 
-export default CrossIcon
+export default CrossIcon;
