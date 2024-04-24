@@ -29,11 +29,11 @@ export default function Edit() {
         }
     }, [Id]);
     return (
-        <div>
+        <div >
             <div className="top-0 sticky z-[100] bg-white shadow-xl w-full">
                 <ParticipantsListMainHeader />
             </div>
-            <div>
+            <div className="px-[20px] py-[20px]">
                 <div>
                     {!defaultValues ||
                     Object.keys(defaultValues).length === 0 ? (
