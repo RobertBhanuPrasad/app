@@ -1,7 +1,7 @@
 import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable"; // Importing BaseTable component for displaying table
 import TransactionActivity from "@components/participants/TransactionActivityPopover";
-import { handleEditParticipantValues } from "@components/participants/editParticipant/EditParticipantUtil";
+import { handleEditPaymentValues } from "@components/participants/editParticipant/EditParticipantUtil";
 import EditPayment from "@components/participants/editParticipant/editPayment";
 import ViewDonationDetails from "@components/participants/editParticipant/viewDonationDetails";
 import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
@@ -357,8 +357,8 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
             useEffect(() => {
                 async function fetchData() {
                     try {
-                        const values = await handleEditParticipantValues(
-                            Number(Id)
+                        const values = await handleEditPaymentValues(
+                            Number(row?.original?.id)
                         );
                         setDefaultValues(values);
                     } catch (error) {
@@ -405,7 +405,9 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                                                     }
                                                 >
                                                     <EditPayment
-                                                    paymentId={Number(row?.original?.id)}
+                                                        paymentId={Number(
+                                                            row?.original?.id
+                                                        )}
                                                         setEditPayment={
                                                             setEditPayment
                                                         }
