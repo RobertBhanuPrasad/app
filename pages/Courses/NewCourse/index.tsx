@@ -158,6 +158,22 @@ function NewCourse() {
 
   console.log("country config data is", data?.data[0]);
 
+  // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
+  const {
+    data: timeZonesData,
+    isLoading: timeZoneLoading,
+  }: QueryObserverResult<GetListResponse<TimeZoneDataBaseType>, HttpError> &
+    UseLoadingOvertimeReturnType = useList({
+    resource: "time_zones",
+  });
+
+  // check how many records are there in time_zones table
+  // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
+  if (timeZonesData?.data?.length === 1 && newCourseData === null) {
+    defaultValues[NewCourseStep3FormNames?.time_zone_id] =
+      timeZonesData?.data[0]?.id;
+  }
+
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
   // and same we need to set only if newCourseData is null
   if (newCourseData === null) {
@@ -175,7 +191,8 @@ function NewCourse() {
   // isLoading also we need becuase we need to set the data right
   if (
     (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) ||
-    isLoading
+    isLoading ||
+    timeZoneLoading
   ) {
     return <LoadingIcon />;
   }

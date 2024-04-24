@@ -643,7 +643,7 @@ export default function NewCourseReviewPage() {
                   Time Zone
                 </p>
                 <p className="font-semibold truncate text-accent-secondary">
-                  {timeZone?.data?.name}
+                  {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
                 </p>
               </div>
               <div>{venueSessions()}</div>
