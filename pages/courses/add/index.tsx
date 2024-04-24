@@ -491,11 +491,6 @@ export const NewCourseTabs = () => {
     },
   ];
 
-  const getHeader=()=>{
-    if(router.query.header===""){
-      
-  }
-
   return (
     <div>
       <p className="font-semibold text-2xl">
