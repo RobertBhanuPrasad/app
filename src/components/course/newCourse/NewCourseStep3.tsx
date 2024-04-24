@@ -328,28 +328,36 @@ const Sessions = () => {
     // we will take one temporary objetc initially with date and then based on timezone id we need to add proper startHour, startMinute, endHour, endMinute
     // we need to store startTimeFormat and endTimeFormat also because it is 12 hour or 24 hour format right we need to store wether it is AM or PM.
     const tempSchedule: {
-      date: Date;
+      date?: Date;
       startHour?: string;
       startMinute?: string;
       endHour?: string;
       endMinute?: string;
       startTimeFormat?: string;
       endTimeFormat?: string;
-    } = {
-      date: new Date(),
-    };
+    } = {};
+
+    const today = new Date();
+
+    const tomorrowDate = new Date(today).setDate(today.getDate() + 1);
+
+    // as per requirement we need to set to tomorrow date
+    tempSchedule.date = new Date(tomorrowDate);
+
+    // and we need to set to 06:00PM as start time and end time as 08:00PM for all countries
+    // in future if client asks we need to set date and time as per each country what ever theu want
 
     if (formData?.hoursFormatId === timeFormat12HoursId) {
-      tempSchedule["startHour"] = "12";
+      tempSchedule["startHour"] = "06";
       tempSchedule["startMinute"] = "00";
-      tempSchedule["endHour"] = "12";
+      tempSchedule["endHour"] = "08";
       tempSchedule["endMinute"] = "00";
-      tempSchedule["startTimeFormat"] = "AM";
-      tempSchedule["endTimeFormat"] = "AM";
+      tempSchedule["startTimeFormat"] = "PM";
+      tempSchedule["endTimeFormat"] = "PM";
     } else {
-      tempSchedule["startHour"] = "00";
+      tempSchedule["startHour"] = "18";
       tempSchedule["startMinute"] = "00";
-      tempSchedule["endHour"] = "00";
+      tempSchedule["endHour"] = "20";
       tempSchedule["endMinute"] = "00";
     }
 
