@@ -334,14 +334,11 @@ export const CourseTypeDropDown = () => {
 };
 
 const RegistrationGateway = () => {
-
   const {
     field: { value, onChange },
   } = useController({
     name: NewCourseStep2FormNames?.is_registration_required,
   });
-
-
 
   return (
     <div className="flex flex-row items-center gap-[19px]">
@@ -482,13 +479,22 @@ const TeachersDropDown = () => {
     });
   }
 
+  // we have to get teachers based on the selected organization
+  if (formData?.organization_id) {
+    filter.push({
+      field: "program_type_teachers.program_type_id.organization_id",
+      operator: "eq",
+      value: formData?.organization_id,
+    });
+  }
+
   const [pageSize, setPageSize] = useState(10);
 
   const selectQuery: any = {
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(program_type_id),contact_id!inner(full_name))",
+        "*,program_type_teachers!inner(program_type_id!inner(organization_id)),contact_id!inner(full_name))",
     },
     filters: filter,
     onSearch: (value: any) => [
@@ -511,6 +517,7 @@ const TeachersDropDown = () => {
   }
 
   const { options, queryResult, onSearch } = useSelect(selectQuery);
+
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
