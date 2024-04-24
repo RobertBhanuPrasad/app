@@ -16,7 +16,6 @@ export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
   setProgramId: (by: number) => void,
-  langCode: string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -260,7 +259,9 @@ export const handlePostProgramData = async (
   // Appending the program ID to identify the specific program
   // Constructing the complete registration URL
   // this url is now posted to the program api which is used to further usage in the details view or at any other place.
-  const registrationUrl = `${RX_BASE_URL}/${langCode}/programs/${programId}`;
+
+  // TODO : need to integrate with country code and language code after translations are done
+  const registrationUrl = `${RX_BASE_URL}/programs/${programId}`;
 
   // TODO need to integrate with url provided by cx team -(kalyan)
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
