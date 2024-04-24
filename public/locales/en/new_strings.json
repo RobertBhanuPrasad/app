@@ -12,6 +12,7 @@
         "select_a_venue_by_clicking":"2118 Thornridge Cir. Syracuse, Connecticut, Manchester, Kentucky 35624",
         "no_existing_venue_found":"no existing venue found",
         "edit_venue":"Edit Venue",
+        "venue":"Venue",
         "are_you_sure_you_want_to_delete":"Are you sure you want to delete the address",
         "copy_lnks":"Copy 2 Links",
         "review_your_details_right_here":"Review Your Details Right Here",
@@ -30,6 +31,23 @@
         "edit_course_accounting_form":"Edit Course Accounting Form",
         "note":"Note",
         "copied":"copied",
-        "accommodation":"Accommodation"
+        "accommodation":"Accommodation",
+        "health_consent_status":"Health Consent Status",
+        "completed":"Completed",
+        "pending":"Pending",
+        "filter_by":"Filter By",
+        "contact_details":"Contact Details",
+        "select_payment_method":"Select Payment Method",
+        "search_by_registration_date":"Search by Registration Date",
+        "bulk_actions":"Bulk Actions",
+        "select_all":"Select All",
+        "selected":"Selected",
+        "out_of":"Out of",
+        "showing":"Showing",
+        "of":"Of",
+        "enter_valid_email":"Enter valid email id and Enter only one email at a time",
+        "excel":"Excel",
+        "csv":"Csv",
+        "no_results":"No results."
         
 }

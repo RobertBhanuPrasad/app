@@ -6,7 +6,6 @@
         "registration_date_placeholder": "Select  Date ",
         "fee_level_placeholder": "Select Fee Level ",
         "course_fee": "Course Fee",
-        "attendance_status": "Attendance Status",
         "enter_special_code": "Enter Special Code",
         "accommodation_type": "Accommodation Type",
         "accommodation_placeholder": "Select Accommodation",
@@ -76,7 +75,6 @@
             "accommodation_fee": "Accommodation Fee",
             "total_fee": "Total Fee(Includes VAT)",
             "enter_special_code": "Enter Special Code",
-            "attendance_status": "Attendance Status",
             "view_donation_details": "View Donation Details",
             "donation_details": "Donation Details",
             "amount": "Amount",
@@ -150,7 +148,6 @@
     "view_participant": {
         "transaction_id": "Transaction ID",
         "time_stamp": "Time Stamp",
-        "transaction_type": "Transaction Type",
         "payment_method": "Payment Method",
         "organization_fee_(EUR)": "Organization fee (EUR)",
         "expense_fee_(eur)": "Expense fee (EUR)",
@@ -160,7 +157,6 @@
         "accommodation_fee_(eur)": "Accommodation Fee (EUR)",
         "total_fee_(eur)": "Total fee (EUR)",
         "fee_level": "Fee level",
-        "transaction_status": "Transaction Status",
         "reason": "Reason",
         "action": "Action",
         "transaction_details": "Transaction Details",
@@ -193,7 +189,6 @@
             "phone_number": "Phone Number",
             "home_work_phone": "Home / Work Phone",
             "occupation": "Occupation",
-            "email": "Email",
             "url_for_registration_completion": "Url for registration completion",
             "how_did_you_find_out_about": "How did you find out about the program?"
         },
@@ -201,7 +196,6 @@
             "course_information": "Course Information",
             "course_name": "Course name",
             "Teachers(S)": "Teachers(S)",
-            "attendance_status": "Attendance Status",
             "discount_amount": "Discount Amount"
         }
     }

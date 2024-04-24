@@ -24,6 +24,7 @@ import { useTranslation } from 'next-i18next';
 // Define CourseTable component
 
 export default function CourseTable() {
+  const { t } = useTranslation( [ "common", 'course.new_course']);
   const [courseFeeSettings, setCourseFeeSettings] = useState();
 
   const { watch } = useFormContext();
@@ -86,10 +87,11 @@ export default function CourseTable() {
     id: formData?.organization_id,
   });
 
+
   if (courseFeeSettings == undefined || isLoading) {
     return <LoadingIcon />;
   }
-  const { t } = useTranslation( [ "common", 'course.new_course']);
+  
   return (
     <div className="flex flex-col gap-[18px]">
       <div className="font-semibold text-base text-[#333333]">{t("fees")}</div>
@@ -254,7 +256,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Normal Fee",
+      header: t("course.new_course:fees_normal_fee"),
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
@@ -299,7 +301,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Total Fee",
+      header:t("course.new_course:fees_tab.fee"),
     },
   ];
 

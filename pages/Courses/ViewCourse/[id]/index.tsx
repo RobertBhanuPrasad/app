@@ -1339,7 +1339,7 @@ const ViewCourseAccountingRejectedModalOpen = ({
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.participant", "new_strings"])
 
   if (!authenticated) {
     return {

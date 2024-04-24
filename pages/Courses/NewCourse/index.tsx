@@ -626,7 +626,7 @@ export const NewCourseTabs = () => {
 };
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common", "course.new_course", "new_strings"])
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common", "course.new_course","course.participant", "new_strings"])
   if (!authenticated) {
     return {
       props: {

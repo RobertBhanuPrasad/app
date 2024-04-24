@@ -34,6 +34,11 @@ import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";
 import { ParticipantsListMainHeader } from "@components/participants/ParticipantsListMainHeader";
 
+import { authProvider } from "src/authProvider"
+import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import { useTranslation } from 'next-i18next';
+
 function index() {
   const router = useRouter();
   const programID: number | undefined = router?.query?.id
@@ -401,9 +406,10 @@ function index() {
       alert(`${participantIds.length} Record(s) updated successfully`);
     }
   };
+  const {t} = useTranslation(["common", "course.participant","new_strings"])
   const [bulkActionSelectedValue, setBulkActionSelectedValue] =
-    useState("Bulk Actions");
-
+  useState("Bulk Action");//{t("new_strings:bulk_actions")}
+    
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <div className="top-0 sticky z-[50] bg-white shadow-xl w-full">
@@ -472,7 +478,7 @@ function index() {
                   className="flex flex-row justify-between w-[152px] h-10"
                   disabled={disableBulkOptions}
                 >
-                  Select Status
+                  {t('course.participant:find_participant.select_status')}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -520,7 +526,7 @@ function index() {
               table: "",
               rowStyles: "",
             }}
-            columns={columns}
+            columns={columns(t)}
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
@@ -535,15 +541,15 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>Select All</div>
+            <div>{t("new_strings:select_all")}</div>
             <div className="font-semibold">
               {participantData?.data?.total || 0}
             </div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            Selected: {allSelected ? participantData?.data?.total : rowCount}{" "}
-            Out of{" "}
+          {t("new_strings:selected")}: {allSelected ? participantData?.data?.total : rowCount}{" "}
+          {t("new_strings:out_of")}{" "}
             <div className="font-semibold">
               {participantData?.data?.total || 0}
             </div>{" "}
@@ -558,7 +564,7 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
-                Export <ChevronDownIcon className="w-5 h-5" />
+                {t('course.participant:find_participant.export')}<ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
@@ -566,11 +572,11 @@ function index() {
                 onClick={handleExportExcel}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                Excel
+                {t("new_strings:excel")}
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
-                Csv
+                {t("new_strings:csv")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -630,6 +636,7 @@ const HeaderSection = () => {
     setValue("registration_date", { from: "", to: "" });
     setValue("transaction_status", []);
   };
+  const {t} = useTranslation(["common", "course.participant", "view_participant"])
 
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4 flex-wrap gap-y-4">
@@ -649,7 +656,7 @@ const HeaderSection = () => {
             onChange={onSearch}
             type="text"
             className=" border-0 outline-none"
-            placeholder="Search by Registration ID"
+            placeholder={t('course.participant:find_participant.search_registration')}
           ></Input>
         </div>
       </div>
@@ -682,7 +689,7 @@ const HeaderSection = () => {
                     format(RegistrationDate.from, "MM/dd/yyyy")
                   )
                 ) : (
-                  <span className="font-thin">Search by Registration Date</span>
+                  <span className="font-thin">{t("new_strings:search_by_registration_date")}</span>
                 )}
               </div>
             </Button>
@@ -700,7 +707,7 @@ const HeaderSection = () => {
       <div>
         <MultiSelect
           value={transactionStatus}
-          placeholder="Transaction Status"
+          placeholder={t('course.participant:find_participant.transaction_status')}
           data={transactionStatusValues}
           onBottomReached={() => {}}
           onSearch={() => {}}
@@ -716,7 +723,7 @@ const HeaderSection = () => {
             className=" cursor-pointer flex gap-2 items-center text-sm font-semibold text-[#7677F4]"
           >
             <ClearAll />
-            <div>Clear All</div>
+            <div>{t("clear_all")}</div>
           </div>
         </div>
         <Button
@@ -725,7 +732,7 @@ const HeaderSection = () => {
             setParticpantFiltersData(formData);
           }}
         >
-          Apply
+          {t("apply_button")}
         </Button>
       </div>
     </div>
@@ -762,10 +769,11 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
     </div>
   );
 };
-
 const handleExportExcel = async () => {
+  
   try {
     const excelColumns = [
+      
       {
         column_name: "Registration ID",
         path: ["participant_code"],
@@ -909,4 +917,28 @@ const handleExportExcel = async () => {
   } catch (error) {
     console.error("Error handling export:", error);
   }
+};
+
+export const getServerSideProps: GetServerSideProps<{}> = async context => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
+
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.participant","new_strings"])
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
+        permanent: false
+      }
+    }
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
 };

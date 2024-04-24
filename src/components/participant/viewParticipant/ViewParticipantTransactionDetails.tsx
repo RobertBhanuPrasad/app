@@ -22,6 +22,7 @@ import {
 } from "src/ui/dropdown-menu"; // Importing components for dropdown menu
 import { formatDateAndTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { useTranslation } from 'next-i18next';
 // Component for viewing participant transaction details
 function ViewParticipantTransactionDetails({ participantId }: any) {
   // Fetching table data using useTable hook

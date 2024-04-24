@@ -10,565 +10,569 @@ import {
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
 import TransactionActivity from "./TransactionActivityPopover";
+import { useTranslation } from 'next-i18next';
 
 // Use an intersection type to combine with ColumnDef
-type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
+type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string }
 
-export const columns: ExtendedColumnDef<any>[] = [
-  {
-    accessorKey: "participant_code",
-    column_name: "Registration ID",
-    enablePinning: true,
-    enableHiding: false,
-    header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Registration ID</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      const router = useRouter();
-      return (
-        // TODO: Write onClick to redirect to view participant page
-        <a
-          className="cursor-pointer"
-          onClick={() => {
-            const routePath = router.asPath.split("?")[0];
-            router.push(`/${routePath}/${row?.original?.id}/view`);
-          }}
-        >
-          <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
-            {row?.original?.participant_code}
-          </div>
-        </a>
-      );
-    },
-  },
-  {
-    accessorKey: "created_at",
-    column_name: "Registration Date",
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+export const columns: any =(t:any)=>{
+  return  [
+    {
+      accessorKey: "participant_code",
+      column_name: t('course.participant:find_participant.registration_id'),
+      enablePinning: true,
+      enableHiding: false,
+      header: ({ column }:any) => {
+        return <div className="min-w-[150px] text-left">{t('course.participant:find_participant.registration_id')}</div>;
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        const router = useRouter();
+        return (
+          // TODO: Write onClick to redirect to view participant page
+          <a
+            className="cursor-pointer"
+            onClick={() => {
+              const routePath = router.asPath.split("?")[0];
+              router.push(`/${routePath}/${row?.original?.id}/view`);
+            }}
           >
-            Registration Date
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
-    },
-
-    cell: ({ row }: any) => {
-      const db_date = formatDate(row?.original?.created_at);
-      return <div className="text-left pl-4">{db_date}</div>;
-    },
-  },
-  {
-    accessorKey: "Name",
-    column_name: "Name",
-    enableHiding: false,
-    enableSorting: true,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Name
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
-    },
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left pl-4 !min-w-[175px] capitalize">
-          {row?.original?.contact_id?.full_name}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "NIF",
-    column_name: "NIF",
-    header: ({ column }) => {
-      return <div className="text-left">NIF</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left !min-w-[125px]">
-          {row?.original?.contact_id?.nif}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Date of Birth",
-    column_name: "Date of Birth",
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Date of Birth
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
-    },
-
-    cell: ({ row }: any) => {
-      const db_date = formatDate(row?.original?.contact_id?.date_of_birth);
-      return (
-        <div className="text-left !min-w-[150px] pl-4">
-          {db_date.length ? db_date : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Phone",
-    column_name: "Phone",
-    enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Phone
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
-    },
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left !min-w-[150px] pl-4">
-          {row?.original?.contact_id?.mobile}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Email",
-    column_name: "Email",
-    enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Email
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
-    },
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="lowercase text-left !min-w-[150px] pl-4">
-          {row?.original?.contact_id?.email}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Fee Level",
-    column_name: "Fee Level",
-    enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Fee Level
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
-    },
-
-    cell: ({ row }: any) => {
-      return (
-        <div className=" capitalize text-left !min-w-[150px] pl-4">
-          {row?.original?.price_category_id?.fee_level_id?.value}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Amount",
-    column_name: "Amount",
-    enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Amount
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
-    },
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left !min-w-[150px] pl-4">
-          {row?.original?.price_category_id?.total?.toFixed(2)}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Transaction Type",
-    column_name: "Transaction Type",
-    header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Transaction Type</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left">
-          {row?.original?.participant_payment_history?.length > 0 ? (
-            <TransactionActivity
-              transactionHistory={row?.original?.participant_payment_history}
-            />
-          ) : (
-            "-"
-          )}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Transaction ID",
-    column_name: "Transaction ID",
-    header: ({ column }) => {
-      return <div className=" min-w-[200px] text-left">Transaction ID</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.payment_transaction_id
-            ? row?.original?.participant_payment_history[0]
-                ?.payment_transaction_id
-            : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Payment Method",
-    column_name: "Payment Method",
-    header: ({ column }) => {
-      return <div className="min-w-[200px] text-left">Payment Method</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.payment_method_id
-            ?.value
-            ? row?.original?.participant_payment_history[0]?.payment_method_id
-                ?.value
-            : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Balance",
-    column_name: "Balance",
-    header: ({ column }) => {
-      return <div className="text-left">Balance</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left">
-          {row?.original?.balance_due
-            ? row?.original?.balance_due?.toFixed(2)
-            : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Transaction Status",
-    column_name: "Transaction Status",
-    enableHiding: false,
-    header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Transaction Status</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left">
-          {row?.original?.payment_status_id?.value
-            ? row?.original?.payment_status_id?.value
-            : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Attendance Status",
-    column_name: "Attendance Status",
-    enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Attendance Status
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </div>
-      );
-    },
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="text-left !min-w-[150px] pl-4">
-          {row?.original?.participant_attendence_status_id?.value
-            ? row?.original?.participant_attendence_status_id?.value
-            : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Program Agreement Version",
-    column_name: "Program Agreement Version",
-    header: ({ column }) => {
-      return <div className="text-left">Program Agreement Version</div>;
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.legal_agreement_version
-            ? row?.original?.legal_agreement_version
-            : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Program Agreement Status",
-    column_name: "Program Agreement Status",
-    header: ({ column }) => {
-      return (
-        <div className="min-w-[150px] text-left">Program Agreement Status</div>
-      );
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      const toggle =
-        row?.original?.is_program_agreement_checked === true
-          ? "Completed"
-          : row?.original?.is_program_agreement_checked === false
-          ? "Pending"
-          : "-";
-      return <div className="min-w-[150px] text-left">{toggle}</div>;
-    },
-  },
-  {
-    accessorKey: "Program Agreement Date",
-    column_name: "Program Agreement Date",
-    header: ({ column }) => {
-      return (
-        <div className="min-w-[150px] text-left">Program Agreement Date</div>
-      );
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      const db_date = formatDate(row?.original?.program_agreement_date);
-      return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.program_agreement_date ? db_date : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "Health Declaration Status",
-    column_name: "Health Declaration Status",
-    header: ({ column }) => {
-      return (
-        <div className="min-w-[150px] text-left">Health Declaration Status</div>
-      );
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      const toggle =
-        row?.original?.is_health_declaration_checked === true
-          ? "Completed"
-          : row?.original?.is_health_declaration_checked === false
-          ? "Pending"
-          : "-";
-      return <div className="min-w-[150px] text-left">{toggle}</div>;
-    },
-  },
-  {
-    accessorKey: "Health Declaration Consent Date",
-    column_name: "Health Declaration Consent Date",
-    header: ({ column }) => {
-      return (
-        <div className="min-w-[150px] text-left">
-          Health Declaration Consent Date
-        </div>
-      );
-    },
-
-    // This any will be removed after internal dataStructure implementation
-
-    cell: ({ row }: any) => {
-      const db_date = formatDate(
-        row?.original?.health_declaration_consent_date
-      );
-      return (
-        <div className="min-w-[150px] text-left">
-          {row?.original?.health_declaration_consent_date ? db_date : "-"}
-        </div>
-      );
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const optionsValues = [
-        "View Participant",
-        "Edit Participant",
-        // TODO(Not in MVP scope): Integrate these actions later
-        // "Transfer",
-        // "Send Email",
-        // "Perform sale with cash, check offline credit card payment",
-        // "Send registration confirmation email",
-        // "Upload offline payment receipt",
-        // "Download receipt",
-        // "Transaction Activity",
-      ];
-
-      const router = useRouter();
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0 text-[#7677F4]">
-              <span className="sr-only">Open menu</span>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <div className="flex flex-col gap-4 p-3 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
-              {optionsValues.map((value, index) => (
-                <DropdownMenuItem
-                  onClick={() => {
-                    handleActions(index, row?.original?.id, router);
-                  }}
-                >
-                  {value}
-                </DropdownMenuItem>
-              ))}
+            <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
+              {row?.original?.participant_code}
             </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+          </a>
+        );
+      },
     },
-  },
-];
-
+    {
+      accessorKey: "created_at",
+      column_name: t('course.participant:find_participant.registration_date'),
+      header: ({ column }: any) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              {t('course.participant:find_participant.registration_date')}
+              {column.getIsSorted() === "desc" ? (
+                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : column.getIsSorted() === "asc" ? (
+                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : (
+                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
+        );
+      },
+  
+      cell: ({ row }: any) => {
+        const db_date = formatDate(row?.original?.created_at);
+        return <div className="text-left pl-4">{db_date}</div>;
+      },
+    },
+    {
+      accessorKey: "Name",
+      column_name: t('course.participant:find_participant.name'),
+      enableHiding: false,
+      enableSorting: true,
+      header: ({ column }: any) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              {t('course.participant:find_participant.name')}
+              {column.getIsSorted() === "desc" ? (
+                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : column.getIsSorted() === "asc" ? (
+                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : (
+                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
+        );
+      },
+  
+      cell: ({ row }: any) => {
+        
+        return (
+          <div className="text-left pl-4 !min-w-[175px] capitalize">
+            {row?.original?.contact_id?.full_name}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "NIF",
+      column_name: t('course.participant:find_participant.nif'),
+      header: ({ column }: any) => {
+        return <div className="text-left">{t('course.participant:find_participant.nif')}</div>;
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left !min-w-[125px]">
+            {row?.original?.contact_id?.nif}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Date of Birth",
+      column_name: t('course.participant:find_participant.date_of_birth'),
+      header: ({ column }: any) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              {t('course.participant:find_participant.date_of_birth')}
+              {column.getIsSorted() === "desc" ? (
+                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : column.getIsSorted() === "asc" ? (
+                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : (
+                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
+        );
+      },
+  
+      cell: ({ row }: any) => {
+        const db_date = formatDate(row?.original?.contact_id?.date_of_birth);
+        return (
+          <div className="text-left !min-w-[150px] pl-4">
+            {db_date.length ? db_date : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Phone",
+      column_name: t('course.participant:find_participant.phone'),
+      enableHiding: false,
+      header: ({ column }: any) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              {t('course.participant:find_participant.phone')}
+              {column.getIsSorted() === "desc" ? (
+                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : column.getIsSorted() === "asc" ? (
+                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : (
+                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
+        );
+      },
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left !min-w-[150px] pl-4">
+            {row?.original?.contact_id?.mobile}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Email",
+      column_name: t('course.participant:find_participant.email'),
+      enableHiding: false,
+      header: ({ column }: any) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              {t('course.participant:find_participant.email')}
+              {column.getIsSorted() === "desc" ? (
+                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : column.getIsSorted() === "asc" ? (
+                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : (
+                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
+        );
+      },
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="lowercase text-left !min-w-[150px] pl-4">
+            {row?.original?.contact_id?.email}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Fee Level",
+      column_name: t('course.participant:view_participant.fee_level'),
+      enableHiding: false,
+      header: ({ column }: any) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              {t('course.participant:view_participant.fee_level')}
+              {column.getIsSorted() === "desc" ? (
+                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : column.getIsSorted() === "asc" ? (
+                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : (
+                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
+        );
+      },
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className=" capitalize text-left !min-w-[150px] pl-4">
+            {row?.original?.price_category_id?.fee_level_id?.value}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Amount",
+      column_name: t('course.participant:find_participant.amount(EUR)'),
+      enableHiding: false,
+      header: ({ column }: any) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              {t('course.participant:find_participant.amount(EUR)')}
+              {column.getIsSorted() === "desc" ? (
+                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : column.getIsSorted() === "asc" ? (
+                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : (
+                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
+        );
+      },
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left !min-w-[150px] pl-4">
+            {row?.original?.price_category_id?.total?.toFixed(2)}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Transaction Type",
+      column_name: t('course.participant:find_participant.transaction_type'),
+      header: ({ column }: any) => {
+        return <div className="min-w-[150px] text-left">{t('course.participant:find_participant.transaction_type')}</div>;
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left">
+            {row?.original?.participant_payment_history?.length > 0 ? (
+              <TransactionActivity
+                transactionHistory={row?.original?.participant_payment_history}
+              />
+            ) : (
+              "-"
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Transaction ID",
+      column_name: t('course.participant:find_participant.transaction_id'),
+      header: ({ column }: any) => {
+        return <div className=" min-w-[200px] text-left">{t('course.participant:find_participant.transaction_id')}</div>;
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left">
+            {row?.original?.participant_payment_history[0]?.payment_transaction_id
+              ? row?.original?.participant_payment_history[0]
+                  ?.payment_transaction_id
+              : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Payment Method",
+      column_name: t('course.participant:find_participant.payment_method'),
+      header: ({ column }: any) => {
+        return <div className="min-w-[200px] text-left">{t('course.participant:find_participant.payment_method')}</div>;
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left">
+            {row?.original?.participant_payment_history[0]?.payment_method_id
+              ?.value
+              ? row?.original?.participant_payment_history[0]?.payment_method_id
+                  ?.value
+              : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Balance",
+      column_name: t('course.participant:find_participant.balance_due(EUR)'),
+      header: ({ column }: any) => {
+        return <div className="text-left">{t('course.participant:find_participant.balance_due(EUR)')}</div>;
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left">
+            {row?.original?.balance_due
+              ? row?.original?.balance_due?.toFixed(2)
+              : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Transaction Status",
+      column_name: t('course.participant:find_participant.transaction_status'),
+      enableHiding: false,
+      header: ({ column }: any) => {
+        return <div className="min-w-[150px] text-left">{t('course.participant:find_participant.transaction_status')}</div>;
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left">
+            {row?.original?.payment_status_id?.value
+              ? row?.original?.payment_status_id?.value
+              : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Attendance Status",
+      column_name: t('course.participant:find_participant.attendance_status'),
+      enableHiding: false,
+      header: ({ column }: any) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              {t('course.participant:find_participant.attendance_status')}
+              {column.getIsSorted() === "desc" ? (
+                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : column.getIsSorted() === "asc" ? (
+                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              ) : (
+                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
+        );
+      },
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="text-left !min-w-[150px] pl-4">
+            {row?.original?.participant_attendence_status_id?.value
+              ? row?.original?.participant_attendence_status_id?.value
+              : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Program Agreement Version",
+      column_name: t('course.participant:find_participant.program_agreement_version'),
+      header: ({ column }: any) => {
+        return <div className="text-left">{t('course.participant:find_participant.program_agreement_version')}</div>;
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        return (
+          <div className="min-w-[150px] text-left">
+            {row?.original?.legal_agreement_version
+              ? row?.original?.legal_agreement_version
+              : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Program Agreement Status",
+      column_name: t('course.participant:find_participant.program_agreement_status'),
+      header: ({ column }: any) => {
+        return (
+          <div className="min-w-[150px] text-left">{t('course.participant:find_participant.program_agreement_status')}</div>
+        );
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        const toggle =
+          row?.original?.is_program_agreement_checked === true
+            ? "Completed"
+            : row?.original?.is_program_agreement_checked === false
+            ? "Pending"
+            : "-";
+        return <div className="min-w-[150px] text-left">{toggle}</div>;
+      },
+    },
+    {
+      accessorKey: "Program Agreement Date",
+      column_name: t('course.participant:find_participant.program_agreement_date'),
+      header: ({ column }: any) => {
+        return (
+          <div className="min-w-[150px] text-left">{t('course.participant:find_participant.program_agreement_date')}</div>
+        );
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        const db_date = formatDate(row?.original?.program_agreement_date);
+        return (
+          <div className="min-w-[150px] text-left">
+            {row?.original?.program_agreement_date ? db_date : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "Health Declaration Status",
+      column_name: t('course.participant:find_participant.health_declaration_status'),
+      header: ({ column }: any) => {
+        return (
+          <div className="min-w-[150px] text-left">{t('course.participant:find_participant.health_declaration_status')}</div>
+        );
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        const toggle =
+          row?.original?.is_health_declaration_checked === true
+            ? "Completed"
+            : row?.original?.is_health_declaration_checked === false
+            ? "Pending"
+            : "-";
+        return <div className="min-w-[150px] text-left">{toggle}</div>;
+      },
+    },
+    {
+      accessorKey: "Health Declaration Consent Date",
+      column_name: t('course.participant:find_participant.health_declaration_consent_date'),
+      header: ({ column }: any) => {
+        return (
+          <div className="min-w-[150px] text-left">
+            {t('course.participant:find_participant.health_declaration_consent_date')}
+          </div>
+        );
+      },
+  
+      // This any will be removed after internal dataStructure implementation
+  
+      cell: ({ row }: any) => {
+        const db_date = formatDate(
+          row?.original?.health_declaration_consent_date
+        );
+        return (
+          <div className="min-w-[150px] text-left">
+            {row?.original?.health_declaration_consent_date ? db_date : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }:any) => {
+        const optionsValues = [
+          "View Participant",
+          "Edit Participant",
+          // TODO(Not in MVP scope): Integrate these actions later
+          // "Transfer",
+          // "Send Email",
+          // "Perform sale with cash, check offline credit card payment",
+          // "Send registration confirmation email",
+          // "Upload offline payment receipt",
+          // "Download receipt",
+          // "Transaction Activity",
+        ];
+  
+        const router = useRouter();
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0 text-[#7677F4]">
+                <span className="sr-only">Open menu</span>
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <div className="flex flex-col gap-4 p-3 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+                {optionsValues.map((value, index) => (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      handleActions(index, row?.original?.id, router);
+                    }}
+                  >
+                    {value}
+                  </DropdownMenuItem>
+                ))}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+  
+}
 export function formatDate(date: string): string {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",

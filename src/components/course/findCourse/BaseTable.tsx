@@ -315,7 +315,7 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
-  const {t} = useTranslation("common")
+  const {t} = useTranslation(["common", "course.participant","new_strings"])
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
@@ -328,7 +328,7 @@ export function BaseTable<TData, TValue>({
                   variant="outline"
                   className="flex flex-row justify-between w-[192px] h-10"
                 >
-                  Columns
+                 {t('course.participant:find_participant.columns')}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -341,7 +341,7 @@ export function BaseTable<TData, TValue>({
                         checked={selectAll}
                         onCheckedChange={handleSelectAllChange}
                       />
-                      <div className="font-bold text-[14px]">Select All</div>
+                      <div className="font-bold text-[14px]">{t("new_strings:select_all")}</div>
                     </div>
 
                   {table
@@ -349,8 +349,7 @@ export function BaseTable<TData, TValue>({
                     .filter((column) => column?.accessorFn)
                     // Here we are filtering the columns which have accessorKey
                     .map((column: any) => {
-
-                      const {t} = useTranslation("common")
+                      
                       return (
                         <div className="flex flex-row gap-4 items-center">
                           <Checkbox
@@ -534,7 +533,7 @@ export function BaseTable<TData, TValue>({
                       colSpan={columns?.length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      {t("new_strings:no_results")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -567,13 +566,13 @@ export function BaseTable<TData, TValue>({
                       pageSize // Till now there is no limit will change after confirming TODO
                     ) => (
                       <SelectItem key={pageSize} value={`${pageSize}`}>
-                        Showing {pageSize}
+                        {t("new_strings:showing")} {pageSize}
                       </SelectItem>
                     )
                   )}
                 </SelectContent>
               </Select>
-              <div>of {total}</div>
+              <div> {t("new_strings:of")} {total}</div>
             </div>
           </div>
         )}
