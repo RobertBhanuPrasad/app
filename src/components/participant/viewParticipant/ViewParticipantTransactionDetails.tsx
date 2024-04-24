@@ -1,6 +1,7 @@
 import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable"; // Importing BaseTable component for displaying table
 import TransactionActivity from "@components/participants/TransactionActivityPopover";
+import { handleEditParticipantValues } from "@components/participants/editParticipant/EditParticipantUtil";
 import EditPayment from "@components/participants/editParticipant/editPayment";
 import { editPaymentSchema } from "@components/participants/editParticipant/editPaymentValidations";
 import ViewDonationDetails from "@components/participants/editParticipant/viewDonationDetails";
@@ -9,7 +10,8 @@ import { CaretSortIcon } from "@radix-ui/react-icons"; // Importing CaretSortIco
 import { useTable } from "@refinedev/core"; // Importing useTable hook for fetching table data
 import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type for defining table columns
 import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react"; // Importing icons for UI
-import { useState } from "react"; // Importing React
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react"; // Importing React
 import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
 import { TableHeader, Text } from "src/ui/TextTags";
@@ -306,6 +308,26 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
       const [editPayment, setEditPayment] = useState(false);
       const [viewDonation, setViewDonation] = useState(false);
+      const { query } = useRouter();
+      const [defaultValues, setDefaultValues] = useState({});
+      const Id: number | undefined = query?.participantId
+          ? parseInt(query.participantId as string)
+          : undefined;
+  
+      useEffect(() => {
+        async function fetchData() {
+          try {
+              const values = await handleEditParticipantValues(Number(Id));
+              setDefaultValues(values);
+          } catch (error) {
+              console.error("An error occurred:", error);
+          }
+      }
+
+      if (Id) {
+          fetchData();
+      }
+      }, [Id]);
       return (
         <div className="flex justify-center text-primary">
           <DropdownMenu>
@@ -331,7 +353,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                         </div>
                       </DialogTrigger>
                       <DialogContent>
-                        <Form  onSubmit={()=>{} } defaultValues={editPaymentSchema()}>
+                        <Form  onSubmit={() => { } }  defaultValues={defaultValues}>
                         <EditPayment setEditPayment={setEditPayment} />
                         </Form>
                       </DialogContent>
@@ -377,3 +399,4 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
   },
 ];
+
