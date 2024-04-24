@@ -1,12 +1,22 @@
 import { Button } from "src/ui/button";
 
+import CrossIcon from "@public/assets/CrossIcon";
 import { useList, useOne, useSelect, useUpdate } from "@refinedev/core";
+import _ from "lodash";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { TRANSACTION_STATUS } from "src/constants/OptionLabels";
 import { CONFIRMED, FAILED } from "src/constants/OptionValueOrder";
 import { DateField } from "src/ui/DateField";
 import { Text } from "src/ui/TextTags";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { Checkbox } from "src/ui/checkbox";
 import {
     Select,
@@ -25,8 +35,10 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
     const { query } = useRouter();
     const { mutate } = useUpdate();
     const { watch, getValues } = useFormContext();
+    const [cancelEditPayment, setcancelEditPayment] = useState(false);
     const defaultData = getValues();
     let formData = watch();
+    const [initialValue, setinitialValue] = useState(formData);
     const onFormSubmission = () => {
         mutate({
             resource: "participant_payment_history",
@@ -159,6 +171,17 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             },
         ],
     });
+    const cancelConfirmation = () => {
+        if (!_.isEqual(initialValue, formData)) {
+            setcancelEditPayment(true);
+        }
+        else{
+            setEditPayment(false);
+        }
+    };
+    const cancelEditPaymentHandler = () => {
+        setEditPayment(false);
+    };
     return (
         <div>
             <div>
@@ -286,10 +309,10 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                         <div className="!w-[278px]">
                                             <Select
                                                 disabled={
-                                                    transaction_status_id?.id ==
+                                                    transaction_status_id ==
                                                     FAILED_ID
                                                         ? true
-                                                        : transaction_status_id?.id ==
+                                                        : transaction_status_id==
                                                           CONFIRMED_ID
                                                         ? true
                                                         : false
@@ -388,7 +411,10 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                     <div className="flex justify-center gap-6">
                         <div>
                             <Button
-                                onClick={() => setEditPayment(false)}
+                                onClick={() => {
+                                    cancelConfirmation();
+                                }}
+                                // onClick={() => setEditPayment(false)}
                                 className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold"
                             >
                                 Cancel
@@ -405,6 +431,53 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                             </Button>
                         </div>
                     </div>
+
+                    <AlertDialog
+                        open={cancelEditPayment}
+                        onOpenChange={setcancelEditPayment}
+                    >
+                        <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
+                            <AlertDialogHeader>
+                                <div
+                                    className="flex justify-end cursor-pointer"
+                                    onClick={() => setcancelEditPayment(false)}
+                                >
+                                    <CrossIcon />
+                                </div>
+                                <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
+                                    Changes made will be lost. Are you sure you
+                                    want to continue?
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <div className="w-full flex justify-center items-center gap-5">
+                                    <div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="rounded-[12px] w-[71px] h-[46px]"
+                                            onClick={() => {
+                                                setcancelEditPayment(false);
+                                            }}
+                                        >
+                                            No
+                                        </Button>
+                                    </div>
+                                    <div>
+                                        <Button
+                                            type="button"
+                                            className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                                            onClick={() => {
+                                                cancelEditPaymentHandler();
+                                            }}
+                                        >
+                                            Yes
+                                        </Button>
+                                    </div>
+                                </div>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
         </div>

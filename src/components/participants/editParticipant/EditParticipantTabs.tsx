@@ -160,6 +160,9 @@ export default function EditParticipantTabs() {
         if (!_.isEqual(initialValue, formData)) {
             setcancelEditParticipant(true);
         }
+        else{
+            router.back();
+        }
     };
     const cancelEditParticipantHandler = () => {
         setcancelEditParticipant(false);
