@@ -602,33 +602,15 @@ export default function NewCourseReviewPage() {
           <div className="grid grid-cols-3 gap-4 mt-2">
             {newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
               return (
-                <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">{feeLevelData?.data?.[index]?.value}</p>
-                  <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                    title={feeLevel.total}
-                  >
-                    {feeLevel.total}
-                  </abbr>
-                </div>
+               <Fees feeLevelSettingsData={feeLevel}/>
               )
             })}
 
             {newCourseData?.is_early_bird_enabled &&
               newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
                 return (
-                  <div className=" min-w-72">
-                    <abbr className="text-sm font-normal text-accent-light" title={feeLevelData?.data?.[index]?.value}>
-                      {feeLevelData?.data?.[index]?.value}
-                    </abbr>
+                  <EarlyBirdFees feeLevelSettingsData={feeLevel}/>
 
-                    <abbr
-                      className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                      title={feeLevel.early_bird_total}
-                    >
-                      {feeLevel.early_bird_total}
-                    </abbr>
-                  </div>
                 )
               })}
             {courseFeeSettings?.[0]?.is_program_fee_editable &&
@@ -779,7 +761,7 @@ export default function NewCourseReviewPage() {
 /**
  * @function Accommodation
  * REQUIRMENT we need to show the both name and the fee of the accommodation name
- * @description this function is used to display both the accommodation type name and the fee which we will give in the creation of the course
+ * @description this function is used to display both the accommodation type name and the fee which we have already gave in the creation of the course
  * @param accomdationData
  * @returns
  */
@@ -819,6 +801,82 @@ const Accommodation = ({
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
           {currencyCode ? currencyCode : ''}
           {accomdationData?.fee_per_person}
+        </CardValue>
+      </abbr>
+    </div>
+  )
+}
+
+/**
+ * @function Fees
+ * REQUIRMENT we need to show the both fee level type and total of the fee level 
+ * @param feeLevelSettingsData 
+ * @returns 
+ */
+const Fees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettingsDataBaseType}) => {
+  /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+  const { data : feeLevelData } = useOne({
+    resource: 'option_values',
+    id: feeLevelSettingsData?.fee_level_id as number
+  })
+
+  return(
+    <div className=" min-w-72">
+      <abbr title={feeLevelData?.data?.value} className="no-underline">
+        <CardLabel className="truncate">{feeLevelData?.data?.value}</CardLabel>
+      </abbr>
+      <abbr
+        title={JSON.stringify(feeLevelSettingsData?.total)}
+        className="no-underline"
+      >
+        <CardValue className="truncate">{feeLevelSettingsData?.total}
+        </CardValue>
+      </abbr>
+
+
+    </div>
+  )
+}
+
+
+/**
+ * @function EarlyBirdFees
+ * REQUIRMENT we need to show the both fee level type and early bird total of the fee level 
+ * @param feeLevelSettingsData 
+ * @returns 
+ */
+const EarlyBirdFees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettingsDataBaseType}) => {
+  /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+  const { data : feeLevelData } = useOne({
+    resource: 'option_values',
+    id: feeLevelSettingsData?.fee_level_id as number
+  })
+
+  return(
+    <div className=" min-w-72">
+      {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
+      <abbr title={`Early Bird ${feeLevelData?.data?.value}`} className="no-underline">
+        <CardLabel className="truncate">Early Bird {feeLevelData?.data?.value}</CardLabel>
+      </abbr>
+      <abbr
+        title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
+        className="no-underline"
+      >
+        <CardValue className="truncate">{feeLevelSettingsData?.early_bird_total}
         </CardValue>
       </abbr>
     </div>
