@@ -27,14 +27,16 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      const router = useRouter();
+      const {
+        query: { id: courseId },
+        push,
+      } = useRouter();
+
       return (
-        // TODO: Write onClick to redirect to view participant page
         <a
           className="cursor-pointer"
           onClick={() => {
-            const routePath = router.asPath.split("?")[0];
-            router.push(`/${routePath}/${row?.original?.id}/view`);
+            push(`/courses/${courseId}/participants/${row?.original?.id}`);
           }}
         >
           <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
@@ -583,17 +585,20 @@ export const handleActions = (
   participant_id: any,
   router: any
 ) => {
+  const {
+    query: { id },
+  } = router;
+
   switch (index) {
     case 0: {
       // TODO: Navigate to view participant page
-      const routePath = router.asPath.split("?")[0];
-      router.push(`/${routePath}/${participant_id}/view`);
+      router.push(`/courses/${id}/participants/${participant_id}`);
       break;
     }
     case 1: {
       // TODO: Navigate to edit participant page
       const routePath = router.asPath.split("?")[0];
-      router.push(`/${routePath}/${participant_id}/edit`);
+      router.push(`/courses/${id}/participants/${participant_id}/edit`);
       break;
     }
     case 2: {
