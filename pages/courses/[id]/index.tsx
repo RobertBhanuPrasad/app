@@ -1,62 +1,62 @@
-import CalenderIcon from '@public/assets/CalenderIcon'
-import Important from '@public/assets/Important'
-import LocationIcon from '@public/assets/LocationIcon'
-import ParticipantsIcon from '@public/assets/ParticipantsIcon'
-import { useGetIdentity, useList, useOne, useUpdate } from '@refinedev/core'
-import _ from 'lodash'
-import { Circle } from 'lucide-react'
-import { GetServerSideProps } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { authProvider } from 'src/authProvider'
-import { COURSE_ACCOUNTING_STATUS, PROGRAM_STATUS } from 'src/constants/OptionLabels'
-import { ACTIVE, CANCELED, CLOSED, DECLINED, REJECTED } from 'src/constants/OptionValueOrder'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
-import { formatDate, formatDateString } from 'src/utility/DateFunctions'
-import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
+import CalenderIcon from "@public/assets/CalenderIcon"
+import Important from "@public/assets/Important"
+import LocationIcon from "@public/assets/LocationIcon"
+import ParticipantsIcon from "@public/assets/ParticipantsIcon"
+import { useGetIdentity, useList, useOne, useUpdate } from "@refinedev/core"
+import _ from "lodash"
+import { Circle } from "lucide-react"
+import { GetServerSideProps } from "next"
+import { useTranslation } from "next-i18next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import Image from "next/image"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import { authProvider } from "src/authProvider"
+import { COURSE_ACCOUNTING_STATUS, PROGRAM_STATUS } from "src/constants/OptionLabels"
+import { ACTIVE, CANCELED, CLOSED, DECLINED, REJECTED } from "src/constants/OptionValueOrder"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "src/ui/hover-card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs"
+import { formatDate, formatDateString } from "src/utility/DateFunctions"
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel"
 
-import { handleCourseDefaultValues } from '@components/course/newCourse/EditCourseUtil'
+import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil"
 
-import CourseDetailsTab from '@components/course/viewCourse/courseDetailsTab'
-import ParticipantsTab from '@components/course/viewCourse/participantsTab'
+import CourseDetailsTab from "@components/course/viewCourse/courseDetailsTab"
+import ParticipantsTab from "@components/course/viewCourse/participantsTab"
 import {
   DisplayOptions,
   handleTabsBasedOnStatus,
   isApproved,
   isCourseAccountingFormApprovalNeeded,
-  isViewCourseAccountingTabDisplay
-} from '@components/courseBusinessLogic'
-import CopyIcon from '@public/assets/CopyIcon'
-import Cross from '@public/assets/Cross'
-import CurrencyIcon from '@public/assets/CurrencyIcon'
-import Exclamation from '@public/assets/Exclamation'
-import FaceBookIcon from '@public/assets/FaceBookIcon'
-import Instagram from '@public/assets/Instagram'
-import LinkedInIcon from '@public/assets/LinkedInIcon'
-import ShareIcon from '@public/assets/ShareIcon'
-import Tick from '@public/assets/Tick.png'
-import TwitterIcon from '@public/assets/TwitterIcon'
-import WhatsappIcon from '@public/assets/WhatsappIcon'
+  isViewCourseAccountingTabDisplay,
+} from "@components/courseBusinessLogic"
+import CopyIcon from "@public/assets/CopyIcon"
+import Cross from "@public/assets/Cross"
+import CurrencyIcon from "@public/assets/CurrencyIcon"
+import Exclamation from "@public/assets/Exclamation"
+import FaceBookIcon from "@public/assets/FaceBookIcon"
+import Instagram from "@public/assets/Instagram"
+import LinkedInIcon from "@public/assets/LinkedInIcon"
+import ShareIcon from "@public/assets/ShareIcon"
+import Tick from "@public/assets/Tick.png"
+import TwitterIcon from "@public/assets/TwitterIcon"
+import WhatsappIcon from "@public/assets/WhatsappIcon"
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
   PARTICIPANTS_TAB,
   REVENUE_SUMMARY_TAB,
-  VIEW_COURSE_ACCOUNTING_FORM_TAB
-} from 'src/constants/CourseConstants'
+  VIEW_COURSE_ACCOUNTING_FORM_TAB,
+} from "src/constants/CourseConstants"
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
-} from 'src/ui/alert-dialog'
-import { Button } from 'src/ui/button'
+  AlertDialogTitle,
+} from "src/ui/alert-dialog"
+import { Button } from "src/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -64,16 +64,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
-} from 'src/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
-import { Textarea } from 'src/ui/textarea'
-import { supabaseClient } from 'src/utility/supabaseClient'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
-import CourseAccountingFormTab from '../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab'
+  DialogTrigger,
+} from "src/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from "src/ui/select"
+import { Textarea } from "src/ui/textarea"
+import { supabaseClient } from "src/utility/supabaseClient"
+import { newCourseStore } from "src/zustandStore/NewCourseStore"
+import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab"
 
-import ViewCourseAccountingFormTab from '@components/course/viewCourse/ViewCourseAccountingFormTab'
-import { useSearchParams } from 'next/navigation'
+import ViewCourseAccountingFormTab from "@components/course/viewCourse/ViewCourseAccountingFormTab"
+import { useSearchParams } from "next/navigation"
 
 function index() {
   const router = useRouter()
@@ -85,27 +85,27 @@ function index() {
   const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
   const { data: courseData } = useOne({
-    resource: 'program',
+    resource: "program",
     id: Id,
     meta: {
       select:
-        '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)'
-    }
+        ",created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)",
+    },
   })
 
   const [participantData, setParticipantData] = useState<any>()
 
   const fetchData = async () => {
     try {
-      const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
-        method: 'POST',
+      const { data, error } = await supabaseClient.functions.invoke("get_program_participant_summary", {
+        method: "POST",
         body: {
-          program_id: Id
-        }
+          program_id: Id,
+        },
       })
       setParticipantData(data)
     } catch (error) {
-      console.error('Error fetching fee data:', error)
+      console.error("Error fetching fee data:", error)
     }
   }
 
@@ -115,35 +115,35 @@ function index() {
 
   const totalRevenue = participantData?.income
 
-  const startDate = formatDate(courseData?.data?.program_schedules[0]?.start_time)
+  const startDate = formatDate(courseData?.data?.program_schedules?.[0]?.start_time)
 
-  const endDate = formatDate(
-    courseData?.data?.program_schedules[courseData?.data?.program_schedules?.length - 1]?.end_time
-  )
+  const endDate =
+    courseData?.data?.program_schedules?.length - 1 &&
+    formatDate(courseData?.data?.program_schedules[courseData?.data?.program_schedules?.length - 1]?.end_time)
 
-  const countryName = 'India'
+  const countryName = "India"
 
-  const { t } = useTranslation('common')
+  const { t } = useTranslation("common")
 
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
-      label: t('pages.Tabs.CourseDetailsTab'),
+      label: t("pages.Tabs.CourseDetailsTab"),
       disabled: false,
-      tab_query_name: 'course_details'
+      tab_query_name: "course_details",
     },
     {
       value: PARTICIPANTS_TAB,
-      label: t('pages.Tabs.participantTab'),
+      label: t("pages.Tabs.participantTab"),
       disabled: false,
-      tab_query_name: 'participants'
+      tab_query_name: "participants",
     },
     {
       value: REVENUE_SUMMARY_TAB,
-      label: t('pages.Tabs.revenueSummaryTab'),
+      label: t("pages.Tabs.revenueSummaryTab"),
       disabled: false,
-      tab_query_name: 'revenue_summary'
-    }
+      tab_query_name: "revenue_summary",
+    },
   ]
 
   /**
@@ -160,28 +160,28 @@ function index() {
   if (isViewCourseAccountingTabToDisplay) {
     tabTriggers.push({
       value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
-      label: 'View Course Accounting Form',
+      label: "View Course Accounting Form",
       disabled: true,
-      tab_query_name: 'view_course_accounting_form'
+      tab_query_name: "view_course_accounting_form",
     })
   } else {
     tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
-      label: t('pages.Tabs.courseAccountingFormTab'),
+      label: t("pages.Tabs.courseAccountingFormTab"),
       disabled: true,
-      tab_query_name: 'course_accounting_form'
+      tab_query_name: "course_accounting_form",
     })
   }
 
   const { data: loginUserData }: any = useGetIdentity()
 
   const { data: countryConfigData } = useList({
-    resource: 'country_config'
+    resource: "country_config",
   })
 
- /**
- * When we change the tab, we need to retrieve the corresponding tab data to update the query name.
- */
+  /**
+   * When we change the tab, we need to retrieve the corresponding tab data to update the query name.
+   */
   const getTabDataByTabTrigger = (val: string) => {
     const tabData = tabTriggers.find((tab: any) => {
       return JSON.stringify(tab.value) === val
@@ -189,22 +189,22 @@ function index() {
     return tabData
   }
 
- /**
- * This function is primarily used for removing a state variable.
- * It displays the tab corresponding to the query name.
- * If the query name is not present, it displays the first tab.
- */
+  /**
+   * This function is primarily used for removing a state variable.
+   * It displays the tab corresponding to the query name.
+   * If the query name is not present, it displays the first tab.
+   */
   const getTabQueryName = () => {
-    if (searchParam.get('tab') !== null) {
+    if (searchParam.get("tab") !== null) {
       const tabData = tabTriggers.find((tab: any) => {
-        return tab.tab_query_name === searchParam.get('tab')
+        return tab.tab_query_name === searchParam.get("tab")
       })
 
       if (tabData) {
         return JSON.stringify(tabData.value)
       }
     }
-    return '1'
+    return "1"
   }
 
   return (
@@ -228,7 +228,7 @@ function index() {
         </div>
         <div
           onClick={() => {
-            router.push('/')
+            router.push("/")
           }}
           className="cursor-pointer"
         >
@@ -251,7 +251,7 @@ function index() {
         </div>
         <div
           onClick={() => {
-            router.push('/')
+            router.push("/")
           }}
           className="cursor-pointer"
         >
@@ -283,7 +283,7 @@ function index() {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Approved by: {courseData?.data?.approved_by_user_id?.contact_id?.full_name} ({' '}
+              Approved by: {courseData?.data?.approved_by_user_id?.contact_id?.full_name} ({" "}
               {formatDateString(new Date(courseData?.data?.program_approved_date))})<br></br>
               Last Modified by: National Admin(17 Mar, 2022)
             </div>
@@ -294,10 +294,10 @@ function index() {
       <div className="w-full mt-6 sticky">
         <Tabs
           onValueChange={(val: string) => {
-            // to store the tab Data 
+            // to store the tab Data
             const tabData = getTabDataByTabTrigger(val)
             //change the queryname according to tabData
-            params.set('tab', tabData?.tab_query_name)
+            params.set("tab", tabData?.tab_query_name)
             router.replace(`/courses/${Id}?${params.toString()}`)
           }}
           value={getTabQueryName()}
@@ -315,8 +315,8 @@ function index() {
                   <div
                     className={`${
                       getTabQueryName() === JSON.stringify(trigger.value)
-                        ? 'bg-[#7677F4] rounded w-full h-[2px]'
-                        : 'w-full h-[2px]'
+                        ? "bg-[#7677F4] rounded w-full h-[2px]"
+                        : "w-full h-[2px]"
                     }`}
                   />
                 </div>
@@ -371,13 +371,13 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
   const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, DECLINED)?.id
   const options = [
     {
-      label: 'Approve Course',
-      value: 1
+      label: "Approve Course",
+      value: 1,
     },
     {
-      label: 'Reject Course',
-      value: 2
-    }
+      label: "Reject Course",
+      value: 2,
+    },
   ]
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [rejectModalOpen, setRejectModalOpen] = useState(false)
@@ -388,12 +388,12 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
   const { mutate } = useUpdate()
   const approveCourse = async () => {
     await mutate({
-      resource: 'program',
+      resource: "program",
       values: {
         status_id: courseActiveStatusId,
-        approved_by_user_id: loginUserData?.userData?.id
+        approved_by_user_id: loginUserData?.userData?.id,
       },
-      id: courseId
+      id: courseId,
     })
     setViewSuccessModal(true)
   }
@@ -402,12 +402,12 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
 
   const rejectCourse = async () => {
     await mutate({
-      resource: 'program',
+      resource: "program",
       values: {
         status_id: courseDeclinedStatusId,
-        program_rejection_feedback: rejectionFeedback
+        program_rejection_feedback: rejectionFeedback,
       },
-      id: courseId
+      id: courseId,
     })
     setViewRejectedModal(true)
   }
@@ -415,7 +415,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
   return (
     <div>
       <Select
-        onValueChange={val => {
+        onValueChange={(val) => {
           if (val == 1) {
             setApproveModalOpen(true)
           } else {
@@ -482,10 +482,10 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
         <DialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6 ">
           <DialogHeader className="text-center">
             <div className="flex items-center w-full justify-center">
-              <Cross />{' '}
+              <Cross />{" "}
             </div>
             <DialogTitle className="text-gray-500 text-sm font-normal pt-2">
-              {' '}
+              {" "}
               Describe your rejection reason
               <span className="text-blue-500">(optional)</span>
             </DialogTitle>
@@ -538,7 +538,7 @@ const RejectedModalOpen = () => {
       <DialogContent className="w-[414px] h-[279px]">
         <DialogHeader className="text-center">
           <div className="flex items-center w-full justify-center">
-            <Cross />{' '}
+            <Cross />{" "}
           </div>
           <DialogTitle className="font-bold text-center">Course Rejected</DialogTitle>
           <DialogDescription className="text-center">The Course got rejected successfully</DialogDescription>
@@ -628,9 +628,9 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       // we have to delete schedules when user click on copy course and other we need to prefill
 
-      defaultValues = _.omit(defaultValues, ['id', 'schedules'])
+      defaultValues = _.omit(defaultValues, ["id", "schedules"])
       setNewCourseData(defaultValues)
-      router.push({ pathname: '/courses/add', query: { action: 'Copy' } })
+      router.push({ pathname: "/courses/add", query: { action: "Copy" } })
     }
   }
 
@@ -641,11 +641,11 @@ export const ActionsDropDown = ({ courseData }: any) => {
   const cancelCourse = () => {
     setCancelCourseModalOpen(false)
     mutate({
-      resource: 'program',
+      resource: "program",
       values: {
-        status_id: courseCanceledStatusId
+        status_id: courseCanceledStatusId,
       },
-      id: courseId
+      id: courseId,
     })
     setCancelSuccessModalOpen(true)
   }
@@ -653,7 +653,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
   return (
     <div>
       <Select
-        onValueChange={val => {
+        onValueChange={(val) => {
           switch (val) {
             case 1: {
               // TODO - navigate to view participants page
@@ -662,7 +662,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
             }
             case 2: {
               // TODO - navigate to register participants page
-              router.push('/courses/add')
+              router.push("/courses/add")
               break
             }
             case 3: {
@@ -683,7 +683,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
               break
             }
             default: {
-              router.push('/')
+              router.push("/")
             }
           }
         }}
@@ -774,35 +774,35 @@ const DisplayingCourseStatus = ({ statusId }: any) => {
   let statusColor
   let color
   switch (statusId) {
-    case 'Active':
-      statusText = 'Active'
-      statusColor = 'text-[#15AF53] bg-[#15AF530D]'
-      color = '#15AF53'
+    case "Active":
+      statusText = "Active"
+      statusColor = "text-[#15AF53] bg-[#15AF530D]"
+      color = "#15AF53"
       break
-    case 'Pending Review':
-      statusText = 'Pending Review'
-      statusColor = 'text-[#FFB900] bg-[#FFB9000D]'
-      color = '#FFB900'
+    case "Pending Review":
+      statusText = "Pending Review"
+      statusColor = "text-[#FFB900] bg-[#FFB9000D]"
+      color = "#FFB900"
       break
-    case 'Canceled':
-      statusText = 'Cancelled'
-      statusColor = 'text-[#FF5630] bg-[#FF56300D]'
-      color = '#FF5630'
+    case "Canceled":
+      statusText = "Cancelled"
+      statusColor = "text-[#FF5630] bg-[#FF56300D]"
+      color = "#FF5630"
       break
-    case 'Declined':
-      statusText = 'Declined'
-      statusColor = 'text-[#FF5630] bg-[#FF56300D]'
-      color = '#FF5630'
+    case "Declined":
+      statusText = "Declined"
+      statusColor = "text-[#FF5630] bg-[#FF56300D]"
+      color = "#FF5630"
       break
-    case 'Completed':
-      statusText = 'Completed'
-      statusColor = 'text-[#36B37E] bg-[#36B37E0D]'
-      color = '#36B37E'
+    case "Completed":
+      statusText = "Completed"
+      statusColor = "text-[#36B37E] bg-[#36B37E0D]"
+      color = "#36B37E"
       break
-    case 'Full':
-      statusText = 'Full'
-      statusColor = 'text-[#15AF53] bg-[#15AF530D]'
-      color = '#15AF53'
+    case "Full":
+      statusText = "Full"
+      statusColor = "text-[#15AF53] bg-[#15AF530D]"
+      color = "#15AF53"
       break
   }
 
@@ -824,7 +824,7 @@ const ShareButton = () => {
     try {
       await navigator.clipboard.writeText(text)
     } catch (err) {
-      console.error('Failed to copy: ', err)
+      console.error("Failed to copy: ", err)
     }
   }
 
@@ -882,7 +882,7 @@ const ShareButton = () => {
                     copied
                   </div>
                 ) : (
-                  ''
+                  ""
                 )}
               </div>
             </div>
@@ -903,7 +903,7 @@ const ShareButton = () => {
                     copied
                   </div>
                 ) : (
-                  ''
+                  ""
                 )}
               </div>
             </div>
@@ -914,27 +914,27 @@ const ShareButton = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async context => {
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context)
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
+  const translateProps = await serverSideTranslations(context.locale ?? "en", ["common"])
 
   if (!authenticated) {
     return {
       props: {
-        ...translateProps
+        ...translateProps,
       },
       redirect: {
-        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
-        permanent: false
-      }
+        destination: ` ${redirectTo}?to=${encodeURIComponent(context.req.url || "/")}`,
+        permanent: false,
+      },
     }
   }
 
   return {
     props: {
-      ...translateProps
-    }
+      ...translateProps,
+    },
   }
 }
 
@@ -947,13 +947,13 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
 
   const options = [
     {
-      label: 'Approve',
-      value: 1
+      label: "Approve",
+      value: 1,
     },
     {
-      label: 'Reject',
-      value: 2
-    }
+      label: "Reject",
+      value: 2,
+    },
   ]
 
   // Initialize state for whether the approve modal is open or not
@@ -970,7 +970,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
     setViewCourseAccountingSuccessModal,
     setViewCourseAccountingRejectedDescriptionModal,
     setViewCourseAccountingRejectedModal,
-    viewCourseAccountingRejectedModal
+    viewCourseAccountingRejectedModal,
   } = newCourseStore()
 
   const { data: loginUserData }: any = useGetIdentity()
@@ -986,12 +986,12 @@ const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: n
    */
   const approveCourseAccountingForm = async () => {
     await supabaseClient
-      .from('program')
+      .from("program")
       .update({ program_accounting_status_id: accountingClosedStatusId })
-      .eq('id', courseId)
+      .eq("id", courseId)
 
     await supabaseClient
-      .from('program_accounting_activity')
+      .from("program_accounting_activity")
       .insert({ caf_status_id: accountingClosedStatusId, user_id: loginUserData?.userData?.id })
 
     setViewCourseAccountingSuccessModal(true)
@@ -1154,7 +1154,7 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
   const {
     viewCourseAccountingRejectedDescriptionModal,
     setViewCourseAccountingRejectedDescriptionModal,
-    setViewCourseAccountingRejectedModal
+    setViewCourseAccountingRejectedModal,
   } = newCourseStore()
 
   const [rejectionFeedback, setRejectionFeedback] = useState(false)
@@ -1174,14 +1174,14 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
   const rejectCourse = async () => {
     // Make an asynchronous call to update the program resource
     await supabaseClient
-      .from('program')
+      .from("program")
       .update({ program_accounting_status_id: accountingRejectedStatusId })
-      .eq('id', courseId)
+      .eq("id", courseId)
 
-    await supabaseClient.from('program_accounting_activity').insert({
+    await supabaseClient.from("program_accounting_activity").insert({
       caf_status_id: accountingRejectedStatusId,
       user_id: loginUserData?.userData?.id,
-      comment: rejectionFeedback
+      comment: rejectionFeedback,
     })
 
     // Close the modal for viewing the rejected accounting form
@@ -1194,10 +1194,10 @@ const ViewCourseAccountingRejectedModalOpen = ({ courseId }: { courseId: number 
       <AlertDialogContent className="flex flex-col items-center h-[331px] w-[414px] !p-6">
         <AlertDialogHeader className="text-center">
           <div className="flex items-center w-full justify-center">
-            <Cross />{' '}
+            <Cross />{" "}
           </div>
           <AlertDialogTitle className="text-gray-500 text-sm font-normal pt-2">
-            {' '}
+            {" "}
             Describe your rejection reason
             <span className="text-blue-500">(optional)</span>
           </AlertDialogTitle>

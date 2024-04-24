@@ -1,13 +1,9 @@
+import _ from "lodash"
+import { usePathname, useSearchParams } from "next/navigation"
+import { PAYMENT_MODE, PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from "src/constants/OptionLabels"
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity, useMany, useOne } from "@refinedev/core";
-import _ from "lodash";
+import { useGetIdentity, useList, useMany, useOne } from "@refinedev/core";
 import { useEffect, useState } from "react";
-import {
-  PAYMENT_MODE,
-  PROGRAM_ORGANIZER_TYPE,
-  TIME_FORMAT,
-  VISIBILITY,
-} from "src/constants/OptionLabels";
 import countryCodes from "src/data/CountryCodes";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
@@ -25,238 +21,223 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
+import { CardLabel, CardValue } from "src/ui/TextTags";
+import { useRouter } from "next/router";
 
 export default function NewCourseReviewPage() {
-  const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
-    newCourseStore();
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const { replace } = useRouter()
+  const { newCourseData } = newCourseStore()
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
     id: newCourseData?.program_type_id,
-  });
+  })
 
   let stateId: number = 0,
     cityId: number = 0,
-    centerId: number = 0;
+    centerId: number = 0
 
   //Finding the state_id ,city_id and center_id where course is going on
   if (programTypeData?.data?.is_online_program) {
-    stateId = newCourseData?.state_id;
-    cityId = newCourseData?.city_id;
-    centerId = newCourseData?.center_id;
+    stateId = newCourseData?.state_id
+    cityId = newCourseData?.city_id
+    centerId = newCourseData?.center_id
   } else {
     if (newCourseData?.is_existing_venue == "new-venue") {
-      stateId = newCourseData?.newVenue?.state_id;
-      cityId = newCourseData?.newVenue?.city_id;
-      centerId = newCourseData?.newVenue?.center_id;
+      stateId = newCourseData?.newVenue?.state_id
+      cityId = newCourseData?.newVenue?.city_id
+      centerId = newCourseData?.newVenue?.center_id
     } else if (newCourseData?.is_existing_venue == "existing-venue") {
-      stateId = newCourseData?.existingVenue?.state_id;
-      cityId = newCourseData?.existingVenue?.city_id;
-      centerId = newCourseData?.existingVenue?.center_id;
+      stateId = newCourseData?.existingVenue?.state_id
+      cityId = newCourseData?.existingVenue?.city_id
+      centerId = newCourseData?.existingVenue?.center_id
     }
   }
 
   const { data: venueState } = useOne({
     resource: "state",
     id: stateId,
-  });
+  })
 
-  const StateNames = venueState?.data?.name;
+  const StateNames = venueState?.data?.name
 
   const { data: venueCity } = useOne({
     resource: "city",
     id: cityId,
-  });
+  })
 
-  const CityNames = venueCity?.data?.name;
+  const CityNames = venueCity?.data?.name
 
   const { data: venueCenter } = useOne({
     resource: "center",
     id: centerId,
-  });
+  })
 
-  const CenterNames = venueCenter?.data?.name;
+  const CenterNames = venueCenter?.data?.name
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const { data }: any = useGetIdentity();
+  const { data }: any = useGetIdentity()
 
-  const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
+  const [courseFeeSettings, setCourseFeeSettings] = useState<any>()
 
   //Finding course start date
-  const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
+  const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString()
 
   const fetchFeeData = async () => {
     //Sending all required params
-    const { data, error } = await supabaseClient.functions.invoke(
-      "course-fee",
-      {
-        method: "POST",
-        body: {
-          state_id: stateId,
-          city_id: cityId,
-          center_id: centerId,
-          start_date: courseStartDate,
-          program_type_id: newCourseData?.program_type_id,
-        },
-      }
-    );
+    const { data, error } = await supabaseClient.functions.invoke("course-fee", {
+      method: "POST",
+      body: {
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
+        program_type_id: newCourseData?.program_type_id,
+      },
+    })
 
-    if (error)
-      console.log("error while fetching course fee level settings data", error);
-    setCourseFeeSettings(data);
-  };
+    if (error) console.log("error while fetching course fee level settings data", error)
+    setCourseFeeSettings(data)
+  }
 
   useEffect(() => {
-    fetchFeeData();
-  }, []);
+    fetchFeeData()
+  }, [])
 
   const creator =
     newCourseData?.program_created_by &&
-    getOptionValueObjectById(
-      PROGRAM_ORGANIZER_TYPE,
-      newCourseData?.program_created_by
-    );
+    getOptionValueObjectById(PROGRAM_ORGANIZER_TYPE, newCourseData?.program_created_by)
 
-  const paymentMethod = getOptionValueObjectById(
-    PAYMENT_MODE,
-    newCourseData?.accommodation_fee_payment_mode
-  );
+  const paymentMethod = getOptionValueObjectById(PAYMENT_MODE, newCourseData?.accommodation_fee_payment_mode)
 
   const timeFormat =
-    newCourseData?.hour_format_id &&
-    getOptionValueObjectById(TIME_FORMAT, newCourseData?.hour_format_id);
+    newCourseData?.hour_format_id && getOptionValueObjectById(TIME_FORMAT, newCourseData?.hour_format_id)
 
-  const visibility =
-    newCourseData?.visibility_id &&
-    getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id);
+  const visibility = newCourseData?.visibility_id && getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id)
 
   const { data: organizationName } = useOne({
     resource: "organizations",
     id: newCourseData?.organization_id,
-  });
+  })
 
   const { data: ProgramOrganizer } = useMany({
     resource: "users",
     ids: newCourseData?.organizer_ids || [],
     meta: { select: "contact_id(full_name)" },
-  });
+  })
 
   const programOrganizersNames = ProgramOrganizer?.data
     ?.map((user_id) => {
-      if (user_id?.contact_id?.full_name) return user_id?.contact_id?.full_name;
+      if (user_id?.contact_id?.full_name) return user_id?.contact_id?.full_name
     })
-    .join(", ");
+    .join(", ")
 
   const { data: CourseLanguages } = useMany({
     resource: "languages",
     ids: newCourseData?.language_ids || [],
     meta: { select: "language_name" },
-  });
+  })
 
   const courselLanguageName = CourseLanguages?.data
     ?.map((language: any) => {
-      if (language?.language_name) return language?.language_name;
+      if (language?.language_name) return language?.language_name
     })
-    .join(", ");
+    .join(", ")
 
   const { data: CourseAccomidation } = useMany({
     resource: "accomdation_types",
     ids: _.map(newCourseData?.accommodation, "accommodation_type_id") || [],
-  });
+  })
 
-  const courseAccomodationNames = CourseAccomidation?.data?.map(
-    (accomdation: any) => {
-      if (accomdation?.name) return accomdation?.name;
-    }
-  );
+  const courseAccomodationNames = CourseAccomidation?.data?.map((accomdation: any) => {
+    if (accomdation?.name) return accomdation?.name
+  })
 
   const { data: CourseTranslation } = useMany({
     resource: "languages",
     ids: newCourseData?.translation_language_ids || [],
     meta: { select: "language_name" },
-  });
+  })
 
   const languagesTranslations = CourseTranslation?.data
     ?.map((CourseTranslation: any) => {
-      return CourseTranslation?.language_name;
+      return CourseTranslation?.language_name
     })
-    .join(", ");
+    .join(", ")
 
   const { data: CourseTeachers } = useMany({
     resource: "users",
     ids: newCourseData?.teacher_ids || [],
     meta: { select: "contact_id(full_name)" },
-  });
+  })
 
   const CourseTeachersNames = CourseTeachers?.data?.map((teacher_id) => {
-    if (teacher_id?.contact_id?.full_name)
-      return teacher_id?.contact_id?.full_name;
-  });
+    if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
+  })
 
   const { data: courseType } = useOne({
     resource: "program_types",
     id: newCourseData?.program_type_id,
-  });
+  })
 
   const venueSessions = () => {
     return (
       <div className=" min-w-72 ">
-        <p className="text-sm font-normal text-accent-light text-[#999999]">
-          Sessions
-        </p>
+        <p className="text-sm font-normal text-accent-light text-[#999999]">Sessions</p>
         {newCourseData?.schedules?.map((data: any) => {
-          const schedule = `${formatDateString(data.date)} | ${
-            data?.startHour || "00"
-          } : ${data?.startMinute || "00"}  ${
-            data?.startTimeFormat && data?.startTimeFormat
-          } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
-            data?.endTimeFormat && data?.endTimeFormat
-          }`;
+          const schedule = `${formatDateString(data.date)} | ${data?.startHour || "00"} : ${
+            data?.startMinute || "00"
+          }  ${data?.startTimeFormat && data?.startTimeFormat} to ${data?.endHour || "00"} : ${
+            data?.endMinute || "00"
+          }  ${data?.endTimeFormat && data?.endTimeFormat}`
           return (
-            <abbr
-              className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-              title={schedule}
-            >
+            <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]" title={schedule}>
               {schedule}
             </abbr>
-          );
+          )
         })}
       </div>
-    );
-  };
+    )
+  }
 
   const allowedCountries = newCourseData?.allowed_countries
     ?.map((countryCode: string) => {
-      return countryCodes[countryCode];
+      return countryCodes[countryCode]
     })
-    .join(", ");
+    .join(", ")
 
   const { data: timeZone } = useOne({
     resource: "time_zones",
     id: newCourseData?.time_zone_id,
-  });
+  })
 
   const { data: feeLevelData } = useMany({
     resource: "option_values",
     ids: _.map(newCourseData?.program_fee_level_settings, "fee_level_id"),
-  });
+  })
 
-  const [openBasicDetails, setOpenBasicDetails] = useState(false);
-  const [openCourseDetails, setOpenCourseDetails] = useState(false);
-  const [openVenueDetails, setOpenVenueDetails] = useState(false);
-  const [openAccomidationDetails, setOpenAccomidationDetails] = useState(false);
-  const [openContactDetails, setOpenContactDetails] = useState(false);
-  const [openFeesDetails, setOpenFeesDetails] = useState(false);
-  const [clickedButton, setClickedButton] = useState<string | null>(null);
+  const [openBasicDetails, setOpenBasicDetails] = useState(false)
+  const [openCourseDetails, setOpenCourseDetails] = useState(false)
+  const [openVenueDetails, setOpenVenueDetails] = useState(false)
+  const [openAccomidationDetails, setOpenAccomidationDetails] = useState(false)
+  const [openContactDetails, setOpenContactDetails] = useState(false)
+  const [openFeesDetails, setOpenFeesDetails] = useState(false)
+  const [clickedButton, setClickedButton] = useState<string | null>(null)
 
-  const { setProgramId } = newCourseStore();
+  const { setProgramId } = newCourseStore()
+
+  
 
   const handClickContinue = async () => {
+  
     setIsSubmitting(true);
 
     /**
-     * This variable will retur true if all api calls has been successfully it will return false if any api call fails
+     * This variable will return true if all api calls has been successfully it will return false if any api call fails
      */
     const isPosted = await handlePostProgramData(
       newCourseData,
@@ -265,12 +246,34 @@ export default function NewCourseReviewPage() {
     );
 
     if (isPosted) {
-      setViewPreviewPage(false);
-      setViewThankyouPage(true);
+      const params = new URLSearchParams(searchParams);
+
+    params.set("header", "thankyou_page");
+
+    // we have to use this replace method
+    replace(`${pathname}?${params.toString()}`);
     } else {
       setIsSubmitting(false);
     }
   };
+
+  /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the accommodation details
+   * we will get the currency code in the country config
+   *
+   */
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: newCourseData?.organization_id,
+      },
+    ],
+  });
 
   return (
     <div className="pb-12">
@@ -282,9 +285,7 @@ export default function NewCourseReviewPage() {
         <section className="w-full pb-8 text-base border-b">
           {/* title section */}
           <div className="flex items-center">
-            <p className="font-semibold text-accent-primary text-[#333333]">
-              Basic Details
-            </p>
+            <p className="font-semibold text-accent-primary text-[#333333]">Basic Details</p>
             {/* Here we are calling EditModalDialog for passing the data of BasicDetails page */}
             <EditModalDialog
               title="Basic Details"
@@ -292,17 +293,15 @@ export default function NewCourseReviewPage() {
               onClose={() => setOpenBasicDetails(false)}
               open={openBasicDetails}
               openEdit={() => {
-                setOpenBasicDetails(true);
-                setClickedButton("Basic Details");
+                setOpenBasicDetails(true)
+                setClickedButton("Basic Details")
               }}
             />{" "}
           </div>
           {/* body */}
           <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72 ">
-              <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                Creator
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999] ">Creator</p>
 
               <abbr
                 className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
@@ -312,9 +311,7 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Organization
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Organization</p>
               <abbr
                 className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
                 title={organizationName?.data?.name}
@@ -323,9 +320,7 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Program Organizer
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Program Organizer</p>
               <abbr
                 className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
                 title={programOrganizersNames}
@@ -334,9 +329,7 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Registration via 3rd party gateway
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Registration via 3rd party gateway</p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.is_geo_restriction_applicable}
@@ -345,9 +338,7 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Registration via 3rd party gateway
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Registration via 3rd party gateway</p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.is_registration_via_3rd_party}
@@ -374,9 +365,7 @@ export default function NewCourseReviewPage() {
         <section className="w-full py-8 text-base border-b">
           {/* title section */}
           <div className="flex items-center  ">
-            <p className="font-semibold text-accent-primary text-[#333333]">
-              Course Details
-            </p>
+            <p className="font-semibold text-accent-primary text-[#333333]">Course Details</p>
             {/* Here we are calling EditModalDialog for passing the data of CourseDetails page */}
             <EditModalDialog
               title="Course Details"
@@ -384,17 +373,15 @@ export default function NewCourseReviewPage() {
               onClose={() => setOpenCourseDetails(false)}
               open={openCourseDetails}
               openEdit={() => {
-                setOpenCourseDetails(true);
-                setClickedButton("Course Details");
+                setOpenCourseDetails(true)
+                setClickedButton("Course Details")
               }}
             />{" "}
           </div>
           {/* body */}
           <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Type
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Course Type</p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={courseType?.data?.name}
@@ -403,17 +390,13 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Teacher
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Teacher</p>
               <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Language(s) course is taught in
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Language(s) course is taught in</p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={courselLanguageName}
@@ -433,22 +416,16 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Max Capacity
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Max Capacity</p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.max_capacity}
               >
-                {newCourseData?.max_capacity
-                  ? newCourseData?.max_capacity
-                  : "-"}
+                {newCourseData?.max_capacity ? newCourseData?.max_capacity : "-"}
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Program Visibility
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Program Visibility</p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={visibility?.value}
@@ -480,49 +457,40 @@ export default function NewCourseReviewPage() {
             </div>
             {/* // TODO need to do when the form filed is clear */}
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Description
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Course Description</p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={
                   "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
                 }
               >
-                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-                aut fugit, sed quia consequuntur ma
+                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma
               </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
 
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Notes
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Course Notes</p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={
                   "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
                 }
               >
-                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-                aut fugit, sed quia consequuntur ma{" "}
+                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma{" "}
               </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
 
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Email Notes
-              </p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">Email Notes</p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={
                   "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
                 }
               >
-                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-                aut fugit, sed quia consequuntur ma{" "}
+                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma{" "}
               </abbr>
             </div>
           </div>
@@ -531,9 +499,7 @@ export default function NewCourseReviewPage() {
         <section className="w-full py-8 text-base border-b">
           {/* title section */}
           <div className="flex items-center  ">
-            <p className="font-semibold text-accent-primary text-[#333333]">
-              Time and Venue
-            </p>
+            <p className="font-semibold text-accent-primary text-[#333333]">Time and Venue</p>
             {/* Here we are calling EditModalDialog for passing the data of VenueDetails page */}
             <EditModalDialog
               title="Venue Details"
@@ -541,8 +507,8 @@ export default function NewCourseReviewPage() {
               onClose={() => setOpenVenueDetails(false)}
               open={openVenueDetails}
               openEdit={() => {
-                setOpenVenueDetails(true);
-                setClickedButton("Venue Details");
+                setOpenVenueDetails(true)
+                setClickedButton("Venue Details")
               }}
             />{" "}
           </div>
@@ -551,9 +517,7 @@ export default function NewCourseReviewPage() {
           {programTypeData?.data?.is_online_program === true ? (
             <div className="grid grid-cols-4 gap-4 mt-2">
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Online zoom URL
-                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">Online zoom URL</p>
                 <abbr
                   className="text-sm font-normal text-accent-light text-[#999999]"
                   title={newCourseData?.online_url}
@@ -562,25 +526,15 @@ export default function NewCourseReviewPage() {
                 </abbr>
               </div>
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Province
-                </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  {StateNames ? StateNames : "-"}
-                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">Province</p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">{StateNames ? StateNames : "-"}</p>
               </div>
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  City
-                </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  {CityNames ? CityNames : "-"}
-                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">City</p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">{CityNames ? CityNames : "-"}</p>
               </div>
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Center
-                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">Center</p>
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   {CenterNames ? CenterNames : "-"}
                 </p>
@@ -590,20 +544,12 @@ export default function NewCourseReviewPage() {
           ) : (
             <div className="grid grid-cols-4 gap-4 mt-2">
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Time Format
-                </p>
-                <p className="font-semibold truncate text-accent-secondary">
-                  {timeFormat?.value}
-                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">Time Format</p>
+                <p className="font-semibold truncate text-accent-secondary">{timeFormat?.value}</p>
               </div>
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Time Zone
-                </p>
-                <p className="font-semibold truncate text-accent-secondary">
-                  {timeZone?.data?.name}
-                </p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">Time Zone</p>
+                <p className="font-semibold truncate text-accent-secondary">{timeZone?.data?.name}</p>
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -614,9 +560,7 @@ export default function NewCourseReviewPage() {
         <section className="w-full py-8 text-base border-b">
           {/* title section */}
           <div className="flex items-center  ">
-            <p className="font-semibold text-accent-primary text-[#333333]">
-              Fees Information
-            </p>
+            <p className="font-semibold text-accent-primary text-[#333333]">Fees Information</p>
             {/* Here we are calling EditModalDialog for passing the data of FeesDetails page */}
             <EditModalDialog
               title="Fees Details"
@@ -624,60 +568,49 @@ export default function NewCourseReviewPage() {
               onClose={() => setOpenFeesDetails(false)}
               open={openFeesDetails}
               openEdit={() => {
-                setOpenFeesDetails(true);
-                setClickedButton("Venue Details");
+                setOpenFeesDetails(true)
+                setClickedButton("Venue Details")
               }}
             />{" "}
           </div>
           {/* body */}
           <div className="grid grid-cols-3 gap-4 mt-2">
-            {newCourseData?.program_fee_level_settings?.map(
-              (feeLevel: any, index: number) => {
-                return (
-                  <div className=" min-w-72">
-                    <p className="text-sm font-normal text-accent-light ">
-                      {feeLevelData?.data?.[index]?.value}
-                    </p>
-                    <abbr
-                      className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                      title={feeLevel.total}
-                    >
-                      {feeLevel.total}
-                    </abbr>
-                  </div>
-                );
-              }
-            )}
+            {newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
+              return (
+                <div className=" min-w-72">
+                  <p className="text-sm font-normal text-accent-light ">{feeLevelData?.data?.[index]?.value}</p>
+                  <abbr
+                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    title={feeLevel.total}
+                  >
+                    {feeLevel.total}
+                  </abbr>
+                </div>
+              )
+            })}
 
             {newCourseData?.is_early_bird_enabled &&
-              newCourseData?.program_fee_level_settings?.map(
-                (feeLevel: any, index: number) => {
-                  return (
-                    <div className=" min-w-72">
-                      <abbr
-                        className="text-sm font-normal text-accent-light"
-                        title={feeLevelData?.data?.[index]?.value}
-                      >
-                        {feeLevelData?.data?.[index]?.value}
-                      </abbr>
+              newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
+                return (
+                  <div className=" min-w-72">
+                    <abbr className="text-sm font-normal text-accent-light" title={feeLevelData?.data?.[index]?.value}>
+                      {feeLevelData?.data?.[index]?.value}
+                    </abbr>
 
-                      <abbr
-                        className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                        title={feeLevel.early_bird_total}
-                      >
-                        {feeLevel.early_bird_total}
-                      </abbr>
-                    </div>
-                  );
-                }
-              )}
+                    <abbr
+                      className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                      title={feeLevel.early_bird_total}
+                    >
+                      {feeLevel.early_bird_total}
+                    </abbr>
+                  </div>
+                )
+              })}
             {courseFeeSettings?.[0]?.is_program_fee_editable &&
               courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
               courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Early bird cut-off period
-                  </p>
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">Early bird cut-off period</p>
                   <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                     {subtractDaysAndFormat(
                       courseFeeSettings?.[0]?.early_bird_cut_off_period,
@@ -689,13 +622,8 @@ export default function NewCourseReviewPage() {
               )}
 
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                Disable Pay Later Label123?
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title="Yes"
-              >
+              <p className="text-sm font-normal text-accent-light text-[#999999] ">Disable Pay Later Label123?</p>
+              <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]" title="Yes">
                 Yes
               </abbr>
             </div>
@@ -705,9 +633,7 @@ export default function NewCourseReviewPage() {
         <section className="w-full py-8 text-base border-b">
           {/* title section */}
           <div className="flex items-center ">
-            <p className="font-semibold text-accent-primary text-[#333333]">
-              Accommodation Information
-            </p>
+            <p className="font-semibold text-accent-primary text-[#333333]">Accommodation Information</p>
             {/* Here we are calling EditModalDialog for passing the data of AccomidationDetails page */}
             <EditModalDialog
               title="Accomidation Details"
@@ -715,48 +641,43 @@ export default function NewCourseReviewPage() {
               onClose={() => setOpenAccomidationDetails(false)}
               open={openAccomidationDetails}
               openEdit={() => {
-                setOpenAccomidationDetails(true);
-                setClickedButton("Accomidation Details");
+                setOpenAccomidationDetails(true)
+                setClickedButton("Accomidation Details")
               }}
             />{" "}
           </div>
-          {newCourseData?.is_residential_program &&
-          <div className="grid grid-cols-4 gap-4 mt-2">
-            {newCourseData?.accommodation?.map((data: any) => {
-              return (
-                <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    {" "}
-                    {courseAccomodationNames}
-                  </p>
-                  <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
-                    {data?.fee_per_person}
-                  </p>
-                </div>
-              );
-            })}
+          {newCourseData?.is_residential_program && (
+            <div className="grid grid-cols-4 gap-4 mt-2">
+              {newCourseData?.accommodation?.map((data: any) => {
+                return (
+                  <Accommodation
+                    accomdationData={data}
+                    currencyCode={
+                      countryConfigData?.data?.[0]?.default_currency_code
+                    }
+                  />
+                );
+              })}
 
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                Accommodation fee payment mode
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={paymentMethod?.value}
-              >
-                {paymentMethod?.value}
-              </abbr>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                  Accommodation fee payment mode
+                </p>
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={paymentMethod?.value}
+                >
+                  {paymentMethod?.value}
+                </abbr>
+              </div>
             </div>
-          </div>
-          }
+          )}
         </section>
         {/* Contact Info */}
         <section className="w-full py-8 text-base ">
           {/* title section */}
           <div className="flex items-center  ">
-            <p className="font-semibold text-accent-primary text-[#333333]">
-              Contact Info
-            </p>
+            <p className="font-semibold text-accent-primary text-[#333333]">Contact Info</p>
             {/* Here we are calling EditModalDialog for passing the data of ContactDetails page */}
             <EditModalDialog
               title="Contact Details"
@@ -764,8 +685,8 @@ export default function NewCourseReviewPage() {
               onClose={() => setOpenContactDetails(false)}
               open={openContactDetails}
               openEdit={() => {
-                setOpenContactDetails(true);
-                setClickedButton("Contact Details");
+                setOpenContactDetails(true)
+                setClickedButton("Contact Details")
               }}
             />{" "}
           </div>
@@ -774,9 +695,7 @@ export default function NewCourseReviewPage() {
             return (
               <div className="grid grid-cols-4 gap-3 pb-4 mt-2 border-b">
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Email
-                  </p>
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">Contact Email</p>
                   <abbr
                     className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_email}
@@ -785,9 +704,7 @@ export default function NewCourseReviewPage() {
                   </abbr>
                 </div>
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Phone
-                  </p>
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">Contact Phone</p>
                   <abbr
                     className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_number}
@@ -796,9 +713,7 @@ export default function NewCourseReviewPage() {
                   </abbr>
                 </div>
                 <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Name
-                  </p>
+                  <p className="text-sm font-normal text-accent-light text-[#999999] ">Contact Name</p>
                   <abbr
                     className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_name}
@@ -807,13 +722,11 @@ export default function NewCourseReviewPage() {
                   </abbr>
                 </div>
               </div>
-            );
+            )
           })}
 
           <div className="mt-4 min-w-72">
-            <p className="text-sm font-normal text-accent-light text-[#999999]">
-              BCC registration confirmation email
-            </p>
+            <p className="text-sm font-normal text-accent-light text-[#999999]">BCC registration confirmation email</p>
             <div className="truncate">
               <abbr
                 className="font-semibold  no-underline text-accent-secondary text-[#666666]"
@@ -839,3 +752,49 @@ export default function NewCourseReviewPage() {
     </div>
   );
 }
+
+/**
+ * @function Accommodation
+ * REQUIRMENT we need to show the both name and the fee of the accommodation name
+ * @description this function is used to display both the accommodation type name and the fee which we will give in the creation of the course
+ * @param accomdationData
+ * @returns
+ */
+
+const Accommodation = ({
+  accomdationData,
+  currencyCode,
+}: {
+  accomdationData: { accommodation_type_id: number; fee_per_person: number };
+  currencyCode: string;
+}) => {
+  /**
+   * @constant data
+   * REQUIRMENT we need to show the both name and the fee of the accommodation name
+   * we have the accommodation type id and we need the name of the type
+   * For that we are doing appi call for the accomdation_types table and we are getting the data in that data we have the accommodation type name
+   * @description this data const is used to store the accommodation type api data with respective to the accommodation type id
+   *
+   */
+  const { data } = useOne({
+    resource: "accomdation_types",
+    id: accomdationData?.accommodation_type_id,
+  });
+
+  return (
+    <div className=" min-w-[72px]">
+      <abbr title={data?.data?.name} className="no-underline">
+        <CardLabel className="truncate">{data?.data?.name}</CardLabel>
+      </abbr>
+      <abbr
+        title={`${currencyCode ? currencyCode : ""} ${accomdationData?.fee_per_person}`}
+        className="no-underline"
+      >
+        <CardValue className="truncate">
+          {currencyCode ? currencyCode : ""}
+          {accomdationData?.fee_per_person}
+        </CardValue>
+      </abbr>
+    </div>
+  );
+};

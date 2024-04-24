@@ -14,7 +14,6 @@ import Info from '@public/assets/Info'
 import Profile from '@public/assets/Profile'
 import Venue from '@public/assets/Venue'
 import { useGetIdentity, useList } from '@refinedev/core'
-import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   ACCOMMODATION_STEP_NUMBER,
@@ -28,44 +27,47 @@ import {
   NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
-  TIME_AND_VENUE_STEP_NUMBER
-} from 'src/constants/CourseConstants'
-import { PAYMENT_MODE, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
-import { PAY_ONLINE, PUBLIC, SUPER_ADMIN, TIME_FORMAT_24_HOURS } from 'src/constants/OptionValueOrder'
-import { Button } from 'src/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
-import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
-import { useValidateCurrentStepFields } from 'src/utility/ValidationSteps'
-import { validationSchema } from '../../../src/components/course/newCourse/NewCourseValidations'
+  TIME_AND_VENUE_STEP_NUMBER,
+  review_course_details,
+  thankyou_page,
+} from "src/constants/CourseConstants";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "src/ui/tabs";
+import { Button } from "src/ui/button";
+import { PAYMENT_MODE, TIME_FORMAT } from "src/constants/OptionLabels";
+import {
+  PAY_ONLINE,
+  PUBLIC,
+  TIME_FORMAT_24_HOURS,
+} from "src/constants/OptionValueOrder";
+import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { useState } from "react";
+import { VISIBILITY } from "src/constants/OptionLabels";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
-import Error from '@public/assets/Error'
-import LoadingIcon from '@public/assets/LoadingIcon'
-import Success from '@public/assets/Success'
-import _ from 'lodash'
-import { useRouter } from 'next/router'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+import Error from "@public/assets/Error";
+import Success from "@public/assets/Success";
+import _ from "lodash";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import LoadingIcon from "@public/assets/LoadingIcon";
+import { useRouter } from "next/router";
+
 
 function index() {
-  const { data: loginUserData }: any = useGetIdentity()
-
-  const { viewPreviewPage, viewThankyouPage } = newCourseStore()
+  const router = useRouter();
+  const {header}=router.query
+  const { data: loginUserData }: any = useGetIdentity();
+  console.log(loginUserData,'loginUserData')
 
   if (!loginUserData?.userData) {
-    return <div>Loading...</div>
-  }
-
-  if (viewThankyouPage) {
-    return (
-      <div className="mb-8">
-        <NewCourseThankyouPage />;
-      </div>
-    )
-  }
-
-  if (viewPreviewPage) {
-    return <NewCourseReviewPage />
-  } else {
-    return <NewCourse />
+    return <div>Loading...</div>;
+  }if(header == review_course_details){
+    return <NewCourseReviewPage/>
+  }if(header == thankyou_page){
+    return <NewCourseThankyouPage/>
+  }else {
+    return <NewCourse />;
   }
 }
 function NewCourse() {
@@ -124,10 +126,10 @@ function NewCourse() {
 export default index
 
 export const NewCourseTabs = () => {
-  const { watch, getValues } = useFormContext()
-  const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } = newCourseStore()
-
-  const router = useRouter()
+  const router = useRouter();
+  const { watch, getValues } = useFormContext();
+  const { setNewCourseData, currentStep, setCurrentStep } =
+    newCourseStore();
 
   const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined)
   const [isAllFieldsValid2, setIsAllFieldsValid2] = useState(undefined)
@@ -243,8 +245,9 @@ export const NewCourseTabs = () => {
 
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames)
     if (isAllFieldsFilled) {
-      setViewPreviewPage(true)
-      setNewCourseData(formData)
+      router.push({ query: { header: 'review_course_details' } })
+
+      setNewCourseData(formData);
     }
     handelIsAllFieldsFilled(isAllFieldsFilled)
   }
@@ -486,7 +489,6 @@ export const NewCourseTabs = () => {
                     <Button
                       className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
                       onClick={async () => {
-                        router.push({ query: { header: 'Review Course Details' } })
                         await handleClickReviewDetailsButton(validationFieldsStepWise[currentStep - 1])
                       }}
                     >

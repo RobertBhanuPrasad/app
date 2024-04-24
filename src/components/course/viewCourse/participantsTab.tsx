@@ -9,6 +9,7 @@ import { getColorWithDecreasedOpacity } from "src/utility/GenerateColours";
 
 function ParticipantsTab() {
     const router = useRouter();
+    const {id} = router.query;
 
     const Id: number | undefined = router?.query?.id
         ? parseInt(router.query.id as string)
@@ -44,14 +45,16 @@ function ParticipantsTab() {
                     Overall Participants
                 </div>
                 <div className="flex gap-4">
-                    <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">
+                    <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]" 
+                      onClick={() =>
+                        router.push(`/courses/add`)  }  
+                    >
                         Register Participant
                     </Button>
                     <Button
                         className="w-[188px] h-[46px] rounded-[12px]"
                         onClick={() =>
-                            router.push(`${router.asPath}/participant/list/`)
-                        }
+                            router.push(`/courses/${id}/participants/list`)                        }
                     >
                         View Participants
                     </Button>

@@ -18,7 +18,7 @@ export const handlePostProgramData = async (
 ) => {
   console.log("i will post course data in this functions", body);
 
-  let programId = body.id;
+  let programId = body?.id;
   // we have to create course only when we dont have id
   //   if (!programId) {
   const programBody: ProgramDataBaseType = {
@@ -31,7 +31,7 @@ export const handlePostProgramData = async (
   if (body.id) {
     programBody.id = body.id;
   }
-
+ 
   // step 1
   if (body[NewCourseStep1FormNames.program_created_by]) {
     programBody.program_created_by =
@@ -196,6 +196,12 @@ export const handlePostProgramData = async (
       body[NewCourseStep5FormNames.is_residential_program];
   }
 
+  //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
+  if(programTypeData?.is_online_program === false && body[NewCourseStep5FormNames.is_residential_program])
+    {
+      if (!(await handlePostAccommodations(body, programId))) return false;
+    }
+
   //accommodation_fee_payment_mode
   if (
     body[NewCourseStep5FormNames.accommodation_fee_payment_mode] &&
@@ -220,6 +226,7 @@ export const handlePostProgramData = async (
     .select();
   console.log("course data is created!", programData);
 
+
   if (programError) {
     console.log(programError);
     return false;
@@ -228,6 +235,20 @@ export const handlePostProgramData = async (
     //call zustand function to store created programId
     // so that it can be helpful in thankyou page
     setProgramId(programId);
+
+  // here we have to update the created_by_user_id with loggedInUserId because this field is required
+  // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
+  // here we have to update when we are creating the program that is when created_by_user_id is null
+  // other wise no need to update the created_by_user_id 
+  // when one user create one program at that time we have to post created_by_user_id 
+  // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
+  // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
+  if(loggedInUserId && programData[0].created_by_user_id == null) {
+    await supabaseClient
+    .from("program")
+    .update({created_by_user_id: loggedInUserId })
+    .eq("id", programId)
+  } 
 
     //TODO: We are doing this in backend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
