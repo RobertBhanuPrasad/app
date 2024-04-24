@@ -43,7 +43,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   }
 
   //is_registration_via_3rd_party
-  if (data.is_registration_via_3rd_party)
+  if (data.is_registration_via_3rd_party != undefined)
     defaultValues.is_registration_via_3rd_party =
       data.is_registration_via_3rd_party;
 
@@ -106,13 +106,18 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   }
 
   //is_geo_restriction_applicable
-  if (data.is_geo_restriction_applicable)
+  if (data.is_geo_restriction_applicable != undefined)
     defaultValues.is_geo_restriction_applicable =
       data.is_geo_restriction_applicable;
 
   //allowed_countries
   if (data?.allowed_countries) {
     defaultValues.allowed_countries = data.allowed_countries;
+  }
+
+  //registration required for program
+  if (data?.is_registration_required != undefined) {
+    defaultValues.is_registration_required = data.is_registration_required;
   }
 
   //TODO: Need to do for course notes,description and emial notes
@@ -153,7 +158,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
       }
     }
   }
- 
+
   if (data?.hour_format_id)
     defaultValues.hour_format_id = data.hour_format_id as number;
 
@@ -200,9 +205,11 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data.program_accommodations)
     defaultValues.accommodation = data.program_accommodations;
 
-  if (data.is_residential_program)
+  // is_residential_program
+  if (data.is_residential_program != undefined)
     defaultValues.is_residential_program = data.is_residential_program;
 
+  // accommodation_fee_payment_mode
   if (data?.accommodation_fee_payment_mode)
     defaultValues.accommodation_fee_payment_mode =
       data.accommodation_fee_payment_mode;
