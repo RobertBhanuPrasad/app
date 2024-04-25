@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import _ from 'lodash'
+=======
+import _ from "lodash";
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
 import {
   COURSE_ACTIVE_STATUS_ID,
   COURSE_PENDING_REVIEW_STATUS_ID,
@@ -7,12 +11,28 @@ import {
   NewCourseStep3FormNames,
   NewCourseStep4FormNames,
   NewCourseStep5FormNames,
+<<<<<<< HEAD
   NewCourseStep6FormNames
 } from 'src/constants/CourseConstants'
 import { supabaseClient } from 'src/utility'
 
 export const handlePostProgramData = async (body: any, loggedInUserId: number, setProgramId: (by: number) => void) => {
   console.log('i will post course data in this functions', body)
+=======
+  NewCourseStep6FormNames,
+} from "src/constants/CourseConstants";
+import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
+import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
+import { supabaseClient } from "src/utility";
+
+export const handlePostProgramData = async (
+  body: any,
+  loggedInUserId: number,
+  setProgramId: (by: number) => void,
+  accountingNotSubmittedStatusId: number,
+) => {
+  console.log("i will post course data in this functions", body);
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
 
   let programId = body.id
   // we have to create course only when we dont have id
@@ -222,7 +242,11 @@ export const handlePostProgramData = async (body: any, loggedInUserId: number, s
     setProgramId(programId)
 
     // this RX base url coming from env file now.(need to change after proper table was there in backend)
+<<<<<<< HEAD
     const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string
+=======
+    const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
 
     // Constructing the registration URL
     // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
@@ -237,7 +261,11 @@ export const handlePostProgramData = async (body: any, loggedInUserId: number, s
     const registrationUrl = `${RX_BASE_URL}/programs/${programId}`
 
     // TODO need to integrate with url provided by cx team -(kalyan)
+<<<<<<< HEAD
     const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string
+=======
+    const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
 
     // here we have to update the created_by_user_id with loggedInUserId because this field is required
     // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
@@ -248,6 +276,7 @@ export const handlePostProgramData = async (body: any, loggedInUserId: number, s
     // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
     if (loggedInUserId && programData[0].created_by_user_id == null) {
       await supabaseClient
+<<<<<<< HEAD
         .from('program')
         .update({
           created_by_user_id: loggedInUserId,
@@ -255,6 +284,15 @@ export const handlePostProgramData = async (body: any, loggedInUserId: number, s
           registration_link: registrationUrl
         })
         .eq('id', programId)
+=======
+        .from("program")
+        .update({
+          created_by_user_id: loggedInUserId,
+          details_page_link: CX_BASE_URL,
+          registration_link: registrationUrl,
+        })
+        .eq("id", programId);
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
     }
 
     //TODO: We are doing this in backend for only first deployment
@@ -286,8 +324,16 @@ export const handlePostProgramData = async (body: any, loggedInUserId: number, s
   if (!(await handlePostProgramContactDetailsData(body, programId))) return false
 
   //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
+<<<<<<< HEAD
   if (programTypeData?.is_online_program === false && body[NewCourseStep5FormNames.is_residential_program]) {
     if (!(await handlePostAccommodations(body, programId))) return false
+=======
+  if (
+    programTypeData?.is_online_program === false &&
+    body[NewCourseStep5FormNames.is_residential_program]
+  ) {
+    if (!(await handlePostAccommodations(body, programId))) return false;
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
   }
 
   //now after all data was stored into respective table we have to update status of program
@@ -296,8 +342,22 @@ export const handlePostProgramData = async (body: any, loggedInUserId: number, s
 
   if (!(await handleProgramStatusUpdate(programId))) return false
 
+<<<<<<< HEAD
   return true
 }
+=======
+  // we have to update the accounting status of program to not submitted
+  if (
+    !(await handleProgramAccountingStatusUpdate(
+      programId,
+      accountingNotSubmittedStatusId
+    ))
+  )
+    return false;
+
+  return true;
+};
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
 
 export const handlePostProgramInfoData = async (body: any, programId: number) => {
   // store is_registration_via_3rd_party,registration_via_3rd_party_url data in program_details_info
@@ -599,6 +659,7 @@ export const handleProgramSchedulesData = async (body: any, programId: number) =
     console.log('deleted schedules because they are not present in database ', data)
   }
 
+<<<<<<< HEAD
   const schedulesData: ProgramSchedulesDataBaseType[] = body[NewCourseStep3FormNames.schedules].map(
     (scheduleData: any, index: number) => {
       const {
@@ -638,6 +699,65 @@ export const handleProgramSchedulesData = async (body: any, programId: number) =
   )
 
   console.log('schedulesData to create or update program_schedules was', schedulesData)
+=======
+  // sort the scheules by date, startHour, startMinute, endHour, endMinute
+
+  let schedules = body[NewCourseStep3FormNames.schedules].sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }
+  );
+
+  const schedulesData: ProgramSchedulesDataBaseType[] = schedules.map(
+    (scheduleData: any, index: number) => {
+      const {
+        startHour = "00",
+        startMinute = "00",
+        endHour = "00",
+        endMinute = "00",
+        startTimeFormat,
+        endTimeFormat,
+        date,
+      } = scheduleData;
+
+      // Parse date and time strings to create Date objects
+      const startTime = new Date(date);
+      startTime.setHours(parseInt(startHour), parseInt(startMinute), 0);
+      if (startTimeFormat === "PM")
+        startTime.setHours(startTime.getHours() + 12);
+
+      const endTime = new Date(date);
+      endTime.setHours(parseInt(endHour), parseInt(endMinute), 0);
+      if (endTimeFormat === "PM") endTime.setHours(endTime.getHours() + 12);
+
+      const scheduleBody: ProgramSchedulesDataBaseType = {
+        program_id: programId,
+        start_time: startTime,
+        end_time: endTime,
+        program_schedule_name: `Schedule ${index + 1}`,
+        //TODO: schedule_type is optional if need we need to pass here
+        order: index + 1,
+      };
+
+      if (scheduleData.id) {
+        scheduleBody.id = scheduleData.id;
+      }
+
+      return scheduleBody;
+    }
+  );
+
+  console.log(
+    "schedulesData to create or update program_schedules was",
+    schedulesData
+  );
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
 
   // Perform upsert operation for all schedules at once
   const { data, error } = await supabaseClient.from('program_schedules').upsert(schedulesData).select()
@@ -694,9 +814,15 @@ export const handlePostAccommodations = async (body: any, programId: number) => 
 
   // Perform upsert operation
   const { data, error } = await supabaseClient
+<<<<<<< HEAD
     .from('program_accommodations')
     .upsert(accommodationsData, { defaultToNull: false })
     .select()
+=======
+    .from("program_accommodations")
+    .upsert(accommodationsData, { defaultToNull: false })
+    .select();
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
 
   // Handle upsert result
   if (error) {
@@ -750,6 +876,14 @@ export const handlePostProgramContactDetailsData = async (body: any, programId: 
 
   console.log('contactDetailsData need to create in databse', contactDetailsData)
 
+<<<<<<< HEAD
+=======
+  console.log(
+    "contactDetailsData need to create in databse",
+    contactDetailsData
+  );
+
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
   /**
    * Upserts (inserts or updates) the contact data into the database.
    * This function ensures that if the data already exists, it will be updated;
@@ -763,9 +897,15 @@ export const handlePostProgramContactDetailsData = async (body: any, programId: 
    * values instead of being set to null.
    */
   const { data, error } = await supabaseClient
+<<<<<<< HEAD
     .from('program_contact_details')
     .upsert(contactDetailsData, { defaultToNull: false })
     .select()
+=======
+    .from("program_contact_details")
+    .upsert(contactDetailsData, { defaultToNull: false })
+    .select();
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
 
   // Handle upsert result
   if (error) {
@@ -990,4 +1130,36 @@ const handleGenerateProgramCode = async (programId: number, loggedInUserId: numb
       console.log('program code updated successfully', programData)
     }
   }
+<<<<<<< HEAD
 }
+=======
+};
+
+/**
+ * Function to update the status of course accounting status when we are posting the course data
+ */
+const handleProgramAccountingStatusUpdate = async (
+  programId: number,
+  accountingNotSubmittedStatusId: number
+) => {
+  // updating the accounting status of program to not submitted initially when the program created
+
+  if (!accountingNotSubmittedStatusId) return null;
+  const { data, error } = await supabaseClient
+    .from("program")
+    .update({
+      program_accounting_status_id: accountingNotSubmittedStatusId,
+    })
+    .eq("id", programId)
+    .select();
+
+  // if there is error return false else true
+  if (error) {
+    console.log("erorr while updating program accounting status", error);
+    return false;
+  } else {
+    console.log("program accounting status updated successfully", data);
+    return true;
+  }
+};
+>>>>>>> 506fe59ec15fa55e1e69f5ce2a6ea4cfee8a0edc
