@@ -31,8 +31,7 @@ export default function EditParticipantTabs() {
     const { query } = useRouter();
     const [cancelEditParticipant, setcancelEditParticipant] = useState(false);
 
-    // participant_payment_history contains numerous records of same participant, getting the latest history record
-
+    // Getting participant registered data for particular participant routed in the router
     const Id: number | undefined = query?.id
         ? parseInt(query.id as string)
         : undefined;
@@ -49,8 +48,12 @@ export default function EditParticipantTabs() {
             },
         ],
     });
+
+    // This variable stores boolean values, which informs that, the particular have accommodation or not
     const accommodationData =
         data?.data[0]?.program_id?.program_type_id?.is_online_program;
+
+    // Validating and Posting the modified data to participant registration and participant payment history api
     const { mutate } = useUpdate();
     const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
     const onFormSubmission = async (formData: any) => {
@@ -79,7 +82,6 @@ export default function EditParticipantTabs() {
                     participant_attendence_status_id:
                         formData?.participant_attendence_status_id,
                 },
-                // TODO: integrate with participant_registration id
                 id: Number(query?.participantId),
             });
         isAllFieldsFilled &&
@@ -88,14 +90,12 @@ export default function EditParticipantTabs() {
                 values: {
                     accommodation_type_id: formData?.accommodationType,
                 },
-                // TODO: integrate with participant_payment_history id
                 id: Number(Id),
             });
             router.back()
     };
 
     // TODO: need to integrated with efficient tabs component
-    // Rendering tabs content through tabs variable
     let tabs = [
         {
             id: 0,
@@ -152,7 +152,9 @@ export default function EditParticipantTabs() {
             ),
         },
     ];
-    // Check if accommodation should be rendered
+
+
+    // Check if accommodation tab should be rendered in tabs list or not
     if (!accommodationData) {
         tabs = tabs.filter((tab) => tab.label !== "Accommodation Details");
     }
@@ -168,6 +170,8 @@ export default function EditParticipantTabs() {
         setcancelEditParticipant(false);
         router.back();
     };
+
+    
     return (
         <div onClick={(e) => e.preventDefault()}>
             <ScrollableTabs tabs={tabs} />

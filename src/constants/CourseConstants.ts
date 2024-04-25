@@ -78,6 +78,8 @@ export const NewCourseStep6FormNames = {
   contact_number: "contact_number",
   bcc_registration_confirmation_email: "bcc_registration_confirmation_email",
 };
+
+// Form names to validate
 export const EditParticipantFormNames={
   memo:"memo",
   accommodation_snore:"accommodation_snore",

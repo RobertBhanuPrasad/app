@@ -14,6 +14,8 @@ export default function ViewDonationDetails({
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)
         : undefined;
+
+    // participant_payment_history contains numerous records of same participant, getting the latest history record
     const { data: donationData } = useList({
         resource: "participant_payment_history",
         meta: {
@@ -33,6 +35,8 @@ export default function ViewDonationDetails({
             },
         ],
     });
+
+    // Getting participant contact detials for that particular participantId from router
     const { data: contactData } = useOne({
         resource: "participant_registration",
         id: Number(Id),
@@ -40,6 +44,7 @@ export default function ViewDonationDetails({
             select: "contact_id(id,full_name,email,mobile,identification_num,identification_type_id,date_of_birth,street_address,state_id!inner(name),city_id!inner(name),country_id!inner(name),postal_code)",
         },
     });
+    
     return (
         <div>
             <div>
