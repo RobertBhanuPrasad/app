@@ -251,11 +251,11 @@ function ViewDetails() {
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
-            <HoverCardContent className="z-[100]">
-              <div className="w-[231px] text-wrap !rounded-[15px] font-normal min-h[104px]">
-                {participantData?.participantCount} Participants with: Transaction
-                status = Confirmed / Pending Attendance status = Confirmed /
-                Pending / Dropout Total participants records:
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                {participantData?.participantCount} Participants with:
+                Transaction status = Confirmed / Pending Attendance status =
+                Confirmed / Pending / Dropout Total participants records:
                 {participantData?.totalParticipantCount}
               </div>
             </HoverCardContent>
@@ -275,7 +275,7 @@ function ViewDetails() {
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
-            <HoverCardContent className="z-[100]">
+            <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 Revenue from confirmed pending transaction participants revenue:
                 {countryConfigData?.data?.[0]?.default_currency_code}{" "}
@@ -284,56 +284,54 @@ function ViewDetails() {
             </HoverCardContent>
           </HoverCard>
         </div>
-        <div className="flex justify-between">
-          <div className="flex flex-row gap-2 items-center mt-3 w-full">
-            <LocationIcon />
-            <p className="w-full">{`
-              ${courseData?.data?.venue_id?.address},
-              ${courseData?.data?.venue_id?.city_id?.name},
-              ${courseData?.data?.venue_id?.state_id?.name}, ${countryName},
-              ${courseData?.data?.venue_id?.postal_code} `}
+        <div className="flex flex-row gap-2 items-center mt-3">
+          <LocationIcon />
+          {courseData?.data?.venue_id?.address},
+          {courseData?.data?.venue_id?.city_id?.name},
+          {courseData?.data?.venue_id?.state_id?.name}, {countryName},
+          {courseData?.data?.venue_id?.postal_code}
+        </div>
 
-            </p>
-          </div>
-          <div className="flex flex-row items-center gap-2 w-full justify-end ">
-            Announced by:{" "}
-            {courseData?.data?.created_by_user_id?.contact_id?.full_name}
-            <HoverCard >
-              <HoverCardTrigger>
-                <Important />
-              </HoverCardTrigger>
-              <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full z-[100]">
-                <div className="!rounded-[15px] font-normal flex flex-col">
-                  <p>Approved by:</p>
-                  <p>
-                    {courseData?.data?.approved_by_user_id &&
-                      courseData?.data?.program_approved_date
-                      ? `${courseData?.data?.approved_by_user_id?.contact_id
-                        ?.full_name
+        <div className="flex flex-row items-center gap-2 w-full justify-end ">
+          Announced by:{" "}
+          {courseData?.data?.created_by_user_id?.contact_id?.full_name}
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
+              <div className="!rounded-[15px] font-normal flex flex-col">
+                <p>Approved by:</p>
+                <p>
+                  {courseData?.data?.approved_by_user_id &&
+                  courseData?.data?.program_approved_date
+                    ? `${
+                        courseData?.data?.approved_by_user_id?.contact_id
+                          ?.full_name
                       } (${formatDateString(
                         new Date(courseData?.data?.program_approved_date)
                       )})`
-                      : "-"}
-                  </p>
-                  <Separator className="my-2" />
-                  <p>Last Modified by:</p>
-                  <p>
-                    {courseData?.data?.last_modified_by_user_id &&
-                      courseData?.data?.modified_at
-                      ? `${courseData?.data?.last_modified_by_user_id?.contact_id
-                        ?.full_name
+                    : "-"}
+                </p>
+                <Separator className="my-2" />
+                <p>Last Modified by:</p>
+                <p>
+                  {courseData?.data?.last_modified_by_user_id &&
+                  courseData?.data?.modified_at
+                    ? `${
+                        courseData?.data?.last_modified_by_user_id?.contact_id
+                          ?.full_name
                       } (${formatDateString(
                         new Date(courseData?.data?.modified_at)
                       )})`
-                      : "-"}
-                  </p>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-          </div>
+                    : "-"}
+                </p>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
       </div>
-      <div className="w-full mt-3">
+      <div className="w-full mt-6">
         <Tabs
           onValueChange={(val: string) => {
             setSelectedValue(val);
@@ -341,7 +339,7 @@ function ViewDetails() {
           value={selectedValue}
           className=""
         >
-          <TabsList className="flex flex-row gap-10  bg-white !rounded-none sticky top-[95px] z-[100] w-full border-b h-12 px-8">
+          <TabsList className="flex flex-row gap-10  bg-white !rounded-none  w-full border-b h-12 px-8">
             {tabTriggers.map((trigger: any, index: number) => (
               <TabsTrigger
                 key={index}
@@ -369,10 +367,10 @@ function ViewDetails() {
                 courseData?.data?.program_accounting_status_id,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && (
-                  <PendingCourseAccountingFormApprovalDropDown
-                    courseId={Id as number}
-                  />
-                )}
+                <PendingCourseAccountingFormApprovalDropDown
+                  courseId={Id as number}
+                />
+              )}
 
               <ViewCourseAccountingSuccessModalOpen />
               <ViewCourseAccountingRejectedModalOpen courseId={Id as number} />
@@ -381,27 +379,40 @@ function ViewDetails() {
             </div>
           </TabsList>
           <div className="px-8 bg-white">
-
-            <TabsContent value={JSON.stringify(COURSE_DETAILS_TAB)} className="overflow-scroll">
+            <TabsContent
+              value={JSON.stringify(COURSE_DETAILS_TAB)}
+              className="overflow-scroll"
+            >
               <CourseDetailsTab />
             </TabsContent>
-            <TabsContent value={JSON.stringify(PARTICIPANTS_TAB)} className="overflow-scroll">
+            <TabsContent
+              value={JSON.stringify(PARTICIPANTS_TAB)}
+              className="overflow-scroll"
+            >
               <ParticipantsTab />
             </TabsContent>
-            <TabsContent value={JSON.stringify(REVENUE_SUMMARY_TAB)} className="overflow-scroll">
+            <TabsContent
+              value={JSON.stringify(REVENUE_SUMMARY_TAB)}
+              className="overflow-scroll"
+            >
               Place Revenue Summary tab here
             </TabsContent>
-            <TabsContent value={JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)} className="overflow-scroll">
+            <TabsContent
+              value={JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)}
+              className="overflow-scroll"
+            >
               <CourseAccountingFormTab />
             </TabsContent>
-            <TabsContent value={JSON.stringify(VIEW_COURSE_ACCOUNTING_FORM_TAB)} className="overflow-scroll">
+            <TabsContent
+              value={JSON.stringify(VIEW_COURSE_ACCOUNTING_FORM_TAB)}
+              className="overflow-scroll"
+            >
               <ViewCourseAccountingFormTab programId={Id as number} />
             </TabsContent>
           </div>
         </Tabs>
-
       </div>
-    </div >
+    </div>
   );
 }
 
