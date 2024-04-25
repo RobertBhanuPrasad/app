@@ -35,10 +35,21 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
+import { NATIONAL_ADMIN, NOT_SUBMITTED, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { CardLabel, CardValue } from "src/ui/TextTags";
 
 export default function NewCourseReviewPage() {
+  const { data: loginUserData }: any = useGetIdentity()
+
+  // Checking weather login user is super admin or not
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  )
+
+  // Checking weather login user is National admin or not
+  const hasNationalAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == NATIONAL_ADMIN
+  )
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
     newCourseStore();
 
@@ -388,7 +399,7 @@ export default function NewCourseReviewPage() {
                 {programOrganizersNames ? programOrganizersNames : "-"}
               </abbr>
             </div>
-           
+            {(hasSuperAdminRole || hasNationalAdminRole) && (
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Registration via 3rd party gateway
@@ -400,6 +411,7 @@ export default function NewCourseReviewPage() {
                 {newCourseData?.is_registration_via_3rd_party ? "Yes" : "No"}
               </abbr>
             </div>
+            )}
             {newCourseData?.is_registration_via_3rd_party ? (
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
