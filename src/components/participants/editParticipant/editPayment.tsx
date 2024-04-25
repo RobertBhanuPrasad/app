@@ -1,16 +1,23 @@
-import { useState } from "react";
 import { Button } from "src/ui/button";
 
-import CalenderIcon from "@public/assets/CalenderIcon";
+import CrossIcon from "@public/assets/CrossIcon";
 import { useList, useOne, useSelect, useUpdate } from "@refinedev/core";
+import _ from "lodash";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { TRANSACTION_STATUS } from "src/constants/OptionLabels";
 import { CONFIRMED, FAILED } from "src/constants/OptionValueOrder";
+import { DateField } from "src/ui/DateField";
 import { Text } from "src/ui/TextTags";
-import { Calendar } from "src/ui/calendar";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { Checkbox } from "src/ui/checkbox";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import {
     Select,
     SelectContent,
@@ -20,17 +27,21 @@ import {
     SelectValue,
 } from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
-import { formatDateString } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 interface EditPaymentProps {
     setEditPayment: React.Dispatch<React.SetStateAction<any>>;
+    paymentId: number;
 }
-export default function EditPayment({ setEditPayment }: EditPaymentProps) {
+export default function EditPayment({
+    setEditPayment,
+    paymentId,
+}: EditPaymentProps) {
     const { query } = useRouter();
     const { mutate } = useUpdate();
-    const { watch, getValues } = useFormContext();
-    const defaultData = getValues();
-    const formData = watch();
+    const { watch } = useFormContext();
+    const [cancelEditPayment, setcancelEditPayment] = useState(false);
+    let formData = watch();
+    const [initialValue, setinitialValue] = useState(formData);
     const onFormSubmission = () => {
         mutate({
             resource: "participant_payment_history",
@@ -41,12 +52,11 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                 transaction_status_id: formData?.transaction_status_id,
             },
             // TODO: replace with participant_paymente_history id
-            id: defaultData?.id,
+            id: paymentId,
         });
         setEditPayment(false);
     };
     // Form fileds useControllers
-    const [open, setOpen] = useState(false);
     const {
         field: { value: transaction_status_id, onChange: transactionOnchange },
     } = useController({
@@ -140,30 +150,23 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             select: "contact_id(full_name)",
         },
     });
-    const transactionData = useList({
+    const transactionData = useOne({
         resource: "participant_payment_history",
+        id: paymentId,
         meta: {
             select: "id,transaction_id,response_message,error_message",
         },
-        filters: [
-            {
-                field: "participant_id",
-                operator: "eq",
-                value: Id,
-            },
-            {
-                field:"program_id",
-                operator:"eq",
-                value:query?.id
-            }
-        ],
-        sorters: [
-            {
-                field: "created_at",
-                order: "desc",
-            },
-        ],
     });
+    const cancelConfirmation = () => {
+        if (!_.isEqual(initialValue, formData)) {
+            setcancelEditPayment(true);
+        } else {
+            setEditPayment(false);
+        }
+    };
+    const cancelEditPaymentHandler = () => {
+        setEditPayment(false);
+    };
     return (
         <div>
             <div>
@@ -181,6 +184,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                         </Text>
                                         <div>
                                             <Textarea
+                                                disabled={true}
                                                 value={
                                                     data?.data?.contact_id
                                                         ?.full_name
@@ -188,7 +192,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                                               ?.full_name
                                                         : "-"
                                                 }
-                                                className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed"
+                                                className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed outline-none rounded-[12px]"
                                             />
                                         </div>
                                     </div>
@@ -201,10 +205,10 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                             {/* TODO: need to disable select for confirmed and failed transaction ids */}
                                             <Select
                                                 disabled={
-                                                    transaction_status_id?.id ==
+                                                    transaction_status_id ==
                                                     FAILED_ID
                                                         ? true
-                                                        : transaction_status_id?.id ==
+                                                        : transaction_status_id ==
                                                           CONFIRMED_ID
                                                         ? true
                                                         : false
@@ -253,6 +257,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                         </Text>
                                         <div>
                                             <Textarea
+                                                disabled={true}
                                                 value={
                                                     transactionData?.data
                                                         ?.data[0]
@@ -271,58 +276,14 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                         </Text>
                                         {/* TODO: need to disable it for confirmed and failed transaction ids */}
                                         <div>
-                                            <Dialog open={open}>
-                                                <DialogTrigger asChild>
-                                                    <Button
-                                                        onClick={() =>
-                                                            setOpen(true)
-                                                        }
-                                                        className="w-[278px] h-[40px] flex flex-row items-center"
-                                                        variant="outline"
-                                                    >
-                                                        <div className="flex gap-8">
-                                                            <div className="">
-                                                                {payment_date ? (
-                                                                    <Text>
-                                                                        {formatDateString(
-                                                                            new Date(
-                                                                                payment_date
-                                                                            )
-                                                                        )}
-                                                                    </Text>
-                                                                ) : (
-                                                                    <Text className="flex gap-2 font-normal">
-                                                                        Select
-                                                                        the Date
-                                                                        Range
-                                                                    </Text>
-                                                                )}
-                                                            </div>
-                                                            <div className="">
-                                                                <CalenderIcon color="#666666" />
-                                                            </div>
-                                                        </div>
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent className="bg-[#FFFFFF] !rounded-3xl">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={payment_date}
-                                                        onSelect={
-                                                            paymentDateOnchange
-                                                        }
-                                                        className="rounded-md border"
-                                                    />
-                                                    <Button
-                                                        onClick={() =>
-                                                            setOpen(false)
-                                                        }
-                                                        className=" w-[94px] h-10 rounded-xl"
-                                                    >
-                                                        Apply
-                                                    </Button>
-                                                </DialogContent>
-                                            </Dialog>
+                                            <DateField
+                                                value={payment_date as Date}
+                                                onChange={paymentDateOnchange}
+                                                placeholder=" Select
+                                                        the Date
+                                                        Range"
+                                                className="!w-[278px] h-[40px] rounded-[12px]"
+                                            />
                                         </div>
                                     </div>
 
@@ -331,13 +292,12 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                             Payment Method
                                         </Text>
                                         <div className="!w-[278px]">
-                                            {/* TODO:need to disable select for confimed and failed transaction ids */}
                                             <Select
                                                 disabled={
-                                                    transaction_status_id?.id ==
+                                                    transaction_status_id ==
                                                     FAILED_ID
                                                         ? true
-                                                        : transaction_status_id?.id ==
+                                                        : transaction_status_id ==
                                                           CONFIRMED_ID
                                                         ? true
                                                         : false
@@ -391,6 +351,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                         </Text>
                                         <div>
                                             <Textarea
+                                                disabled={true}
                                                 value={
                                                     transactionData?.data
                                                         ?.data[0]
@@ -404,9 +365,12 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                             </div>
 
                             <div className="flex flex-col py-[5px]">
-                                <Text className="py-[5px] outline-none">Error Message</Text>
+                                <Text className="py-[5px] outline-none">
+                                    Error Message
+                                </Text>
                                 <div>
                                     <Textarea
+                                        disabled={true}
                                         value={
                                             transactionData?.data?.data[0]
                                                 ?.error_message
@@ -432,7 +396,10 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                     <div className="flex justify-center gap-6">
                         <div>
                             <Button
-                                onClick={() => setEditPayment(false)}
+                                onClick={() => {
+                                    cancelConfirmation();
+                                }}
+                                // onClick={() => setEditPayment(false)}
                                 className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold"
                             >
                                 Cancel
@@ -449,6 +416,53 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                             </Button>
                         </div>
                     </div>
+
+                    <AlertDialog
+                        open={cancelEditPayment}
+                        onOpenChange={setcancelEditPayment}
+                    >
+                        <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
+                            <AlertDialogHeader>
+                                <div
+                                    className="flex justify-end cursor-pointer"
+                                    onClick={() => setcancelEditPayment(false)}
+                                >
+                                    <CrossIcon />
+                                </div>
+                                <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
+                                    Changes made will be lost. Are you sure you
+                                    want to continue?
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <div className="w-full flex justify-center items-center gap-5">
+                                    <div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="rounded-[12px] w-[71px] h-[46px]"
+                                            onClick={() => {
+                                                setcancelEditPayment(false);
+                                            }}
+                                        >
+                                            No
+                                        </Button>
+                                    </div>
+                                    <div>
+                                        <Button
+                                            type="button"
+                                            className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                                            onClick={() => {
+                                                cancelEditPaymentHandler();
+                                            }}
+                                        >
+                                            Yes
+                                        </Button>
+                                    </div>
+                                </div>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
         </div>
