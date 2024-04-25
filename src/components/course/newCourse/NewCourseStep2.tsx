@@ -262,7 +262,6 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.program_type,
   });
 
-  console.log("heyyyyy setttingss dataa", courseSettings);
 
   const {
     field: { value: maxCapacityValue, onChange: maxCapacityOnChange },
