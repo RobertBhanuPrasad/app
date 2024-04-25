@@ -4,9 +4,12 @@ import { useList, useOne } from "@refinedev/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { Header2, ItemValue } from "src/commonComponents";
+import { VISIBILITY } from "src/constants/OptionLabels";
+import { PUBLIC } from "src/constants/OptionValueOrder";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { formatDateTime } from "src/utility/DateFunctions";
 import { useTranslation } from 'next-i18next';
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 interface fullNameObject {
   user_id?: {
     contact_id?: {
@@ -58,7 +61,7 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,value),program_type_id(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),max_capacity,visibility_id(value)",
+        "*,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,value),program_type_id(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),max_capacity,visibility_id(id,value)",
     },
   });
 
@@ -73,6 +76,7 @@ function CourseDetailsTab() {
 
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
+  const {t} = useTranslation("common")
 
   const copyText = async (text: string) => {
     try {
@@ -99,7 +103,15 @@ function CourseDetailsTab() {
       setCopiedRegistrationLink(false);
     }, 1000);
   };
-   const {t} = useTranslation(["common", "course.view_course"])
+   
+ // getting public visibility id to check whether the particular course is public or private.
+ const publicVisibilityId = getOptionValueObjectByOptionOrder(
+  VISIBILITY,
+  PUBLIC
+)?.id;
+
+
+ 
 
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
@@ -121,61 +133,62 @@ function CourseDetailsTab() {
             </div>
             <div>
               <Header2>Course ID</Header2>
-              <ItemValue>{courseData?.data?.program_code}</ItemValue>
+              <ItemValue>{courseData?.data?.program_code ? courseData?.data?.program_code : '-'}</ItemValue>
             </div>
             <div>
               <Header2>{t('course_type')}</Header2>
-              <ItemValue>{courseData?.data?.program_type_id?.name}</ItemValue>
+              <ItemValue>{courseData?.data?.program_type_id?.name ? courseData?.data?.program_type_id?.name : '-'}</ItemValue>
             </div>
             <div>
               <Header2>{t('course_accounting_status')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_accounting_status_id?.value}
+                {courseData?.data?.program_accounting_status_id?.value ? courseData?.data?.program_accounting_status_id?.value : '-'}
               </ItemValue>
             </div>
             <div>
               <Header2> {t('teachers')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_teachers?.map(
-                  (item: fullNameObject) => {
-                    return item?.user_id?.contact_id?.full_name;
-                  }
-                )}
+              {courseData?.data?.program_teachers?.length > 0
+              ? courseData?.data?.program_teachers.map((item: fullNameObject) => {
+               return item?.user_id?.contact_id?.full_name;
+              }).join(", ")
+              : "-"}
               </ItemValue>
             </div>
             <div>
               <Header2>{t('course.view_course:basic_details_tab.assistant_teachers')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_assistant_teachers?.map(
-                  (item: fullNameObject) => {
-                    return item?.user_id?.contact_id?.full_name;
-                  }
-                )}
+                {courseData?.data?.program_assistant_teachers?.length > 0
+                ? courseData?.data?.program_assistant_teachers?.map((item: fullNameObject) => {
+                  return item?.user_id?.contact_id?.full_name;
+                  }).join(',')
+               : '-' }
               </ItemValue>
             </div>
             <div>
               <Header2> {t('available_languages_for_translation')} </Header2>
               <ItemValue>
-                {courseData?.data?.program_translation_languages
-                  ?.map(
-                    (item: LanguageItem) => item?.language_id?.language_name
-                  )
-                  .join(", ")}
+                {courseData?.data?.program_translation_languages?.length > 0
+                 ? courseData?.data?.program_translation_languages?.map((item: LanguageItem) => {
+                  return item?.language_id?.language_name
+                 }).join(", ") 
+                 : '-'}
               </ItemValue>
             </div>
             <div>
               <Header2>{t('language_course_is_taught_in')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_languages
-                  ?.map(
-                    (item: LanguageItem) => item?.language_id?.language_name
-                  )
-                  .join(", ")}
+                {courseData?.data?.program_languages?.length > 0
+                ? courseData?.data?.program_languages?.map(
+                    (item: LanguageItem) => {
+                      return item?.language_id?.language_name
+                    }).join(", ")
+                 : '-'}
               </ItemValue>
             </div>
             <div>
               <Header2>{t('program_visibility')}</Header2>
-              <ItemValue>{courseData?.data?.visibility_id?.value}</ItemValue>
+              <ItemValue>{courseData?.data?.visibility_id?.value ? courseData?.data?.visibility_id?.value : '-'}</ItemValue>
             </div>
             <div>
               <Header2>{t('max_capacity')}</Header2>
@@ -184,12 +197,11 @@ function CourseDetailsTab() {
             <div>
               <Header2>{t('course.view_course:basic_details_tab.program_organizer')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_organizers
-                  ?.map(
-                    (item: fullNameObject) =>
-                      item?.user_id?.contact_id?.full_name
-                  )
-                  .join(", ")}
+                {courseData?.data?.program_organizers?.length > 0
+                 ? courseData?.data?.program_organizers?.map((item: fullNameObject) => {
+                     return  item?.user_id?.contact_id?.full_name
+                    }).join(", ") 
+                 : '-'}
               </ItemValue>
             </div>
           </CardContent>
@@ -208,7 +220,8 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {programFees?.map((item: ProgramFeeItem) => {
+            {programFees?.length > 0 
+            ? programFees?.map((item: ProgramFeeItem) => {
               return (
                 <div className="flex flex-col gap-1">
                   <Header2>{item?.fee_level_id?.value}</Header2>
@@ -218,8 +231,10 @@ function CourseDetailsTab() {
                   </ItemValue>
                 </div>
               );
-            })}
-            {courseData?.data?.program_accommodations?.map(
+            }) 
+            : '-'}
+            {courseData?.data?.program_accommodations?.length > 0 
+            ? courseData?.data?.program_accommodations?.map(
               (item: AccommodationItem) => {
                 return (
                   <div className="flex flex-col gap-1">
@@ -230,8 +245,8 @@ function CourseDetailsTab() {
                     </ItemValue>
                   </div>
                 );
-              }
-            )}
+              }) 
+              : '-'}
           </CardContent>
         </Card>
       </div>
@@ -247,6 +262,7 @@ function CourseDetailsTab() {
           <CardContent className="gap-[23px] flex flex-col">
             <div>
               <Header2>{t('venue_address')}</Header2>
+              {courseData?.data?.venue_id ?
               <ItemValue>
                 {courseData?.data?.venue_id?.address},
                 {courseData?.data?.venue_id?.center_id?.name},
@@ -254,11 +270,12 @@ function CourseDetailsTab() {
                 {courseData?.data?.venue_id?.state_id?.name}{" "}
                 {courseData?.data?.venue_id?.postal_code}
               </ItemValue>
+              : '-'}
             </div>
             <Header2>
             {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
-                {courseData?.data?.program_schedules?.map(
+                {courseData?.data?.program_schedules?.length > 0 ? courseData?.data?.program_schedules?.map(
                   (item: ProgramScheduleItem, index: number) => (
                     <div key={index}>
                       <div className="flex flex-col">
@@ -268,7 +285,7 @@ function CourseDetailsTab() {
                       </div>
                     </div>
                   )
-                )}
+                ) : '-'}
               </div>
             </Header2>
           </CardContent>
@@ -286,12 +303,13 @@ function CourseDetailsTab() {
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div className="gap-[23px] flex flex-col">
+              {courseData?.data?.visibility_id?.id == publicVisibilityId && 
               <div>
                 <Header2>{t('course.view_course:basic_details_tab.course_details_url')}</Header2>
                 <ItemValue>
                   <div className="flex flex-row gap-4">
                     <div className="w-[90%] break-words">
-                      {courseData?.data?.details_page_link}
+                      {courseData?.data?.details_page_link ? courseData?.data?.details_page_link : '-'}
                     </div>
                     {courseData?.data?.details_page_link && (
                       <div
@@ -313,11 +331,12 @@ function CourseDetailsTab() {
                   </div>
                 </ItemValue>
               </div>
+              }  
               <div>
                 <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">
                   <div className="text-[16px] font-semibold w-[90%] break-words">
-                    {courseData?.data?.registration_link}
+                    {courseData?.data?.registration_link ? courseData?.data?.registration_link : '-'}
                   </div>
                   {courseData?.data?.registration_link && (
                     <div
@@ -353,7 +372,7 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {courseData?.data?.program_contact_details?.map(
+            {courseData?.data?.program_contact_details?.length > 0 ? courseData?.data?.program_contact_details?.map(
               (item: ContactDetailsItem) => {
                 return (
                   <div className="gap-[23px] flex flex-col">
@@ -372,7 +391,7 @@ function CourseDetailsTab() {
                   </div>
                 );
               }
-            )}
+            ) : '-'}
           </CardContent>
         </Card>
       </div>

@@ -7,6 +7,8 @@ interface IViewParticipantsStore {
   setParticpantFiltersData: (by: any) => void;
   selectedRowObjects: [];
   setSelectedRowObjects: (by: any) => void;
+  advanceFilterCount: number;
+  setAdvanceFilterCount: (by: any) => void;
 }
 
 export const ParticipantStore = create<IViewParticipantsStore>((set) => ({
@@ -26,6 +28,12 @@ export const ParticipantStore = create<IViewParticipantsStore>((set) => ({
   setSelectedRowObjects: (data: any) => {
     set(() => ({
       selectedRowObjects: data,
+    }));
+  },
+  advanceFilterCount: 0,
+  setAdvanceFilterCount: (data: number) => {
+    set(() => ({
+      advanceFilterCount: data,
     }));
   },
 }));

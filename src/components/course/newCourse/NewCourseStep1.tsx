@@ -80,6 +80,7 @@ const RegistrationGateway = () => {
         id="registration"
         className="!w-[57px] !h-[24px]"
         onCheckedChange={onChange}
+        checked={registrationSieUrl}
       />
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">

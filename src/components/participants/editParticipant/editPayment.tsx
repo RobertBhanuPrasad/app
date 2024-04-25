@@ -1,14 +1,23 @@
-import { useState } from "react";
 import { Button } from "src/ui/button";
 
-import CalenderIcon from "@public/assets/CalenderIcon";
-import { useList, useSelect, useUpdate } from "@refinedev/core";
+import CrossIcon from "@public/assets/CrossIcon";
+import { useList, useOne, useSelect, useUpdate } from "@refinedev/core";
+import _ from "lodash";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { TRANSACTION_STATUS } from "src/constants/OptionLabels";
+import { CONFIRMED, FAILED } from "src/constants/OptionValueOrder";
+import { DateField } from "src/ui/DateField";
 import { Text } from "src/ui/TextTags";
-import { Calendar } from "src/ui/calendar";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { Checkbox } from "src/ui/checkbox";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import {
     Select,
     SelectContent,
@@ -18,30 +27,36 @@ import {
     SelectValue,
 } from "src/ui/select";
 import { Textarea } from "src/ui/textarea";
-import { formatDateString } from "src/utility/DateFunctions";
-export default function EditPayment({ setEditPayment }) {
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+interface EditPaymentProps {
+    setEditPayment: React.Dispatch<React.SetStateAction<any>>;
+    paymentId: number;
+}
+export default function EditPayment({
+    setEditPayment,
+    paymentId,
+}: EditPaymentProps) {
     const { query } = useRouter();
     const { mutate } = useUpdate();
-    const { watch, getValues } = useFormContext();
-    const defaultData = getValues();
-    const formData = watch();
-    const onFormSubmission = (data: any) => {
+    const { watch } = useFormContext();
+    const [cancelEditPayment, setcancelEditPayment] = useState(false);
+    let formData = watch();
+    const [initialValue, setinitialValue] = useState(formData);
+    const onFormSubmission = () => {
         mutate({
             resource: "participant_payment_history",
             values: {
-                send_payment_confirmation: formData?.emailConfirmation,
-                payment_date: formData?.paymentDate,
-                payment_method_id: formData?.paymentMethod,
-                transaction_status_id: formData?.transaction,
+                send_payment_confirmation: formData?.send_payment_confirmation,
+                payment_date: formData?.payment_date,
+                payment_method_id: formData?.payment_method_id,
+                transaction_status_id: formData?.transaction_status_id,
             },
             // TODO: replace with participant_paymente_history id
-            id: defaultData?.id,
+            id: paymentId,
         });
         setEditPayment(false);
     };
-
     // Form fileds useControllers
-    const [open, setOpen] = useState(false);
     const {
         field: { value: transaction_status_id, onChange: transactionOnchange },
     } = useController({
@@ -56,23 +71,8 @@ export default function EditPayment({ setEditPayment }) {
     const {
         field: { value: payment_method_id, onChange: paymentMethodOnchange },
     } = useController({
-        name: "payment_method",
+        name: "payment_method_id",
         // defaultValue: paymentData?.payment_method_id?.id,
-    });
-    const {
-        field: { value: transaction_id },
-    } = useController({
-        name: "transaction_id",
-    });
-    const {
-        field: { value: response_message },
-    } = useController({
-        name: "response_message",
-    });
-    const {
-        field: { value: error_message },
-    } = useController({
-        name: "error_message",
     });
     const {
         field: {
@@ -94,6 +94,14 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
+    const CONFIRMED_ID = getOptionValueObjectByOptionOrder(
+        TRANSACTION_STATUS,
+        CONFIRMED
+    )?.id;
+    const FAILED_ID = getOptionValueObjectByOptionOrder(
+        TRANSACTION_STATUS,
+        FAILED
+    )?.id;
     // Getting option values for transaction status
     const { options: transactionStatus } = useSelect({
         resource: "option_values",
@@ -107,7 +115,7 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-   // Getting option label for payment method
+    // Getting option label for payment method
     const { data: payment_data } = useList<any>({
         resource: "option_labels",
         filters: [
@@ -132,7 +140,34 @@ export default function EditPayment({ setEditPayment }) {
             },
         ],
     });
-       return (
+    const Id: number | undefined = query?.participantId
+        ? parseInt(query.participantId as string)
+        : undefined;
+    const { data } = useOne({
+        resource: "participant_registration",
+        id: Number(Id),
+        meta: {
+            select: "contact_id(full_name)",
+        },
+    });
+    const transactionData = useOne({
+        resource: "participant_payment_history",
+        id: paymentId,
+        meta: {
+            select: "id,transaction_id,response_message,error_message",
+        },
+    });
+    const cancelConfirmation = () => {
+        if (!_.isEqual(initialValue, formData)) {
+            setcancelEditPayment(true);
+        } else {
+            setEditPayment(false);
+        }
+    };
+    const cancelEditPaymentHandler = () => {
+        setEditPayment(false);
+    };
+    return (
         <div>
             <div>
                 <div>
@@ -149,12 +184,15 @@ export default function EditPayment({ setEditPayment }) {
                                         </Text>
                                         <div>
                                             <Textarea
+                                                disabled={true}
                                                 value={
-                                                    defaultData?.full_name
-                                                        ? defaultData?.full_name
-                                                        : ""
+                                                    data?.data?.contact_id
+                                                        ?.full_name
+                                                        ? data?.data?.contact_id
+                                                              ?.full_name
+                                                        : "-"
                                                 }
-                                                className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed"
+                                                className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed outline-none rounded-[12px]"
                                             />
                                         </div>
                                     </div>
@@ -166,6 +204,15 @@ export default function EditPayment({ setEditPayment }) {
                                         <div>
                                             {/* TODO: need to disable select for confirmed and failed transaction ids */}
                                             <Select
+                                                disabled={
+                                                    transaction_status_id ==
+                                                    FAILED_ID
+                                                        ? true
+                                                        : transaction_status_id ==
+                                                          CONFIRMED_ID
+                                                        ? true
+                                                        : false
+                                                }
                                                 value={transaction_status_id}
                                                 onValueChange={(val: any) => {
                                                     transactionOnchange(val);
@@ -204,13 +251,18 @@ export default function EditPayment({ setEditPayment }) {
                                         </div>
                                     </div>
 
-                                    <div className="py-[5px]">
-                                        <Text className="py-[5px]">
+                                    <div className="py-[5px] ">
+                                        <Text className="py-[5px] outline-none">
                                             Transaction ID
                                         </Text>
                                         <div>
                                             <Textarea
-                                                value={transaction_id}
+                                                disabled={true}
+                                                value={
+                                                    transactionData?.data
+                                                        ?.data[0]
+                                                        ?.transaction_id
+                                                }
                                                 className="!w-[278px] resize-none !important h-[40px]"
                                             />
                                         </div>
@@ -224,58 +276,14 @@ export default function EditPayment({ setEditPayment }) {
                                         </Text>
                                         {/* TODO: need to disable it for confirmed and failed transaction ids */}
                                         <div>
-                                            <Dialog open={open}>
-                                                <DialogTrigger asChild>
-                                                    <Button
-                                                        onClick={() =>
-                                                            setOpen(true)
-                                                        }
-                                                        className="w-[278px] h-[40px] flex flex-row items-center"
-                                                        variant="outline"
-                                                    >
-                                                        <div className="flex gap-8">
-                                                            <div className="">
-                                                                {payment_date ? (
-                                                                    <Text>
-                                                                        {formatDateString(
-                                                                            new Date(
-                                                                                payment_date
-                                                                            )
-                                                                        )}
-                                                                    </Text>
-                                                                ) : (
-                                                                    <Text className="flex gap-2 font-normal">
-                                                                        Select
-                                                                        the Date
-                                                                        Range
-                                                                    </Text>
-                                                                )}
-                                                            </div>
-                                                            <div className="">
-                                                                <CalenderIcon color="#666666" />
-                                                            </div>
-                                                        </div>
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent className="bg-[#FFFFFF] !rounded-3xl">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={payment_date}
-                                                        onSelect={
-                                                            paymentDateOnchange
-                                                        }
-                                                        className="rounded-md border"
-                                                    />
-                                                    <Button
-                                                        onClick={() =>
-                                                            setOpen(false)
-                                                        }
-                                                        className=" w-[94px] h-10 rounded-xl"
-                                                    >
-                                                        Apply
-                                                    </Button>
-                                                </DialogContent>
-                                            </Dialog>
+                                            <DateField
+                                                value={payment_date as Date}
+                                                onChange={paymentDateOnchange}
+                                                placeholder=" Select
+                                                        the Date
+                                                        Range"
+                                                className="!w-[278px] h-[40px] rounded-[12px]"
+                                            />
                                         </div>
                                     </div>
 
@@ -284,8 +292,16 @@ export default function EditPayment({ setEditPayment }) {
                                             Payment Method
                                         </Text>
                                         <div className="!w-[278px]">
-                                            {/* TODO:need to disable select for confimed and failed transaction ids */}
                                             <Select
+                                                disabled={
+                                                    transaction_status_id ==
+                                                    FAILED_ID
+                                                        ? true
+                                                        : transaction_status_id ==
+                                                          CONFIRMED_ID
+                                                        ? true
+                                                        : false
+                                                }
                                                 value={payment_method_id}
                                                 onValueChange={(val: any) => {
                                                     paymentMethodOnchange(val);
@@ -330,12 +346,17 @@ export default function EditPayment({ setEditPayment }) {
                                     </div>
 
                                     <div className="py-[5px]">
-                                        <Text className="py-[5px]">
+                                        <Text className="py-[5px] outline-none">
                                             Response Message
                                         </Text>
                                         <div>
                                             <Textarea
-                                                value={response_message}
+                                                disabled={true}
+                                                value={
+                                                    transactionData?.data
+                                                        ?.data[0]
+                                                        ?.response_message
+                                                }
                                                 className="!w-[278px] resize-none !important h-[40px]"
                                             />
                                         </div>
@@ -344,10 +365,16 @@ export default function EditPayment({ setEditPayment }) {
                             </div>
 
                             <div className="flex flex-col py-[5px]">
-                                <Text className="py-[5px]">Error Message</Text>
+                                <Text className="py-[5px] outline-none">
+                                    Error Message
+                                </Text>
                                 <div>
                                     <Textarea
-                                        value={error_message}
+                                        disabled={true}
+                                        value={
+                                            transactionData?.data?.data[0]
+                                                ?.error_message
+                                        }
                                         className=" resize-none !important !h-[40px] !w-[578px]"
                                     />
                                 </div>
@@ -369,7 +396,10 @@ export default function EditPayment({ setEditPayment }) {
                     <div className="flex justify-center gap-6">
                         <div>
                             <Button
-                                onClick={() => setEditPayment(false)}
+                                onClick={() => {
+                                    cancelConfirmation();
+                                }}
+                                // onClick={() => setEditPayment(false)}
                                 className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold"
                             >
                                 Cancel
@@ -379,13 +409,60 @@ export default function EditPayment({ setEditPayment }) {
                             <Button
                                 className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
                                 onClick={() => {
-                                    onFormSubmission(formData);
+                                    onFormSubmission();
                                 }}
                             >
                                 Save
                             </Button>
                         </div>
                     </div>
+
+                    <AlertDialog
+                        open={cancelEditPayment}
+                        onOpenChange={setcancelEditPayment}
+                    >
+                        <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
+                            <AlertDialogHeader>
+                                <div
+                                    className="flex justify-end cursor-pointer"
+                                    onClick={() => setcancelEditPayment(false)}
+                                >
+                                    <CrossIcon />
+                                </div>
+                                <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
+                                    Changes made will be lost. Are you sure you
+                                    want to continue?
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <div className="w-full flex justify-center items-center gap-5">
+                                    <div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="rounded-[12px] w-[71px] h-[46px]"
+                                            onClick={() => {
+                                                setcancelEditPayment(false);
+                                            }}
+                                        >
+                                            No
+                                        </Button>
+                                    </div>
+                                    <div>
+                                        <Button
+                                            type="button"
+                                            className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                                            onClick={() => {
+                                                cancelEditPaymentHandler();
+                                            }}
+                                        >
+                                            Yes
+                                        </Button>
+                                    </div>
+                                </div>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
         </div>

@@ -43,7 +43,7 @@ function NewCourseStep6() {
 
   return (
     
-    <div className="p-2">
+    <div className="p-2 w-[1016px]">
       {/* Mapping through each contact field */}
       {fields.map((contact, index) => (
         <div key={contact.id} className="flex gap-6">
