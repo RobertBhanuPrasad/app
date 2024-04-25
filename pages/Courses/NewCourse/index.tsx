@@ -12,7 +12,14 @@ import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
-import { useGetIdentity, useList } from "@refinedev/core";
+import { QueryObserverResult } from "@tanstack/react-query";
+import {
+  GetListResponse,
+  HttpError,
+  UseLoadingOvertimeReturnType,
+  useGetIdentity,
+  useList,
+} from "@refinedev/core";
 import Form from "@components/Formfield";
 import { useFormContext, useFormState } from "react-hook-form";
 import {
@@ -139,13 +146,59 @@ function NewCourse() {
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
           [NewCourseStep5FormNames?.is_residential_program]: false,
-          [NewCourseStep3FormNames?.hour_format_id]: timeFormat24HoursId,
         }
       : newCourseData;
 
+  // fetch data from country_config table for time format
+  const {
+    data,
+    isLoading,
+  }: QueryObserverResult<
+    GetListResponse<CountryConfigDataBaseType>,
+    HttpError
+  > &
+    UseLoadingOvertimeReturnType = useList({
+    resource: "country_config",
+  });
+
+  console.log("country config data is", data?.data[0]);
+
+  // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
+  const {
+    data: timeZonesData,
+    isLoading: timeZoneLoading,
+  }: QueryObserverResult<GetListResponse<TimeZoneDataBaseType>, HttpError> &
+    UseLoadingOvertimeReturnType = useList({
+    resource: "time_zones",
+  });
+
+  // check how many records are there in time_zones table
+  // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
+  if (timeZonesData?.data?.length === 1 && newCourseData === null) {
+    defaultValues[NewCourseStep3FormNames?.time_zone_id] =
+      timeZonesData?.data[0]?.id;
+  }
+
+  //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
+  // and same we need to set only if newCourseData is null
+  if (newCourseData === null) {
+    if (data?.data[0]?.hour_format_id) {
+      defaultValues[NewCourseStep3FormNames?.hour_format_id] =
+        data?.data[0]?.hour_format_id;
+    } else {
+      defaultValues[NewCourseStep3FormNames?.hour_format_id] =
+        timeFormat24HoursId;
+    }
+  }
+
   // If the form is still loading, display a loading message
   // we have to display loading icon until the below variables will be get from database
-  if (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) {
+  // isLoading also we need becuase we need to set the data right
+  if (
+    (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) ||
+    isLoading ||
+    timeZoneLoading
+  ) {
     return <LoadingIcon />;
   }
 
