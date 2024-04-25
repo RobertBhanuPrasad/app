@@ -329,8 +329,7 @@ export default function NewCourseReviewPage() {
   const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
 
   return (
-    
-    <div className="pb-12">
+  <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold">
       {t("new_strings:review_your_details_right_here")}
       </div>
@@ -779,7 +778,7 @@ export default function NewCourseReviewPage() {
 
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
-              {t("course.new_course:accommodation_tab.accommodation_fee")}
+                Accommodation fee payment mode
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -789,7 +788,7 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
           </div>
-          }
+          )}
         </section>
         {/* Contact Info */}
         <section className="w-full py-8 text-base ">

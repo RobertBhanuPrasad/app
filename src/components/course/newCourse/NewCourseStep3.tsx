@@ -38,7 +38,6 @@ import { Input } from "src/ui/input"
 import { Label } from "src/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover"
 import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from "src/ui/select"
 import { supabaseClient } from "src/utility"
 import {
   getOptionValueObjectByOptionOrder,
@@ -70,6 +69,14 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useTranslation } from "next-i18next"
+import CalenderIcon from "@public/assets/CalenderIcon";
+import Delete from "@public/assets/Delete";
+import EditIcon from "@public/assets/EditIcon";
+import { X } from "lucide-react";
+import useDebounce from "src/utility/useDebounceHook";
+import SearchIcon from "@public/assets/SearchIcon";
+import GetScrollTypesAlert from "@components/GetScrollAlert";
+import { format } from "date-fns/format";
 
 function NewCourseStep3() {
   const { watch } = useFormContext()
@@ -192,7 +199,7 @@ const SchedulesHeader = () => {
         label: val?.value,
       };
     }
-  })
+  )
   const { options } = useSelect({
     resource: "time_zones",
     optionLabel: "name",
