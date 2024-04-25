@@ -10,7 +10,7 @@ export const useValidateCurrentStepFields = () => {
   * @returns boolean , this function returns weather all the fields of particular validation is passed or not 
   */  
  const ValidateCurrentStepFields = async (currentStepFormNames: any[]) => {
-    const isAllFieldsValidatedPromise = currentStepFormNames?.reduce(
+  const isAllFieldsValidatedPromise = currentStepFormNames?.reduce(
       async (valid, name) => {
         valid = await Promise.resolve(valid);
         const singleField = await trigger(name);

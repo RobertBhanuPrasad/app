@@ -1,8 +1,15 @@
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity, useMany, useOne } from "@refinedev/core";
+import {
+  useGetIdentity,
+  useInvalidate,
+  useMany,
+  useOne,
+  useList,
+} from "@refinedev/core";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
+  COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
   PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
@@ -15,7 +22,10 @@ import {
   formatDateString,
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
-import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
+import {
+  getOptionValueObjectById,
+  getOptionValueObjectByOptionOrder,
+} from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
@@ -25,6 +35,8 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
+import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
+import { CardLabel, CardValue } from "src/ui/TextTags";
 import { useTranslation } from 'next-i18next';
 export default function NewCourseReviewPage() {
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
@@ -161,17 +173,6 @@ export default function NewCourseReviewPage() {
     })
     .join(", ");
 
-  const { data: CourseAccomidation } = useMany({
-    resource: "accomdation_types",
-    ids: _.map(newCourseData?.accommodation, "accommodation_type_id") || [],
-  });
-
-  const courseAccomodationNames = CourseAccomidation?.data?.map(
-    (accomdation: any) => {
-      if (accomdation?.name) return accomdation?.name;
-    }
-  );
-
   const { data: CourseTranslation } = useMany({
     resource: "languages",
     ids: newCourseData?.translation_language_ids || [],
@@ -190,10 +191,12 @@ export default function NewCourseReviewPage() {
     meta: { select: "contact_id(full_name)" },
   });
 
-  const CourseTeachersNames = CourseTeachers?.data?.map((teacher_id) => {
-    if (teacher_id?.contact_id?.full_name)
-      return teacher_id?.contact_id?.full_name;
-  });
+  const CourseTeachersNames: any = CourseTeachers?.data
+    ?.map((teacher_id) => {
+      if (teacher_id?.contact_id?.full_name)
+        return teacher_id?.contact_id?.full_name;
+    })
+    .join(", ");
 
   const { data: courseType } = useOne({
     resource: "program_types",
@@ -201,6 +204,19 @@ export default function NewCourseReviewPage() {
   });
 
   const venueSessions = () => {
+    let schedules = newCourseData?.schedules;
+
+    // sort the schedules
+
+    schedules = schedules.sort((a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    });
 
     return (
       <div className=" min-w-72 ">
@@ -211,17 +227,20 @@ export default function NewCourseReviewPage() {
           const schedule = `${formatDateString(data.date)} | ${
             data?.startHour || "00"
           } : ${data?.startMinute || "00"}  ${
-            data?.startTimeFormat && data?.startTimeFormat
+            data?.startTimeFormat ? data?.startTimeFormat : ""
           } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
-            data?.endTimeFormat && data?.endTimeFormat
+            data?.endTimeFormat ? data?.endTimeFormat : ""
           }`;
+
           return (
-            <abbr
-              className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-              title={schedule}
-            >
-              {schedule}
-            </abbr>
+            <div>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={schedule}
+              >
+                {schedule}
+              </abbr>
+            </div>
           );
         })}
       </div>
@@ -239,10 +258,8 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.time_zone_id,
   });
 
-  const { data: feeLevelData } = useMany({
-    resource: "option_values",
-    ids: _.map(newCourseData?.program_fee_level_settings, "fee_level_id"),
-  });
+ //Requirement: Need to show only enabled fee level.
+ const enabledFeeLevelData=newCourseData?.program_fee_level_settings?.filter((feeLevel: { is_enable: boolean; })=>(feeLevel.is_enable===true));
 
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
@@ -254,6 +271,18 @@ export default function NewCourseReviewPage() {
 
   const { setProgramId } = newCourseStore();
 
+  /**
+   * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
+   */
+  const invalidate = useInvalidate();
+
+  /**
+   * The variable holds the course accounting status not submitted id
+   */
+  const accountingNotSubmittedStatusId =
+    getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
+      ?.id ?? 0;
+
   const handClickContinue = async () => {
     setIsSubmitting(true);
 
@@ -263,16 +292,40 @@ export default function NewCourseReviewPage() {
     const isPosted = await handlePostProgramData(
       newCourseData,
       data?.userData?.id,
-      setProgramId
+      setProgramId,
+      accountingNotSubmittedStatusId
     );
 
     if (isPosted) {
+      // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+      await invalidate({
+        resource: "program",
+        invalidates: ["list"],
+      });
       setViewPreviewPage(false);
       setViewThankyouPage(true);
     } else {
       setIsSubmitting(false);
     }
   };
+
+  /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the accommodation details
+   * we will get the currency code in the country config
+   *
+   */
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+    filters: [
+      {
+        field: "organization_id",
+        operator: "eq",
+        value: newCourseData?.organization_id,
+      },
+    ],
+  });
   const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
 
   return (
@@ -299,6 +352,7 @@ export default function NewCourseReviewPage() {
                 setOpenBasicDetails(true);
                 setClickedButton("Basic Details");
               }}
+              onOpenChange={setOpenBasicDetails}
             />{" "}
           </div>
           {/* body */}
@@ -320,7 +374,7 @@ export default function NewCourseReviewPage() {
               {t('organization')}
               </p>
               <abbr
-                className="font-semibold no-underline truncate text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
                 title={organizationName?.data?.name}
               >
                 {organizationName?.data?.name}
@@ -331,7 +385,7 @@ export default function NewCourseReviewPage() {
                 {t('program_organizer')}
               </p>
               <abbr
-                className="font-semibold no-underline truncate  text-accent-secondary text-[#666666]"
+                className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
                 title={programOrganizersNames}
               >
                 {programOrganizersNames ? programOrganizersNames : "-"}
@@ -365,7 +419,7 @@ export default function NewCourseReviewPage() {
                 {t("new_strings:registration_via")}
                 </p>
                 <abbr
-                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.registration_via_3rd_party_url}
                 >
                   {newCourseData?.registration_via_3rd_party_url}
@@ -391,6 +445,7 @@ export default function NewCourseReviewPage() {
                 setOpenCourseDetails(true);
                 setClickedButton("Course Details");
               }}
+              onOpenChange={setOpenCourseDetails}
             />{" "}
           </div>
           {/* body */}
@@ -400,7 +455,7 @@ export default function NewCourseReviewPage() {
               {t('')}
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={courseType?.data?.name}
               >
                 {courseType?.data?.name ? courseType?.data?.name : "-"}
@@ -410,7 +465,10 @@ export default function NewCourseReviewPage() {
               <p className="text-sm font-normal text-accent-light text-[#999999]">
               {t("new_strings:teacher")}
               </p>
-              <abbr className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
+              <abbr
+                title={CourseTeachersNames ? CourseTeachersNames : "-"}
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+              >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
             </div>
@@ -419,7 +477,7 @@ export default function NewCourseReviewPage() {
                 {t('language_course_is_taught_in')}
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={courselLanguageName}
               >
                 {courselLanguageName ? courselLanguageName : "-"}
@@ -430,7 +488,7 @@ export default function NewCourseReviewPage() {
                 {t('available_languages_for_translation')}
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={languagesTranslations}
               >
                 {languagesTranslations ? languagesTranslations : "-"}
@@ -465,7 +523,7 @@ export default function NewCourseReviewPage() {
               {t('countries_from_where_registrations_are_allowed')}
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={allowedCountries}
               >
                 {allowedCountries ? allowedCountries : "-"}
@@ -546,6 +604,7 @@ export default function NewCourseReviewPage() {
                 setOpenVenueDetails(true);
                 setClickedButton("Venue Details");
               }}
+              onOpenChange={setOpenVenueDetails}
             />{" "}
           </div>
           {/* body */}
@@ -557,7 +616,7 @@ export default function NewCourseReviewPage() {
                 {t('online_zoom_url')}
                 </p>
                 <abbr
-                  className="text-sm font-normal text-accent-light text-[#999999]"
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.online_url}
                 >
                   {newCourseData?.online_url}
@@ -567,25 +626,34 @@ export default function NewCourseReviewPage() {
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("course.new_course:time_and_venue_tab.province")}
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={StateNames ? StateNames : "-"}
+                >
                   {StateNames ? StateNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t('city')}
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={CityNames ? CityNames : "-"}
+                >
                   {CityNames ? CityNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Center
                 </p>
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={CenterNames ? CenterNames : "-"}
+                >
                   {CenterNames ? CenterNames : "-"}
-                </p>
+                </abbr>
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -604,7 +672,7 @@ export default function NewCourseReviewPage() {
                   {t("course.new_course:review_post_details.time_zone")}
                 </p>
                 <p className="font-semibold truncate text-accent-secondary">
-                  {timeZone?.data?.name}
+                  {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
                 </p>
               </div>
               <div>{venueSessions()}</div>
@@ -629,50 +697,23 @@ export default function NewCourseReviewPage() {
                 setOpenFeesDetails(true);
                 setClickedButton("Venue Details");
               }}
+              onOpenChange={setOpenFeesDetails}
             />{" "}
           </div>
           {/* body */}
           <div className="grid grid-cols-3 gap-4 mt-2">
-            {newCourseData?.program_fee_level_settings?.map(
-              (feeLevel: any, index: number) => {
-                return (
-                  <div className=" min-w-72">
-                    <p className="text-sm font-normal text-accent-light ">
-                      {feeLevelData?.data?.[index]?.value}
-                    </p>
-                    <abbr
-                      className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                      title={feeLevel.total}
-                    >
-                      {feeLevel.total}
-                    </abbr>
-                  </div>
-                );
-              }
-            )}
+            {enabledFeeLevelData?.map((feeLevel: any, index: number) => {
+              return (
+               <Fees feeLevelSettingsData={feeLevel}/>
+              )
+            })}
 
             {newCourseData?.is_early_bird_enabled &&
-              newCourseData?.program_fee_level_settings?.map(
-                (feeLevel: any, index: number) => {
-                  return (
-                    <div className=" min-w-72">
-                      <abbr
-                        className="text-sm font-normal text-accent-light"
-                        title={feeLevelData?.data?.[index]?.value}
-                      >
-                        {feeLevelData?.data?.[index]?.value}
-                      </abbr>
-
-                      <abbr
-                        className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                        title={feeLevel.early_bird_total}
-                      >
-                        {feeLevel.early_bird_total}
-                      </abbr>
-                    </div>
-                  );
-                }
-              )}
+              enabledFeeLevelData?.map((feeLevel: any, index: number) => {
+                return (
+                  <EarlyBirdFees feeLevelSettingsData={feeLevel}/>
+                )
+              })}
             {courseFeeSettings?.[0]?.is_program_fee_editable &&
               courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
               courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
@@ -720,23 +761,21 @@ export default function NewCourseReviewPage() {
                 setOpenAccomidationDetails(true);
                 setClickedButton("Accomidation Details");
               }}
+              onOpenChange={setOpenAccomidationDetails}
             />{" "}
           </div>
-          {newCourseData?.is_residential_program &&
-          <div className="grid grid-cols-4 gap-4 mt-2">
-            {newCourseData?.accommodation?.map((data: any) => {
-              return (
-                <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    {" "}
-                    {courseAccomodationNames}
-                  </p>
-                  <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
-                    {data?.fee_per_person}
-                  </p>
-                </div>
-              );
-            })}
+          {newCourseData?.is_residential_program && (
+            <div className="grid grid-cols-4 gap-4 mt-2">
+              {newCourseData?.accommodation?.map((data: any) => {
+                return (
+                  <Accommodation
+                    accomdationData={data}
+                    currencyCode={
+                      countryConfigData?.data?.[0]?.default_currency_code
+                    }
+                  />
+                );
+              })}
 
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
@@ -769,6 +808,7 @@ export default function NewCourseReviewPage() {
                 setOpenContactDetails(true);
                 setClickedButton("Contact Details");
               }}
+              onOpenChange={setOpenContactDetails}
             />{" "}
           </div>
           {/* body */}
@@ -780,7 +820,7 @@ export default function NewCourseReviewPage() {
                   {t('contact_email')}
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_email}
                   >
                     {data?.contact_email}
@@ -791,7 +831,7 @@ export default function NewCourseReviewPage() {
                   {t("new_strings:contact_phone")}
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_number}
                   >
                     {data?.contact_number}
@@ -802,7 +842,7 @@ export default function NewCourseReviewPage() {
                   {t('contact_name')}
                   </p>
                   <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_name}
                   >
                     {data?.contact_name}
@@ -818,7 +858,7 @@ export default function NewCourseReviewPage() {
             </p>
             <div className="truncate">
               <abbr
-                className="font-semibold  no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={newCourseData?.bcc_registration_confirmation_email}
               >
                 {newCourseData?.bcc_registration_confirmation_email
@@ -840,4 +880,131 @@ export default function NewCourseReviewPage() {
       </div>
     </div>
   );
+}
+
+/**
+ * @function Accommodation
+ * REQUIRMENT we need to show the both name and the fee of the accommodation name
+ * @description this function is used to display both the accommodation type name and the fee which we have already gave in the creation of the course
+ * @param accomdationData
+ * @returns
+ */
+
+const Accommodation = ({
+  accomdationData,
+  currencyCode,
+}: {
+  accomdationData: { accommodation_type_id: number; fee_per_person: number };
+  currencyCode: string;
+}) => {
+  /**
+   * @constant data
+   * REQUIRMENT we need to show the both name and the fee of the accommodation name
+   * we have the accommodation type id and we need the name of the type
+   * For that we are doing appi call for the accomdation_types table and we are getting the data in that data we have the accommodation type name
+   * @description this data const is used to store the accommodation type api data with respective to the accommodation type id
+   *
+   */
+  const { data } = useOne({
+    resource: "accomdation_types",
+    id: accomdationData?.accommodation_type_id,
+  });
+
+  return (
+    <div className=" min-w-[72px]">
+      <abbr title={data?.data?.name} className="no-underline">
+        <CardLabel className="truncate">{data?.data?.name}</CardLabel>
+      </abbr>
+      <abbr
+        // If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined
+        // we need to display the currency code when the code is present for the organization
+        title={`${currencyCode ? currencyCode : ""} ${
+          accomdationData?.fee_per_person
+        }`}
+        className="no-underline"
+      >
+        <CardValue className="truncate">
+          {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
+          {currencyCode ? currencyCode : ""}
+          {accomdationData?.fee_per_person}
+        </CardValue>
+      </abbr>
+    </div>
+  )
+}
+
+/**
+ * @function Fees
+ * REQUIRMENT we need to show the both fee level type and total of the fee level 
+ * @param feeLevelSettingsData 
+ * @returns 
+ */
+const Fees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettingsDataBaseType}) => {
+  /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+  const { data : feeLevelData } = useOne({
+    resource: 'option_values',
+    id: feeLevelSettingsData?.fee_level_id as number
+  })
+
+  return(
+    <div className=" min-w-72">
+      <abbr title={feeLevelData?.data?.value} className="no-underline">
+        <CardLabel className="truncate">{feeLevelData?.data?.value}</CardLabel>
+      </abbr>
+      <abbr
+        title={JSON.stringify(feeLevelSettingsData?.total)}
+        className="no-underline"
+      >
+        <CardValue className="truncate">{feeLevelSettingsData?.total}
+        </CardValue>
+      </abbr>
+
+
+    </div>
+  )
+}
+
+
+/**
+ * @function EarlyBirdFees
+ * REQUIRMENT we need to show the both fee level type and early bird total of the fee level 
+ * @param feeLevelSettingsData 
+ * @returns 
+ */
+const EarlyBirdFees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettingsDataBaseType}) => {
+  /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+  const { data : feeLevelData } = useOne({
+    resource: 'option_values',
+    id: feeLevelSettingsData?.fee_level_id as number
+  })
+
+  return(
+    <div className=" min-w-72">
+      {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
+      <abbr title={`Early Bird ${feeLevelData?.data?.value}`} className="no-underline">
+        <CardLabel className="truncate">Early Bird {feeLevelData?.data?.value}</CardLabel>
+      </abbr>
+      <abbr
+        title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
+        className="no-underline"
+      >
+        <CardValue className="truncate">{feeLevelSettingsData?.early_bird_total}
+        </CardValue>
+      </abbr>
+    </div>
+  )
 }

@@ -1,10 +1,10 @@
-import Form from "@components/Formfield";
-import EditIcon from "@public/assets/EditIcon";
-import { Dialog } from "@radix-ui/react-dialog";
-import { useFormContext } from "react-hook-form";
-import { Button } from "src/ui/button";
-import { DialogContent, DialogFooter, DialogTrigger } from "src/ui/dialog";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import Form from '@components/Formfield'
+import EditIcon from '@public/assets/EditIcon'
+import { Dialog } from '@radix-ui/react-dialog'
+import { useFormContext } from 'react-hook-form'
+import { Button } from 'src/ui/button'
+import { DialogContent, DialogFooter, DialogTrigger } from 'src/ui/dialog'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import { useTranslation } from 'next-i18next';
 /**
  * EditModalDialog Component
@@ -23,22 +23,16 @@ import { useTranslation } from 'next-i18next';
  */
 
 interface EditModalDialogProps {
-  title: string;
-  content: any;
-  onClose: () => void;
-  open: boolean;
-  openEdit: () => void;
+  title: string
+  content: any
+  onClose: () => void
+  open: boolean
+  openEdit: () => void
+  onOpenChange: any
 }
 
-export const EditModalDialog = ({
-  title,
-  content,
-  onClose,
-  open,
-  openEdit,
-}: EditModalDialogProps) => {
-
-  const { newCourseData, setNewCourseData } = newCourseStore();
+export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpenChange }: EditModalDialogProps) => {
+  const { newCourseData, setNewCourseData } = newCourseStore()
 
   /**
    * ButtonsDialog Component
@@ -77,7 +71,7 @@ export const EditModalDialog = ({
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <div className="w-16 h-18 ml-4 text-blue-600 ">
           <div onClick={openEdit} className="cursor-pointer">
@@ -85,7 +79,7 @@ export const EditModalDialog = ({
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="w-auto">
+      <DialogContent className="w-auto max-h-[500px] overflow-y-scroll">
         <Form
           defaultValues={newCourseData}
           onSubmit={function (data: any): void {

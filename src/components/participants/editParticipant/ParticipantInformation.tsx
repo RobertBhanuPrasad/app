@@ -10,6 +10,7 @@ export default function ParticipantInformation() {
     // Use useController to control the participantMemo field
     const {
         field: { value: memo, onChange: participantMemoChange },
+        fieldState: { error: memoError },
     } = useController({
         name: "memo",
     });
@@ -55,11 +56,18 @@ export default function ParticipantInformation() {
                             <Input
                                 value={memo}
                                 onChange={(val) => {
-                                    participantMemoChange(val?.target?.value);
+                                        participantMemoChange(
+                                              val?.target?.value
+                                          );
                                 }}
                                 placeholder="Add Memo"
                                 className="w-[303px] !h-[40px] resize-none rounded-[14px]"
                             />
+                            {memoError && (
+                                <span className="text-[#FF6D6D] text-[14px]">
+                                    {memoError?.message}
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>

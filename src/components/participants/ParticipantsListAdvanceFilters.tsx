@@ -34,7 +34,11 @@ import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 import { useTranslation } from 'next-i18next';
 
 export function ParticipantsAdvanceFilter() {
-  const { setParticpantFiltersData } = ParticipantStore();
+  const {
+    setParticpantFiltersData,
+    advanceFilterCount,
+    setAdvanceFilterCount,
+  } = ParticipantStore();
   const { watch, setValue, getValues } = useFormContext();
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
@@ -43,20 +47,32 @@ export function ParticipantsAdvanceFilter() {
   const filterCount = () => {
     const { advanceFilter } = getValues();
     let res = 0;
+    if (
+      advanceFilter?.full_name?.length ||
+      advanceFilter?.email?.length ||
+      advanceFilter?.mobile?.length
+    )
+      res += 1;
+    // if (advanceFilter?.email?.length) res += 1;
+    // if (advanceFilter?.mobile?.length) res += 1;
+    if (advanceFilter?.transaction_type?.length) res += 1;
+    if (advanceFilter?.payment_method?.length) res += 1;
+    if (advanceFilter?.fee_level?.length) res += 1;
+    if (advanceFilter?.attendance_status?.length) res += 1;
+    if (
+      advanceFilter?.health_consent_status?.completed ||
+      advanceFilter?.health_consent_status?.pending
+    )
+      res += 1;
+    // if (advanceFilter?.health_consent_status?.pending) res += 1;
+    if (
+      advanceFilter?.program_agreement_status?.completed ||
+      advanceFilter?.program_agreement_status?.pending
+    )
+      res += 1;
+    // if (advanceFilter?.program_agreement_status?.pending) res += 1;
 
-    if (advanceFilter?.full_name?.length) res += 1;
-    if (advanceFilter?.email?.length) res += 1;
-    if (advanceFilter?.mobile?.length) res += 1;
-    if (advanceFilter?.transaction_type?.length)
-      res += advanceFilter?.transaction_type?.length;
-    if (advanceFilter?.fee_level?.length)
-      res += advanceFilter?.fee_level?.length;
-    if (advanceFilter?.attendance_status?.length)
-      res += advanceFilter?.attendance_status?.length;
-    if (advanceFilter?.health_consent_status?.completed) res += 1;
-    if (advanceFilter?.health_consent_status?.pending) res += 1;
-    if (advanceFilter?.program_agreement_status?.completed) res += 1;
-    if (advanceFilter?.program_agreement_status?.pending) res += 1;
+    setAdvanceFilterCount(res);
 
     return res;
   };
