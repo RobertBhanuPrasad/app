@@ -29,7 +29,7 @@ import {
 } from 'src/ui/dialog'
 import { Input } from 'src/ui/input'
 import { supabaseClient } from 'src/utility'
-;('use client')
+
 
 import {
   CenterDropDown,
