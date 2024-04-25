@@ -99,7 +99,7 @@ const VenueData =[
   CityNames,
   StateNames,
   VenuePostalCode
-].join(',')
+].join(', ')
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
