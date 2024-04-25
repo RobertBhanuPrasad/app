@@ -30,7 +30,7 @@ export default function Edit() {
     }, [Id]);
     return (
         <div >
-            <div className="top-0 sticky z-[100] bg-white shadow-xl w-full">
+            <div className="top-0  z-[100] bg-white shadow-xl w-full">
                 <ParticipantsListMainHeader />
             </div>
             <div className="px-[20px] py-[20px]">
