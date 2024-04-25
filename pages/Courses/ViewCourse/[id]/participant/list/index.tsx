@@ -462,6 +462,7 @@ function index() {
         <ParticipantsListMainHeader />
       </div>
       <span>
+        {/* Popup to display error/success message for bulk actions update */}
         <AlertDialog open={displayTransactionStatusBulkActionError}>
           <AlertDialogContent>
             <div className="flex justify-end">
@@ -493,26 +494,6 @@ function index() {
                 </Button>
               </div>
             </div>
-            {/* <AlertDialogHeader>
-              <AlertDialogTitle className="text-center">
-                {bulkActionsErrorTitle}
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-center">
-                {bulkActionsErrorMessage}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel
-                className=" bg-[#7677F4] text-white"
-                onClick={() => {
-                  setDisplayTransactionStatusBulkActionError(false);
-                  setBulkActionsErrorTitle("");
-                  setBulkActionsErrorMessage("");
-                }}
-              >
-                Close
-              </AlertDialogCancel>
-            </AlertDialogFooter> */}
           </AlertDialogContent>
         </AlertDialog>
       </span>
