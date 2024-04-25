@@ -14,7 +14,7 @@ import {
 } from "src/ui/accordion";
 import { Label } from "src/ui/label";
 import { Input } from "src/ui/input";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Checkbox } from "src/ui/checkbox";
 import { Separator } from "src/ui/separator";
 import FilterIcon from "@public/assets/FilterIcon";
@@ -33,7 +33,11 @@ import { MultiSelect } from "src/ui/multi-select";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 
 export function ParticipantsAdvanceFilter() {
-  const { setParticpantFiltersData } = ParticipantStore();
+  const {
+    setParticpantFiltersData,
+    advanceFilterCount,
+    setAdvanceFilterCount,
+  } = ParticipantStore();
   const { watch, setValue, getValues } = useFormContext();
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
@@ -42,23 +46,53 @@ export function ParticipantsAdvanceFilter() {
   const filterCount = () => {
     const { advanceFilter } = getValues();
     let res = 0;
+    if (
+      advanceFilter?.full_name?.length ||
+      advanceFilter?.email?.length ||
+      advanceFilter?.mobile?.length
+    )
+      res += 1;
+    // if (advanceFilter?.email?.length) res += 1;
+    // if (advanceFilter?.mobile?.length) res += 1;
+    if (advanceFilter?.transaction_type?.length) res += 1;
+    if (advanceFilter?.payment_method?.length) res += 1;
+    if (advanceFilter?.fee_level?.length) res += 1;
+    if (advanceFilter?.attendance_status?.length) res += 1;
+    if (
+      advanceFilter?.health_consent_status?.completed ||
+      advanceFilter?.health_consent_status?.pending
+    )
+      res += 1;
+    // if (advanceFilter?.health_consent_status?.pending) res += 1;
+    if (
+      advanceFilter?.program_agreement_status?.completed ||
+      advanceFilter?.program_agreement_status?.pending
+    )
+      res += 1;
+    // if (advanceFilter?.program_agreement_status?.pending) res += 1;
 
-    if (advanceFilter?.full_name?.length) res += 1;
-    if (advanceFilter?.email?.length) res += 1;
-    if (advanceFilter?.mobile?.length) res += 1;
-    if (advanceFilter?.transaction_type?.length)
-      res += advanceFilter?.transaction_type?.length;
-    if (advanceFilter?.fee_level?.length)
-      res += advanceFilter?.fee_level?.length;
-    if (advanceFilter?.attendance_status?.length)
-      res += advanceFilter?.attendance_status?.length;
-    if (advanceFilter?.health_consent_status?.completed) res += 1;
-    if (advanceFilter?.health_consent_status?.pending) res += 1;
-    if (advanceFilter?.program_agreement_status?.completed) res += 1;
-    if (advanceFilter?.program_agreement_status?.pending) res += 1;
+    setAdvanceFilterCount(res);
 
     return res;
   };
+
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sheetRef.current &&
+        !sheetRef.current.contains(event.target as Node)
+      ) {
+        setOpenAdvFilter(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [sheetRef]);
 
   return (
     <Sheet open={openAdvFilter}>
@@ -79,10 +113,12 @@ export function ParticipantsAdvanceFilter() {
           {" "}
           <FilterIcon />
           All Filters
-          {count > 0 && <CountComponent count={count} />}
+          {advanceFilterCount > 0 && (
+            <CountComponent count={advanceFilterCount} />
+          )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[446px] rounded-l-xl">
+      <SheetContent className="w-[446px] rounded-l-xl" ref={sheetRef}>
         <div className="flex flex-col gap-4">
           <div className="max-h-[90vh] overflow-y-auto scrollbar pr-4">
             <SheetHeader className="p-3 text-2xl font-semibold flex flex-row">
@@ -299,7 +335,8 @@ export const ContactDetails = () => {
     name: "tempFilters.mobile",
   });
 
-  const emailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const emailRegex: RegExp =
+    /^[^\s]+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   return (
     <div className="flex flex-col gap-4">
@@ -328,7 +365,9 @@ export const ContactDetails = () => {
           (emailRegex.test(contactEmail) ? (
             ""
           ) : (
-            <div className="text-red-600">Enter valid email id</div>
+            <div className="text-red-600">
+              Enter valid email id and Enter only one email at a time
+            </div>
           ))}
       </div>
       <div className="flex flex-col gap-2">

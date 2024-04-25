@@ -1,7 +1,13 @@
 import _ from "lodash";
+import { TIME_FORMAT } from "src/constants/OptionLabels";
+import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
-export const handleCourseDefaultValues = async (programId: number) => {
+export const handleCourseDefaultValues = async (
+  programId: number,
+  timeFormat12HoursId: number
+) => {
   const { data, error } = await supabaseClient
     .from("program")
     .select(
@@ -12,7 +18,7 @@ export const handleCourseDefaultValues = async (programId: number) => {
   console.log("data was", data);
 
   if (!error) {
-    const defaultValues = await getDefaultValues(data[0]);
+    const defaultValues = await getDefaultValues(data[0], timeFormat12HoursId);
 
     return defaultValues;
   }
@@ -20,7 +26,10 @@ export const handleCourseDefaultValues = async (programId: number) => {
   return {};
 };
 
-export const getDefaultValues = async (data: ProgramDataBaseType) => {
+export const getDefaultValues = async (
+  data: ProgramDataBaseType,
+  timeFormat12HoursId: number
+) => {
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
@@ -43,7 +52,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   }
 
   //is_registration_via_3rd_party
-  if (data.is_registration_via_3rd_party)
+  if (data.is_registration_via_3rd_party != undefined)
     defaultValues.is_registration_via_3rd_party =
       data.is_registration_via_3rd_party;
 
@@ -106,13 +115,18 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   }
 
   //is_geo_restriction_applicable
-  if (data.is_geo_restriction_applicable)
+  if (data.is_geo_restriction_applicable != undefined)
     defaultValues.is_geo_restriction_applicable =
       data.is_geo_restriction_applicable;
 
   //allowed_countries
   if (data?.allowed_countries) {
     defaultValues.allowed_countries = data.allowed_countries;
+  }
+
+  //registration required for program
+  if (data?.is_registration_required != undefined) {
+    defaultValues.is_registration_required = data.is_registration_required;
   }
 
   //TODO: Need to do for course notes,description and emial notes
@@ -153,7 +167,7 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
       }
     }
   }
- 
+
   if (data?.hour_format_id)
     defaultValues.hour_format_id = data.hour_format_id as number;
 
@@ -171,16 +185,73 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
           ? new Date(schedule.end_time)
           : new Date();
 
-        const scheduleType: any = {
+        const modiediedSchedule: any = {
           date: schedule.start_time,
-          startHour: schedule.start_time.getHours(),
-          startMinute: schedule.start_time
-            ? schedule.start_time.getMinutes()
-            : 0,
-          endHour: schedule.end_time.getHours(),
-          endMinute: schedule.end_time.getMinutes(),
         };
-        return scheduleType;
+
+        const startHour = JSON.stringify(
+          schedule.start_time.getHours()
+        ).padStart(2, "0");
+
+        const endHour = JSON.stringify(schedule.end_time.getHours()).padStart(
+          2,
+          "0"
+        );
+
+        const startMinute = JSON.stringify(
+          schedule.start_time.getMinutes()
+        ).padStart(2, "0");
+
+        const endMinute = JSON.stringify(
+          schedule.end_time.getMinutes()
+        ).padStart(2, "0");
+
+        // if data contains 12 hour format id we need to store AM or PM with 12 hour standard
+        if (timeFormat12HoursId === data.hour_format_id) {
+          // now we need store in 12 hour format with AM or PM
+
+          if (startHour === "00") {
+            modiediedSchedule.startHour = "12";
+            modiediedSchedule.startTimeFormat = "AM";
+          } else if (startHour > "12") {
+            modiediedSchedule.startHour = JSON.stringify(
+              parseInt(startHour) - 12
+            ).padStart(2, "0");
+
+            modiediedSchedule.startTimeFormat = "PM";
+          } else {
+            modiediedSchedule.startHour = startHour;
+            modiediedSchedule.startTimeFormat = "AM";
+          }
+
+          // for endHour we need to
+
+          if (endHour === "00") {
+            modiediedSchedule.endHour = "12";
+            modiediedSchedule.endTimeFormat = "AM";
+          } else if (endHour > "12") {
+            modiediedSchedule.endHour = JSON.stringify(
+              parseInt(endHour) - 12
+            ).padStart(2, "0");
+
+            modiediedSchedule.endTimeFormat = "PM";
+          } else {
+            modiediedSchedule.endHour = endHour;
+            modiediedSchedule.endTimeFormat = "AM";
+          }
+
+          modiediedSchedule.startMinute = startMinute;
+          modiediedSchedule.endMinute = endMinute;
+        } else {
+          modiediedSchedule.startHour = startHour;
+
+          modiediedSchedule.startMinute = startMinute;
+
+          modiediedSchedule.endHour = endHour;
+
+          modiediedSchedule.endMinute = endMinute;
+        }
+        return modiediedSchedule;
       }
     );
   }
@@ -200,9 +271,11 @@ export const getDefaultValues = async (data: ProgramDataBaseType) => {
   if (data.program_accommodations)
     defaultValues.accommodation = data.program_accommodations;
 
-  if (data.is_residential_program)
+  // is_residential_program
+  if (data.is_residential_program != undefined)
     defaultValues.is_residential_program = data.is_residential_program;
 
+  // accommodation_fee_payment_mode
   if (data?.accommodation_fee_payment_mode)
     defaultValues.accommodation_fee_payment_mode =
       data.accommodation_fee_payment_mode;

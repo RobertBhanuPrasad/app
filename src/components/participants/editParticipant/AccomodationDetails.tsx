@@ -19,22 +19,23 @@ export default function AccomodationDetails() {
     const { getValues } = useFormContext();
     const FormData = getValues();
     const {
-        field: { value: accommodation_type_id },
-    } = useController({
-        name: "accommodation_type_id",
-    });
-    const {
         field: { value: accommodation_snore, onChange: snoreChange },
+        fieldState: { error: accommodationSnoreError },
     } = useController({
         name: "accommodation_snore",
     });
 
     const {
         field: { value: roommate_snore, onChange: roomateSnoreChange },
+        fieldState: { error: roommateSnoreError },
     } = useController({
         name: "roommate_snore",
     });
 
+    const { query } = useRouter();
+    const Id: number | undefined = query?.participantId
+        ? parseInt(query.participantId as string)
+        : undefined;
     // TODO: need to get the api data for accomodation types for particular program_id
 
     const { data: accommodationOptions } = useList<any>({
@@ -43,27 +44,31 @@ export default function AccomodationDetails() {
             {
                 field: "program_id",
                 operator: "eq",
-                value: FormData?.program_id?.id,
+                value: query?.id,
             },
         ],
         meta: {
             select: "accommodation_type_id!inner(id,name)",
         },
+        pagination: {
+            mode: "off",
+        },
     });
-    const { query } = useRouter();
-    const Id: number | undefined = query?.participantId
-        ? parseInt(query.id as string)
-        : undefined;
     const { data } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)),roommate_preferences_1,roommate_preferences_2,roommate_preferences_3)",
+            select: "accommodation_fee,accommodation_type_id(accommodation_type_id(id,name)),currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)),roommate_preferences_1,roommate_preferences_2,roommate_preferences_3)",
         },
         filters: [
             {
                 field: "participant_id",
                 operator: "eq",
                 value: Id,
+            },
+            {
+                field: "program_id",
+                operator: "eq",
+                value: query?.id,
             },
         ],
         sorters: [
@@ -93,7 +98,13 @@ export default function AccomodationDetails() {
                     </div>
                     <div className="py-[5px]">
                         {/* TODO: need to disable this accommodation type select */}
-                        <Select disabled={true} value={accommodation_type_id}>
+                        <Select
+                            disabled={true}
+                            value={
+                                accommodationData?.accommodation_type_id
+                                    ?.accommodation_type_id?.id
+                            }
+                        >
                             <SelectTrigger className="w-[278px] border text-[#999999] font-semibold !border-[#999999]">
                                 <SelectValue placeholder="Select accomodation type" />
                             </SelectTrigger>
@@ -231,6 +242,11 @@ export default function AccomodationDetails() {
                             />
                         </div>
                     </RadioGroup>
+                    {accommodationSnoreError && (
+                        <span className="text-[#FF6D6D] text-[14px]">
+                            {accommodationSnoreError?.message}
+                        </span>
+                    )}
                 </div>
             </div>
             <div className="text-[#999999] py-[10px]">
@@ -270,6 +286,11 @@ export default function AccomodationDetails() {
                         />
                     </div>
                 </RadioGroup>
+                {roommateSnoreError && (
+                    <span className="text-[#FF6D6D] text-[14px]">
+                        {roommateSnoreError?.message}
+                    </span>
+                )}
             </div>
             <hr />
         </div>

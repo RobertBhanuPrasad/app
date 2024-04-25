@@ -277,7 +277,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left !min-w-[150px] pl-4">
-          {row?.original?.price_category_id?.total}
+          {row?.original?.price_category_id?.total?.toFixed(2)}
         </div>
       );
     },
@@ -337,10 +337,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.payment_method_id
-            ?.value
-            ? row?.original?.participant_payment_history[0]?.payment_method_id
-                ?.value
+          {row?.original?.payment_method?.value
+            ? row?.original?.payment_method?.value
             : "-"}
         </div>
       );
@@ -358,7 +356,9 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.balance_due ? row?.original?.balance_due : "0.00"}
+          {row?.original?.balance_due
+            ? row?.original?.balance_due?.toFixed(2)
+            : "-"}
         </div>
       );
     },
@@ -549,7 +549,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <div className="flex flex-col gap-4 p-3 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+            <div className="flex flex-col gap-2 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
               {optionsValues.map((value, index) => (
                 <DropdownMenuItem
                   onClick={() => {
