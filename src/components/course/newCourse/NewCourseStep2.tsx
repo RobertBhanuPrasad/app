@@ -167,7 +167,7 @@ export default function NewCourseStep2() {
 }
 
 export const CourseTypeDropDown = () => {
-  const { watch, setValue } = useFormContext();
+  const { watch, setValue, clearErrors } = useFormContext();
 
   const [pageSize, setPageSize] = useState(10);
 
@@ -265,7 +265,7 @@ export const CourseTypeDropDown = () => {
   console.log("heyyyyy setttingss dataa", courseSettings);
 
   const {
-    field: { onChange: maxCapacityOnChange },
+    field: { value: maxCapacityValue, onChange: maxCapacityOnChange },
   } = useController({
     name: NewCourseStep2FormNames?.max_capacity,
   });
@@ -285,12 +285,10 @@ export const CourseTypeDropDown = () => {
       ? courseSettings?.[0].maximum_capacity.toString()
       : undefined;
 
-    console.log("heyy max attendes", maxAttendes);
-
-    // when we change the course type and we get new settings we need to set the max capacity from the course type settings
+    // when we change the course type and we get new settings we need to set the max capacity from the course type settings otherwise it should be empty
     if (maxAttendes) {
       maxCapacityOnChange(maxAttendes);
-    } else {
+    } else if (maxCapacityValue) {
       setValue(NewCourseStep2FormNames?.max_capacity, "");
     }
 
@@ -1071,22 +1069,12 @@ const AllowedCountriesDropDown = () => {
 };
 
 const MaximumCapacity = () => {
-  const { watch } = useFormContext();
-
-  const { errors } = useFormState();
-
-  console.log('heyy form errors', errors)
-
-  const formData = watch();
-
   const {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
     name: NewCourseStep2FormNames?.max_capacity,
   });
-
-  console.log("heyy error", error);
 
   return (
     <div className="flex gap-1 flex-col">
@@ -1109,7 +1097,7 @@ const MaximumCapacity = () => {
         placeholder="Enter no. of attendees"
         value={value}
         onChange={(val) => {
-          onChange(val?.target?.value);
+          onChange(val);
         }}
         className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
         error={error ? true : false}
