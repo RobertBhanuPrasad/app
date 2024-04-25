@@ -33,6 +33,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";
 import { ParticipantsListMainHeader } from "@components/participants/ParticipantsListMainHeader";
+import { AlertDialog, AlertDialogContent } from "src/ui/alert-dialog";
+import SuccessGreenTick from "@public/assets/SuccessGreenTick";
+import Tick from "@public/assets/Tick";
+import CrossIcon from "@public/assets/CrossIcon";
 
 function index() {
   const router = useRouter();
@@ -316,6 +320,13 @@ function index() {
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [allSelected, setAllSelected] = useState();
+  const [
+    displayTransactionStatusBulkActionError,
+    setDisplayTransactionStatusBulkActionError,
+  ] = useState(false);
+  const [bulkActionsErrorMessage, setBulkActionsErrorMessage] = useState("");
+  const [bulkActionsErrorTitle, setBulkActionsErrorTitle] = useState("");
+  const [bulkActionsSuccessIcon, setbulkActionsSuccessIcon] = useState(false);
 
   useEffect(() => {
     if (!participantData?.data?.data) return;
@@ -365,7 +376,14 @@ function index() {
       .in("id", participantIds);
 
     if (!error) {
-      alert(`${participantIds.length} Record(s) updated successfully`);
+      setDisplayTransactionStatusBulkActionError(true);
+      setbulkActionsSuccessIcon(true);
+      setBulkActionsErrorTitle(
+        `${participantIds?.length} Records Successfully Updated`
+      );
+      setBulkActionsErrorMessage(
+        `The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.`
+      );
     }
   };
 
@@ -384,22 +402,55 @@ function index() {
       (record: any) => record.value == "Pending"
     )?.id;
 
-    const { error } = await supabaseClient
+    const { data: selectedTransactionStatusValues } = await supabaseClient
       .from("participant_payment_history")
-      .update({ transaction_status_id: transaction_status_id })
-      .match({
-        program_id: programID,
-        transaction_status_id: transactionPendingStatusID,
-      })
+      .select("transaction_status_id")
+      .match({ program_id: programID })
       .in("participant_id", participantIds);
 
-    const { data } = await supabaseClient
-      .from("participant_registration")
-      .update({ payment_status_id: transaction_status_id })
-      .in("id", participantIds);
+    const selectTransactionStatusIds = selectedTransactionStatusValues?.map(
+      (record) => record?.transaction_status_id
+    );
 
-    if (!error) {
-      alert(`${participantIds.length} Record(s) updated successfully`);
+    const allValuesSame = (arr: any): boolean =>
+      arr.every((val: any) => val === transactionPendingStatusID);
+
+    if (selectTransactionStatusIds?.length) {
+      if (allValuesSame(selectTransactionStatusIds)) {
+        const { error } = await supabaseClient
+          .from("participant_payment_history")
+          .update({ transaction_status_id: transaction_status_id })
+          .match({
+            program_id: programID,
+            transaction_status_id: transactionPendingStatusID,
+          })
+          .in("participant_id", participantIds);
+
+        if (!error) {
+          setDisplayTransactionStatusBulkActionError(true);
+          setbulkActionsSuccessIcon(true);
+          setBulkActionsErrorTitle("Bulk Transaction Status Update");
+          setBulkActionsErrorMessage(
+            `${participantIds?.length} Records Successfully Updated`
+          );
+        }
+      } else {
+        setDisplayTransactionStatusBulkActionError(true);
+        setbulkActionsSuccessIcon(false);
+        setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
+        setBulkActionsErrorMessage(`Bulk update can only be done for payments with “Pending” status.
+        Please select records whose transaction status value is only
+        “Pending”. To update the payments with status other than
+        “Pending”, please visit the Registration details for that
+        participant.`);
+      }
+    } else {
+      setDisplayTransactionStatusBulkActionError(true);
+      setbulkActionsSuccessIcon(false);
+      setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
+      setBulkActionsErrorMessage(
+        "No transaction history found for the selected participant(s)"
+      );
     }
   };
   const [bulkActionSelectedValue, setBulkActionSelectedValue] =
@@ -410,6 +461,61 @@ function index() {
       <div className="top-0 sticky z-[50] bg-white shadow-md w-full">
         <ParticipantsListMainHeader />
       </div>
+      <span>
+        <AlertDialog open={displayTransactionStatusBulkActionError}>
+          <AlertDialogContent>
+            <div className="flex justify-end">
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  setDisplayTransactionStatusBulkActionError(false);
+                }}
+              >
+                <CrossIcon fill="#333333" />
+              </div>
+            </div>
+            <div className="w-full flex flex-col text-center items-center gap-4">
+              {bulkActionsSuccessIcon && <Tick />}
+              <div className="font-bold text-[20px]">
+                {bulkActionsErrorTitle}
+              </div>
+              <div className="w-full px-4">{bulkActionsErrorMessage}</div>
+              <div>
+                <Button
+                  onClick={() => {
+                    setDisplayTransactionStatusBulkActionError(false);
+                    setBulkActionsErrorTitle("");
+                    setBulkActionsErrorMessage("");
+                    setbulkActionsSuccessIcon(false);
+                  }}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+            {/* <AlertDialogHeader>
+              <AlertDialogTitle className="text-center">
+                {bulkActionsErrorTitle}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-center">
+                {bulkActionsErrorMessage}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                className=" bg-[#7677F4] text-white"
+                onClick={() => {
+                  setDisplayTransactionStatusBulkActionError(false);
+                  setBulkActionsErrorTitle("");
+                  setBulkActionsErrorMessage("");
+                }}
+              >
+                Close
+              </AlertDialogCancel>
+            </AlertDialogFooter> */}
+          </AlertDialogContent>
+        </AlertDialog>
+      </span>
       <div className="flex flex-col gap-4 px-10 py-2">
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
