@@ -191,9 +191,26 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div>Attendees</div>;
     },
     cell: ({ row }: any) => {
+      const [participantCount, setParticipantCount] = useState<number>(0);
+      useEffect(() => {
+        const fetchData = async () => {
+          const { data, error } = await supabaseClient.functions.invoke(
+            "get_program_participant_summary",
+            {
+              method: "POST",
+              body: {
+                program_id: row.original.id,
+              },
+            }
+          );
+          setParticipantCount(data?.participantCount);
+        };
+
+        fetchData();
+      }, []);
       return (
         <div className="min-w-[150px]">
-          {row?.original?.participant_registration?.length}
+          {participantCount ? participantCount : "-"}
         </div>
       );
     },
@@ -361,7 +378,6 @@ export const columns: ExtendedColumnDef<any>[] = [
           case 1: {
             //Need to navigate to participants list of select course.
             router.push(`ViewCourse/${row.original.id}/participant/list`);
-            console.log("Participant route is",`ViewCourse/${row.original.id}/participant/list`)
             break;
           }
           case 2: {
