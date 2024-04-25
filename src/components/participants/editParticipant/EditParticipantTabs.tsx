@@ -158,6 +158,8 @@ export default function EditParticipantTabs() {
     if (!accommodationData) {
         tabs = tabs.filter((tab) => tab.label !== "Accommodation Details");
     }
+    
+    // Both functions are confirmation popups to save or cancel the changes of the edit participant form
     const cancelConfirmation = () => {
         if (!_.isEqual(initialValue, formData)) {
             setcancelEditParticipant(true);
@@ -171,7 +173,7 @@ export default function EditParticipantTabs() {
         router.back();
     };
 
-    
+
     return (
         <div onClick={(e) => e.preventDefault()}>
             <ScrollableTabs tabs={tabs} />

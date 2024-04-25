@@ -171,7 +171,11 @@ export default function EditPayment({
 
     // Both functions are confirmation popups to save or cancel the changes of the edit payment form
     const cancelConfirmation = () => {
-        if (!_.isEqual(initialValue, formData)) {
+        // Picks common keys form both objects and compares if any value is editted or not
+        const commonKeys = _.intersection(_.keys(initialValue), _.keys(formData));
+        const initialData = _.pick(initialValue, commonKeys);
+        const formValues = _.pick(formData, commonKeys);
+        if (!_.isEqual(initialData, formValues)) {
             setcancelEditPayment(true);
         } else {
             setEditPayment(false);
