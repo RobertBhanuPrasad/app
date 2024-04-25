@@ -59,7 +59,7 @@ export const handlePostProgramData = async (
   }
 
   if (
-    (body[NewCourseStep1FormNames.registration_via_3rd_party_url]! = undefined)
+    body[NewCourseStep1FormNames.registration_via_3rd_party_url] != undefined
   ) {
     programBody.registration_via_3rd_party_url =
       body[NewCourseStep1FormNames.registration_via_3rd_party_url];

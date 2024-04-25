@@ -388,17 +388,7 @@ export default function NewCourseReviewPage() {
                 {programOrganizersNames ? programOrganizersNames : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Registration via 3rd party gateway
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_geo_restriction_applicable}
-              >
-                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
-              </abbr>
-            </div>
+           
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Registration via 3rd party gateway
