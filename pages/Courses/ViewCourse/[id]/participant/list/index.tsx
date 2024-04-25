@@ -602,13 +602,6 @@ const HeaderSection = () => {
     name: "participant_code",
   });
 
-  const handleSearchChange = (event: any) => {
-    const { value } = event.target;
-    const sanitizedValue = value.replace(/[^a-zA-Z0-9]/g, ""); // Regex to allow only alphabets and numbers
-
-    onSearch({ target: { value: sanitizedValue } });
-  };
-
   const {
     field: { value: RegistrationDate, onChange: RegistrationDateChange },
   } = useController({
@@ -673,7 +666,7 @@ const HeaderSection = () => {
         <div>
           <Input
             value={Searchvalue}
-            onChange={handleSearchChange}
+            onChange={onSearch}
             type="text"
             className=" border-0 outline-none"
             placeholder="Search by Registration ID"
