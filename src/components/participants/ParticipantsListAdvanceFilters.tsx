@@ -338,12 +338,28 @@ export const ContactDetails = () => {
   const emailRegex: RegExp =
     /^[^\s]+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+  const handleNameChange = (event: any) => {
+    const { value } = event.target;
+    const updatedName = value.replace(/[^\w\s]|[\d_]/gi, ""); //Regex to allow only alphabets
+
+    if (updatedName.length <= 50) {
+      onNameChange({ target: { value: updatedName } });
+    }
+  };
+
+  const handlePhoneChange = (event: any) => {
+    const { value } = event.target;
+    const updatedPhone = value.replace(/\D/g, ""); // Regex to allow only numeric characters
+
+    onPhoneChange({ target: { value: updatedPhone } });
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label>Name</Label>
         <Input
-          onChange={onNameChange}
+          onChange={handleNameChange}
           value={contactName}
           type="text"
           maxLength={50}
@@ -372,7 +388,11 @@ export const ContactDetails = () => {
       </div>
       <div className="flex flex-col gap-2">
         <Label>Phone</Label>
-        <Input onChange={onPhoneChange} value={contactPhone} type="tel"></Input>
+        <Input
+          onChange={handlePhoneChange}
+          value={contactPhone}
+          type="tel"
+        ></Input>
       </div>
     </div>
   );

@@ -42,7 +42,7 @@ function Navbar() {
   const firstRouteName = pathSegments.find((segment) => segment !== "");
 
   return (
-    <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
+    <div className="w-full flex flex-row px-8 h-16 justify-between items-center  ">
       {/* Logo */}
       <Logo />
       {/* Navigation Menu */}

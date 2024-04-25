@@ -7,8 +7,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
-import { PROGRAM_STATUS } from "src/constants/OptionLabels";
-import { CANCELED } from "src/constants/OptionValueOrder";
+import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
+import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { useEffect, useState } from "react";
 import { Button } from "src/ui/button";
 import {
@@ -320,13 +320,22 @@ export const columns: ExtendedColumnDef<any>[] = [
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
 
+      // here we need this variable to create default values
+      const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
+        TIME_FORMAT,
+        TIME_FORMAT_12_HOURS
+      )?.id as number;
+
       const handleEditCourse = async () => {
         console.log("clicking on edit course");
 
         /**
          * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
          */
-        const defaultValues = await handleCourseDefaultValues(row.original.id);
+        const defaultValues = await handleCourseDefaultValues(
+          row.original.id,
+          timeFormat12HoursId
+        );
         console.log("default values are", defaultValues);
 
         setNewCourseData(defaultValues);
@@ -343,7 +352,10 @@ export const columns: ExtendedColumnDef<any>[] = [
       const handleCopyCourse = async () => {
         setViewThankyouPage(false);
 
-        let defaultValues = await handleCourseDefaultValues(row.original.id);
+        let defaultValues = await handleCourseDefaultValues(
+          row.original.id,
+          timeFormat12HoursId
+        );
         // we have to delete schedules when user click on cipy course and other we need to prefill
         defaultValues = _.omit(defaultValues, ["id", "schedules"]);
         setNewCourseData(defaultValues);
@@ -361,7 +373,10 @@ export const columns: ExtendedColumnDef<any>[] = [
           case 1: {
             //Need to navigate to participants list of select course.
             router.push(`ViewCourse/${row.original.id}/participant/list`);
-            console.log("Participant route is",`ViewCourse/${row.original.id}/participant/list`)
+            console.log(
+              "Participant route is",
+              `ViewCourse/${row.original.id}/participant/list`
+            );
             break;
           }
           case 2: {
