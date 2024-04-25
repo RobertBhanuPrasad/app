@@ -251,8 +251,8 @@ function ViewDetails() {
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+            <HoverCardContent className="z-[100]">
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal min-h[104px]">
                 {participantData?.participantCount} Participants with: Transaction
                 status = Confirmed / Pending Attendance status = Confirmed /
                 Pending / Dropout Total participants records:
@@ -275,7 +275,7 @@ function ViewDetails() {
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
-            <HoverCardContent>
+            <HoverCardContent className="z-[100]">
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 Revenue from confirmed pending transaction participants revenue:
                 {countryConfigData?.data?.[0]?.default_currency_code}{" "}
@@ -284,52 +284,56 @@ function ViewDetails() {
             </HoverCardContent>
           </HoverCard>
         </div>
-        <div className="flex flex-row gap-2 items-center mt-3">
-          <LocationIcon />
-          {courseData?.data?.venue_id?.address},
-          {courseData?.data?.venue_id?.city_id?.name},
-          {courseData?.data?.venue_id?.state_id?.name}, {countryName},
-          {courseData?.data?.venue_id?.postal_code}
-        </div>
+        <div className="flex justify-between">
+          <div className="flex flex-row gap-2 items-center mt-3 w-full">
+            <LocationIcon />
+            <p className="w-full">{`
+              ${courseData?.data?.venue_id?.address},
+              ${courseData?.data?.venue_id?.city_id?.name},
+              ${courseData?.data?.venue_id?.state_id?.name}, ${countryName},
+              ${courseData?.data?.venue_id?.postal_code} `}
 
-        <div className="flex flex-row items-center gap-2 w-full justify-end ">
-          Announced by:{" "}
-          {courseData?.data?.created_by_user_id?.contact_id?.full_name}
-          <HoverCard>
-            <HoverCardTrigger>
-              <Important />
-            </HoverCardTrigger>
-            <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
-              <div className="!rounded-[15px] font-normal flex flex-col">
-                <p>Approved by:</p>
-                <p>
-                  {courseData?.data?.approved_by_user_id &&
-                    courseData?.data?.program_approved_date
-                    ? `${courseData?.data?.approved_by_user_id?.contact_id
-                      ?.full_name
-                    } (${formatDateString(
-                      new Date(courseData?.data?.program_approved_date)
-                    )})`
-                    : "-"}
-                </p>
-                <Separator className="my-2" />
-                <p>Last Modified by:</p>
-                <p>
-                  {courseData?.data?.last_modified_by_user_id &&
-                    courseData?.data?.modified_at
-                    ? `${courseData?.data?.last_modified_by_user_id?.contact_id
-                      ?.full_name
-                    } (${formatDateString(
-                      new Date(courseData?.data?.modified_at)
-                    )})`
-                    : "-"}
-                </p>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+            </p>
+          </div>
+          <div className="flex flex-row items-center gap-2 w-full justify-end ">
+            Announced by:{" "}
+            {courseData?.data?.created_by_user_id?.contact_id?.full_name}
+            <HoverCard >
+              <HoverCardTrigger>
+                <Important />
+              </HoverCardTrigger>
+              <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full z-[100]">
+                <div className="!rounded-[15px] font-normal flex flex-col">
+                  <p>Approved by:</p>
+                  <p>
+                    {courseData?.data?.approved_by_user_id &&
+                      courseData?.data?.program_approved_date
+                      ? `${courseData?.data?.approved_by_user_id?.contact_id
+                        ?.full_name
+                      } (${formatDateString(
+                        new Date(courseData?.data?.program_approved_date)
+                      )})`
+                      : "-"}
+                  </p>
+                  <Separator className="my-2" />
+                  <p>Last Modified by:</p>
+                  <p>
+                    {courseData?.data?.last_modified_by_user_id &&
+                      courseData?.data?.modified_at
+                      ? `${courseData?.data?.last_modified_by_user_id?.contact_id
+                        ?.full_name
+                      } (${formatDateString(
+                        new Date(courseData?.data?.modified_at)
+                      )})`
+                      : "-"}
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
         </div>
       </div>
-      <div className="w-full mt-6">
+      <div className="w-full mt-3">
         <Tabs
           onValueChange={(val: string) => {
             setSelectedValue(val);
