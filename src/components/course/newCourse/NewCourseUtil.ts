@@ -909,7 +909,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
   let venueData: any = {};
 
   const venueBody: VenueDataBaseType = {};
-
+  console.log(body, "body=====")
   if (body.isNewVenue) {
     venueData = body?.newVenue || {};
   } else {
