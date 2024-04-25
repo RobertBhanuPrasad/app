@@ -1,45 +1,27 @@
-import LoadingIcon from "@public/assets/LoadingIcon";
-import {
-  useGetIdentity,
-  useInvalidate,
-  useMany,
-  useOne,
-  useList,
-} from "@refinedev/core";
-import _ from "lodash";
-import { useEffect, useState } from "react";
-import {
-  PAYMENT_MODE,
-  PROGRAM_ORGANIZER_TYPE,
-  TIME_FORMAT,
-  VISIBILITY,
-} from "src/constants/OptionLabels";
-import countryCodes from "src/data/CountryCodes";
-import { Button } from "src/ui/button";
-import { supabaseClient } from "src/utility";
-import {
-  formatDateString,
-  subtractDaysAndFormat,
-} from "src/utility/DateFunctions";
-import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
-import NewCourseStep1 from "./NewCourseStep1";
-import NewCourseStep2 from "./NewCourseStep2";
-import NewCourseStep3 from "./NewCourseStep3";
-import NewCourseStep4 from "./NewCourseStep4";
-import NewCourseStep5 from "./NewCourseStep5";
-import NewCourseStep6 from "./NewCourseStep6";
-import { handlePostProgramData } from "./NewCourseUtil";
-import { CardLabel, CardValue } from "src/ui/TextTags";
+import LoadingIcon from '@public/assets/LoadingIcon'
+import { useGetIdentity, useInvalidate, useList, useMany, useOne } from '@refinedev/core'
+import _ from 'lodash'
+import { useEffect, useState } from 'react'
+import { PAYMENT_MODE, PROGRAM_ORGANIZER_TYPE, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
+import countryCodes from 'src/data/CountryCodes'
+import { CardLabel, CardValue } from 'src/ui/TextTags'
+import { Button } from 'src/ui/button'
+import { supabaseClient } from 'src/utility'
+import { formatDateString, subtractDaysAndFormat } from 'src/utility/DateFunctions'
+import { getOptionValueObjectById } from 'src/utility/GetOptionValuesByOptionLabel'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+import { EditModalDialog } from './NewCoursePreviewPageEditModal'
+import NewCourseStep1 from './NewCourseStep1'
+import NewCourseStep2 from './NewCourseStep2'
+import NewCourseStep3 from './NewCourseStep3'
+import NewCourseStep4 from './NewCourseStep4'
+import NewCourseStep5 from './NewCourseStep5'
+import NewCourseStep6 from './NewCourseStep6'
+import { handlePostProgramData } from './NewCourseUtil'
 
 export default function NewCourseReviewPage() {
-  
-
-  
-  const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
-    newCourseStore();
-
+  const { newCourseData, setViewPreviewPage, setViewThankyouPage } = newCourseStore()
+  console.log(newCourseData, 'newcourse')
   const { data: programTypeData } = useOne({
     resource: 'program_types',
     id: newCourseData?.program_type_id
@@ -246,11 +228,7 @@ export default function NewCourseReviewPage() {
     /**
      * This variable will retur true if all api calls has been successfully it will return false if any api call fails
      */
-    const isPosted = await handlePostProgramData(
-      newCourseData,
-      data?.userData?.id,
-      setProgramId
-    );
+    const isPosted = await handlePostProgramData(newCourseData, data?.userData?.id, setProgramId)
 
     if (isPosted) {
       // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
@@ -339,9 +317,9 @@ export default function NewCourseReviewPage() {
               <p className="text-sm font-normal text-accent-light text-[#999999]">Registration via 3rd party gateway</p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_geo_restriction_applicable}
+                title={newCourseData?.is_registration_via_3rd_party}
               >
-                {newCourseData?.is_geo_restriction_applicable ? 'Yes' : 'No'}
+                {newCourseData?.is_registration_via_3rd_party ? 'Yes' : 'No'}
               </abbr>
             </div>
 
