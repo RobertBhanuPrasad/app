@@ -663,14 +663,14 @@ const Venue = () => {
 const NewVenueDetails = () => {
   const { getValues } = useFormContext()
   const {
-    newVenue: { center_id, address, postal_code, name }
+    newVenue: { city_id, address, postal_code, name }
   } = getValues()
 
   const { data, isLoading } = useOne({
-    resource: 'center',
-    id: center_id,
+    resource: 'city',
+    id: city_id,
     meta: {
-      select: '*,state_id(*),city_id(*)'
+      select: '*,state_id(*)'
     }
   })
 
@@ -682,7 +682,7 @@ const NewVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address},{data?.data?.city_id?.name}, {data?.data?.state_id?.name}, {postal_code}
+      {name}, {address},{data?.data?.name}, {data?.data?.state_id?.name}, {postal_code}
     </div>
   )
 }
@@ -690,15 +690,15 @@ const NewVenueDetails = () => {
 const ExistingVenueDetails = () => {
   const { getValues } = useFormContext()
   const {
-    existingVenue: { center_id, address, postal_code, name }
+    existingVenue: {  address, postal_code, name,city_id }
   } = getValues()
 
   const { data, isLoading } = useOne({
-    resource: 'center',
-    id: center_id,
+    resource: 'city',
+    id: city_id,
     meta: {
-      select: '*,state_id(*),city_id(*)'
-    }
+      select: '*,state_id(*))'
+    } 
   })
 
   console.log('new venue data is', data)
@@ -709,7 +709,7 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address},{data?.data?.city_id?.name}, {data?.data?.state_id?.name}, {postal_code}
+      {name}, {address},{data?.data?.name}, {data?.data?.state_id?.name}, {postal_code}
     </div>
   )
 }

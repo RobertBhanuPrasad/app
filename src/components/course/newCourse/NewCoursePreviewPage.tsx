@@ -100,6 +100,18 @@ export default function NewCourseReviewPage() {
 
   const CenterNames = venueCenter?.data?.name;
 
+  const VenueName = newCourseData?.is_existing_venue == "existing-venue" ? newCourseData?.existingVenue?.name : newCourseData?.newVenue?.name;
+  const VenueAddress = newCourseData?.is_existing_venue == "existing-venue" ? newCourseData?.existingVenue?.address : newCourseData?.newVenue?.address;
+  const VenuePostalCode = newCourseData?.is_existing_venue == "existing-venue" ? newCourseData?.existingVenue?.postal_code : newCourseData?.newVenue?.postal_code;
+
+const VenueData =[
+  VenueName,
+  VenueAddress,
+  CityNames,
+  StateNames,
+  VenuePostalCode
+].join(', ')
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data }: any = useGetIdentity();
@@ -662,11 +674,16 @@ export default function NewCourseReviewPage() {
             <div className="grid grid-cols-4 gap-4 mt-2">
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Time Format
+                  Venue Address
                 </p>
+                <abbr className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                 title={VenueData ? VenueData : "-"}>
                 <p className="font-semibold truncate text-accent-secondary">
-                  {timeFormat?.value}
-                </p>
+                    <div className="break-all">{VenueData}</div>      </p></abbr>
+              </div>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">Time Format</p>
+                <p className="font-semibold truncate text-accent-secondary">{timeFormat?.value}</p>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
