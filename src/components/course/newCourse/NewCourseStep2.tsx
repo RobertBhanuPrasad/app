@@ -262,7 +262,6 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.program_type,
   });
 
-
   const {
     field: { value: maxCapacityValue, onChange: maxCapacityOnChange },
   } = useController({
@@ -287,7 +286,7 @@ export const CourseTypeDropDown = () => {
     // when we change the course type and we get new settings we need to set the max capacity from the course type settings otherwise it should be empty
     if (maxAttendes) {
       maxCapacityOnChange(maxAttendes);
-    } else if (maxCapacityValue) {
+    } else {
       setValue(NewCourseStep2FormNames?.max_capacity, "");
     }
 
