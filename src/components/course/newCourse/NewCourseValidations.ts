@@ -63,13 +63,14 @@ export const validationSchema = () => {
         .nonempty({ message: "Country is a required field" }),
       max_capacity: z
         .string({
-          required_error: "Maximum capacity is required fields",
+          required_error: "Maximum capacity is a required field",
         })
-        .regex(/^\d+$/, {
+        //here if the value is empty string then also we need to show this error
+        .refine((val) => val != "", {
+          message: "Maximum capacity is a required field",
+        })
+        .refine((val) => /^\d+$/.test(val), {
           message: "Maximum Capacity can accept only integers",
-        })
-        .refine((val) => parseInt(val) < 500, {
-          message: "Maximum capacity exceeds the allowed limit",
         }),
 
       // Step 3 Schema

@@ -66,9 +66,9 @@ function index() {
 
   const { viewPreviewPage, viewThankyouPage } = newCourseStore();
 
-  if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
-  }
+  // if (!loginUserData?.userData) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (viewThankyouPage) {
     return (
