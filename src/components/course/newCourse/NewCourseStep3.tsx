@@ -29,7 +29,7 @@ import {
 } from 'src/ui/dialog'
 import { Input } from 'src/ui/input'
 import { supabaseClient } from 'src/utility'
-"use client";
+;('use client')
 
 import {
   CenterDropDown,
@@ -134,9 +134,9 @@ const OnlineProgram = () => {
 }
 
 const Schedules = () => {
-  const { errors } = useFormState();
+  const { errors } = useFormState()
 
-  console.log("errors are", errors?.schedules);
+  console.log('errors are', errors?.schedules)
 
   return (
     <div className="flex flex-col gap-4 w-[1016px]">
@@ -144,11 +144,7 @@ const Schedules = () => {
 
       <Sessions />
 
-      {errors?.schedules && (
-        <span className="text-[#FF6D6D] text-[12px]">
-          {errors?.schedules?.message as string}
-        </span>
-      )}
+      {errors?.schedules && <span className="text-[#FF6D6D] text-[12px]">{errors?.schedules?.message as string}</span>}
     </div>
   )
 }
@@ -156,24 +152,22 @@ const Schedules = () => {
 const SchedulesHeader = () => {
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
-    fieldState: { error: schedulesHeaderErrors },
-  } = useController({ name: NewCourseStep3FormNames?.hour_format_id });
+    fieldState: { error: schedulesHeaderErrors }
+  } = useController({ name: NewCourseStep3FormNames?.hour_format_id })
 
   const {
     field: { value: timeZones, onChange: timeZonesOnChange },
-    fieldState: { error: timeZoneError },
-  } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
+    fieldState: { error: timeZoneError }
+  } = useController({ name: NewCourseStep3FormNames?.time_zone_id })
 
-  let timeFormatOptions =
-    getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
+  let timeFormatOptions = getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values
 
-  timeFormatOptions = timeFormatOptions?.map(
-    (val: { id: any; value: string }) => {
-      return {
-        value: val?.id,
-        label: val?.value,
-      };
-    })
+  timeFormatOptions = timeFormatOptions?.map((val: { id: any; value: string }) => {
+    return {
+      value: val?.id,
+      label: val?.value
+    }
+  })
 
   const { options } = useSelect({
     resource: 'time_zones',
@@ -255,15 +249,15 @@ const SchedulesHeader = () => {
 
 const Sessions = () => {
   const { append, remove, fields } = useFieldArray({
-    name: "schedules",
-  });
+    name: 'schedules'
+  })
 
-  const { watch } = useFormContext();
+  const { watch } = useFormContext()
 
-  const formData = watch();
-  const schedules = formData?.schedules || [];
+  const formData = watch()
+  const schedules = formData?.schedules || []
 
-  console.log("schedules are", schedules);
+  console.log('schedules are', schedules)
 
   /**
    * We need to add a new session when user click on add session
@@ -279,46 +273,46 @@ const Sessions = () => {
     // we will take one temporary objetc initially with date and then based on timezone id we need to add proper startHour, startMinute, endHour, endMinute
     // we need to store startTimeFormat and endTimeFormat also because it is 12 hour or 24 hour format right we need to store wether it is AM or PM.
     const tempSchedule: {
-      date?: Date;
-      startHour?: string;
-      startMinute?: string;
-      endHour?: string;
-      endMinute?: string;
-      startTimeFormat?: string;
-      endTimeFormat?: string;
-    } = {};
+      date?: Date
+      startHour?: string
+      startMinute?: string
+      endHour?: string
+      endMinute?: string
+      startTimeFormat?: string
+      endTimeFormat?: string
+    } = {}
 
-    const today = new Date();
+    const today = new Date()
 
-    const tomorrowDate = new Date(today).setDate(today.getDate() + 1);
+    const tomorrowDate = new Date(today).setDate(today.getDate() + 1)
 
     // as per requirement we need to set to tomorrow date
-    tempSchedule.date = new Date(tomorrowDate);
+    tempSchedule.date = new Date(tomorrowDate)
 
     // and we need to set to 06:00PM as start time and end time as 08:00PM for all countries
     // in future if client asks we need to set date and time as per each country what ever theu want
 
     if (formData?.hoursFormatId === timeFormat12HoursId) {
-      tempSchedule["startHour"] = "06";
-      tempSchedule["startMinute"] = "00";
-      tempSchedule["endHour"] = "08";
-      tempSchedule["endMinute"] = "00";
-      tempSchedule["startTimeFormat"] = "PM";
-      tempSchedule["endTimeFormat"] = "PM";
+      tempSchedule['startHour'] = '06'
+      tempSchedule['startMinute'] = '00'
+      tempSchedule['endHour'] = '08'
+      tempSchedule['endMinute'] = '00'
+      tempSchedule['startTimeFormat'] = 'PM'
+      tempSchedule['endTimeFormat'] = 'PM'
     } else {
-      tempSchedule["startHour"] = "18";
-      tempSchedule["startMinute"] = "00";
-      tempSchedule["endHour"] = "20";
-      tempSchedule["endMinute"] = "00";
+      tempSchedule['startHour'] = '18'
+      tempSchedule['startMinute'] = '00'
+      tempSchedule['endHour'] = '20'
+      tempSchedule['endMinute'] = '00'
     }
 
     if (schedules?.length === 0) {
-      append(tempSchedule);
+      append(tempSchedule)
     } else {
       // date we need to increase to next day of previous date
-      const date = new Date(schedules[schedules?.length - 1]?.date);
+      const date = new Date(schedules[schedules?.length - 1]?.date)
 
-      date.setDate(date.getDate() + 1);
+      date.setDate(date.getDate() + 1)
 
       append({
         date,
@@ -327,24 +321,21 @@ const Sessions = () => {
         endHour: schedules[schedules?.length - 1]?.endHour,
         endMinute: schedules[schedules?.length - 1]?.endMinute,
         startTimeFormat: schedules[schedules?.length - 1]?.startTimeFormat,
-        endTimeFormat: schedules[schedules?.length - 1]?.endTimeFormat,
-      });
+        endTimeFormat: schedules[schedules?.length - 1]?.endTimeFormat
+      })
     }
-  };
+  }
 
   useEffect(() => {
     if (schedules?.length <= 0 || !schedules) {
       handleAddSession()
     }
-  }, []);
+  }, [])
 
   const handleRemoveSession = (index: number) => {
-    remove(index);
-  };
-  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-    TIME_FORMAT,
-    TIME_FORMAT_12_HOURS
-  )?.id;
+    remove(index)
+  }
+  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(TIME_FORMAT, TIME_FORMAT_12_HOURS)?.id
 
   return (
     <div className="flex flex-col gap-4">
@@ -371,24 +362,21 @@ const Sessions = () => {
 const ScheduleComponent = ({
   index,
   handleAddSession,
-  handleRemoveSession,
+  handleRemoveSession
 }: {
-  index: number;
-  handleAddSession: any;
-  handleRemoveSession: any;
+  index: number
+  handleAddSession: any
+  handleRemoveSession: any
 }) => {
-  const { errors }: any = useFormState();
-  const [open, setOpen] = useState(false);
+  const { errors }: any = useFormState()
+  const [open, setOpen] = useState(false)
 
-  const { watch } = useFormContext();
-  const formData = watch();
+  const { watch } = useFormContext()
+  const formData = watch()
 
-  const schedule = formData?.schedules[index];
+  const schedule = formData?.schedules[index]
 
-  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-    TIME_FORMAT,
-    TIME_FORMAT_12_HOURS
-  )?.id;
+  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(TIME_FORMAT, TIME_FORMAT_12_HOURS)?.id
 
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
@@ -402,34 +390,26 @@ const ScheduleComponent = ({
             <Button
               onClick={() => setOpen(true)}
               className={`w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 ${
-                errors?.schedules?.[index] && "border-[#FF6D6D]"
+                errors?.schedules?.[index] && 'border-[#FF6D6D]'
               }`}
               variant="outline"
             >
               <div>
                 <CalenderIcon color="#999999" />
               </div>
-              <div>
-                {schedule?.date &&
-                  format(new Date(schedule.date), "dd MMM, yyyy")}
-              </div>
+              <div>{schedule?.date && format(new Date(schedule.date), 'dd MMM, yyyy')}</div>
             </Button>
           </DialogTrigger>
           <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
             <CalenderComponent index={index} setOpen={setOpen} />
           </DialogContent>
         </Dialog>
-        <TimePicker
-          index={index}
-          is12HourFormat={
-            formData?.hour_format_id == timeFormat12HoursId ? true : false
-          }
-        />
+        <TimePicker index={index} is12HourFormat={formData?.hour_format_id == timeFormat12HoursId ? true : false} />
         <div className="w-[127px] flex gap-4 ">
           {index == formData?.schedules?.length - 1 && (
             <div
               onClick={() => {
-                handleAddSession();
+                handleAddSession()
               }}
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
@@ -439,7 +419,7 @@ const ScheduleComponent = ({
           {index != 0 && (
             <div
               onClick={() => {
-                handleRemoveSession(index);
+                handleRemoveSession(index)
               }}
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
@@ -450,16 +430,12 @@ const ScheduleComponent = ({
         </div>
       </div>
 
-      {errors?.schedules &&
-        errors?.schedules?.length > 0 &&
-        errors?.schedules?.[index] && (
-          <span className="text-[#FF6D6D] text-[12px]">
-            {errors?.schedules?.[index]?.message as string}
-          </span>
-        )}
+      {errors?.schedules && errors?.schedules?.length > 0 && errors?.schedules?.[index] && (
+        <span className="text-[#FF6D6D] text-[12px]">{errors?.schedules?.[index]?.message as string}</span>
+      )}
     </div>
-  );
-};
+  )
+}
 
 const Venue = () => {
   const { watch, setValue, resetField } = useFormContext()
@@ -498,7 +474,9 @@ const Venue = () => {
   const [openAddNewVenue, setOpenAddNewVenue] = useState(false)
 
   const [warningmessage, setwarningmessage] = useState(false)
-
+  // here we are quering because if we create a new venue details with already existing venue data it should not be duplicated we need to show some warning message
+  // for showing the warning message we created a state variable with intial value false
+  // if the form data matches with the already existing the venue we are updating the state to true...
   const handleAddNewVenue = async () => {
     const { data } = await supabaseClient
       .from('venue')
@@ -509,8 +487,6 @@ const Venue = () => {
       .eq('address', formData?.address)
       .eq('postal_code', formData?.postal_code)
       .eq('name', formData?.name)
-
-    console.log(formData, 'formdata')
 
     const isAllFieldsFilled = await ValidateCurrentStepFields([
       'city_id',
@@ -523,7 +499,7 @@ const Venue = () => {
 
     if (isAllFieldsFilled) {
       if (data && data?.length > 0) {
-        console.log('Venue with the provided data already exists.')
+        // here we are updating state to true to show the warning message
         setwarningmessage(true)
       } else {
         setValue('newVenue', {
@@ -559,6 +535,8 @@ const Venue = () => {
   }
 
   const handleOpenAddNewVenue = () => {
+    // we are making the state varaible to false for not showing the warning message so that after
+    // closing the dialog it will not show the data
     setwarningmessage(false)
     resetField('center_id')
     resetField('state_id')
@@ -736,20 +714,14 @@ const ExistingVenueDetails = () => {
   )
 }
 
-const TimePicker = ({
-  index,
-  is12HourFormat,
-}: {
-  index: number;
-  is12HourFormat: Boolean;
-}) => {
-  const { errors }: any = useFormState();
+const TimePicker = ({ index, is12HourFormat }: { index: number; is12HourFormat: Boolean }) => {
+  const { errors }: any = useFormState()
 
-  const { trigger } = useFormContext();
+  const { trigger } = useFormContext()
 
-  const formData = useWatch();
+  const formData = useWatch()
 
-  const { schedules } = formData;
+  const { schedules } = formData
 
   /**
    * This useEffect we are writing on two reasons
@@ -760,8 +732,8 @@ const TimePicker = ({
    * Implementation 2: We need to trigger the validation on schedules
    */
   useEffect(() => {
-    trigger(`${NewCourseStep3FormNames?.schedules}`);
-  }, [schedules[index]]);
+    trigger(`${NewCourseStep3FormNames?.schedules}`)
+  }, [schedules[index]])
 
   return (
     <div className="flex items-center gap-6">
@@ -788,12 +760,12 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },
-    formState: { dirtyFields },
+    formState: { dirtyFields }
   } = useController({
-    name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
-  });
+    name: `${NewCourseStep3FormNames?.schedules}[${index}].date`
+  })
 
-  const { trigger } = useFormContext();
+  const { trigger } = useFormContext()
 
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date
   const [date, setDate] = useState<any>(dateValue ? dateValue : new Date())
@@ -911,11 +883,11 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       <div className="flex self-center">
         <Button
           onClick={() => {
-            onChange(date);
-            setOpen(false);
+            onChange(date)
+            setOpen(false)
 
             // we need to validate schedules after date changes to get instant errors
-            trigger("schedules");
+            trigger('schedules')
           }}
           className="w-24 rounded-[12px]"
         >
@@ -1111,23 +1083,18 @@ const ExistingVenueList = () => {
                       id={item.id}
                       value={item.id}
                       onCheckedChange={() => handleCheckboxChange(item)}
-                      checked={
-                        formData[NewCourseStep3FormNames.venue_id] == item.id
-                          ? true
-                          : false
-                      }
+                      checked={formData[NewCourseStep3FormNames.venue_id] == item.id ? true : false}
                     />
                     <div className="space-y-1 leading-none w-full">
                       <div className="flex justify-between">
                         <div className="font-semibold">{item.name}</div>
                         <div className="flex flex-row gap-3">
-                          {item?.created_by_user_id ==
-                            loginUserData?.userData?.id ||
+                          {item?.created_by_user_id == loginUserData?.userData?.id ||
                             (isUserNationAdminOrSuperAdmin && (
                               <Dialog>
                                 <DialogTrigger
                                   onClick={() => {
-                                    handleOpenExistingVenue(item);
+                                    handleOpenExistingVenue(item)
                                   }}
                                 >
                                   <EditIcon />
@@ -1135,7 +1102,7 @@ const ExistingVenueList = () => {
                                 <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
                                   <AddOrEditVenue
                                     handleSubmit={() => {
-                                      handleSubmitExistingVenue(index);
+                                      handleSubmitExistingVenue(index)
                                     }}
                                   />
                                 </DialogContent>
@@ -1150,7 +1117,7 @@ const ExistingVenueList = () => {
                               <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
                                 <DeleteVenueComponent
                                   handleDeleteVenue={() => {
-                                    deleteVenue(item?.id);
+                                    deleteVenue(item?.id)
                                   }}
                                 />
                               </DialogContent>
@@ -1160,8 +1127,7 @@ const ExistingVenueList = () => {
                       </div>
 
                       <div className="leading-tight">
-                        {item.name}, {item.address}, {item.city_name},{" "}
-                        {item.state_name}, {item.postal_code}
+                        {item.name}, {item.address}, {item.city_name}, {item.state_name}, {item.postal_code}
                       </div>
                     </div>
                   </div>
@@ -1220,7 +1186,9 @@ export const AddOrEditVenue = ({ handleSubmit, message }: { handleSubmit: () => 
           <CenterDropDown name="center_id" />
         </div>
       </div>
-      {message && <span className="text-[#FF6D6D] text-[14px] text-md">Venue with the provided data already exists.</span>}
+      {message && (
+        <span className="text-[#FF6D6D] text-[14px] text-md">Venue with the provided data already exists.</span>
+      )}
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
           <Button onClick={handleSubmit}>Submit</Button>
@@ -1253,23 +1221,23 @@ const TimeSelector = ({
    * 4. The main goal behind this we are already adding a new session when user click on Add button in handleAddSession() function
    * 5. at that its better to not to run the useEffect
    */
-  const isMountingRef = useRef(false);
+  const isMountingRef = useRef(false)
 
   // Maximum hours depending on the time format
-  const maximumHours = is12HourFormat ? "12" : "23";
+  const maximumHours = is12HourFormat ? '12' : '23'
   // Extracting hour value and onChange function using useController hook
   const {
     field: { value: hourValue = '00', onChange: hourOnChange }
   } = useController({ name: `${name}Hour` })
   // Extracting minute value and onChange function using useController hook
   const {
-    field: { value: minuteValue = "00", onChange: minuteOnChange },
-  } = useController({ name: `${name}Minute` });
+    field: { value: minuteValue = '00', onChange: minuteOnChange }
+  } = useController({ name: `${name}Minute` })
 
   // Extracting time format value and onChange function using useController hook
   const {
-    field: { value: timeFormat = "AM", onChange: timeFormatOnChange },
-  } = useController({ name: `${name}TimeFormat` });
+    field: { value: timeFormat = 'AM', onChange: timeFormatOnChange }
+  } = useController({ name: `${name}TimeFormat` })
 
   // Function to preprocess input value (add leading zeros and remove non-numeric characters)
   const preProcessInputValue = (value: string): string => {
@@ -1291,20 +1259,20 @@ const TimeSelector = ({
   // Event handler for incrementing hour
   const handleHourUpArrow = () => {
     //if it is 12 hour format we need to check if it 01 or not if it is 01 then we need to set to maximum hours
-    if (is12HourFormat && hourValue == "01") {
-      hourOnChange(maximumHours);
-      return;
+    if (is12HourFormat && hourValue == '01') {
+      hourOnChange(maximumHours)
+      return
     }
     //if it is 24 hour format we need to check if it 00 or not if it is 00 then we need to set to maximum hours
-    if (!is12HourFormat && hourValue == "00") {
-      hourOnChange(maximumHours);
-      return;
+    if (!is12HourFormat && hourValue == '00') {
+      hourOnChange(maximumHours)
+      return
     }
 
-    let hour = (parseInt(hourValue) - 1).toString();
-    hour = preProcessInputValue(hour);
-    hourOnChange(hour);
-  };
+    let hour = (parseInt(hourValue) - 1).toString()
+    hour = preProcessInputValue(hour)
+    hourOnChange(hour)
+  }
   /**
    * Event handler for incrementing  the hour.
    *
@@ -1314,25 +1282,25 @@ const TimeSelector = ({
    */
   const handleHourDownArrow = () => {
     // Temporary variable to hold the hour value
-    let tempHourValue = hourValue;
+    let tempHourValue = hourValue
 
     // Check if the current hour is greater than or equal to the maximum hours
     if (tempHourValue >= maximumHours) {
       // If the time format is not 12-hour, set the hour to 00
       if (is12HourFormat === false) {
-        hourOnChange("00");
-        return;
+        hourOnChange('00')
+        return
       } else {
         // If the time format is 12-hour, set the tempHourValue to 00
-        tempHourValue = "00";
+        tempHourValue = '00'
       }
     }
 
     // Increment the tempHourValue and update the hour value
-    let hour = (parseInt(tempHourValue) + 1).toString();
-    hour = preProcessInputValue(hour);
-    hourOnChange(hour);
-  };
+    let hour = (parseInt(tempHourValue) + 1).toString()
+    hour = preProcessInputValue(hour)
+    hourOnChange(hour)
+  }
   // Event handler for minute input change
   const handleMinute = (event: { target: { value: any } }) => {
     let inputValue = event.target.value
@@ -1355,35 +1323,35 @@ const TimeSelector = ({
       minuteOnChange('00')
       return
     }
-    let minute = (parseInt(minuteValue) + 1).toString();
-    minute = preProcessInputValue(minute);
-    minuteOnChange(minute);
-  };
+    let minute = (parseInt(minuteValue) + 1).toString()
+    minute = preProcessInputValue(minute)
+    minuteOnChange(minute)
+  }
 
   // Effect to handle hour format change
   useEffect(() => {
-    if (isMountingRef.current === false) return;
+    if (isMountingRef.current === false) return
 
     if (is12HourFormat == true) {
       if (hourValue >= 12) {
         // if hourValue is 12 then we dont need to subtract
         // if hourValue is not 12 then we need to subtract
         if (hourValue != 12) {
-          const hours = parseInt(hourValue) - 12;
-          const newHourValue = preProcessInputValue(hours.toString());
-          hourOnChange(newHourValue);
+          const hours = parseInt(hourValue) - 12
+          const newHourValue = preProcessInputValue(hours.toString())
+          hourOnChange(newHourValue)
         }
 
-        timeFormatOnChange("PM");
+        timeFormatOnChange('PM')
       } else {
         // but here one edge case if there in 24 hour format if hour is 00 then if i change to 12 hour format then i need to keep 12 right now
-        if (hourValue == "00") {
-          const newHourValue = preProcessInputValue("12");
-          hourOnChange(newHourValue);
+        if (hourValue == '00') {
+          const newHourValue = preProcessInputValue('12')
+          hourOnChange(newHourValue)
         }
 
         // if time is less than 12 then we just need to set AM.
-        timeFormatOnChange("AM");
+        timeFormatOnChange('AM')
       }
     } else {
       // this block will call if user selects 24 hour format.
@@ -1391,41 +1359,39 @@ const TimeSelector = ({
       // if timeFormat is PM then we need to add 12
       // If timeFormat is AM and hourValue is 12 then we set hourValue to 00
       // because in 24 hour format 00 is same as 12 AM
-      if (timeFormat == "AM" && hourValue == 12) {
-        const newHourValue = preProcessInputValue("00");
-        hourOnChange(newHourValue);
-      } else if (timeFormat == "PM" && hourValue == 12) {
+      if (timeFormat == 'AM' && hourValue == 12) {
+        const newHourValue = preProcessInputValue('00')
+        hourOnChange(newHourValue)
+      } else if (timeFormat == 'PM' && hourValue == 12) {
         // If timeFormat is PM and hourValue is 12 then we need to keep it as it is
         // because in 24 hour format 12 is same as 00 PM
-        const newHourValue = preProcessInputValue("12");
-        hourOnChange(newHourValue);
-      } else if (timeFormat == "PM" && hourValue < 12) {
+        const newHourValue = preProcessInputValue('12')
+        hourOnChange(newHourValue)
+      } else if (timeFormat == 'PM' && hourValue < 12) {
         // If timeFormat is PM and hourValue is less than 12
         // then we need to add 12 to the hourValue
         // because in 24 hour format PM starts from 12 to 23
-        const newHourValue = preProcessInputValue(
-          (parseInt(hourValue) + 12).toString()
-        );
-        hourOnChange(newHourValue);
-      } else if (timeFormat == "PM" && hourValue == 12) {
+        const newHourValue = preProcessInputValue((parseInt(hourValue) + 12).toString())
+        hourOnChange(newHourValue)
+      } else if (timeFormat == 'PM' && hourValue == 12) {
         // If timeFormat is PM and hourValue is 12 then we set hourValue to 00
         // because in 24 hour format 00 is same as 12 PM
-        const newHourValue = preProcessInputValue("00");
-        hourOnChange(newHourValue);
+        const newHourValue = preProcessInputValue('00')
+        hourOnChange(newHourValue)
       }
 
       // when user change timeFormat from 12 hour format to 24 hour format we need to set timeFormat to null
       // becuase in 24 hour format we dont need to store AM or PM in startTimeFormat and endTimeFormat
-      timeFormatOnChange(null);
+      timeFormatOnChange(null)
     }
-  }, [is12HourFormat]);
+  }, [is12HourFormat])
 
   // if you observe i have written condition on above useEffect
   // and now i will do true so the useEffect will not run initial render
   // but from next render it will run automatically
   useEffect(() => {
-    isMountingRef.current = true;
-  }, []);
+    isMountingRef.current = true
+  }, [])
 
   return (
     <Popover>
