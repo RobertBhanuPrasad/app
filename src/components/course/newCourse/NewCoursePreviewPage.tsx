@@ -674,8 +674,10 @@ const VenueData =[
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Venue Address
                 </p>
+                <abbr className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                 title={VenueData ? VenueData : "-"}>
                 <p className="font-semibold truncate text-accent-secondary">
-                    <div className="break-all">{VenueData}</div>      </p>
+                    <div className="break-all">{VenueData}</div>      </p></abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">Time Format</p>
