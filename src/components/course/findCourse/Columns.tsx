@@ -361,7 +361,7 @@ export const columns: any =(t:any) =>{
           /**
            * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
            */
-          const defaultValues = await handleCourseDefaultValues(row.original.id);
+          const defaultValues = await handleCourseDefaultValues(row.original.id,TIME_FORMAT_12_HOURS);
           console.log("default values are", defaultValues);
   
           setNewCourseData(defaultValues);
@@ -378,7 +378,7 @@ export const columns: any =(t:any) =>{
         const handleCopyCourse = async () => {
           setViewThankyouPage(false);
           
-          let defaultValues = await handleCourseDefaultValues(row.original.id);
+          let defaultValues = await handleCourseDefaultValues(row.original.id,TIME_FORMAT_12_HOURS);
           // we have to delete schedules when user click on cipy course and other we need to prefill
           defaultValues = _.omit(defaultValues, ["id", "schedules"]);
           setNewCourseData(defaultValues);
