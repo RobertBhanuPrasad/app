@@ -15,7 +15,8 @@ import { supabaseClient } from "src/utility";
 export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
-  setProgramId: (by: number) => void
+  setProgramId: (by: number) => void,
+  langCode: string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -78,6 +79,15 @@ export const handlePostProgramData = async (
     programBody.max_capacity = body[NewCourseStep2FormNames.max_capacity];
   }
 
+  // is_geo_restriction_applicable
+  if (
+    body[NewCourseStep2FormNames.is_geo_restriction_applicable] != undefined
+  ) {
+    programBody.is_geo_restriction_applicable =
+      body[NewCourseStep2FormNames.is_geo_restriction_applicable];
+  }
+
+  // is_registration_required
   if (body[NewCourseStep2FormNames.is_registration_required] != undefined) {
     programBody.is_registration_required =
       body[NewCourseStep2FormNames.is_registration_required];
@@ -239,19 +249,35 @@ export const handlePostProgramData = async (
     // so that it can be helpful in thankyou page
     setProgramId(programId);
 
-    // here we have to update the created_by_user_id with loggedInUserId because this field is required
-    // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
-    // here we have to update when we are creating the program that is when created_by_user_id is null
-    // other wise no need to update the created_by_user_id
-    // when one user create one program at that time we have to post created_by_user_id
-    // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
-    // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
-    if (loggedInUserId && programData[0].created_by_user_id == null) {
-      await supabaseClient
-        .from("program")
-        .update({ created_by_user_id: loggedInUserId })
-        .eq("id", programId);
-    }
+  // this RX base url coming from env file now.(need to change after proper table was there in backend)  
+  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+
+  // Constructing the registration URL
+  // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
+  // The base URL where registration information is located
+  // Adding the country code to specify the country of the program
+  // Adding the language code to specify the language of the program
+  // Appending the program ID to identify the specific program
+  // Constructing the complete registration URL
+  // this url is now posted to the program api which is used to further usage in the details view or at any other place.
+  const registrationUrl = `${RX_BASE_URL}/${langCode}/programs/${programId}`;
+
+  // TODO need to integrate with url provided by cx team -(kalyan)
+  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
+
+  // here we have to update the created_by_user_id with loggedInUserId because this field is required
+  // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
+  // here we have to update when we are creating the program that is when created_by_user_id is null
+  // other wise no need to update the created_by_user_id 
+  // when one user create one program at that time we have to post created_by_user_id 
+  // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
+  // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
+  if(loggedInUserId && programData[0].created_by_user_id == null) {
+    await supabaseClient
+    .from("program")
+    .update({created_by_user_id: loggedInUserId, details_page_link: CX_BASE_URL, registration_link: registrationUrl })
+    .eq("id", programId)
+  } 
 
     //TODO: We are doing this in backend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
@@ -803,7 +829,7 @@ export const handlePostAccommodations = async (
   // Perform upsert operation
   const { data, error } = await supabaseClient
     .from("program_accommodations")
-    .upsert(accommodationsData)
+    .upsert(accommodationsData,{ defaultToNull: false })
     .select();
 
   // Handle upsert result

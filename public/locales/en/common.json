@@ -1,5 +1,5 @@
 {
-    "organization":"Organization",
+  "organization":"Organization",
     "city_placeholder": "Select City",
     "local_center": "Local Center",
     "fees": "Fees",
@@ -10,6 +10,7 @@
     "add": "Add",
     "teacher": "Teacher",
     "course_type": "Course Type",
+  
     "max_capacity": "Max Capacity",
     "program_visibility": "Program Visibility",
     "online_zoom_url": "Online zoom URL",
@@ -70,9 +71,4 @@
     "student": "Student",
     "cancel_course": "Cancel Course",
     "overall_information": "Overall Information"
-
   }
-
-
-
-

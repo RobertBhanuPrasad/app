@@ -23,22 +23,16 @@ import { useTranslation } from 'next-i18next';
  */
 
 interface EditModalDialogProps {
-  title: string;
-  content: any;
-  onClose: () => void;
-  open: boolean;
-  openEdit: () => void;
+  title: string
+  content: any
+  onClose: () => void
+  open: boolean
+  openEdit: () => void
+  onOpenChange: any
 }
 
-export const EditModalDialog = ({
-  title,
-  content,
-  onClose,
-  open,
-  openEdit,
-}: EditModalDialogProps) => {
-
-  const { newCourseData, setNewCourseData } = newCourseStore();
+export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpenChange }: EditModalDialogProps) => {
+  const { newCourseData, setNewCourseData } = newCourseStore()
 
   /**
    * ButtonsDialog Component
@@ -77,7 +71,7 @@ export const EditModalDialog = ({
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <div className="w-16 h-18 ml-4 text-blue-600 ">
           <div onClick={openEdit} className="cursor-pointer">

@@ -147,7 +147,7 @@ export function BaseTable<TData, TValue>({
   setCurrent,
   pageCount,
   total,
-  setPageSize = () => {},
+  setPageSize = () => { },
   pageSize,
   pagination = false,
   checkboxSelection,
@@ -167,13 +167,12 @@ export function BaseTable<TData, TValue>({
           ? true
           : // If enableHiding is true for the current column, set visibility to false, otherwise set it to true
           enableHiding
-          ? false
-          : true;
+            ? false
+            : true;
       return acc;
     },
     {}
   );
-
 
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -316,7 +315,7 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
-  const {t} = useTranslation("common")
+  const { t } = useTranslation("common")
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
@@ -329,7 +328,7 @@ export function BaseTable<TData, TValue>({
                   variant="outline"
                   className="flex flex-row justify-between w-[192px] h-10"
                 >
-                  Columns
+                  {t("course.find_course:columns")}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -342,77 +341,54 @@ export function BaseTable<TData, TValue>({
                         checked={selectAll}
                         onCheckedChange={handleSelectAllChange}
                       />
-                      <div className="font-bold text-[14px]">Select All</div>
+                      <div className="font-bold text-[14px]">{t("course.find_course:select_all")}</div>
                     </div>
+
+                    {table
+                      .getAllColumns()
+                      .filter((column) => column?.accessorFn)
+                      // Here we are filtering the columns which have accessorKey
+                      .map((column: any) => {
+
+                        return (
+                          <div className="flex flex-row gap-4 items-center">
+                            <Checkbox
+                              key={column.id}
+                              disabled={!column.getCanHide()}
+                              //Disabling the checkbox if the column cannot be hidden
+                              className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
+                              checked={columnVisibilityChanges[column.id]}
+                              onCheckedChange={(value: boolean) => {
+                                handleColumnVisibilityChange(column.id, value);
+                              }}
+                            />
+                            {column?.columnDef?.column_name}
+                          </div>
+                        );
+                      })}
+                  </div>
+
+                  <div className="flex flex-row gap-4 p-2 w-full items-center ">
+                    <div
+                      onClick={clearColumnVisibilityChanges}
+                      className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
+                    >
+                      <ClearAll />
+                      <div>{t('clear_all')}</div>
+                    </div>
+                    <Button
+                      onClick={applyColumnVisibilityChanges}
+                      className="h-9 w-18 rounded-xl"
+                    >
+                      {t('apply_button')}
+                    </Button>
+                  </div>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
         {/* column selector  */}
-        <div>
-          <DropdownMenu open={open}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                onClick={() => setOpen(true)}
-                variant="outline"
-                className="flex flex-row justify-between w-[192px] h-10"
-              >
-                {t("course.find_course:columns")}
-                <DropDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[192px]" align="start">
-              <div>
-                <div className="flex flex-col gap-4 p-3 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
-                  <div className="flex flex-row gap-4 items-center">
-                    <Checkbox
-                      className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
-                      checked={selectAll}
-                      onCheckedChange={handleSelectAllChange}
-                    />
-                    <div className="font-bold text-[14px]">{t("course.find_course:select_all")}</div>
-                  </div>
-
-                  {table
-                    .getAllColumns()
-                    .filter((column) => column?.accessorFn)
-                    // Here we are filtering the columns which have accessorKey
-                    .map((column: any) => {
-
-                      return (
-                        <div className="flex flex-row gap-4 items-center">
-                          <Checkbox
-                            key={column.id}
-                            disabled={!column.getCanHide()}
-                            //Disabling the checkbox if the column cannot be hidden
-                            className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
-                            checked={columnVisibilityChanges[column.id]}
-                            onCheckedChange={(value: boolean) => {
-                              handleColumnVisibilityChange(column.id, value);
-                            }}
-                          />
-                          {column?.columnDef?.column_name}
-                        </div>
-                      );
-                    })}
-                </div>
-
-                <div className="flex flex-row gap-4 p-2 w-full items-center ">
-                  <div
-                    onClick={clearColumnVisibilityChanges}
-                    className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
-                  >
-                    <ClearAll />
-                    <div>{t('clear_all')}</div>
-                  </div>
-                  <Button
-                    onClick={applyColumnVisibilityChanges}
-                    className="h-9 w-18 rounded-xl"
-                  >
-                    {t('apply_button')}
-                  </Button>
-                </div>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
         {/* If pagination set true then we have to show pagination  */}
         <div>
           {pagination && (
@@ -445,9 +421,8 @@ export function BaseTable<TData, TValue>({
                       {/* If the checkboxSelection is true then we need to show checkboxes  */}
                       {checkboxSelection && (
                         <TableHead
-                          className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#F1F1FE]"
-                          }`}
+                          className={`${columnPinning && "sticky left-0 z-10 bg-[#F1F1FE]"
+                            }`}
                         >
                           <Checkbox
                             className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
@@ -463,25 +438,22 @@ export function BaseTable<TData, TValue>({
                         return (
                           <TableHead
                             //If we have column pinning true then we have to make the first and last column sticky
-                            className={`${
-                              columnPinning &&
+                            className={`${columnPinning &&
                               index === 0 &&
-                              `sticky ${
-                                checkboxSelection ? "left-10" : "left-0"
+                              `sticky ${checkboxSelection ? "left-10" : "left-0"
                               } z-10 bg-[#F1F1FE] drop-shadow-right`
-                            } ${
-                              columnPinning &&
+                              } ${columnPinning &&
                               index === headerGroup.headers.length - 1 &&
                               `sticky right-0 z-10 bg-[#F1F1FE] drop-shadow-left w-[50px]`
-                            } text-[#333333] `}
+                              } text-[#333333] `}
                             key={header?.id}
                           >
                             {header?.isPlaceholder
                               ? null
                               : flexRender(
-                                  header?.column?.columnDef?.header,
-                                  header?.getContext()
-                                )}
+                                header?.column?.columnDef?.header,
+                                header?.getContext()
+                              )}
 
                             {index === headerGroup.headers.length - 1 &&
                               columnPinning && (
@@ -508,14 +480,13 @@ export function BaseTable<TData, TValue>({
                     <TableRow
                       className={`{${tableStyles?.rowStyles}`}
                       key={row?.id}
-                      // data-state={row?.getIsSelected() && "selected"}
+                    // data-state={row?.getIsSelected() && "selected"}
                     >
                       {/* If the checkboxSelection is true then we need to show checkboxes  */}
                       {checkboxSelection && (
                         <TableCell
-                          className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#FFFFFF] "
-                          }`}
+                          className={`${columnPinning && "sticky left-0 z-10 bg-[#FFFFFF] "
+                            }`}
                         >
                           <Checkbox
                             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
@@ -531,17 +502,14 @@ export function BaseTable<TData, TValue>({
                       {row?.getVisibleCells().map((cell, index) => (
                         //If we have column pinning true then we have to make the first and last column sticky
                         <TableCell
-                          className={` ${
-                            columnPinning &&
+                          className={` ${columnPinning &&
                             index === 0 &&
-                            `sticky ${
-                              checkboxSelection ? "left-10" : "left-0"
+                            `sticky ${checkboxSelection ? "left-10" : "left-0"
                             }  top-0 z-10 bg-[#FFFFFF] drop-shadow-right`
-                          } ${
-                            columnPinning &&
+                            } ${columnPinning &&
                             index === row.getVisibleCells().length - 1 &&
                             `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[50px] drop-shadow-left`
-                          } text-[#333333]`}
+                            } text-[#333333]`}
                           key={cell.id}
                         >
                           {flexRender(
@@ -566,7 +534,7 @@ export function BaseTable<TData, TValue>({
             </Table>
           </div>
         </div>
-          {pagination && (
+        {pagination && (
           <div className="flex justify-center">
             <DataPagination
               setCurrent={setCurrent}
@@ -574,32 +542,32 @@ export function BaseTable<TData, TValue>({
               pageCount={pageCount}
             />
 
-          <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
-            <Select
-              value={`${pageSize}`}
-              onValueChange={(value) => {
-                setPageSize(Number(value));
+            <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
+              <Select
+                value={`${pageSize}`}
+                onValueChange={(value) => {
+                  setPageSize(Number(value));
                   table?.setPageSize(Number(value));
-              }}
-            >
-              <SelectTrigger className="h-8 w-[131px]">
-                <SelectValue placeholder={`${pageSize}`} />
-              </SelectTrigger>
-              <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map(
-                  (
-                    pageSize // Till now there is no limit will change after confirming TODO
-                  ) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>
-                      {t("course.find_course:showing")} {pageSize}
-                    </SelectItem>
-                  )
-                )}
-              </SelectContent>
-            </Select>
-            <div>{t("course.find_course:of")} {total}</div>
+                }}
+              >
+                <SelectTrigger className="h-8 w-[131px]">
+                  <SelectValue placeholder={`${pageSize}`} />
+                </SelectTrigger>
+                <SelectContent side="top">
+                  {[10, 20, 30, 40, 50].map(
+                    (
+                      pageSize // Till now there is no limit will change after confirming TODO
+                    ) => (
+                      <SelectItem key={pageSize} value={`${pageSize}`}>
+                        {t("course.find_course:showing")} {pageSize}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
+              <div>{t("course.find_course:of")} {total}</div>
+            </div>
           </div>
-        </div>
         )}
       </div>
     </div>
@@ -613,11 +581,11 @@ interface DataPaginationProps {
 }
 
 const DataPagination = ({
-  setCurrent = () => {},
+  setCurrent = () => { },
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
-  const {t} = useTranslation("common")
+  const { t } = useTranslation("common")
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}

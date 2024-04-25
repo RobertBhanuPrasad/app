@@ -34,6 +34,9 @@ import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { columns } from "../../../src/components/course/findCourse/Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
+import { X } from "lucide-react";
+import CrossIcon from "@public/assets/CrossIcon";
+import { Text } from "src/ui/TextTags";
 import { useTranslation } from "next-i18next";
 import { authProvider } from "src/authProvider"
 import { GetServerSideProps } from "next"
@@ -166,23 +169,34 @@ function index() {
 
   //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
+    //Here the date picker uses the GMT time so , iam adding  1 day that is next day for from and to of course date
     filters.permanent?.push(
       {
-        field: "program_schedules.start_time",
+        field: "start_date",
         operator: "gte",
         value:
           AllFilterData.course_date.from &&
-          new Date(AllFilterData.course_date.from?.setHours(0, 0, 0, 0))
-            ?.toISOString()
+          new Date(
+            new Date(
+              AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
+            ).getTime() +
+              24 * 60 * 60 * 1000
+          )
+            .toISOString()
             .replace("T", " ")
             .slice(0, -5) + "+00",
       },
       {
-        field: "program_schedules.start_time",
-        operator: "lt",
+        field: "start_date",
+        operator: "lte",
         value:
           AllFilterData.course_date.to &&
-          new Date(AllFilterData.course_date.to?.setHours(0, 0, 0, 0))
+          new Date(
+            new Date(
+              AllFilterData.course_date.to?.setUTCHours(23, 59, 0, 0)
+            ).getTime() +
+              24 * 60 * 60 * 1000
+          )
             ?.toISOString()
             .replace("T", " ")
             .slice(0, -5) + "+00",
@@ -402,7 +416,7 @@ function index() {
               table: "",
               rowStyles: "!important border-none",
             }}
-            columns={columns}
+            columns={columns(t)}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
@@ -495,8 +509,8 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
         <Button
           onClick={() =>
             onSelect({
-              from: new Date(),
-              to: new Date(),
+              from: undefined,
+              to: undefined,
             })
           }
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
@@ -631,25 +645,38 @@ export const BasicFilters = () => {
         <Dialog open={open}>
           <DialogTrigger asChild>
             <Button
-              onClick={() => setOpen(true)}
-              className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2"
+              className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
               variant="outline"
             >
-              <CalenderIcon color="#666666" />
-              {courseDate?.from ? (
-                courseDate?.to ? (
-                  <>
-                    {format(courseDate.from, "MM/dd/yyyy")} -{" "}
-                    {format(courseDate.to, "MM/dd/yyyy")}
-                    <div
-                      onClick={() => {
-                        courseDateOnChange(undefined);
-                      }}
-                    ></div>
-                  </>
-                ) : (
-                  format(courseDate.from, "MM/dd/yyyy")
-                )
+              <div
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                <CalenderIcon color="#666666" />
+              </div>
+              {courseDate ? (
+                <div className="flex justify-between items-center w-full">
+                  <div className="flex flex-row gap-2 text-[14px]">
+                    {/* If the course from date and to date is present then only format and show the from date and to date */}
+                    <Text className="font-semibold">
+                      {courseDate.from && format(courseDate.from, "MM/dd/yyyy")}
+                    </Text>{" "}
+                    {courseDate.to && <span>-</span>}{" "}
+                    <Text className="font-semibold">
+                      {courseDate.to && format(courseDate.to, "MM/dd/yyyy")}
+                    </Text>
+                  </div>
+                  <div
+                    onClick={() => {
+                      //when we click on cross icon we need to clear the date
+                      courseDateOnChange(undefined);
+                    }}
+                    className="ml-auto"
+                  >
+                    <CrossIcon fill="#7677F4" height={10} width={10} />
+                  </div>
+                </div>
               ) : (
                 <div className="flex gap-2 font-normal">
                   {t('new_strings:select_the_date_range')}
@@ -657,7 +684,10 @@ export const BasicFilters = () => {
               )}
             </Button>
           </DialogTrigger>
-          <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
+          <DialogContent
+            closeIcon={false}
+            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"
+          >
             <DateRangePickerComponent
               setOpen={setOpen}
               value={courseDate}

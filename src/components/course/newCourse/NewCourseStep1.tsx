@@ -128,7 +128,7 @@ const RadioCards = () => {
   const { data: loginUserData }: any = useGetIdentity();
   const user_roles: any[] = loginUserData?.userData?.user_roles;
   const hasTeacherRole =
-    user_roles && user_roles.some((role) => role?.role_id?.order === TEACHER);
+    user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
   const loginInTeacherData = loginUserData?.userData?.id;
   const {
     field: { value: teachers, onChange: teachersOnChange },
@@ -439,7 +439,3 @@ const ProgramOrganizerDropDown = () => {
     </div>
   );
 };
-
-
-
-

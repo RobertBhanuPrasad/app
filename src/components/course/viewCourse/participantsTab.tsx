@@ -37,30 +37,32 @@ function ParticipantsTab() {
         }
     };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    useEffect(() => {
+        fetchData();
+    }, []);
   const {t} = useTranslation("common")
-  return (
-    <div className="my-[31px] mb-6 overscroll ">
-      <div className="flex justify-between">
-        <div className="text-[23px] font-semibold">Overall Participants</div>
-        <div className="flex gap-4">
-          <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">
+    return (
+        <div className="my-[31px] mb-6 overscroll ">
+            <div className="flex justify-between">
+                <div className="text-[23px] font-semibold">
+                    Overall Participants
+                </div>
+                <div className="flex gap-4">
+                    <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">
           {t('register_participant')},
-          </Button>
+                    </Button>
           <Button className="w-[188px] h-[46px] rounded-[12px]">
           {t('view_participants')}
-          </Button>
+                    </Button>
+                </div>
+            </div>
+            <div className="mt-6 flex flex-row  gap-[30px]">
+                <AttendancePieChart participantData={participantData} />
+                <FeeLevelPieChart participantData={participantData} />
+                <GenderPieChart participantData={participantData} />
+            </div>
         </div>
-      </div>
-      <div className="mt-6 flex flex-row  gap-[30px]">
-        <AttendancePieChart participantData={participantData} />
-        <FeeLevelPieChart participantData={participantData} />
-        <GenderPieChart participantData={participantData} />
-      </div>
-    </div>
-  );
+    );
 }
 
 export default ParticipantsTab;
