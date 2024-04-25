@@ -952,6 +952,18 @@ const Fees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettin
     id: feeLevelSettingsData?.fee_level_id as number
   })
 
+   /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the fee details
+   * we will get the currency code in the country config
+   *
+   */
+
+   const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
+
   return(
     <div className=" min-w-72">
       <abbr title={feeLevelData?.data?.value} className="no-underline">
@@ -961,7 +973,7 @@ const Fees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettin
         title={JSON.stringify(feeLevelSettingsData?.total)}
         className="no-underline"
       >
-        <CardValue className="truncate">{feeLevelSettingsData?.total}
+        <CardValue className="truncate">{countryConfigData?.data?.[0]?.default_currency_code}{" "}{feeLevelSettingsData?.total}
         </CardValue>
       </abbr>
 
@@ -991,6 +1003,18 @@ const EarlyBirdFees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLe
     id: feeLevelSettingsData?.fee_level_id as number
   })
 
+   /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the fee details
+   * we will get the currency code in the country config
+   *
+   */
+
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
+
   return(
     <div className=" min-w-72">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
@@ -1001,7 +1025,7 @@ const EarlyBirdFees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLe
         title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
         className="no-underline"
       >
-        <CardValue className="truncate">{feeLevelSettingsData?.early_bird_total}
+        <CardValue className="truncate">{countryConfigData?.data?.[0]?.default_currency_code}{" "}{feeLevelSettingsData?.early_bird_total}
         </CardValue>
       </abbr>
     </div>

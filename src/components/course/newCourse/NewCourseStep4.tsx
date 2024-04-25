@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "src/ui/checkbox";
 import { supabaseClient } from "src/utility";
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity, useOne } from "@refinedev/core";
+import { useGetIdentity, useList, useOne } from "@refinedev/core";
 import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import {
   useController,
@@ -111,6 +111,10 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   const { data: loginUserData }: any = useGetIdentity();
 
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
+
   const { watch } = useFormContext();
 
   const formData = watch();
@@ -208,7 +212,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Normal Fee",
+      header: `Normal Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
@@ -217,7 +221,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Vat Fee",
+      header: `Vat Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -225,7 +229,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Total Fee",
+      header: `Total Fee(${countryConfigData?.data?.[0]?.default_currency_code})` ,
     },
   ];
 
@@ -253,7 +257,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Normal Fee",
+      header: `Normal Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
@@ -268,7 +272,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Vat Fee",
+      header: `Vat Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -298,7 +302,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Total Fee",
+      header: `Total Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -310,7 +314,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Normal Fee",
+      header: `Early Normal Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
@@ -318,7 +322,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Vat Fee",
+      header: `Early Vat Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -326,7 +330,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Total Fee",
+      header: `Early Total Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -348,7 +352,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Normal Fee",
+      header: `Early Normal Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
@@ -364,7 +368,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Vat Fee",
+      header: `Early Vat Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -394,7 +398,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Total Fee",
+      header: `Early Total Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -486,7 +490,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         </div>
       )}
       {/* Rendering DataTable component */}
-      <div className="w-[1016px] h-auto">
+      <div className="w-[full] h-auto">
         {isFeeEditable ? (
           feeLevels?.length > 0 && (
             <DataTable columns={feeColumns} data={courseFeeData} />
