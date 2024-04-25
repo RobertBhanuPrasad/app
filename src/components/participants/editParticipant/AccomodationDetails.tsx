@@ -14,6 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "src/ui/select";
+import { useTranslation } from 'next-i18next';
 
 export default function AccomodationDetails() {
     const { getValues } = useFormContext();
@@ -79,6 +80,7 @@ export default function AccomodationDetails() {
         ],
     });
     const accommodationData = data?.data[0];
+    const {t} = useTranslation(["common", "course.participant","new_strings"])
     
     return (
         <div id="Accomodation">
@@ -224,7 +226,7 @@ export default function AccomodationDetails() {
                                 selectedRadioValue={JSON.stringify(
                                     accommodation_snore
                                 )} // Use the actual value, no need to stringify
-                                label="Yes"
+                                label={t("yes")}
                                 className="w-[112px] h-[40px] rounded-[12px]" // Removed unnecessary ! from className
                             />
                             <RadioButtonCard
@@ -232,7 +234,7 @@ export default function AccomodationDetails() {
                                 selectedRadioValue={JSON.stringify(
                                     accommodation_snore
                                 )} // Use the actual value, no need to stringify
-                                label="No"
+                                label={t("no")}
                                 className="w-[112px] h-[40px] rounded-[12px]" // Removed unnecessary ! from className
                             />
                         </div>
@@ -265,13 +267,13 @@ export default function AccomodationDetails() {
                             selectedRadioValue={JSON.stringify(
                                 FormData?.roommate_snore
                             )}
-                            label="Yes"
+                            label={t("yes")}
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
                         <RadioButtonCard
                             value="false"
                             selectedRadioValue={JSON.stringify(roommate_snore)}
-                            label="No"
+                            label={t("no")}
                             className="w-[112px] !h-[40px] rounded-[12px]"
                         />
                     </div>
