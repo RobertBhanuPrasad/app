@@ -218,149 +218,144 @@ function ViewDetails() {
   });
 
   return (
-    <div className="flex flex-col mx-8">
-      <div className="flex flex-row justify-between">
-        <div className="text-[32px] font-semibold">
-          {courseData?.data?.program_alias_name_id
-            ? courseData?.data?.program_alias_name_id?.alias_name
-            : courseData?.data?.program_type_id?.name}
+    <div className="flex flex-col">
+      <div className="mx-8">
+        <div className="flex flex-row justify-between">
+          <div className="text-[32px] font-semibold">
+            {courseData?.data?.program_alias_name_id
+              ? courseData?.data?.program_alias_name_id?.alias_name
+              : courseData?.data?.program_type_id?.name}
+          </div>
+          <div className="flex items-center gap-4">
+            <DisplayingCourseStatus
+              statusId={courseData?.data?.status_id?.value}
+            />
+            <ShareButton />
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <DisplayingCourseStatus
-            statusId={courseData?.data?.status_id?.value}
-          />
-          <ShareButton />
+        <div className="flex flex-row gap-2 items-center mt-3">
+          <CalenderIcon color="#7677F4" />
+          {startDate} to {endDate}
+          <div>
+            <ParticipantsIcon />
+          </div>
+          <div
+            onClick={() => {
+              router.push(`/${router.asPath}/participant/list`);
+            }}
+            className="cursor-pointer"
+          >
+            {participantData?.participantCount}
+          </div>
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent className="z-[100]">
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal min-h[104px]">
+                {participantData?.participantCount} Participants with: Transaction
+                status = Confirmed / Pending Attendance status = Confirmed /
+                Pending / Dropout Total participants records:
+                {participantData?.totalParticipantCount}
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+          <div>
+            <CurrencyIcon />
+          </div>
+          <div
+            onClick={() => {
+              router.push("/");
+            }}
+            className="cursor-pointer"
+          >
+            {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
+          </div>
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent className="z-[100]">
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                Revenue from confirmed pending transaction participants revenue:
+                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                {totalRevenue}
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
-      </div>
-      <div className="flex flex-row gap-2 items-center mt-3">
-        <CalenderIcon color="#7677F4" />
-        {startDate} to {endDate}
-        <div>
-          <ParticipantsIcon />
-        </div>
-        <div
-          onClick={() => {
-            router.push(`/${router.asPath}/participant/list`);
-          }}
-          className="cursor-pointer"
-        >
-          {participantData?.participantCount}
-        </div>
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              {participantData?.participantCount} Participants with: Transaction
-              status = Confirmed / Pending Attendance status = Confirmed /
-              Pending / Dropout Total participants records:
-              {participantData?.totalParticipantCount}
-            </div>
-          </HoverCardContent>
-        </HoverCard>
-        <div>
-          <CurrencyIcon />
-        </div>
-        <div
-          onClick={() => {
-            router.push("/");
-          }}
-          className="cursor-pointer"
-        >
-          {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
-        </div>
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Revenue from confirmed pending transaction participants revenue:
-              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-              {totalRevenue}
-            </div>
-          </HoverCardContent>
-        </HoverCard>
-      </div>
-      <div className="flex flex-row gap-2 items-center mt-3">
-        <LocationIcon />
-        {courseData?.data?.venue_id?.address},
-        {courseData?.data?.venue_id?.city_id?.name},
-        {courseData?.data?.venue_id?.state_id?.name}, {countryName},
-        {courseData?.data?.venue_id?.postal_code}
-      </div>
+        <div className="flex justify-between">
+          <div className="flex flex-row gap-2 items-center mt-3 w-full">
+            <LocationIcon />
+            <p className="w-full">{`
+              ${courseData?.data?.venue_id?.address},
+              ${courseData?.data?.venue_id?.city_id?.name},
+              ${courseData?.data?.venue_id?.state_id?.name}, ${countryName},
+              ${courseData?.data?.venue_id?.postal_code} `}
 
-      <div className="flex flex-row items-center gap-2 w-full justify-end">
-        Announced by:{" "}
-        {courseData?.data?.created_by_user_id?.contact_id?.full_name}
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
-            <div className="!rounded-[15px] font-normal flex flex-col">
-              <p>Approved by:</p>
-              <p>
-                {courseData?.data?.approved_by_user_id &&
-                courseData?.data?.program_approved_date
-                  ? `${
-                      courseData?.data?.approved_by_user_id?.contact_id
+            </p>
+          </div>
+          <div className="flex flex-row items-center gap-2 w-full justify-end ">
+            Announced by:{" "}
+            {courseData?.data?.created_by_user_id?.contact_id?.full_name}
+            <HoverCard >
+              <HoverCardTrigger>
+                <Important />
+              </HoverCardTrigger>
+              <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full z-[100]">
+                <div className="!rounded-[15px] font-normal flex flex-col">
+                  <p>Approved by:</p>
+                  <p>
+                    {courseData?.data?.approved_by_user_id &&
+                      courseData?.data?.program_approved_date
+                      ? `${courseData?.data?.approved_by_user_id?.contact_id
                         ?.full_name
-                    } (${formatDateString(
-                      new Date(courseData?.data?.program_approved_date)
-                    )})`
-                  : "-"}
-              </p>
-              <Separator className="my-2" />
-              <p>Last Modified by:</p>
-              <p>
-                {courseData?.data?.last_modified_by_user_id &&
-                courseData?.data?.modified_at
-                  ? `${
-                      courseData?.data?.last_modified_by_user_id?.contact_id
+                      } (${formatDateString(
+                        new Date(courseData?.data?.program_approved_date)
+                      )})`
+                      : "-"}
+                  </p>
+                  <Separator className="my-2" />
+                  <p>Last Modified by:</p>
+                  <p>
+                    {courseData?.data?.last_modified_by_user_id &&
+                      courseData?.data?.modified_at
+                      ? `${courseData?.data?.last_modified_by_user_id?.contact_id
                         ?.full_name
-                    } (${formatDateString(
-                      new Date(courseData?.data?.modified_at)
-                    )})`
-                  : "-"}
-              </p>
-            </div>
-          </HoverCardContent>
-        </HoverCard>
+                      } (${formatDateString(
+                        new Date(courseData?.data?.modified_at)
+                      )})`
+                      : "-"}
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        </div>
       </div>
-
-      <div className="w-full mt-6 sticky">
+      <div className="w-full mt-3">
         <Tabs
           onValueChange={(val: string) => {
             setSelectedValue(val);
           }}
           value={selectedValue}
+          className=""
         >
-          <TabsList className="flex flex-row gap-10 !flex-start !justify-start !bg-[white] !rounded-none">
+          <TabsList className="flex flex-row gap-10  bg-white !rounded-none sticky top-[95px] z-[100] w-full border-b h-12 px-8">
             {tabTriggers.map((trigger: any, index: number) => (
               <TabsTrigger
                 key={index}
                 value={JSON.stringify(trigger.value)}
-                className={`!px-0 data-[state=active]:text-[#7677F4] py-1.5 text-sm font-medium flex flex-start !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999]  `}
+                className={` data-[state=active]:text-[#7677F4] data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end  text-sm font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none  `}
                 disabled={handleTabsBasedOnStatus(
                   courseData?.data?.status_id?.id,
                   trigger.value
                 )}
               >
-                <div className="flex flex-col gap-1">
-                  {trigger.label}
-                  <div
-                    className={`${
-                      selectedValue === JSON.stringify(trigger.value)
-                        ? "bg-[#7677F4] rounded w-full h-[2px]"
-                        : "w-full h-[2px]"
-                    }`}
-                  />
-                </div>
+                {trigger.label}
               </TabsTrigger>
             ))}
-            <div className="ml-auto mb-6 flex gap-4 ">
+            <div className="ml-auto flex gap-4">
               {isApproved(
                 courseData?.data?.program_type_id?.is_approval_required,
                 courseData?.data?.status_id?.id,
@@ -374,10 +369,10 @@ function ViewDetails() {
                 courseData?.data?.program_accounting_status_id,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && (
-                <PendingCourseAccountingFormApprovalDropDown
-                  courseId={Id as number}
-                />
-              )}
+                  <PendingCourseAccountingFormApprovalDropDown
+                    courseId={Id as number}
+                  />
+                )}
 
               <ViewCourseAccountingSuccessModalOpen />
               <ViewCourseAccountingRejectedModalOpen courseId={Id as number} />
@@ -385,25 +380,28 @@ function ViewDetails() {
               <ActionsDropDown courseData={courseData?.data} />
             </div>
           </TabsList>
-          <div className="w-full border-b border-[#D6D7D8] -mt-2"></div>
-          <TabsContent value={JSON.stringify(COURSE_DETAILS_TAB)}>
-            <CourseDetailsTab />
-          </TabsContent>
-          <TabsContent value={JSON.stringify(PARTICIPANTS_TAB)}>
-            <ParticipantsTab />
-          </TabsContent>
-          <TabsContent value={JSON.stringify(REVENUE_SUMMARY_TAB)}>
-            Place Revenue Summary tab here
-          </TabsContent>
-          <TabsContent value={JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)}>
-            <CourseAccountingFormTab />
-          </TabsContent>
-          <TabsContent value={JSON.stringify(VIEW_COURSE_ACCOUNTING_FORM_TAB)}>
-            <ViewCourseAccountingFormTab programId={Id as number} />
-          </TabsContent>
+          <div className="px-8 bg-white">
+
+            <TabsContent value={JSON.stringify(COURSE_DETAILS_TAB)} className="overflow-scroll">
+              <CourseDetailsTab />
+            </TabsContent>
+            <TabsContent value={JSON.stringify(PARTICIPANTS_TAB)} className="overflow-scroll">
+              <ParticipantsTab />
+            </TabsContent>
+            <TabsContent value={JSON.stringify(REVENUE_SUMMARY_TAB)} className="overflow-scroll">
+              Place Revenue Summary tab here
+            </TabsContent>
+            <TabsContent value={JSON.stringify(COURSE_ACCOUNTING_FORM_TAB)} className="overflow-scroll">
+              <CourseAccountingFormTab />
+            </TabsContent>
+            <TabsContent value={JSON.stringify(VIEW_COURSE_ACCOUNTING_FORM_TAB)} className="overflow-scroll">
+              <ViewCourseAccountingFormTab programId={Id as number} />
+            </TabsContent>
+          </div>
         </Tabs>
+
       </div>
-    </div>
+    </div >
   );
 }
 
