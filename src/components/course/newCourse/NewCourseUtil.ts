@@ -972,6 +972,8 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
     const venueId = body.existingVenue?.id;
     venueData = body?.existingVenue || {};
 
+    // we have to temporary delete the existing venue and create new if user edits 
+
     const { data } = await supabaseClient
       .from("venue")
       .update({ is_deleted: true }) // Update the field to mark as deleted
@@ -1018,6 +1020,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
   //   .upsert(venueBody)
   //   .select();
 
+  // we are inserting new venue at the time of editing for the present user 
   const { data, error } = await supabaseClient
     .from("venue")
     .insert(venueBody)
