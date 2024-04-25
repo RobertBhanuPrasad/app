@@ -9,6 +9,7 @@ import {
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
+  COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
   PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
@@ -21,7 +22,10 @@ import {
   formatDateString,
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
-import { getOptionValueObjectById } from "src/utility/GetOptionValuesByOptionLabel";
+import {
+  getOptionValueObjectById,
+  getOptionValueObjectByOptionOrder,
+} from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
@@ -31,6 +35,7 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
+import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { CardLabel, CardValue } from "src/ui/TextTags";
 import { useTranslation } from "next-i18next";
 
@@ -178,10 +183,11 @@ export default function NewCourseReviewPage() {
   })
 
   const CourseTeachersNames: any = CourseTeachers?.data
-    ?.map(teacher_id => {
-      if (teacher_id?.contact_id?.full_name) return teacher_id?.contact_id?.full_name
+    ?.map((teacher_id) => {
+      if (teacher_id?.contact_id?.full_name)
+        return teacher_id?.contact_id?.full_name;
     })
-    .join(', ')
+    .join(", ");
 
   const { data: courseType } = useOne({
     resource: 'program_types',
@@ -189,23 +195,42 @@ export default function NewCourseReviewPage() {
   })
 
   const venueSessions = () => {
+    let schedules = newCourseData?.schedules;
+
+    // sort the schedules
+
+    schedules = schedules.sort((a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    });
+
     return (
       <div className=" min-w-72 ">
         <p className="text-sm font-normal text-accent-light text-[#999999]">Sessions</p>
         {newCourseData?.schedules?.map((data: any) => {
-          const schedule = `${formatDateString(data.date)} | ${data?.startHour || '00'} : ${
-            data?.startMinute || '00'
-          }  ${data?.startTimeFormat && data?.startTimeFormat} to ${data?.endHour || '00'} : ${
-            data?.endMinute || '00'
-          }  ${data?.endTimeFormat && data?.endTimeFormat}`
+          const schedule = `${formatDateString(data.date)} | ${
+            data?.startHour || "00"
+          } : ${data?.startMinute || "00"}  ${
+            data?.startTimeFormat ? data?.startTimeFormat : ""
+          } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
+            data?.endTimeFormat ? data?.endTimeFormat : ""
+          }`;
+
           return (
-            <abbr
-              className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-              title={schedule}
-            >
-              {schedule}
-            </abbr>
-          )
+            <div>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={schedule}
+              >
+                {schedule}
+              </abbr>
+            </div>
+          );
         })}
       </div>
     )
@@ -222,10 +247,8 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.time_zone_id
   })
 
-  const { data: feeLevelData } = useMany({
-    resource: 'option_values',
-    ids: _.map(newCourseData?.program_fee_level_settings, 'fee_level_id')
-  })
+ //Requirement: Need to show only enabled fee level.
+ const enabledFeeLevelData=newCourseData?.program_fee_level_settings?.filter((feeLevel: { is_enable: boolean; })=>(feeLevel.is_enable===true));
 
   const [openBasicDetails, setOpenBasicDetails] = useState(false)
   const [openCourseDetails, setOpenCourseDetails] = useState(false)
@@ -242,6 +265,13 @@ export default function NewCourseReviewPage() {
    */
   const invalidate = useInvalidate()
 
+  /**
+   * The variable holds the course accounting status not submitted id
+   */
+  const accountingNotSubmittedStatusId =
+    getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
+      ?.id ?? 0;
+
   const handClickContinue = async () => {
     setIsSubmitting(true)
 
@@ -252,7 +282,7 @@ export default function NewCourseReviewPage() {
       newCourseData,
       data?.userData?.id,
       setProgramId,
-      langCode
+      accountingNotSubmittedStatusId
     );
 
     if (isPosted) {
@@ -306,7 +336,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton('Basic Details')
               }}
               onOpenChange={setOpenBasicDetails}
-            />{' '}
+            />{" "}
           </div>
           {/* body */}
           <div className="grid grid-cols-4 gap-4 mt-2">
@@ -387,7 +417,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton('Course Details')
               }}
               onOpenChange={setOpenCourseDetails}
-            />{' '}
+            />{" "}
           </div>
           {/* body */}
           <div className="grid grid-cols-4 gap-4 mt-2">
@@ -401,12 +431,14 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">Teacher</p>
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
+                Teacher
+              </p>
               <abbr
-                title={CourseTeachersNames ? CourseTeachersNames : '-'}
+                title={CourseTeachersNames ? CourseTeachersNames : "-"}
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
               >
-                {CourseTeachersNames ? CourseTeachersNames : '-'}
+                {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
             </div>
             <div className=" min-w-72">
@@ -525,7 +557,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton('Venue Details')
               }}
               onOpenChange={setOpenVenueDetails}
-            />{' '}
+            />{" "}
           </div>
           {/* body */}
           {/* // TODO need to do when the form filed is clear */}
@@ -541,30 +573,36 @@ export default function NewCourseReviewPage() {
                 </abbr>
               </div>
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">Province</p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Province
+                </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={StateNames ? StateNames : '-'}
+                  title={StateNames ? StateNames : "-"}
                 >
-                  {StateNames ? StateNames : '-'}
+                  {StateNames ? StateNames : "-"}
                 </abbr>
               </div>
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">City</p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  City
+                </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={CityNames ? CityNames : '-'}
+                  title={CityNames ? CityNames : "-"}
                 >
-                  {CityNames ? CityNames : '-'}
+                  {CityNames ? CityNames : "-"}
                 </abbr>
               </div>
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">Center</p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Center
+                </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={CenterNames ? CenterNames : '-'}
+                  title={CenterNames ? CenterNames : "-"}
                 >
-                  {CenterNames ? CenterNames : '-'}
+                  {CenterNames ? CenterNames : "-"}
                 </abbr>
               </div>
               <div>{venueSessions()}</div>
@@ -576,8 +614,12 @@ export default function NewCourseReviewPage() {
                 <p className="font-semibold truncate text-accent-secondary">{timeFormat?.value}</p>
               </div>
               <div className=" min-w-72">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">Time Zone</p>
-                <p className="font-semibold truncate text-accent-secondary">{timeZone?.data?.name}</p>
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Time Zone
+                </p>
+                <p className="font-semibold truncate text-accent-secondary">
+                  {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
+                </p>
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -600,39 +642,20 @@ export default function NewCourseReviewPage() {
                 setClickedButton('Venue Details')
               }}
               onOpenChange={setOpenFeesDetails}
-            />{' '}
+            />{" "}
           </div>
           {/* body */}
           <div className="grid grid-cols-3 gap-4 mt-2">
-            {newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
+            {enabledFeeLevelData?.map((feeLevel: any, index: number) => {
               return (
-                <div className=" min-w-72">
-                  <p className="text-sm font-normal text-accent-light ">{feeLevelData?.data?.[index]?.value}</p>
-                  <abbr
-                    className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                    title={feeLevel.total}
-                  >
-                    {feeLevel.total}
-                  </abbr>
-                </div>
+               <Fees feeLevelSettingsData={feeLevel}/>
               )
             })}
 
             {newCourseData?.is_early_bird_enabled &&
-              newCourseData?.program_fee_level_settings?.map((feeLevel: any, index: number) => {
+              enabledFeeLevelData?.map((feeLevel: any, index: number) => {
                 return (
-                  <div className=" min-w-72">
-                    <abbr className="text-sm font-normal text-accent-light" title={feeLevelData?.data?.[index]?.value}>
-                      {feeLevelData?.data?.[index]?.value}
-                    </abbr>
-
-                    <abbr
-                      className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                      title={feeLevel.early_bird_total}
-                    >
-                      {feeLevel.early_bird_total}
-                    </abbr>
-                  </div>
+                  <EarlyBirdFees feeLevelSettingsData={feeLevel}/>
                 )
               })}
             {courseFeeSettings?.[0]?.is_program_fee_editable &&
@@ -674,7 +697,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton('Accomidation Details')
               }}
               onOpenChange={setOpenAccomidationDetails}
-            />{' '}
+            />{" "}
           </div>
           {newCourseData?.is_residential_program && (
             <div className="grid grid-cols-4 gap-4 mt-2">
@@ -715,7 +738,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton('Contact Details')
               }}
               onOpenChange={setOpenContactDetails}
-            />{' '}
+            />{" "}
           </div>
           {/* body */}
           {newCourseData?.contact?.map((data: any) => {
@@ -783,7 +806,7 @@ export default function NewCourseReviewPage() {
 /**
  * @function Accommodation
  * REQUIRMENT we need to show the both name and the fee of the accommodation name
- * @description this function is used to display both the accommodation type name and the fee which we will give in the creation of the course
+ * @description this function is used to display both the accommodation type name and the fee which we have already gave in the creation of the course
  * @param accomdationData
  * @returns
  */
@@ -823,6 +846,82 @@ const Accommodation = ({
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
           {currencyCode ? currencyCode : ''}
           {accomdationData?.fee_per_person}
+        </CardValue>
+      </abbr>
+    </div>
+  )
+}
+
+/**
+ * @function Fees
+ * REQUIRMENT we need to show the both fee level type and total of the fee level 
+ * @param feeLevelSettingsData 
+ * @returns 
+ */
+const Fees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettingsDataBaseType}) => {
+  /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+  const { data : feeLevelData } = useOne({
+    resource: 'option_values',
+    id: feeLevelSettingsData?.fee_level_id as number
+  })
+
+  return(
+    <div className=" min-w-72">
+      <abbr title={feeLevelData?.data?.value} className="no-underline">
+        <CardLabel className="truncate">{feeLevelData?.data?.value}</CardLabel>
+      </abbr>
+      <abbr
+        title={JSON.stringify(feeLevelSettingsData?.total)}
+        className="no-underline"
+      >
+        <CardValue className="truncate">{feeLevelSettingsData?.total}
+        </CardValue>
+      </abbr>
+
+
+    </div>
+  )
+}
+
+
+/**
+ * @function EarlyBirdFees
+ * REQUIRMENT we need to show the both fee level type and early bird total of the fee level 
+ * @param feeLevelSettingsData 
+ * @returns 
+ */
+const EarlyBirdFees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettingsDataBaseType}) => {
+  /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+  const { data : feeLevelData } = useOne({
+    resource: 'option_values',
+    id: feeLevelSettingsData?.fee_level_id as number
+  })
+
+  return(
+    <div className=" min-w-72">
+      {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
+      <abbr title={`Early Bird ${feeLevelData?.data?.value}`} className="no-underline">
+        <CardLabel className="truncate">Early Bird {feeLevelData?.data?.value}</CardLabel>
+      </abbr>
+      <abbr
+        title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
+        className="no-underline"
+      >
+        <CardValue className="truncate">{feeLevelSettingsData?.early_bird_total}
         </CardValue>
       </abbr>
     </div>

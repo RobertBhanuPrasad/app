@@ -14,7 +14,9 @@ import {
 } from "src/constants/OptionLabels";
 import {
   ASSIST,
+  CERTIFIED,
   COURSE,
+  CO_TEACH,
   I_AM_ORGANIZER,
   PRIVATE,
   PUBLIC,
@@ -339,14 +341,11 @@ export const CourseTypeDropDown = () => {
 };
 
 const RegistrationGateway = () => {
-
   const {
     field: { value, onChange },
   } = useController({
     name: NewCourseStep2FormNames?.is_registration_required,
   });
-
-
 
   return (
     <div className="flex flex-row items-center gap-[19px]">
@@ -477,7 +476,32 @@ const TeachersDropDown = () => {
     I_AM_ORGANIZER
   )?.id;
 
-  let filter: Array<CrudFilter> = [];
+  /**
+   * This holds the certification certified level id
+   */
+  const certificationCeritifiedLevelId = getOptionValueObjectByOptionOrder(
+    CERTIFICATION_TYPE,
+    CERTIFIED
+  )?.id;
+
+  /**
+   * This holds the certification co teach level id
+   */
+  const certificationCoTeachLevelId = getOptionValueObjectByOptionOrder(
+    CERTIFICATION_TYPE,
+    CO_TEACH
+  )?.id;
+
+  /**
+   * Initiall filter array holds the certification level for teachers and it fetch only those whose certification levl is co teach and cerified
+   */
+  let filter: Array<CrudFilter> = [
+    {
+      field: "program_type_teachers.certification_level_id",
+      operator: "in",
+      value: [certificationCeritifiedLevelId, certificationCoTeachLevelId],
+    },
+  ];
 
   if (formData?.program_type_id) {
     filter.push({
@@ -487,13 +511,22 @@ const TeachersDropDown = () => {
     });
   }
 
+  // we have to get teachers based on the selected organization
+  if (formData?.organization_id) {
+    filter.push({
+      field: "program_type_teachers.program_type_id.organization_id",
+      operator: "eq",
+      value: formData?.organization_id,
+    });
+  }
+
   const [pageSize, setPageSize] = useState(10);
 
   const selectQuery: any = {
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(program_type_id),contact_id!inner(full_name))",
+        "*,program_type_teachers!inner(certification_level_id,program_type_id!inner(organization_id)),contact_id!inner(full_name))",
     },
     filters: filter,
     onSearch: (value: any) => [

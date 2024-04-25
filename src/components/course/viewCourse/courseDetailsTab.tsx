@@ -182,12 +182,12 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('program_visibility')}</Header2>
-              <ItemValue>{courseData?.data?.visibility_id?.value}</ItemValue>
+              <Header2>Program Visibility</Header2>
+              <ItemValue>{courseData?.data?.visibility_id?.value ? courseData?.data?.visibility_id?.value : '-'}</ItemValue>
             </div>
             <div>
-              <Header2>{t('max_capacity')}</Header2>
-              <ItemValue>{courseData?.data?.max_capacity}</ItemValue>
+              <Header2>Max Capacity</Header2>
+              <ItemValue>{courseData?.data?.max_capacity ? courseData?.data?.max_capacity : '-'}</ItemValue>
             </div>
             <div>
               <Header2>Program organizer</Header2>

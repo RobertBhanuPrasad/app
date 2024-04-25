@@ -7,8 +7,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
-import { PROGRAM_STATUS } from "src/constants/OptionLabels";
-import { CANCELED } from "src/constants/OptionValueOrder";
+import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
+import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { useEffect, useState } from "react";
 import { Button } from "src/ui/button";
 import { useTranslation } from 'next-i18next';
@@ -28,6 +28,8 @@ import {
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { format } from "date-fns";
+
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
 export const columns: any =(t:any) =>{
