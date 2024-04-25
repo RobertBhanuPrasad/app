@@ -161,12 +161,14 @@ const accommodationValidationSchema = z.array(
       .string({
         required_error: "Please enter a valid money value for fee per person.",
       })
-      .regex(/^\d+$/, "Fee can accept only integers "),
+      .regex(/^\d+$/, "Fee can accept only integers ")
+      .or(z.number()),
     no_of_residential_spots: z
       .string({
         required_error: "Please enter a valid no of residential spots",
       })
-      .regex(/^\d+$/, "Residential spots can accept only integers "),
+      .regex(/^\d+$/, "Residential spots can accept only integers ")
+      .or(z.number()),
   })
 );
 
