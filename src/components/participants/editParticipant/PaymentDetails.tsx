@@ -15,6 +15,8 @@ import {
 } from "src/ui/select";
 
 export default function PaymentDetails() {
+    
+    // Use useController to control the participant_code,participant_attendance_status field
     const {
         field: { value: participant_code, onChange: specialCodeChange },
     } = useController({
@@ -29,6 +31,8 @@ export default function PaymentDetails() {
     } = useController({
         name: "participant_attendence_status_id",
     });
+
+    // Getting dropdown options for attendence status
     const { data } = useList<any>({
         resource: "option_labels",
         filters: [
@@ -52,6 +56,9 @@ export default function PaymentDetails() {
             },
         ],
     });
+
+    
+    // participant_payment_history contains numerous records of same participant, getting the latest history record
     const { query } = useRouter();
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)
@@ -116,7 +123,6 @@ export default function PaymentDetails() {
                         {paymentDetailData?.accommodation_fee
                             ? paymentDetailData?.accommodation_fee
                             : "-"}
-                        {/* {paymentDetailData.accommodation_fee ? paymentDetailData.accommodation_fee : "-"} */}
                     </Text>
                 </div>
                 <div className="w-[303px]">
@@ -172,7 +178,6 @@ export default function PaymentDetails() {
                 <div className="w-[305px]">
                     <div className="flex gap-2">
                         <div>
-                            {/* TODO: make it mandatory */}
                             <Text className="text-[#999999] text-[14px]  ">
                                 Attendance Status
                             </Text>
@@ -181,7 +186,6 @@ export default function PaymentDetails() {
                             <Star />
                         </div>
                     </div>
-                    {/* TODO: need to make it mandatory */}
                     <div>
                         <Select
                             value={participant_attendence_status_id}

@@ -5,7 +5,7 @@ export const editParticipantSchema=()=>{
             required_error:"Memo is required field"
         })
         .refine((value)=>!(value==""),{
-message:"Memo is required field"
+            message:"Memo is required field"
         }),
         accommodation_type_id:z.number({
             required_error:"Select Accommodation Type"
