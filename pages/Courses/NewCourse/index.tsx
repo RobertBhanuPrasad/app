@@ -12,7 +12,14 @@ import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
-import { useGetIdentity, useList } from "@refinedev/core";
+import { QueryObserverResult } from "@tanstack/react-query";
+import {
+  GetListResponse,
+  HttpError,
+  UseLoadingOvertimeReturnType,
+  useGetIdentity,
+  useList,
+} from "@refinedev/core";
 import Form from "@components/Formfield";
 import { useFormContext, useFormState } from "react-hook-form";
 import {
@@ -49,6 +56,9 @@ import Success from "@public/assets/Success";
 import _ from "lodash";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -125,22 +135,70 @@ function NewCourse() {
           [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
             true,
-          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
           //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
           [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
             ? true
             : undefined,
+
+          // is_geo_restriction_applicable is visible to super admin and default it is no
+          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
           [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
             payOnlineId,
           [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
           [NewCourseStep5FormNames?.is_residential_program]: false,
-          [NewCourseStep3FormNames?.hour_format_id]: timeFormat24HoursId,
         }
       : newCourseData;
 
+  // fetch data from country_config table for time format
+  const {
+    data,
+    isLoading,
+  }: QueryObserverResult<
+    GetListResponse<CountryConfigDataBaseType>,
+    HttpError
+  > &
+    UseLoadingOvertimeReturnType = useList({
+    resource: "country_config",
+  });
+
+  console.log("country config data is", data?.data[0]);
+
+  // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
+  const {
+    data: timeZonesData,
+    isLoading: timeZoneLoading,
+  }: QueryObserverResult<GetListResponse<TimeZoneDataBaseType>, HttpError> &
+    UseLoadingOvertimeReturnType = useList({
+    resource: "time_zones",
+  });
+
+  // check how many records are there in time_zones table
+  // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
+  if (timeZonesData?.data?.length === 1 && newCourseData === null) {
+    defaultValues[NewCourseStep3FormNames?.time_zone_id] =
+      timeZonesData?.data[0]?.id;
+  }
+
+  //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
+  // and same we need to set only if newCourseData is null
+  if (newCourseData === null) {
+    if (data?.data[0]?.hour_format_id) {
+      defaultValues[NewCourseStep3FormNames?.hour_format_id] =
+        data?.data[0]?.hour_format_id;
+    } else {
+      defaultValues[NewCourseStep3FormNames?.hour_format_id] =
+        timeFormat24HoursId;
+    }
+  }
+
   // If the form is still loading, display a loading message
   // we have to display loading icon until the below variables will be get from database
-  if (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) {
+  // isLoading also we need becuase we need to set the data right
+  if (
+    (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) ||
+    isLoading ||
+    timeZoneLoading
+  ) {
     return <LoadingIcon />;
   }
 
@@ -633,4 +691,40 @@ export const NewCourseTabs = () => {
       </Tabs>
     </div>
   );
+};
+
+/**
+ * Function to fetch server-side props.
+ * This function checks the authentication status using the auth provider and
+ * fetches translations for the current locale.
+ * If the user is not authenticated, it redirects them to the specified destination.
+ * @param context The context object containing information about the request.
+ * @returns Server-side props including translated props or redirection information.
+ */
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
 };
