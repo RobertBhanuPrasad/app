@@ -40,8 +40,6 @@ export const columns: any =(t:any) =>{
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-  
-        const {t} = useTranslation()
         return <div className="w-[100px]">{t("new_strings:course_id")}</div>;
       },
       cell: ({ row } : any) => {
@@ -65,7 +63,6 @@ export const columns: any =(t:any) =>{
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        const {t} = useTranslation()
         return <div className="w-[150px]">{t("new_strings:course_type_name")}</div>;
       },
       cell: ({ row } : any) => {
@@ -80,7 +77,6 @@ export const columns: any =(t:any) =>{
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        const {t} = useTranslation()
         return <div className="min-w-[150px]">{t("new_strings:course_name")}</div>;
       },
       cell: ({ row } : any) => {
@@ -98,7 +94,6 @@ export const columns: any =(t:any) =>{
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        const {t} = useTranslation()
         return <div className="min-w-[150px]">{t("course.find_course:course_status")}</div>;
       },
       cell: ({ row } : any) => {
@@ -113,7 +108,6 @@ export const columns: any =(t:any) =>{
       enableHiding: false,
       column_name: t("course.find_course:start_date"),
       header: () => {
-        const {t} = useTranslation()
         return <div className="min-w-[150px]">{t("course.find_course:start_date")}</div>;
       },
       cell: ({ row }: any) => {
@@ -141,7 +135,6 @@ export const columns: any =(t:any) =>{
       accessorKey: "state",
       column_name: t("course.find_course:state"),
       header: () => {
-        const {t} = useTranslation()
         return <div className="min-w-[150px]">{t("course.find_course:state")}</div>;
       },
       cell: ({ row } : any) => {
@@ -152,8 +145,6 @@ export const columns: any =(t:any) =>{
       accessorKey: "city",
       column_name: t("common:city"),
       header: () => {
-  
-        const {t} = useTranslation()
         return <div className="min-w-[150px]">{t("common:city")}</div>;
       },
       cell: ({ row } : any) => {
@@ -164,7 +155,6 @@ export const columns: any =(t:any) =>{
       accessorKey: "center",
       column_name: t("course.find_course:center"),
       header: () => {
-        const {t} = useTranslation()
         return <div className="min-w-[150px]">{t("course.find_course:center")}</div>;
       },
       cell: ({ row } : any) => {
@@ -178,8 +168,6 @@ export const columns: any =(t:any) =>{
       enableHiding: false,
       column_name: t('course.find_course:teachers'),
       header: () => {
-    const {t} = useTranslation()
-        
         return <div className="min-w-[150px]">{t('course.find_course:teachers')}</div>;
       },
       cell: ({ row } : any) => {
@@ -198,7 +186,6 @@ export const columns: any =(t:any) =>{
       accessorKey: "program_organizers",
       column_name: t('new_strings:organizers'),
       header: () => {
-        const {t} = useTranslation()
         return <div className="min-w-[150px]">{t('new_strings:organizers')}</div>;
       },
       cell: ({ row } : any) => {
@@ -218,7 +205,6 @@ export const columns: any =(t:any) =>{
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        const {t} = useTranslation()
         return <div>{t("course.find_course:attendees")}</div>;
       },
       cell: ({ row }: any) => {
@@ -233,7 +219,6 @@ export const columns: any =(t:any) =>{
       accessorKey: "visibility_id",
       column_name: t('new_strings:visibility'),
       header: () => {
-        const {t} = useTranslation()
         return <div>{t('new_strings:visibility')}</div>;
       },
       cell: ({ row }: any) => {
@@ -248,7 +233,6 @@ export const columns: any =(t:any) =>{
       accessorKey: "course_accounting_status",
       column_name: t('new_strings:course_accounting_form'),
       header: () => {
-        const {t} = useTranslation()
         return <div className="min-w-[200px]">{t('new_strings:course_accounting_form')}</div>;
       },
       cell: ({ row }: any) => {
@@ -265,7 +249,6 @@ export const columns: any =(t:any) =>{
       accessorKey: "Course Accounting Closure Date",
       column_name: t('course.find_course:course_accounting_closure_date'),
       header: () => {
-        const {t} = useTranslation()
         return (
           <div className="min-w-[250px]">{t('course.find_course:course_accounting_closure_date') }</div>
         );
