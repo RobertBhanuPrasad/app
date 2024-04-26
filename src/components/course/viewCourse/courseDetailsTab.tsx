@@ -103,15 +103,12 @@ function CourseDetailsTab() {
       setCopiedRegistrationLink(false);
     }, 1000);
   };
-   
- // getting public visibility id to check whether the particular course is public or private.
- const publicVisibilityId = getOptionValueObjectByOptionOrder(
-  VISIBILITY,
-  PUBLIC
-)?.id;
 
-
- 
+  // getting public visibility id to check whether the particular course is public or private.
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
 
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
@@ -129,79 +126,110 @@ function CourseDetailsTab() {
           <CardContent className="gap-[23px] flex flex-col">
             <div>
               <Header2>{t('new_strings:organisation')}</Header2>
-              <ItemValue>{courseData?.data?.organization_id?.name}</ItemValue>
+              <ItemValue>
+                {courseData?.data?.organization_id?.name
+                  ? courseData?.data?.organization_id?.name
+                  : "-"}
+              </ItemValue>
             </div>
             <div>
               <Header2>Course ID</Header2>
-              <ItemValue>{courseData?.data?.program_code ? courseData?.data?.program_code : '-'}</ItemValue>
+              <ItemValue>
+                {courseData?.data?.program_code
+                  ? courseData?.data?.program_code
+                  : "-"}
+              </ItemValue>
             </div>
             <div>
               <Header2>{t('new_strings:course_type')}</Header2>
-              <ItemValue>{courseData?.data?.program_type_id?.name ? courseData?.data?.program_type_id?.name : '-'}</ItemValue>
+              <ItemValue>
+                {courseData?.data?.program_type_id?.name
+                  ? courseData?.data?.program_type_id?.name
+                  : "-"}
+              </ItemValue>
             </div>
             <div>
               <Header2>{t('course_accounting_status')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_accounting_status_id?.value ? courseData?.data?.program_accounting_status_id?.value : '-'}
+                {courseData?.data?.program_accounting_status_id?.value
+                  ? courseData?.data?.program_accounting_status_id?.value
+                  : "-"}
               </ItemValue>
             </div>
             <div>
               <Header2> {t('teachers')}</Header2>
               <ItemValue>
-              {courseData?.data?.program_teachers?.length > 0
-              ? courseData?.data?.program_teachers.map((item: fullNameObject) => {
-               return item?.user_id?.contact_id?.full_name;
-              }).join(", ")
-              : "-"}
+                {courseData?.data?.program_teachers?.length > 0
+                  ? courseData?.data?.program_teachers
+                      .map((item: fullNameObject) => {
+                        return item?.user_id?.contact_id?.full_name;
+                      })
+                      .join(", ")
+                  : "-"}
               </ItemValue>
             </div>
             <div>
               <Header2>{t('course.view_course:basic_details_tab.assistant_teachers')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_assistant_teachers?.length > 0
-                ? courseData?.data?.program_assistant_teachers?.map((item: fullNameObject) => {
-                  return item?.user_id?.contact_id?.full_name;
-                  }).join(',')
-               : '-' }
+                  ? courseData?.data?.program_assistant_teachers
+                      ?.map((item: fullNameObject) => {
+                        return item?.user_id?.contact_id?.full_name;
+                      })
+                      .join(",")
+                  : "-"}
               </ItemValue>
             </div>
             <div>
               <Header2> {t('available_languages_for_translation')} </Header2>
               <ItemValue>
                 {courseData?.data?.program_translation_languages?.length > 0
-                 ? courseData?.data?.program_translation_languages?.map((item: LanguageItem) => {
-                  return item?.language_id?.language_name
-                 }).join(", ") 
-                 : '-'}
+                  ? courseData?.data?.program_translation_languages
+                      ?.map((item: LanguageItem) => {
+                        return item?.language_id?.language_name;
+                      })
+                      .join(", ")
+                  : "-"}
               </ItemValue>
             </div>
             <div>
               <Header2>{t('language_course_is_taught_in')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_languages?.length > 0
-                ? courseData?.data?.program_languages?.map(
-                    (item: LanguageItem) => {
-                      return item?.language_id?.language_name
-                    }).join(", ")
-                 : '-'}
+                  ? courseData?.data?.program_languages
+                      ?.map((item: LanguageItem) => {
+                        return item?.language_id?.language_name;
+                      })
+                      .join(", ")
+                  : "-"}
               </ItemValue>
             </div>
             <div>
               <Header2>{t('program_visibility')}</Header2>
-              <ItemValue>{courseData?.data?.visibility_id?.value ? courseData?.data?.visibility_id?.value : '-'}</ItemValue>
+              <ItemValue>
+                {courseData?.data?.visibility_id?.value
+                  ? courseData?.data?.visibility_id?.value
+                  : "-"}
+              </ItemValue>
             </div>
             <div>
               <Header2>{t('max_capacity')}</Header2>
-              <ItemValue>{courseData?.data?.max_capacity}</ItemValue>
+              <ItemValue>
+                {courseData?.data?.max_capacity
+                  ? courseData?.data?.max_capacity
+                  : "-"}
+              </ItemValue>
             </div>
             <div>
               <Header2>{t('course.view_course:basic_details_tab.program_organizer')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_organizers?.length > 0
-                 ? courseData?.data?.program_organizers?.map((item: fullNameObject) => {
-                     return  item?.user_id?.contact_id?.full_name
-                    }).join(", ") 
-                 : '-'}
+                  ? courseData?.data?.program_organizers
+                      ?.map((item: fullNameObject) => {
+                        return item?.user_id?.contact_id?.full_name;
+                      })
+                      .join(", ")
+                  : "-"}
               </ItemValue>
             </div>
           </CardContent>
@@ -220,33 +248,34 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {programFees?.length > 0 
-            ? programFees?.map((item: ProgramFeeItem) => {
-              return (
-                <div className="flex flex-col gap-1">
-                  <Header2>{item?.fee_level_id?.value}</Header2>
-                  <ItemValue>
-                    {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                    {item?.total}
-                  </ItemValue>
-                </div>
-              );
-            }) 
-            : '-'}
-            {courseData?.data?.program_accommodations?.length > 0 
-            ? courseData?.data?.program_accommodations?.map(
-              (item: AccommodationItem) => {
-                return (
-                  <div className="flex flex-col gap-1">
-                    <Header2>{item?.accommodation_type_id?.name}</Header2>
-                    <ItemValue>
-                      {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                      {item?.fee_per_person}
-                    </ItemValue>
-                  </div>
-                );
-              }) 
-              : '-'}
+            {programFees?.length > 0
+              ? programFees?.map((item: ProgramFeeItem) => {
+                  return (
+                    <div className="flex flex-col gap-1">
+                      <Header2>{item?.fee_level_id?.value}</Header2>
+                      <ItemValue>
+                        {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                        {item?.total}
+                      </ItemValue>
+                    </div>
+                  );
+                })
+              : "-"}
+            {courseData?.data?.program_accommodations?.length > 0
+              ? courseData?.data?.program_accommodations?.map(
+                  (item: AccommodationItem) => {
+                    return (
+                      <div className="flex flex-col gap-1">
+                        <Header2>{item?.accommodation_type_id?.name}</Header2>
+                        <ItemValue>
+                          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                          {item?.fee_per_person}
+                        </ItemValue>
+                      </div>
+                    );
+                  }
+                )
+              : "-"}
           </CardContent>
         </Card>
       </div>
@@ -262,30 +291,34 @@ function CourseDetailsTab() {
           <CardContent className="gap-[23px] flex flex-col">
             <div>
               <Header2>{t('venue_address')}</Header2>
-              {courseData?.data?.venue_id ?
-              <ItemValue>
-                {courseData?.data?.venue_id?.address},
-                {courseData?.data?.venue_id?.center_id?.name},
-                {courseData?.data?.venue_id?.city_id?.name},
-                {courseData?.data?.venue_id?.state_id?.name}{" "}
-                {courseData?.data?.venue_id?.postal_code}
-              </ItemValue>
-              : '-'}
+              {courseData?.data?.venue_id ? (
+                <ItemValue>
+                  {courseData?.data?.venue_id?.address},
+                  {courseData?.data?.venue_id?.center_id?.name},
+                  {courseData?.data?.venue_id?.city_id?.name},
+                  {courseData?.data?.venue_id?.state_id?.name}{" "}
+                  {courseData?.data?.venue_id?.postal_code}
+                </ItemValue>
+              ) : (
+                "-"
+              )}
             </div>
             <Header2>
             {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
-                {courseData?.data?.program_schedules?.length > 0 ? courseData?.data?.program_schedules?.map(
-                  (item: ProgramScheduleItem, index: number) => (
-                    <div key={index}>
-                      <div className="flex flex-col">
-                        <div>
-                          {formatDateTime(item?.start_time, item?.end_time)}
+                {courseData?.data?.program_schedules?.length > 0
+                  ? courseData?.data?.program_schedules?.map(
+                      (item: ProgramScheduleItem, index: number) => (
+                        <div key={index}>
+                          <div className="flex flex-col">
+                            <div>
+                              {formatDateTime(item?.start_time, item?.end_time)}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  )
-                ) : '-'}
+                      )
+                    )
+                  : "-"}
               </div>
             </Header2>
           </CardContent>
@@ -303,40 +336,44 @@ function CourseDetailsTab() {
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div className="gap-[23px] flex flex-col">
-              {courseData?.data?.visibility_id?.id == publicVisibilityId && 
-              <div>
-                <Header2>{t('course.view_course:basic_details_tab.course_details_url')}</Header2>
-                <ItemValue>
-                  <div className="flex flex-row gap-4">
-                    <div className="w-[90%] break-words">
-                      {courseData?.data?.details_page_link ? courseData?.data?.details_page_link : '-'}
-                    </div>
-                    {courseData?.data?.details_page_link && (
-                      <div
-                        onClick={() => {
-                          handleCopyDetailsPageLink();
-                        }}
-                        className="relative mt-1"
-                      >
-                        <CopyIcon />
-                        {copiedDetailsPageLink ? (
-                          <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                            copied
-                          </div>
-                        ) : (
-                          ""
-                        )}
+              {courseData?.data?.visibility_id?.id == publicVisibilityId && (
+                <div>
+                  <Header2>{t('course.view_course:basic_details_tab.course_details_url')}</Header2>
+                  <ItemValue>
+                    <div className="flex flex-row gap-4">
+                      <div className="w-[90%] break-words">
+                        {courseData?.data?.details_page_link
+                          ? courseData?.data?.details_page_link
+                          : "-"}
                       </div>
-                    )}
-                  </div>
-                </ItemValue>
-              </div>
-              }  
+                      {courseData?.data?.details_page_link && (
+                        <div
+                          onClick={() => {
+                            handleCopyDetailsPageLink();
+                          }}
+                          className="relative mt-1"
+                        >
+                          <CopyIcon />
+                          {copiedDetailsPageLink ? (
+                            <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
+                              {t('new_strings:copied')}
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </ItemValue>
+                </div>
+              )}
               <div>
                 <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">
                   <div className="text-[16px] font-semibold w-[90%] break-words">
-                    {courseData?.data?.registration_link ? courseData?.data?.registration_link : '-'}
+                    {courseData?.data?.registration_link
+                      ? courseData?.data?.registration_link
+                      : "-"}
                   </div>
                   {courseData?.data?.registration_link && (
                     <div
@@ -348,7 +385,7 @@ function CourseDetailsTab() {
                       <CopyIcon />
                       {copiedRegistrationLink ? (
                         <div className="absolute -left-8 bottom-12 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                          copied
+                          {t('new_strings:copied')}
                         </div>
                       ) : (
                         ""
@@ -372,26 +409,28 @@ function CourseDetailsTab() {
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {courseData?.data?.program_contact_details?.length > 0 ? courseData?.data?.program_contact_details?.map(
-              (item: ContactDetailsItem) => {
-                return (
-                  <div className="gap-[23px] flex flex-col">
-                    <div>
-                      <Header2>Contact Name</Header2>
-                      <ItemValue>{item.contact_name}</ItemValue>
-                    </div>
-                    <div>
-                      <Header2>Contact Email</Header2>
-                      <ItemValue>{item.contact_email}</ItemValue>
-                    </div>
-                    <div>
-                      <Header2>{t('course.view_course:basic_details_tab.contact_phone')}</Header2>
-                      <ItemValue>{item.contact_number}</ItemValue>
-                    </div>
-                  </div>
-                );
-              }
-            ) : '-'}
+            {courseData?.data?.program_contact_details?.length > 0
+              ? courseData?.data?.program_contact_details?.map(
+                  (item: ContactDetailsItem) => {
+                    return (
+                      <div className="gap-[23px] flex flex-col">
+                        <div>
+                          <Header2>Contact Name</Header2>
+                          <ItemValue>{item.contact_name}</ItemValue>
+                        </div>
+                        <div>
+                          <Header2>Contact Email</Header2>
+                          <ItemValue>{item.contact_email}</ItemValue>
+                        </div>
+                        <div>
+                          <Header2>{t('course.view_course:basic_details_tab.contact_phone')}</Header2>
+                          <ItemValue>{item.contact_number}</ItemValue>
+                        </div>
+                      </div>
+                    );
+                  }
+                )
+              : "-"}
           </CardContent>
         </Card>
       </div>

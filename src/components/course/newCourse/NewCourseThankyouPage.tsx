@@ -75,15 +75,13 @@ const NewCourseThankyouPage = () => {
   // Formatting the venue details
   const venue =
     data?.data?.venue_id?.address +
-    "," +
+    ", " +
     data?.data?.venue_id?.name +
-    "," +
-    data?.data?.venue_id?.center_id?.name +
-    "," +
+    ", " +
     data?.data?.venue_id?.city_id?.name +
-    "," +
+    ", " +
     data?.data?.venue_id?.state_id?.name +
-    "," +
+    ", " +
     data?.data?.venue_id?.postal_code;
 
   const statusColorCode = getCourseStatusColorBasedOnStatusId(

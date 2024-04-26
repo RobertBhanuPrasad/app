@@ -14,7 +14,9 @@ import {
   I_AM_CO_TEACHING,
   I_AM_ORGANIZER,
   I_AM_TEACHING,
+  NATIONAL_ADMIN,
   PROGRAM_ORGANIZER,
+  SUPER_ADMIN,
   TEACHER,
 } from "src/constants/OptionValueOrder";
 import { Card } from "src/ui/card";
@@ -37,7 +39,17 @@ import { useTranslation } from 'next-i18next';
 
 
 function NewCourseStep1() {
+  const { data: loginUserData }: any = useGetIdentity()
 
+  // Checking weather login user is super admin or not
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  )
+
+  // Checking weather login user is National admin or not
+  const hasNationalAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == NATIONAL_ADMIN
+  )
   return (
     <div>
       <RadioCards />
@@ -49,7 +61,12 @@ function NewCourseStep1() {
           <ProgramOrganizerDropDown />
         </div>
       </div>
-      <RegistrationGateway />
+       {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
+       {(hasSuperAdminRole || hasNationalAdminRole) && (
+        <div>
+          <RegistrationGateway />
+        </div>
+      )}
     </div>
   );
 }
