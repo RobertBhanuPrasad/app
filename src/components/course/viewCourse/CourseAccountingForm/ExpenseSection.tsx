@@ -100,7 +100,7 @@ function ExpenseSection() {
     const formData = getValues();
 
     if (_.isEqual(formData, courseAccountingFormDefaultValues)) {
-      replace(`/Courses/ViewCourse/${params?.id}`);
+      replace(`/courses/${params?.id}`);
     } else {
       // if anything is changed we will open the dialog
       setCancelOpenDialog(true);
@@ -112,7 +112,7 @@ function ExpenseSection() {
    */
   const handleCancelDialogYesClick = () => {
     setCancelOpenDialog(false);
-    replace(`/Courses/ViewCourse/${params?.id}`);
+    replace(`/courses/${params?.id}`);
   };
 
   /**
@@ -192,7 +192,7 @@ function ExpenseSection() {
       });
 
       setTimeout(() => {
-        replace(`/Courses/ViewCourse/${params?.id}`);
+        replace(`/courses/${params?.id}`);
       }, 3000);
     } catch (error) {
       console.error(error);

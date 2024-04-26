@@ -427,7 +427,8 @@ function index() {
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
-      <div className="mx-8 flex flex-col gap-4">
+      <p className="font-semibold text-2xl ml-8">Find Course</p>
+      <div className="mx-8 flex flex-col gap-4 mt-4">
         <HeaderSection />
         <div className="w-full">
           <BaseTable
