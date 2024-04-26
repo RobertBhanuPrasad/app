@@ -1132,12 +1132,12 @@ export const handleProgramFeeLevelSettingsData = async (
     (feeLevel: any, index: number) => {
       if (existingFeeLevelSettingsData?.[index]?.id) {
         return {
+          ...feeLevel,
           id: existingFeeLevelSettingsData?.[index]?.id,
           program_id: programId,
-          ...feeLevel,
         };
       }
-      return { program_id: programId, ...feeLevel };
+      return { ...feeLevel,program_id: programId };
     }
   );
 
