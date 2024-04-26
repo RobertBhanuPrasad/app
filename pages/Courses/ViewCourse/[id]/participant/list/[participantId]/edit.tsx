@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 export default function Edit() {
     const { query } = useRouter();
     const [defaultValues, setDefaultValues] = useState({});
+
+    // This function will get the participant Id from router and fetches defaultValues from EditParticipantUtil
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)
         : undefined;
@@ -30,7 +32,7 @@ export default function Edit() {
     }, [Id]);
     return (
         <div >
-            <div className="top-0 sticky z-[100] bg-white shadow-xl w-full">
+            <div className="top-0  z-[100] bg-white shadow-xl w-full">
                 <ParticipantsListMainHeader />
             </div>
             <div className="px-[20px] py-[20px]">

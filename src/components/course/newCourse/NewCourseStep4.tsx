@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "src/ui/checkbox";
 import { supabaseClient } from "src/utility";
 import LoadingIcon from "@public/assets/LoadingIcon";
-import { useGetIdentity, useOne } from "@refinedev/core";
+import { useGetIdentity, useList, useOne } from "@refinedev/core";
 import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import {
   useController,
@@ -56,6 +56,19 @@ export default function CourseTable() {
   //Finding course start date
   const courseStartDate = formData?.schedules?.[0]?.date?.toISOString();
 
+  //Form variable to store the early_bird_cut_off_period
+  const {
+    field: { value: earlyBirdCutOff, onChange: setEarlyBirdCutOff },
+  } = useController({ name: "early_bird_cut_off_period" });
+
+  //Form variable to store the is_early_bird_enabled
+  const {
+    field: {
+      value: showEarlyBirdColumns,
+      onChange: setShowEarlyBirdColumns,
+    },
+  } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
+
   const fetchFeeData = async () => {
     //Sending all required params
     const { data, error } = await supabaseClient.functions.invoke(
@@ -73,6 +86,14 @@ export default function CourseTable() {
     );
     if (error)
       console.log("error while fetching course fee level settings", error);
+    
+    if (earlyBirdCutOff == undefined) {
+      setEarlyBirdCutOff(data?.[0]?.early_bird_cut_off_period);
+    }
+
+    if(showEarlyBirdColumns==undefined && data?.[0]?.is_early_bird_fee_enabled){
+      setShowEarlyBirdColumns(data?.[0]?.is_early_bird_fee_enabled)
+    }
     setCourseFeeSettings(data);
   };
 
@@ -111,6 +132,10 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   const { data: loginUserData }: any = useGetIdentity();
 
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
+
   const { watch } = useFormContext();
 
   const formData = watch();
@@ -146,7 +171,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   const {
     field: {
-      value: showEarlyBirdColumns = false,
+      value: showEarlyBirdColumns,
       onChange: setShowEarlyBirdColumns,
     },
   } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
@@ -180,7 +205,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       const feeData = courseFeeData?.map((fee) => {
         return {
           // By default all checkbox will be false
-          is_enable: false,
+          is_enable: fee?.is_enable,
           total: fee?.total,
           early_bird_total: fee?.earlyBirdTotal,
           fee_level_id: fee?.feeLevelId,
@@ -208,7 +233,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Normal Fee",
+      header: `Normal Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
@@ -217,7 +242,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Vat Fee",
+      header: `Vat Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -225,7 +250,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Total Fee",
+      header: `Total Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -253,7 +278,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Normal Fee",
+      header: `Normal Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
@@ -268,7 +293,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Vat Fee",
+      header: `Vat Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -298,7 +323,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Total Fee",
+      header: `Total Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -310,7 +335,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Normal Fee",
+      header: `Early Normal Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
@@ -318,7 +343,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Vat Fee",
+      header: `Early Vat Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -326,7 +351,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Total Fee",
+      header: `Early Total Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -340,7 +365,6 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
         });
 
-
         //Requirement: Early Bird Sub Total is (Early Bird Total - Tax )
         const earlyBirdSubTotal = earlyBirdTotal - (earlyBirdTotal * taxRate);
 
@@ -348,7 +372,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Normal Fee",
+      header: `Early Normal Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
@@ -364,7 +388,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Vat Fee",
+      header: `Early Vat Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -394,7 +418,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: "Early Total Fee",
+      header: `Early Total Fee(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -451,11 +475,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   //Form variable to store the early_bird_cut_off_period
   const {
-    field: {
-      value: earlyBirdCutOff = courseFeeSettings?.[0]
-        ?.early_bird_cut_off_period,
-      onChange: setEarlyBirdCutOff,
-    },
+    field: { value: earlyBirdCutOff, onChange: setEarlyBirdCutOff },
   } = useController({ name: "early_bird_cut_off_period" });
 
   //Finding course start date
@@ -463,10 +483,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   const earlyBirdStartDate = new Date(courseStartDate);
   //calculate of early bird start date
-  earlyBirdStartDate.setDate(
-    earlyBirdStartDate.getDate() -
-      courseFeeSettings?.[0]?.early_bird_cut_off_period
-  );
+  earlyBirdStartDate.setDate(earlyBirdStartDate.getDate() - earlyBirdCutOff);
 
   const [selectedDate, setSelectedData] = useState(earlyBirdStartDate);
 
@@ -486,7 +503,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         </div>
       )}
       {/* Rendering DataTable component */}
-      <div className="w-[1016px] h-auto">
+      <div className="w-[1200px] h-auto">
         {isFeeEditable ? (
           feeLevels?.length > 0 && (
             <DataTable columns={feeColumns} data={courseFeeData} />
@@ -497,12 +514,13 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       </div>
 
       <div>
-      {/* Requirment: Show the early bird calender when 
+        {/* Requirment: Show the early bird calender when 
       1.Super or National Admin is logged in 
       2.Early bird fee enabled in settings
       3.Early bird fee enabled by user
       4.Early bird cut off editable in settings */}
-        {isFeeEditable && showEarlyBirdColumns &&
+        {isFeeEditable &&
+          showEarlyBirdColumns &&
           courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
           courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
             <div className="w-80 mt-9">
@@ -573,7 +591,7 @@ type FeeLevelType = {
   earlyBirdTotal: number;
   feeLevelId: number;
   feeLevelLabel: string;
-  isEnable: boolean;
+  is_enable: boolean;
   subTotal: number;
   tax: number;
   total: number;

@@ -315,11 +315,13 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
+      const sortedRows = row?.original?.participant_payment_history.sort(
+        (a: any, b: any) => b?.id - a?.id
+      );
       return (
         <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.payment_transaction_id
-            ? row?.original?.participant_payment_history[0]
-                ?.payment_transaction_id
+          {row?.original?.participant_payment_history?.length
+            ? sortedRows[0]?.payment_transaction_id
             : "-"}
         </div>
       );

@@ -1,5 +1,6 @@
 import { supabaseClient } from 'src/utility/supabaseClient';
 
+// api call for getting defaultvalues for edit participant tab from payment history
 export const handleEditParticipantValues=async(participantId:number)=>{
     const { data, error } = 
     await supabaseClient
@@ -14,6 +15,22 @@ export const handleEditParticipantValues=async(participantId:number)=>{
       }
       return {};
 }
+
+// api call for getting default values for edit payment form from payment history
+export const handleEditPaymentValues=async(paymentHistoryId:number)=>{
+const {data,error}=await supabaseClient
+.from("participant_payment_history")
+.select("id,payment_method_id,transaction_status_id!inner(id,value),payment_date,send_payment_confirmation")
+.eq("id", paymentHistoryId);
+if (!error) {
+    const defaultValues = await getDefaultValues(data[0] as unknown as ParticipantPaymentHistoryDataBaseType);
+   
+    return defaultValues;
+  }
+  return {};
+}
+
+// Assigning all api data to default values variable
 export const getDefaultValues = async (data: ParticipantPaymentHistoryDataBaseType) => {
   
  const defaultValues: EditParticipantFormFieldTypes = {}
@@ -30,9 +47,11 @@ export const getDefaultValues = async (data: ParticipantPaymentHistoryDataBaseTy
     // accommodation_snore
     if (data.participant_id)
       defaultValues.accommodation_snore = data.participant_id.accommodation_snore
-// payment_method_id
-if(data.payment_method_id)
-  defaultValues.payment_method_id=data?.payment_method_id
+
+    // payment_method_id
+    if(data.payment_method_id)
+      defaultValues.payment_method_id=data?.payment_method_id
+
     // transaction_status
     if (data?.transaction_status) defaultValues.transaction_status = data?.transaction_status
 
@@ -41,6 +60,7 @@ if(data.payment_method_id)
 
     // participant_code
     if (data.participant_id) defaultValues.participant_code = data.participant_id.participant_code
+
     // discount_code
     if (data.participant_id?.discount_code) defaultValues.discount_code = data.participant_id.discount_code
 
@@ -48,9 +68,6 @@ if(data.payment_method_id)
     if (data.participant_id?.participant_attendence_status_id)
       defaultValues.participant_attendence_status_id = data.participant_id.participant_attendence_status_id
   }
-
-  
-
   // transaction_status_id
   if (data.transaction_status_id) defaultValues.transaction_status_id = data.transaction_status_id?.id
 
@@ -60,7 +77,6 @@ if(data.payment_method_id)
   // payment_date
   if (data.payment_date) defaultValues.payment_date = data.payment_date
 
-  
   // send_payment_confirmation
   if (data.send_payment_confirmation) defaultValues.send_payment_confirmation = data.send_payment_confirmation
 
