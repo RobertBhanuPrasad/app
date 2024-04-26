@@ -7,6 +7,7 @@ import { Text } from "src/ui/TextTags";
 
 export default function ParticipantInformation() {
     const { query } = useRouter();
+
     // Use useController to control the participantMemo field
     const {
         field: { value: memo, onChange: participantMemoChange },
@@ -14,6 +15,8 @@ export default function ParticipantInformation() {
     } = useController({
         name: "memo",
     });
+
+    // Using participant Id from router and getting participant contact details
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)
         : undefined;
@@ -24,6 +27,7 @@ export default function ParticipantInformation() {
             select: "contact_id(full_name)",
         },
     });
+
     return (
         <div id="participants">
             <Text className="font-semibold text-[18px] pt-[25px] ">
@@ -40,7 +44,6 @@ export default function ParticipantInformation() {
                             : "-"}
                     </Text>
                 </div>
-                {/* TODO: need to make this required field */}
                 <div className="flex">
                     <div className="w-[303px]">
                         <div className="flex gap-2">

@@ -18,6 +18,8 @@ import {
 export default function AccomodationDetails() {
     const { getValues } = useFormContext();
     const FormData = getValues();
+
+    // Use useController to control the accommodation_snore,roommate_snore
     const {
         field: { value: accommodation_snore, onChange: snoreChange },
         fieldState: { error: accommodationSnoreError },
@@ -32,11 +34,13 @@ export default function AccomodationDetails() {
         name: "roommate_snore",
     });
 
+
     const { query } = useRouter();
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)
         : undefined;
-    // TODO: need to get the api data for accomodation types for particular program_id
+    
+    // Getting options without pagination for accommodation dropdown
 
     const { data: accommodationOptions } = useList<any>({
         resource: "program_accommodations",
@@ -54,6 +58,8 @@ export default function AccomodationDetails() {
             mode: "off",
         },
     });
+
+    // participant_payment_history contains numerous records of same participant, getting the latest history record
     const { data } = useList({
         resource: "participant_payment_history",
         meta: {
@@ -79,6 +85,8 @@ export default function AccomodationDetails() {
         ],
     });
     const accommodationData = data?.data[0];
+
+
     return (
         <div id="Accomodation">
             <Text className="font-semibold text-[18px] py-[25px]">
@@ -225,20 +233,20 @@ export default function AccomodationDetails() {
                     >
                         <div className="flex flex-row gap-6">
                             <RadioButtonCard
-                                value="true" // Use boolean value directly
+                                value="true" 
                                 selectedRadioValue={JSON.stringify(
                                     accommodation_snore
-                                )} // Use the actual value, no need to stringify
+                                )} 
                                 label="Yes"
-                                className="w-[112px] h-[40px] rounded-[12px]" // Removed unnecessary ! from className
+                                className="w-[112px] h-[40px] rounded-[12px]" 
                             />
                             <RadioButtonCard
-                                value="false" // Use boolean value directly
+                                value="false"
                                 selectedRadioValue={JSON.stringify(
                                     accommodation_snore
-                                )} // Use the actual value, no need to stringify
+                                )} 
                                 label="No"
-                                className="w-[112px] h-[40px] rounded-[12px]" // Removed unnecessary ! from className
+                                className="w-[112px] h-[40px] rounded-[12px]" 
                             />
                         </div>
                     </RadioGroup>
