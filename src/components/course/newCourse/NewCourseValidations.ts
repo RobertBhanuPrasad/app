@@ -17,7 +17,9 @@ export const validationSchema = () => {
     }),
     is_registration_via_3rd_party: z.boolean().optional(),
     registration_via_3rd_party_url: z
-      .string({ required_error: "URL for 3rd party website is required field" })
+      .string({
+        required_error: "URL for 3rd party website is required field",
+      })
       .refine(
         (value) => {
           const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
@@ -32,6 +34,7 @@ export const validationSchema = () => {
     program_type_id: z.number({
       required_error: "Course type is a required field",
     }),
+    program_type: z.object({}).optional(),
     program_alias_name_id: z.number({
       required_error: "Course Name is a required field",
     }),
@@ -59,11 +62,14 @@ export const validationSchema = () => {
       .nonempty({ message: "Country is a required field" }),
     max_capacity: z
       .string({
-        required_error: "Maximum capacity is required fields",
+        required_error: "Maximum capacity is a required field",
       })
-      .regex(/^\d+$/, { message: "Maximum Capacity can accept only integers" })
-      .refine((val) => parseInt(val) < 500, {
-        message: "Maximum capacity exceeds the allowed limit",
+      //here if the value is empty string then also we need to show this error
+      .refine((val) => val != "", {
+        message: "Maximum capacity is a required field",
+      })
+      .refine((val) => /^\d+$/.test(val), {
+        message: "Maximum Capacity can accept only integers",
       }),
 
     // Step 3 Schema
@@ -87,7 +93,9 @@ export const validationSchema = () => {
     center_id: z.number({
       required_error: "Center is is a required fields",
     }),
-    time_zone_id: z.number({ required_error: "Time zone is a required field" }),
+    time_zone_id: z.number({
+      required_error: "Time zone is a required field",
+    }),
     schedules: scheduleValidationSchema,
     name: z.string({ required_error: "Venu Name is a required field." }),
     address: z.string({ required_error: "Address is a required field." }),
@@ -113,7 +121,9 @@ export const validationSchema = () => {
       .string({ required_error: "At least on email is required." })
       .regex(
         /^(?:[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
-        { message: "One of the Bcc email you entered is not in correct format" }
+        {
+          message: "One of the Bcc email you entered is not in correct format",
+        }
       ),
   });
 };

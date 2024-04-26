@@ -4,7 +4,7 @@ import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
+import { useController, useFormContext, useFormState } from "react-hook-form";
 import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
@@ -23,6 +23,7 @@ import {
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
+import { Text } from "src/ui/TextTags";
 import {
   HoverCard,
   HoverCardContent,
@@ -166,7 +167,7 @@ export default function NewCourseStep2() {
 }
 
 export const CourseTypeDropDown = () => {
-  const { watch } = useFormContext();
+  const { watch, setValue, clearErrors } = useFormContext();
 
   const [pageSize, setPageSize] = useState(10);
 
@@ -256,9 +257,15 @@ export const CourseTypeDropDown = () => {
     }) as { label: string; value: number }[];
 
   const {
-    field: { onChange: setCourseTypeSettings },
+    field: { value: courseSettings, onChange: setCourseTypeSettings },
   } = useController({
     name: NewCourseStep2FormNames?.program_type,
+  });
+
+  const {
+    field: { value: maxCapacityValue, onChange: maxCapacityOnChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.max_capacity,
   });
 
   /**
@@ -271,6 +278,17 @@ export const CourseTypeDropDown = () => {
     const courseSettings = queryResult?.data?.data.filter(
       (data) => data.id == val
     );
+
+    const maxAttendes = courseSettings?.[0].maximum_capacity
+      ? courseSettings?.[0].maximum_capacity.toString()
+      : undefined;
+
+    // when we change the course type and we get new settings we need to set the max capacity from the course type settings otherwise it should be empty
+    if (maxAttendes) {
+      maxCapacityOnChange(maxAttendes);
+    } else {
+      setValue(NewCourseStep2FormNames?.max_capacity, "");
+    }
 
     setCourseTypeSettings(courseSettings?.[0]);
   };
@@ -1049,25 +1067,35 @@ const AllowedCountriesDropDown = () => {
 };
 
 const MaximumCapacity = () => {
-  const { watch } = useFormContext();
-
-  const formData = watch();
-
-  const maxAttendees = formData?.courseTypeSettings?.maximum_capacity;
-
   const {
-    field: { value = maxAttendees, onChange },
+    field: { value, onChange },
     fieldState: { error },
-  } = useController({ name: NewCourseStep2FormNames?.max_capacity });
+  } = useController({
+    name: NewCourseStep2FormNames?.max_capacity,
+  });
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">Max Capacity</div>
+      <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
+        <Text className="text-xs ">Max Capacity</Text>
+        <Text className="text-[#7677F4]">*</Text>
+        {/* popover to show the note to maximum capacity */}
+        <HoverCard>
+          <HoverCardTrigger>
+            <Important />
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
+              If this field is blank, then the course capacity is unlimited.
+            </Text>
+          </HoverCardContent>
+        </HoverCard>
+      </div>
       <Input
         placeholder="Enter no. of attendees"
         value={value}
         onChange={(val) => {
-          onChange(val?.target?.value);
+          onChange(val);
         }}
         className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
         error={error ? true : false}

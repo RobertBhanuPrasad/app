@@ -2,7 +2,7 @@ import { handleCourseDefaultValues } from "@components/course/newCourse/EditCour
 import { DisplayOptions } from "@components/courseBusinessLogic";
 import Cross from "@public/assets/Cross";
 import Exclamation from "@public/assets/Exclamation";
-import { useGetIdentity, useOne, useUpdate } from "@refinedev/core";
+import { useGetIdentity, useList, useOne, useUpdate } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { MoreVertical } from "lucide-react";
@@ -45,7 +45,7 @@ export const columns: ExtendedColumnDef<any>[] = [
       return (
         <div
           onClick={() => {
-            router.push(`ViewCourse/${row?.original?.id}`);
+            router.push(`/courses/${row?.original?.id}`);
           }}
           className="w-[100px] text-[#7677F4] font-semibold"
         >
@@ -172,12 +172,15 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Organizers</div>;
     },
     cell: ({ row }) => {
+      //Mapping all the programOrganizers in the comma separated name
       const organizers = row?.original?.program_organizers?.map(
         (Organizer: any) => Organizer?.users?.contact_id?.full_name
       );
+
       return (
         <div className="flex flex-wrap min-w-[150px]">
-          <div>{organizers && organizers.join(",  ")}</div>
+          {/* If organisers present them map them by comma separated other wise it will display - */}
+          <div>{organizers ? organizers.join(",  ") : "-"}</div>
         </div>
       );
     },
@@ -308,15 +311,9 @@ export const columns: ExtendedColumnDef<any>[] = [
 
       const { data: loginUserData }: any = useGetIdentity();
 
-      //TODO: Need to use row only instead of this below api call
-      const { data, isLoading } = useOne({
-        resource: "program",
-        id: row.original.id,
-      });
-
       const dropDownMenuData = DisplayOptions(
-        data?.data?.status_id,
-        data?.data?.program_accounting_status_id,
+        row?.original?.status_id?.id,
+        row?.original?.program_accounting_status_id?.id,
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
 
@@ -340,7 +337,7 @@ export const columns: ExtendedColumnDef<any>[] = [
 
         setNewCourseData(defaultValues);
 
-        setViewPreviewPage(true);
+        router.push(`/courses/${row.original.id}/edit`);
       };
 
       /**
@@ -361,10 +358,10 @@ export const columns: ExtendedColumnDef<any>[] = [
         setNewCourseData(defaultValues);
         // when we do copy course we have to set the current step to first step
         setCurrentStep(1);
-        router.push("/Courses/NewCourse");
+        router.push({ pathname: "/courses/add", query: { action: "Copy" } });
       };
 
-      dropDownMenuData?.unshift({ label: "View Course", value: 10 });
+      dropDownMenuData?.unshift({ label: "View Course", value: 9 });
 
       const handleSelected = (value: number) => {
         console.log("clicked on", value);
@@ -372,16 +369,12 @@ export const columns: ExtendedColumnDef<any>[] = [
         switch (value) {
           case 1: {
             //Need to navigate to participants list of select course.
-            router.push(`ViewCourse/${row.original.id}/participant/list`);
-            console.log(
-              "Participant route is",
-              `ViewCourse/${row.original.id}/participant/list`
-            );
+            router.push(`/courses/${row.original.id}/participants/list`);
             break;
           }
           case 2: {
             // TODO - Navigate to Register Participant page
-            router.push("/");
+            router.push("/courses/add");
             break;
           }
           case 3: {
@@ -398,7 +391,9 @@ export const columns: ExtendedColumnDef<any>[] = [
           }
           case 6: {
             // TODO - Navigate to submit course accounting page
-            router.push("/");
+            router.push(
+              `/courses/${row.original.id}?tab=course_accounting_form`
+            );
             break;
           }
           case 7: {
@@ -412,12 +407,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 9: {
-            // TODO - Navigate to edit course accounting page
-            router.push("/");
-            break;
-          }
-          case 10: {
-            router.push(`ViewCourse/${row.original.id}`);
+            router.push(`/courses/${row.original.id}`);
             break;
           }
         }
@@ -435,24 +425,18 @@ export const columns: ExtendedColumnDef<any>[] = [
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {!isLoading ? (
-                    <p>
-                      {dropDownMenuData &&
-                        dropDownMenuData.map((data: any) => (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              handleSelected(data.value);
-                            }}
-                          >
-                            {data.label}
-                          </DropdownMenuItem>
-                        ))}
-                    </p>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <div>Loading...</div>
-                    </div>
-                  )}
+                  <p>
+                    {dropDownMenuData &&
+                      dropDownMenuData.map((data: any) => (
+                        <DropdownMenuItem
+                          onClick={() => {
+                            handleSelected(data.value);
+                          }}
+                        >
+                          {data.label}
+                        </DropdownMenuItem>
+                      ))}
+                  </p>
                 </DropdownMenuContent>
               </DropdownMenu>
               {isDialogOpen && (
