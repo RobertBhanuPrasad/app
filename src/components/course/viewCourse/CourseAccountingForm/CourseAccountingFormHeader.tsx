@@ -61,7 +61,7 @@ function HeaderSection() {
         <div
           className="  text-[#7677F4] pt-3 cursor-pointer"
           onClick={() => {
-            replace(`/Courses/ViewCourse/${programId}`)
+            replace(`/courses/${programId}?tab=course_accounting_form`)
           }}
         >
           <Back />
