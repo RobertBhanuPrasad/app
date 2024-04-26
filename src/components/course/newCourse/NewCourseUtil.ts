@@ -981,10 +981,6 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 
     console.log(data, "deleted data venue");
 
-    // if it is existing venue then we will insert the id and do upsert automatically it will work update or insert
-    if (venueId) {
-      venueBody.id = venueId;
-    }
   }
 
   if (venueData.name) {
