@@ -1,0 +1,148 @@
+{
+  "/courses/add":[
+    {
+      "label": "Home",
+      "className": "",
+      "href": ""
+    },
+    {
+      "label": "Courses",
+      "className": "",
+      "href": "/courses "
+    },
+    {
+      "label": "New Course",
+      "className": "",
+      "href": ""
+    }
+  ],
+  "/courses/list":[
+    {
+      "label": "Home",
+      "className": "",
+      "href": ""
+    },
+    {
+      "label": "Courses",
+      "className": "/courses",
+      "href": ""
+    },
+    {
+      "label": "Find Courses",
+      "className": "",
+      "href": ""
+    }
+  ],
+  "/courses/[id]":[
+    {
+      "label": "Home",
+      "className": "",
+      "href": ""
+    },
+    {
+      "label": "Courses",
+      "className": "/courses",
+      "href": ""
+    },
+    {
+      "label": "Course Details",
+      "className": "",
+      "href": ""
+    }
+  ],
+  "/courses/[id]/edit":[
+    {
+      "label": "Home",
+      "className": "",
+      "href": ""
+    },
+    {
+      "label": "Courses",
+      "className": "/courses",
+      "href": ""
+    },
+    {
+      "label": "Edit Course",
+      "className": "",
+      "href": ""
+    }
+  ],
+ "/courses/[id]/participants/list":[
+  {
+    "label": "Home",
+    "className": "",
+    "href": ""
+  },
+  {
+    "label": "Courses",
+    "className": "/courses",
+    "href": ""
+  },
+  {
+    "label": "Course Details",
+    "className": "/courses/[id]",
+    "href": ""
+  },
+  {
+    "label": "View Course Participants",
+    "className": "",
+    "href": ""
+  }
+
+ ],
+ "/courses/[id]/participants/[participantId]":[
+  {
+    "label": "Home",
+    "className": "",
+    "href": ""
+  },
+  {
+    "label": "Courses",
+    "className": "/courses",
+    "href": ""
+  },
+  {
+    "label": "Course Details",
+    "className": "/courses/[id]",
+    "href": ""
+  },
+  {
+    "label": "View Course Participants",
+    "className": "/courses/[id]/participants/list",
+    "href": ""
+  },
+  {
+    "label": "Participant Registration Details",
+    "className": "",
+    "href": ""
+  }
+ ],
+ "/courses/[id]/participants/[participantId]/edit": [
+  {
+    "label": "Home",
+    "className": "",
+    "href": ""
+  },
+  {
+    "label": "Courses",
+    "className": "/courses",
+    "href": ""
+  },
+  {
+    "label": "Course Details",
+    "className": "/courses/[id]",
+    "href": ""
+  },
+  {
+    "label": "View Course Participants",
+    "className": "/courses/[id]/participants/list",
+    "href": ""
+  },
+  {
+    "label": "Edit Participant Registration",
+    "className": "",
+    "href": ""
+  }
+
+ ]
+}
