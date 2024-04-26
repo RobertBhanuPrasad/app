@@ -645,7 +645,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
     if (courseId) {
       const defaultValues = await handleCourseDefaultValues(courseId, timeFormat12HoursId)
       setNewCourseData(defaultValues)
-      setViewPreviewPage(true)
+      // setViewPreviewPage(true)
       router.push(`/courses/${courseId}/edit`)
     }
   }
