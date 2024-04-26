@@ -218,7 +218,7 @@ export function MultiSelect({
                 return (
                   <div key={item}>
                     <div className="flex flex-row justify-between items-center pr-3">
-                      <div className="cursor-pointer p-2 text-[12px] hover:bg-gray-200">
+                      <div className="cursor-pointer p-2 text-[12px]">
                         {findObjectById(item)?.label}
                       </div>
                       {!noIcon && (
