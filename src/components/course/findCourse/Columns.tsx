@@ -2,7 +2,7 @@ import { handleCourseDefaultValues } from "@components/course/newCourse/EditCour
 import { DisplayOptions } from "@components/courseBusinessLogic";
 import Cross from "@public/assets/Cross";
 import Exclamation from "@public/assets/Exclamation";
-import { useGetIdentity, useOne, useUpdate } from "@refinedev/core";
+import { useGetIdentity, useList, useOne, useUpdate } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { MoreVertical } from "lucide-react";
@@ -172,12 +172,32 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Organizers</div>;
     },
     cell: ({ row }) => {
-      const organizers = row?.original?.program_organizers?.map(
+      /**
+       * Getting the program organizers data based on the program_id
+       */
+      const { data: programOrganizers } = useList({
+        resource: "program_organizers",
+        meta: {
+          select: "users(contact_id(full_name))",
+        },
+        filters: [
+          {
+            field: "program_id",
+            operator: "eq",
+            value: row?.original?.id,
+          },
+        ],
+      });
+
+      //Mapping all the programOrganizers in the comma separated name
+      const organizers = programOrganizers?.data?.map(
         (Organizer: any) => Organizer?.users?.contact_id?.full_name
       );
+
       return (
         <div className="flex flex-wrap min-w-[150px]">
-          <div>{organizers && organizers.join(",  ")}</div>
+          {/* If organisers present them map them by comma separated other wise it will display - */}
+          <div>{organizers ? organizers.join(",  ") : "-"}</div>
         </div>
       );
     },
