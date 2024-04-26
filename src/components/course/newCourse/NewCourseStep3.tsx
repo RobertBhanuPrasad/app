@@ -1071,7 +1071,7 @@ const ExistingVenueList = () => {
             onBottomReached()
           }}
         >
-          <div className=" mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 " id={'options'}>
+          <div className="h-[330px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 gap-x-[30px] gap-y-[24px]" id={'options'}>
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
             {filteredVenueData?.map((item: any, index: number) => {
               console.log(index, 'index')

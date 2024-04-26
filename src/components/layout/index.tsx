@@ -20,10 +20,11 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const formattedPthName = addGapsToPathname(pathname);
 
   return (
-    <div className="layout relative">
-      <div className="fixed top-0 left-0 w-full z-[100] bg-white">
+    <div className="layout sticky">
+      <Image src={background} alt="bg" className="w-full -mt-1 !h-[227px]" />
+      <div className="absolute top-0 left-0 w-full z-10 inset-0">
         <Navbar />
-        <div className="h-[32px] bg-[#F9F9F9] drop-shadow-md flex items-center gap-2 shrink-0  font-normal text-[12px] text-[#7677F4] px-8">
+        <div className="h-[32px] bg-[#F9F9F9] drop-shadow-md flex items-center gap-2 shrink-0  font-normal text-[12px] text-[#7677F4] ">
           <HomeIcon />
           <div>
             Home
@@ -31,9 +32,10 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
           </div>
         </div>
         <Breadcrumb />
+        <div className="mt-9">
+          <div className="">{children}</div>
+        </div>
       </div>
-      <Image src={background} alt="bg" className="w-full -mt-1 !h-[245px]"/>
-      <div className="absolute w-full top-28">{children}</div>
     </div>
   );
 };
