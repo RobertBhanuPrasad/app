@@ -63,10 +63,7 @@ export default function CourseTable() {
 
   //Form variable to store the is_early_bird_enabled
   const {
-    field: {
-      value: showEarlyBirdColumns,
-      onChange: setShowEarlyBirdColumns,
-    },
+    field: { value: showEarlyBirdColumns, onChange: setShowEarlyBirdColumns },
   } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
 
   const fetchFeeData = async () => {
@@ -86,13 +83,16 @@ export default function CourseTable() {
     );
     if (error)
       console.log("error while fetching course fee level settings", error);
-    
+
     if (earlyBirdCutOff == undefined) {
       setEarlyBirdCutOff(data?.[0]?.early_bird_cut_off_period);
     }
 
-    if(showEarlyBirdColumns==undefined && data?.[0]?.is_early_bird_fee_enabled){
-      setShowEarlyBirdColumns(data?.[0]?.is_early_bird_fee_enabled)
+    if (
+      showEarlyBirdColumns == undefined &&
+      data?.[0]?.is_early_bird_fee_enabled
+    ) {
+      setShowEarlyBirdColumns(data?.[0]?.is_early_bird_fee_enabled);
     }
     setCourseFeeSettings(data);
   };
@@ -170,20 +170,13 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       : false;
 
   const {
-    field: {
-      value: showEarlyBirdColumns,
-      onChange: setShowEarlyBirdColumns,
-    },
+    field: { value: showEarlyBirdColumns, onChange: setShowEarlyBirdColumns },
   } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
 
   // Data for the table
   const courseFeeData: FeeLevelType[] =
     courseFeeSettings?.[0]?.program_fee_level_settings?.map((val: any) => {
-      return {
-        earlyBirdSubTotal:
-          val?.early_bird_total - val?.early_bird_total * taxRate,
-        earlyBirdTax: val?.early_bird_total * taxRate,
-        earlyBirdTotal: JSON.stringify(val?.early_bird_total),
+      let modifiedFeeLevels: any = {
         feeLevelId: val?.fee_level_id?.id,
         feeLevelLabel: val?.is_custom_fee
           ? val?.custom_fee_label
@@ -193,6 +186,18 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         tax: val?.total * taxRate,
         total: JSON.stringify(val?.total),
       };
+
+      //Need to insert early bird fee if early bird fee is enabled in settings
+      if (courseFeeSettings?.[0]?.is_early_bird_fee_enabled) {
+        modifiedFeeLevels = {
+          ...modifiedFeeLevels,
+          earlyBirdSubTotal:
+            val?.early_bird_total - val?.early_bird_total * taxRate,
+          earlyBirdTax: val?.early_bird_total * taxRate,
+          earlyBirdTotal: JSON.stringify(val?.early_bird_total || ""),
+        };
+      }
+      return modifiedFeeLevels;
     });
 
   const { fields: feeLevels, append } = useFieldArray({
@@ -207,7 +212,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           // By default all checkbox will be false
           is_enable: fee?.is_enable,
           total: fee?.total,
-          early_bird_total: fee?.earlyBirdTotal,
+          early_bird_total: fee?.earlyBirdTotal || 0,
           fee_level_id: fee?.feeLevelId,
         };
       });
