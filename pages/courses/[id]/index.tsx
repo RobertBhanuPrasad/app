@@ -74,8 +74,10 @@ import { Textarea } from 'src/ui/textarea'
 import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import CourseAccountingFormTab from '../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab'
+import { useSearchParams } from 'next/navigation'
 
-function index() {
+function index() { 
+
   const { viewPreviewPage } = newCourseStore()
 
   if (viewPreviewPage) {
@@ -87,6 +89,10 @@ function index() {
 
 function ViewDetails() {
   const router = useRouter()
+
+  const searchParam = useSearchParams()
+
+  const params = new URLSearchParams(searchParam)
 
   const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
@@ -131,25 +137,28 @@ function ViewDetails() {
 
   const { t } = useTranslation('common')
 
-  const [selectedValue, setSelectedValue] = useState(JSON.stringify(COURSE_DETAILS_TAB))
 
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
-      label: t('pages.Tabs.CourseDetailsTab'),
-      disabled: false
+      label: t("pages.Tabs.CourseDetailsTab"),
+      disabled: false,
+      tab_query_name: "course_details",
     },
     {
       value: PARTICIPANTS_TAB,
-      label: t('pages.Tabs.participantTab'),
-      disabled: false
+      label: t("pages.Tabs.participantTab"),
+      disabled: false,
+      tab_query_name: "participants",
     },
     {
       value: REVENUE_SUMMARY_TAB,
-      label: t('pages.Tabs.revenueSummaryTab'),
-      disabled: false
-    }
-  ]
+      label: t("pages.Tabs.revenueSummaryTab"),
+      disabled: false,
+      tab_query_name: "revenue_summary",
+    },
+  ];
+  
 
   /**
    * variable to check whether we have to show course accounting form tab or
@@ -166,13 +175,15 @@ function ViewDetails() {
     tabTriggers.push({
       value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
       label: 'View Course Accounting Form',
-      disabled: true
+      disabled: true,
+      tab_query_name: "view_course_accounting_form",
     })
   } else {
     tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
       label: t('pages.Tabs.courseAccountingFormTab'),
-      disabled: true
+      disabled: true,
+      tab_query_name: "course_accounting_form",
     })
   }
 
@@ -181,6 +192,34 @@ function ViewDetails() {
   const { data: countryConfigData } = useList({
     resource: 'country_config'
   })
+
+  /**
+   * When we change the tab, we need to retrieve the corresponding tab data to update the query name.
+   */
+  const getTabDataByTabTrigger = (val: string) => {
+    const tabData = tabTriggers.find((tab: any) => {
+      return JSON.stringify(tab.value) === val
+    })
+    return tabData
+  }
+
+  /**
+   * This function is primarily used for removing a state variable.
+   * It displays the tab corresponding to the query name.
+   * If the query name is not present, it displays the first tab.
+   */
+  const getTabQueryName = () => {
+    if (searchParam.get("tab") !== null) {
+      const tabData = tabTriggers.find((tab: any) => {
+        return tab.tab_query_name === searchParam.get("tab")
+      })
+
+      if (tabData) {
+        return JSON.stringify(tabData.value)
+      }
+    }
+    return "1"
+  }
 
   return (
     <div className="flex flex-col">
@@ -284,10 +323,13 @@ function ViewDetails() {
       <div className="w-full mt-6">
         <Tabs
           onValueChange={(val: string) => {
-            setSelectedValue(val)
+            // to store the tab Data
+            const tabData = getTabDataByTabTrigger(val)
+            //change the queryname according to tabData
+            params.set("tab", tabData?.tab_query_name)
+            router.replace(`/courses/${Id}?${params.toString()}`)
           }}
-          value={selectedValue}
-          className=""
+          value={getTabQueryName()}
         >
           <TabsList className="flex flex-row gap-10  bg-white !rounded-none  w-full border-b h-12 px-8">
             {tabTriggers.map((trigger: any, index: number) => (
@@ -297,7 +339,16 @@ function ViewDetails() {
                 className={` data-[state=active]:text-[#7677F4] data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end  text-sm font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none  `}
                 disabled={handleTabsBasedOnStatus(courseData?.data?.status_id?.id, trigger.value)}
               >
-                {trigger.label}
+                 <div className="flex flex-col gap-1">
+                  {trigger.label}
+                  <div
+                    className={`${
+                      getTabQueryName() === JSON.stringify(trigger.value)
+                        ? "bg-[#7677F4] rounded w-full h-[2px]"
+                        : "w-full h-[2px]"
+                    }`}
+                  />
+                </div>
               </TabsTrigger>
             ))}
             <div className="ml-auto flex gap-4">
@@ -598,6 +649,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
       const defaultValues = await handleCourseDefaultValues(courseId, timeFormat12HoursId)
       setNewCourseData(defaultValues)
       setViewPreviewPage(true)
+      router.push(`/courses/${courseId}/edit`)
     }
   }
 
@@ -615,7 +667,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       setNewCourseData(defaultValues)
-      router.push('/Courses/NewCourse')
+      router.push({ pathname: "/courses/add", query: { action: "Copy" } })
     }
   }
 
@@ -642,12 +694,12 @@ export const ActionsDropDown = ({ courseData }: any) => {
           switch (val) {
             case 1: {
               // TODO - navigate to view participants page
-              router.push('/')
+              router.push(`/courses/${courseId}/participants/list`)
               break
             }
             case 2: {
               // TODO - navigate to register participants page
-              router.push('/')
+              router.push("/courses/add")
               break
             }
             case 3: {
@@ -664,7 +716,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
             }
             case 6: {
               // TODO - navigate to course accounting form
-              router.push('/')
+              router.push(`/courses/${courseId}?tab=course_accounting_form`)
               break
             }
             default: {

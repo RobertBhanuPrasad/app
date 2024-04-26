@@ -115,7 +115,7 @@ const NewCourseThankyouPage = () => {
               />
               {data?.data?.status_id?.value}
             </Button>
-            <Link href="/Courses/FindCourse">
+            <Link href="/courses/list">
               <Button
                 variant="outline"
                 className="text-indigo-600 border-indigo-600 "

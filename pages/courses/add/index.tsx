@@ -59,6 +59,7 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
+import { useRouter } from "next/router";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -218,6 +219,8 @@ function NewCourse() {
 export default index;
 
 export const NewCourseTabs = () => {
+
+  const router = useRouter()
   const { watch, getValues } = useFormContext();
   const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
     newCourseStore();
@@ -572,6 +575,8 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
+       <p className="font-semibold text-2xl">{router.query.action ? router.query.action  : 'New'} Course</p>
+      <div className="mt-4">
       <Tabs value={JSON.stringify(currentStep)}>
         <div className="flex flex-row">
           <TabsList className="h-[513px] bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
@@ -686,7 +691,9 @@ export const NewCourseTabs = () => {
           </div>
         </div>
       </Tabs>
-    </div>
+      </div>
+      </div>
+    
   );
 };
 
