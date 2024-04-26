@@ -1033,13 +1033,14 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
   // we have to delete them from database
 
   const deleteVenueIDs = body.deletedVenueID;
+ 
   if (deleteVenueIDs && deleteVenueIDs.length > 0) {
     const { data, error } = await supabaseClient
       .from("venue")
-      .delete()
+      .update({is_deleted: true })
       .in("id", deleteVenueIDs)
       .select();
-
+    console.log('deleted Venues are',data)
     if (error) {
       console.log("error while deleting venue", error);
       return false;

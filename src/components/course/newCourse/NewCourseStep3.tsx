@@ -1163,8 +1163,8 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
         <div className="flex justify-between">
           <div className="font-semibold">{item.name}</div>
           <div className="flex flex-row gap-3">
-            {item?.created_by_user_id == loginUserData?.userData?.id ||
-              (isUserNationAdminOrSuperAdmin && (
+            {(item?.created_by_user_id == loginUserData?.userData?.id ||
+              isUserNationAdminOrSuperAdmin) && (
                 <Dialog
                   open={openExistingVenue}
                   onOpenChange={setOpenExistingVenue}
@@ -1186,7 +1186,7 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
                     />
                   </DialogContent>
                 </Dialog>
-              ))}
+              )}
             {isUserNationAdminOrSuperAdmin && (
               // isUserNationAdminOrSuperAdmin
               <Dialog>
