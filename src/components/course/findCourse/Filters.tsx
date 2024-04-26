@@ -321,7 +321,7 @@ export const CourseName = () => {
     },
     onSearch: value => [
       {
-        field: 'name',
+        field: 'alias_name',
         operator: 'contains',
         value
       }
@@ -710,13 +710,13 @@ export const CourseFees = () => {
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="FALSE"
+            value="TRUE"
             selectedRadioValue={temporaryValue}
             label="Default"
             className="p-2 h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
-            value="TRUE"
+            value="FALSE"
             selectedRadioValue={temporaryValue}
             label="Custom"
             className="p-2 h-[40px] rounded-[12px]"
@@ -736,22 +736,19 @@ export const ProgramOrganiser = () => {
 
   const [pageSize, setPageSize] = useState(20)
 
-  const { queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useSelect({
     resource: 'users',
     meta: {
-      select: '*,contact_id!inner(first_name,last_name),user_roles!inner(role_id)'
+      select: '*,contact_id!inner(full_name),user_roles!inner(role_id)'
     },
+    optionLabel: "contact_id.full_name",
+    optionValue: "id",
     onSearch: value => [
       {
-        field: 'contact_id.first_name',
+        field: 'contact_id.full_name',
         operator: 'contains',
         value
       },
-      {
-        field: 'contact_id.last_name',
-        operator: 'contains',
-        value
-      }
     ],
     pagination: {
       pageSize: pageSize,
@@ -759,16 +756,9 @@ export const ProgramOrganiser = () => {
     }
   })
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 20)
+    if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
+      setPageSize((previousLimit: number) => previousLimit + 20)
   }
-
-  const options: any =
-    queryResult?.data?.data?.map(item => {
-      return {
-        label: item?.contact_id?.first_name + ' ' + item?.contact_id?.last_name,
-        value: item.id
-      }
-    }) ?? []
 
   return (
     <MultiSelect
