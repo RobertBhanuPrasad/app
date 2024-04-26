@@ -43,6 +43,7 @@ import ShareIcon from '@public/assets/ShareIcon'
 import Tick from '@public/assets/Tick.png'
 import TwitterIcon from '@public/assets/TwitterIcon'
 import WhatsappIcon from '@public/assets/WhatsappIcon'
+import { useSearchParams } from 'next/navigation'
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
@@ -74,10 +75,8 @@ import { Textarea } from 'src/ui/textarea'
 import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import CourseAccountingFormTab from '../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab'
-import { useSearchParams } from 'next/navigation'
 
-function index() { 
-
+function index() {
   const { viewPreviewPage } = newCourseStore()
 
   if (viewPreviewPage) {
@@ -137,28 +136,26 @@ function ViewDetails() {
 
   const { t } = useTranslation('common')
 
-
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
-      label: t("pages.Tabs.CourseDetailsTab"),
+      label: t('pages.Tabs.CourseDetailsTab'),
       disabled: false,
-      tab_query_name: "course_details",
+      tab_query_name: 'course_details'
     },
     {
       value: PARTICIPANTS_TAB,
-      label: t("pages.Tabs.participantTab"),
+      label: t('pages.Tabs.participantTab'),
       disabled: false,
-      tab_query_name: "participants",
+      tab_query_name: 'participants'
     },
     {
       value: REVENUE_SUMMARY_TAB,
-      label: t("pages.Tabs.revenueSummaryTab"),
+      label: t('pages.Tabs.revenueSummaryTab'),
       disabled: false,
-      tab_query_name: "revenue_summary",
-    },
-  ];
-  
+      tab_query_name: 'revenue_summary'
+    }
+  ]
 
   /**
    * variable to check whether we have to show course accounting form tab or
@@ -176,14 +173,14 @@ function ViewDetails() {
       value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
       label: 'View Course Accounting Form',
       disabled: true,
-      tab_query_name: "view_course_accounting_form",
+      tab_query_name: 'view_course_accounting_form'
     })
   } else {
     tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
       label: t('pages.Tabs.courseAccountingFormTab'),
       disabled: true,
-      tab_query_name: "course_accounting_form",
+      tab_query_name: 'course_accounting_form'
     })
   }
 
@@ -209,16 +206,16 @@ function ViewDetails() {
    * If the query name is not present, it displays the first tab.
    */
   const getTabQueryName = () => {
-    if (searchParam.get("tab") !== null) {
+    if (searchParam.get('tab') !== null) {
       const tabData = tabTriggers.find((tab: any) => {
-        return tab.tab_query_name === searchParam.get("tab")
+        return tab.tab_query_name === searchParam.get('tab')
       })
 
       if (tabData) {
         return JSON.stringify(tabData.value)
       }
     }
-    return "1"
+    return '1'
   }
 
   return (
@@ -326,7 +323,7 @@ function ViewDetails() {
             // to store the tab Data
             const tabData = getTabDataByTabTrigger(val)
             //change the queryname according to tabData
-            params.set("tab", tabData?.tab_query_name)
+            params.set('tab', tabData?.tab_query_name)
             router.replace(`/courses/${Id}?${params.toString()}`)
           }}
           value={getTabQueryName()}
@@ -339,15 +336,15 @@ function ViewDetails() {
                 className={` data-[state=active]:text-[#7677F4] data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end  text-sm font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none  `}
                 disabled={handleTabsBasedOnStatus(courseData?.data?.status_id?.id, trigger.value)}
               >
-                 <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1">
                   {trigger.label}
-                  <div
+                  {/* <div
                     className={`${
                       getTabQueryName() === JSON.stringify(trigger.value)
-                        ? "bg-[#7677F4] rounded w-full h-[2px]"
-                        : "w-full h-[2px]"
+                        ? 'bg-[#7677F4] rounded w-full h-[2px]'
+                        : 'w-full h-[2px]'
                     }`}
-                  />
+                  ></div> */}
                 </div>
               </TabsTrigger>
             ))}
@@ -667,7 +664,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       setNewCourseData(defaultValues)
-      router.push({ pathname: "/courses/add", query: { action: "Copy" } })
+      router.push({ pathname: '/courses/add', query: { action: 'Copy' } })
     }
   }
 
@@ -699,7 +696,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
             }
             case 2: {
               // TODO - navigate to register participants page
-              router.push("/courses/add")
+              router.push('/courses/add')
               break
             }
             case 3: {
