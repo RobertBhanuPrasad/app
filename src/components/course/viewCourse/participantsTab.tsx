@@ -39,7 +39,7 @@ function ParticipantsTab() {
   useEffect(() => {
     fetchData();
   }, []);
-  const {t} = useTranslation(["common", "course.view_course"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <div className="my-[31px] mb-6 overscroll ">
       <div className="flex justify-between">
@@ -84,7 +84,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
       };
     }
   );
-  const {t} = useTranslation(["common", "course.view_course"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
@@ -219,7 +219,7 @@ const GenderPieChart = ({ participantData }: any) => {
       ),
     };
   });
-  const {t} = useTranslation(["common", "course.view_course"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>

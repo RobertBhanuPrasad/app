@@ -99,6 +99,9 @@ import CurrencyIcon from "@public/assets/CurrencyIcon";
 import ViewCourseAccountingFormTab from "@components/course/viewCourse/ViewCourseAccountingFormTab";
 import { Separator } from "src/ui/separator";
 
+
+
+
 function index() {
   const { viewPreviewPage } = newCourseStore();
 
@@ -598,7 +601,7 @@ const RejectedModalOpen = () => {
             <Cross />{" "}
           </div>
           <DialogTitle className="font-bold text-center">
-            {t('new_strings:course rejected')}
+            {t('new_strings:course_rejected')}
           </DialogTitle>
           <DialogDescription className="text-center">
             {t('course.view_course:basic_details_tab.the_course_got_rejected')}
@@ -1014,7 +1017,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
   
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common", "course.view_course"
+    "common", "course.view_course", "new_strings"
   ]);
 
   if (!authenticated) {
@@ -1373,3 +1376,4 @@ await supabaseClient
     </AlertDialog>
   );
 };
+

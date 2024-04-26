@@ -1,6 +1,8 @@
 {
     "total_participants":"Total Participants",
     "copied":"copied",
-    "course rejected":"Course Rejected"
+    "course_rejected":"Course Rejected",
+    "organisation":"Organisation",
+    "course_type":"Course type"
     
 }

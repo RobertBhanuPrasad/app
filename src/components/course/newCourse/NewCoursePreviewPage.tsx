@@ -327,7 +327,7 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
-
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     
     <div className="pb-12">

@@ -33,6 +33,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useRouter } from "next/router";
 import { ParticipantsListMainHeader } from "@components/participants/ParticipantsListMainHeader";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
 
 function index() {
   const router = useRouter();
@@ -930,3 +933,32 @@ const handleExportExcel = async () => {
     console.error("Error handling export:", error);
   }
 };
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common" ,"new_strings", "course.view_course",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};
+

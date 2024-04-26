@@ -128,7 +128,7 @@ function CourseDetailsTab() {
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div>
-              <Header2>{t('organization')}</Header2>
+              <Header2>{t('new_strings:organisation')}</Header2>
               <ItemValue>{courseData?.data?.organization_id?.name}</ItemValue>
             </div>
             <div>
@@ -136,7 +136,7 @@ function CourseDetailsTab() {
               <ItemValue>{courseData?.data?.program_code ? courseData?.data?.program_code : '-'}</ItemValue>
             </div>
             <div>
-              <Header2>{t('course_type')}</Header2>
+              <Header2>{t('new_strings:course_type')}</Header2>
               <ItemValue>{courseData?.data?.program_type_id?.name ? courseData?.data?.program_type_id?.name : '-'}</ItemValue>
             </div>
             <div>
