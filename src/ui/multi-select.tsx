@@ -214,7 +214,8 @@ export function MultiSelect({
                   : {
                       noIcon: false,
                     };
-                const { noIcon } = optionProps;
+                    const { disable: noIcon } = optionProps;
+                    if (index > 10) return null
                 return (
                   <div key={item}>
                     <div className="flex flex-row justify-between items-center pr-3">
