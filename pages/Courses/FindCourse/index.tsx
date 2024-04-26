@@ -154,14 +154,20 @@ function index() {
   }
 
   //If we select course fee then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.is_course_fee) {
+  if (AllFilterData?.advanceFilter?.is_course_fee === true) {
+    //If the program_fee_setting_id is not null then it has default fee if it is null then we have our custom fee
     filters.permanent.push({
-      field: "program_fee_level_settings.is_custom_fee",
+      field: "program_fee_setting_id",
+      operator: "neq",
+      value: null,
+    });
+  } else {
+    filters.permanent.push({
+      field: "program_fee_setting_id",
       operator: "eq",
-      value: AllFilterData?.advanceFilter?.is_course_fee,
+      value: null,
     });
   }
-
   //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
     //Here the date picker uses the GMT time so , iam adding  1 day that is next day for from and to of course date
@@ -723,10 +729,11 @@ const AdvanceFilter = () => {
       Object.keys(formData?.advanceFilter).filter(
         (key) =>
           formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== "" &&
-          formData.advanceFilter[key].length > 0
+          formData.advanceFilter[key] !== ""
       ).length) ||
     0;
+
+  console.log("heyy adv filter count", count, formData?.advanceFilter);
 
   return (
     <Sheet open={advanceFilterOpen}>

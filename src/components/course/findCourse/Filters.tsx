@@ -818,13 +818,13 @@ export const CourseFees = () => {
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value="FALSE"
+            value="TRUE"
             selectedRadioValue={temporaryValue}
             label="Default"
             className="p-2 h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
-            value="TRUE"
+            value="FALSE"
             selectedRadioValue={temporaryValue}
             label="Custom"
             className="p-2 h-[40px] rounded-[12px]"
