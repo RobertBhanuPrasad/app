@@ -166,9 +166,9 @@ export const columns: any =(t:any) =>{
       accessorKey: "program_teachers",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-      column_name: t('course.find_course:teachers'),
+      column_name: t('course.find_course:teacher(s)'),
       header: () => {
-        return <div className="min-w-[150px]">{t('course.find_course:teachers')}</div>;
+        return <div className="min-w-[150px]">{t('course.find_course:teacher(s)')}</div>;
       },
       cell: ({ row } : any) => {
         const teachers = row?.original?.program_teachers?.map(
@@ -186,7 +186,7 @@ export const columns: any =(t:any) =>{
       accessorKey: "program_organizers",
       column_name: t('new_strings:organizers'),
       header: () => {
-        return <div className="min-w-[150px]">{t('new_strings:organizers')}</div>;
+        return <div className="min-w-[150px]">{t('new_strings:program_organizer')}</div>;
       },
       cell: ({ row } : any) => {
         const organizers = row?.original?.program_organizers?.map(

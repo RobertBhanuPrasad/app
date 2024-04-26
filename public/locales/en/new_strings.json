@@ -5,7 +5,7 @@
     "select_course_name" : "Select Course Name",
     "course_id" : "Course ID",
     "course_type_name" : "Course Type Name",
-    "organizers" : "Organizers",
+    "program_organizer" : "Program Organizer",
     "visibility" : "Visibility",
     "course_accounting_form" : "Course Accounting Form",
     "revenue" : "Revenue",
