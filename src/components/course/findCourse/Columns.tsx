@@ -172,25 +172,8 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Organizers</div>;
     },
     cell: ({ row }) => {
-      /**
-       * Getting the program organizers data based on the program_id
-       */
-      const { data: programOrganizers } = useList({
-        resource: "program_organizers",
-        meta: {
-          select: "users(contact_id(full_name))",
-        },
-        filters: [
-          {
-            field: "program_id",
-            operator: "eq",
-            value: row?.original?.id,
-          },
-        ],
-      });
-
       //Mapping all the programOrganizers in the comma separated name
-      const organizers = programOrganizers?.data?.map(
+      const organizers = row?.original?.program_organizers?.map(
         (Organizer: any) => Organizer?.users?.contact_id?.full_name
       );
 
@@ -328,15 +311,9 @@ export const columns: ExtendedColumnDef<any>[] = [
 
       const { data: loginUserData }: any = useGetIdentity();
 
-      //TODO: Need to use row only instead of this below api call
-      const { data, isLoading } = useOne({
-        resource: "program",
-        id: row.original.id,
-      });
-
       const dropDownMenuData = DisplayOptions(
-        data?.data?.status_id,
-        data?.data?.program_accounting_status_id,
+        row?.original?.status_id,
+        row?.original?.program_accounting_status_id,
         loginUserData?.userData?.user_roles[0]?.role_id?.id
       );
 
@@ -455,24 +432,18 @@ export const columns: ExtendedColumnDef<any>[] = [
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {!isLoading ? (
-                    <p>
-                      {dropDownMenuData &&
-                        dropDownMenuData.map((data: any) => (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              handleSelected(data.value);
-                            }}
-                          >
-                            {data.label}
-                          </DropdownMenuItem>
-                        ))}
-                    </p>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <div>Loading...</div>
-                    </div>
-                  )}
+                  <p>
+                    {dropDownMenuData &&
+                      dropDownMenuData.map((data: any) => (
+                        <DropdownMenuItem
+                          onClick={() => {
+                            handleSelected(data.value);
+                          }}
+                        >
+                          {data.label}
+                        </DropdownMenuItem>
+                      ))}
+                  </p>
                 </DropdownMenuContent>
               </DropdownMenu>
               {isDialogOpen && (

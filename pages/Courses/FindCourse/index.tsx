@@ -213,9 +213,11 @@ function index() {
    */
   const [rowSelection, setRowSelection] = React.useState({});
 
-  // Data query to fetch the program data
+  /**
+   * Here we are maintaining 2 querys one is for filtering and one is for showing the data in the table and this is the filter query
+   */
   const {
-    tableQueryResult: programData,
+    tableQueryResult: FilterProgramData,
     pageCount,
     pageSize,
     setPageSize,
@@ -225,9 +227,41 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        "*,program_types(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
     filters: filters,
+    sorters: {
+      permanent: [
+        // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
+        { field: "created_at", order: "desc" },
+      ],
+    },
+  });
+
+  /**
+   *This variable holds the filtered ids of the query
+   */
+  const filteredIds =
+    FilterProgramData?.data?.data.map((item) => item.id) || [];
+
+  /**
+   *This is the query to get data to show in the table
+   */
+  const { tableQueryResult: programData } = useTable({
+    resource: "program",
+    meta: {
+      select:
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+    },
+    filters: {
+      permanent: [
+        {
+          field: "id",
+          operator: "in",
+          value: filteredIds,
+        },
+      ],
+    },
     sorters: {
       permanent: [
         // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
@@ -403,7 +437,7 @@ function index() {
             checkboxSelection={true}
             setCurrent={setCurrent}
             pageCount={pageCount}
-            total={programData?.data?.total || 0}
+            total={FilterProgramData?.data?.total || 0}
             pageSize={pageSize}
             setPageSize={setPageSize}
             pagination={true}
@@ -427,12 +461,17 @@ function index() {
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
             <div>Select All</div>
-            <div className="font-semibold">{programData?.data?.total || 0}</div>
+            <div className="font-semibold">
+              {FilterProgramData?.data?.total || 0}
+            </div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            Selected: {allSelected ? programData?.data?.total : rowCount} Out of{" "}
-            <div className="font-semibold">{programData?.data?.total || 0}</div>{" "}
+            Selected: {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
+            Out of{" "}
+            <div className="font-semibold">
+              {FilterProgramData?.data?.total || 0}
+            </div>{" "}
           </div>
         </div>
         <div>
