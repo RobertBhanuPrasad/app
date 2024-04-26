@@ -696,7 +696,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
             }
             case 2: {
               // TODO - navigate to register participants page
-              router.push('/courses/add')
+              // router.push('/courses/add')
               break
             }
             case 3: {
