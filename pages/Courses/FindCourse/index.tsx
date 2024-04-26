@@ -733,8 +733,6 @@ const AdvanceFilter = () => {
       ).length) ||
     0;
 
-  console.log("heyy adv filter count", count, formData?.advanceFilter);
-
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">
