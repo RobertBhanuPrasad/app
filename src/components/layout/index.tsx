@@ -1,34 +1,189 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren } from 'react'
 
-import { Breadcrumb } from "../breadcrumb";
-import { Menu } from "../menu";
-import Navbar from "@components/navbar";
-import { useRouter } from "next/router";
-import HomeIcon from "@public/assets/HomeIcon";
-import Image from "next/image";
-import background from "@public/images/background.png";
+import Navbar from '@components/navbar'
+import HomeIcon from '@public/assets/HomeIcon'
+import background from '@public/images/background.png'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { Breadcrumb } from '../breadcrumb'
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
-  const { pathname } = useRouter();
-  const addGapsToPathname = (pathname: any) => {
-    // Split the pathname by '/' and insert a hyphen before and after each '/'
-    const newPathname = pathname.split("/").join(" / ");
+  const router = useRouter()
+  const {
+    query: { id, participantId }
+  } = useRouter()
+  const breadCrumbData = {
+    '/courses/add': [
+      {
+        label: 'Home',
+        className: 'text-primary',
+        href: ''
+      },
+      {
+        label: 'Courses',
+        className: 'text-primary',
+        href: '/courses '
+      },
+      {
+        label: 'New Course',
+        className: '',
+        href: ''
+      }
+    ],
+    '/courses/list': [
+      {
+        label: 'Home',
+        className: 'text-primary',
+        href: ''
+      },
+      {
+        label: 'Courses',
+        className: 'text-primary',
+        href: '/courses'
+      },
+      {
+        label: 'Find Courses',
+        className: '',
+        href: ''
+      }
+    ],
+    '/courses/[id]': [
+      {
+        label: 'Home',
+        className: 'text-primary',
+        href: ''
+      },
+      {
+        label: 'Courses',
+        className: 'text-primary',
+        href: '/courses'
+      },
+      {
+        label: 'Course Details',
+        className: '',
+        href: ''
+      }
+    ],
+    '/courses/[id]/edit': [
+      {
+        label: 'Home',
+        className: 'text-primary',
+        href: ''
+      },
+      {
+        label: 'Courses',
+        className: 'text-primary',
+        href: '/courses'
+      },
+      {
+        label: 'Edit Course',
+        className: '',
+        href: ''
+      }
+    ],
+    '/courses/[id]/participants/list': [
+      {
+        label: 'Home',
+        className: 'text-primary',
+        href: ''
+      },
+      {
+        label: 'Courses',
+        className: 'text-primary',
+        href: '/courses'
+      },
+      {
+        label: 'Course Details',
+        className: 'text-primary',
+        href: `/courses/${id}`
+      },
+      {
+        label: 'View Course Participants',
+        className: '',
+        href: ''
+      }
+    ],
+    '/courses/[id]/participants/[participantId]': [
+      {
+        label: 'Home',
+        className: 'text-primary',
+        href: ''
+      },
+      {
+        label: 'Courses',
+        className: 'text-primary',
+        href: '/courses'
+      },
+      {
+        label: 'Course Details',
+        className: 'text-primary',
+        href: `/courses/${id}`
+      },
+      {
+        label: 'View Course Participants',
+        className: 'text-primary',
+        href: `/courses/${id}/participants/list`
+      },
+      {
+        label: 'Participant Registration Details',
+        className: '',
+        href: ''
+      }
+    ],
+    '/courses/[id]/participants/[participantId]/edit': [
+      {
+        label: 'Home',
+        className: 'text-primary',
+        href: ''
+      },
+      {
+        label: 'Courses',
+        className: 'text-primary',
+        href: '/courses'
+      },
+      {
+        label: 'Course Details',
+        className: 'text-primary',
+        href: `/courses/${id}`
+      },
+      {
+        label: 'View Course Participants',
+        className: 'text-primary',
+        href: `/courses/${id}/participants/list`
+      },
+      {
+        label: 'Edit Participant Registration',
+        className: '',
+        href: ''
+      }
+    ]
+  }
+  const { pathname } = useRouter()
 
-    return newPathname;
-  };
-
-  const formattedPthName = addGapsToPathname(pathname);
+  const data: any = breadCrumbData[`${pathname}`]
 
   return (
     <div className="layout sticky">
       <Image src={background} alt="bg" className="w-full -mt-1 !h-[227px]" />
       <div className="absolute top-0 left-0 w-full z-10 inset-0">
         <Navbar />
-        <div className="h-[32px] bg-[#F9F9F9] drop-shadow-md flex items-center gap-2 shrink-0  font-normal text-[12px] text-[#7677F4] ">
+        <div className="h-[32px] bg-[#F9F9F9] drop-shadow-md flex items-center gap-2 shrink-0  font-normal text-[12px]">
           <HomeIcon />
-          <div>
-            Home
-            {formattedPthName}
+          <div className="flex">
+            {data?.map((label: any, index: number) => {
+              const isLastLabel = index === data.length - 1 // Check if it's the last label
+              return (
+                <p
+                  className={`${label.className} text-xs`}
+                  onClick={() => {
+                    router.push(`${label.href}`)
+                  }}
+                >
+                  {label.label}
+                  {!isLastLabel && ' /'} {/* Render '/' only if it's not the last label */}
+                </p>
+              )
+            })}
           </div>
         </div>
         <Breadcrumb />
@@ -37,5 +192,5 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
