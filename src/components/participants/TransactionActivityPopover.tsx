@@ -47,8 +47,10 @@ export default function TransactionActivity({
         return <div>Completed</div>;
       case "Pending":
         return <div>Pending</div>;
-      case "Canceled":
-        return <div>Cancel</div>;
+      case "Not Received":
+        return <div>Not Received</div>;
+      case "Failed":
+        return <div>Failed</div>;
       default:
         return null; // Default case if no matching transaction type is found
     }
@@ -153,8 +155,8 @@ export default function TransactionActivity({
                       Transaction id:
                     </span>
                     <span className="font-normal text-base leading-5">
-                      {transaction.transaction_id
-                        ? transaction.transaction_id
+                      {transaction.payment_transaction_id
+                        ? transaction.payment_transaction_id
                         : "-"}
                     </span>
                   </div>

@@ -59,7 +59,7 @@ export const handlePostProgramData = async (
   }
 
   if (
-    (body[NewCourseStep1FormNames.registration_via_3rd_party_url]! = undefined)
+    body[NewCourseStep1FormNames.registration_via_3rd_party_url] != undefined
   ) {
     programBody.registration_via_3rd_party_url =
       body[NewCourseStep1FormNames.registration_via_3rd_party_url];
@@ -1143,12 +1143,12 @@ export const handleProgramFeeLevelSettingsData = async (
     (feeLevel: any, index: number) => {
       if (existingFeeLevelSettingsData?.[index]?.id) {
         return {
+          ...feeLevel,
           id: existingFeeLevelSettingsData?.[index]?.id,
           program_id: programId,
-          ...feeLevel,
         };
       }
-      return { program_id: programId, ...feeLevel };
+      return { ...feeLevel,program_id: programId };
     }
   );
 

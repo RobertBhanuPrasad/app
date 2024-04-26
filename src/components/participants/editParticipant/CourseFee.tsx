@@ -8,6 +8,8 @@ export default function CourseFee() {
     const Id: number | undefined = query?.participantId
         ? parseInt(query?.participantId as string)
         : undefined;
+
+    // participant_payment_history contains numerous records of same participant, getting the latest history record
     const { data } = useList({
         resource: "participant_payment_history",
         meta: {
@@ -39,7 +41,6 @@ export default function CourseFee() {
             <Text className="font-semibold text-[18px] pt-[25px]">
                 Course Fees
             </Text>
-            {/* TODO: need confirmation about which date need to display */}
             <div className="flex py-[20px]">
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px]">

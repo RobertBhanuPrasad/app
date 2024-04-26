@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 export default function Edit() {
     const { query } = useRouter();
     const [defaultValues, setDefaultValues] = useState({});
+
+    // This function will get the participant Id from router and fetches defaultValues from EditParticipantUtil
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)
         : undefined;

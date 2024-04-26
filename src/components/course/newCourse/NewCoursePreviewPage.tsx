@@ -35,10 +35,26 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
+import {
+  NATIONAL_ADMIN,
+  NOT_SUBMITTED,
+  SUPER_ADMIN,
+} from "src/constants/OptionValueOrder";
 import { CardLabel, CardValue } from "src/ui/TextTags";
 
 export default function NewCourseReviewPage() {
+  const { data: loginUserData }: any = useGetIdentity();
+
+  // Checking weather login user is super admin or not
+  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
+  );
+
+  // Checking weather login user is National admin or not
+  const hasNationalAdminRole = loginUserData?.userData?.user_roles.find(
+    (val: { role_id: { order: number } }) =>
+      val.role_id?.order == NATIONAL_ADMIN
+  );
   const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
     newCourseStore();
 
@@ -88,6 +104,27 @@ export default function NewCourseReviewPage() {
   });
 
   const CenterNames = venueCenter?.data?.name;
+
+  const VenueName =
+    newCourseData?.is_existing_venue == "existing-venue"
+      ? newCourseData?.existingVenue?.name
+      : newCourseData?.newVenue?.name;
+  const VenueAddress =
+    newCourseData?.is_existing_venue == "existing-venue"
+      ? newCourseData?.existingVenue?.address
+      : newCourseData?.newVenue?.address;
+  const VenuePostalCode =
+    newCourseData?.is_existing_venue == "existing-venue"
+      ? newCourseData?.existingVenue?.postal_code
+      : newCourseData?.newVenue?.postal_code;
+
+  const VenueData = [
+    VenueName,
+    VenueAddress,
+    CityNames,
+    StateNames,
+    VenuePostalCode,
+  ].join(", ");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -257,8 +294,46 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.time_zone_id,
   });
 
- //Requirement: Need to show only enabled fee level.
- const enabledFeeLevelData=newCourseData?.program_fee_level_settings?.filter((feeLevel: { is_enable: boolean; })=>(feeLevel.is_enable===true));
+  const user_roles: any[] = data?.userData?.user_roles;
+
+  //Checking Weather a user is Super Admin or Not
+  let isUserNationAdminOrSuperAdmin = false;
+
+  if (
+    user_roles.some(
+      (role) =>
+        role.role_id.order === NATIONAL_ADMIN ||
+        role.role_id.order === SUPER_ADMIN
+    )
+  ) {
+    isUserNationAdminOrSuperAdmin = true;
+  }
+
+  //Checking Weather a fee is editable or not
+  const isFeeEditable =
+    isUserNationAdminOrSuperAdmin ||
+    courseFeeSettings?.[0]?.is_program_fee_editable
+      ? true
+      : false;
+
+  //Exacting default Fee Levels from settings.In this Data we will have entire object in fee_level_id but we need only fee_level_id.
+  const defaultFeeLevels =
+    courseFeeSettings?.[0]?.program_fee_level_settings?.map((feeLevel: any) => {
+      return {
+        ...feeLevel,
+        fee_level_id: feeLevel?.fee_level_id?.id,
+      };
+    });
+
+  //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
+  const feeLevels = isFeeEditable
+    ? newCourseData?.program_fee_level_settings
+    : defaultFeeLevels;
+
+  //Requirement: Need to show only enabled fee levels.
+  const enabledFeeLevelData = feeLevels?.filter(
+    (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
+  );
 
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
@@ -388,28 +463,19 @@ export default function NewCourseReviewPage() {
                 {programOrganizersNames ? programOrganizersNames : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Registration via 3rd party gateway
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_geo_restriction_applicable}
-              >
-                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
-              </abbr>
-            </div>
-            <div className=" min-w-72">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Registration via 3rd party gateway
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_registration_via_3rd_party}
-              >
-                {newCourseData?.is_registration_via_3rd_party ? "Yes" : "No"}
-              </abbr>
-            </div>
+            {(hasSuperAdminRole || hasNationalAdminRole) && (
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Registration via 3rd party gateway
+                </p>
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_registration_via_3rd_party}
+                >
+                  {newCourseData?.is_registration_via_3rd_party ? "Yes" : "No"}
+                </abbr>
+              </div>
+            )}
             {newCourseData?.is_registration_via_3rd_party ? (
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -660,6 +726,19 @@ export default function NewCourseReviewPage() {
             <div className="grid grid-cols-4 gap-4 mt-2">
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Venue Address
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={VenueData ? VenueData : "-"}
+                >
+                  <p className="font-semibold truncate text-accent-secondary">
+                    <div className="break-all">{VenueData}</div>{" "}
+                  </p>
+                </abbr>
+              </div>
+              <div className=" min-w-72">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Time Format
                 </p>
                 <p className="font-semibold truncate text-accent-secondary">
@@ -702,18 +781,21 @@ export default function NewCourseReviewPage() {
           {/* body */}
           <div className="grid grid-cols-3 gap-4 mt-2">
             {enabledFeeLevelData?.map((feeLevel: any, index: number) => {
-              return (
-               <Fees feeLevelSettingsData={feeLevel}/>
-              )
+              return <Fees feeLevelSettingsData={feeLevel} />;
             })}
 
             {newCourseData?.is_early_bird_enabled &&
               enabledFeeLevelData?.map((feeLevel: any, index: number) => {
-                return (
-                  <EarlyBirdFees feeLevelSettingsData={feeLevel}/>
-                )
+                return <EarlyBirdFees feeLevelSettingsData={feeLevel} />;
               })}
-            {courseFeeSettings?.[0]?.is_program_fee_editable &&
+
+            {/* Requirment: Show the early bird calender when 
+      1.Super or National Admin is logged in 
+      2.Early bird fee enabled in settings
+      3.Early bird fee enabled by user
+      4.Early bird cut off editable in settings */}
+            {isFeeEditable &&
+              newCourseData?.is_early_bird_enabled &&
               courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
               courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
                 <div className=" min-w-72">
@@ -722,10 +804,10 @@ export default function NewCourseReviewPage() {
                   </p>
                   <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                     {subtractDaysAndFormat(
-                      courseFeeSettings?.[0]?.early_bird_cut_off_period,
+                      newCourseData?.early_bird_cut_off_period,
                       newCourseData?.schedules?.[0]?.date
                     )}{" "}
-                    ({courseFeeSettings?.[0]?.early_bird_cut_off_period} Days)
+                    ({newCourseData?.early_bird_cut_off_period} Days)
                   </p>
                 </div>
               )}
@@ -929,16 +1011,20 @@ const Accommodation = ({
         </CardValue>
       </abbr>
     </div>
-  )
-}
+  );
+};
 
 /**
  * @function Fees
- * REQUIRMENT we need to show the both fee level type and total of the fee level 
- * @param feeLevelSettingsData 
- * @returns 
+ * REQUIRMENT we need to show the both fee level type and total of the fee level
+ * @param feeLevelSettingsData
+ * @returns
  */
-const Fees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettingsDataBaseType}) => {
+const Fees = ({
+  feeLevelSettingsData,
+}: {
+  feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
+}) => {
   /**
    * @constant feeLevelData
    * REQUIRMENT we need to show the both fee level type and total of the fee level
@@ -947,12 +1033,24 @@ const Fees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettin
    * @description this data const is used to store the fee level type data with respective to the fee level type id
    *
    */
-  const { data : feeLevelData } = useOne({
-    resource: 'option_values',
-    id: feeLevelSettingsData?.fee_level_id as number
-  })
+  const { data: feeLevelData } = useOne({
+    resource: "option_values",
+    id: feeLevelSettingsData?.fee_level_id as number,
+  });
 
-  return(
+  /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the fee details
+   * we will get the currency code in the country config
+   *
+   */
+
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
+
+  return (
     <div className=" min-w-72">
       <abbr title={feeLevelData?.data?.value} className="no-underline">
         <CardLabel className="truncate">{feeLevelData?.data?.value}</CardLabel>
@@ -961,23 +1059,26 @@ const Fees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettin
         title={JSON.stringify(feeLevelSettingsData?.total)}
         className="no-underline"
       >
-        <CardValue className="truncate">{feeLevelSettingsData?.total}
+        <CardValue className="truncate">
+          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+          {feeLevelSettingsData?.total}
         </CardValue>
       </abbr>
-
-
     </div>
-  )
-}
-
+  );
+};
 
 /**
  * @function EarlyBirdFees
- * REQUIRMENT we need to show the both fee level type and early bird total of the fee level 
- * @param feeLevelSettingsData 
- * @returns 
+ * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
+ * @param feeLevelSettingsData
+ * @returns
  */
-const EarlyBirdFees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLevelSettingsDataBaseType}) => {
+const EarlyBirdFees = ({
+  feeLevelSettingsData,
+}: {
+  feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
+}) => {
   /**
    * @constant feeLevelData
    * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
@@ -986,24 +1087,43 @@ const EarlyBirdFees = ({feeLevelSettingsData}:{feeLevelSettingsData:ProgramFeeLe
    * @description this data const is used to store the fee level type data with respective to the fee level type id
    *
    */
-  const { data : feeLevelData } = useOne({
-    resource: 'option_values',
-    id: feeLevelSettingsData?.fee_level_id as number
-  })
+  const { data: feeLevelData } = useOne({
+    resource: "option_values",
+    id: feeLevelSettingsData?.fee_level_id as number,
+  });
 
-  return(
+  /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the fee details
+   * we will get the currency code in the country config
+   *
+   */
+
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
+
+  return (
     <div className=" min-w-72">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
-      <abbr title={`Early Bird ${feeLevelData?.data?.value}`} className="no-underline">
-        <CardLabel className="truncate">Early Bird {feeLevelData?.data?.value}</CardLabel>
+      <abbr
+        title={`Early Bird ${feeLevelData?.data?.value}`}
+        className="no-underline"
+      >
+        <CardLabel className="truncate">
+          Early Bird {feeLevelData?.data?.value}
+        </CardLabel>
       </abbr>
       <abbr
         title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
         className="no-underline"
       >
-        <CardValue className="truncate">{feeLevelSettingsData?.early_bird_total}
+        <CardValue className="truncate">
+          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+          {feeLevelSettingsData?.early_bird_total}
         </CardValue>
       </abbr>
     </div>
-  )
-}
+  );
+};
