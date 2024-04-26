@@ -1,3 +1,4 @@
+import {isTeacherShownInPrefilledData, isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
 import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
@@ -575,32 +576,47 @@ const TeachersDropDown = () => {
       <div className="text-xs font-normal text-[#333333] flex flex-row">
         Teacher <div className="text-[#7677F4]">*</div>
       </div>
-      <MultiSelect
-        value={value}
-        placeholder="Enter Teacher Name"
-        data={options}
-        onBottomReached={handleOnBottomReached}
-        onSearch={onSearch}
-        onChange={(val: any) => {
-          onChange(val);
-        }}
-        getOptionProps={(option: { value: { id: number } }) => {
-          //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
-          if (
-            option === loginUserData?.userData?.id &&
-            formData?.program_created_by != iAmOrganizerId
-          ) {
-            return {
-              disable: true,
-            };
-          } else {
-            return {
-              disable: false,
-            };
-          }
-        }}
-        error={teachersErrors}
-      />
+      {/* 
+        // Here i have to show teachers based on program created user 
+        // if program created user is the teacher of that program then we have to show only program created user
+        // if program created user is the  Co-teacher of that program then we have to show  program created user along with other teachers
+        // and program created user is should prefilled 
+        // if program created user is the organizer of that program then we don't show the program created user along with other teachers
+      */}
+      {isTeacherShownInTeacherField(formData?.program_created_by)
+        ? <Input
+          value={loginUserData?.userData?.contact_id?.full_name}
+          disabled={true}
+          className="rounded-[12px] text-[14px] font-normal"
+        />
+        :
+        <MultiSelect
+         value={isTeacherShownInPrefilledData(formData?.program_created_by) ? value : []}
+          placeholder="Enter Teacher Name"
+          data={options}
+          onBottomReached={handleOnBottomReached}
+          onSearch={onSearch}
+          onChange={(val: any) => {
+            onChange(val);
+          }}
+          getOptionProps={(option: { value: { id: number } }) => {
+            //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
+            if (
+              option === loginUserData?.userData?.id &&
+              formData?.program_created_by != iAmOrganizerId
+            ) {
+              return {
+                disable: true,
+              };
+            } else {
+              return {
+                disable: false,
+              };
+            }
+          }}
+          error={teachersErrors}
+        />
+       }
       {teachersErrors && (
         <span className="text-[#FF6D6D] text-[12px]">
           {teachersErrors?.message}

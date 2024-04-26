@@ -11,6 +11,7 @@ import {
   COURSE_ACCOUNTING_STATUS,
   PARTICIPANT_ATTENDANCE_STATUS,
   PARTICIPANT_PAYMENT_STATUS,
+  PROGRAM_ORGANIZER_TYPE,
   PROGRAM_STATUS,
   USER_ROLE,
 } from "src/constants/OptionLabels";
@@ -25,6 +26,8 @@ import {
   DECLINED,
   FINANCE_ADMIN,
   FULL,
+  I_AM_CO_TEACHING,
+  I_AM_TEACHING,
   NATIONAL_ADMIN,
   NOT_SUBMITTED,
   PARTICIPANT_FAILED_PAYMENT_STATUS,
@@ -1018,3 +1021,47 @@ export const isCAFSubmitButtonVisible = (courseStatusId: number) => {
     return false; // Return false otherwise
   }
 };
+
+/**
+ * Determines whether the teacher should be shown in the teacher field based on the program creator's user ID.
+ * @param {number} programCreatedUserId - The ID of the user who created the program.
+ * @returns {boolean} - True if the teacher should be shown, false otherwise.
+ */
+export const isTeacherShownInTeacherField = (programCreatedUserId: number) => {
+  // Get the ID for "I am teaching" option from the PROGRAM_ORGANIZER_TYPE
+  const iAmTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_TEACHING
+  )?.id;
+
+  // Check if the program creator's user ID matches the "I am teaching" option ID
+  if (programCreatedUserId === iAmTeachingId) {
+    return true; // Show the teacher in the teacher field
+  } else {
+    return false; // Do not show the teacher in the teacher field
+  }
+}
+
+/**
+ * Determines whether the teacher should be shown in the prefilled data based on the program creator's user ID.
+ * @param {number} programCreatedUserId - The ID of the user who created the program.
+ * @returns {boolean} - True if the teacher should be shown in the prefilled data, false otherwise.
+ */
+export const isTeacherShownInPrefilledData = (programCreatedUserId: number) => {
+  // Get the ID for "I am co-teaching" option from the PROGRAM_ORGANIZER_TYPE
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
+
+  // Check if the program creator's user ID matches the "I am co-teaching" option ID
+  if (programCreatedUserId === iAmCoTeachingId) {
+    return true; // Show the teacher in the prefilled data
+  } else {
+    return false; // Do not show the teacher in the prefilled data
+  }
+}
+
+
+
+
