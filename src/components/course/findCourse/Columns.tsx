@@ -277,16 +277,6 @@ export const columns: ExtendedColumnDef<any>[] = [
       const timeFormat12HoursId = getOptionValueObjectByOptionOrder(TIME_FORMAT, TIME_FORMAT_12_HOURS)?.id as number
 
       const handleEditCourse = async () => {
-        console.log('clicking on edit course')
-
-        /**
-         * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
-         */
-        const defaultValues = await handleCourseDefaultValues(row.original.id, timeFormat12HoursId)
-        console.log('default values are', defaultValues)
-
-        setNewCourseData(defaultValues)
-
         router.push(`/courses/${row.original.id}/edit`)
       }
 
