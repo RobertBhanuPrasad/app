@@ -1042,25 +1042,8 @@ export const isTeacherShownInTeacherField = (programCreatedUserId: number) => {
   }
 }
 
-/**
- * Determines whether the teacher should be shown in the prefilled data based on the program creator's user ID.
- * @param {number} programCreatedUserId - The ID of the user who created the program.
- * @returns {boolean} - True if the teacher should be shown in the prefilled data, false otherwise.
- */
-export const isTeacherShownInPrefilledData = (programCreatedUserId: number) => {
-  // Get the ID for "I am co-teaching" option from the PROGRAM_ORGANIZER_TYPE
-  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_CO_TEACHING
-  )?.id;
 
-  // Check if the program creator's user ID matches the "I am co-teaching" option ID
-  if (programCreatedUserId === iAmCoTeachingId) {
-    return true; // Show the teacher in the prefilled data
-  } else {
-    return false; // Do not show the teacher in the prefilled data
-  }
-}
+
 
 
 

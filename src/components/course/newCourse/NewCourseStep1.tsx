@@ -58,8 +58,8 @@ function NewCourseStep1() {
           <ProgramOrganizerDropDown />
         </div>
       </div>
-       {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
-       {(hasSuperAdminRole || hasNationalAdminRole) && (
+      {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
+      {(hasSuperAdminRole || hasNationalAdminRole) && (
         <div>
           <RegistrationGateway />
         </div>
@@ -120,6 +120,9 @@ const RegistrationGateway = () => {
   );
 };
 const RadioCards = () => {
+
+  const { clearErrors } = useFormContext();
+
   const {
     field: { value, onChange },
     fieldState: { error: radioError },
@@ -163,6 +166,19 @@ const RadioCards = () => {
         teachersOnChange([loginInTeacherData, ...teachers]);
       }
     }
+    // Check if the selected value is equal to the organizer's ID
+     if (parseInt(val) === iAmOrganizerId) {
+       // If there are already teachers selected
+     if (teachers) {
+     // Remove the logged-in teacher's ID from the list of selected teachers
+      teachersOnChange(_.without(teachers, loginInTeacherData));
+     }
+     // Set a timeout to clear errors for the 'teacher_ids' field after 10 milliseconds
+     setTimeout(() => {
+    clearErrors('teacher_ids');
+  }, 10);
+}
+
   };
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
@@ -172,14 +188,14 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
-            }`}
+              }`}
           >
             <Card
               className={` p-2 w-80 h-[106px] flex flex-row ${
                 value === iAmTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
-                  : ""
-              }`}
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                : ""
+                }`}
             >
               <div>
                 <RadioGroupCheckItem
@@ -206,14 +222,14 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmCoTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
-            }`}
+              }`}
           >
             <Card
               className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-                  : ""
-              }`}
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                : ""
+                }`}
             >
               <RadioGroupCheckItem
                 value={JSON.stringify(iAmCoTeachingId)}
@@ -228,7 +244,7 @@ const RadioCards = () => {
                 <Coteacher
                   color={` ${
                     value === iAmCoTeachingId ? "#7677F4" : "#999999"
-                  }`}
+                    }`}
                 />
                 I am co-teaching this course
               </div>
@@ -239,14 +255,14 @@ const RadioCards = () => {
           htmlFor={JSON.stringify(iAmOrganizerId)}
           className={`text-[#999999] font-normal ${
             value === iAmOrganizerId ? "text-[#7677F4]" : ""
-          }`}
+            }`}
         >
           <Card
             className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
               value === iAmOrganizerId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-                : ""
-            }`}
+              ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+              : ""
+              }`}
           >
             <RadioGroupCheckItem
               value={JSON.stringify(iAmOrganizerId)}

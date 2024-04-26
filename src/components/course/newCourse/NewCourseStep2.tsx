@@ -1,4 +1,4 @@
-import {isTeacherShownInPrefilledData, isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
+import {isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
 import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
@@ -591,7 +591,7 @@ const TeachersDropDown = () => {
         />
         :
         <MultiSelect
-         value={isTeacherShownInPrefilledData(formData?.program_created_by) ? value : []}
+         value={value}
           placeholder="Enter Teacher Name"
           data={options}
           onBottomReached={handleOnBottomReached}
