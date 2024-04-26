@@ -219,19 +219,21 @@ const NewCourseThankyouPage = () => {
                     </div>
                   </div>
                 )}
-                <div className="pl-5">
-                  <Button
-                    onClick={() => {
-                      handleCopyDetailsPageLink(RX_BASE_URL)
-                      handleCopyRegistrationLink(CX_BASE_URL)
-                      copyText(CX_BASE_URL + ',' + RX_BASE_URL)
-                    }}
-                    variant="outline"
-                    className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
-                  >
-                    Copy 2 Links
-                  </Button>
-                </div>
+                {data?.data?.visibility_id?.id == publicVisibilityId && (
+                  <div className="pl-5">
+                    <Button
+                      onClick={() => {
+                        handleCopyDetailsPageLink(RX_BASE_URL)
+                        handleCopyRegistrationLink(CX_BASE_URL)
+                        copyText(CX_BASE_URL + ',' + RX_BASE_URL)
+                      }}
+                      variant="outline"
+                      className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
+                    >
+                      Copy 2 Links
+                    </Button>
+                  </div>
+                )}
               </div>
             </section>
           )}
