@@ -56,7 +56,7 @@ const NewCourseThankyouPage = () => {
     id: programId,
     meta: {
       select:
-        'visibility_id(*,value),program_code,program_type_id,venue_id,status_id,time_zone_id,program_type_id(name),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value)'
+        'visibility_id(*),program_code,program_type_id,venue_id,status_id,time_zone_id,program_type_id(name),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value)'
     }
   })
 
@@ -75,8 +75,6 @@ const NewCourseThankyouPage = () => {
     data?.data?.venue_id?.address +
     ',' +
     data?.data?.venue_id?.name +
-    ',' +
-    data?.data?.venue_id?.center_id?.name +
     ',' +
     data?.data?.venue_id?.city_id?.name +
     ',' +
