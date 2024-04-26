@@ -1016,20 +1016,25 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
   //   .upsert(venueBody)
   //   .select();
 
+  console.log(body, "bodykjnjnvenuvervjn");
+  
+
   // we are inserting new venue at the time of editing for the present user 
-  const { data, error } = await supabaseClient
+
+  if(body?.isExistingVenueEdited === true) {
+    const { data, error } = await supabaseClient
     .from("venue")
     .insert(venueBody)
     .select();
 
-  if (error) {
-    console.log("error while creating venue", error);
-    return false;
-  } else {
-    console.log("venue created or updated successfully", data);
-  }
+    if (error) {
+      console.log("error while creating venue", error);
+      return false;
+    } else {
+      console.log("venue created or updated successfully", data);
+    }
 
-  // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
+     // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
   // we have to delete them from database
 
   const deleteVenueIDs = body.deletedVenueID;
@@ -1050,6 +1055,8 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
   }
 
   return data[0].id;
+  }
+ 
 };
 
 export const handleProgramStatusUpdate = async (programId: number) => {

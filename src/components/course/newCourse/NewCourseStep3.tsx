@@ -1088,6 +1088,13 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
     name: "isNewVenue",
   });
 
+
+  const {
+    field: { onChange: setIsExistingVenueEdited },
+  } = useController({
+    name: "isExistingVenueEdited",
+  });
+
   const {
     field: { value: deletedVenueIds = [], onChange: deleteVenueIdOnChange },
   } = useController({
@@ -1106,9 +1113,11 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
     setValue("city_id", item?.city_id);
     setValue("center_id", item?.center_id);
     setValue("postal_code", item?.postal_code);
+    setIsExistingVenueEdited(true)
   };
 
   const handleSubmitExistingVenue = async (index: number) => {
+    
     const isAllFieldsFilled = await ValidateCurrentStepFields([
       "city_id",
       "center_id",
@@ -1174,6 +1183,7 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
                     disabled={!isVenueSelected}
                     onClick={() => {
                       handleOpenExistingVenue(item);
+                      console.log()
                     }}
                   >
                     <EditIcon />
