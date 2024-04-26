@@ -227,7 +227,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
     filters: filters,
     sorters: {
@@ -237,6 +237,8 @@ function index() {
       ],
     },
   });
+
+  console.log("heyy programm data", FilterProgramData);
 
   /**
    *This variable holds the filtered ids of the query
