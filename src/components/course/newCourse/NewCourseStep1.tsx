@@ -3,6 +3,7 @@ import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
+import { useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import {
@@ -36,17 +37,18 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep1() {
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
 
   // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
-  )
+  );
 
   // Checking weather login user is National admin or not
   const hasNationalAdminRole = loginUserData?.userData?.user_roles.find(
-    (val: { role_id: { order: number } }) => val.role_id?.order == NATIONAL_ADMIN
-  )
+    (val: { role_id: { order: number } }) =>
+      val.role_id?.order == NATIONAL_ADMIN
+  );
   return (
     <div>
       <RadioCards />
@@ -58,8 +60,8 @@ function NewCourseStep1() {
           <ProgramOrganizerDropDown />
         </div>
       </div>
-       {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
-       {(hasSuperAdminRole || hasNationalAdminRole) && (
+      {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
+      {(hasSuperAdminRole || hasNationalAdminRole) && (
         <div>
           <RegistrationGateway />
         </div>
@@ -278,6 +280,15 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
+  const searchParams = useSearchParams();
+
+  const params = new URLSearchParams(searchParams);
+
+  /**
+   * Checking whether the url contains the edit or not
+   */
+  const isEditCourse = params.has("edit");
+
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
@@ -322,6 +333,8 @@ const OrganizationDropDown = () => {
           onValueChange={(value: any) => {
             onChange(value);
           }}
+          //disabling the organization dropdown when it is edit
+          disabled={isEditCourse}
         >
           <SelectTrigger
             className="w-[320px]"

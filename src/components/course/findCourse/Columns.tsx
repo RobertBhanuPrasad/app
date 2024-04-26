@@ -18,6 +18,9 @@ import {
   DialogFooter,
   DialogHeader,
 } from "src/ui/dialog";
+
+import { useRouter as useNavigationRouter } from "next/navigation";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +31,7 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { format } from "date-fns";
+import { usePathname, useSearchParams } from "next/navigation";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
@@ -283,6 +287,9 @@ export const columns: ExtendedColumnDef<any>[] = [
       } = newCourseStore();
 
       const router = useRouter();
+      const searchParams = useSearchParams();
+      const pathname = usePathname();
+      const { replace } = useNavigationRouter();
       const [isDialogOpen, setIsDialogOpen] = useState(false);
       const [cancelSuccessModalOpen, setCancelSuccessModalOpen] =
         useState(false);
@@ -339,6 +346,17 @@ export const columns: ExtendedColumnDef<any>[] = [
         console.log("default values are", defaultValues);
 
         setNewCourseData(defaultValues);
+
+        /**
+         * Gettings the current search params
+         */
+        const params = new URLSearchParams(searchParams);
+
+        // when  user click on edit then iam setting the edit and id of that particular program
+        params.set("edit", row.original.id);
+
+        //replacing the url with modified one
+        replace(`${pathname}?${params.toString()}`);
 
         setViewPreviewPage(true);
       };

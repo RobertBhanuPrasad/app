@@ -3,6 +3,7 @@ import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
+import { useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
@@ -169,6 +170,15 @@ export default function NewCourseStep2() {
 export const CourseTypeDropDown = () => {
   const { watch, setValue, clearErrors } = useFormContext();
 
+  const searchParams = useSearchParams();
+
+  const params = new URLSearchParams(searchParams);
+
+  /**
+   * Checking whether the url contains the edit or not
+   */
+  const isEditCourse = params.has("edit");
+
   const [pageSize, setPageSize] = useState(10);
 
   const [searchValue, searchOnChange] = useState("");
@@ -310,6 +320,7 @@ export const CourseTypeDropDown = () => {
           onChange(val);
           getCourseTypeSettings(val);
         }}
+        disabled={isEditCourse}
       >
         <SelectTrigger
           className="w-[320px]"
