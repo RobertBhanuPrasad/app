@@ -72,9 +72,9 @@ const NewCourseThankyouPage = () => {
 
   // Formatting the venue details
   const venue =
-    data?.data?.venue_id?.address +
-    ', ' +
     data?.data?.venue_id?.name +
+    ', ' +
+    data?.data?.venue_id?.address +
     ', ' +
     data?.data?.venue_id?.city_id?.name +
     ', ' +
