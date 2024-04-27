@@ -1,18 +1,25 @@
-import { PropsWithChildren } from 'react'
-
+type breadCrumbDataType = {
+  [key: string]: {
+    label: string
+    className: string
+    href: string
+  }[]
+}
 import Navbar from '@components/navbar'
 import HomeIcon from '@public/assets/HomeIcon'
 import background from '@public/images/background.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { PropsWithChildren } from 'react'
 import { Breadcrumb } from '../breadcrumb'
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter()
-  const {
-    query: { id, participantId }
-  } = useRouter()
-  const breadCrumbData:any = {
+
+  /**
+   * Based on the URL paths the breadcrumbs listed here
+   */
+  const breadCrumbData: breadCrumbDataType = {
     '/courses/add': [
       {
         label: 'Home',
@@ -95,7 +102,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Course Details',
         className: 'text-primary cursor-pointer',
-        href: `/courses/${id}`
+        href: `/courses/${router.query.id}`
       },
       {
         label: 'View Course Participants',
@@ -117,12 +124,12 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Course Details',
         className: 'text-primary cursor-pointer',
-        href: `/courses/${id}`
+        href: `/courses/${router.query.id}`
       },
       {
         label: 'View Course Participants',
         className: 'text-primary cursor-pointer',
-        href: `/courses/${id}/participants/list`
+        href: `/courses/${router.query.id}/participants/list`
       },
       {
         label: 'Participant Registration Details',
@@ -144,12 +151,12 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Course Details',
         className: 'text-primary cursor-pointer',
-        href: `/courses/${id}`
+        href: `/courses/${router.query.id}`
       },
       {
         label: 'View Course Participants',
         className: 'text-primary cursor-pointer',
-        href: `/courses/${id}/participants/list`
+        href: `/courses/${router.query.id}/participants/list`
       },
       {
         label: 'Edit Participant Registration',
@@ -158,9 +165,11 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       }
     ]
   }
-  const { pathname } = useRouter()
 
-  const data: any = breadCrumbData[`${pathname}`]
+  /**
+   * based on the current path as key  retrieve the corresponding value
+   */
+  const data = breadCrumbData[`${router.pathname}`]
 
   return (
     <div className="layout sticky">
@@ -176,7 +185,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
                 <p
                   className={`${label.className} text-xs`}
                   onClick={() => {
-                   !isLastLabel && router.push(`${label.href}`)
+                    !isLastLabel && router.push(`${label.href}`)
                   }}
                 >
                   &nbsp;
