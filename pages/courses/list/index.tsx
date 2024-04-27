@@ -772,13 +772,11 @@ const AdvanceFilter = () => {
    */
   const count =
     (formData?.advanceFilter &&
-      Object.keys(formData?.advanceFilter).filter(
-        (key) =>
-          //If the any of the filter is undefined , empty string and if the filter is array then it should not be empty those filters are selected and should be counted
-          Array.isArray(formData.advanceFilter[key]) &&
-          formData.advanceFilter[key].length > 0 &&
-          formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== ""
+      Object.keys(formData.advanceFilter).filter((key) =>
+        Array.isArray(formData.advanceFilter[key])
+          ? formData.advanceFilter[key].length > 0
+          : formData.advanceFilter[key] !== undefined &&
+            formData.advanceFilter[key] !== ""
       ).length) ||
     0;
   return (
