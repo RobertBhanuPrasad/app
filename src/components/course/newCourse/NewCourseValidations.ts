@@ -70,7 +70,7 @@ export const validationSchema = () => {
       })
       .refine((val) => /^\d+$/.test(val), {
         message: "Maximum Capacity can accept only integers",
-      }),
+      }).optional(),
 
     // Step 3 Schema
     is_existing_venue: z.string({
