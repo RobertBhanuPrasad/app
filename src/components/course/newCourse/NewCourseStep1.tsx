@@ -36,17 +36,18 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 function NewCourseStep1() {
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
 
   // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
-  )
+  );
 
   // Checking weather login user is National admin or not
   const hasNationalAdminRole = loginUserData?.userData?.user_roles.find(
-    (val: { role_id: { order: number } }) => val.role_id?.order == NATIONAL_ADMIN
-  )
+    (val: { role_id: { order: number } }) =>
+      val.role_id?.order == NATIONAL_ADMIN
+  );
   return (
     <div>
       <RadioCards />
@@ -58,8 +59,8 @@ function NewCourseStep1() {
           <ProgramOrganizerDropDown />
         </div>
       </div>
-       {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
-       {(hasSuperAdminRole || hasNationalAdminRole) && (
+      {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
+      {(hasSuperAdminRole || hasNationalAdminRole) && (
         <div>
           <RegistrationGateway />
         </div>
@@ -164,6 +165,18 @@ const RadioCards = () => {
       }
     }
   };
+
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const loginInUserData = loginUserData?.userData?.id;
+
+  const isLoggedInUserIsTeacher =
+    formData?.teacher_ids?.includes(loginInUserData);
+
+  const isOrganizingforOtherTeacherEnabled = isLoggedInUserIsTeacher;
+
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">

@@ -143,7 +143,7 @@ export const columns: ExtendedColumnDef<any>[] = [
       return <div className="min-w-[150px]">Center</div>;
     },
     cell: ({ row }) => {
-      return <div className="min-w-[150px]">{row?.original?.center?.name}</div>;
+      return <div className="min-w-[150px]">{row?.original?.center?.name}</div>
     },
   },
   {
