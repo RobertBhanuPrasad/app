@@ -175,7 +175,7 @@ export const Breadcrumb = () => {
         const isLastLabel = index === data.length - 1 // Check if it's the last label
         return (
           <p
-            className={`${label.className} flex`}
+            className={`${label.className} flex items-center`}
             onClick={() => {  // Check if it's not the last label and not the Home page
               if (!isLastLabel && index !== 0) {
                 router.push(`${label.href}`);
