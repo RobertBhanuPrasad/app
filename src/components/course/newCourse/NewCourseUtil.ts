@@ -17,7 +17,7 @@ export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
   setProgramId: (by: number) => void,
-  accountingNotSubmittedStatusId: number,
+  accountingNotSubmittedStatusId: number
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -124,37 +124,49 @@ export const handlePostProgramData = async (
     programBody.online_url = body[NewCourseStep3FormNames.online_url];
   }
 
-  //state_id
+  //If state_id is present then assign it to programBody if not then check that is there a venue has state_id if yes then assign to program body
   if (body[NewCourseStep3FormNames.state_id]) {
-    if (body.is_existing_venue == "new-venue") {
-      programBody.state_id = body?.newVenue?.state_id;
-    } else if (body?.is_existing_venue == "existing-venue") {
-      programBody.state_id = body?.existingVenue?.state_id;
-    } else {
-      programBody.state_id = body[NewCourseStep3FormNames.state_id];
-    }
+    programBody.state_id = body[NewCourseStep3FormNames.state_id];
+  } else if (
+    body.is_existing_venue === "new-venue" &&
+    body?.newVenue?.state_id
+  ) {
+    programBody.state_id = body.newVenue.state_id;
+  } else if (
+    body.is_existing_venue === "existing-venue" &&
+    body?.existingVenue?.state_id
+  ) {
+    programBody.state_id = body.existingVenue.state_id;
   }
 
-  //city_id
+  //If city_id is present then assign it to programBody if not then check that is there a venue has city_id if yes then assign to program body
   if (body[NewCourseStep3FormNames.city_id]) {
-    if (body.is_existing_venue == "new-venue") {
-      programBody.city_id = body?.newVenue?.city_id;
-    } else if (body?.is_existing_venue == "existing-venue") {
-      programBody.city_id = body?.existingVenue?.city_id;
-    } else {
-      programBody.city_id = body[NewCourseStep3FormNames.city_id];
-    }
+    programBody.city_id = body[NewCourseStep3FormNames.city_id];
+  } else if (
+    body.is_existing_venue === "new-venue" &&
+    body?.newVenue?.city_id
+  ) {
+    programBody.city_id = body.newVenue.city_id;
+  } else if (
+    body.is_existing_venue === "existing-venue" &&
+    body?.existingVenue?.city_id
+  ) {
+    programBody.city_id = body.existingVenue.city_id;
   }
 
-  //center_id
+  //If center_id is present then assign it to programBody if not then check that is there a venue has center_id if yes then assign to program body
   if (body[NewCourseStep3FormNames.center_id]) {
-    if (body.is_existing_venue == "new-venue") {
-      programBody.center_id = body?.newVenue?.center_id;
-    } else if (body?.is_existing_venue == "existing-venue") {
-      programBody.center_id = body?.existingVenue?.center_id;
-    } else {
-      programBody.center_id = body[NewCourseStep3FormNames.center_id];
-    }
+    programBody.center_id = body[NewCourseStep3FormNames.center_id];
+  } else if (
+    body.is_existing_venue === "new-venue" &&
+    body?.newVenue?.center_id
+  ) {
+    programBody.center_id = body.newVenue.center_id;
+  } else if (
+    body.is_existing_venue === "existing-venue" &&
+    body?.existingVenue?.center_id
+  ) {
+    programBody.center_id = body.existingVenue.center_id;
   }
 
   //hour_format_id
@@ -1155,7 +1167,7 @@ export const handleProgramFeeLevelSettingsData = async (
           program_id: programId,
         };
       }
-      return { ...feeLevel,program_id: programId };
+      return { ...feeLevel, program_id: programId };
     }
   );
 
