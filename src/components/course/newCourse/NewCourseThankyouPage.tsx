@@ -11,7 +11,7 @@ import { CopyIcon } from '@radix-ui/react-icons'
 import { useOne } from '@refinedev/core'
 import { Circle } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
 import { ACTIVE, PUBLIC } from 'src/constants/OptionValueOrder'
@@ -24,6 +24,8 @@ const NewCourseThankyouPage = () => {
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false)
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
   const { programId } = newCourseStore()
+
+  const router = useRouter()
 
   const copyText = async (text: any) => {
     try {
@@ -102,11 +104,11 @@ const NewCourseThankyouPage = () => {
               <Circle color={statusColorCode} fill={statusColorCode} size={5} className="text-[#FFB900]" />
               {data?.data?.status_id?.value}
             </Button>
-            <Link href="/courses/list">
-              <Button variant="outline" className="text-indigo-600 border-indigo-600 " onClick={() => {}}>
+          
+              <Button variant="outline" className="text-indigo-600 border-indigo-600 " onClick={() => {router.replace('/courses/list')}}>
                 Go to Course Listing
               </Button>
-            </Link>
+          
           </div>
           <Image src={ThankyouGif} alt="My Image" width={148} height={148} className="mx-auto" />
           <div className="mx-auto text-center max-w-fit ">
@@ -117,9 +119,8 @@ const NewCourseThankyouPage = () => {
           <div className="flex h-auto px-4 py-4 m-5 text-base border-2 border-indigo-600 border-dashed rounded-2xl bg-indigo-50">
             <div className="flex-[1] p-4 border-r border-light">
               <p className=" text-accent-secondary">Course ID</p>
-              <Link href={`/courses/${programId}`}>
-                <p className="font-bold cursor-pointer text-accent-primary">{data?.data?.program_code}</p>
-              </Link>
+                <p className="font-bold cursor-pointer text-accent-primary" onClick={()=>{router.replace(`/courses/${programId}`)}}>{data?.data?.program_code}
+                </p>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
               <p className="text-accent-secondary">Course Name</p>
