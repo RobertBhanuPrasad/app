@@ -563,6 +563,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
 
 const RejectedModalOpen = () => {
   const { viewRejectedModal, setViewRejectedModal } = newCourseStore()
+  const {t} = useTranslation(["common", "course.view_course"])
 
   return (
     <Dialog open={viewRejectedModal}>
@@ -571,7 +572,7 @@ const RejectedModalOpen = () => {
           <div className="flex items-center w-full justify-center">
             <Cross />{' '}
           </div>
-          <DialogTitle className="font-bold text-center">Course Rejected</DialogTitle>
+          <DialogTitle className="font-bold text-center">{t('new_strings:course_rejected')}</DialogTitle>
           <DialogDescription className="text-center">The Course got rejected successfully</DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -878,6 +879,7 @@ const ShareButton = () => {
   }
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string
   const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 
   return (
     <Dialog>
@@ -888,7 +890,7 @@ const ShareButton = () => {
       </DialogTrigger>
       <DialogContent className="w-[414px] h-[310px] !rounded-[24px] !p-6 ">
         <div className="flex items-center gap-5 flex-col">
-          <div className="text-[24px] font-semibold items-center">Share in Social</div>
+          <div className="text-[24px] font-semibold items-center">{t('course.view_course:basic_details_tab.share_in_social')}</div>
           <div className="flex flex-row gap-6 ">
             <WhatsappIcon />
             <FaceBookIcon />
@@ -910,7 +912,7 @@ const ShareButton = () => {
                 <CopyIcon />
                 {copiedRegistrationLink ? (
                   <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                    copied
+                    {t('new_strings:copied')}
                   </div>
                 ) : (
                   ''
@@ -931,7 +933,7 @@ const ShareButton = () => {
                 <CopyIcon />
                 {copiedDetailsPageLink ? (
                   <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                    copied
+                    {t('new_strings:copied')}
                   </div>
                 ) : (
                   ''
@@ -948,7 +950,7 @@ const ShareButton = () => {
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', 'course.view_course', 'new_strings'])
 
   if (!authenticated) {
     return {
