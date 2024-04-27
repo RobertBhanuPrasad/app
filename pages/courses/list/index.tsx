@@ -276,7 +276,6 @@ function index() {
     },
   });
 
-  console.log("heyy programm data", programData);
 
   /**
    * The variable holds whether all rows are selected or not
