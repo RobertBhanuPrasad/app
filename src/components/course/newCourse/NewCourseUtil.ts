@@ -1021,14 +1021,10 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 
       console.log(data, "deleted data venue");
 
-      console.log(venueData, "venu detata cjdjvndsjcns");
-
       //TODO: Need to post latitude and longitude also when map component was done.
 
       // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
       // we have to delete them from database
-
-      console.log("enter into else of existing venue", venueBody);
 
       const { data: insertData, error } = await supabaseClient
         .from("venue")
@@ -1061,20 +1057,6 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 
       return insertData[0].id;
     }
-
-    // if (venueId) {
-    //   const { data: updatingExistingVenue, error } = await supabaseClient
-    //     .from("venue")
-    //     .upsert(venueBody)
-    //     .select();
-
-    //     if (error) {
-    //       console.log("error while updating existing venue", error);
-    //       return false;
-    //     } else {
-    //       console.log("updating existing venue", updatingExistingVenue);
-    //     }
-    // }
   }
 };
 
