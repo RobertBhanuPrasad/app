@@ -415,7 +415,7 @@ export default function NewCourseReviewPage() {
 
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold ml-8">Review Course Details</div>
+      <div className="text-[24px] my-4 font-semibold ml-6">Review Course Details</div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -742,26 +742,30 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={VenueData ? VenueData : "-"}
                 >
-                  <p className="font-semibold truncate text-accent-secondary">
-                    <div className="break-all">{VenueData}</div>{" "}
-                  </p>
+                  {VenueData ? VenueData : "-"}
                 </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Time Format
                 </p>
-                <p className="font-semibold truncate text-accent-secondary">
-                  {timeFormat?.value}
-                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={timeFormat?.value}
+                >
+                  {timeFormat?.value ? timeFormat?.value : "-"}
+                </abbr>
               </div>
               <div className=" min-w-72">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Time Zone
                 </p>
-                <p className="font-semibold truncate text-accent-secondary">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={`${timeZone?.data?.name} - ${timeZone?.data?.utc_off_set}`}
+                >
                   {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
-                </p>
+                </abbr>
               </div>
               <div>{venueSessions()}</div>
             </div>
