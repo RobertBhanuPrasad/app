@@ -166,17 +166,6 @@ const RadioCards = () => {
     }
   };
 
-  const { watch } = useFormContext();
-
-  const formData = watch();
-
-  const loginInUserData = loginUserData?.userData?.id;
-
-  const isLoggedInUserIsTeacher =
-    formData?.teacher_ids?.includes(loginInUserData);
-
-  const isOrganizingforOtherTeacherEnabled = isLoggedInUserIsTeacher;
-
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
