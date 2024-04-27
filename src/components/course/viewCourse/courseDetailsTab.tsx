@@ -51,6 +51,7 @@ interface ProgramScheduleItem {
 
 function CourseDetailsTab() {
   const router = useRouter();
+  const {t} = useTranslation(["common", "course.view_course"])
 
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
@@ -76,7 +77,7 @@ function CourseDetailsTab() {
 
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
-  const {t} = useTranslation("common")
+  
 
   const copyText = async (text: string) => {
     try {
@@ -109,6 +110,7 @@ function CourseDetailsTab() {
     VISIBILITY,
     PUBLIC
   )?.id;
+  
 
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
