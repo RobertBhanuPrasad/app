@@ -1,5 +1,6 @@
 import { useRouter } from "next/router"
 import HomeIcon from '@public/assets/HomeIcon'
+import SlashIcon from "src/ui/SlashIcon"
 
 type breadCrumbDataType = {
   [key: string]: {
@@ -40,7 +41,7 @@ export const Breadcrumb = () => {
       },
       {
         label: 'Courses',
-        className: 'text-primary cursor-pointer',
+        className: '',
         href: '/courses/list'
       },
       {
@@ -174,7 +175,7 @@ export const Breadcrumb = () => {
         const isLastLabel = index === data.length - 1 // Check if it's the last label
         return (
           <p
-            className={`${label.className} text-xs`}
+            className={`${label.className} flex`}
             onClick={() => {  // Check if it's not the last label and not the Home page
               if (!isLastLabel && index !== 0) {
                 router.push(`${label.href}`);
@@ -183,7 +184,8 @@ export const Breadcrumb = () => {
           >
             &nbsp;
             {label.label}
-            {!isLastLabel && ' /'} {/* Render '/' only if it's not the last label */}
+            &nbsp;
+            {!isLastLabel && <SlashIcon/>} {/* Render '/' only if it's not the last label */}
           </p>
         )
       })}
