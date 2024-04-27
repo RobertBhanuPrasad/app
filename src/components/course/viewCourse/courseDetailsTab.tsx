@@ -113,8 +113,8 @@ function CourseDetailsTab() {
       {/**
        * Basic details card
        */}
-      <div>
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] ">
+      <div className="w-full">
+        <Card className="min-w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] ">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Basic Details
@@ -237,8 +237,8 @@ function CourseDetailsTab() {
       {/**
        * Fee and accommodation card
        */}
-      <div>
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+      <div className="w-full">
+        <Card className="min-w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Fee and Accommodation
@@ -278,8 +278,8 @@ function CourseDetailsTab() {
         </Card>
       </div>
 
-      <div className="flex flex-col gap-[30px]">
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+      <div className="flex flex-col gap-[30px] w-full">
+        <Card className="min-w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Time and Venue
@@ -325,7 +325,7 @@ function CourseDetailsTab() {
         {/**
          * Registration Links card*/}
 
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="min-w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Registration Links
@@ -399,7 +399,7 @@ function CourseDetailsTab() {
         {/**
          * Contact details card
          */}
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="min-w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Contact Details

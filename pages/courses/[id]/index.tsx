@@ -250,8 +250,8 @@ function ViewDetails() {
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+            <HoverCardContent className='z-[100]'>
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal min-h-[104px]">
                 {participantData?.participantCount} Participants with: Transaction status = Confirmed / Pending
                 Attendance status = Confirmed / Pending / Dropout Total participants records:
                 {participantData?.totalParticipantCount}
@@ -273,7 +273,7 @@ function ViewDetails() {
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
-            <HoverCardContent>
+            <HoverCardContent className='z-[100]'>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 Revenue from confirmed pending transaction participants revenue:
                 {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
@@ -281,19 +281,23 @@ function ViewDetails() {
             </HoverCardContent>
           </HoverCard>
         </div>
-        <div className="flex flex-row gap-2 items-center mt-3">
+       <div className='flex justify-between'>
+        <div className="flex flex-row gap-2 items-center mt-3 w-full">
           <LocationIcon />
-          {courseData?.data?.venue_id?.address},{courseData?.data?.venue_id?.city_id?.name},
-          {courseData?.data?.venue_id?.state_id?.name}, {countryName},{courseData?.data?.venue_id?.postal_code}
-        </div>
-
+          <p className="w-full">{`
+              ${courseData?.data?.venue_id?.address},
+              ${courseData?.data?.venue_id?.city_id?.name},
+              ${courseData?.data?.venue_id?.state_id?.name}, ${countryName},
+              ${courseData?.data?.venue_id?.postal_code} `}
+          </p>
+        </div> 
         <div className="flex flex-row items-center gap-2 w-full justify-end ">
           Announced by: {courseData?.data?.created_by_user_id?.contact_id?.full_name}
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
-            <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
+            <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full z-[100]">
               <div className="!rounded-[15px] font-normal flex flex-col">
                 <p>Approved by:</p>
                 <p>
@@ -316,8 +320,9 @@ function ViewDetails() {
             </HoverCardContent>
           </HoverCard>
         </div>
+        </div>
       </div>
-      <div className="w-full mt-6">
+      <div className="w-full mt-3">
         <Tabs
           onValueChange={(val: string) => {
             // to store the tab Data
@@ -328,24 +333,15 @@ function ViewDetails() {
           }}
           value={getTabQueryName()}
         >
-          <TabsList className="flex flex-row gap-10  bg-white !rounded-none  w-full border-b h-12 px-8">
+          <TabsList className="flex flex-row gap-10  bg-white !rounded-none sticky top-[95px] z-[100] w-full border-b h-12 px-8">
             {tabTriggers.map((trigger: any, index: number) => (
               <TabsTrigger
                 key={index}
                 value={JSON.stringify(trigger.value)}
-                className={` data-[state=active]:text-[#7677F4] data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end  text-sm font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none  `}
+                className={` data-[state=active]:text-[#7677F4] data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end  text-sm font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none `}
                 disabled={handleTabsBasedOnStatus(courseData?.data?.status_id?.id, trigger.value)}
               >
-                <div className="flex flex-col gap-1">
                   {trigger.label}
-                  {/* <div
-                    className={`${
-                      getTabQueryName() === JSON.stringify(trigger.value)
-                        ? 'bg-[#7677F4] rounded w-full h-[2px]'
-                        : 'w-full h-[2px]'
-                    }`}
-                  ></div> */}
-                </div>
               </TabsTrigger>
             ))}
             <div className="ml-auto flex gap-4">
