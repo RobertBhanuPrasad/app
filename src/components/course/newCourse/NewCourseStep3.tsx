@@ -136,8 +136,6 @@ const OnlineProgram = () => {
 const Schedules = () => {
   const { errors } = useFormState()
 
-  console.log('errors are', errors?.schedules)
-
   return (
     <div className="flex flex-col gap-4 w-[1016px]">
       <SchedulesHeader />
@@ -256,8 +254,6 @@ const Sessions = () => {
 
   const formData = watch()
   const schedules = formData?.schedules || []
-
-  console.log('schedules are', schedules)
 
   /**
    * We need to add a new session when user click on add session
@@ -967,7 +963,6 @@ const ExistingVenueList = () => {
 
     return data
   }
-  console.log(loginUserData)
   const fetchOtherVenues = async () => {
     const { data } = await supabaseClient
       .from('venue_view_with_names')
@@ -1088,11 +1083,12 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
     name: "isNewVenue",
   });
 
-
+  // for checking user has edited the existing venue 
   const {
     field: { onChange: setIsExistingVenueEdited },
   } = useController({
     name: "isExistingVenueEdited",
+    defaultValue: false,
   });
 
   const {
@@ -1113,11 +1109,20 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
     setValue("city_id", item?.city_id);
     setValue("center_id", item?.center_id);
     setValue("postal_code", item?.postal_code);
-    setIsExistingVenueEdited(true)
   };
 
   const handleSubmitExistingVenue = async (index: number) => {
     
+    const { data } = await supabaseClient
+    .from('venue')
+    .select('*')
+    .eq('state_id', formData?.state_id)
+    .eq('center_id', formData?.center_id)
+    .eq('city_id', formData?.city_id)
+    .eq('address', formData?.address)
+    .eq('postal_code', formData?.postal_code)
+    .eq('name', formData?.name)
+
     const isAllFieldsFilled = await ValidateCurrentStepFields([
       "city_id",
       "center_id",
@@ -1137,12 +1142,12 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
       center_id: formData?.center_id,
       postal_code: formData?.postal_code,
     };
-    
+
     if (isAllFieldsFilled) {
-      console.log("entered");
-      
       setVenueData(allVenuesData);
       setOpenExistingVenue(false);
+      // we are checking whether the user edited any value 
+      setIsExistingVenueEdited(data && data.length > 0 ? false : true);
     } else {
       setOpenExistingVenue(true);
     }
@@ -1183,7 +1188,6 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
                     disabled={!isVenueSelected}
                     onClick={() => {
                       handleOpenExistingVenue(item);
-                      console.log()
                     }}
                   >
                     <EditIcon />
@@ -1233,7 +1237,6 @@ export const AddOrEditVenue = ({
   const { watch } = useFormContext();
 
   const formData = watch()
-  console.log(formData, 'fd')
 
   const isNewVenue = formData?.isNewVenue
 
