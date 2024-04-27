@@ -67,18 +67,14 @@ useEffect(() => {
       setCopiedRegistrationLink(false)
     }, 1000)
   }
-
   const { data, isLoading: isThankyouPageDataIsLoading } = useOne({
     resource: 'program',
     id: programId,
     meta: {
       select:
-        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value)'
+        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value),registration_link,details_page_link'
     }
   })
-
-  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string
-  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string
 
   // Formatting teacher string
   const teachers = data?.data?.program_teachers
@@ -200,11 +196,11 @@ useEffect(() => {
                   </p>
                   <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                     <h4 id="textToCopy" className="">
-                      {`${RX_BASE_URL}/programs/${programId}`}
+                      {data?.data?.registration_link}
                     </h4>
                     <div
                       onClick={() => {
-                        handleCopyDetailsPageLink(`${RX_BASE_URL}/programs/${programId}`)
+                        handleCopyDetailsPageLink(data?.data?.registration_link)
                       }}
                       className="relative mt-1 cursor-pointer"
                     >
@@ -229,11 +225,11 @@ useEffect(() => {
 
                     <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                       <h4 id="textToCopy1" className="">
-                        {CX_BASE_URL}
+                        {data?.data?.details_page_link}
                       </h4>
                       <div
                         onClick={() => {
-                          handleCopyRegistrationLink(CX_BASE_URL)
+                          handleCopyRegistrationLink(data?.data?.details_page_link)
                         }}
                         className="relative mt-1 cursor-pointer"
                       >
@@ -253,9 +249,9 @@ useEffect(() => {
                   <div className="pl-5">
                     <Button
                       onClick={() => {
-                        handleCopyDetailsPageLink(RX_BASE_URL)
-                        handleCopyRegistrationLink(CX_BASE_URL)
-                        copyText(CX_BASE_URL + ',' + RX_BASE_URL)
+                        handleCopyDetailsPageLink(data?.data?.registration_link)
+                        handleCopyRegistrationLink(data?.data?.details_page_link)
+                        copyText(data?.data?.registration_link+ ',' + data?.data?.details_page_link)
                       }}
                       variant="outline"
                       className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
