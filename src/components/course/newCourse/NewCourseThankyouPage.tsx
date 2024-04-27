@@ -21,9 +21,9 @@ import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesBy
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 const NewCourseThankyouPage = () => {
-  const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false)
-  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
-  const { programId } = newCourseStore()
+  const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
+  const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
+  const { programId } = newCourseStore();
 
   const router = useRouter()
 
@@ -58,7 +58,7 @@ const NewCourseThankyouPage = () => {
     id: programId,
     meta: {
       select:
-        'visibility_id(*),program_code,program_type_id,venue_id,status_id,time_zone_id,program_type_id(name),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value)'
+        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value)'
     }
   })
 
@@ -75,13 +75,13 @@ const NewCourseThankyouPage = () => {
   // Formatting the venue details
   const venue =
     data?.data?.venue_id?.address +
-    ',' +
+    ', ' +
     data?.data?.venue_id?.name +
-    ',' +
+    ', ' +
     data?.data?.venue_id?.city_id?.name +
-    ',' +
+    ', ' +
     data?.data?.venue_id?.state_id?.name +
-    ',' +
+    ', ' +
     data?.data?.venue_id?.postal_code
 
   const statusColorCode = getCourseStatusColorBasedOnStatusId(data?.data?.status_id?.id)?.colorCode
@@ -131,10 +131,24 @@ const NewCourseThankyouPage = () => {
               <p className="font-bold text-accent-primary">{teachers ? teachers : '-'}</p>
             </div>
             {/* // TODO need to do when the form filed is clear */}
+            {/* If it is an online course in the venue section we have to show online text that can be hyperlinked which will take the user to the meeting url on click  */}
+            {data?.data?.program_type_id?.is_online_program === true ? 
+            (  <div className="flex-[2.5] p-4 border-r border-light">
+              <p className="text-accent-secondary">Venue</p>
+              <p className="font-bold text-accent-primary">
+                {data?.data?.online_url ? (
+                  <a href={data?.data?.online_url} className="text-blue-600 hover:text-blue-800 ">Online</a>
+                  ) : ( "-")}
+             </p>
+              </div>) :
+            (
+              // for offline we have to show the venue details 
             <div className="flex-[2.5] p-4 border-r border-light">
               <p className="text-accent-secondary">Venue</p>
               <p className="font-bold text-accent-primary">{venue ? venue : '-'}</p>
             </div>
+            )
+          }
             <div className="flex-[2.5] p-4 ">
               <p className="text-accent-secondary">Course Date (UTC 05:00)</p>
               {data?.data?.program_schedules?.map((data: any) => {
