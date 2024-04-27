@@ -154,6 +154,16 @@ export const handlePostProgramData = async (
     programBody.center_id = body?.existingVenue?.center_id;
   }
 
+  //hour_format_id
+  if (body[NewCourseStep3FormNames.hour_format_id]) {
+    programBody.hour_format_id = body[NewCourseStep3FormNames.hour_format_id];
+  }
+
+  //time_zone_id
+  if (body[NewCourseStep3FormNames.time_zone_id]) {
+    programBody.time_zone_id = body[NewCourseStep3FormNames.time_zone_id];
+  }
+
   // step 4
   if (body[NewCourseStep4FormNames.is_early_bird_enabled]) {
     programBody.is_early_bird_enabled =
