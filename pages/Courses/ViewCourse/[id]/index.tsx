@@ -423,7 +423,7 @@ export default index;
 
 const PendingApprovalDropDown = ({ courseId }: any) => {
   const today = new Date();
-  const {t} = useTranslation(["common", "course.view_course"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
     
     PROGRAM_STATUS,
@@ -634,7 +634,7 @@ const RejectedModalOpen = () => {
 
 const SuccessModalOpen = () => {
   const { viewSuccessModal, setViewSuccessModal } = newCourseStore();
-  const {t} = useTranslation(["common", "course.view_course"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Dialog open={viewSuccessModal}>
       <DialogTrigger></DialogTrigger>
@@ -741,7 +741,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
     });
     setCancelSuccessModalOpen(true);
   };
-  const {t} = useTranslation(["common", "course.view_course"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <div>
       <Select
@@ -1124,7 +1124,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({
    * Set state to display a rejected modal
    * Close the reject modal
    */
-  const {t} = useTranslation(["common", "course.view_course"])
+  
   const rejectCourse = async () => {
     setViewCourseAccountingRejectedDescriptionModal(true);
   };
