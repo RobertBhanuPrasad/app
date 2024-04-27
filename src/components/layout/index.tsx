@@ -16,12 +16,12 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     '/courses/add': [
       {
         label: 'Home',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: ''
       },
       {
         label: 'Courses',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: '/courses/list '
       },
       {
@@ -33,12 +33,12 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     '/courses/list': [
       {
         label: 'Home',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: ''
       },
       {
         label: 'Courses',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: '/courses/list'
       },
       {
@@ -50,12 +50,12 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     '/courses/[id]': [
       {
         label: 'Home',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: ''
       },
       {
         label: 'Courses',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: '/courses/list'
       },
       {
@@ -67,12 +67,12 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     '/courses/[id]/edit': [
       {
         label: 'Home',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: ''
       },
       {
         label: 'Courses',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: '/courses/list'
       },
       {
@@ -84,17 +84,17 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     '/courses/[id]/participants/list': [
       {
         label: 'Home',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: ''
       },
       {
         label: 'Courses',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: '/courses/list'
       },
       {
         label: 'Course Details',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: `/courses/${id}`
       },
       {
@@ -106,22 +106,22 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     '/courses/[id]/participants/[participantId]': [
       {
         label: 'Home',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: ''
       },
       {
         label: 'Courses',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: '/courses/list'
       },
       {
         label: 'Course Details',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: `/courses/${id}`
       },
       {
         label: 'View Course Participants',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: `/courses/${id}/participants/list`
       },
       {
@@ -133,22 +133,22 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     '/courses/[id]/participants/[participantId]/edit': [
       {
         label: 'Home',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: ''
       },
       {
         label: 'Courses',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: '/courses/list'
       },
       {
         label: 'Course Details',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: `/courses/${id}`
       },
       {
         label: 'View Course Participants',
-        className: 'text-primary',
+        className: 'text-primary cursor-pointer',
         href: `/courses/${id}/participants/list`
       },
       {
