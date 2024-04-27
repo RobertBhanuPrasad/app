@@ -21,11 +21,11 @@ function Navbar() {
   const components = [
     {
       title: "New Course",
-      href: "/Courses/NewCourse",
+      href: "/courses/add",
     },
     {
       title: "Find Course",
-      href: "/Courses/FindCourse",
+      href: "/courses/list",
     },
     {
       title: "Discount Codes",

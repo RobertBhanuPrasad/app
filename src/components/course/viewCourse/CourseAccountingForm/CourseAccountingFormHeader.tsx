@@ -5,7 +5,7 @@ import ParticipantsIcon from '@public/assets/ParticipantsIcon'
 import Line from '@public/assets/line'
 import { useList, useOne } from '@refinedev/core'
 import { useRouter } from 'next/router'
-import { ActionsDropDown } from 'pages/Courses/ViewCourse/[id]'
+import { ActionsDropDown } from 'pages/courses/[id]'
 import { useEffect, useState } from 'react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card'
 import { formatDate } from 'src/utility/DateFunctions'
@@ -61,7 +61,7 @@ function HeaderSection() {
         <div
           className="  text-[#7677F4] pt-3 cursor-pointer"
           onClick={() => {
-            replace(`/Courses/ViewCourse/${programId}`)
+            replace(`/courses/${programId}?tab=course_accounting_form`)
           }}
         >
           <Back />

@@ -209,7 +209,7 @@ export function MultiSelect({
         <div className="relative" ref={popoverDropdownRef}>
           {popoverOpen ? (
             <CommandGroup
-              className={`absolute w-full  rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in ${dropdownStyles}`}
+              className={`absolute w-full z-[100]  rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in ${dropdownStyles}`}
             >
               {selected?.map((item, index) => {
                 // Extracting option properties, including 'noIcon' to determine if a cross icon should be displayed
@@ -218,11 +218,11 @@ export function MultiSelect({
                   : {
                       noIcon: false,
                     };
-                const { noIcon } = optionProps;
-                return (
+                    const { disable: noIcon } = optionProps;
+                    return (
                   <div key={item}>
                     <div className="flex flex-row justify-between items-center pr-3">
-                      <div className="cursor-pointer p-2 text-[12px] hover:bg-gray-200">
+                      <div className="cursor-pointer p-2 text-[12px]">
                         {findObjectById(item)?.label}
                       </div>
                       {!noIcon && (

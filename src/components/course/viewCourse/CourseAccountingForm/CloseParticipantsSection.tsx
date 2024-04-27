@@ -360,7 +360,7 @@ function CloseParticipantsSection() {
         <Button
           className="w-[118px] h-[46px] border border-[#7677F4] rounded-[12px] bg-[white] text-[#7677F4]"
           onClick={() => {
-            replace("/Courses/ViewCourse/2");
+            replace(`/courses/${query.id}?tab=course_accounting_form`);
           }}
         >
           Previous

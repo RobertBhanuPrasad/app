@@ -59,18 +59,24 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
+import { useRouter } from "next/router";
+import { usePathname, useSearchParams } from "next/navigation";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData, "loginUserData");
 
-  const { viewPreviewPage, viewThankyouPage } = newCourseStore();
+  const {
+    query: { section },
+  } = useRouter();
+
+  console.log("router is ", section);
 
   if (!loginUserData?.userData) {
     return <div>Loading...</div>;
   }
 
-  if (viewThankyouPage) {
+  if (section === "thank_you") {
     return (
       <div className="mb-8">
         <NewCourseThankyouPage />;
@@ -78,7 +84,7 @@ function index() {
     );
   }
 
-  if (viewPreviewPage) {
+  if (section === "preview_page") {
     return <NewCourseReviewPage />;
   } else {
     return <NewCourse />;
@@ -218,9 +224,12 @@ function NewCourse() {
 export default index;
 
 export const NewCourseTabs = () => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  const router = useRouter();
   const { watch, getValues } = useFormContext();
-  const { setViewPreviewPage, setNewCourseData, currentStep, setCurrentStep } =
-    newCourseStore();
+  const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
 
   const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined);
   const [isAllFieldsValid2, setIsAllFieldsValid2] = useState(undefined);
@@ -353,8 +362,16 @@ export const NewCourseTabs = () => {
 
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
-      setViewPreviewPage(true);
+      // setViewPreviewPage(true);
       setNewCourseData(formData);
+
+      // i need to set params with section=preview_page
+      const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
+      current.set("section", "preview_page");
+
+      const params = current.toString();
+
+      router.replace(`${pathname}?${params}`);
     }
     handelIsAllFieldsFilled(isAllFieldsFilled);
   };
@@ -572,120 +589,125 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
-      <Tabs value={JSON.stringify(currentStep)}>
-        <div className="flex flex-row">
-          <TabsList className="h-[513px] bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
-            <div className="flex flex-col  h-full gap-4 ">
-              {stepTitles.map((tab, index) => (
-                <TabsTrigger
-                  key={index}
-                  value={JSON.stringify(tab.value)}
-                  className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                  onClick={async () =>
-                    await handleClickTab(
-                      validationFieldsStepWise[currentStep - 1],
-                      tab
-                    )
-                  }
-                >
-                  {currentStep === tab.value && (
-                    <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
-                  )}
-                  <div
-                    className={`flex flex-row gap-[10px] ml-[14px] items-center ${tab?.textColor}`}
+      <p className="font-semibold text-2xl">
+        {router.query.action ? router.query.action : "New"} Course
+      </p>
+      <div className="mt-4">
+        <Tabs value={JSON.stringify(currentStep)}>
+          <div className="flex flex-row">
+            <TabsList className="h-[513px] bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
+              <div className="flex flex-col  h-full gap-4 ">
+                {stepTitles.map((tab, index) => (
+                  <TabsTrigger
+                    key={index}
+                    value={JSON.stringify(tab.value)}
+                    className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                    onClick={async () =>
+                      await handleClickTab(
+                        validationFieldsStepWise[currentStep - 1],
+                        tab
+                      )
+                    }
                   >
-                    {tab.icon}
-                    {tab.label}
-                  </div>
-                </TabsTrigger>
-              ))}
-            </div>
-          </TabsList>
-
-          <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
-            <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
-              <div>
-                <TabsContent
-                  value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
-                  className={contentStylings}
-                >
-                  <NewCourseStep1 />
-                </TabsContent>
-                <TabsContent
-                  value={JSON.stringify(COURSE_DETAILS_STEP_NUMBER)}
-                  className={contentStylings}
-                >
-                  <NewCourseStep2 />
-                </TabsContent>
-                <TabsContent
-                  value={JSON.stringify(TIME_AND_VENUE_STEP_NUMBER)}
-                  className={contentStylings}
-                >
-                  <NewCourseStep3 />
-                </TabsContent>
-                <TabsContent
-                  value={JSON.stringify(FEE_STEP_NUMBER)}
-                  className={contentStylings}
-                >
-                  <NewCourseStep4 />
-                </TabsContent>
-                <TabsContent
-                  value={JSON.stringify(ACCOMMODATION_STEP_NUMBER)}
-                  className={contentStylings}
-                >
-                  <NewCourseStep5 />
-                </TabsContent>
-                <TabsContent
-                  value={JSON.stringify(CONTACT_INFO_STEP_NUMBER)}
-                  className={contentStylings}
-                >
-                  <NewCourseStep6 />
-                </TabsContent>
+                    {currentStep === tab.value && (
+                      <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
+                    )}
+                    <div
+                      className={`flex flex-row gap-[10px] ml-[14px] items-center ${tab?.textColor}`}
+                    >
+                      {tab.icon}
+                      {tab.label}
+                    </div>
+                  </TabsTrigger>
+                ))}
               </div>
-              <div className="flex self-end justify-center gap-4 w-full mt-2">
-                {currentStep > 1 && (
-                  <Button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleClickPrevious();
-                    }}
-                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
-                  >
-                    Previous
-                  </Button>
-                )}
+            </TabsList>
 
-                {currentStep < stepTitles.length && (
-                  <Button
-                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      await handleClickNext(
-                        validationFieldsStepWise[currentStep - 1]
-                      );
-                    }}
+            <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
+              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
+                <div>
+                  <TabsContent
+                    value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
+                    className={contentStylings}
                   >
-                    Next
-                  </Button>
-                )}
+                    <NewCourseStep1 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(COURSE_DETAILS_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep2 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(TIME_AND_VENUE_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep3 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(FEE_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep4 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(ACCOMMODATION_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep5 />
+                  </TabsContent>
+                  <TabsContent
+                    value={JSON.stringify(CONTACT_INFO_STEP_NUMBER)}
+                    className={contentStylings}
+                  >
+                    <NewCourseStep6 />
+                  </TabsContent>
+                </div>
+                <div className="flex self-end justify-center gap-4 w-full mt-2">
+                  {currentStep > 1 && (
+                    <Button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleClickPrevious();
+                      }}
+                      className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
+                    >
+                      Previous
+                    </Button>
+                  )}
 
-                {currentStep == CONTACT_INFO_STEP_NUMBER && (
-                  <Button
-                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-                    onClick={async () => {
-                      await handleClickReviewDetailsButton(
-                        validationFieldsStepWise[currentStep - 1]
-                      );
-                    }}
-                  >
-                    Review Details
-                  </Button>
-                )}
+                  {currentStep < stepTitles.length && (
+                    <Button
+                      className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        await handleClickNext(
+                          validationFieldsStepWise[currentStep - 1]
+                        );
+                      }}
+                    >
+                      Next
+                    </Button>
+                  )}
+
+                  {currentStep == CONTACT_INFO_STEP_NUMBER && (
+                    <Button
+                      className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
+                      onClick={async () => {
+                        await handleClickReviewDetailsButton(
+                          validationFieldsStepWise[currentStep - 1]
+                        );
+                      }}
+                    >
+                      Review Details
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Tabs>
+        </Tabs>
+      </div>
     </div>
   );
 };

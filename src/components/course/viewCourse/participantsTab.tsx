@@ -1,40 +1,37 @@
-import { Circle } from "lucide-react";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { PieChart } from "react-minimal-pie-chart";
-import { Button } from "src/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
-import { supabaseClient } from "src/utility";
-import { getColorWithDecreasedOpacity } from "src/utility/GenerateColours";
-import _ from "lodash";
-
+import { Circle } from 'lucide-react'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import { PieChart } from 'react-minimal-pie-chart'
+import { Button } from 'src/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from 'src/ui/card'
+import { supabaseClient } from 'src/utility'
+import { getColorWithDecreasedOpacity } from 'src/utility/GenerateColours'
 import { useTranslation } from 'next-i18next';
 
+
 function ParticipantsTab() {
-    const router = useRouter();
+  const router = useRouter()
+  const {
+    query: { id }
+  } = router
 
-    const Id: number | undefined = router?.query?.id
-        ? parseInt(router.query.id as string)
-        : undefined;
+  const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
-    const [participantData, setParticipantData] = useState<any>();
+  const [participantData, setParticipantData] = useState<any>()
 
-    const fetchData = async () => {
-        try {
-            const { data, error } = await supabaseClient.functions.invoke(
-                "get_program_participant_summary",
-                {
-                    method: "POST",
-                    body: {
-                        program_id: Id,
-                    },
-                }
-            );
-            setParticipantData(data);
-        } catch (error) {
-            console.error("Error fetching fee data:", error);
+  const fetchData = async () => {
+    try {
+      const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
+        method: 'POST',
+        body: {
+          program_id: Id
         }
-    };
+      })
+      setParticipantData(data)
+    } catch (error) {
+      console.error('Error fetching fee data:', error)
+    }
+  }
 
   useEffect(() => {
     fetchData();
@@ -45,7 +42,9 @@ function ParticipantsTab() {
       <div className="flex justify-between">
         <div className="text-[23px] font-semibold">{t('course.view_course:participants_tab.overall_participants')}</div>
         <div className="flex gap-4">
-          <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">
+          <Button className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]">// onClick={() =>
+            //     // router.push('/courses/add')
+            // }
           {t('register_participant')}
           </Button>
           <Button className="w-[188px] h-[46px] rounded-[12px]">
@@ -59,13 +58,13 @@ function ParticipantsTab() {
         <GenderPieChart participantData={participantData} />
       </div>
     </div>
-  );
+  )
 }
 
-export default ParticipantsTab;
+export default ParticipantsTab
 
 const FeeLevelPieChart = ({ participantData }: any) => {
-    const baseColor = "#7677F4";
+  const baseColor = '#7677F4'
 
   const feeLevelData = participantData?.FeeLevelBreakUp?.map(
     (item: any, index: any) => {
@@ -80,10 +79,10 @@ const FeeLevelPieChart = ({ participantData }: any) => {
           baseColor,
           index + 1,
           participantData?.FeeLevelBreakUp?.length
-        ),
-      };
+        )
+      }
     }
-  );
+  )
   const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
@@ -123,17 +122,17 @@ const FeeLevelPieChart = ({ participantData }: any) => {
                   </div>
                   <div className="font-semibold">{item?.value}</div>
                 </div>
-              );
+              )
             })}
           </div>
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 const AttendancePieChart = ({ participantData }: any) => {
-    const baseColor = "#7677F4";
+  const baseColor = '#7677F4'
 
   const attendanceData = participantData?.AttendanceStatus?.map(
     (item: any, index: any) => {
@@ -149,7 +148,7 @@ const AttendancePieChart = ({ participantData }: any) => {
           index + 1,
           participantData?.AttendanceStatus?.length
         ),
-      };
+      }
     }
   );
   const {t} = useTranslation(["common", "course.view_course", "new_strings"])
@@ -198,11 +197,11 @@ const AttendancePieChart = ({ participantData }: any) => {
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 const GenderPieChart = ({ participantData }: any) => {
-    const baseColor = "#7677F4";
+  const baseColor = '#7677F4'
 
   const genderData = participantData?.Gender?.map((item: any, index: any) => {
     // Extract the title from the object key
@@ -216,9 +215,9 @@ const GenderPieChart = ({ participantData }: any) => {
         baseColor,
         index + 1,
         participantData?.Gender?.length
-      ),
-    };
-  });
+      )
+    }
+  })
   const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
@@ -259,7 +258,7 @@ const GenderPieChart = ({ participantData }: any) => {
                   </div>
                   <div className="font-semibold">{item?.value}</div>
                 </div>
-              );
+              )
             })}
           </div>
         </div>
