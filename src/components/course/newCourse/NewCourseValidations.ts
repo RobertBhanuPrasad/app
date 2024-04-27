@@ -61,16 +61,11 @@ export const validationSchema = () => {
       .array(z.string())
       .nonempty({ message: "Country is a required field" }),
     max_capacity: z
-      .string({
-        required_error: "Maximum capacity is a required field",
-      })
-      //here if the value is empty string then also we need to show this error
-      .refine((val) => val != "", {
-        message: "Maximum capacity is a required field",
-      })
-      .refine((val) => /^\d+$/.test(val), {
+      .string()
+      .refine((val) => val === "" || /^\d+$/.test(val), {
         message: "Maximum Capacity can accept only integers",
-      }).optional(),
+      })
+      .optional(),
 
     // Step 3 Schema
     is_existing_venue: z.string({
