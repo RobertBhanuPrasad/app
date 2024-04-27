@@ -441,7 +441,16 @@ const Venue = () => {
   const { watch, setValue, resetField } = useFormContext()
 
   const removeVenue = () => {
-    setValue('newVenue', null)
+    setValue('newVenue', undefined)
+    // After click remove then due to the following fields are not removed before, because of that 
+    // due to the reset field in the add new venue function the data which is already present we did not removed is prefilling
+    // So we are removing the data for the following fields also.
+    setValue("state_id",undefined)
+    setValue("name",undefined)
+    setValue("city_id",undefined)
+    setValue("center_id",undefined)
+    setValue("postal_code",undefined)
+    setValue("address",undefined)
   }
 
   const formData = watch()
