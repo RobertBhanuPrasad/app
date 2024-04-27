@@ -67,18 +67,7 @@ function index() {
   const { setCurrentStep } = newCourseStore();
   console.log(loginUserData, "loginUserData");
 
-/**
- * useEffect to run once when the component mounts.
- * It sets the current step to 1.
- * This effect has an empty dependency array to ensure it runs only once.
- */
-useEffect(() => {
-  /**
-   * Set the current step to 1 when the component mounts.
-   * This initializes the component state for the first step.
-   */
-  setCurrentStep(1);
-}, []);
+
 
 
   const {
@@ -106,6 +95,7 @@ useEffect(() => {
   }
 }
 function NewCourse() {
+  const { setCurrentStep} = newCourseStore();
   const { data: loginUserData }: any = useGetIdentity();
 
   const loggedUserData = loginUserData?.userData?.id;
@@ -115,6 +105,20 @@ function NewCourse() {
   const onSubmit = (formData: any) => {
     // console.log(formData);
   };
+
+
+/**
+ * useEffect to run once when the component mounts.
+ * It sets the current step to 1.
+ * This effect has an empty dependency array to ensure it runs only once.
+ */
+useEffect(() => {
+  /**
+   * Set the current step to 1 when the component mounts.
+   * This initializes the component state for the first step.
+   */
+  setCurrentStep(1);
+}, []);
 
   //Finding program Organizer role id
   const publicVisibilityId = getOptionValueObjectByOptionOrder(

@@ -171,11 +171,11 @@ const NewCourseThankyouPage = () => {
                   </p>
                   <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                     <h4 id="textToCopy" className="">
-                      {CX_BASE_URL}
+                      {`${RX_BASE_URL}/programs/${programId}`}
                     </h4>
                     <div
                       onClick={() => {
-                        handleCopyDetailsPageLink(CX_BASE_URL)
+                        handleCopyDetailsPageLink(`${RX_BASE_URL}/programs/${programId}`)
                       }}
                       className="relative mt-1 cursor-pointer"
                     >
@@ -200,11 +200,11 @@ const NewCourseThankyouPage = () => {
 
                     <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                       <h4 id="textToCopy1" className="">
-                        {RX_BASE_URL}
+                        {CX_BASE_URL}
                       </h4>
                       <div
                         onClick={() => {
-                          handleCopyRegistrationLink(RX_BASE_URL)
+                          handleCopyRegistrationLink(CX_BASE_URL)
                         }}
                         className="relative mt-1 cursor-pointer"
                       >
