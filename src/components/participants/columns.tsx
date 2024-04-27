@@ -33,8 +33,8 @@ export const columns: ExtendedColumnDef<any>[] = [
         <a
           className="cursor-pointer"
           onClick={() => {
-            const routePath = router.asPath.split("?")[0];
-            router.push(`/${routePath}/${row?.original?.id}/view`);
+            const routePath = router.asPath.split("list")[0];
+            router.push(`/${routePath}/${row?.original?.id}`);
           }}
         >
           <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
@@ -315,11 +315,13 @@ export const columns: ExtendedColumnDef<any>[] = [
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
+      const sortedRows = row?.original?.participant_payment_history.sort(
+        (a: any, b: any) => b?.id - a?.id
+      );
       return (
         <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.payment_transaction_id
-            ? row?.original?.participant_payment_history[0]
-                ?.payment_transaction_id
+          {row?.original?.participant_payment_history?.length
+            ? sortedRows[0]?.payment_transaction_id
             : "-"}
         </div>
       );
@@ -337,10 +339,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.participant_payment_history[0]?.payment_method_id
-            ?.value
-            ? row?.original?.participant_payment_history[0]?.payment_method_id
-                ?.value
+          {row?.original?.payment_method?.value
+            ? row?.original?.payment_method?.value
             : "-"}
         </div>
       );
@@ -551,7 +551,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <div className="flex flex-col gap-4 p-3 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+            <div className="flex flex-col gap-2 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
               {optionsValues.map((value, index) => (
                 <DropdownMenuItem
                   onClick={() => {
@@ -586,13 +586,13 @@ export const handleActions = (
   switch (index) {
     case 0: {
       // TODO: Navigate to view participant page
-      const routePath = router.asPath.split("?")[0];
-      router.push(`/${routePath}/${participant_id}/view`);
+      const routePath = router.asPath.split("list")[0];
+      router.push(`/${routePath}/${participant_id}`);
       break;
     }
     case 1: {
       // TODO: Navigate to edit participant page
-      const routePath = router.asPath.split("?")[0];
+      const routePath = router.asPath.split("list")[0];
       router.push(`/${routePath}/${participant_id}/edit`);
       break;
     }

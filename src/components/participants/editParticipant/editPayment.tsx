@@ -30,15 +30,20 @@ import { Textarea } from "src/ui/textarea";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 interface EditPaymentProps {
     setEditPayment: React.Dispatch<React.SetStateAction<any>>;
+    paymentId: number;
 }
-export default function EditPayment({ setEditPayment }: EditPaymentProps) {
+export default function EditPayment({
+    setEditPayment,
+    paymentId,
+}: EditPaymentProps) {
     const { query } = useRouter();
     const { mutate } = useUpdate();
-    const { watch, getValues } = useFormContext();
+    const { watch } = useFormContext();
     const [cancelEditPayment, setcancelEditPayment] = useState(false);
-    const defaultData = getValues();
     let formData = watch();
     const [initialValue, setinitialValue] = useState(formData);
+
+    // Posting edit payment form data to payment history api
     const onFormSubmission = () => {
         mutate({
             resource: "participant_payment_history",
@@ -48,11 +53,12 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                 payment_method_id: formData?.payment_method_id,
                 transaction_status_id: formData?.transaction_status_id,
             },
-            // TODO: replace with participant_paymente_history id
-            id: defaultData?.id,
+            id: paymentId,
         });
         setEditPayment(false);
     };
+
+
     // Form fileds useControllers
     const {
         field: { value: transaction_status_id, onChange: transactionOnchange },
@@ -69,7 +75,6 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
         field: { value: payment_method_id, onChange: paymentMethodOnchange },
     } = useController({
         name: "payment_method_id",
-        // defaultValue: paymentData?.payment_method_id?.id,
     });
     const {
         field: {
@@ -91,6 +96,8 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             },
         ],
     });
+
+    // Getting option value constant using option order
     const CONFIRMED_ID = getOptionValueObjectByOptionOrder(
         TRANSACTION_STATUS,
         CONFIRMED
@@ -99,7 +106,9 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
         TRANSACTION_STATUS,
         FAILED
     )?.id;
-    // Getting option values for transaction status
+
+
+    // Getting option values for transaction status dropodwn
     const { options: transactionStatus } = useSelect({
         resource: "option_values",
         optionLabel: "value",
@@ -112,6 +121,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             },
         ],
     });
+    
     // Getting option label for payment method
     const { data: payment_data } = useList<any>({
         resource: "option_labels",
@@ -124,7 +134,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
         ],
     });
 
-    // Getting option values for payment method
+    // Getting option values for payment method dropdown
     const { options: payment_method } = useSelect({
         resource: "option_values",
         optionLabel: "value",
@@ -137,6 +147,8 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             },
         ],
     });
+
+    // getting participant contact name for particular participant id
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)
         : undefined;
@@ -147,41 +159,32 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
             select: "contact_id(full_name)",
         },
     });
-    const transactionData = useList({
+
+    // Getting transaction details for the particular payment history id
+    const transactionData = useOne({
         resource: "participant_payment_history",
+        id: paymentId,
         meta: {
             select: "id,transaction_id,response_message,error_message",
         },
-        filters: [
-            {
-                field: "participant_id",
-                operator: "eq",
-                value: Id,
-            },
-            {
-                field: "program_id",
-                operator: "eq",
-                value: query?.id,
-            },
-        ],
-        sorters: [
-            {
-                field: "created_at",
-                order: "desc",
-            },
-        ],
     });
+
+    // Both functions are confirmation popups to save or cancel the changes of the edit payment form
     const cancelConfirmation = () => {
-        if (!_.isEqual(initialValue, formData)) {
+        // Picks common keys form both objects and compares if any value is editted or not
+        const commonKeys = _.intersection(_.keys(initialValue), _.keys(formData));
+        const initialData = _.pick(initialValue, commonKeys);
+        const formValues = _.pick(formData, commonKeys);
+        if (!_.isEqual(initialData, formValues)) {
             setcancelEditPayment(true);
-        }
-        else{
+        } else {
             setEditPayment(false);
         }
     };
     const cancelEditPaymentHandler = () => {
         setEditPayment(false);
     };
+
     return (
         <div>
             <div>
@@ -217,7 +220,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                             Transaction Status
                                         </Text>
                                         <div>
-                                            {/* TODO: need to disable select for confirmed and failed transaction ids */}
+                                            {/*  when transaction status is confirmed or failed need to disable select */}
                                             <Select
                                                 disabled={
                                                     transaction_status_id ==
@@ -312,7 +315,7 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                                     transaction_status_id ==
                                                     FAILED_ID
                                                         ? true
-                                                        : transaction_status_id==
+                                                        : transaction_status_id ==
                                                           CONFIRMED_ID
                                                         ? true
                                                         : false
@@ -414,7 +417,6 @@ export default function EditPayment({ setEditPayment }: EditPaymentProps) {
                                 onClick={() => {
                                     cancelConfirmation();
                                 }}
-                                // onClick={() => setEditPayment(false)}
                                 className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold"
                             >
                                 Cancel

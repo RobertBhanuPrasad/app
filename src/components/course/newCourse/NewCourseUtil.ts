@@ -9,12 +9,15 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
+import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
+import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
 
 export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
-  setProgramId: (by: number) => void
+  setProgramId: (by: number) => void,
+  accountingNotSubmittedStatusId: number,
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -56,7 +59,7 @@ export const handlePostProgramData = async (
   }
 
   if (
-    (body[NewCourseStep1FormNames.registration_via_3rd_party_url]! = undefined)
+    body[NewCourseStep1FormNames.registration_via_3rd_party_url] != undefined
   ) {
     programBody.registration_via_3rd_party_url =
       body[NewCourseStep1FormNames.registration_via_3rd_party_url];
@@ -344,6 +347,15 @@ export const handlePostProgramData = async (
   //Requirement: If the slected program_type of the program contains is_approval_required:false then we have to update status of program to "active"
 
   if (!(await handleProgramStatusUpdate(programId))) return false;
+
+  // we have to update the accounting status of program to not submitted
+  if (
+    !(await handleProgramAccountingStatusUpdate(
+      programId,
+      accountingNotSubmittedStatusId
+    ))
+  )
+    return false;
 
   return true;
 };
@@ -743,43 +755,58 @@ export const handleProgramSchedulesData = async (
     );
   }
 
-  const schedulesData: ProgramSchedulesDataBaseType[] = body[
-    NewCourseStep3FormNames.schedules
-  ].map((scheduleData: any, index: number) => {
-    const {
-      startHour = "00",
-      startMinute = "00",
-      endHour = "00",
-      endMinute = "00",
-      startTimeFormat,
-      endTimeFormat,
-      date,
-    } = scheduleData;
+  // sort the scheules by date, startHour, startMinute, endHour, endMinute
 
-    // Parse date and time strings to create Date objects
-    const startTime = new Date(date);
-    startTime.setHours(parseInt(startHour), parseInt(startMinute), 0);
-    if (startTimeFormat === "PM") startTime.setHours(startTime.getHours() + 12);
+  let schedules = body[NewCourseStep3FormNames.schedules].sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
 
-    const endTime = new Date(date);
-    endTime.setHours(parseInt(endHour), parseInt(endMinute), 0);
-    if (endTimeFormat === "PM") endTime.setHours(endTime.getHours() + 12);
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
 
-    const scheduleBody: ProgramSchedulesDataBaseType = {
-      program_id: programId,
-      start_time: startTime,
-      end_time: endTime,
-      program_schedule_name: `Schedule ${index + 1}`,
-      //TODO: schedule_type is optional if need we need to pass here
-      order: index + 1,
-    };
-
-    if (scheduleData.id) {
-      scheduleBody.id = scheduleData.id;
+      return aDate.getTime() - bDate.getTime();
     }
+  );
 
-    return scheduleBody;
-  });
+  const schedulesData: ProgramSchedulesDataBaseType[] = schedules.map(
+    (scheduleData: any, index: number) => {
+      const {
+        startHour = "00",
+        startMinute = "00",
+        endHour = "00",
+        endMinute = "00",
+        startTimeFormat,
+        endTimeFormat,
+        date,
+      } = scheduleData;
+
+      // Parse date and time strings to create Date objects
+      const startTime = new Date(date);
+      startTime.setHours(parseInt(startHour), parseInt(startMinute), 0);
+      if (startTimeFormat === "PM")
+        startTime.setHours(startTime.getHours() + 12);
+
+      const endTime = new Date(date);
+      endTime.setHours(parseInt(endHour), parseInt(endMinute), 0);
+      if (endTimeFormat === "PM") endTime.setHours(endTime.getHours() + 12);
+
+      const scheduleBody: ProgramSchedulesDataBaseType = {
+        program_id: programId,
+        start_time: startTime,
+        end_time: endTime,
+        program_schedule_name: `Schedule ${index + 1}`,
+        //TODO: schedule_type is optional if need we need to pass here
+        order: index + 1,
+      };
+
+      if (scheduleData.id) {
+        scheduleBody.id = scheduleData.id;
+      }
+
+      return scheduleBody;
+    }
+  );
 
   console.log(
     "schedulesData to create or update program_schedules was",
@@ -1123,12 +1150,12 @@ export const handleProgramFeeLevelSettingsData = async (
     (feeLevel: any, index: number) => {
       if (existingFeeLevelSettingsData?.[index]?.id) {
         return {
+          ...feeLevel,
           id: existingFeeLevelSettingsData?.[index]?.id,
           program_id: programId,
-          ...feeLevel,
         };
       }
-      return { program_id: programId, ...feeLevel };
+      return { ...feeLevel,program_id: programId };
     }
   );
 
@@ -1185,5 +1212,33 @@ const handleGenerateProgramCode = async (
     } else {
       console.log("program code updated successfully", programData);
     }
+  }
+};
+
+/**
+ * Function to update the status of course accounting status when we are posting the course data
+ */
+const handleProgramAccountingStatusUpdate = async (
+  programId: number,
+  accountingNotSubmittedStatusId: number
+) => {
+  // updating the accounting status of program to not submitted initially when the program created
+
+  if (!accountingNotSubmittedStatusId) return null;
+  const { data, error } = await supabaseClient
+    .from("program")
+    .update({
+      program_accounting_status_id: accountingNotSubmittedStatusId,
+    })
+    .eq("id", programId)
+    .select();
+
+  // if there is error return false else true
+  if (error) {
+    console.log("erorr while updating program accounting status", error);
+    return false;
+  } else {
+    console.log("program accounting status updated successfully", data);
+    return true;
   }
 };
