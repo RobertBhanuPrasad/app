@@ -259,7 +259,7 @@ export default function NewCourseReviewPage() {
     });
 
     return (
-      <div className=" min-w-72 ">
+      <div className="w-[291px]">
         <p className="text-sm font-normal text-accent-light text-[#999999]">
           Sessions
         </p>
@@ -415,7 +415,7 @@ export default function NewCourseReviewPage() {
 
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold ml-8">Review Course Details</div>
+      <div className="text-[24px] my-4 font-semibold ml-6">Review Course Details</div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -438,8 +438,8 @@ export default function NewCourseReviewPage() {
             />{" "}
           </div>
           {/* body */}
-          <div className="grid grid-cols-4 gap-4 mt-2">
-            <div className=" min-w-72 ">
+          <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 Creator
               </p>
@@ -451,7 +451,7 @@ export default function NewCourseReviewPage() {
                 {creator?.value ? creator?.value : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Organization
               </p>
@@ -462,7 +462,7 @@ export default function NewCourseReviewPage() {
                 {organizationName?.data?.name}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Program Organizer
               </p>
@@ -474,7 +474,7 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             {(hasSuperAdminRole || hasNationalAdminRole) && (
-              <div className=" min-w-72">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Registration via 3rd party gateway
                 </p>
@@ -487,7 +487,7 @@ export default function NewCourseReviewPage() {
               </div>
             )}
             {newCourseData?.is_registration_via_3rd_party ? (
-              <div className=" min-w-72">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Registration via 3rd party gateway url
                 </p>
@@ -522,8 +522,8 @@ export default function NewCourseReviewPage() {
             />{" "}
           </div>
           {/* body */}
-          <div className="grid grid-cols-4 gap-4 mt-2">
-            <div className=" min-w-72">
+          <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Course Type
               </p>
@@ -534,7 +534,7 @@ export default function NewCourseReviewPage() {
                 {courseType?.data?.name ? courseType?.data?.name : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Teacher
               </p>
@@ -545,7 +545,7 @@ export default function NewCourseReviewPage() {
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Language(s) course is taught in
               </p>
@@ -556,7 +556,7 @@ export default function NewCourseReviewPage() {
                 {courselLanguageName ? courselLanguageName : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Available language(s) for translation
               </p>
@@ -567,7 +567,33 @@ export default function NewCourseReviewPage() {
                 {languagesTranslations ? languagesTranslations : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            {hasSuperAdminRole && (
+            <div className="w-[291px]">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
+              Display language translation option for participants
+              </p>
+              <abbr
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.is_language_translation_for_participants}
+              >
+                {newCourseData?.is_language_translation_for_participants ? "Yes" : "No"}
+              </abbr>
+            </div>
+            )}
+            {hasSuperAdminRole && (
+            <div className="w-[291px]">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
+              Registration is mandatory for this course
+              </p>
+              <abbr
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.is_registration_required}
+              >
+                {newCourseData?.is_registration_required ? "Yes" : "No"}
+              </abbr>
+            </div>
+            )}
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Max Capacity
               </p>
@@ -580,7 +606,7 @@ export default function NewCourseReviewPage() {
                   : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Program Visibility
               </p>
@@ -591,7 +617,7 @@ export default function NewCourseReviewPage() {
                 {visibility ? visibility?.value : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Country(s) from where registrations are allowed
               </p>
@@ -602,7 +628,8 @@ export default function NewCourseReviewPage() {
                 {allowedCountries ? allowedCountries : "-"}
               </abbr>
             </div>
-            <div className=" min-w-72">
+            {hasSuperAdminRole && (
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Is geo restriction applicable for registrations
               </p>
@@ -613,8 +640,9 @@ export default function NewCourseReviewPage() {
                 {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
               </abbr>
             </div>
+            )}
             {/* // TODO need to do when the form filed is clear */}
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Course Description
               </p>
@@ -630,7 +658,7 @@ export default function NewCourseReviewPage() {
             </div>
             {/* // TODO need to do when the form filed is clear */}
 
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Course Notes
               </p>
@@ -646,7 +674,7 @@ export default function NewCourseReviewPage() {
             </div>
             {/* // TODO need to do when the form filed is clear */}
 
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 Email Notes
               </p>
@@ -685,8 +713,8 @@ export default function NewCourseReviewPage() {
           {/* body */}
           {/* // TODO need to do when the form filed is clear */}
           {programTypeData?.data?.is_online_program === true ? (
-            <div className="grid grid-cols-4 gap-4 mt-2">
-              <div className=" min-w-72">
+            <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Online zoom URL
                 </p>
@@ -697,7 +725,7 @@ export default function NewCourseReviewPage() {
                   {newCourseData?.online_url}
                 </abbr>
               </div>
-              <div className=" min-w-72">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Province
                 </p>
@@ -708,7 +736,7 @@ export default function NewCourseReviewPage() {
                   {StateNames ? StateNames : "-"}
                 </abbr>
               </div>
-              <div className=" min-w-72">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   City
                 </p>
@@ -719,7 +747,7 @@ export default function NewCourseReviewPage() {
                   {CityNames ? CityNames : "-"}
                 </abbr>
               </div>
-              <div className=" min-w-72">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Center
                 </p>
@@ -733,8 +761,8 @@ export default function NewCourseReviewPage() {
               <div>{venueSessions()}</div>
             </div>
           ) : (
-            <div className="grid grid-cols-4 gap-4 mt-2">
-              <div className=" min-w-72">
+            <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Venue Address
                 </p>
@@ -742,26 +770,30 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={VenueData ? VenueData : "-"}
                 >
-                  <p className="font-semibold truncate text-accent-secondary">
-                    <div className="break-all">{VenueData}</div>{" "}
-                  </p>
+                  {VenueData ? VenueData : "-"}
                 </abbr>
               </div>
-              <div className=" min-w-72">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Time Format
                 </p>
-                <p className="font-semibold truncate text-accent-secondary">
-                  {timeFormat?.value}
-                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={timeFormat?.value}
+                >
+                  {timeFormat?.value ? timeFormat?.value : "-"}
+                </abbr>
               </div>
-              <div className=" min-w-72">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   Time Zone
                 </p>
-                <p className="font-semibold truncate text-accent-secondary">
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={`${timeZone?.data?.name} - ${timeZone?.data?.utc_off_set}`}
+                >
                   {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
-                </p>
+                </abbr>
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -789,7 +821,7 @@ export default function NewCourseReviewPage() {
             />{" "}
           </div>
           {/* body */}
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
             {enabledFeeLevelData?.map((feeLevel: any, index: number) => {
               return <Fees feeLevelSettingsData={feeLevel} />;
             })}
@@ -808,7 +840,7 @@ export default function NewCourseReviewPage() {
               newCourseData?.is_early_bird_enabled &&
               courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
               courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
-                <div className=" min-w-72">
+                <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     Early bird cut-off period
                   </p>
@@ -822,7 +854,7 @@ export default function NewCourseReviewPage() {
                 </div>
               )}
 
-            <div className=" min-w-72">
+            <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 Disable Pay Later Label123?
               </p>
@@ -856,7 +888,7 @@ export default function NewCourseReviewPage() {
             />{" "}
           </div>
           {newCourseData?.is_residential_program && (
-            <div className="grid grid-cols-4 gap-4 mt-2">
+            <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
               {newCourseData?.accommodation?.map((data: any) => {
                 return (
                   <Accommodation
@@ -868,7 +900,7 @@ export default function NewCourseReviewPage() {
                 );
               })}
 
-              <div className=" min-w-72">
+              <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999] ">
                   Accommodation fee payment mode
                 </p>
@@ -905,8 +937,8 @@ export default function NewCourseReviewPage() {
           {/* body */}
           {newCourseData?.contact?.map((data: any) => {
             return (
-              <div className="grid grid-cols-4 gap-3 pb-4 mt-2 border-b">
-                <div className=" min-w-72">
+              <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] pb-4 mt-2 ">
+                <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     Contact Email
                   </p>
@@ -917,7 +949,7 @@ export default function NewCourseReviewPage() {
                     {data?.contact_email}
                   </abbr>
                 </div>
-                <div className=" min-w-72">
+                <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     Contact Phone
                   </p>
@@ -928,7 +960,7 @@ export default function NewCourseReviewPage() {
                     {data?.contact_number}
                   </abbr>
                 </div>
-                <div className=" min-w-72">
+                <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     Contact Name
                   </p>
@@ -943,7 +975,7 @@ export default function NewCourseReviewPage() {
             );
           })}
 
-          <div className="mt-4 min-w-72">
+          <div className="w-[291px] mt-4">
             <p className="text-sm font-normal text-accent-light text-[#999999]">
               BCC registration confirmation email
             </p>
@@ -1002,7 +1034,7 @@ const Accommodation = ({
   });
 
   return (
-    <div className=" min-w-[72px]">
+    <div className="w-[291px]">
       <abbr title={data?.data?.name} className="no-underline">
         <CardLabel className="truncate">{data?.data?.name}</CardLabel>
       </abbr>
@@ -1061,7 +1093,7 @@ const Fees = ({
   });
 
   return (
-    <div className=" min-w-72">
+    <div className="w-[291px]">
       <abbr title={feeLevelData?.data?.value} className="no-underline">
         <CardLabel className="truncate">{feeLevelData?.data?.value}</CardLabel>
       </abbr>
@@ -1115,7 +1147,7 @@ const EarlyBirdFees = ({
   });
 
   return (
-    <div className=" min-w-72">
+    <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
       <abbr
         title={`Early Bird ${feeLevelData?.data?.value}`}
