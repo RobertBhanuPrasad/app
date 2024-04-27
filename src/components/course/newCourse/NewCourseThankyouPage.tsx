@@ -23,7 +23,7 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 const NewCourseThankyouPage = () => {
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
-  const { programId, newCourseData} = newCourseStore();
+  const { programId } = newCourseStore();
 
   const copyText = async (text: any) => {
     try {
