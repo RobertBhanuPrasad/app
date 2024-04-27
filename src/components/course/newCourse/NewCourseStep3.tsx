@@ -949,6 +949,9 @@ const ExistingVenueList = () => {
     name: 'isNewVenueSelected'
   })
 
+  /**
+   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue list
+   */
   const {
     field: { onChange : isExistingVenueOnchange }
   } = useController({
