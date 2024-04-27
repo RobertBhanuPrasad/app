@@ -11,7 +11,7 @@ import { format } from 'date-fns'
 import _ from 'lodash'
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useController, useFieldArray, useFormContext, useFormState, useWatch } from 'react-hook-form'
+import { useController, useFieldArray, useForm, useFormContext, useFormState, useWatch } from 'react-hook-form'
 import { TIME_FORMAT } from 'src/constants/OptionLabels'
 import { DateCalendar } from 'src/ui/DateCalendar'
 import { Badge } from 'src/ui/badge'
@@ -513,6 +513,7 @@ const Venue = () => {
           address: formData?.address,
           name: formData?.name
         })
+        onChange("new-venue")
         setOpenAddNewVenue(false)
       }
     } else {
@@ -550,7 +551,7 @@ const Venue = () => {
 
   return (
     <div>
-      <RadioGroup className="flex flex-row gap-7" onValueChange={onChange} value={value}>
+      <RadioGroup className="flex flex-row gap-7" value={value}>
         <Label htmlFor="existing-venue">
           <div
             className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
@@ -559,7 +560,7 @@ const Venue = () => {
           >
             <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
               <RadioGroupCircleItem
-                value="existing-venue"
+                value= {value}
                 id="existing-venue"
                 className={` ${
                   value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
@@ -574,7 +575,7 @@ const Venue = () => {
                 ) : (
                   <div className="pl-[30px] leading-6 font-normal">Select a venue by clicking “View All” button</div>
                 )}
-                {!(value === 'new-venue') && (
+                {/* {!(value === 'new-venue') && ( */}
                   <Dialog>
                     <DialogTrigger>
                       <Badge
@@ -588,7 +589,7 @@ const Venue = () => {
                       <ExistingVenueList />
                     </DialogContent>
                   </Dialog>
-                )}
+                {/* )} */}
               </div>
             ) : (
               <div className="px-[30px] leading-6 font-normal">No existing venue found</div>
@@ -605,7 +606,7 @@ const Venue = () => {
               <div className=" flex flex-row justify-between">
                 <div className="text-[16px] font-semibold text-[#7677F4] gap-3 flex flex-row">
                   <RadioGroupCircleItem
-                    value="new-venue"
+                    value={value}
                     id="new-venue"
                     className={` ${
                       value == 'new-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
@@ -630,6 +631,10 @@ const Venue = () => {
                     <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
                       <DeleteVenueComponent
                         handleDeleteVenue={() => {
+                        onChange(undefined)
+                        if(existingVenue !== undefined && existingVenue !== null){
+                          onChange("existing-venue")
+                        }
                           removeVenue()
                         }}
                       />
@@ -653,11 +658,13 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
-      {(errors?.is_existing_venue || errors?.existingVenue || errors?.newVenue) && (
-        <span className="text-[#FF6D6D] text-[14px]">
-          {"Venue is a required field"}
-        </span>
-      )}
+      {/* 
+      In errors if we have the error for the is_existing_venue then we will display the message 
+       */}
+      {(errors?.is_existing_venue) && (
+        <span className="text-[#FF6D6D] text-[14px]">{'Venue is a required field'}</span>
+      ) }
+     
     </div>
   )
 }
@@ -933,6 +940,12 @@ const ExistingVenueList = () => {
     name: 'isNewVenueSelected'
   })
 
+  const {
+    field: { onChange : isExistingVenueOnchange }
+  } = useController({
+    name: 'is_existing_venue'
+  })
+
   const fetchLoginUserVenue = async () => {
     const { data } = await supabaseClient
       .from('venue_view_with_names')
@@ -1146,6 +1159,7 @@ const ExistingVenueList = () => {
             type="submit"
             onClick={() => {
               isNewVenueSelectedOnchange('existing-venue')
+              isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList()
             }}
           >
