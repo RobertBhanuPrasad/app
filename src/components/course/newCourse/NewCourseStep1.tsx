@@ -3,7 +3,7 @@ import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import {
@@ -35,6 +35,7 @@ import {
 } from "src/ui/select";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { IsEditCourse } from "./EditCourseUtil";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -280,14 +281,16 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
-  const searchParams = useSearchParams();
+  /**
+   * This variable holds the path of the url
+   */
+  const pathname = usePathname();
 
-  const params = new URLSearchParams(searchParams);
 
   /**
    * Checking whether the url contains the edit or not
    */
-  const isEditCourse = params.has("edit");
+  const isEditCourse = IsEditCourse(pathname);
 
   const [pageSize, setPageSize] = useState<number>(1);
 

@@ -13,7 +13,7 @@ import { Checkbox } from "src/ui/checkbox";
 import { Input } from "src/ui/input";
 import Delete from "@public/assets/Delete";
 import CustomSelect from "src/ui/custom-select";
-import { useOne, useSelect } from "@refinedev/core";
+import { useList, useOne, useSelect } from "@refinedev/core";
 import Add from "@public/assets/Add";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { RadioGroup } from "src/ui/radio-group";
@@ -30,6 +30,9 @@ import _ from "lodash";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PAYMENT_MODE } from "src/constants/OptionLabels";
 import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
+import { IsEditCourse } from "./EditCourseUtil";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -86,30 +89,110 @@ export const AccomdationComponent = () => {
 
       <div className="my-[10px]">
         {fields.map((field: any, index: number) => (
-          <div key={field.id} className="flex items-center w-full h-auto ">
-            <div className=" w-[288px] p-[10px]">
-              <AccommodationType index={index} />
-            </div>
-            <div className="p-4  w-[288px] p-[10px]">
-              <FeePerPerson index={index} />
-            </div>
-            <div className="p-4  w-[288px] p-[10px]">
-              <AccomdationSpot index={index} />
-            </div>
-            <div className=" w-[151px]  p-[10px] flex  ">
-              <AccomdationAction
-                index={index}
-                remove={remove}
-                append={append}
-              />
-            </div>
-
-            {index < accommodations?.length - 1 && (
-              <hr className="border-[#D6D7D8]" />
-            )}
-          </div>
+          <AccommodationField
+            key={field.id}
+            data={field}
+            index={index}
+            remove={remove}
+            append={append}
+            accommodations={accommodations}
+          />
         ))}
       </div>
+    </div>
+  );
+};
+
+export const AccommodationField = ({
+  index,
+  remove,
+  append,
+  accommodations,
+  data,
+}: {
+  /**
+   * index of the particular acommodation type
+   */
+  index: number;
+  /**
+   * use controller remove method to remove the particular row
+   */
+  remove: Function;
+  /**
+   * use controller append method to add the new row
+   */
+  append: Function;
+  /**
+   * This has all accommodations data
+   */
+  accommodations: any[];
+  /**
+   * This contain the particular accommodation data
+   */
+  data: any;
+}) => {
+  const router = useRouter();
+
+  /**
+   * This variable holds the path of the url
+   */
+  const pathname = usePathname();
+
+  /**
+   * Checking whether the url contains the edit or not
+   */
+  const isEditCourse = IsEditCourse(pathname);
+
+  /**
+   * Here we need to get the data of participants who have choosen this particular accommodation type
+   */
+  const { data: accommodationTypeData } = useList({
+    resource: "participant_registration",
+    meta: {
+      select: "*, program_accommodations!inner(accommodation_type_id)",
+    },
+    filters: [
+      {
+        field: "program_accommodations.accommodation_type_id",
+        operator: "eq",
+        value: data?.accommodation_type_id,
+      },
+      {
+        field: "program_id",
+        operator: "eq",
+        value: parseInt(router.query.id as string),
+      },
+    ],
+  });
+
+  /**
+   * This variable determines whether there are participants who has choosen this particular accommodation type or not based on data and is this the edit course or not
+   */
+  const isAccommodationDisabled: boolean =
+    accommodationTypeData?.data &&
+    accommodationTypeData?.data?.length > 0 &&
+    isEditCourse
+      ? true
+      : false;
+
+  return (
+    <div className="flex items-center w-full h-auto">
+      <div className="w-[288px] p-[10px]">
+        <AccommodationType disabled={isAccommodationDisabled} index={index} />
+      </div>
+      <div className="p-4 w-[288px] p-[10px]">
+        <FeePerPerson index={index} />
+      </div>
+      <div className="p-4 w-[288px] p-[10px]">
+        <AccomdationSpot index={index} />
+      </div>
+      <div className="w-[151px] p-[10px] flex">
+        <AccomdationAction index={index} remove={remove} append={append} />
+      </div>
+
+      {index < accommodations?.length - 1 && (
+        <hr className="border-[#D6D7D8]" />
+      )}
     </div>
   );
 };
@@ -148,7 +231,7 @@ export const ResidentialCourse = () => {
             value="true"
             selectedRadioValue={JSON.stringify(value)}
             label="Yes"
-            className="w-[112px] h-[40px] rounded-[12px]"            
+            className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
@@ -165,7 +248,7 @@ export const ResidentialCourse = () => {
 export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
-    fieldState:{error}
+    fieldState: { error },
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
@@ -207,11 +290,8 @@ export const AccommodationFeeMode = () => {
         </div>
       </RadioGroup>
       {error && (
-  <span className="text-[#FF6D6D] text-[14px]">
-    {error?.message}
-  </span>
-)}
-
+        <span className="text-[#FF6D6D] text-[14px]">{error?.message}</span>
+      )}
     </div>
   );
 };
@@ -241,7 +321,19 @@ const FeePerPerson = ({ index }: any) => {
   );
 };
 
-export const AccommodationType = ({ index }: { index: number }) => {
+export const AccommodationType = ({
+  index,
+  disabled,
+}: {
+  /**
+   * Index of the current accommodation
+   */
+  index: number;
+  /**
+   * This decides whether the accommodation type dropdown is disabled or not
+   */
+  disabled: boolean;
+}) => {
   const { watch } = useFormContext();
 
   const formData = watch().accommodation || [];
@@ -288,6 +380,7 @@ export const AccommodationType = ({ index }: { index: number }) => {
         onValueChange={(value: any) => {
           onChange(value);
         }}
+        disabled={disabled}
       >
         <SelectTrigger error={error ? true : false}>
           <SelectValue placeholder="Select Accommodation" />
