@@ -172,13 +172,14 @@ const RadioCards = () => {
      if (teachers) {
      // Remove the logged-in teacher's ID from the list of selected teachers
       teachersOnChange(_.without(teachers, loginInTeacherData));
-     }
      // Set a timeout to clear errors for the 'teacher_ids' field after 10 milliseconds
-     setTimeout(() => {
-    clearErrors('teacher_ids');
-  }, 10);
-}
+      setTimeout(() => {
+        clearErrors('teacher_ids');
+      }, 10);
+     }
 
+     
+    }
   };
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
