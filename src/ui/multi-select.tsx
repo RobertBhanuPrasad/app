@@ -9,6 +9,7 @@ import { Input } from "./input";
 import { useEffect } from "react";
 import isEqual from "lodash/isEqual";
 import _, { uniqBy } from "lodash";
+import DropDown from "@public/assets/DropDown";
 
 // Define the shape of each data item
 export type DataItem = Record<"value" | "label", string>;
@@ -25,6 +26,7 @@ export function MultiSelect({
   error,
   selectBoxStyles,
   searchBar = true,
+  variant = 'standard',
 }: {
   placeholder?: string;
   data: DataItem[];
@@ -41,6 +43,7 @@ export function MultiSelect({
    * False: it will not display search bar
    */
   searchBar?: boolean;
+  variant?: 'basic' | 'standard';
 }) {
   const filteredData = uniqBy(data, "value");
 
@@ -178,26 +181,51 @@ export function MultiSelect({
             )}
 
             {/* Display placeholder or "Add" button */}
-            <div className="flex flex-row justify-between w-full ">
-              <div>
-                {selected?.length <= 0 && (
-                  <div className="text-[#999999] font-normal">
-                    {placeholder}
-                  </div>
-                )}
+            {variant==='basic' ? (
+              <div className="w-full">
+                <div className="flex flex-row justify-between w-full">
+                  <button
+                    type="button"
+                    className="w-full"
+                    onClick={(e) => {
+                      setOpen(true);
+                    }}
+                  >
+                    <div className="flex flex-row justify-between w-full">
+                      <div>
+                        {selected?.length <= 0 && (
+                          <div className="text-[#999999] font-normal">
+                            {placeholder}
+                          </div>
+                        )}
+                      </div>
+                      <div className={`px-1 py-[7px]`}><DropDown/></div>
+                    </div>
+                  </button>
+                </div>
               </div>
-              <div className="flex self-end">
-                <button
-                  type="button"
-                  className="ml-1 rounded-full text-[#7677F4] text-[12px] font-semibold"
-                  onClick={(e) => {
-                    setOpen(true);
-                  }}
-                >
-                  + Add
-                </button>
+            ):(
+              <div className="flex flex-row justify-between w-full">
+                <div>
+                  {selected?.length <= 0 && (
+                    <div className="text-[#999999] font-normal">
+                      {placeholder}
+                    </div>
+                  )}
+                </div>
+                <div className="flex self-end">
+                  <button
+                    type="button"
+                    className="ml-1 rounded-full text-[#7677F4] text-[12px] font-semibold"
+                    onClick={(e) => {
+                      setOpen(true);
+                    }}
+                  >
+                    + Add
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
