@@ -12,7 +12,7 @@ function SubmitCourseAccountingFormTab() {
    */
   const handleClickContinue = () => {
     router.push(
-      `${router.asPath}/course-accounting-form?current_section=close_participants`
+      `/courses/course-accounting-form?current_section=close_participants`
     );
   };
 

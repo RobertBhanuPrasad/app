@@ -2,11 +2,10 @@ import LoadingIcon from "@public/assets/LoadingIcon";
 import {
   useGetIdentity,
   useInvalidate,
+  useList,
   useMany,
   useOne,
-  useList,
 } from "@refinedev/core";
-import _ from "lodash";
 import { useEffect, useState } from "react";
 import {
   COURSE_ACCOUNTING_STATUS,
@@ -15,7 +14,13 @@ import {
   TIME_FORMAT,
   VISIBILITY,
 } from "src/constants/OptionLabels";
+import {
+  NATIONAL_ADMIN,
+  NOT_SUBMITTED,
+  SUPER_ADMIN,
+} from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
+import { CardLabel, CardValue } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
 import {
@@ -35,15 +40,14 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-import {
-  NATIONAL_ADMIN,
-  NOT_SUBMITTED,
-  SUPER_ADMIN,
-} from "src/constants/OptionValueOrder";
-import { CardLabel, CardValue } from "src/ui/TextTags";
+import { useRouter } from "next/router";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function NewCourseReviewPage() {
   const { data: loginUserData }: any = useGetIdentity();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
@@ -240,7 +244,7 @@ export default function NewCourseReviewPage() {
   });
 
   const venueSessions = () => {
-    let schedules = newCourseData?.schedules;
+    let schedules = newCourseData?.schedules || [];
 
     // sort the schedules
 
@@ -294,7 +298,7 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.time_zone_id,
   });
 
-  const user_roles: any[] = data?.userData?.user_roles;
+  const user_roles: any[] = data?.userData?.user_roles || [];
 
   //Checking Weather a user is Super Admin or Not
   let isUserNationAdminOrSuperAdmin = false;
@@ -376,8 +380,16 @@ export default function NewCourseReviewPage() {
         resource: "program",
         invalidates: ["list"],
       });
-      setViewPreviewPage(false);
-      setViewThankyouPage(true);
+
+      // i need to set params with section=thank_you
+      const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
+      current.set("section", "thank_you");
+
+      const params = current.toString();
+
+      router.replace(`${pathname}?${params}`);
+      // setViewPreviewPage(false)
+      // setViewThankyouPage(true)
     } else {
       setIsSubmitting(false);
     }
@@ -403,9 +415,7 @@ export default function NewCourseReviewPage() {
 
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold">
-        Review Your Details Right Here
-      </div>
+      <div className="text-[24px] my-4 font-semibold ml-8">Review Course Details</div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
