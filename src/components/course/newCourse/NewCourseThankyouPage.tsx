@@ -59,7 +59,6 @@ const NewCourseThankyouPage = () => {
         'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value)'
     }
   })
-console.log(data,'onlinee');
 
   const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string

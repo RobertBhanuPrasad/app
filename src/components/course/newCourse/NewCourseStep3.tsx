@@ -700,7 +700,6 @@ const ExistingVenueDetails = () => {
       select: '*'
     } 
   })
-console.log(data,'existingVenueDetails');
 
   console.log('new venue data is', data)
 

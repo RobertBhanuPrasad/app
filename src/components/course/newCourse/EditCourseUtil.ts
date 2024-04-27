@@ -161,13 +161,9 @@ export const getDefaultValues = async (
         .from("venue_view_with_names")
         .select("*")
         .eq("id", data.venue_id);
+      defaultValues.venue_id = data.venue_id;
       if (venueData && venueData[0]) {
-        
         defaultValues.existingVenue = venueData[0];
-        console.log( defaultValues.existingVenue ,'valllll');
-      }
-      if (data.venue_id) {
-        defaultValues.venue_id = data.venue_id;
       }
     }
   }
