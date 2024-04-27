@@ -335,7 +335,6 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
             setValue("temporaryadvancefilter.is_course_fee", "");
             setValue("temporaryadvancefilter.course_teacher", "");
             setValue("temporaryadvancefilter.program_organiser", []);
-            console.log("hey form Data", formData);
           }}
           className="flex gap-1 items-center cursor-pointer"
         >
