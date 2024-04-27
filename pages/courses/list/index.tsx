@@ -244,8 +244,6 @@ function index() {
     },
   });
 
-  console.log("heyy programm data", FilterProgramData);
-
   /**
    *This variable holds the filtered ids of the query
    */
@@ -277,6 +275,7 @@ function index() {
       ],
     },
   });
+
 
   /**
    * The variable holds whether all rows are selected or not
