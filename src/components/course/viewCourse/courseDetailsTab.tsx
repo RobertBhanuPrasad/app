@@ -115,6 +115,7 @@ function CourseDetailsTab() {
     VISIBILITY,
     PUBLIC
   )?.id;
+  const {t} = useTranslation(["common", "course.participant","new_strings"])
 
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
@@ -132,7 +133,7 @@ function CourseDetailsTab() {
           <CardContent className="gap-[23px] flex flex-col">
             <div>
               <Header2>{t('organization')}</Header2>
-              <ItemValue>{courseData?.data?.organization_id?.name}</ItemValue>
+              <ItemValue>{courseData?.data?.organization_id?.name ? courseData?.data?.organization_id?.name : '-'}</ItemValue>
             </div>
             <div>
               <Header2>Course ID</Header2>
@@ -191,11 +192,11 @@ function CourseDetailsTab() {
             </div>
             <div>
               <Header2>{t('program_visibility')}</Header2>
-              <ItemValue>{courseData?.data?.visibility_id?.value}</ItemValue>
+               <ItemValue>{courseData?.data?.visibility_id?.value ? courseData?.data?.visibility_id?.value : '-'}</ItemValue>
             </div>
             <div>
               <Header2>{t('max_capacity')}</Header2>
-              <ItemValue>{courseData?.data?.max_capacity}</ItemValue>
+              <ItemValue>{courseData?.data?.max_capacity ? courseData?.data?.max_capacity : '-'}</ItemValue>
             </div>
             <div>
               <Header2>Program organizer</Header2>

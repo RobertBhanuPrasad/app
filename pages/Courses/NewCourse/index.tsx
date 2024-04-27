@@ -414,7 +414,7 @@ export const NewCourseTabs = () => {
     },
     {
       value: COURSE_DETAILS_STEP_NUMBER,
-      label: t("basic_details"),
+      label: t("new_strings:course_details"),
       // If the current step is COURSE_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === COURSE_DETAILS_STEP_NUMBER ||

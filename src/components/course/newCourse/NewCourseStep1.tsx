@@ -250,7 +250,7 @@ const RadioCards = () => {
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
               <div className="w-[240px] text-wrap text-center justify-center">
-                {t("course.new_course:basic_details_tab.organizing_this_course")}
+                {t("new_strings:I_am_organizing_this_course_for_another_teacher")}
               </div>
             </div>
           </Card>
@@ -407,7 +407,7 @@ const ProgramOrganizerDropDown = () => {
   return (
     <div className="w-80 flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        {t("program_organizer")}
+        {t("program_organizer")}*
       </div>
       <MultiSelect
         value={value}

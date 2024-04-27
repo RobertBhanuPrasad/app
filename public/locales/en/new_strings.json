@@ -17,7 +17,6 @@
   "copy_lnks": "Copy 2 Links",
   "review_your_details_right_here": "Review Your Details Right Here",
   "registration_via": "Registration via 3rd party gateway url",
-  "nemo_enim_ipsam_voluptatem_quia": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma",
   "accommodation_information": "Accommodation Information",
   "contact_info": "Contact Info",
   "contact_phone": "Contact Phone",
@@ -48,5 +47,15 @@
   "enter_valid_email": "Enter valid email id and Enter only one email at a time",
   "excel": "Excel",
   "csv": "Csv",
-  "no_results": "No results."
+  "no_results": "No results.",
+  "course_details":"Course Details",
+  "course_type":"Course Type",
+  "existing_venues":"Existing Venues",
+  "fee_per_person":"Fee per person",
+  "inc_vat":"Inc. VAT",
+  "I_am_organizing_this_course_for_another_teacher":"I am organizing this course for another teacher",
+  "online_meeting_note":"Note: Participants will join your online course through your",
+  "virtual_venue":"virtual venue",
+  "select_state":"Select State",
+  "online_meeting_url_is_not_valid":"Online meeting URL is not valid"
 }

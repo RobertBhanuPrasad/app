@@ -71,13 +71,13 @@ export const AccomdationComponent = () => {
   }, []);
 
   const accommodations = formData.accommodation || [];
-  const { t } = useTranslation( [ "common", 'course.new_course']);
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
   return (
     <div className="rounded-[12px]  border border-[#D6D7D8]">
       <div className="flex h-[48px]">
         <div className="p-4 bg-[#7677F41A] w-[288px] ">{t("course.new_course:accommodation_tab.accommodation_type")}</div>
         <div className="p-4 bg-[#7677F41A]  w-[288px]">
-        {t("course.new_course:accommodation_tab.fee_per_person")}
+        {t("new_strings:fee_per_person")} (MYR) {t("new_strings:fee_per_person")}
         </div>
         <div className="p-4  bg-[#7677F41A]  w-[288px]">
         {t("course.new_course:accommodation_tab.number_of_spots")}

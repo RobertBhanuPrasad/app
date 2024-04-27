@@ -146,7 +146,7 @@ export default function NewCourseReviewPage() {
 
   const { data: organizationName } = useOne({
     resource: "organizations",
-    id: newCourseData?._id,
+    id: newCourseData?.organization_id,
   });
 
   const { data: ProgramOrganizer } = useMany({
@@ -451,7 +451,7 @@ export default function NewCourseReviewPage() {
           <div className="grid grid-cols-4 gap-4 mt-2">
             <div className=" min-w-72">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-              {t('')}
+              {t("new_strings:course_type")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -550,7 +550,7 @@ export default function NewCourseReviewPage() {
                   "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
                 }
               >
-            {t("new_strings:nemo_enim_ipsam_voluptatem_quia")}
+            Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma
               </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}
@@ -565,7 +565,7 @@ export default function NewCourseReviewPage() {
                   "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma"
                 }
               >
-              {t("new_strings:nemo_enim_ipsam_voluptatem_quia")}{" "}
+              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur ma{" "}
               </abbr>
             </div>
             {/* // TODO need to do when the form filed is clear */}

@@ -243,14 +243,14 @@ export const StateDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
-      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.province")}</div>
+      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.state")}</div>
 
       <Select value={stateValue} onValueChange={stateValueOnchange}>
         <SelectTrigger
           className="w-full"
           error={stateValueError ? true : false}
         >
-          <SelectValue placeholder={t("course.new_course:time_and_venue_tab.province_placeholder")} />
+          <SelectValue placeholder={t("new_strings:select_state")} />
         </SelectTrigger>
         <SelectContent>
           <Input

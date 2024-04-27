@@ -121,7 +121,7 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="">{t("online_zoom_url")}</div>
+        <div className="">{t("course.new_course:time_and_venue_tab.online_meeting_url")}*</div>
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}
@@ -134,8 +134,8 @@ const OnlineProgram = () => {
           />
           {error && <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>}
           <div className="text-xs font-normal text-[#666666] italic w-[320px] overflow-hidden">
-            <div>{t("course.new_course:time_and_venue_tab.online_meeting_note")}</div>
-            <div>{t("course.new_course:time_and_venue_tab.virtual_venue")}</div>
+            <div>{t("new_strings:online_meeting_note")}</div>
+            <div>{t("new_strings:virtual_venue")}</div>
           </div>
         </div>
       </div>
@@ -1073,12 +1073,12 @@ const ExistingVenueList = () => {
     }),
       setVenueData(allVenuesData)
   }
-  const { t } = useTranslation( [ "common", 'course.new_course']);
+  const { t } = useTranslation( [ "common", 'course.new_course', "new_strings"]);
 
   return (
     <div>
       <div className="rounded-[24px] ">
-        <div className="flex justify-center text-[24px] font-semibold">{t("course.new_course:time_and_venue_tab.existing_venue")}</div>
+        <div className="flex justify-center text-[24px] font-semibold">{t("new_strings:existing_venues")}</div>
         <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto mt-4">
           <Input
             placeholder={t("course.new_course:time_and_venue_tab.search_by_venue_name")}
@@ -1211,7 +1211,7 @@ export const AddOrEditVenue = ({ handleSubmit }: { handleSubmit: () => void }) =
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />
-          <CityDropDown name="city+id" />
+          <CityDropDown name="city_id" />
         </div>
 
         <div className="flex flex-col gap-5">
@@ -1505,7 +1505,7 @@ const TimeSelector = ({
                   timeFormatOnChange("AM")
                 }}
               >
-                {t("am")}
+                AM
               </div>
               <div
                 className="w-12 h-10 border border-2 border-[blue] flex items-center justify-center bg-blue-600 text-white font-medium rounded-md cursor-pointer"
@@ -1513,7 +1513,7 @@ const TimeSelector = ({
                   timeFormatOnChange("PM")
                 }}
               >
-                {t("pm")}
+                PM
               </div>
             </div>
           )}
