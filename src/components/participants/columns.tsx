@@ -33,8 +33,8 @@ export const columns: ExtendedColumnDef<any>[] = [
         <a
           className="cursor-pointer"
           onClick={() => {
-            const routePath = router.asPath.split("?")[0];
-            router.push(`/${routePath}/${row?.original?.id}/view`);
+            const routePath = router.asPath.split("list")[0];
+            router.push(`/${routePath}/${row?.original?.id}`);
           }}
         >
           <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
@@ -586,13 +586,13 @@ export const handleActions = (
   switch (index) {
     case 0: {
       // TODO: Navigate to view participant page
-      const routePath = router.asPath.split("?")[0];
-      router.push(`/${routePath}/${participant_id}/view`);
+      const routePath = router.asPath.split("list")[0];
+      router.push(`/${routePath}/${participant_id}`);
       break;
     }
     case 1: {
       // TODO: Navigate to edit participant page
-      const routePath = router.asPath.split("?")[0];
+      const routePath = router.asPath.split("list")[0];
       router.push(`/${routePath}/${participant_id}/edit`);
       break;
     }
