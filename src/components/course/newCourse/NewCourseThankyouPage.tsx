@@ -12,7 +12,7 @@ import { useOne } from '@refinedev/core'
 import { Circle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
 import { ACTIVE, PUBLIC } from 'src/constants/OptionValueOrder'
 import { Button } from 'src/ui/button'
@@ -23,7 +23,7 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 const NewCourseThankyouPage = () => {
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false)
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
-  const { programId } = newCourseStore()
+  const { programId,setNewCourseData } = newCourseStore()
 
   const router = useRouter()
 
@@ -34,7 +34,22 @@ const NewCourseThankyouPage = () => {
       console.error('Failed to copy: ', err)
     }
   }
-
+ 
+/**
+ * useEffect to reset the new course data when the component mounts.
+ * This effect ensures that the new course data is set to null initially.
+ * It runs only once upon component mount due to the empty dependency array.
+ * Because when user click new course from thank you page then we don't need to getting default values that is why here we have to set newCourseData as null
+ */
+useEffect(() => {
+  /**
+   * Reset the new course data to null when the component mounts.
+   * This ensures that any existing new course data is cleared.
+   */
+  setNewCourseData(null);
+}, []);
+ 
+ 
   const handleCopyDetailsPageLink = (textToCopy: string) => {
     copyText(textToCopy)
     setCopiedDetailsPageLink(true)

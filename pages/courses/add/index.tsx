@@ -64,10 +64,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
-  const { setCurrentStep } = newCourseStore();
   console.log(loginUserData, "loginUserData");
-
-
 
 
   const {
