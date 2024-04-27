@@ -12,7 +12,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const {
     query: { id, participantId }
   } = useRouter()
-  const breadCrumbData = {
+  const breadCrumbData:any = {
     '/courses/add': [
       {
         label: 'Home',
@@ -22,7 +22,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Courses',
         className: 'text-primary',
-        href: '/courses '
+        href: '/courses/list '
       },
       {
         label: 'New Course',
@@ -39,7 +39,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Courses',
         className: 'text-primary',
-        href: '/courses'
+        href: '/courses/list'
       },
       {
         label: 'Find Courses',
@@ -56,7 +56,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Courses',
         className: 'text-primary',
-        href: '/courses'
+        href: '/courses/list'
       },
       {
         label: 'Course Details',
@@ -73,7 +73,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Courses',
         className: 'text-primary',
-        href: '/courses'
+        href: '/courses/list'
       },
       {
         label: 'Edit Course',
@@ -90,7 +90,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Courses',
         className: 'text-primary',
-        href: '/courses'
+        href: '/courses/list'
       },
       {
         label: 'Course Details',
@@ -112,7 +112,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Courses',
         className: 'text-primary',
-        href: '/courses'
+        href: '/courses/list'
       },
       {
         label: 'Course Details',
@@ -139,7 +139,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       {
         label: 'Courses',
         className: 'text-primary',
-        href: '/courses'
+        href: '/courses/list'
       },
       {
         label: 'Course Details',
@@ -167,7 +167,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       <Image src={background} alt="bg" className="w-full -mt-1 !h-[227px]" />
       <div className="absolute top-0 left-0 w-full z-10 inset-0">
         <Navbar />
-        <div className="h-[32px] bg-[#F9F9F9] drop-shadow-md flex items-center gap-2 shrink-0  font-normal text-[12px]">
+        <div className="h-[32px] bg-[#F9F9F9] drop-shadow-md flex items-center  shrink-0  font-normal text-[12px] pl-8">
           <HomeIcon />
           <div className="flex">
             {data?.map((label: any, index: number) => {
@@ -176,9 +176,10 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
                 <p
                   className={`${label.className} text-xs`}
                   onClick={() => {
-                    router.push(`${label.href}`)
+                   !isLastLabel && router.push(`${label.href}`)
                   }}
                 >
+                  &nbsp;
                   {label.label}
                   {!isLastLabel && ' /'} {/* Render '/' only if it's not the last label */}
                 </p>
