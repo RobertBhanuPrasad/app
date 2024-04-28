@@ -441,6 +441,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     }
   }
 ]
+// we are writing this condition to remove the course_name in a column 
+// for the ticket MVP-1054
 const useFalseAliasName = async () => {
   let FalseAliasName = true
     const { data } = await supabaseClient.from('program_types').select('has_alias_name')
@@ -450,7 +452,7 @@ const useFalseAliasName = async () => {
     } else {
       FalseAliasName = true
     }
-    console.log(data, 'requireddataaaaa')
+    // console.log(data, 'requireddataaaaa')
   return FalseAliasName
 }
 
