@@ -12,7 +12,7 @@ import { useOne } from '@refinedev/core'
 import { Circle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
 import { ACTIVE, PUBLIC } from 'src/constants/OptionValueOrder'
 import { Button } from 'src/ui/button'
@@ -23,7 +23,7 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 const NewCourseThankyouPage = () => {
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false)
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
-  const { programId } = newCourseStore()
+  const { programId,setNewCourseData } = newCourseStore()
 
   const router = useRouter()
 
@@ -34,7 +34,22 @@ const NewCourseThankyouPage = () => {
       console.error('Failed to copy: ', err)
     }
   }
-
+ 
+/**
+ * useEffect to reset the new course data when the component mounts.
+ * This effect ensures that the new course data is set to null initially.
+ * It runs only once upon component mount due to the empty dependency array.
+ * Because when user click new course from thank you page then we don't need to getting default values that is why here we have to set newCourseData as null
+ */
+useEffect(() => {
+  /**
+   * Reset the new course data to null when the component mounts.
+   * This ensures that any existing new course data is cleared.
+   */
+  setNewCourseData(null);
+}, []);
+ 
+ 
   const handleCopyDetailsPageLink = (textToCopy: string) => {
     copyText(textToCopy)
     setCopiedDetailsPageLink(true)
@@ -52,18 +67,14 @@ const NewCourseThankyouPage = () => {
       setCopiedRegistrationLink(false)
     }, 1000)
   }
-
   const { data, isLoading: isThankyouPageDataIsLoading } = useOne({
     resource: 'program',
     id: programId,
     meta: {
       select:
-        'visibility_id(*),program_code,program_type_id,venue_id,status_id,time_zone_id,program_type_id(name),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value)'
+        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value),registration_link,details_page_link'
     }
   })
-
-  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string
-  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string
 
   // Formatting teacher string
   const teachers = data?.data?.program_teachers
@@ -75,13 +86,13 @@ const NewCourseThankyouPage = () => {
   // Formatting the venue details
   const venue =
     data?.data?.venue_id?.address +
-    ',' +
+    ', ' +
     data?.data?.venue_id?.name +
-    ',' +
+    ', ' +
     data?.data?.venue_id?.city_id?.name +
-    ',' +
+    ', ' +
     data?.data?.venue_id?.state_id?.name +
-    ',' +
+    ', ' +
     data?.data?.venue_id?.postal_code
 
   const statusColorCode = getCourseStatusColorBasedOnStatusId(data?.data?.status_id?.id)?.colorCode
@@ -131,10 +142,24 @@ const NewCourseThankyouPage = () => {
               <p className="font-bold text-accent-primary">{teachers ? teachers : '-'}</p>
             </div>
             {/* // TODO need to do when the form filed is clear */}
+            {/* If it is an online course in the venue section we have to show online text that can be hyperlinked which will take the user to the meeting url on click  */}
+            {data?.data?.program_type_id?.is_online_program === true ? 
+            (  <div className="flex-[2.5] p-4 border-r border-light">
+              <p className="text-accent-secondary">Venue</p>
+              <p className="font-bold text-accent-primary">
+                {data?.data?.online_url ? (
+                  <a href={data?.data?.online_url} className="text-blue-600 hover:text-blue-800 ">Online</a>
+                  ) : ( "-")}
+             </p>
+              </div>) :
+            (
+              // for offline we have to show the venue details 
             <div className="flex-[2.5] p-4 border-r border-light">
               <p className="text-accent-secondary">Venue</p>
               <p className="font-bold text-accent-primary">{venue ? venue : '-'}</p>
             </div>
+            )
+          }
             <div className="flex-[2.5] p-4 ">
               <p className="text-accent-secondary">Course Date (UTC 05:00)</p>
               {data?.data?.program_schedules?.map((data: any) => {
@@ -171,11 +196,11 @@ const NewCourseThankyouPage = () => {
                   </p>
                   <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                     <h4 id="textToCopy" className="">
-                      {CX_BASE_URL}
+                      {data?.data?.registration_link}
                     </h4>
                     <div
                       onClick={() => {
-                        handleCopyDetailsPageLink(CX_BASE_URL)
+                        handleCopyDetailsPageLink(data?.data?.registration_link)
                       }}
                       className="relative mt-1 cursor-pointer"
                     >
@@ -200,11 +225,11 @@ const NewCourseThankyouPage = () => {
 
                     <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                       <h4 id="textToCopy1" className="">
-                        {RX_BASE_URL}
+                        {data?.data?.details_page_link}
                       </h4>
                       <div
                         onClick={() => {
-                          handleCopyRegistrationLink(RX_BASE_URL)
+                          handleCopyRegistrationLink(data?.data?.details_page_link)
                         }}
                         className="relative mt-1 cursor-pointer"
                       >
@@ -224,9 +249,9 @@ const NewCourseThankyouPage = () => {
                   <div className="pl-5">
                     <Button
                       onClick={() => {
-                        handleCopyDetailsPageLink(RX_BASE_URL)
-                        handleCopyRegistrationLink(CX_BASE_URL)
-                        copyText(CX_BASE_URL + ',' + RX_BASE_URL)
+                        handleCopyDetailsPageLink(data?.data?.registration_link)
+                        handleCopyRegistrationLink(data?.data?.details_page_link)
+                        copyText(data?.data?.registration_link+ ',' + data?.data?.details_page_link)
                       }}
                       variant="outline"
                       className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
