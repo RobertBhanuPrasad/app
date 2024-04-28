@@ -17,6 +17,7 @@ import { RadioGroup } from 'src/ui/radio-group'
 import { RadioButtonCard } from 'src/ui/radioButtonCard'
 import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
 import { Separator } from 'src/ui/separator'
+import { supabaseClient } from 'src/utility'
 import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel
@@ -26,6 +27,22 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
   const { watch, setValue } = useFormContext()
 
   const formData = watch()
+
+  // we are writing this to check if the any course 'has alias_name' as false we making the state variable as false
+  // so that the course_type and course_name is not visible in advance filter
+  // for the ticket MVP-1054
+  const [FalseAliasName, setFalseAliasName] = useState(true)
+  async function fetchData() {
+    const { data } = await supabaseClient.from('program_types').select('has_alias_name')
+    const hasFalseAliasName = data?.some(item => item.has_alias_name === false)
+    if (hasFalseAliasName) {
+      setFalseAliasName(false)
+    } else {
+      setFalseAliasName(true)
+    }
+    console.log(data, 'requireddata')
+  }
+  fetchData()
 
   return (
     <div className="flex flex-col gap-5">
@@ -61,29 +78,33 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
           ]}
         >
           {/* Course Name Accordion */}
-          <AccordionItem value="item-1" className="border-none">
-            <AccordionTrigger className="text-base font-semibold pr-3">
-              <div className="flex flex-row gap-2 items-center">
-                <div>Course Name</div>
-                {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-5 pr-3">
-              <CourseName />
-            </AccordionContent>
-          </AccordionItem>
+          {FalseAliasName && (
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger className="text-base font-semibold pr-3">
+                <div className="flex flex-row gap-2 items-center">
+                  <div>Course Name</div>
+                  {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pb-5 pr-3">
+                <CourseName />
+              </AccordionContent>
+            </AccordionItem>
+          )}
           <Separator />
-          <AccordionItem value="item-14" className="border-none">
-            <AccordionTrigger className="text-base font-semibold pr-3">
-              <div className="flex flex-row gap-2 items-center">
-                <div>Course Type</div>
-                {formData?.temporaryadvancefilter.course_type && <CountComponent count={1} />}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-5 pr-3">
-              <CourseTypeComponent name="temporaryadvancefilter.course_type" />
-            </AccordionContent>
-          </AccordionItem>
+          {FalseAliasName && (
+            <AccordionItem value="item-14" className="border-none">
+              <AccordionTrigger className="text-base font-semibold pr-3">
+                <div className="flex flex-row gap-2 items-center">
+                  <div>Course Type</div>
+                  {formData?.temporaryadvancefilter.course_type && <CountComponent count={1} />}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pb-5 pr-3">
+                <CourseTypeComponent name="temporaryadvancefilter.course_type" />
+              </AccordionContent>
+            </AccordionItem>
+          )}
           <Separator />
 
           {/* Course Status Accordion */}
