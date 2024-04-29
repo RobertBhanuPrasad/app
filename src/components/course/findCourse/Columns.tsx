@@ -56,7 +56,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "program_types",
-    column_name: "Course Type Name",
+    column_name: "Course Type",
     //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
@@ -365,7 +365,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         router.push({ pathname: "/courses/add", query: { action: "Copy" } });
       };
 
-      dropDownMenuData?.unshift({ label: "View Course", value: 9 });
+      dropDownMenuData?.unshift({ label: "View Course Details ", value: 9 });
 
       const handleSelected = (value: number) => {
         console.log("clicked on", value);
