@@ -53,8 +53,6 @@ export const NewCourseStep3FormNames = {
   center_id: "center_id",
   venue_id: "venue_id",
   is_existing_venue: "is_existing_venue",
-  existingVenue:"existingVenue",
-  newVenue:"newVenue"
 };
 
 export const NewCourseStep4FormNames = {
