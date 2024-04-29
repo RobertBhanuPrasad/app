@@ -30,7 +30,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
 
   const formData = watch()
 
-  const { setAllFilterData} = newCourseStore();
+  const { setAllFilterData } = newCourseStore()
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -277,8 +277,8 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
           onClick={() => {
             setValue('temporaryadvancefilter.course_name', '')
             setValue('temporaryadvancefilter.course_type', '')
-            setValue('temporaryadvancefilter.course_status', '')
-            setValue('temporaryadvancefilter.course_accounting_status', '')
+            setValue('temporaryadvancefilter.course_status', [])
+            setValue('temporaryadvancefilter.course_accounting_status', [])
             setValue('temporaryadvancefilter.course_accounting_closure_date', '')
             setValue('temporaryadvancefilter.state', '')
             setValue('temporaryadvancefilter.city', '')
@@ -288,8 +288,6 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
             setValue('temporaryadvancefilter.is_course_fee', '')
             setValue('temporaryadvancefilter.course_teacher', '')
             setValue('temporaryadvancefilter.program_organiser', [])
-            setValue('temporaryadvancefilter', [])
-            console.log('hey form Data', formData)
           }}
           className="flex gap-1 items-center cursor-pointer"
         >
@@ -786,7 +784,7 @@ export const ProgramOrganiser = () => {
         onSearch(val)
       }}
       onChange={temporaryOnChange}
-      variant='basic'
+      variant="basic"
     />
   )
 }
