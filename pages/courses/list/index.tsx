@@ -109,7 +109,7 @@ function index() {
   }
 
   //If we select program_organiser then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.program_organiser) {
+  if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
     filters.permanent.push({
       field: "program_organizers.user_id",
       operator: "in",
@@ -136,7 +136,7 @@ function index() {
   }
 
   //If we select course_status then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.course_status) {
+  if (AllFilterData?.advanceFilter?.course_status?.length > 0) {
     filters.permanent.push({
       field: "status_id",
       operator: "in",
@@ -206,7 +206,7 @@ function index() {
   }
 
   //If we select course_accounting_status then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.course_accounting_status) {
+  if (AllFilterData?.advanceFilter?.course_accounting_status?.length > 0) {
     filters.permanent.push({
       field: "program_accounting_status_id",
       operator: "in",
