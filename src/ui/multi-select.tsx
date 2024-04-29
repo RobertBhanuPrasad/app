@@ -43,6 +43,11 @@ export function MultiSelect({
    * False: it will not display search bar
    */
   searchBar?: boolean;
+  /**
+   * To add placeholder to "+add" or "dropdown icon" button for open dropdown popover 
+   * standard: by default it will be standard only no need to pass (only clickable +add icon)
+   * basic: it will display dropdown icon and (clickable any where in select)
+   */
   variant?: 'basic' | 'standard';
 }) {
   const filteredData = uniqBy(data, "value");
@@ -199,7 +204,7 @@ export function MultiSelect({
                           </div>
                         )}
                       </div>
-                      <div className={`px-1 py-[7px]`}><DropDown/></div>
+                      <div className="px-1 py-[7px]"><DropDown/></div>
                     </div>
                   </button>
                 </div>
