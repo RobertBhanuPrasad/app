@@ -109,7 +109,7 @@ function index() {
   }
 
   //If we select program_organiser then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.program_organiser) {
+  if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
     filters.permanent.push({
       field: "program_organizers.user_id",
       operator: "in",
@@ -136,7 +136,7 @@ function index() {
   }
 
   //If we select course_status then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.course_status) {
+  if (AllFilterData?.advanceFilter?.course_status?.length > 0) {
     filters.permanent.push({
       field: "status_id",
       operator: "in",
@@ -206,7 +206,7 @@ function index() {
   }
 
   //If we select course_accounting_status then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.course_accounting_status) {
+  if (AllFilterData?.advanceFilter?.course_accounting_status?.length > 0) {
     filters.permanent.push({
       field: "program_accounting_status_id",
       operator: "in",
@@ -244,8 +244,6 @@ function index() {
     },
   });
 
-  console.log("heyy programm data", FilterProgramData);
-
   /**
    *This variable holds the filtered ids of the query
    */
@@ -277,6 +275,7 @@ function index() {
       ],
     },
   });
+
 
   /**
    * The variable holds whether all rows are selected or not
@@ -766,15 +765,19 @@ const AdvanceFilter = () => {
   const { setValue, watch } = useFormContext();
   const formData = watch();
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+
+  /**
+   *This holds the applied filters count in advance filter
+   */
   const count =
     (formData?.advanceFilter &&
-      Object.keys(formData?.advanceFilter).filter(
-        (key) =>
-          formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== ""
+      Object.keys(formData.advanceFilter).filter((key) =>
+        Array.isArray(formData.advanceFilter[key])
+          ? formData.advanceFilter[key].length > 0
+          : formData.advanceFilter[key] !== undefined &&
+            formData.advanceFilter[key] !== ""
       ).length) ||
     0;
-
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">

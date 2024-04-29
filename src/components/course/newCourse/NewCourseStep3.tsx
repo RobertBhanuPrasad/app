@@ -686,14 +686,14 @@ const NewVenueDetails = () => {
 const ExistingVenueDetails = () => {
   const { getValues } = useFormContext()
   const {
-    existingVenue: {  address, postal_code, name,city_id }
+    existingVenue: { id }
   } = getValues()
 
   const { data, isLoading } = useOne({
-    resource: 'city',
-    id: city_id,
+    resource: 'venue_view_with_names',
+    id: id,
     meta: {
-      select: '*,state_id(*))'
+      select: '*'
     } 
   })
 
@@ -705,7 +705,7 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address},{data?.data?.name}, {data?.data?.state_id?.name}, {postal_code}
+      {data?.data?.name}, {data?.data?.address},{data?.data?.city_name}, {data?.data?.state_name}, {data?.data?.postal_code}
     </div>
   )
 }

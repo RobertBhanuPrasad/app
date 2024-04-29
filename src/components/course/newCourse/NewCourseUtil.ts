@@ -124,19 +124,34 @@ export const handlePostProgramData = async (
     programBody.online_url = body[NewCourseStep3FormNames.online_url];
   }
 
-  //state_id
+  //If the program is online program then we store state_id ,city_id ,center_id
   if (body[NewCourseStep3FormNames.state_id]) {
     programBody.state_id = body[NewCourseStep3FormNames.state_id];
   }
 
-  //city_id
   if (body[NewCourseStep3FormNames.city_id]) {
     programBody.city_id = body[NewCourseStep3FormNames.city_id];
   }
 
-  //center_id
   if (body[NewCourseStep3FormNames.center_id]) {
     programBody.center_id = body[NewCourseStep3FormNames.center_id];
+  }
+
+  /**
+   * If it is offline program generally we store state , city , center in venue table it self
+   *  But due to bug MVP-885 we are storing the venue state, city ,center in program itself to make filtering and displaying easy in course listing page
+   */
+
+  if (body.is_existing_venue == "new-venue") {
+    programBody.state_id = body?.newVenue?.state_id;
+    programBody.city_id = body?.newVenue?.city_id;
+    programBody.center_id = body?.newVenue?.center_id;
+  }
+
+  if (body?.is_existing_venue == "existing-venue") {
+    programBody.state_id = body?.existingVenue?.state_id;
+    programBody.city_id = body?.existingVenue?.city_id;
+    programBody.center_id = body?.existingVenue?.center_id;
   }
 
   //hour_format_id

@@ -770,6 +770,7 @@ export const ProgramOrganiser = () => {
         onSearch(val)
       }}
       onChange={temporaryOnChange}
+      variant='basic'
     />
   )
 }
