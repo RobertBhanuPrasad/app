@@ -307,7 +307,6 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       const refundTransaction = () => {};
 
       const [editPayment, setEditPayment] = useState(false);
-      const [menuOpen, setMenuOpen] = useState(false);
       const [viewDonation, setViewDonation] = useState(false);
       const { query } = useRouter();
       const [defaultValues, setDefaultValues] = useState({});
@@ -351,7 +350,6 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                         <div
                           onClick={() => {
                             setEditPayment(true);
-                            setMenuOpen(false);
                           }}
                         >
                           Edit
