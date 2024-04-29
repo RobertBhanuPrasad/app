@@ -171,18 +171,17 @@ export default function EditPayment({
     resource: "participant_payment_history",
     id: paymentId,
     meta: {
-      select: "id,payment_transaction_id,response_message,error_message",
+      select:
+        "id,payment_transaction_id,response_message,error_message,payment_method_id",
     },
   });
 
   // Both functions are confirmation popups to save or cancel the changes of the edit payment form
   const cancelConfirmation = () => {
     // Picks common keys form both objects and compares if any value is editted or not
-    const commonKeys = _.union(_.keys(initialValue), _.keys(formData));
+    const commonKeys = _.intersection(_.keys(initialValue), _.keys(formData));
     const initialData = _.pick(initialValue, commonKeys);
     const formValues = _.pick(formData, commonKeys);
-    console.log("ini", initialValue);
-    console.log("form", formData);
     if (!_.isEqual(initialData, formValues)) {
       setcancelEditPayment(true);
     } else {
@@ -237,7 +236,7 @@ export default function EditPayment({
                         }}
                       >
                         <SelectTrigger className="w-[278px]">
-                          <SelectValue placeholder="Select Course Type" />
+                          <SelectValue placeholder="Select Transaction Status" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItems>
@@ -314,7 +313,7 @@ export default function EditPayment({
                         }}
                       >
                         <SelectTrigger className="w-[278px]">
-                          <SelectValue placeholder="Select Course Type" />
+                          <SelectValue placeholder="Select Payment Method" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItems>
