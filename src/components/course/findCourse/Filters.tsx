@@ -23,7 +23,9 @@ import {
 } from 'src/utility/GetOptionValuesByOptionLabel'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
-const Filters = ({ setAdvanceFilterOpen }: any) => {
+const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
+  console.log(hasAliasNameFalse, 'FalseAliasNamefilter')
+
   const { watch, setValue } = useFormContext()
 
   const formData = watch()
@@ -63,30 +65,38 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
           ]}
         >
           {/* Course Name Accordion */}
-          <AccordionItem value="item-1" className="border-none">
-            <AccordionTrigger className="text-base font-semibold pr-3">
-              <div className="flex flex-row gap-2 items-center">
-                <div>Course Name</div>
-                {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-5 pr-3">
-              <CourseName />
-            </AccordionContent>
-          </AccordionItem>
-          <Separator />
-          <AccordionItem value="item-14" className="border-none">
-            <AccordionTrigger className="text-base font-semibold pr-3">
-              <div className="flex flex-row gap-2 items-center">
-                <div>Course Type</div>
-                {formData?.temporaryadvancefilter.course_type && <CountComponent count={1} />}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-5 pr-3">
-              <CourseTypeComponent name="temporaryadvancefilter.course_type" />
-            </AccordionContent>
-          </AccordionItem>
-          <Separator />
+          {!hasAliasNameFalse && (
+            <>
+              <AccordionItem value="item-1" className="border-none">
+                <AccordionTrigger className="text-base font-semibold pr-3">
+                  <div className="flex flex-row gap-2 items-center">
+                    <div>Course Name</div>
+                    {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pb-5 pr-3">
+                  <CourseName />
+                </AccordionContent>
+              </AccordionItem>
+              <Separator />
+            </>
+          )}
+          {!hasAliasNameFalse && (
+            <>
+              <AccordionItem value="item-14" className="border-none">
+                <AccordionTrigger className="text-base font-semibold pr-3">
+                  <div className="flex flex-row gap-2 items-center">
+                    <div>Course Type</div>
+                    {formData?.temporaryadvancefilter.course_type && <CountComponent count={1} />}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pb-5 pr-3">
+                  <CourseTypeComponent name="temporaryadvancefilter.course_type" />
+                </AccordionContent>
+              </AccordionItem>
+              <Separator />
+            </>
+          )}
 
           {/* Course Status Accordion */}
           <AccordionItem value="item-2" className="border-none ">
@@ -776,6 +786,7 @@ export const ProgramOrganiser = () => {
         onSearch(val)
       }}
       onChange={temporaryOnChange}
+      variant='basic'
     />
   )
 }
