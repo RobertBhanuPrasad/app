@@ -987,7 +987,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
     //For New Venue directly posting data in venue table
     const { data, error } = await supabaseClient
       .from("venue")
-      .insert({ venueData, created_by_user_id: loggedInUserId })
+      .insert({...venueData, created_by_user_id: loggedInUserId })
       .select();
 
     if (error) {
