@@ -6,6 +6,7 @@ import { Button } from 'src/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from 'src/ui/card'
 import { supabaseClient } from 'src/utility'
 import { getColorWithDecreasedOpacity } from 'src/utility/GenerateColours'
+import { useTranslation } from 'next-i18next';
 
 function ParticipantsTab() {
   const router = useRouter()
@@ -34,11 +35,12 @@ function ParticipantsTab() {
   useEffect(() => {
     fetchData()
   }, [])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 
   return (
     <div className="my-[31px] mb-6 overscroll ">
       <div className="flex justify-between">
-        <div className="text-[23px] font-semibold">Overall Participants</div>
+        <div className="text-[23px] font-semibold">{t('course.view_course:participants_tab.overall_participants')}</div>
         <div className="flex gap-4">
           <Button
             className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]"
@@ -46,13 +48,13 @@ function ParticipantsTab() {
             //     // router.push('/courses/add')
             // }
           >
-            Register Participant
+            {t('common:register_participant')}
           </Button>
           <Button
             className="w-[188px] h-[46px] rounded-[12px]"
             onClick={() => router.push(`/courses/${id}/participants/list`)}
           >
-            View Participants
+            {t('new_strings:view_participant')}
           </Button>
         </div>
       </div>
@@ -81,11 +83,12 @@ const FeeLevelPieChart = ({ participantData }: any) => {
       color: getColorWithDecreasedOpacity(baseColor, index + 1, participantData?.FeeLevelBreakUp?.length)
     }
   })
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Fee Level Breakup</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.fee_level_breakup')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -102,7 +105,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p>Total Participants</p>
+            <p>{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">{participantData?.totalParticipantCount}</p>
           </div>
         </div>
@@ -140,12 +143,13 @@ const AttendancePieChart = ({ participantData }: any) => {
       color: getColorWithDecreasedOpacity(baseColor, index + 1, participantData?.AttendanceStatus?.length)
     }
   })
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Attendance Status</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.attendance_status')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -163,7 +167,7 @@ const AttendancePieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p>Total Participants</p>
+            <p>{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">{participantData?.totalParticipantCount}</p>
           </div>
         </div>
@@ -201,12 +205,13 @@ const GenderPieChart = ({ participantData }: any) => {
       color: getColorWithDecreasedOpacity(baseColor, index + 1, participantData?.Gender?.length)
     }
   })
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Gender Breakdown</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.gender_breakdown')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -224,7 +229,7 @@ const GenderPieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p>Total Participants</p>
+            <p>{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">{participantData?.totalParticipantCount}</p>
           </div>
         </div>

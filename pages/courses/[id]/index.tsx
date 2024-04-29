@@ -401,11 +401,11 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
   const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, DECLINED)?.id
   const options = [
     {
-      label: 'Approve Course',
+      label: t('course.view_course:basic_details_tab.approve_course'),
       value: 1
     },
     {
-      label: 'Reject Course',
+      label: t('course.view_course:basic_details_tab.reject_course'),
       value: 2
     }
   ]
@@ -455,7 +455,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder="Pending Approval" />
+          <SelectValue placeholder={t('common:pending_approval')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
@@ -476,7 +476,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
               <Exclamation />
             </div>
             <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-              Are you sure you want to approve this course?
+            {t('course.view_course:basic_details_tab.are_you_sure_you_want_to_approve')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -560,7 +560,6 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
     </div>
   )
 }
-
 const RejectedModalOpen = () => {
   const { viewRejectedModal, setViewRejectedModal } = newCourseStore()
 
@@ -680,7 +679,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
     })
     setCancelSuccessModalOpen(true)
   }
-
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <div>
       <Select
@@ -720,7 +719,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder="Actions" />
+          <SelectValue placeholder={t('common:actions')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
@@ -756,7 +755,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     setCancelCourseModalOpen(false)
                   }}
                 >
-                  No
+                  {t('common:no')}
                 </Button>
               </div>
               <div>
@@ -767,7 +766,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     cancelCourse()
                   }}
                 >
-                  Yes
+                {t('common:yes')}
                 </Button>
               </div>
             </div>
@@ -878,17 +877,18 @@ const ShareButton = () => {
   }
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string
   const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string
+  const {t} = useTranslation(["common", "course.view_course","new_strings"])
 
   return (
     <Dialog>
       <DialogTrigger>
         <Button className="border border-primary text-primary w-[93px] bg-[white] rounded-[12px] flex gap-2 ">
-          Share <ShareIcon />
+        {t('common:share_button')} <ShareIcon />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[414px] h-[310px] !rounded-[24px] !p-6 ">
         <div className="flex items-center gap-5 flex-col">
-          <div className="text-[24px] font-semibold items-center">Share in Social</div>
+          <div className="text-[24px] font-semibold items-center">{t('course.view_course:share_in_social')}</div>
           <div className="flex flex-row gap-6 ">
             <WhatsappIcon />
             <FaceBookIcon />
@@ -896,9 +896,9 @@ const ShareButton = () => {
             <Instagram />
             <LinkedInIcon />
           </div>
-          <div className="text-[14px] font-normal text-[#666666]">Or</div>
+          <div className="text-[14px] font-normal text-[#666666]">{t('common:or')}</div>
           <div className="relative w-full">
-            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">Registration link</p>
+            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">{t('common:registration_link')}</p>
             <div className="flex justify-between gap-2 px-3 py-1 border rounded-2xl min-w-72">
               <div className="text-[14px] font-semibold">{RX_BASE_URL}</div>
               <div
@@ -910,7 +910,7 @@ const ShareButton = () => {
                 <CopyIcon />
                 {copiedRegistrationLink ? (
                   <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                    copied
+                    {t('new_strings:copied')}
                   </div>
                 ) : (
                   ''
@@ -919,7 +919,7 @@ const ShareButton = () => {
             </div>
           </div>
           <div className="relative w-full">
-            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">Details Page link</p>
+            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">{t('common:details_page_link')}</p>
             <div className="flex justify-between gap-2 px-3 py-1 border rounded-2xl min-w-72">
               <div className="text-[14px] font-semibold">{CX_BASE_URL}</div>
               <div
@@ -931,7 +931,7 @@ const ShareButton = () => {
                 <CopyIcon />
                 {copiedDetailsPageLink ? (
                   <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                    copied
+                    {t('new_strings:copied')}
                   </div>
                 ) : (
                   ''
@@ -948,7 +948,7 @@ const ShareButton = () => {
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings"])
 
   if (!authenticated) {
     return {

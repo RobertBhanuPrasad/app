@@ -5,7 +5,11 @@
  "find_course":"find course",
 
  "view_course":"view course",
-
+ "copied":"copied",
+ "organisation":"Organisation",
+ "course type":"Course type",
+ "total_participants":"Total Participants",
+ "view_participant":"View Participant",
 
  "participants":"participants"
 
