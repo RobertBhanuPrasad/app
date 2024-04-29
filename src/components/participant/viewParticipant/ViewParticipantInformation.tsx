@@ -1,3 +1,4 @@
+import { isDisplayRegistrationCompletionLink } from '@components/courseBusinessLogic'
 import CopyIcon from '@public/assets/CopyIcon'
 import LoadingIcon from '@public/assets/LoadingIcon'
 import { useOne } from '@refinedev/core'
@@ -79,35 +80,54 @@ function ViewParticipantInformation({ participantId }: any) {
     { key: 'Occupation', value: contactData?.occupation ?? '-' },
     { key: 'Email', value: contactData?.email ?? '-' },
     {
-      key: 'Url for registration completion',
-      value: participantData?.data?.program_id?.registration_link ? (
-        <div className="flex ">
-          <div className="text-[14px] font-semibold text-[#7677F4] underline pr-[10px] truncate">
-            {participantData?.data?.program_id?.registration_link}
-          </div>
-          <div
-            onClick={() => {
-              handleCopyRegistrationLink()
-            }}
-            className="relative mt-1 cursor-pointer"
-          >
-            {/* here we have to show copy icon or copied text based on two conditions
-             /* at first we have to show copy icon when user click on copy icon
-             /* then we have to show copied text for 3 sec in the place of icon 
-             /* after 3 sec again we have to show copy icon.
-            */}
-           {!copiedRegistrationLink ? <CopyIcon />  : <p className="text-[#7677F4] -left-12 bottom-8 rounded-md px-5 shadow-md sm:-left-8 sm:bottom-12">Copied</p>}
-          </div>
-        </div>
-      ) : (
-        '-'
-      )
-    },
-    {
       key: 'How did you find out about the program?',
       value: participantData?.data?.hear_program_from_id?.value ?? 'NA'
     }
   ]
+  
+/**
+ * Defines the index where the registration link object will be inserted into the participant info array.
+ * This index indicates where the registration link will be displayed.
+ */
+const registrationLinkObjectIndex = 10
+
+/**
+ * Defines the object representing the registration link.
+ * This object contains the URL for registration completion, along with copy functionality.
+ * registration link is shown only when manual registration and payment status is failed or pending 
+ */
+const registrationLinkObject = {
+  key: 'Url for registration completion',
+  value: participantData?.data?.program_id?.registration_link ? (
+    <div className="flex ">
+      <div className="text-[14px] font-semibold text-[#7677F4] underline pr-[10px] truncate">
+        {participantData?.data?.program_id?.registration_link}
+      </div>
+      <div
+        onClick={() => {
+          handleCopyRegistrationLink()
+        }}
+        className="relative mt-1 cursor-pointer"
+      >
+        {/* here we have to show copy icon or copied text based on two conditions
+         /* at first we have to show copy icon when user click on copy icon
+         /* then we have to show copied text for 3 sec in the place of icon 
+         /* after 3 sec again we have to show copy icon.
+        */}
+       {!copiedRegistrationLink ? <CopyIcon />  : <p className="text-[#7677F4] -left-12 bottom-8 rounded-md px-5 shadow-md sm:-left-8 sm:bottom-12">Copied</p>}
+      </div>
+    </div>
+  ) : (
+    '-'
+  )
+};
+
+// Check if the registration completion link should be displayed
+if (isDisplayRegistrationCompletionLink(participantData?.data?.is_manual_registration,participantData?.data?.payment_status_id)) {
+  // Insert the registration link object into the participant info array
+  participantInfo.splice(registrationLinkObjectIndex, 0, registrationLinkObject);
+}
+
 
   // Render component content based on loading state
   return !isLoading ? (
