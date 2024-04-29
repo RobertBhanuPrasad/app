@@ -10,6 +10,14 @@ function ViewParticipantInformation({ participantId }: any) {
   // State variable to track whether the registration link has been copied
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
 
+  const copyText = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
+
   // Query object for fetching participant data
   const query: any = {
     resource: 'participant_registration',
@@ -25,6 +33,23 @@ function ViewParticipantInformation({ participantId }: any) {
 
   // Extracting contact data from participantData
   const contactData = participantData?.data?.contact_id
+
+/**
+ * Function to handle copying the registration link to the clipboard.
+ * It first copies the registration link to the clipboard, then sets the state
+ * to indicate that the link has been copied. After 3 seconds, it resets the
+ * state to false.
+ * 
+ * @returns {void}
+ */
+  const handleCopyRegistrationLink = () => {
+    copyText(participantData?.data?.program_id?.registration_link);
+    setCopiedRegistrationLink(true);
+
+    setTimeout(() => {
+      setCopiedRegistrationLink(false);
+    }, 3000);
+  };
 
   // Array containing participant information with keys and values
   const participantInfo = [
@@ -62,21 +87,16 @@ function ViewParticipantInformation({ participantId }: any) {
           </div>
           <div
             onClick={() => {
-              handleCopyRegistrationLink(
-                setCopiedRegistrationLink,
-                participantData?.data?.program_id?.registration_link
-              )
+              handleCopyRegistrationLink()
             }}
             className="relative mt-1 cursor-pointer"
           >
-            <CopyIcon />
-            {copiedRegistrationLink ? (
-              <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                copied
-              </div>
-            ) : (
-              ''
-            )}
+            {/* here we have to show copy icon or copied text based on two conditions
+             /* at first we have to show copy icon when user click on copy icon
+             /* the we have to show copied text for 3 sec in the place of icon 
+             /* after 3 sec again we have to show copy icon.
+            */}
+           {!copiedRegistrationLink ? <CopyIcon />  : <p className="text-[#7677F4] -left-12 bottom-8 rounded-md px-5 shadow-md sm:-left-8 sm:bottom-12">Copied</p>}
           </div>
         </div>
       ) : (
