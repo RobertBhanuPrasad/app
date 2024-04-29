@@ -1043,6 +1043,39 @@ export const isTeacherShownInTeacherField = (programCreatedUserId: number) => {
 }
 
 
+/**
+ * Determines whether the registration completion link should be displayed based on manual registration and payment status.
+ * @param {boolean} isManualRegistration - Indicates whether the registration is manual or not.
+ * @param {number} paymentStatusId - The ID of the payment status.
+ * @returns {boolean} - True if the registration completion link should be displayed, false otherwise.
+ */
+export const isDisplayRegistrationCompletionLink = (isManualRegistration: boolean , paymentStatusId: number) => {
+  
+  // Get the ID for pending payment status
+  const pendingPaymentStatusId =  getOptionValueObjectByOptionOrder(
+    PARTICIPANT_PAYMENT_STATUS,
+    PARTICIPANT_PENDING_PAYMENT_STATUS
+  )?.id
+
+  // Get the ID for failed payment status
+  const failedPaymentStatusId =  getOptionValueObjectByOptionOrder(
+    PARTICIPANT_PAYMENT_STATUS,
+    PARTICIPANT_FAILED_PAYMENT_STATUS
+  )?.id
+ 
+  // Check if it's a manual registration and the payment status is pending or failed
+  if (isManualRegistration && (paymentStatusId === pendingPaymentStatusId || paymentStatusId === failedPaymentStatusId)) {
+    // If the conditions are met, return true
+    return true
+  } else {
+    // Otherwise, return false
+    return false
+  }
+ 
+}
+
+
+
 
 
 
