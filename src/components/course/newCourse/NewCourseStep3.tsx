@@ -11,7 +11,7 @@ import { format } from 'date-fns'
 import _ from 'lodash'
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useController, useFieldArray, useFormContext, useFormState, useWatch } from 'react-hook-form'
+import { useController, useFieldArray, useForm, useFormContext, useFormState, useWatch } from 'react-hook-form'
 import { TIME_FORMAT } from 'src/constants/OptionLabels'
 import { DateCalendar } from 'src/ui/DateCalendar'
 import { Badge } from 'src/ui/badge'
@@ -437,7 +437,16 @@ const Venue = () => {
   const { watch, setValue, resetField } = useFormContext()
 
   const removeVenue = () => {
-    setValue('newVenue', null)
+    setValue('newVenue', undefined)
+    // After click remove then due to the following fields are not removed before, because of that 
+    // due to the reset field in the add new venue function the data which is already present we did not removed is prefilling
+    // So we are removing the data for the following fields also.
+    setValue("state_id",undefined)
+    setValue("name",undefined)
+    setValue("city_id",undefined)
+    setValue("center_id",undefined)
+    setValue("postal_code",undefined)
+    setValue("address",undefined)
   }
 
   const formData = watch()
@@ -509,6 +518,7 @@ const Venue = () => {
           address: formData?.address,
           name: formData?.name
         })
+        onChange("new-venue")
         setOpenAddNewVenue(false)
       }
     } else {
@@ -546,7 +556,7 @@ const Venue = () => {
 
   return (
     <div>
-      <RadioGroup className="flex flex-row gap-7" onValueChange={onChange} value={value}>
+      <RadioGroup className="flex flex-row gap-7" value={value} onValueChange={onChange} >
         <Label htmlFor="existing-venue">
           <div
             className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
@@ -554,14 +564,16 @@ const Venue = () => {
             }`}
           >
             <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
+              {(formData?.existingVenue !== undefined ) && 
               <RadioGroupCircleItem
-                value="existing-venue"
-                id="existing-venue"
-                className={` ${
-                  value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
-                }`}
-              />
-              <div>Existing Venue</div>
+                  value= {"existing-venue"}
+                  id="existing-venue"
+                  className={` ${
+                    value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
+                  }`}
+                />}
+                {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
+              <div className={`${((formData?.is_existing_venue == undefined || formData?.is_existing_venue == "new-venue") && formData?.existingVenue == undefined ) && 'ml-7'}`}>Existing Venue</div>
             </div>
             {data ? (
               <div>
@@ -570,7 +582,7 @@ const Venue = () => {
                 ) : (
                   <div className="pl-[30px] leading-6 font-normal">Select a venue by clicking “View All” button</div>
                 )}
-                {!(value === 'new-venue') && (
+                {/* {!(value === 'new-venue') && ( */}
                   <Dialog>
                     <DialogTrigger>
                       <Badge
@@ -584,7 +596,7 @@ const Venue = () => {
                       <ExistingVenueList />
                     </DialogContent>
                   </Dialog>
-                )}
+                {/* )} */}
               </div>
             ) : (
               <div className="px-[30px] leading-6 font-normal">No existing venue found</div>
@@ -600,6 +612,9 @@ const Venue = () => {
             >
               <div className=" flex flex-row justify-between">
                 <div className="text-[16px] font-semibold text-[#7677F4] gap-3 flex flex-row">
+                  {
+                    formData?.newVenue !== undefined  &&
+
                   <RadioGroupCircleItem
                     value="new-venue"
                     id="new-venue"
@@ -607,7 +622,8 @@ const Venue = () => {
                       value == 'new-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
                     }`}
                   />
-                  <div>New Venue</div>
+                  }
+                <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
@@ -626,6 +642,10 @@ const Venue = () => {
                     <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
                       <DeleteVenueComponent
                         handleDeleteVenue={() => {
+                        onChange(undefined)
+                        if(existingVenue !== undefined && existingVenue !== null){
+                          onChange("existing-venue")
+                        }
                           removeVenue()
                         }}
                       />
@@ -649,9 +669,13 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
-      {(errors?.is_existing_venue || errors?.existingVenue) && (
+      {/* 
+      In errors if we have the error for the is_existing_venue then we will display the message 
+       */}
+      {(errors?.is_existing_venue) && (
         <span className="text-[#FF6D6D] text-[14px]">{'Venue is a required field'}</span>
-      )}
+      ) }
+     
     </div>
   )
 }
@@ -950,6 +974,14 @@ const ExistingVenueList = () => {
     }
     setVenueData(modifiedVenueData);
   };
+  /**
+   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue 
+   */
+  const {
+    field: { onChange : isExistingVenueOnchange }
+  } = useController({
+    name: 'is_existing_venue'
+  })
 
   const fetchLoginUserVenue = async () => {
     const { data } = await supabaseClient
@@ -1056,6 +1088,7 @@ const ExistingVenueList = () => {
             type="submit"
             onClick={() => {
               isNewVenueSelectedOnchange('existing-venue')
+              isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList()
             }}
           >

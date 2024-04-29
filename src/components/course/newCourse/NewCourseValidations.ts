@@ -71,8 +71,6 @@ export const validationSchema = () => {
     is_existing_venue: z.string({
       required_error: "Venue is a required fields",
     }),
-    existingVenue: existingVenueSchedules,
-    newVenue: newVenueSchedules,
     online_url: z
       .string({ required_error: " Online meeting URL is a required fields" })
       .url({ message: "Online meeting URL is not valid" }),
@@ -123,15 +121,6 @@ export const validationSchema = () => {
   });
 };
 
-const existingVenueSchedules = z.object({
-  id: z.number({ required_error: "Venue is a required fields" }),
-});
-
-const newVenueSchedules = z.object({
-  state_id: z.number({
-    required_error: "Venue is a required fields",
-  }),
-});
 
 const feelLevelsValidationSchema = z.array(
   z.object({
