@@ -139,7 +139,7 @@ export const getDefaultValues = async (
 
   // if the selected program_type contains is_online_program to true then load online_url, state_id,city_id and center_id
   const { data: programTypeData }: any = await supabaseClient
-    .from("program_type")
+    .from("program_types")
     .select("*")
     .eq("id", data.program_type_id);
 
@@ -158,10 +158,10 @@ export const getDefaultValues = async (
     // for form to match requirement we need to store venue data into existingVenue form name
     if (data.venue_id) {
       const { data: venueData }: any = await supabaseClient
-        .from("venue")
+        .from("venue_view_with_names")
         .select("*")
         .eq("id", data.venue_id);
-
+      defaultValues.venue_id = data.venue_id;
       if (venueData && venueData[0]) {
         defaultValues.existingVenue = venueData[0];
       }
