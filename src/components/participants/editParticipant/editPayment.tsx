@@ -32,6 +32,7 @@ import {
 import { Textarea } from "src/ui/textarea";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { DialogContent } from "src/ui/dialog";
+import Tick from "@public/assets/Tick";
 interface EditPaymentProps {
   setEditPayment: React.Dispatch<React.SetStateAction<any>>;
   paymentId: number;
@@ -44,6 +45,7 @@ export default function EditPayment({
   const { mutate } = useUpdate();
   const { watch, reset } = useFormContext();
   const [cancelEditPayment, setcancelEditPayment] = useState(false);
+  const [saveChangesConfirmation, setSaveChangesConfirmation] = useState(false);
   let formData = watch();
   const [initialValue, setinitialValue] = useState(formData);
 
@@ -59,7 +61,7 @@ export default function EditPayment({
       },
       id: paymentId,
     });
-    setEditPayment(false);
+    setSaveChangesConfirmation(true);
   };
 
   // Form fileds useControllers
@@ -446,6 +448,38 @@ export default function EditPayment({
                     </div>
                   </div>
                 </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={saveChangesConfirmation}>
+              <AlertDialogContent>
+                <div className="flex justify-end">
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSaveChangesConfirmation(false);
+                      setEditPayment(false);
+                    }}
+                  >
+                    <CrossIcon fill="#333333" />
+                  </div>
+                </div>
+                <div className="w-full flex flex-col text-center items-center gap-4">
+                  <Tick />
+                  <div className="w-full font-bold text-[20px]">
+                    Changes saved successfully
+                  </div>
+                  <div>
+                    <Button
+                      onClick={() => {
+                        setSaveChangesConfirmation(false);
+                        setEditPayment(false);
+                      }}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
               </AlertDialogContent>
             </AlertDialog>
           </div>
