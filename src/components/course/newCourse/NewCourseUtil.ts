@@ -984,9 +984,10 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
   if (body.isNewVenue) {
     venueData = body?.newVenue || {};
 
+    //For New Venue directly posting data in venue table
     const { data, error } = await supabaseClient
       .from("venue")
-      .insert(venueData)
+      .insert({ venueData, created_by_user_id: loggedInUserId })
       .select();
 
     if (error) {
@@ -995,6 +996,8 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
     } else {
       console.log("New venue created", data);
     }
+
+    return data?.[0]?.id;
   } else {
     // we are inserting new venue at the time of editing for the present user
     const venueId = body.existingVenue?.id;
@@ -1026,6 +1029,26 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 
     venueBody.created_by_user_id = loggedInUserId;
 
+    //Exacting deleted venue IDs from form
+    const deleteVenueIDs = body.deletedVenueID;
+
+    if (deleteVenueIDs && deleteVenueIDs.length > 0) {
+      //Soft deleting all the venues deleted by user while creating course.
+      const { data, error } = await supabaseClient
+        .from("venue")
+        .update({ is_deleted: true })
+        .in("id", deleteVenueIDs)
+        .select();
+
+      console.log("deleted Venues are", data);
+      if (error) {
+        console.log("error while deleting venue", error);
+        return false;
+      } else {
+        console.log("venues deleted successfully", data);
+      }
+    }
+
     if (body?.isExistingVenueEdited === true) {
       // we have to temporary delete the existing venue and create new if user edits
 
@@ -1051,23 +1074,6 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
         return false;
       } else {
         console.log("new Venue edited by user is created", insertData);
-      }
-
-      const deleteVenueIDs = body.deletedVenueID;
-
-      if (deleteVenueIDs && deleteVenueIDs.length > 0) {
-        const { data, error } = await supabaseClient
-          .from("venue")
-          .update({ is_deleted: true })
-          .in("id", deleteVenueIDs)
-          .select();
-        console.log("deleted Venues are", data);
-        if (error) {
-          console.log("error while deleting venue", error);
-          return false;
-        } else {
-          console.log("venues deleted successfully", data);
-        }
       }
 
       return insertData[0].id;

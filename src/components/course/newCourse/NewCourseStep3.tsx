@@ -1184,7 +1184,7 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
                   onOpenChange={setOpenExistingVenue}
                 >
                   <DialogTrigger
-                    className={!isVenueSelected ? "cursor-not-allowed pointer-events-none opacity-50" : "opacity-none"}
+                    className={!isVenueSelected ? "cursor-not-allowed  opacity-50" : "opacity-none"}
                     disabled={!isVenueSelected}
                     onClick={() => {
                       handleOpenExistingVenue(item);
