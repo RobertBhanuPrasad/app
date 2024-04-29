@@ -9,7 +9,7 @@ import FilterIcon from '@public/assets/FilterIcon'
 import SearchIcon from '@public/assets/Search'
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 import { ChevronDownIcon } from '@radix-ui/react-icons'
-import { useSelect, useTable } from '@refinedev/core'
+import { useList, useSelect, useTable } from '@refinedev/core'
 import { format } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
@@ -402,29 +402,26 @@ function index() {
   }
 
   // we are writing this to check if the any course 'has alias_name' as false we making the state variable as false
-  // so that the course_type and course_name is not visible in advance filter
+  // so that the course_type and course_name is not visible in advance filter and for the columns course_name should be visible if and only if course_alias_name is true
   // for the ticket MVP-1054
-  const [FalseAliasName, setFalseAliasName] = useState(true)
-  async function fetchData() {
-    const { data } = await supabaseClient.from('program_types').select('has_alias_name')
-    const hasFalseAliasName = data?.some(item => item.has_alias_name === false)
-    if (hasFalseAliasName) {
-      setFalseAliasName(false)
-    } else {
-      setFalseAliasName(true)
-    }
-    console.log(data, 'requireddata')
-  }
-  fetchData()
-
-  var Columns = []
-  Columns = column(FalseAliasName)
+  const { data, isLoading } = useList<any>({
+    resource: 'program_types',
+    filters: [
+      {
+        field: 'has_alias_name',
+        operator: 'eq',
+        value: true
+      }
+    ]
+  })
+  console.log(data, 'dataaa')
+  console.log(isLoading, 'loadinggg')
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
       <div className="mx-8 flex flex-col gap-4 mt-4">
-        <HeaderSection FalseAliasName={FalseAliasName} />
+        <HeaderSection FalseAliasName={isLoading} />
         <div className="w-full">
           <BaseTable
             current={current}
@@ -441,7 +438,7 @@ function index() {
               table: '',
               rowStyles: '!important border-none'
             }}
-            columns={Columns}
+            columns={column(isLoading)}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
