@@ -47,7 +47,7 @@ import {
 import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VISIBILITY } from "src/constants/OptionLabels";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
@@ -67,6 +67,7 @@ import { useTranslation } from 'next-i18next';
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData, "loginUserData");
+
 
   const {
     query: { section },
@@ -93,6 +94,7 @@ function index() {
   }
 }
 function NewCourse() {
+  const { setCurrentStep} = newCourseStore();
   const { data: loginUserData }: any = useGetIdentity();
 
   const loggedUserData = loginUserData?.userData?.id;
@@ -102,6 +104,20 @@ function NewCourse() {
   const onSubmit = (formData: any) => {
     // console.log(formData);
   };
+
+
+/**
+ * useEffect to run once when the component mounts.
+ * It sets the current step to 1.
+ * This effect has an empty dependency array to ensure it runs only once.
+ */
+useEffect(() => {
+  /**
+   * Set the current step to 1 when the component mounts.
+   * This initializes the component state for the first step.
+   */
+  setCurrentStep(1);
+}, []);
 
   //Finding program Organizer role id
   const publicVisibilityId = getOptionValueObjectByOptionOrder(

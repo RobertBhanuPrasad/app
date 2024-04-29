@@ -17,7 +17,7 @@ export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
   setProgramId: (by: number) => void,
-  accountingNotSubmittedStatusId: number,
+  accountingNotSubmittedStatusId: number
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -124,19 +124,34 @@ export const handlePostProgramData = async (
     programBody.online_url = body[NewCourseStep3FormNames.online_url];
   }
 
-  //state_id
+  //If the program is online program then we store state_id ,city_id ,center_id
   if (body[NewCourseStep3FormNames.state_id]) {
     programBody.state_id = body[NewCourseStep3FormNames.state_id];
   }
 
-  //city_id
   if (body[NewCourseStep3FormNames.city_id]) {
     programBody.city_id = body[NewCourseStep3FormNames.city_id];
   }
 
-  //center_id
   if (body[NewCourseStep3FormNames.center_id]) {
     programBody.center_id = body[NewCourseStep3FormNames.center_id];
+  }
+
+  /**
+   * If it is offline program generally we store state , city , center in venue table it self
+   *  But due to bug MVP-885 we are storing the venue state, city ,center in program itself to make filtering and displaying easy in course listing page
+   */
+
+  if (body.is_existing_venue == "new-venue") {
+    programBody.state_id = body?.newVenue?.state_id;
+    programBody.city_id = body?.newVenue?.city_id;
+    programBody.center_id = body?.newVenue?.center_id;
+  }
+
+  if (body?.is_existing_venue == "existing-venue") {
+    programBody.state_id = body?.existingVenue?.state_id;
+    programBody.city_id = body?.existingVenue?.city_id;
+    programBody.center_id = body?.existingVenue?.center_id;
   }
 
   //hour_format_id
@@ -252,17 +267,17 @@ export const handlePostProgramData = async (
     // this RX base url coming from env file now.(need to change after proper table was there in backend)
     const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
 
-  // Constructing the registration URL
-  // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
-  // The base URL where registration information is located
-  // Adding the country code to specify the country of the program
-  // Adding the language code to specify the language of the program
-  // Appending the program ID to identify the specific program
-  // Constructing the complete registration URL
-  // this url is now posted to the program api which is used to further usage in the details view or at any other place.
+    // Constructing the registration URL
+    // Combining the base URL or Origin of Rx ,countryCode-languageCode, programs and program ID
+    // The base URL where registration information is located
+    // Adding the country code to specify the country of the program
+    // Adding the language code to specify the language of the program
+    // Appending the program ID to identify the specific program
+    // Constructing the complete registration URL
+    // this url is now posted to the program api which is used to further usage in the details view or at any other place.
 
-  // TODO : need to integrate with country code and language code after translations are done
-  const registrationUrl = `${RX_BASE_URL}/programs/${programId}`;
+    // TODO : need to integrate with country code and language code after translations are done
+    const registrationUrl = `${RX_BASE_URL}/programs/${programId}`;
 
     // TODO need to integrate with url provided by cx team -(kalyan)
     const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
@@ -1137,7 +1152,7 @@ export const handleProgramFeeLevelSettingsData = async (
           program_id: programId,
         };
       }
-      return { ...feeLevel,program_id: programId };
+      return { ...feeLevel, program_id: programId };
     }
   );
 

@@ -38,17 +38,18 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { useTranslation } from 'next-i18next';
 
 function NewCourseStep1() {
-  const { data: loginUserData }: any = useGetIdentity()
+  const { data: loginUserData }: any = useGetIdentity();
 
   // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
-  )
+  );
 
   // Checking weather login user is National admin or not
   const hasNationalAdminRole = loginUserData?.userData?.user_roles.find(
-    (val: { role_id: { order: number } }) => val.role_id?.order == NATIONAL_ADMIN
-  )
+    (val: { role_id: { order: number } }) =>
+      val.role_id?.order == NATIONAL_ADMIN
+  );
   return (
     <div>
       <RadioCards />
@@ -60,8 +61,8 @@ function NewCourseStep1() {
           <ProgramOrganizerDropDown />
         </div>
       </div>
-       {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
-       {(hasSuperAdminRole || hasNationalAdminRole) && (
+      {/* 'Registration via 3rd Party' field should be visible only to Super Admin and National Admin */}
+      {(hasSuperAdminRole || hasNationalAdminRole) && (
         <div>
           <RegistrationGateway />
         </div>
@@ -123,6 +124,9 @@ const RegistrationGateway = () => {
   );
 };
 const RadioCards = () => {
+
+  const { clearErrors } = useFormContext();
+
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value, onChange },
@@ -167,7 +171,22 @@ const RadioCards = () => {
         teachersOnChange([loginInTeacherData, ...teachers]);
       }
     }
+    // Check if the selected value is equal to the organizer's ID
+     if (parseInt(val) === iAmOrganizerId) {
+       // If there are already teachers selected
+     if (teachers) {
+     // Remove the logged-in teacher's ID from the list of selected teachers
+      teachersOnChange(_.without(teachers, loginInTeacherData));
+     // Set a timeout to clear errors for the 'teacher_ids' field after 10 milliseconds
+      setTimeout(() => {
+        clearErrors('teacher_ids');
+      }, 10);
+     }
+
+     
+    }
   };
+
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
@@ -176,14 +195,14 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
-            }`}
+              }`}
           >
             <Card
               className={` p-2 w-80 h-[106px] flex flex-row ${
                 value === iAmTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
-                  : ""
-              }`}
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                : ""
+                }`}
             >
               <div>
                 <RadioGroupCheckItem
@@ -210,14 +229,14 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmCoTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
-            }`}
+              }`}
           >
             <Card
               className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-                  : ""
-              }`}
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                : ""
+                }`}
             >
               <RadioGroupCheckItem
                 value={JSON.stringify(iAmCoTeachingId)}
@@ -232,7 +251,7 @@ const RadioCards = () => {
                 <Coteacher
                   color={` ${
                     value === iAmCoTeachingId ? "#7677F4" : "#999999"
-                  }`}
+                    }`}
                 />
               {t("course.new_course:basic_details_tab.co_teaching")}
               </div>
@@ -243,14 +262,14 @@ const RadioCards = () => {
           htmlFor={JSON.stringify(iAmOrganizerId)}
           className={`text-[#999999] font-normal ${
             value === iAmOrganizerId ? "text-[#7677F4]" : ""
-          }`}
+            }`}
         >
           <Card
             className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
               value === iAmOrganizerId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-                : ""
-            }`}
+              ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+              : ""
+              }`}
           >
             <RadioGroupCheckItem
               value={JSON.stringify(iAmOrganizerId)}

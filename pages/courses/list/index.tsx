@@ -248,8 +248,6 @@ function index() {
     },
   });
 
-  console.log("heyy programm data", FilterProgramData);
-
   /**
    *This variable holds the filtered ids of the query
    */
@@ -281,6 +279,7 @@ function index() {
       ],
     },
   });
+
 
   /**
    * The variable holds whether all rows are selected or not
@@ -770,15 +769,19 @@ const AdvanceFilter = () => {
   const { setValue, watch } = useFormContext();
   const formData = watch();
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+
+  /**
+   *This holds the applied filters count in advance filter
+   */
   const count =
     (formData?.advanceFilter &&
-      Object.keys(formData?.advanceFilter).filter(
-        (key) =>
-          formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== ""
+      Object.keys(formData.advanceFilter).filter((key) =>
+        Array.isArray(formData.advanceFilter[key])
+          ? formData.advanceFilter[key].length > 0
+          : formData.advanceFilter[key] !== undefined &&
+            formData.advanceFilter[key] !== ""
       ).length) ||
     0;
-
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">
