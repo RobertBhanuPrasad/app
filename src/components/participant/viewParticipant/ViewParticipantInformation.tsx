@@ -93,7 +93,7 @@ function ViewParticipantInformation({ participantId }: any) {
           >
             {/* here we have to show copy icon or copied text based on two conditions
              /* at first we have to show copy icon when user click on copy icon
-             /* the we have to show copied text for 3 sec in the place of icon 
+             /* then we have to show copied text for 3 sec in the place of icon 
              /* after 3 sec again we have to show copy icon.
             */}
            {!copiedRegistrationLink ? <CopyIcon />  : <p className="text-[#7677F4] -left-12 bottom-8 rounded-md px-5 shadow-md sm:-left-8 sm:bottom-12">Copied</p>}
