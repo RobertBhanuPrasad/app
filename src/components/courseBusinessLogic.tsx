@@ -1,4 +1,3 @@
-import { AnyPtrRecord } from "dns";
 import _ from "lodash";
 import {
   COURSE_ACCOUNTING_FORM_TAB,
@@ -26,18 +25,16 @@ import {
   DECLINED,
   FINANCE_ADMIN,
   FULL,
-  I_AM_CO_TEACHING,
   I_AM_TEACHING,
   NATIONAL_ADMIN,
   NOT_SUBMITTED,
-  PARTICIPANT_FAILED_PAYMENT_STATUS,
   PARTICIPANT_PENDING_PAYMENT_STATUS,
   PENDING_ATTENDANCE_STATUS,
   PENDING_REVIEW,
   PROGRAM_ORGANIZER,
   REJECTED,
   SUPER_ADMIN,
-  TEACHER,
+  TEACHER
 } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
@@ -1041,6 +1038,55 @@ export const isTeacherShownInTeacherField = (programCreatedUserId: number) => {
     return false; // Do not show the teacher in the teacher field
   }
 }
+
+/**
+ * requirement : Course Type & Course name to be shown only if course alias setting is set to 'Yes' in course type setting
+ * for that we are intially caling the api from the program_types
+ * @param {boolean} has_alias_name-The required field to check if the course has alias name or not,
+ * if it is true then do not show the course_name and course_type in the advance filter
+ * and in the columns we do  not need to show the course_name
+ * @returns {boolean}
+ */
+export const hasAliasNameFalse=(data:any)=>{
+  console.log("data was",data,data?.data?.length)
+  if(data?.data?.length!=0){
+    return false       // show the cpurse_name,course_type     
+  }else{
+    return true        //do not show the course_name,and course_type
+  }
+}
+
+/**
+ * Determines whether the registration completion link should be displayed based on manual registration and payment status.
+ * @param {boolean} isManualRegistration - Indicates whether the registration is manual or not.
+ * @param {number} paymentStatusId - The ID of the payment status.
+ * @returns {boolean} - True if the registration completion link should be displayed, false otherwise.
+ */
+export const isDisplayRegistrationCompletionLink = (isManualRegistration: boolean , paymentStatusId: number) => {
+  
+  // Get the ID for pending payment status
+  const pendingPaymentStatusId =  getOptionValueObjectByOptionOrder(
+    PARTICIPANT_PAYMENT_STATUS,
+    PARTICIPANT_PENDING_PAYMENT_STATUS
+  )?.id
+
+  // Get the ID for failed payment status
+  const failedPaymentStatusId =  getOptionValueObjectByOptionOrder(
+    PARTICIPANT_PAYMENT_STATUS,
+    PARTICIPANT_FAILED_PAYMENT_STATUS
+  )?.id
+ 
+  // Check if it's a manual registration and the payment status is pending or failed
+  if (isManualRegistration && (paymentStatusId === pendingPaymentStatusId || paymentStatusId === failedPaymentStatusId)) {
+    // If the conditions are met, return true
+    return true
+  } else {
+    // Otherwise, return false
+    return false
+  }
+ 
+}
+
 
 
 
