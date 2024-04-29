@@ -457,7 +457,7 @@ export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => 
     }
   ]
   const courseNameIndex = finalColumns.findIndex(finalColumns => finalColumns.column_name === 'Course Name')
-  if (!hasFalseAliasName && courseNameIndex !== -1) {
+  if (hasFalseAliasName && courseNameIndex !== -1) {
     finalColumns.splice(courseNameIndex, 1)
   }
   return finalColumns

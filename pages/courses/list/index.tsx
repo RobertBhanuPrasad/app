@@ -416,12 +416,11 @@ function index() {
     ]
   })
 
-
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
       <div className="mx-8 flex flex-col gap-4 mt-4">
-        <HeaderSection FalseAliasName={hasAliasNameFalse({ data })} />
+        <HeaderSection hasAliasNameFalse={hasAliasNameFalse(data)} />
         <div className="w-full">
           <BaseTable
             current={current}
@@ -438,7 +437,7 @@ function index() {
               table: '',
               rowStyles: '!important border-none'
             }}
-            columns={column(hasAliasNameFalse({ data }))}
+            columns={column(hasAliasNameFalse(data))}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
@@ -490,14 +489,15 @@ function index() {
 
 export default index
 
-const HeaderSection = ({ setFalseAliasName }: any) => {
+const HeaderSection = ({ hasAliasNameFalse }: any) => {
+
   const { AllFilterData, newAdvanceFilterData } = newCourseStore()
 
   return (
     <Form onSubmit={() => {}} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
         <div className="flex-[0.25]">
-          <AdvanceFilter FalseAliasName={setFalseAliasName} />
+          <AdvanceFilter hasAliasNameFalse={hasAliasNameFalse} />
         </div>
         <div className="flex-[1.75]">
           <BasicFilters />
@@ -713,7 +713,7 @@ export const BasicFilters = () => {
   )
 }
 
-const AdvanceFilter = ({ FalseAliasName }: any) => {
+const AdvanceFilter = ({ hasAliasNameFalse }: any) => {
   const { setValue, watch } = useFormContext()
   const formData = watch()
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false)
@@ -746,7 +746,7 @@ const AdvanceFilter = ({ FalseAliasName }: any) => {
         </Button>
       </SheetTrigger>
       <SheetContent className="w-[446px] rounded-l-xl">
-        <Filters setAdvanceFilterOpen={setAdvanceFilterOpen} FalseAliasName={FalseAliasName} />
+        <Filters setAdvanceFilterOpen={setAdvanceFilterOpen} hasAliasNameFalse={hasAliasNameFalse} />
       </SheetContent>
     </Sheet>
   )

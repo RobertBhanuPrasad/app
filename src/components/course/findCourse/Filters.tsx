@@ -17,13 +17,14 @@ import { RadioGroup } from 'src/ui/radio-group'
 import { RadioButtonCard } from 'src/ui/radioButtonCard'
 import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
 import { Separator } from 'src/ui/separator'
-import { supabaseClient } from 'src/utility'
 import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel
 } from 'src/utility/GetOptionValuesByOptionLabel'
 
-const Filters = ({ setAdvanceFilterOpen,FalseAliasName }: any) => {
+const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
+  console.log(hasAliasNameFalse, 'FalseAliasNamefilter')
+
   const { watch, setValue } = useFormContext()
 
   const formData = watch()
@@ -62,7 +63,7 @@ const Filters = ({ setAdvanceFilterOpen,FalseAliasName }: any) => {
           ]}
         >
           {/* Course Name Accordion */}
-          {FalseAliasName && (
+          {!hasAliasNameFalse && (
             <AccordionItem value="item-1" className="border-none">
               <AccordionTrigger className="text-base font-semibold pr-3">
                 <div className="flex flex-row gap-2 items-center">
@@ -76,7 +77,7 @@ const Filters = ({ setAdvanceFilterOpen,FalseAliasName }: any) => {
             </AccordionItem>
           )}
           <Separator />
-          {FalseAliasName && (
+          {!hasAliasNameFalse && (
             <AccordionItem value="item-14" className="border-none">
               <AccordionTrigger className="text-base font-semibold pr-3">
                 <div className="flex flex-row gap-2 items-center">
@@ -746,14 +747,14 @@ export const ProgramOrganiser = () => {
     meta: {
       select: '*,contact_id!inner(full_name),user_roles!inner(role_id)'
     },
-    optionLabel: "contact_id.full_name",
-    optionValue: "id",
+    optionLabel: 'contact_id.full_name',
+    optionValue: 'id',
     onSearch: value => [
       {
         field: 'contact_id.full_name',
         operator: 'contains',
         value
-      },
+      }
     ],
     pagination: {
       pageSize: pageSize,

@@ -1043,15 +1043,16 @@ export const isTeacherShownInTeacherField = (programCreatedUserId: number) => {
  * requirement : Course Type & Course name to be shown only if course alias setting is set to 'Yes' in course type setting
  * for that we are intially caling the api from the program_types
  * @param {boolean} has_alias_name-The required field to check if the course has alias name or not,
- * if it is true then we have to show the course_name and course_type in the advance filter
+ * if it is true then do not show the course_name and course_type in the advance filter
  * and in the columns we do  not need to show the course_name
  * @returns {boolean}
  */
 export const hasAliasNameFalse=(data:any)=>{
+  console.log("data was",data,data?.data?.length)
   if(data?.data?.length!=0){
-    return false       //do not show the cpurse_name,course_type     
+    return false       // show the cpurse_name,course_type     
   }else{
-    return true        //show the course_name,and course_type
+    return true        //do not show the course_name,and course_type
   }
 }
 
