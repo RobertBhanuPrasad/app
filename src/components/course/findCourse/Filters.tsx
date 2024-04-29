@@ -23,26 +23,10 @@ import {
   getOptionValuesByOptionLabel
 } from 'src/utility/GetOptionValuesByOptionLabel'
 
-const Filters = ({ setAdvanceFilterOpen }: any) => {
+const Filters = ({ setAdvanceFilterOpen,FalseAliasName }: any) => {
   const { watch, setValue } = useFormContext()
 
   const formData = watch()
-
-  // we are writing this to check if the any course 'has alias_name' as false we making the state variable as false
-  // so that the course_type and course_name is not visible in advance filter
-  // for the ticket MVP-1054
-  const [FalseAliasName, setFalseAliasName] = useState(true)
-  async function fetchData() {
-    const { data } = await supabaseClient.from('program_types').select('has_alias_name')
-    const hasFalseAliasName = data?.some(item => item.has_alias_name === false)
-    if (hasFalseAliasName) {
-      setFalseAliasName(false)
-    } else {
-      setFalseAliasName(true)
-    }
-    console.log(data, 'requireddata')
-  }
-  fetchData()
 
   return (
     <div className="flex flex-col gap-5">
