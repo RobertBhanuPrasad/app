@@ -2,6 +2,7 @@ import Form from '@components/Formfield'
 import { BaseTable } from '@components/course/findCourse/BaseTable'
 import Filters from '@components/course/findCourse/Filters'
 import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
+import { hasAliasNameFalse } from '@components/courseBusinessLogic'
 import CalenderIcon from '@public/assets/CalenderIcon'
 import ClearAll from '@public/assets/ClearAll'
 import CrossIcon from '@public/assets/CrossIcon'
@@ -404,7 +405,7 @@ function index() {
   // we are writing this to check if the any course 'has alias_name' as false we making the state variable as false
   // so that the course_type and course_name is not visible in advance filter and for the columns course_name should be visible if and only if course_alias_name is true
   // for the ticket MVP-1054
-  const { data, isLoading } = useList<any>({
+  const { data } = useList<any>({
     resource: 'program_types',
     filters: [
       {
@@ -420,7 +421,7 @@ function index() {
     <div className="flex flex-col justify-between relative h-screen">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
       <div className="mx-8 flex flex-col gap-4 mt-4">
-        <HeaderSection FalseAliasName={isLoading} />
+        <HeaderSection FalseAliasName={hasAliasNameFalse({ data })} />
         <div className="w-full">
           <BaseTable
             current={current}
@@ -437,7 +438,7 @@ function index() {
               table: '',
               rowStyles: '!important border-none'
             }}
-            columns={column(isLoading)}
+            columns={column(hasAliasNameFalse({ data }))}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}

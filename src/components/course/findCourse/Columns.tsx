@@ -19,7 +19,7 @@ import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string }
-export const column = (FalseAliasName: boolean): ExtendedColumnDef<any>[] => {
+export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => {
   const finalColumns = [
     {
       accessorKey: 'program_code',
@@ -457,7 +457,7 @@ export const column = (FalseAliasName: boolean): ExtendedColumnDef<any>[] => {
     }
   ]
   const courseNameIndex = finalColumns.findIndex(finalColumns => finalColumns.column_name === 'Course Name')
-  if (!FalseAliasName && courseNameIndex !== -1) {
+  if (!hasFalseAliasName && courseNameIndex !== -1) {
     finalColumns.splice(courseNameIndex, 1)
   }
   return finalColumns
