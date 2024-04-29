@@ -560,7 +560,7 @@ const Venue = () => {
 
   return (
     <div>
-      <RadioGroup className="flex flex-row gap-7" value={value}>
+      <RadioGroup className="flex flex-row gap-7" value={value} onValueChange={onChange} >
         <Label htmlFor="existing-venue">
           <div
             className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
@@ -568,16 +568,16 @@ const Venue = () => {
             }`}
           >
             <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
-              {formData?.is_existing_venue == "existing-venue" && 
+              {(formData?.existingVenue !== undefined ) && 
               <RadioGroupCircleItem
-                  value= {value}
+                  value= {"existing-venue"}
                   id="existing-venue"
                   className={` ${
                     value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
                   }`}
                 />}
                 {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
-              <div className={`${formData?.is_existing_venue !== "existing-venue" && 'ml-7'}`}>Existing Venue</div>
+              <div className={`${((formData?.is_existing_venue == undefined || formData?.is_existing_venue == "new-venue") && formData?.existingVenue == undefined ) && 'ml-7'}`}>Existing Venue</div>
             </div>
             {data ? (
               <div>
@@ -617,18 +617,17 @@ const Venue = () => {
               <div className=" flex flex-row justify-between">
                 <div className="text-[16px] font-semibold text-[#7677F4] gap-3 flex flex-row">
                   {
-                    formData?.is_existing_venue == "new-venue" &&
+                    formData?.newVenue !== undefined  &&
 
                   <RadioGroupCircleItem
-                    value={value}
+                    value="new-venue"
                     id="new-venue"
                     className={` ${
                       value == 'new-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
                     }`}
                   />
                   }
-                {/* If we not selected the new venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
-                  <div className={`${formData?.is_existing_venue !== "new-venue" && 'ml-7'}`}>New Venue</div>
+                <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
