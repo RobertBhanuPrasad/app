@@ -568,14 +568,16 @@ const Venue = () => {
             }`}
           >
             <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
+              {formData?.is_existing_venue == "existing-venue" && 
               <RadioGroupCircleItem
-                value= {value}
-                id="existing-venue"
-                className={` ${
-                  value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
-                }`}
-              />
-              <div>Existing Venue</div>
+                  value= {value}
+                  id="existing-venue"
+                  className={` ${
+                    value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
+                  }`}
+                />}
+                {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
+              <div className={`${formData?.is_existing_venue !== "existing-venue" && 'ml-7'}`}>Existing Venue</div>
             </div>
             {data ? (
               <div>
@@ -614,6 +616,9 @@ const Venue = () => {
             >
               <div className=" flex flex-row justify-between">
                 <div className="text-[16px] font-semibold text-[#7677F4] gap-3 flex flex-row">
+                  {
+                    formData?.is_existing_venue == "new-venue" &&
+
                   <RadioGroupCircleItem
                     value={value}
                     id="new-venue"
@@ -621,7 +626,9 @@ const Venue = () => {
                       value == 'new-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
                     }`}
                   />
-                  <div>New Venue</div>
+                  }
+                {/* If we not selected the new venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
+                  <div className={`${formData?.is_existing_venue !== "new-venue" && 'ml-7'}`}>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
@@ -950,7 +957,7 @@ const ExistingVenueList = () => {
   })
 
   /**
-   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue list
+   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue 
    */
   const {
     field: { onChange : isExistingVenueOnchange }
