@@ -38,6 +38,10 @@ import { X } from "lucide-react";
 import CrossIcon from "@public/assets/CrossIcon";
 import { Text } from "src/ui/TextTags";
 
+import { authProvider } from "src/authProvider"
+import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+
 function index() {
   interface ExcelColumn {
     column_name: string;
@@ -799,4 +803,26 @@ const AdvanceFilter = () => {
       </SheetContent>
     </Sheet>
   );
+};
+
+
+export const getServerSideProps: GetServerSideProps<{}> = async context => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "new_strings"])
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
+        permanent: false
+      }
+    }
+  }
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
 };

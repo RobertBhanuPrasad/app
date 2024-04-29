@@ -55,6 +55,8 @@ import {
 import { useValidateCurrentStepFields } from 'src/utility/ValidationSteps'
 import useDebounce from 'src/utility/useDebounceHook'
 
+import { useTranslation } from 'next-i18next';
+
 function NewCourseStep3() {
   const { watch } = useFormContext()
 
@@ -438,6 +440,8 @@ const ScheduleComponent = ({
 }
 
 const Venue = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+
   const { watch, setValue, resetField } = useFormContext()
 
   const removeVenue = () => {
@@ -547,7 +551,7 @@ const Venue = () => {
     isNewVenueOnchange(true)
     setOpenAddNewVenue(true)
   }
-
+  
   return (
     <div>
       <RadioGroup className="flex flex-row gap-7" onValueChange={onChange} value={value}>
@@ -565,7 +569,7 @@ const Venue = () => {
                   value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
                 }`}
               />
-              <div>Existing Venue</div>
+              <div>{t('course.new_course:time_and_venue_tab.existing_venue')}</div>
             </div>
             {data ? (
               <div>
