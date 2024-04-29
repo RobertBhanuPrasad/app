@@ -21,12 +21,14 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel
 } from 'src/utility/GetOptionValuesByOptionLabel'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 const Filters = ({ setAdvanceFilterOpen }: any) => {
   const { watch, setValue } = useFormContext()
 
   const formData = watch()
 
+  const { setAllFilterData} = newCourseStore();
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -276,6 +278,7 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
             setValue('temporaryadvancefilter.is_course_fee', '')
             setValue('temporaryadvancefilter.course_teacher', '')
             setValue('temporaryadvancefilter.program_organiser', [])
+            setValue('temporaryadvancefilter', [])
             console.log('hey form Data', formData)
           }}
           className="flex gap-1 items-center cursor-pointer"
@@ -289,7 +292,10 @@ const Filters = ({ setAdvanceFilterOpen }: any) => {
 
             setValue('advanceFilter', temporaryData?.temporaryadvancefilter)
             setValue('course_type', temporaryData?.temporaryadvancefilter.course_type)
-
+            setAllFilterData({
+              ...formData,
+              advanceFilter: temporaryData?.temporaryadvancefilter
+            })
             setAdvanceFilterOpen(false)
           }}
         >
@@ -741,14 +747,14 @@ export const ProgramOrganiser = () => {
     meta: {
       select: '*,contact_id!inner(full_name),user_roles!inner(role_id)'
     },
-    optionLabel: "contact_id.full_name",
-    optionValue: "id",
+    optionLabel: 'contact_id.full_name',
+    optionValue: 'id',
     onSearch: value => [
       {
         field: 'contact_id.full_name',
         operator: 'contains',
         value
-      },
+      }
     ],
     pagination: {
       pageSize: pageSize,
