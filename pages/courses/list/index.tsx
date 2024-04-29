@@ -414,8 +414,7 @@ function index() {
       }
     ]
   })
-  console.log(data, 'dataaa')
-  console.log(isLoading, 'loadinggg')
+
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
