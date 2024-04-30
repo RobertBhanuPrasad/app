@@ -343,27 +343,49 @@ export function BaseTable<TData, TValue>({
                       />
                       <div className="font-bold text-[14px]">Select All</div>
                     </div>
-
                     {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn)
+                      .filter((column) => column?.accessorFn)// Here we are filtering the columns which have accessorKey
+                      .map((column: any) => {
+                        if (!column.getCanHide()) { 
+                          //display the disabled options 
+                          return (
+                            <div className="flex flex-row gap-4 items-center">
+                              <Checkbox
+                                key={column.id}
+                                disabled={!column.getCanHide()}
+                                //Disabling the checkbox if the column cannot be hidden
+                                className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
+                                checked={columnVisibilityChanges[column.id]}
+                                onCheckedChange={(value: boolean) => {
+                                  handleColumnVisibilityChange(column.id, value);
+                                }}
+                              />
+                              {column?.columnDef?.column_name}
+                            </div>
+                          );
+                        }
+                      })}
+                       {table
+                      .getAllColumns()
+                      .filter((column) => column?.accessorFn && column.getCanHide())
                       // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
-                        return (
-                          <div className="flex flex-row gap-4 items-center">
-                            <Checkbox
-                              key={column.id}
-                              disabled={!column.getCanHide()}
-                              //Disabling the checkbox if the column cannot be hidden
-                              className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
-                              checked={columnVisibilityChanges[column.id]}
-                              onCheckedChange={(value: boolean) => {
-                                handleColumnVisibilityChange(column.id, value);
-                              }}
-                            />
-                            {column?.columnDef?.column_name}
-                          </div>
-                        );
+                        // display the enabled options
+                          return (
+                            <div className="flex flex-row gap-4 items-center">
+                              <Checkbox
+                                key={column.id}
+                                className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
+                                checked={columnVisibilityChanges[column.id]}
+                                onCheckedChange={(value: boolean) => {
+                                  handleColumnVisibilityChange(column.id, value);
+                                }}
+                              />
+                              {column?.columnDef?.column_name}
+                            </div>
+                          );
+                        
                       })}
                   </div>
 

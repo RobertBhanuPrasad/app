@@ -61,23 +61,16 @@ export const validationSchema = () => {
       .array(z.string())
       .nonempty({ message: "Country is a required field" }),
     max_capacity: z
-      .string({
-        required_error: "Maximum capacity is a required field",
-      })
-      //here if the value is empty string then also we need to show this error
-      .refine((val) => val != "", {
-        message: "Maximum capacity is a required field",
-      })
-      .refine((val) => /^\d+$/.test(val), {
+      .string()
+      .refine((val) => val === "" || /^\d+$/.test(val), {
         message: "Maximum Capacity can accept only integers",
-      }),
+      })
+      .optional(),
 
     // Step 3 Schema
     is_existing_venue: z.string({
       required_error: "Venue is a required fields",
     }),
-    existingVenue: existingVenueSchedules,
-    newVenue: newVenueSchedules,
     online_url: z
       .string({ required_error: " Online meeting URL is a required fields" })
       .url({ message: "Online meeting URL is not valid" }),
@@ -128,15 +121,6 @@ export const validationSchema = () => {
   });
 };
 
-const existingVenueSchedules = z.object({
-  id: z.number({ required_error: "Venue is a required fields" }),
-});
-
-const newVenueSchedules = z.object({
-  state_id: z.number({
-    required_error: "Venue is a required fields",
-  }),
-});
 
 const feelLevelsValidationSchema = z.array(
   z.object({
