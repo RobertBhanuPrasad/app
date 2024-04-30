@@ -11,7 +11,7 @@ import { format } from 'date-fns'
 import _ from 'lodash'
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useController, useFieldArray, useFormContext, useFormState, useWatch } from 'react-hook-form'
+import { useController, useFieldArray, useForm, useFormContext, useFormState, useWatch } from 'react-hook-form'
 import { TIME_FORMAT } from 'src/constants/OptionLabels'
 import { DateCalendar } from 'src/ui/DateCalendar'
 import { Badge } from 'src/ui/badge'
@@ -136,8 +136,6 @@ const OnlineProgram = () => {
 const Schedules = () => {
   const { errors } = useFormState()
 
-  console.log('errors are', errors?.schedules)
-
   return (
     <div className="flex flex-col gap-4 w-[1016px]">
       <SchedulesHeader />
@@ -256,8 +254,6 @@ const Sessions = () => {
 
   const formData = watch()
   const schedules = formData?.schedules || []
-
-  console.log('schedules are', schedules)
 
   /**
    * We need to add a new session when user click on add session
@@ -441,7 +437,16 @@ const Venue = () => {
   const { watch, setValue, resetField } = useFormContext()
 
   const removeVenue = () => {
-    setValue('newVenue', null)
+    setValue('newVenue', undefined)
+    // After click remove then due to the following fields are not removed before, because of that 
+    // due to the reset field in the add new venue function the data which is already present we did not removed is prefilling
+    // So we are removing the data for the following fields also.
+    setValue("state_id",undefined)
+    setValue("name",undefined)
+    setValue("city_id",undefined)
+    setValue("center_id",undefined)
+    setValue("postal_code",undefined)
+    setValue("address",undefined)
   }
 
   const formData = watch()
@@ -513,6 +518,7 @@ const Venue = () => {
           address: formData?.address,
           name: formData?.name
         })
+        onChange("new-venue")
         setOpenAddNewVenue(false)
       }
     } else {
@@ -550,7 +556,7 @@ const Venue = () => {
 
   return (
     <div>
-      <RadioGroup className="flex flex-row gap-7" onValueChange={onChange} value={value}>
+      <RadioGroup className="flex flex-row gap-7" value={value} onValueChange={onChange} >
         <Label htmlFor="existing-venue">
           <div
             className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
@@ -558,14 +564,16 @@ const Venue = () => {
             }`}
           >
             <div className="text-[#7677F4] text-[16px] font-semibold flex flex-row gap-[12px]">
+              {(formData?.existingVenue !== undefined ) && 
               <RadioGroupCircleItem
-                value="existing-venue"
-                id="existing-venue"
-                className={` ${
-                  value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
-                }`}
-              />
-              <div>Existing Venue</div>
+                  value= {"existing-venue"}
+                  id="existing-venue"
+                  className={` ${
+                    value == 'existing-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
+                  }`}
+                />}
+                {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
+              <div className={`${((formData?.is_existing_venue == undefined || formData?.is_existing_venue == "new-venue") && formData?.existingVenue == undefined ) && 'ml-7'}`}>Existing Venue</div>
             </div>
             {data ? (
               <div>
@@ -574,7 +582,7 @@ const Venue = () => {
                 ) : (
                   <div className="pl-[30px] leading-6 font-normal">Select a venue by clicking “View All” button</div>
                 )}
-                {!(value === 'new-venue') && (
+                {/* {!(value === 'new-venue') && ( */}
                   <Dialog>
                     <DialogTrigger>
                       <Badge
@@ -588,7 +596,7 @@ const Venue = () => {
                       <ExistingVenueList />
                     </DialogContent>
                   </Dialog>
-                )}
+                {/* )} */}
               </div>
             ) : (
               <div className="px-[30px] leading-6 font-normal">No existing venue found</div>
@@ -604,6 +612,9 @@ const Venue = () => {
             >
               <div className=" flex flex-row justify-between">
                 <div className="text-[16px] font-semibold text-[#7677F4] gap-3 flex flex-row">
+                  {
+                    formData?.newVenue !== undefined  &&
+
                   <RadioGroupCircleItem
                     value="new-venue"
                     id="new-venue"
@@ -611,7 +622,8 @@ const Venue = () => {
                       value == 'new-venue' ? '!bg-[#7677F4] ' : 'border !border-[#D6D7D8] border-[1.5px] '
                     }`}
                   />
-                  <div>New Venue</div>
+                  }
+                <div>New Venue</div>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
@@ -630,6 +642,10 @@ const Venue = () => {
                     <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
                       <DeleteVenueComponent
                         handleDeleteVenue={() => {
+                        onChange(undefined)
+                        if(existingVenue !== undefined && existingVenue !== null){
+                          onChange("existing-venue")
+                        }
                           removeVenue()
                         }}
                       />
@@ -653,9 +669,13 @@ const Venue = () => {
           </Dialog>
         )}
       </RadioGroup>
-      {(errors?.is_existing_venue || errors?.existingVenue) && (
+      {/* 
+      In errors if we have the error for the is_existing_venue then we will display the message 
+       */}
+      {(errors?.is_existing_venue) && (
         <span className="text-[#FF6D6D] text-[14px]">{'Venue is a required field'}</span>
-      )}
+      ) }
+     
     </div>
   )
 }
@@ -901,7 +921,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 const ExistingVenueList = () => {
   const { data: loginUserData }: any = useGetIdentity()
 
-  const { setValue, watch } = useFormContext()
+  const { watch } = useFormContext()
 
   const formData = watch()
 
@@ -914,21 +934,53 @@ const ExistingVenueList = () => {
   const [venueData, setVenueData] = useState<any[]>([])
 
   const {
-    field: { value: deletedVenueIds = [], onChange: deleteVenueIdOnChange }
-  } = useController({
-    name: 'deletedVenueID'
-  })
-
-  const {
-    field: { onChange: setIsNewVenue }
-  } = useController({
-    name: 'isNewVenue'
-  })
-
-  const {
     field: { onChange: isNewVenueSelectedOnchange }
   } = useController({
     name: 'isNewVenueSelected'
+  })
+
+  const {
+    field: { value: existingVenue, onChange: existingVenueOnChange },
+  } = useController({
+    name: "existingVenue",
+  });
+
+  const {
+    field: { value: deletedVenueIds = [] },
+  } = useController({
+    name: "deletedVenueID",
+  });
+
+  //Fetching initial Data of venues
+  useEffect(() => {
+    if (venueData?.length == 0) fetchVenueData();
+  }, []);
+
+  //Fetching venue data after search
+  useEffect(() => {
+    setVenueData([]);
+    setOtherVenueSkip(0);
+
+    fetchVenueData();
+  }, [debouncedSearchValue]);
+
+  const fetchVenueData = async () => {
+    const loginUserVenues = ((await fetchLoginUserVenue()) as any[]) ?? [];
+    const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? [];
+    let modifiedVenueData = [...loginUserVenues, ...otherVenueData];
+    if (existingVenue) {
+      modifiedVenueData = [existingVenue, ...modifiedVenueData];
+      modifiedVenueData = _.uniqBy(modifiedVenueData, "id");
+    }
+    setVenueData(modifiedVenueData);
+  };
+  /**
+   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue 
+   */
+  const {
+    field: { onChange : isExistingVenueOnchange }
+  } = useController({
+    name: 'is_existing_venue'
   })
 
   const fetchLoginUserVenue = async () => {
@@ -939,10 +991,10 @@ const ExistingVenueList = () => {
       .or(
         `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
       )
+      .eq('is_deleted', false) // this line to filter out records where is_deleted is false
 
     return data
   }
-  console.log(loginUserData)
   const fetchOtherVenues = async () => {
     const { data } = await supabaseClient
       .from('venue_view_with_names')
@@ -951,43 +1003,10 @@ const ExistingVenueList = () => {
       .or(
         `name.ilike."%${debouncedSearchValue}%",state_name.ilike.%${debouncedSearchValue}%,city_name.ilike."%${debouncedSearchValue}%",center_name.ilike."%${debouncedSearchValue}%"`
       )
+      .eq('is_deleted', false) // this line to filter out records where is_deleted is false
       .range(otherVenueSkip, otherVenueSkip + 5)
 
     return data
-  }
-
-  const fetchVenueData = async () => {
-    const loginUserVenues = ((await fetchLoginUserVenue()) as any[]) ?? []
-    const otherVenueData = ((await fetchOtherVenues()) as any[]) ?? []
-    let modifiedVenueData = [...loginUserVenues, ...otherVenueData]
-    console.log(modifiedVenueData, 'mdata')
-    if (existingVenue) {
-      modifiedVenueData = [existingVenue, ...modifiedVenueData]
-      modifiedVenueData = _.uniqBy(modifiedVenueData, 'id')
-    }
-    console.log(modifiedVenueData, 'mmdata')
-    setVenueData(modifiedVenueData)
-  }
-
-  //Fetching initial Data of venues
-  useEffect(() => {
-    if (venueData?.length == 0) fetchVenueData()
-  }, [])
-
-  //Fetching venue data after search
-  useEffect(() => {
-    setVenueData([])
-    setOtherVenueSkip(0)
-
-    fetchVenueData()
-  }, [debouncedSearchValue])
-  console.log(venueData, 'venueData')
-
-  let filteredVenueData = venueData.filter((obj: { id: number }) => !deletedVenueIds.includes(obj.id))
-  console.log(filteredVenueData, 'filteredVenueData')
-
-  const deleteVenue = (id: any) => {
-    deleteVenueIdOnChange([...deletedVenueIds, id])
   }
 
   //fetching other venue data after scrolling
@@ -999,54 +1018,28 @@ const ExistingVenueList = () => {
     fetchOtherVenueDataAfterScroll()
   }, [otherVenueSkip])
 
+  //Fetching venue data after search
+  useEffect(() => {
+    setVenueData([]);
+    setOtherVenueSkip(0);
+
+    fetchVenueData();
+  }, [debouncedSearchValue]);
+
   const onBottomReached = () => {
     if (filteredVenueData && filteredVenueData?.length >= 6)
       setOtherVenueSkip((previousLimit: number) => previousLimit + 6)
   }
-
-  const handleCheckboxChange = (item: any) => {
-    setValue(NewCourseStep3FormNames.venue_id, item.id)
-  }
-  const {
-    field: { value: existingVenue, onChange: existingVenueOnChange }
-  } = useController({
-    name: 'existingVenue'
-  })
 
   const handleSubmitVenueList = () => {
     const existingVenueObject = venueData.filter(venue => venue.id == formData[NewCourseStep3FormNames.venue_id])
     existingVenueOnChange(existingVenueObject?.[0])
   }
 
-  const user_roles: any[] = loginUserData?.userData?.user_roles
+  let filteredVenueData = venueData.filter(
+    (obj: { id: number }) => !deletedVenueIds.includes(obj.id)
+  );
 
-  const isUserNationAdminOrSuperAdmin = user_roles?.find(
-    role => role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
-  )
-
-  const handleOpenExistingVenue = (item: any) => {
-    setIsNewVenue(false)
-    setValue('name', item?.name)
-    setValue('address', item?.address)
-    setValue('state_id', item?.state_id)
-    setValue('city_id', item?.city_id)
-    setValue('center_id', item?.center_id)
-    setValue('postal_code', item?.postal_code)
-  }
-
-  const handleSubmitExistingVenue = (index: number) => {
-    const allVenuesData = [...venueData]
-    ;(allVenuesData[index] = {
-      ...allVenuesData[index],
-      name: formData?.name,
-      address: formData?.address,
-      state_id: formData?.state_id,
-      city_id: formData?.city_id,
-      center_id: formData?.center_id,
-      postal_code: formData?.postal_code
-    }),
-      setVenueData(allVenuesData)
-  }
 
   return (
     <div>
@@ -1073,67 +1066,18 @@ const ExistingVenueList = () => {
         >
           <div className="h-[330px] mt-6 overflow-auto overscroll-none flex flex-row flex-wrap gap-6 gap-x-[30px] gap-y-[24px]" id={'options'}>
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
-            {filteredVenueData?.map((item: any, index: number) => {
-              console.log(index, 'index')
 
-              return (
-                <ScrollArea rounded-md whitespace-nowrap>
-                  <div className="flex  flex-row !w-[390px] h-[102px] rounded-[16px] items-start space-x-3 space-y-0 border p-4">
-                    <Checkbox
-                      id={item.id}
-                      value={item.id}
-                      onCheckedChange={() => handleCheckboxChange(item)}
-                      checked={formData[NewCourseStep3FormNames.venue_id] == item.id ? true : false}
-                    />
-                    <div className="space-y-1 leading-none w-full">
-                      <div className="flex justify-between">
-                        <div className="font-semibold">{item.name}</div>
-                        <div className="flex flex-row gap-3">
-                          {item?.created_by_user_id == loginUserData?.userData?.id ||
-                            (isUserNationAdminOrSuperAdmin && (
-                              <Dialog>
-                                <DialogTrigger
-                                  onClick={() => {
-                                    handleOpenExistingVenue(item)
-                                  }}
-                                >
-                                  <EditIcon />
-                                </DialogTrigger>
-                                <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
-                                  <AddOrEditVenue
-                                    handleSubmit={() => {
-                                      handleSubmitExistingVenue(index)
-                                    }}
-                                  />
-                                </DialogContent>
-                              </Dialog>
-                            ))}
-                          {isUserNationAdminOrSuperAdmin && (
-                            // isUserNationAdminOrSuperAdmin
-                            <Dialog>
-                              <DialogTrigger>
-                                <Delete />
-                              </DialogTrigger>
-                              <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-                                <DeleteVenueComponent
-                                  handleDeleteVenue={() => {
-                                    deleteVenue(item?.id)
-                                  }}
-                                />
-                              </DialogContent>
-                            </Dialog>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="leading-tight">
-                        {item.name}, {item.address}, {item.city_name}, {item.state_name}, {item.postal_code}
-                      </div>
-                    </div>
-                  </div>
-                </ScrollArea>
+            {/* loader for existing venue list  */}
+            {filteredVenueData?.length === 0 ? (
+              <div className="flex w-[100%] flex-row items-center justify-center">
+                <LoadingIcon></LoadingIcon>
+              </div>
+            ) : (
+              filteredVenueData?.map((item: any, index: number) => 
+                 <ExistingVenueListSection venueData={venueData} setVenueData={setVenueData} item={item} index={index} />
               )
-            })}
+            )}
+
             {/* </div> */}
           </div>
         </GetScrollTypesAlert>
@@ -1144,6 +1088,7 @@ const ExistingVenueList = () => {
             type="submit"
             onClick={() => {
               isNewVenueSelectedOnchange('existing-venue')
+              isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList()
             }}
           >
@@ -1155,11 +1100,176 @@ const ExistingVenueList = () => {
   )
 }
 
-export const AddOrEditVenue = ({ handleSubmit, message }: { handleSubmit: () => void; message?: boolean }) => {
-  const { watch } = useFormContext()
+export const ExistingVenueListSection = ({venueData, setVenueData, item , index}:any) => {
+
+  const { data: loginUserData }: any = useGetIdentity();
+  const { setValue, watch } = useFormContext();
+  const formData = watch();
+  const [openExistingVenue, setOpenExistingVenue] = useState(false);
+
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+  const isVenueSelected = formData[NewCourseStep3FormNames.venue_id] === item.id;
+
+  const {
+    field: { onChange: setIsNewVenue },
+  } = useController({
+    name: "isNewVenue",
+  });
+
+  // for checking user has edited the existing venue 
+  const {
+    field: { onChange: setIsExistingVenueEdited },
+  } = useController({
+    name: "isExistingVenueEdited",
+    defaultValue: false,
+  });
+
+  const {
+    field: { value: deletedVenueIds = [], onChange: deleteVenueIdOnChange },
+  } = useController({
+    name: "deletedVenueID",
+  });
+
+  const handleCheckboxChange = (item: any) => {
+    setValue(NewCourseStep3FormNames.venue_id, item.id);
+  };
+
+  const handleOpenExistingVenue = (item: any) => {
+    setIsNewVenue(false);
+    setValue("name", item?.name);
+    setValue("address", item?.address);
+    setValue("state_id", item?.state_id);
+    setValue("city_id", item?.city_id);
+    setValue("center_id", item?.center_id);
+    setValue("postal_code", item?.postal_code);
+  };
+
+  const handleSubmitExistingVenue = async (index: number) => {
+    
+    const { data } = await supabaseClient
+    .from('venue')
+    .select('*')
+    .eq('state_id', formData?.state_id)
+    .eq('center_id', formData?.center_id)
+    .eq('city_id', formData?.city_id)
+    .eq('address', formData?.address)
+    .eq('postal_code', formData?.postal_code)
+    .eq('name', formData?.name)
+
+    const isAllFieldsFilled = await ValidateCurrentStepFields([
+      "city_id",
+      "center_id",
+      "state_id",
+      "name",
+      "address",
+      "postal_code",
+    ]);
+    
+    const allVenuesData = [...venueData];
+    allVenuesData[index] = {
+      ...allVenuesData[index],
+      name: formData?.name,
+      address: formData?.address,
+      state_id: formData?.state_id,
+      city_id: formData?.city_id,
+      center_id: formData?.center_id,
+      postal_code: formData?.postal_code,
+    };
+
+    if (isAllFieldsFilled) {
+      setVenueData(allVenuesData);
+      setOpenExistingVenue(false);
+      // we are checking whether the user edited any value 
+      setIsExistingVenueEdited(data && data.length > 0 ? false : true);
+    } else {
+      setOpenExistingVenue(true);
+    }
+  };
+
+  const deleteVenue = (id: any) => {
+    deleteVenueIdOnChange([...deletedVenueIds, id]);
+  };
+
+  const user_roles: any[] = loginUserData?.userData?.user_roles;
+
+  const isUserNationAdminOrSuperAdmin = user_roles?.find(
+    (role) =>
+      role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
+  );
+  return (
+    <div className="flex flex-row !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
+      <Checkbox
+        id={item.id}
+        value={item.id}
+        onCheckedChange={() => handleCheckboxChange(item)}
+        checked={
+          formData[NewCourseStep3FormNames.venue_id] == item.id ? true : false
+        }
+      />
+      <div className="space-y-1 leading-none w-full">
+        <div className="flex justify-between">
+          <div className="font-semibold">{item.name}</div>
+          <div className="flex flex-row gap-3">
+            {(item?.created_by_user_id == loginUserData?.userData?.id ||
+              isUserNationAdminOrSuperAdmin) && (
+                <Dialog
+                  open={openExistingVenue}
+                  onOpenChange={setOpenExistingVenue}
+                >
+                  <DialogTrigger
+                    className={!isVenueSelected ? "cursor-not-allowed  opacity-50" : "opacity-none"}
+                    disabled={!isVenueSelected}
+                    onClick={() => {
+                      handleOpenExistingVenue(item);
+                    }}
+                  >
+                    <EditIcon />
+                  </DialogTrigger>
+                  <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                    <AddOrEditVenue
+                      handleSubmit={() => {
+                        handleSubmitExistingVenue(index);
+                      }}
+                    />
+                  </DialogContent>
+                </Dialog>
+              )}
+            {isUserNationAdminOrSuperAdmin && (
+              // isUserNationAdminOrSuperAdmin
+              <Dialog>
+                <DialogTrigger>
+                  <Delete />
+                </DialogTrigger>
+                <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+                  <DeleteVenueComponent
+                    handleDeleteVenue={() => {
+                      deleteVenue(item?.id);
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        </div>
+
+        <div className="leading-tight">
+          {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
+          {item.postal_code}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const AddOrEditVenue = ({
+  handleSubmit, message
+}: {
+  handleSubmit: () => void;
+  message?: boolean
+}) => {
+  const { watch } = useFormContext();
 
   const formData = watch()
-  console.log(formData, 'fd')
 
   const isNewVenue = formData?.isNewVenue
 
@@ -1191,7 +1301,7 @@ export const AddOrEditVenue = ({ handleSubmit, message }: { handleSubmit: () => 
       )}
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleSubmit}>Save</Button>
         </div>
       </DialogFooter>
     </div>
@@ -1508,5 +1618,5 @@ const DeleteVenueComponent = ({ handleDeleteVenue }: { handleDeleteVenue: () => 
         </DialogClose>
       </DialogFooter>
     </div>
-  )
-}
+  );
+};

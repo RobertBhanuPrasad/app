@@ -983,76 +983,102 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 
   if (body.isNewVenue) {
     venueData = body?.newVenue || {};
-  } else {
-    const venueId = body.existingVenue?.id;
-    venueData = body?.existingVenue || {};
 
-    // if it is existing venue then we will insert the id and do upsert automatically it will work update or insert
-    if (venueId) {
-      venueBody.id = venueId;
-    }
-  }
-
-  if (venueData.name) {
-    venueBody.name = venueData.name;
-  }
-
-  if (venueData.address) {
-    venueBody.address = venueData.address;
-  }
-
-  if (venueData.state_id) {
-    venueBody.state_id = venueData.state_id;
-  }
-
-  if (venueData.city_id) {
-    venueBody.city_id = venueData.city_id;
-  }
-
-  if (venueData.center_id) {
-    venueBody.center_id = venueData.center_id;
-  }
-
-  if (venueData.postal_code) {
-    venueBody.postal_code = venueData.postal_code;
-  }
-
-  venueBody.created_by_user_id = loggedInUserId;
-
-  //TODO: Need to post latitude and longitude also when map component was done.
-
-  const { data, error } = await supabaseClient
-    .from("venue")
-    .upsert(venueBody)
-    .select();
-
-  if (error) {
-    console.log("error while creating venue", error);
-    return false;
-  } else {
-    console.log("venue created or updated successfully", data);
-  }
-
-  // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
-  // we have to delete them from database
-
-  const deleteVenueIDs = body.deletedVenueID;
-  if (deleteVenueIDs && deleteVenueIDs.length > 0) {
+    //For New Venue directly posting data in venue table
     const { data, error } = await supabaseClient
       .from("venue")
-      .delete()
-      .in("id", deleteVenueIDs)
+      .insert({...venueData, created_by_user_id: loggedInUserId })
       .select();
 
     if (error) {
-      console.log("error while deleting venue", error);
+      console.log("error while creating new venue", error);
       return false;
     } else {
-      console.log("venues deleted successfully", data);
+      console.log("New venue created", data);
+    }
+
+    return data?.[0]?.id;
+  } else {
+    // we are inserting new venue at the time of editing for the present user
+    const venueId = body.existingVenue?.id;
+    venueData = body?.existingVenue || {};
+
+    if (venueData.name) {
+      venueBody.name = venueData.name;
+    }
+
+    if (venueData.address) {
+      venueBody.address = venueData.address;
+    }
+
+    if (venueData.state_id) {
+      venueBody.state_id = venueData.state_id;
+    }
+
+    if (venueData.city_id) {
+      venueBody.city_id = venueData.city_id;
+    }
+
+    if (venueData.center_id) {
+      venueBody.center_id = venueData.center_id;
+    }
+
+    if (venueData.postal_code) {
+      venueBody.postal_code = venueData.postal_code;
+    }
+
+    venueBody.created_by_user_id = loggedInUserId;
+
+    //Exacting deleted venue IDs from form
+    const deleteVenueIDs = body.deletedVenueID;
+
+    if (deleteVenueIDs && deleteVenueIDs.length > 0) {
+      //Soft deleting all the venues deleted by user while creating course.
+      const { data, error } = await supabaseClient
+        .from("venue")
+        .update({ is_deleted: true })
+        .in("id", deleteVenueIDs)
+        .select();
+
+      console.log("deleted Venues are", data);
+      if (error) {
+        console.log("error while deleting venue", error);
+        return false;
+      } else {
+        console.log("venues deleted successfully", data);
+      }
+    }
+
+    if (body?.isExistingVenueEdited === true) {
+      // we have to temporary delete the existing venue and create new if user edits
+
+      const { data } = await supabaseClient
+        .from("venue")
+        .update({ is_deleted: true }) // Update the field to mark as deleted
+        .eq("id", venueId);
+
+      console.log(data, "deleted data venue");
+
+      //TODO: Need to post latitude and longitude also when map component was done.
+
+      // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
+      // we have to delete them from database
+
+      const { data: insertData, error } = await supabaseClient
+        .from("venue")
+        .insert(venueBody)
+        .select();
+
+      if (error) {
+        console.log("error while creating new venue edited by user", error);
+        return false;
+      } else {
+        console.log("new Venue edited by user is created", insertData);
+      }
+
+      return insertData[0].id;
     }
   }
-
-  return data[0].id;
 };
 
 export const handleProgramStatusUpdate = async (programId: number) => {

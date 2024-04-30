@@ -715,7 +715,7 @@ interface NewCourseFormFieldTypes {
   is_language_translation_for_participants?: boolean;
   program_alias_name_id?: number;
   is_geo_restriction_applicable?: boolean;
-  is_registration_required?:boolean
+  is_registration_required?: boolean;
   language_ids?: number[];
   translation_language_ids?: number[];
   allowed_countries?: string[];
@@ -817,6 +817,7 @@ interface EditParticipantFormFieldTypes {
   transaction_status_value?: string;
   payment_date?: string;
   payment_method_id?: number | OptionValuesDataBaseType;
+  payment_method_value?: string;
   send_payment_confirmation?: boolean;
   program_type_id?: boolean;
 }

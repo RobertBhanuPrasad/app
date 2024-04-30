@@ -133,8 +133,8 @@ function ViewDetails() {
   )
 
   const countryName = 'India'
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 
-const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   
 
   const tabTriggers: any = [
@@ -216,7 +216,7 @@ const {t} = useTranslation(["common", "course.view_course", "new_strings"])
         return JSON.stringify(tabData.value)
       }
     }
-    return '1'
+    return '1'  
   }
   
   return (
@@ -396,12 +396,13 @@ const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 export default index
 
 const PendingApprovalDropDown = ({ courseId }: any) => {
-  const today = new Date()
+  const today = new Date() 
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, ACTIVE)?.id
 
   const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, DECLINED)?.id
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   const options = [
-    {
+    {     
       label: t('course.view_course:basic_details_tab.approve_course'),
       value: 1
     },
@@ -443,7 +444,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
     })
     setViewRejectedModal(true)
   }
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  
   return (
     <div>
       <Select
@@ -456,7 +457,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder={t('common:')} />
+          <SelectValue placeholder={t('common:pending_approval')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
@@ -477,7 +478,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
               <Exclamation />
             </div>
             <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-            {t('course.view_course:basic_details_tab.are_you_sure_you_want_to_approve')}
+            {t('new_strings:are_you_sure_you_want_to_approve')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

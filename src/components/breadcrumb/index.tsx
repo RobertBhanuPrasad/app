@@ -102,7 +102,7 @@ export const Breadcrumb = () => {
       },
       {
         label: 'View Course Participants',
-        className: '',
+        className: 'text-primary cursor-pointer',
         href: ''
       }
     ],
@@ -179,6 +179,9 @@ export const Breadcrumb = () => {
             onClick={() => {  // Check if it's not the last label and not the Home page
               if (!isLastLabel && index !== 0) {
                 router.push(`${label.href}`);
+              }
+              else{
+                label.label === "View Course Participants" && router.reload();
               }
             }}
           >
