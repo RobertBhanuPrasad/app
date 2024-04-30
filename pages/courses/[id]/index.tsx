@@ -134,7 +134,8 @@ function ViewDetails() {
 
   const countryName = 'India'
 
-  const { t } = useTranslation('common')
+const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  
 
   const tabTriggers: any = [
     {
@@ -217,7 +218,7 @@ function ViewDetails() {
     }
     return '1'
   }
-
+  
   return (
     <div className="flex flex-col">
       <div className="mx-8">
@@ -275,7 +276,7 @@ function ViewDetails() {
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                Revenue from confirmed pending transaction participants revenue:
+              {t('course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction')} {t('course.view_course:basic_details_tab.participants_revenue')}:
                 {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
               </div>
             </HoverCardContent>
@@ -288,14 +289,14 @@ function ViewDetails() {
         </div>
 
         <div className="flex flex-row items-center gap-2 w-full justify-end ">
-          Announced by: {courseData?.data?.created_by_user_id?.contact_id?.full_name}
+        {t('course.view_course:course_accounting_form_tab.announced_by')}: {courseData?.data?.created_by_user_id?.contact_id?.full_name}
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
               <div className="!rounded-[15px] font-normal flex flex-col">
-                <p>Approved by:</p>
+                <p>{t('course.view_course:basic_details_tab.approved_by')}:</p>
                 <p>
                   {courseData?.data?.approved_by_user_id && courseData?.data?.program_approved_date
                     ? `${courseData?.data?.approved_by_user_id?.contact_id?.full_name} (${formatDateString(
@@ -304,7 +305,7 @@ function ViewDetails() {
                     : '-'}
                 </p>
                 <Separator className="my-2" />
-                <p>Last Modified by:</p>
+                <p>{t('course.view_course:basic_details_tab.last_modified')}:</p>
                 <p>
                   {courseData?.data?.last_modified_by_user_id && courseData?.data?.modified_at
                     ? `${courseData?.data?.last_modified_by_user_id?.contact_id?.full_name} (${formatDateString(
@@ -442,7 +443,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
     })
     setViewRejectedModal(true)
   }
-
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <div>
       <Select
@@ -455,7 +456,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder={t('common:pending_approval')} />
+          <SelectValue placeholder={t('common:')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
@@ -490,7 +491,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     setApproveModalOpen(false)
                   }}
                 >
-                  No
+                  {t('common:no_button')}
                 </Button>
               </div>
               <div>
@@ -501,7 +502,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     approveCourse()
                   }}
                 >
-                  Yes
+                  {t('common:yes_button')}
                 </Button>
               </div>
             </div>
@@ -517,8 +518,8 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
             </div>
             <DialogTitle className="text-gray-500 text-sm font-normal pt-2">
               {' '}
-              Describe your rejection reason
-              <span className="text-blue-500">(optional)</span>
+              {t('new_strings:describe_your_rejection_reason')}
+              <span className="text-blue-500">{t('course.view_course:basic_details_tab.(optional)')}</span>
             </DialogTitle>
             <DialogDescription>
               <Textarea
@@ -541,7 +542,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     setRejectModalOpen(false)
                   }}
                 >
-                  No
+                  {t('common:no_button')}
                 </Button>
               </div>
               <div>
@@ -550,7 +551,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                   className="bg-[#7677F4] text-[white] w-[98px] h-[46px] rounded-[12px]"
                   onClick={rejectCourse}
                 >
-                  Reject
+                  {t('common:reject_button')}
                 </Button>
               </div>
             </div>
@@ -562,7 +563,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
 }
 const RejectedModalOpen = () => {
   const { viewRejectedModal, setViewRejectedModal } = newCourseStore()
-
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Dialog open={viewRejectedModal}>
       <DialogContent className="w-[414px] h-[279px]">
@@ -570,8 +571,8 @@ const RejectedModalOpen = () => {
           <div className="flex items-center w-full justify-center">
             <Cross />{' '}
           </div>
-          <DialogTitle className="font-bold text-center">Course Rejected</DialogTitle>
-          <DialogDescription className="text-center">The Course got rejected successfully</DialogDescription>
+          <DialogTitle className="font-bold text-center">{t('new_strings:course_rejected')}</DialogTitle>
+          <DialogDescription className="text-center">{t('course.view_course:basic_details_tab.the_course_got_rejected')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <div className="flex w-full items-center justify-center">
@@ -590,7 +591,7 @@ const RejectedModalOpen = () => {
 
 const SuccessModalOpen = () => {
   const { viewSuccessModal, setViewSuccessModal } = newCourseStore()
-
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <Dialog open={viewSuccessModal}>
       <DialogTrigger></DialogTrigger>
@@ -599,8 +600,8 @@ const SuccessModalOpen = () => {
           <div className="flex justify-center">
             <Image src={Tick} alt="tick" />
           </div>
-          <div className="font-semibold text-center mt-2">Course approved Successfully</div>
-          <div className="text-center my-4">Thank you for contribution in the course approval process.</div>
+          <div className="font-semibold text-center mt-2">{t('course.view_course:basic_details_tab.course_approved_successfully')}</div>
+          <div className="text-center my-4">{t('course.view_course:basic_details_tab.thank_you_for_contribution')}</div>
           <Button
             onClick={() => {
               setViewSuccessModal(false)
@@ -608,7 +609,7 @@ const SuccessModalOpen = () => {
             }}
             className="w-[91px] h-[46px] rounded-[12px]"
           >
-            Close
+            {t('common:close')}
           </Button>
         </div>
       </DialogContent>
@@ -633,7 +634,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
   )
 
   /**
-   * handle the Edit Course
+   * handle the 
    * Retrieves default values for the course with the given ID,
    * sets the retrieved values as the new course data, and
    * switches the view to the preview page.
@@ -656,7 +657,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
     if (courseId) {
       let defaultValues = await handleCourseDefaultValues(courseId, timeFormat12HoursId)
 
-      // we have to delete schedules when user click on copy course and other we need to prefill
+      // we have to delete schedules when user click on  and other we need to prefill
 
       defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       setNewCourseData(defaultValues)
@@ -741,7 +742,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
               <Exclamation />
             </div>
             <DialogDescription className="font-bold text-black text-lg items-center text-center">
-              Are you sure you want to cancel this course?
+            {t('course.view_course:basic_details_tab.are_you_sure_you_want_to_cancel')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -779,7 +780,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
             <div className="flex justify-center">
               <Cross />
             </div>
-            <div className="font-bold text-center my-5">Course canceled Successfully</div>
+            <div className="font-bold text-center my-5">{t('new_strings:course_canceled_successfully')}</div>
           </div>
 
           <div className="w-full flex items-center justify-center">
@@ -790,7 +791,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                 setCancelSuccessModalOpen(false)
               }}
             >
-              Close
+              {t('common:close')}
             </Button>
           </div>
         </DialogContent>
@@ -888,7 +889,7 @@ const ShareButton = () => {
       </DialogTrigger>
       <DialogContent className="w-[414px] h-[310px] !rounded-[24px] !p-6 ">
         <div className="flex items-center gap-5 flex-col">
-          <div className="text-[24px] font-semibold items-center">{t('course.view_course:share_in_social')}</div>
+          <div className="text-[24px] font-semibold items-center">{t('course.view_course:basic_details_tab.share_in_social')}</div>
           <div className="flex flex-row gap-6 ">
             <WhatsappIcon />
             <FaceBookIcon />
@@ -947,6 +948,7 @@ const ShareButton = () => {
 
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
+  
 
   const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings"])
 
@@ -975,14 +977,15 @@ export const getServerSideProps: GetServerSideProps<{}> = async context => {
  */
 const PendingCourseAccountingFormApprovalDropDown = ({ courseId }: { courseId: number }) => {
   const accountingClosedStatusId = getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, CLOSED)?.id
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 
   const options = [
     {
-      label: 'Approve',
+      label: t('new_strings:approve'),
       value: 1
     },
     {
-      label: 'Reject',
+      label: t('common:reject_button'),
       value: 2
     }
   ]

@@ -29,7 +29,7 @@ interface NewCourseStore {
 
   /**
    * We have to use this variable to store the default values of the course accounting form
-   * when user click on edit course accounting form
+   * when user click on  accounting form
    * when user click on edit call database and set to this variable and assign to form
    */
   courseAccountingFormDefaultValues: CourseAccountingFormFieldTypes;

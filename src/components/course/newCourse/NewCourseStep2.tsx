@@ -124,7 +124,7 @@ export default function NewCourseStep2() {
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 Course Description text is managed by National Admin. If the
-                National Admin has allowed Organizers / Teachers to edit Course
+                National Admin has allowed Organizers / Teachers to 
                 description then only this field will be editable. If you want
                 to change the course description and this field is not editable
                 kindly contact your National Admin.

@@ -377,7 +377,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 2: {
-            // TODO - Navigate to Register Participant page
+            // TODO - Navigate to  page
             router.push("/courses/add");
             break;
           }
@@ -406,7 +406,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             break;
           }
           case 8: {
-            // TODO - Navigate to edit course accounting page
+            // TODO - Navigate to  accounting page
             router.push("/");
             break;
           }

@@ -79,7 +79,7 @@ export const Breadcrumb = () => {
         href: '/courses/list'
       },
       {
-        label: 'Edit Course',
+        label: '',
         className: '',
         href: ''
       }

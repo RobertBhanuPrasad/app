@@ -9,7 +9,14 @@
  "organisation":"Organisation",
  "course type":"Course type",
  "total_participants":"Total Participants",
- "view_participant":"View Participant",
+ 
+ "course_canceled_successfully":"Course canceled Successfully",
+ "approve":"Approve",
+ "describe_your_rejection_reason":"Describe your rejection reason",
+ "course_rejected":"Course Rejected",
+ "edit_course_accounting Form":" Accounting Form",
+ "view_course_accounting_form":"View Course Accounting Form",
+
 
  "participants":"participants"
 

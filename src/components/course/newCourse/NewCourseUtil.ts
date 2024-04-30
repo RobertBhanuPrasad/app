@@ -340,7 +340,7 @@ export const handlePostProgramData = async (
   }
 
   //now after all data was stored into respective table we have to update status of program
-  //Requirement: If the slected program_type of the program contains is_approval_required:true then we have to update status of program to "pending_approval"
+  //Requirement: If the slected program_type of the program contains is_approval_required:true then we have to update status of program to ""
   //Requirement: If the slected program_type of the program contains is_approval_required:false then we have to update status of program to "active"
 
   if (!(await handleProgramStatusUpdate(programId))) return false;
