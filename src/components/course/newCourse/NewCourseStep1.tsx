@@ -169,7 +169,6 @@ const RadioCards = () => {
     loginUserData?.userData?.id
   );
 
-  console.log("heyy teacher included", isLoggedInTeacherIncluded);
 
   /**
    * This determines whether to disable the iam organizing this course for another teacher or not
@@ -177,7 +176,6 @@ const RadioCards = () => {
   const isDisableOrganizingForAnotherTeacher =
     isEditCourse && !isLoggedInTeacherIncluded;
 
-  console.log("heyy disable", isDisableOrganizingForAnotherTeacher);
 
   const {
     field: { value: teachers, onChange: teachersOnChange },

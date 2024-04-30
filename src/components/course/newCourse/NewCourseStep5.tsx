@@ -125,11 +125,11 @@ export const AccommodationField = ({
   /**
    * This has all accommodations data
    */
-  accommodations: any[];
+  accommodations: ProgramAccommodationsDataBaseType[];
   /**
    * This contain the particular accommodation data
    */
-  data: any;
+  data: ProgramAccommodationsDataBaseType;
 }) => {
   const router = useRouter();
 
