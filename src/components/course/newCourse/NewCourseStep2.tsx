@@ -177,7 +177,6 @@ export const CourseTypeDropDown = () => {
    */
   const pathname = usePathname();
 
-  console.log("heyy pathnamee", pathname);
 
   /**
    * Checking whether the url contains the edit or not

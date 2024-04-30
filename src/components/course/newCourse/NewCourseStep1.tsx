@@ -123,8 +123,7 @@ const RegistrationGateway = () => {
   );
 };
 const RadioCards = () => {
-
-  const { clearErrors } = useFormContext();
+  const { clearErrors, watch } = useFormContext();
 
   const {
     field: { value, onChange },
@@ -148,12 +147,44 @@ const RadioCards = () => {
   const user_roles: any[] = loginUserData?.userData?.user_roles;
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
+
+  const formData = watch();
+
   const loginInTeacherData = loginUserData?.userData?.id;
+
+  /**
+   * This variable holds the path of the url
+   */
+  const pathname = usePathname();
+
+  /**
+   * Checking whether the url contains the edit or not
+   */
+  const isEditCourse = IsEditCourse(pathname);
+
+  /**
+   * This determines whether the logged in user is a part of teacher or not
+   */
+  const isLoggedInTeacherIncluded = formData?.teacher_ids?.includes(
+    loginUserData?.userData?.id
+  );
+
+  console.log("heyy teacher included", isLoggedInTeacherIncluded);
+
+  /**
+   * This determines whether to disable the iam organizing this course for another teacher or not
+   */
+  const isDisableOrganizingForAnotherTeacher =
+    isEditCourse && !isLoggedInTeacherIncluded;
+
+  console.log("heyy disable", isDisableOrganizingForAnotherTeacher);
+
   const {
     field: { value: teachers, onChange: teachersOnChange },
   } = useController({
     name: NewCourseStep2FormNames?.teacher_ids,
   });
+
   const handleOnChange = (val: string) => {
     onChange(parseInt(val));
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
@@ -170,18 +201,16 @@ const RadioCards = () => {
       }
     }
     // Check if the selected value is equal to the organizer's ID
-     if (parseInt(val) === iAmOrganizerId) {
-       // If there are already teachers selected
-     if (teachers) {
-     // Remove the logged-in teacher's ID from the list of selected teachers
-      teachersOnChange(_.without(teachers, loginInTeacherData));
-     // Set a timeout to clear errors for the 'teacher_ids' field after 10 milliseconds
-      setTimeout(() => {
-        clearErrors('teacher_ids');
-      }, 10);
-     }
-
-     
+    if (parseInt(val) === iAmOrganizerId) {
+      // If there are already teachers selected
+      if (teachers) {
+        // Remove the logged-in teacher's ID from the list of selected teachers
+        teachersOnChange(_.without(teachers, loginInTeacherData));
+        // Set a timeout to clear errors for the 'teacher_ids' field after 10 milliseconds
+        setTimeout(() => {
+          clearErrors("teacher_ids");
+        }, 10);
+      }
     }
   };
 
@@ -193,14 +222,14 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
-              }`}
+            }`}
           >
             <Card
               className={` p-2 w-80 h-[106px] flex flex-row ${
                 value === iAmTeachingId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
-                : ""
-                }`}
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                  : ""
+              }`}
             >
               <div>
                 <RadioGroupCheckItem
@@ -227,14 +256,14 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmCoTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
-              }`}
+            }`}
           >
             <Card
               className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-                : ""
-                }`}
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                  : ""
+              }`}
             >
               <RadioGroupCheckItem
                 value={JSON.stringify(iAmCoTeachingId)}
@@ -249,7 +278,7 @@ const RadioCards = () => {
                 <Coteacher
                   color={` ${
                     value === iAmCoTeachingId ? "#7677F4" : "#999999"
-                    }`}
+                  }`}
                 />
                 I am co-teaching this course
               </div>
@@ -259,28 +288,40 @@ const RadioCards = () => {
         <Label
           htmlFor={JSON.stringify(iAmOrganizerId)}
           className={`text-[#999999] font-normal ${
-            value === iAmOrganizerId ? "text-[#7677F4]" : ""
-            }`}
+            // If this is disabled then we need to add the cursor styles to disabled
+            value === iAmOrganizerId && !isDisableOrganizingForAnotherTeacher
+              ? "text-[#7677F4]"
+              : isDisableOrganizingForAnotherTeacher
+              ? "cursor-not-allowed"
+              : ""
+          }`}
         >
           <Card
             className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
-              value === iAmOrganizerId
-              ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-              : ""
-              }`}
+              value === iAmOrganizerId && !isDisableOrganizingForAnotherTeacher
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                : ""
+            }`}
           >
             <RadioGroupCheckItem
               value={JSON.stringify(iAmOrganizerId)}
               id={JSON.stringify(iAmOrganizerId)}
+              disabled={isDisableOrganizingForAnotherTeacher}
               className={
-                value === iAmOrganizerId
+                value === iAmOrganizerId &&
+                !isDisableOrganizingForAnotherTeacher
                   ? "!bg-[#7677F4] !border-none "
                   : "!border-[#D6D7D8] !shadow-none "
               }
             />
             <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
               <Organizer
-                color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
+                color={` ${
+                  value === iAmOrganizerId &&
+                  !isDisableOrganizingForAnotherTeacher
+                    ? "#7677F4"
+                    : "#999999"
+                }`}
               />
               <div className="w-[240px] text-wrap text-center justify-center">
                 I am organizing this course for another teacher
@@ -303,7 +344,6 @@ const OrganizationDropDown = () => {
    * This variable holds the path of the url
    */
   const pathname = usePathname();
-
 
   /**
    * Checking whether the url contains the edit or not

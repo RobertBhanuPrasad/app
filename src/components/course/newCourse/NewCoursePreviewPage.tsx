@@ -415,7 +415,9 @@ export default function NewCourseReviewPage() {
 
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold ml-6">Review Course Details</div>
+      <div className="text-[24px] my-4 font-semibold ml-6">
+        Review Course Details
+      </div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -568,30 +570,34 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-              Display language translation option for participants
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_language_translation_for_participants}
-              >
-                {newCourseData?.is_language_translation_for_participants ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Display language translation option for participants
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={
+                    newCourseData?.is_language_translation_for_participants
+                  }
+                >
+                  {newCourseData?.is_language_translation_for_participants
+                    ? "Yes"
+                    : "No"}
+                </abbr>
+              </div>
             )}
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-              Registration is mandatory for this course
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_registration_required}
-              >
-                {newCourseData?.is_registration_required ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Registration is mandatory for this course
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_registration_required}
+                >
+                  {newCourseData?.is_registration_required ? "Yes" : "No"}
+                </abbr>
+              </div>
             )}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -617,29 +623,33 @@ export default function NewCourseReviewPage() {
                 {visibility ? visibility?.value : "-"}
               </abbr>
             </div>
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Country(s) from where registrations are allowed
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={allowedCountries}
-              >
-                {allowedCountries ? allowedCountries : "-"}
-              </abbr>
-            </div>
+            {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
+            {hasSuperAdminRole &&
+              newCourseData?.is_geo_restriction_applicable && (
+                <div className="w-[291px]">
+                  <p className="text-sm font-normal text-accent-light text-[#999999]">
+                    Country(s) from where registrations are allowed
+                  </p>
+                  <abbr
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                    title={allowedCountries}
+                  >
+                    {allowedCountries ? allowedCountries : "-"}
+                  </abbr>
+                </div>
+              )}
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Is geo restriction applicable for registrations
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_geo_restriction_applicable}
-              >
-                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Is geo restriction applicable for registrations
+                </p>
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_geo_restriction_applicable}
+                >
+                  {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
+                </abbr>
+              </div>
             )}
             {/* // TODO need to do when the form filed is clear */}
             <div className="w-[291px]">
