@@ -8,6 +8,7 @@ interface NewCourseStore {
   viewCourseAccountingSuccessModal: boolean;
   viewCourseAccountingRejectedDescriptionModal: boolean;
   viewCourseAccountingRejectedModal: boolean;
+  viewSuccessOnEditModal: boolean;
 
   setViewRejectedModal: (by: boolean) => void;
   setViewPreviewPage: (by: boolean) => void;
@@ -26,6 +27,7 @@ interface NewCourseStore {
   setAllFilterData: (by: any) => void;
   programId: number;
   setProgramId: (by: number) => void;
+  setViewSuccessOnEditModal: (by: boolean) => void;
 
   /**
    * We have to use this variable to store the default values of the course accounting form
@@ -55,6 +57,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   viewCourseAccountingSuccessModal: false,
   viewCourseAccountingRejectedDescriptionModal: false,
   viewCourseAccountingRejectedModal: false,
+  viewSuccessOnEditModal: false,
 
   courseAccountingFormDefaultValues: {},
   setViewRejectedModal: (data: boolean) => {
@@ -77,6 +80,13 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       viewThankyouPage: data,
     }));
   },
+
+  setViewSuccessOnEditModal: (data: boolean) => {
+    set(() => ({
+      viewSuccessOnEditModal: data,
+    }));
+  },
+
   setNewCourseData: (data: any) => {
     set(() => ({
       newCourseData: data,
