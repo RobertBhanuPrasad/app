@@ -446,7 +446,7 @@ const ProgramOrganizerDropDown = () => {
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Program organizer Name"
+        placeholder={t("course.new_course:basic_details_tab.program_organizer_placeholder")}
         data={options}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {

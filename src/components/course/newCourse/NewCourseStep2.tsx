@@ -349,6 +349,7 @@ export const CourseTypeDropDown = () => {
 };
 
 const RegistrationGateway = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value, onChange },
   } = useController({
@@ -358,7 +359,7 @@ const RegistrationGateway = () => {
   return (
     <div className="flex flex-row items-center gap-[19px]">
       <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">
-        Registration is mandatory for this course
+        {t("course.new_course:course_details_tab.registration_mandatory")}
       </div>
       <Switch
         id="is_registration_required"
@@ -373,6 +374,7 @@ const RegistrationGateway = () => {
 };
 
 const CourseNameDropDown = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const [pageSize, setPageSize] = useState(10);
 
   const { watch } = useFormContext();
@@ -421,7 +423,7 @@ const CourseNameDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Course Name <div className="text-[#7677F4]">*</div>
+        {t("new_strings:course_name")} <div className="text-[#7677F4]">*</div>
       </div>
 
       <Select
@@ -431,7 +433,7 @@ const CourseNameDropDown = () => {
         }}
       >
         <SelectTrigger className="w-[320px]" error={error ? true : false}>
-          <SelectValue placeholder="Select course alias name" />
+          <SelectValue placeholder={t("new_strings:select_course_alias_name")}/>
         </SelectTrigger>
         <SelectContent>
           <Input
@@ -789,6 +791,7 @@ const Visibility = () => {
 };
 
 const DisplayLanguage = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value, onChange },
   } = useController({
@@ -798,7 +801,7 @@ const DisplayLanguage = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        Display language translation option for participants *
+        {t("course.new_course:course_details_tab.display_language_option")} *
       </div>
       <RadioGroup
         value={JSON.stringify(value)}
@@ -810,13 +813,13 @@ const DisplayLanguage = () => {
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
-            label="Yes"
+            label={t("yes")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label="No"
+            label={t("no")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -826,6 +829,7 @@ const DisplayLanguage = () => {
 };
 
 const GeoRestriction = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value, onChange },
   } = useController({
@@ -835,7 +839,7 @@ const GeoRestriction = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Is geo restriction applicable for registrations
+        {t("is_geo_restriction")}
         <div className="text-[#7677F4]">*</div>
         <HoverCard>
           <HoverCardTrigger>
@@ -843,10 +847,7 @@ const GeoRestriction = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Text entered in the 'Email Notes' field will be included in the
-              registration confirmation email only irrespective of the
-              transaction status (Email notes will not be shown on the Art of
-              Living Website)
+              {t("new_strings:text_entered_in_the_email_notes_field")}
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -862,13 +863,13 @@ const GeoRestriction = () => {
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
-            label="Yes"
+            label={t("yes")}
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label="No"
+            label={t("no")}
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
         </div>
@@ -1028,6 +1029,7 @@ const LanguageTranslationDropDown = () => {
 };
 
 const AllowedCountriesDropDown = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const { watch } = useFormContext();
 
   const formData = watch();
@@ -1055,12 +1057,12 @@ const AllowedCountriesDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Country(s) from where registrations are allowed
+        {t("countries_from_where_registrations_are_allowed")}
         <div className="text-[#7677F4]">*</div>
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Countries"
+        placeholder={t("course.new_course:course_details_tab.country_registrations_allowed_placeholder")}
         data={allowedCountriesData}
         onBottomReached={() => {}}
         onSearch={() => {}}

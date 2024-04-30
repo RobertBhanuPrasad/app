@@ -691,7 +691,7 @@ export const NewCourseTabs = () => {
                       }}
                       className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
                     >
-                      Previous
+                      {t("previous_button")}
                     </Button>
                   )}
 
@@ -705,7 +705,7 @@ export const NewCourseTabs = () => {
                         );
                       }}
                     >
-                      Next
+                      {t("next")}
                     </Button>
                   )}
 
@@ -718,7 +718,7 @@ export const NewCourseTabs = () => {
                         );
                       }}
                     >
-                      Review Details
+                      {t("course.new_course:contact_info_tab.review_details")}
                     </Button>
                   )}
                 </div>
