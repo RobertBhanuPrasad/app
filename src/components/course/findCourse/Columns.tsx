@@ -9,7 +9,7 @@ import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
 import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
 import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "src/ui/button";
 import {
   Dialog,
@@ -31,16 +31,17 @@ import { format } from "date-fns";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-export const columns: ExtendedColumnDef<any>[] = [
+export const columns:  any =(t:any)  =>{
+return [
   {
     accessorKey: "program_code",
-    column_name: "Course ID",
+    column_name: t('common:course_id'),
     //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
-      return <div className="w-[100px]">Course ID</div>;
+      return <div className="w-[100px]">{t('common:course_id')}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       const router = useRouter();
       return (
         <div
@@ -56,13 +57,13 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "program_types",
-    column_name: "Course Type Name",
+    column_name: t("new_strings:course_type_name"),
     //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
-      return <div className="w-[150px]">Course Type Name</div>;
+      return <div className="w-[150px]">{t("new_strings:course_type_name")}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       return (
         <div className="w-[150px]">{row?.original?.program_types?.name}</div>
       );
@@ -70,13 +71,13 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "program_type_alias_names",
-    column_name: "Course Name",
+    column_name: t("new_strings:course_name"),
     //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
-      return <div className="min-w-[150px]">Course Name</div>;
+      return <div className="min-w-[150px]">{t("new_strings:course_name")}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       return (
         <div className="min-w-[150px]">
           {row?.original?.program_type_alias_names?.alias_name}
@@ -86,13 +87,13 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "status",
-    column_name: "Course Status",
+    column_name: t("course.find_course:course_status"),
     //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
-      return <div className="min-w-[150px]">Course Status</div>;
+      return <div className="min-w-[150px]">{t("course.find_course:course_status")}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       return (
         <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>
       );
@@ -102,9 +103,9 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "program_schedules",
     //These columns are default columns and shouldnt be editable
     enableHiding: false,
-    column_name: "Start Date",
+    column_name: t("course.find_course:start_date"),
     header: () => {
-      return <div className="min-w-[150px]">Start Date</div>;
+      return <div className="min-w-[150px]">{t("course.find_course:start_date")}</div>;
     },
     cell: ({ row }: any) => {
       // Check if start_date exists or not
@@ -118,31 +119,31 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "state",
-    column_name: "State",
+    column_name: t("course.find_course:state"),
     header: () => {
-      return <div className="min-w-[150px]">State</div>;
+      return <div className="min-w-[150px]">{t("course.find_course:state")}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
     },
   },
   {
     accessorKey: "city",
-    column_name: "City",
+    column_name: t("common:city"),
     header: () => {
-      return <div className="min-w-[150px]">City</div>;
+      return <div className="min-w-[150px]">{t("common:city")}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
     },
   },
   {
     accessorKey: "center",
-    column_name: "Center",
+    column_name: t("course.find_course:center"),
     header: () => {
-      return <div className="min-w-[150px]">Center</div>;
+      return <div className="min-w-[150px]">{t("course.find_course:center")}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       return <div className="min-w-[150px]">{row?.original?.center?.name}</div>
     },
   },
@@ -150,11 +151,11 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "program_teachers",
     //These columns are default columns and shouldnt be editable
     enableHiding: false,
-    column_name: "Teachers",
+    column_name: t('course.find_course:teacher(s)'),
     header: () => {
-      return <div className="min-w-[150px]">Teachers</div>;
+      return <div className="min-w-[150px]">{t('course.find_course:teacher(s)')}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       const teachers = row?.original?.program_teachers?.map(
         (teacher: any) => teacher?.users?.contact_id?.full_name
       );
@@ -167,11 +168,11 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "program_organizers",
-    column_name: "Organizers",
+    column_name: t('common:program_organizer'),
     header: () => {
-      return <div className="min-w-[150px]">Organizers</div>;
+      return <div className="min-w-[150px]">{t('common:program_organizer')}</div>;
     },
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       //Mapping all the programOrganizers in the comma separated name
       const organizers = row?.original?.program_organizers?.map(
         (Organizer: any) => Organizer?.users?.contact_id?.full_name
@@ -187,11 +188,11 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "participant_registration",
-    column_name: "Attendees",
+    column_name: t("course.find_course:attendees"),
     //These columns are default columns and shouldnt be editable
     enableHiding: false,
     header: () => {
-      return <div>Attendees</div>;
+      return <div>{t("course.find_course:attendees")}</div>;
     },
     cell: ({ row }: any) => {
       const [participantCount, setParticipantCount] = useState<number>(0);
@@ -220,9 +221,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "visibility_id",
-    column_name: "Visibility",
+    column_name: t('new_strings:visibility'),
     header: () => {
-      return <div>Visibility</div>;
+      return <div>{t('new_strings:visibility')}</div>;
     },
     cell: ({ row }: any) => {
       return (
@@ -234,9 +235,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "course_accounting_status",
-    column_name: "Course Accounting Status",
+    column_name: t('common:course_accounting_status'),
     header: () => {
-      return <div className="min-w-[200px]">Course Accounting Status</div>;
+      return <div className="min-w-[200px]">{t('common:course_accounting_status')}</div>;
     },
     cell: ({ row }: any) => {
       return (
@@ -250,10 +251,10 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Course Accounting Closure Date",
-    column_name: "Course Accounting Closure Date",
+    column_name: t('course.find_course:course_accounting_closure_date'),
     header: () => {
       return (
-        <div className="min-w-[250px]">Course Accounting Closure Date</div>
+        <div className="min-w-[250px]">{t('course.find_course:course_accounting_closure_date')}</div>
       );
     },
     cell: ({ row }: any) => {
@@ -262,9 +263,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "revenue",
-    column_name: "Revenue",
+    column_name: t('new_strings:revenue'),
     header: () => {
-      return <div className="min-w-[150px]">Revenue</div>;
+      return <div className="min-w-[150px]">{t('new_strings:revenue')}</div>;
     },
     cell: ({ row }: any) => {
       const [revenue, setRevenue] = useState<any>();
@@ -294,7 +295,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: ({ row } : any) => {
       const {
         setViewPreviewPage,
         setNewCourseData,
@@ -365,7 +366,7 @@ export const columns: ExtendedColumnDef<any>[] = [
         router.push({ pathname: "/courses/add", query: { action: "Copy" } });
       };
 
-      dropDownMenuData?.unshift({ label: "View Course", value: 9 });
+      dropDownMenuData?.unshift({ label: t('course.find_course:view_course_details'), value: 9 });
 
       const handleSelected = (value: number) => {
         console.log("clicked on", value);
@@ -452,7 +453,7 @@ export const columns: ExtendedColumnDef<any>[] = [
                           <Exclamation />
                         </div>
                         <DialogDescription className="font-bold text-black text-lg items-center text-center">
-                          Are you sure you want to cancel this course?
+                          {t('new_strings:cancel_course')}
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter>
@@ -466,7 +467,7 @@ export const columns: ExtendedColumnDef<any>[] = [
                                 setIsDialogOpen(false);
                               }}
                             >
-                              No
+                              {t('common:no_button')}
                             </Button>
                           </div>
                           <div>
@@ -477,7 +478,7 @@ export const columns: ExtendedColumnDef<any>[] = [
                                 cancelCourse();
                               }}
                             >
-                              Yes
+                              {t('common:yes_button')}
                             </Button>
                           </div>
                         </div>
@@ -491,7 +492,7 @@ export const columns: ExtendedColumnDef<any>[] = [
                           <Cross />
                         </div>
                         <div className="font-bold text-center my-5">
-                          Course canceled Successfully
+                          {t('new_strings:course_cancel_successful')}
                         </div>
                       </div>
 
@@ -502,7 +503,7 @@ export const columns: ExtendedColumnDef<any>[] = [
                             setCancelSuccessModalOpen(false);
                           }}
                         >
-                          Close
+                          {t('common:close')}
                         </Button>
                       </div>
                     </DialogContent>
@@ -515,4 +516,4 @@ export const columns: ExtendedColumnDef<any>[] = [
       );
     },
   },
-];
+]};

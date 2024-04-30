@@ -457,7 +457,7 @@ const {t} = useTranslation();
               table: "",
               rowStyles: "!important border-none",
             }}
-            columns={columns}
+            columns={columns(t)}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}

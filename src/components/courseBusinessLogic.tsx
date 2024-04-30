@@ -1,5 +1,6 @@
 import { AnyPtrRecord } from "dns";
 import _ from "lodash";
+import { useTranslation } from "next-i18next";
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
@@ -40,6 +41,7 @@ import {
   TEACHER,
 } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { UseTranslation } from "next-i18next";
 
 /**
  * Is course approved
@@ -171,9 +173,10 @@ export const DisplayOptions = (
     USER_ROLE,
     FINANCE_ADMIN
   )?.id;
-
+  const {t} = useTranslation()
   // If course status is Active
   if (courseStatusId === courseActiveStatusId) {
+    
     if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
       (roleId === superAdminRoleId ||
@@ -182,33 +185,34 @@ export const DisplayOptions = (
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
+      
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "Submit Course Accounting Form",
+          label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -218,27 +222,27 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "Submit Course Accounting Form",
+          label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -258,31 +262,31 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "Submit Course Accounting Form",
+          label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -294,27 +298,27 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "View Course Accounting Form",
+          label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
       ];
@@ -324,19 +328,19 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "View Course Accounting Form",
+          label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
       ];
@@ -348,27 +352,27 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -378,27 +382,27 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -410,19 +414,19 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "View Course Accounting Form",
+          label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
       ];
@@ -432,15 +436,15 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "View Course Accounting Form",
+          label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
       ];
@@ -460,31 +464,31 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "Submit Course Accounting Form",
+          label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -496,27 +500,27 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "View Course Accounting Form",
+          label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
       ];
@@ -526,19 +530,19 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "View Course Accounting Form",
+          label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
       ];
@@ -552,23 +556,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Register Participant",
+          label: t('common:register_participant'),
           value: 2,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "Cancel Course",
+          label: t('common:cancel_course'),
           value: 5,
         },
         {
-          label: "Edit Course Accounting Form",
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -581,25 +585,25 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Edit Course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "View Course Accounting Form",
+          label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
-        "View Participants",
-        "Edit Course",
-        "Copy Course",
-        "View Course Accounting Form",
+        t('common:view_participants'),
+        t('common:edit_course'),
+        t('common:copy_course'),
+        t('new_strings:view_course_accounting_form'),
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
@@ -607,15 +611,15 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
         {
-          label: "Copy Course",
+          label: t('common:copy_course'),
           value: 4,
         },
         {
-          label: "View Course Accounting Form",
+          label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
       ];
@@ -637,7 +641,7 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "View Participants",
+          label: t('common:view_participants'),
           value: 1,
         },
       ];
@@ -654,11 +658,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Edit course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Cancel course",
+          label: t('common:cancel_course'),
           value: 5,
         },
       ];
@@ -670,7 +674,7 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Cancel course",
+          label: t('common:cancel_course'),
           value: 5,
         },
       ];
@@ -680,11 +684,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Edit course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Cancel course",
+          label: t('common:cancel_course'),
           value: 5,
         },
       ];
@@ -704,11 +708,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: "Edit course",
+          label: t('common:edit_course'),
           value: 3,
         },
         {
-          label: "Cancel course",
+          label: t('common:cancel_course'),
           value: 5,
         },
       ];
