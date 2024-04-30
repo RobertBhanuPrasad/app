@@ -219,7 +219,7 @@ const RadioCards = () => {
                 <Teacher
                   color={` ${value === iAmTeachingId ? "#7677F4" : "#999999"}`}
                 />
-               {t("course.new_course:basic_details_tab.teaching_course")}
+              {t("course.new_course:basic_details_tab.teaching_course")}
               </div>
             </Card>
           </Label>

@@ -127,8 +127,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   if (courseFeeSettings?.length == 0) {
     return (
       <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
-        There is no price set for current settings. Select course type and
-        city/center.
+        {t("there_is_no_price_set_for_current_settings_select_course_type_and_city_center")}
       </div>
     );
   }
@@ -534,10 +533,10 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             <div className="w-80 mt-9">
               <div className="flex justify-between">
                 <div className="font-normal text-base text-sm">
-                  Early bird cut-off period
+                  {t("new_strings:Eearly_bird_cutoff_period")}
                 </div>
                 <div className="font-normal italic text-base text-sm text-[#7677F4]">
-                  {earlyBirdCutOff} Days left
+                  {earlyBirdCutOff} {t("course.new_course:fees_tab.days_left")}
                 </div>
               </div>
               <div>

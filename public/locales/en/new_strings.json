@@ -32,6 +32,23 @@
  "online":"Online",
  "select_course_alias_name":"Select course alias name",
  "text_entered_in_the_email_notes_field":"Text entered in the 'Email Notes' field will be included in the registration confirmation email only irrespective of the transaction status (Email notes will not be shown on the Art of Living Website)",
+ "url":"URL",
+ "note_participants":"Note: Participants will join your online course through your",
+ "virtual_venue":"virtual venue",
+ "select_format":"Select Format",
+ "select_time_zone":"Select Time Zone",
+ "edit_venue":"Edit Venue",
+ "venue_with_the_provided":"Venue with the provided data already exists.",
+ "center":"Center",
+ "no_results":"No results",
+
+
+
+ "course_details_tab":"Course Details",
+ "participants_tab":"Participants",
+ "revenue_summary_tab":"Revenue Summary",
+ "course_accounting_form_tab":"Course Accounting Form",
+
 
 
 

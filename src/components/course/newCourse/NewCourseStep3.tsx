@@ -90,6 +90,7 @@ function NewCourseStep3() {
 export default NewCourseStep3
 
 const OnlineProgram = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value, onChange },
     fieldState: { error }
@@ -99,10 +100,10 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="">Online zoom URL </div>
+        <div className="">{t("online_zoom_url")} </div>
         <div className="w-80">
           <Input
-            placeholder="URL"
+            placeholder={t("new_strings:url")}
             className="rounded-[12px]"
             value={value}
             onChange={event => {
@@ -112,13 +113,13 @@ const OnlineProgram = () => {
           />
           {error && <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>}
           <div className="text-xs font-normal text-[#666666] italic w-[320px] overflow-hidden">
-            <div>Note: Participants will join your online course through your</div>
-            <div>virtual venue</div>
+            <div>{t("new_strings:note_participants")}</div>
+            <div>{t("new_strings:virtual_venue")}</div>
           </div>
         </div>
       </div>
       <div className="flex gap-2 flex-col">
-        <div>Please associate your course with a specific location for reporting purposes</div>
+        <div>{t("course.new_course:time_and_venue_tab.specific_location")}</div>
         <div className="flex gap-7">
           <div className="w-80">
             <StateDropDown name="state_id" />
@@ -195,7 +196,7 @@ const SchedulesHeader = () => {
             }}
           >
             <SelectTrigger className="w-[161px]" error={schedulesHeaderErrors ? true : false}>
-              <SelectValue placeholder="Select Format" />
+              <SelectValue placeholder={t("new_strings:select_format")} />
             </SelectTrigger>
             <SelectContent className="w-[161px]">
               {timeFormatOptions?.map((option: any) => (
@@ -223,7 +224,7 @@ const SchedulesHeader = () => {
               }}
             >
               <SelectTrigger className="w-[257px]" error={timeZoneError ? true : false}>
-                <SelectValue placeholder="Select Time Zone" />
+                <SelectValue placeholder={t("new_strings:select_time_zone")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
@@ -628,7 +629,7 @@ const Venue = () => {
                     }`}
                   />
                   }
-                <div>New Venue</div>
+                <div>{t("course.new_course:time_and_venue_tab.new_venue")}</div>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
@@ -783,6 +784,7 @@ const TimePicker = ({ index, is12HourFormat }: { index: number; is12HourFormat: 
   )
 }
 const CalenderComponent = ({ index, setOpen }: any) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },
@@ -881,7 +883,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         <div className="border-l border-gray-300 h-full"></div>
         <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
           <div className="flex flex-row justify-between text-[20px] font-semibold">
-            Course
+            {t("course.new_course:time_and_venue_tab.course")}
             {/* Close button */}
             <div
               onClick={() => {
@@ -917,7 +919,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
           }}
           className="w-24 rounded-[12px]"
         >
-          Submit
+          {t("save_button")}
         </Button>
       </div>
     </div>
@@ -1099,7 +1101,7 @@ const ExistingVenueList = () => {
               handleSubmitVenueList()
             }}
           >
-            Submit
+            {t("submit_button")}
           </Button>
         </DialogClose>
       </div>
@@ -1264,29 +1266,11 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
                       </div>
                     </div>
                   </div>
-                </ScrollArea>
+                
               )
-            })}
-            {/* </div> */}
-          </div>
-        </GetScrollTypesAlert>
-      </div>
-      <div className="w-full flex items-center justify-center mt-8">
-        <DialogClose>
-          <Button
-            type="submit"
-            onClick={() => {
-              isNewVenueSelectedOnchange('existing-venue')
-              handleSubmitVenueList()
-            }}
-          >
-            {t("submit_button")}
-          </Button>
-        </DialogClose>
-      </div>
-    </div>
-  )
-}
+            }
+     
+  
 
 export const AddOrEditVenue = ({ handleSubmit, message }: { handleSubmit: () => void; message?: boolean }) => {
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
@@ -1301,7 +1285,7 @@ export const AddOrEditVenue = ({ handleSubmit, message }: { handleSubmit: () => 
       {isNewVenue ? (
         <div className="flex justify-center text-[24px] font-semibold">{t("course.new_course:time_and_venue_tab.new_venue")}</div>
       ) : (
-        <div className="flex justify-center text-[24px] font-semibold">Edit Venue</div>
+        <div className="flex justify-center text-[24px] font-semibold">{t("new_strings:edit_venue")}</div>
       )}
       {/* TODO : Integrated after solving the error }
       {/* <MapComponent /> */}
@@ -1320,11 +1304,11 @@ export const AddOrEditVenue = ({ handleSubmit, message }: { handleSubmit: () => 
         </div>
       </div>
       {message && (
-        <span className="text-[#FF6D6D] text-[14px] text-md">Venue with the provided data already exists.</span>
+        <span className="text-[#FF6D6D] text-[14px] text-md">{t("new_strings:venue_with_the_provided")}</span>
       )}
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
-          <Button onClick={handleSubmit}>{t("submit_button")}</Button>
+          <Button onClick={handleSubmit}>{t("save_button")}</Button>
         </div>
       </DialogFooter>
     </div>

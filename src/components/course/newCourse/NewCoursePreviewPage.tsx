@@ -729,7 +729,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Province
+                {t("course.new_course:time_and_venue_tab.province")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -740,7 +740,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  City
+                {t("city")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -751,7 +751,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Center
+                  {t("new_strings:Center")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -964,7 +964,7 @@ export default function NewCourseReviewPage() {
                 </div>
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Name
+                    {t("contact_name")}
                   </p>
                   <abbr
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
