@@ -412,7 +412,7 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
-
+var initialStep=0
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">Review Course Details</div>
@@ -435,6 +435,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Basic Details");
               }}
               onOpenChange={setOpenBasicDetails}
+              currentField={initialStep}
             />{" "}
           </div>
           {/* body */}
@@ -519,6 +520,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Course Details");
               }}
               onOpenChange={setOpenCourseDetails}
+              currentField={initialStep+1}
             />{" "}
           </div>
           {/* body */}
@@ -708,6 +710,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenVenueDetails}
+              currentField={initialStep+2}
             />{" "}
           </div>
           {/* body */}
@@ -818,6 +821,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenFeesDetails}
+              currentField={initialStep+3}
             />{" "}
           </div>
           {/* body */}
@@ -885,6 +889,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Accomidation Details");
               }}
               onOpenChange={setOpenAccomidationDetails}
+              currentField={initialStep+4}
             />{" "}
           </div>
           {newCourseData?.is_residential_program && (
@@ -932,6 +937,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Contact Details");
               }}
               onOpenChange={setOpenContactDetails}
+              currentField={initialStep+5}
             />{" "}
           </div>
           {/* body */}
