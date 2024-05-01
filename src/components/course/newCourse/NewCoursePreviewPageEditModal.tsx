@@ -129,8 +129,6 @@ export const EditModalDialog = ({
       // Update newCourseData with new form data
       setNewCourseData({ ...newCourseData, ...formData })
       isAllFieldsFilled = await ValidateCurrentStepFields(validationFieldsStepWise[currentField])
-      console.log(isAllFieldsFilled, 'isallfiilled')
-
       // Close the dialog
       if (isAllFieldsFilled) {
         onClose()
