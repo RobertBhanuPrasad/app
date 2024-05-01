@@ -1,3 +1,4 @@
+import { useOne } from '@refinedev/core'
 import { Circle } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -15,25 +16,15 @@ function ParticipantsTab() {
 
   const Id: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
-  const [participantData, setParticipantData] = useState<any>()
-
-  const fetchData = async () => {
-    try {
-      const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
-        method: 'POST',
-        body: {
-          program_id: Id
-        }
-      })
-      setParticipantData(data)
-    } catch (error) {
-      console.error('Error fetching fee data:', error)
+  const { data: courseData } = useOne({
+    resource: 'program',
+    id: Id,
+    meta: {
+      select:
+        '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))'
     }
-  }
+  })
 
-  useEffect(() => {
-    fetchData()
-  }, [])
 
   return (
     <div className="my-[31px] mb-6 overscroll ">
@@ -57,9 +48,9 @@ function ParticipantsTab() {
         </div>
       </div>
       <div className="mt-6 flex flex-row  gap-[30px]">
-        <AttendancePieChart participantData={participantData} />
-        <FeeLevelPieChart participantData={participantData} />
-        <GenderPieChart participantData={participantData} />
+        <AttendancePieChart participantData={courseData?.data} />
+        <FeeLevelPieChart participantData={courseData?.data} />
+        <GenderPieChart participantData={courseData?.data} />
       </div>
     </div>
   )
@@ -70,7 +61,7 @@ export default ParticipantsTab
 const FeeLevelPieChart = ({ participantData }: any) => {
   const baseColor = '#7677F4'
 
-  const feeLevelData = participantData?.FeeLevelBreakUp?.map((item: any, index: any) => {
+  const feeLevelData = participantData?.fee_level_breakup?.map((item: any, index: any) => {
     // Extract the title from the object key
     const title = Object.keys(item)[0]
     // Extract the value from the object value
@@ -78,7 +69,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
     return {
       title: title,
       value: value,
-      color: getColorWithDecreasedOpacity(baseColor, index + 1, participantData?.FeeLevelBreakUp?.length)
+      color: getColorWithDecreasedOpacity(baseColor, index + 1, participantData?.fee_level_breakup?.length)
     }
   })
   return (
@@ -98,12 +89,12 @@ const FeeLevelPieChart = ({ participantData }: any) => {
             rounded={true}
             center={[50, 30]}
             viewBoxSize={[100, 60]}
-            totalValue={participantData?.totalParticipantCount}
+            totalValue={participantData?.total_participant_count}
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
             <p>Total Participants</p>
-            <p className="chart-inner-value">{participantData?.totalParticipantCount}</p>
+            <p className="chart-inner-value">{participantData?.total_participant_count}</p>
           </div>
         </div>
         <div className="flex flex-col mt-6">
@@ -140,9 +131,10 @@ const AttendancePieChart = ({ participantData }: any) => {
       color: getColorWithDecreasedOpacity(baseColor, index + 1, participantData?.AttendanceStatus?.length)
     }
   })
+  console.log("attendence data",attendanceData)
 
   return (
-    <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
+    <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6 ">
       <CardHeader>
         <CardTitle>
           <div className="text-[18px] font-semibold">Attendance Status</div>
@@ -159,28 +151,43 @@ const AttendancePieChart = ({ participantData }: any) => {
             rounded={true}
             center={[50, 30]}
             viewBoxSize={[100, 60]}
-            totalValue={participantData?.totalParticipantCount}
+            totalValue={participantData?.total_participant_count}
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
             <p>Total Participants</p>
-            <p className="chart-inner-value">{participantData?.totalParticipantCount}</p>
+            <p className="chart-inner-value">{participantData?.total_participant_count}</p>
           </div>
         </div>
         <div className="flex flex-col mt-6">
-          <div className="">
-            {attendanceData?.map((item: any, index: number) => {
-              return (
-                <div className="flex flex-row items-center justify-center justify-between">
-                  <div className="flex items-center gap-2 py-[2px]">
-                    <Circle size={6} fill={item?.color} color={item?.color} />
-                    <div className="text-[#999999]">{item?.title}</div>
-                  </div>
-                  <div className="font-semibold">{item?.value}</div>
-                </div>
-              )
-            })}
+          <div className='flex justify-between'>
+          <div className='flex items-center gap-1'>
+            <Circle size={6} fill="#333333" color="#333333" />
+            <p>Completed</p>
+            </div>
+            <p>{participantData?.attendance_completed_participant_count}</p>
           </div>
+          <div className='flex justify-between'>
+          <div className='flex items-center gap-1'>
+            <Circle size={6} fill="#333333" color="#333333" />
+            <p>Pending</p>
+            </div>
+            <p>{participantData?.attendance_pending_participant_count}</p>
+          </div>
+          <div className='flex justify-between'>
+          <div className='flex items-center gap-1'>
+            <Circle size={6} fill="#333333" color="#333333" />
+            <p>Dropout</p>
+            </div>
+            <p>{participantData?.attendance_dropout_participant_count}</p>
+          </div>   
+          <div className='flex justify-between'>
+            <div className='flex items-center gap-1'>
+            <Circle size={6} fill="#333333" color="#333333" />
+            <p>Cancelled</p>
+            </div>
+            <p>{participantData?.attendance_cancelled_participant_count}</p>
+          </div>       
         </div>
       </CardContent>
     </Card>
@@ -190,7 +197,7 @@ const AttendancePieChart = ({ participantData }: any) => {
 const GenderPieChart = ({ participantData }: any) => {
   const baseColor = '#7677F4'
 
-  const genderData = participantData?.Gender?.map((item: any, index: any) => {
+  const genderData = participantData?.gender_breakup?.map((item: any, index: any) => {
     // Extract the title from the object key
     const title = Object.keys(item)[0]
     // Extract the value from the object value
@@ -198,7 +205,7 @@ const GenderPieChart = ({ participantData }: any) => {
     return {
       title: title,
       value: value,
-      color: getColorWithDecreasedOpacity(baseColor, index + 1, participantData?.Gender?.length)
+      color: getColorWithDecreasedOpacity(baseColor, index + 1, participantData?.gender_breakup?.length)
     }
   })
 
@@ -220,12 +227,12 @@ const GenderPieChart = ({ participantData }: any) => {
             rounded={true}
             center={[50, 30]}
             viewBoxSize={[100, 60]}
-            totalValue={participantData?.totalParticipantCount}
+            totalValue={participantData?.total_participant_count}
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
             <p>Total Participants</p>
-            <p className="chart-inner-value">{participantData?.totalParticipantCount}</p>
+            <p className="chart-inner-value">{participantData?.total_participant_count}</p>
           </div>
         </div>
         <div className="flex flex-col mt-6">
