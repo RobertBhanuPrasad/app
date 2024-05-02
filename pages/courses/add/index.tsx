@@ -622,7 +622,7 @@ export const NewCourseTabs = () => {
   return (
     <div>
       <p className="font-semibold text-2xl">
-        {router.query.action ? router.query.action : "New"} Course
+        {router.query.action ? router.query.action : t("new_strings:new")} {t("new_strings:course")}
       </p>
       <div className="mt-4">
         <Tabs value={JSON.stringify(currentStep)}>

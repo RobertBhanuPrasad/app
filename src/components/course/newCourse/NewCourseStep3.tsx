@@ -100,7 +100,7 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="">{t("online_zoom_url")} </div>
+        <div className="">{t("course.new_course:time_and_venue_tab.online_meeting_url")} </div>
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}
@@ -586,7 +586,7 @@ const Venue = () => {
                 {existingVenue ? (
                   <ExistingVenueDetails />
                 ) : (
-                  <div className="pl-[30px] leading-6 font-normal">{t("new_strings:no_existing_venue_found")}</div>
+                  <div className="pl-[30px] leading-6 font-normal">{t("new_strings:select_a_venue_by_clicking_viewall_button")}</div>
                 )}
                 {/* {!(value === 'new-venue') && ( */}
                   <Dialog>
@@ -605,7 +605,7 @@ const Venue = () => {
                 {/* )} */}
               </div>
             ) : (
-              <div className="px-[30px] leading-6 font-normal">No existing venue found</div>
+              <div className="px-[30px] leading-6 font-normal">{t("new_strings:no_existing_venue_found")}</div>
             )}
           </div>
         </Label>

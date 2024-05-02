@@ -572,7 +572,7 @@ export default function NewCourseReviewPage() {
             {hasSuperAdminRole && (
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-              Display language translation option for participants
+              {t("course.new_course:course_details_tab.display_language_option")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -585,7 +585,7 @@ export default function NewCourseReviewPage() {
             {hasSuperAdminRole && (
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-              Registration is mandatory for this course
+              {t("course.new_course:course_details_tab.registration_mandatory")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -1150,7 +1150,7 @@ const EarlyBirdFees = ({
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
@@ -1159,7 +1159,7 @@ const EarlyBirdFees = ({
         className="no-underline"
       >
         <CardLabel className="truncate">
-          Early Bird {feeLevelData?.data?.value}
+          {t("new_strings:early_bird")} {feeLevelData?.data?.value}
         </CardLabel>
       </abbr>
       <abbr
