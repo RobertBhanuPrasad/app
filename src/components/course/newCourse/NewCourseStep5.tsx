@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../../DataTable";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useFieldArray,
   useFormContext,
@@ -33,6 +33,7 @@ import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import { IsEditCourse } from "./EditCourseUtil";
+import { supabaseClient } from "src/utility";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -133,56 +134,10 @@ export const AccommodationField = ({
 }) => {
   const router = useRouter();
 
-  /**
-   * This variable holds the path of the url
-   */
-  const pathname = usePathname();
-
-  /**
-   * Checking whether the url contains the edit or not
-   */
-  const isEditCourse = IsEditCourse(pathname);
-
-  /**
-   * Here we need to get the data of participants who have choosen this particular accommodation type and it should be called when it is edit course only
-   */
-  let accommodationTypeData;
-  if (isEditCourse) {
-    accommodationTypeData = useList({
-      resource: "participant_registration",
-      meta: {
-        select: "*, program_accommodations!inner(accommodation_type_id)",
-      },
-      filters: [
-        {
-          field: "program_accommodations.accommodation_type_id",
-          operator: "eq",
-          value: data?.accommodation_type_id,
-        },
-        {
-          field: "program_id",
-          operator: "eq",
-          value: parseInt(router.query.id as string),
-        },
-      ],
-    });
-  }
-
-
-  /**
-   * This variable determines whether there are participants who has choosen this particular accommodation type or not based on data and is this the edit course or not
-   */
-  const isAccommodationDisabled: boolean =
-    accommodationTypeData?.data?.data &&
-    accommodationTypeData?.data?.data?.length > 0 &&
-    isEditCourse
-      ? true
-      : false;
-
   return (
     <div className="flex items-center w-full h-auto">
       <div className="w-[288px] p-[10px]">
-        <AccommodationType disabled={isAccommodationDisabled} index={index} />
+        <AccommodationType index={index} />
       </div>
       <div className="p-4 w-[288px] p-[10px]">
         <FeePerPerson index={index} />
@@ -327,16 +282,11 @@ const FeePerPerson = ({ index }: any) => {
 
 export const AccommodationType = ({
   index,
-  disabled,
 }: {
   /**
    * Index of the current accommodation
    */
   index: number;
-  /**
-   * This decides whether the accommodation type dropdown is disabled or not
-   */
-  disabled: boolean;
 }) => {
   const { watch } = useFormContext();
 
@@ -377,6 +327,38 @@ export const AccommodationType = ({
     (option) => !existingAccommodationValues?.includes(option.value)
   );
 
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const pathname = usePathname();
+
+  const {
+    query: { id },
+  } = useRouter();
+
+  useEffect(() => {
+    // we need to execute this only wheb the url contains the edit course
+    if (IsEditCourse(pathname) && value) {
+      const fetchData = async () => {
+        const { data, error }: any = await supabaseClient
+          .from("participant_registration")
+          .select("id,program_accommodations!inner(*)")
+          .eq("program_id", id)
+          .eq("program_accommodations.accommodation_type_id", value)
+          .limit(1);
+
+        if (error) {
+          console.error("some thing went wrong");
+        } else {
+          if (data && data?.length > 0) {
+            setIsDisabled(true);
+          }
+        }
+      };
+
+      fetchData();
+    }
+  }, []);
+
   return (
     <div className="w-full ">
       <Select
@@ -384,7 +366,7 @@ export const AccommodationType = ({
         onValueChange={(value: any) => {
           onChange(value);
         }}
-        disabled={disabled}
+        disabled={isDisabled}
       >
         <SelectTrigger error={error ? true : false}>
           <SelectValue placeholder="Select Accommodation" />
