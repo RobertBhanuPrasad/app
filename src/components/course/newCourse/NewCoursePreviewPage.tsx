@@ -447,9 +447,9 @@ export default function NewCourseReviewPage() {
 
               <abbr
                 className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
-                title={creator?.value}
+                title={translatedText(creator?.name)}
               >
-                {creator?.value ? creator?.value : "-"}
+                {creator?.name ? translatedText(creator?.name) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -613,9 +613,9 @@ export default function NewCourseReviewPage() {
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={visibility?.value}
+                title={translatedText(visibility?.name)}
               >
-                {visibility ? visibility?.value : "-"}
+                {visibility ? translatedText(visibility?.name) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -907,9 +907,9 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={paymentMethod?.value}
+                  title={translatedText(paymentMethod?.name)}
                 >
-                  {paymentMethod?.value}
+                  {translatedText(paymentMethod?.name)}
                 </abbr>
               </div>
             </div>

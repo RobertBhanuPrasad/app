@@ -1,6 +1,7 @@
 import { useOne } from '@refinedev/core'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { translatedText } from 'src/common/translations'
 import { CardLabel, MainHeader } from 'src/ui/TextTags'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'src/ui/accordion'
 import { formatDate } from 'src/utility/DateFunctions'
@@ -30,7 +31,7 @@ const CourseDetails = () => {
     id: Id,
     meta: {
       select:
-        '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules(*),program_teachers(*,user_id(contact_id(*))),program_accounting_status_id(id,value),program_contact_details(*)'
+        '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,name),program_schedules(*),program_teachers(*,user_id(contact_id(*))),program_accounting_status_id(id,name),program_contact_details(*)'
     }
   })
 
@@ -101,9 +102,9 @@ const CourseDetails = () => {
           <CardLabel className=" text-[14px] font-normal" children="Course Type" />
           <abbr
             className=" no-underline  truncate block text-[16px] text-[#666666]"
-            title={courseData?.data?.program_type_id?.name}
+            title={translatedText(courseData?.data?.program_type_id?.name)}
           >
-            {courseData?.data?.program_type_id?.name ? courseData?.data?.program_type_id?.name : '-'}
+            {courseData?.data?.program_type_id?.name ? translatedText(courseData?.data?.program_type_id?.name) : '-'}
           </abbr>
         </div>
         <div>
@@ -136,9 +137,9 @@ const CourseDetails = () => {
 
           <abbr
             className=" no-underline  truncate block text-[16px] text-[#666666]"
-            title={courseData?.data?.status_id?.value}
+            title={translatedText(courseData?.data?.status_id?.name)}
           >
-            {courseData?.data?.status_id?.value ? courseData?.data?.status_id?.value : '-'}
+            {courseData?.data?.status_id?.name ? translatedText(courseData?.data?.status_id?.name) : '-'}
           </abbr>
         </div>
         <div>
@@ -146,10 +147,10 @@ const CourseDetails = () => {
 
           <abbr
             className=" no-underline  truncate block text-[16px] text-[#666666]"
-            title={courseData?.data?.program_accounting_status_id?.value}
+            title={translatedText(courseData?.data?.program_accounting_status_id?.name)}
           >
-            {courseData?.data?.program_accounting_status_id?.value
-              ? courseData?.data?.program_accounting_status_id?.value
+            {courseData?.data?.program_accounting_status_id?.name
+              ? translatedText(courseData?.data?.program_accounting_status_id?.name)
               : '-'}
           </abbr>
         </div>

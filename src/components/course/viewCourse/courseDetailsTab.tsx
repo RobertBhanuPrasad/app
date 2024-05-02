@@ -26,7 +26,6 @@ interface LanguageItem {
 
 interface ProgramFeeItem {
   fee_level_id?: {
-    value?: string;
     name?: object
   };
   total?: number;
@@ -62,7 +61,7 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,value),program_type_id(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(value))),program_fee_level_settings(*,fee_level_id(value)),max_capacity,visibility_id(id,value)",
+        "*,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,name),program_type_id(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(name))),program_fee_level_settings(*,fee_level_id(name)),max_capacity,visibility_id(id,name)",
     },
   });
 
@@ -151,8 +150,8 @@ function CourseDetailsTab() {
             <div>
               <Header2>Course Accounting Status</Header2>
               <ItemValue>
-                {courseData?.data?.program_accounting_status_id?.value
-                  ? courseData?.data?.program_accounting_status_id?.value
+                {courseData?.data?.program_accounting_status_id?.name
+                  ? translatedText(courseData?.data?.program_accounting_status_id?.name)
                   : "-"}
               </ItemValue>
             </div>
@@ -207,8 +206,8 @@ function CourseDetailsTab() {
             <div>
               <Header2>Program Visibility</Header2>
               <ItemValue>
-                {courseData?.data?.visibility_id?.value
-                  ? courseData?.data?.visibility_id?.value
+                {courseData?.data?.visibility_id?.name
+                  ? translatedText(courseData?.data?.visibility_id?.name)
                   : "-"}
               </ItemValue>
             </div>
@@ -252,7 +251,7 @@ function CourseDetailsTab() {
               ? programFees?.map((item: ProgramFeeItem) => {
                   return (
                     <div className="flex flex-col gap-1">
-                      <Header2>{item?.fee_level_id?.value}</Header2>
+                      <Header2>{translatedText(item?.fee_level_id?.name as object)}</Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                         {item?.total}

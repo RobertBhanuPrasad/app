@@ -1,6 +1,10 @@
 import _ from "lodash";
 
-export const en = "en"
+/**
+ * @constant languageCode
+ * @description this const is used to get the languge code form the route and helps in the translation // TODO need to integrate the route
+ */
+export const languageCode = "es"
 
 /**
  * @function translatedText
@@ -10,5 +14,5 @@ export const en = "en"
  * @returns value to the respected key which is a string
  */
 export const translatedText = (name :  object) => {
-return _.get(name,en);
+return _.get(name,languageCode);
 }

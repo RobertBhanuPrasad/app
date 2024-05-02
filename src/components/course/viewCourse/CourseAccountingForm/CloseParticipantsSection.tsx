@@ -94,7 +94,7 @@ function CloseParticipantsSection() {
     resource: "participant_registration",
     meta: {
       // Selecting all columns along with the participant's full name and payment method details
-      select: "*, contact(full_name), payment_method(id, value)",
+      select: "*, contact(full_name), payment_method(id, name)",
     },
     pagination: {
       // Setting pagination to fetch a maximum of 1000 records per page
@@ -446,8 +446,8 @@ export const participantsColumns: ColumnDef<any>[] = [
         <div className="min-w-[150px]">
           {/* getting the payment_method from the row data */}
           <Text>
-            {row?.original?.payment_method?.value
-              ? row?.original?.payment_method?.value
+            {row?.original?.payment_method?.name
+              ? translatedText(row?.original?.payment_method?.name)
               : "-"}
           </Text>
         </div>

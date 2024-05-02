@@ -213,7 +213,7 @@ function index() {
     resource: 'program',
     meta: {
       select:
-        '*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)'
+        '*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)'
     },
     filters: filters,
     sorters: {
@@ -236,7 +236,7 @@ function index() {
     resource: 'program',
     meta: {
       select:
-        '*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)'
+        '*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)'
     },
     filters: {
       permanent: [
@@ -297,7 +297,7 @@ function index() {
         },
         {
           column_name: 'Course Status',
-          path: ['status_id', 'value']
+          path: ['status_id', 'name']
         },
         {
           column_name: 'Start Date',
@@ -321,11 +321,11 @@ function index() {
         },
         {
           column_name: 'Visibility',
-          path: ['visibility_id', 'value']
+          path: ['visibility_id', 'name']
         },
         {
           column_name: 'Course Accounting Status',
-          path: ['program_accounting_status_id', 'value']
+          path: ['program_accounting_status_id', 'name']
         }
       ]
 
@@ -335,7 +335,7 @@ function index() {
       const params = new URLSearchParams({
         table_name: 'program',
         select:
-          ',program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)',
+          ',program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)',
         columns: JSON.stringify(excelColumns)
       })
 

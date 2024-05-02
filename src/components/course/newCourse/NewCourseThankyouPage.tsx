@@ -73,7 +73,7 @@ useEffect(() => {
     id: programId,
     meta: {
       select:
-        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value),registration_link,details_page_link'
+        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,name),registration_link,details_page_link'
     }
   })
 
@@ -114,7 +114,7 @@ useEffect(() => {
           <div className="absolute flex items-center gap-4 right-6 top-4 rid-cols-2">
             <Button className={`width-[135px] rounded-[25px]  h-[25px] gap-2 ${statusStyles}`}>
               <Circle color={statusColorCode} fill={statusColorCode} size={5} className="text-[#FFB900]" />
-              {data?.data?.status_id?.value}
+              {translatedText(data?.data?.status_id?.name)}
             </Button>
           
               <Button variant="outline" className="text-indigo-600 border-indigo-600 " onClick={() => {router.replace('/courses/list')}}>

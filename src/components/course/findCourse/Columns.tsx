@@ -77,7 +77,7 @@ export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => 
         return <div className="min-w-[150px]">Course Status</div>
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>
+        return <div className="min-w-[150px]">{translatedText(row?.original?.status_id?.name)}</div>
       }
     },
     {
@@ -196,7 +196,8 @@ export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => 
         return <div>Visibility</div>
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.visibility_id?.value}</div>
+        
+        return <div className="min-w-[150px]">{translatedText(row?.original?.visibility_id?.name)}</div>
       }
     },
     {
@@ -208,8 +209,8 @@ export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => 
       cell: ({ row }: any) => {
         return (
           <div className="min-w-[200px]">
-            {row?.original?.program_accounting_status_id?.value
-              ? row?.original?.program_accounting_status_id?.value
+            {row?.original?.program_accounting_status_id?.name
+              ? translatedText(row?.original?.program_accounting_status_id?.name)
               : '-'}
           </div>
         )

@@ -1,5 +1,6 @@
 import { useList, useOne } from "@refinedev/core";
 import { useRouter } from "next/router";
+import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
@@ -19,7 +20,7 @@ export default function ViewDonationDetails({
     const { data: donationData } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(value),transaction_status_id(value),payment_transaction_id",
+            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(name),transaction_status_id(name),payment_transaction_id",
         },
         filters: [
             {
@@ -122,9 +123,9 @@ export default function ViewDonationDetails({
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]?.payment_method_id
-                                        ?.value
-                                        ? donationData?.data[0]
-                                              ?.payment_method_id?.value
+                                        ?.name
+                                        ? translatedText(donationData?.data[0]
+                                              ?.payment_method_id?.name)
                                         : "-"}
                                 </Text>
                             </div>
@@ -148,9 +149,9 @@ export default function ViewDonationDetails({
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]
-                                        ?.transaction_status_id?.value
-                                        ? donationData?.data[0]
-                                              ?.transaction_status_id?.value
+                                        ?.transaction_status_id?.name
+                                        ? translatedText(donationData?.data[0]
+                                              ?.transaction_status_id?.name)
                                         : "-"}
                                 </Text>
                             </div>

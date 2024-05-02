@@ -7,6 +7,7 @@ import { useList, useOne } from '@refinedev/core'
 import { useRouter } from 'next/router'
 import { ActionsDropDown } from 'pages/courses/[id]'
 import { useEffect, useState } from 'react'
+import { translatedText } from 'src/common/translations'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from 'src/ui/hover-card'
 import { formatDate } from 'src/utility/DateFunctions'
 import { supabaseClient } from 'src/utility/supabaseClient'
@@ -21,7 +22,7 @@ function HeaderSection() {
     id: Id,
     meta: {
       select:
-        '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)'
+        '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,name),program_schedules!inner(*)'
     }
   })
   const [participantData, setParticipantData] = useState<any>()
@@ -68,8 +69,8 @@ function HeaderSection() {
         </div>
         <div className="text-[33px] font-semibold pl-5 ">
           {courseData?.data?.program_alias_name_id
-            ? courseData?.data?.program_alias_name_id?.alias_name
-            : courseData?.data?.program_type_id?.name}
+            ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
+            : translatedText(courseData?.data?.program_type_id?.name)}
         </div>
         <div className="pr-2 ml-auto  ">
           <ActionsDropDown courseData={courseData?.data} />
