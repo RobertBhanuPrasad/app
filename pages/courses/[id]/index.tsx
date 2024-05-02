@@ -105,27 +105,7 @@ function ViewDetails() {
     }
   })
 
-  const [participantData, setParticipantData] = useState<any>()
-
-  const fetchData = async () => {
-    try {
-      const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
-        method: 'POST',
-        body: {
-          program_id: Id
-        }
-      })
-      setParticipantData(data)
-    } catch (error) {
-      console.error('Error fetching fee data:', error)
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
-
-  const totalRevenue = participantData?.income
+  const totalRevenue = courseData?.data?.revenue
 
   const startDate = formatDate(courseData?.data?.program_schedules[0]?.start_time)
 
@@ -245,7 +225,7 @@ function ViewDetails() {
             }}
             className="cursor-pointer"
           >
-            {participantData?.participantCount}
+            {courseData?.data?.participant_count}
           </div>
           <HoverCard>
             <HoverCardTrigger>
@@ -253,9 +233,9 @@ function ViewDetails() {
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                {participantData?.participantCount} Participants with: Transaction status = Confirmed / Pending
+              {courseData?.data?.participant_count} Participants with: Transaction status = Confirmed / Pending
                 Attendance status = Confirmed / Pending / Dropout Total participants records:
-                {participantData?.totalParticipantCount}
+                {courseData?.data?.total_participant_count}
               </div>
             </HoverCardContent>
           </HoverCard>

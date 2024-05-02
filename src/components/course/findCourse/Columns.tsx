@@ -172,21 +172,7 @@ export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => 
         return <div>Attendees</div>
       },
       cell: ({ row }: any) => {
-        const [participantCount, setParticipantCount] = useState<number>(0)
-        useEffect(() => {
-          const fetchData = async () => {
-            const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
-              method: 'POST',
-              body: {
-                program_id: row.original.id
-              }
-            })
-            setParticipantCount(data?.participantCount)
-          }
-
-          fetchData()
-        }, [])
-        return <div className="min-w-[150px]">{participantCount ? participantCount : '-'}</div>
+                return <div className="min-w-[150px]">{ row?.original?.participant_count}</div>
       }
     },
     {
@@ -233,22 +219,7 @@ export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => 
         return <div className="min-w-[150px]">Revenue</div>
       },
       cell: ({ row }: any) => {
-        const [revenue, setRevenue] = useState<any>()
-        useEffect(() => {
-          const fetchData = async () => {
-            const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
-              method: 'POST',
-              body: {
-                program_id: row.original.id
-              }
-            })
-            setRevenue(data)
-          }
-
-          fetchData()
-        }, [])
-
-        return <div className="min-w-[150px]">{revenue ? revenue.income : '-'}</div>
+        return <div className="min-w-[150px]">{row?.original?.revenue}</div>
       }
     },
 
