@@ -36,8 +36,6 @@ import {
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGeLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
@@ -428,12 +426,6 @@ function index() {
   const rowCount: number = Object.values(rowSelection).filter(
     (value) => value === true
   ).length;
-
-  const coutryCode = useGetCountryCode();
-  const languageCode = useGeLanguageCode();
-
-  console.log("coutry code", coutryCode);
-  console.log("language code", languageCode);
 
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
