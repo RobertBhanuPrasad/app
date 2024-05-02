@@ -106,7 +106,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     cell: ({ row }) => {
       return (
-        <Text className="lowercase ">
+        <Text>
           {formatDateAndTime(row?.original?.created_at)}
         </Text>
       );
@@ -116,7 +116,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     accessorKey: "transaction_type_id",
     header: () => {
       return (
-        <TableHeader className="  min-w-[150px]">Transaction Type </TableHeader>
+        <TableHeader className="min-w-[150px]">Transaction Type </TableHeader>
       );
     },
 
@@ -150,7 +150,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {row?.original?.payment_method_id?.value}
         </Text>
       );
@@ -168,7 +168,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     cell: ({ row }) => {
       return (
-        <Text className="lowercase ">{row?.original?.organization_fee}</Text>
+        <Text>{row?.original?.organization_fee}</Text>
       );
     },
   },
@@ -181,7 +181,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.expense_fee}</Text>;
+      return <Text>{row?.original?.expense_fee}</Text>;
     },
   },
   {
@@ -191,18 +191,18 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.tax}</Text>;
+      return <Text>{row?.original?.tax}</Text>;
     },
   },
   {
     accessorKey: "discounted_amount",
     header: () => {
-      return <TableHeader className="">Discount </TableHeader>;
+      return <TableHeader>Discount </TableHeader>;
     },
 
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">{row?.original?.discounted_amount}</Text>
+        <Text>{row?.original?.discounted_amount}</Text>
       );
     },
   },
@@ -216,7 +216,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {row?.original?.accommodation_type_id?.accommodation_type_id?.name}
         </Text>
       );
@@ -234,7 +234,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {row?.original?.accommodation_type_id?.fee_per_person}
         </Text>
       );
@@ -248,7 +248,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       );
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.total_amount}</Text>;
+      return <Text>{row?.original?.total_amount}</Text>;
     },
   },
   {
@@ -257,7 +257,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="min-w-[120px]">Source</TableHeader>;
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.source_text}</Text>;
+      return <Text>{row?.original?.source_text}</Text>;
     },
   },
   {
@@ -267,7 +267,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {row?.original?.transaction_fee_level_id?.value}
         </Text>
       );
@@ -282,7 +282,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {row?.original?.transaction_status_id?.value}
         </Text>
       );
@@ -295,7 +295,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">{row?.original?.transaction_reason}</Text>
+        <Text>{row?.original?.transaction_reason}</Text>
       );
     },
   },
