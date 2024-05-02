@@ -34,34 +34,8 @@ const CourseDetails = () => {
     }
   })
 
-  // Define state for holding participant data
-  const [participantData, setParticipantData] = useState<any>()
-
-  // Function to fetch participant data from server
-  const fetchData = async () => {
-    try {
-      // Invoke serverless function to get participant summary data
-      const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
-        method: 'POST',
-        body: {
-          program_id: Id
-        }
-      })
-      // Set fetched participant data to state
-      setParticipantData(data)
-    } catch (error) {
-      // Handle any errors that occur during fetching data
-      console.error('Error fetching fee data:', error)
-    }
-  }
-
-  // Fetch participant data when component mounts
-  useEffect(() => {
-    fetchData()
-  }, [])
-
   // Get total revenue from participant data
-  const totalRevenue = participantData?.income
+  const totalRevenue = courseData?.data?.revenue
 
   // here startDate and endDate will show when the course startdate and end date
   // ACTULLY we are getting start date from backend  2024-04-20T00:00:00+00:00 like this

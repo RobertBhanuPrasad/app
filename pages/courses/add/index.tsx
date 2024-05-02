@@ -310,7 +310,7 @@ export const NewCourseTabs = () => {
    * @constant RequiredNewCourseStep3FormNames
    * @description the names which are need to trigger for the validations of step 3
    */
-  let RequiredNewCourseStep3FormNames = []
+  let RequiredNewCourseStep3FormNames = ["schedules"]
 
   // REQUIRMENT if the program type is online then we need to validate the online url , state is present or not, city is present or not, center id is present or not
   // so if it is online type then we are keeping the online_url, state_id, city_id, center_id
