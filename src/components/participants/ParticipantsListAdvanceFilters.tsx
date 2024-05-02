@@ -391,6 +391,7 @@ export const PaymentMethod = () => {
         onSearch={() => {}}
         onChange={onSelectChange}
         searchBar={false}
+        variant='basic'
       />
     </div>
   )
@@ -422,6 +423,7 @@ export const FeeLevel = () => {
         onSearch={() => {}}
         onChange={onSelectChange}
         searchBar={false}
+        variant='basic'
       />
     </div>
   )
