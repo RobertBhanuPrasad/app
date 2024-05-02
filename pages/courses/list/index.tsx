@@ -7,7 +7,7 @@ import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { useSelect, useTable } from "@refinedev/core";
+import { useGetIdentity, useList, useOne, useSelect, useTable } from "@refinedev/core";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -34,9 +34,9 @@ import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { columns } from "../../../src/components/course/findCourse/Columns";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
-import { X } from "lucide-react";
 import CrossIcon from "@public/assets/CrossIcon";
 import { Text } from "src/ui/TextTags";
+import { PROGRAM_ORGANIZER, TEACHER } from "src/constants/OptionValueOrder";
 
 function index() {
   interface ExcelColumn {
@@ -213,6 +213,66 @@ function index() {
       value: AllFilterData?.advanceFilter?.course_accounting_status,
     });
   }
+    const { data: loginUserData }: any = useGetIdentity();
+    const loginUserID = loginUserData?.userData?.id
+
+  // Getting the role of the logged-in user from the "option_values" Table.
+    const roleOfLogginedUser = useOne({
+    resource: "option_values",
+    id: loginUserData?.userData?.user_roles?.[0]?.role_id?.id
+    })
+
+  // If we logged in as TEACHER then we need to write a filter to the data query,checking if that 'program_teachers.user_id' and 'program_organizers.user_id' are equal to the loginned user ID and that 'program_organizers' or 'program_teachers' are not null.
+    if (roleOfLogginedUser?.data?.data?.order == TEACHER) {
+    filters.permanent.push(
+    {
+      field: "program_teachers.user_id",
+      operator: "eq",
+      value: loginUserID,
+    },
+    {
+      field: "program_organizers.user_id",
+      operator: "eq",
+      value: loginUserID,
+    },
+    {
+      operator: "or",
+      value: [
+        {
+          field:"program_organizers",
+          operator:"nnull",
+          value:null,
+        },
+        {
+          field:"program_teachers",
+          operator:"nnull",
+          value:null,
+        }
+      ]
+    }
+    );
+  }
+
+  //  If we logged in as PROGRAM_ORGANIZER then we need to write a filter to the data query,checking if that 'program_organizers.user_id' are equal to the loginUserID and that program_organizers' are not null.
+    if (roleOfLogginedUser?.data?.data?.order == PROGRAM_ORGANIZER) {
+    filters.permanent.push(
+    {
+      field: "program_organizers.user_id",
+      operator: "eq",
+      value: loginUserID,
+    },
+    {
+      operator: "or",
+      value: [
+        {
+          field:"program_organizers",
+          operator:"nnull",
+          value:null,
+        },
+      ]
+    }
+    );
+  }
 
   /**
    * This holds the records of which rows are selected
@@ -233,7 +293,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        "*,program_teachers(users(id,contact_id(full_name))) , program_organizers(users(id,contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
     filters: filters,
     sorters: {
