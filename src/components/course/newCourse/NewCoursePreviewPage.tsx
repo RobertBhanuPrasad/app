@@ -49,6 +49,7 @@ import {
 } from "src/ui/alert-dialog";
 import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
+import { usePathname } from "next/navigation";
 
 export default function NewCourseReviewPage() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -136,6 +137,8 @@ export default function NewCourseReviewPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data }: any = useGetIdentity();
+
+  const pathname = usePathname();
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
 
@@ -376,7 +379,8 @@ export default function NewCourseReviewPage() {
       newCourseData,
       data?.userData?.id,
       setProgramId,
-      accountingNotSubmittedStatusId
+      accountingNotSubmittedStatusId,
+      pathname
     );
 
     if (isPosted) {
@@ -786,7 +790,12 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={timeFormat?.value}
                 >
-                  {timeFormat?.value ? timeFormat?.value : "-"}
+                  {timeFormat?.value
+                    ? timeFormat?.value.split(" ")[0] +
+                      " " +
+                      timeFormat?.value.split(" ")[1] +
+                      "s"
+                    : "-"}
                 </abbr>
               </div>
               <div className="w-[291px]">

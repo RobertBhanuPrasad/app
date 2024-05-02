@@ -12,12 +12,17 @@ import {
 import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
 import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
+import { IsEditCourse } from "./EditCourseUtil";
 
 export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
   setProgramId: (by: number) => void,
-  accountingNotSubmittedStatusId: number
+  accountingNotSubmittedStatusId: number,
+  /**
+   * The current url either add or edit
+   */
+  pathname: string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -300,7 +305,7 @@ export const handlePostProgramData = async (
         .eq("id", programId);
     }
 
-    //TODO: We are doing this in backend for only first deployment
+    //TODO: We are doing this in frontend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
     if (!programData[0]?.program_code) {
       await handleGenerateProgramCode(programId, loggedInUserId);
@@ -354,6 +359,10 @@ export const handlePostProgramData = async (
   )
     return false;
 
+  // We need to call one supabase edge function to update the course details in sync DB aswell to reflect the changes in unity pages
+  // edge function name : sync-program
+  // we need to call this edge funtion only when all program data has been saved
+  if (!(await handleSyncProgramEdgeFunction(programId, pathname))) return false;
   return true;
 };
 
@@ -981,78 +990,107 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 
   const venueBody: VenueDataBaseType = {};
 
-  if (body.isNewVenue) {
+  if (body.is_existing_venue === "new-venue") {
     venueData = body?.newVenue || {};
-  } else {
-    const venueId = body.existingVenue?.id;
-    venueData = body?.existingVenue || {};
 
-    // if it is existing venue then we will insert the id and do upsert automatically it will work update or insert
-    if (venueId) {
-      venueBody.id = venueId;
-    }
-  }
-
-  if (venueData.name) {
-    venueBody.name = venueData.name;
-  }
-
-  if (venueData.address) {
-    venueBody.address = venueData.address;
-  }
-
-  if (venueData.state_id) {
-    venueBody.state_id = venueData.state_id;
-  }
-
-  if (venueData.city_id) {
-    venueBody.city_id = venueData.city_id;
-  }
-
-  if (venueData.center_id) {
-    venueBody.center_id = venueData.center_id;
-  }
-
-  if (venueData.postal_code) {
-    venueBody.postal_code = venueData.postal_code;
-  }
-
-  venueBody.created_by_user_id = loggedInUserId;
-
-  //TODO: Need to post latitude and longitude also when map component was done.
-
-  const { data, error } = await supabaseClient
-    .from("venue")
-    .upsert(venueBody)
-    .select();
-
-  if (error) {
-    console.log("error while creating venue", error);
-    return false;
-  } else {
-    console.log("venue created or updated successfully", data);
-  }
-
-  // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
-  // we have to delete them from database
-
-  const deleteVenueIDs = body.deletedVenueID;
-  if (deleteVenueIDs && deleteVenueIDs.length > 0) {
+    //For New Venue directly posting data in venue table
     const { data, error } = await supabaseClient
       .from("venue")
-      .delete()
-      .in("id", deleteVenueIDs)
+      .insert({ ...venueData, created_by_user_id: loggedInUserId })
       .select();
 
     if (error) {
-      console.log("error while deleting venue", error);
+      console.log("error while creating new venue", error);
       return false;
     } else {
-      console.log("venues deleted successfully", data);
+      console.log("New venue created", data);
+    }
+
+    return data?.[0]?.id;
+  } else {
+    // we are inserting new venue at the time of editing for the present user
+    const venueId = body.existingVenue?.id;
+    venueData = body?.existingVenue || {};
+
+    if (venueData.name) {
+      venueBody.name = venueData.name;
+    }
+
+    if (venueData.address) {
+      venueBody.address = venueData.address;
+    }
+
+    if (venueData.state_id) {
+      venueBody.state_id = venueData.state_id;
+    }
+
+    if (venueData.city_id) {
+      venueBody.city_id = venueData.city_id;
+    }
+
+    if (venueData.center_id) {
+      venueBody.center_id = venueData.center_id;
+    }
+
+    if (venueData.postal_code) {
+      venueBody.postal_code = venueData.postal_code;
+    }
+
+    venueBody.created_by_user_id = loggedInUserId;
+
+    //Exacting deleted venue IDs from form
+    const deleteVenueIDs = body.deletedVenueID;
+
+    if (deleteVenueIDs && deleteVenueIDs.length > 0) {
+      //Soft deleting all the venues deleted by user while creating course.
+      const { data, error } = await supabaseClient
+        .from("venue")
+        .update({ is_deleted: true })
+        .in("id", deleteVenueIDs)
+        .select();
+
+      console.log("deleted Venues are", data);
+      if (error) {
+        console.log("error while deleting venue", error);
+        return false;
+      } else {
+        console.log("venues deleted successfully", data);
+      }
+    }
+
+    if (body?.isExistingVenueEdited === true) {
+      // we have to temporary delete the existing venue and create new if user edits
+
+      const { data } = await supabaseClient
+        .from("venue")
+        .update({ is_deleted: true }) // Update the field to mark as deleted
+        .eq("id", venueId);
+
+      console.log(data, "deleted data venue");
+
+      //TODO: Need to post latitude and longitude also when map component was done.
+
+      // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
+      // we have to delete them from database
+
+      const { data: insertData, error } = await supabaseClient
+        .from("venue")
+        .insert(venueBody)
+        .select();
+
+      if (error) {
+        console.log("error while creating new venue edited by user", error);
+        return false;
+      } else {
+        console.log("new Venue edited by user is created", insertData);
+      }
+
+      return insertData[0].id;
+    } else {
+      // if user was not edited and select the venue then just return the venue
+      return body?.existingVenue?.id;
     }
   }
-
-  return data[0].id;
 };
 
 export const handleProgramStatusUpdate = async (programId: number) => {
@@ -1238,4 +1276,39 @@ const handleProgramAccountingStatusUpdate = async (
     console.log("program accounting status updated successfully", data);
     return true;
   }
+};
+
+/**
+ * A function to handle the synchronization of a program edge.
+ * @param {number} programId - The ID of the program to synchronize.
+ * @return {boolean} Returns true if the synchronization is successful, false otherwise.
+ */
+export const handleSyncProgramEdgeFunction = async (
+  programId: number,
+  pathname: string
+) => {
+  const method = IsEditCourse(pathname) ? "PUT" : "POST";
+
+  console.log("method", method);
+
+  const { data, error }: any = await supabaseClient.functions.invoke(
+    `sync-program/${programId}`,
+    {
+      headers: {
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+        //TODO: Will need to change public schema to country code once supabase country wise set up is done/
+        "country-code": "public",
+      },
+      method,
+    }
+  );
+
+  if (error) {
+    console.error("error occured while syncing program edge function", error);
+    return false;
+  }
+
+  console.log("sync program edge function invoked successfully", data);
+  return true;
 };
