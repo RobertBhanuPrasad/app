@@ -12,8 +12,10 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { supabaseClient } from "src/utility";
+import { useTranslation } from 'next-i18next';
 
 export const VenueNameComponent = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value: venueName, onChange: venueOnchange },
     fieldState: { error: venueError },
@@ -23,12 +25,12 @@ export const VenueNameComponent = () => {
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Venue Name <div className="text-[#7677F4]"> *</div>
+        {t("course.new_course:time_and_venue_tab.venue_name")} <div className="text-[#7677F4]"> *</div>
       </div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={venueName}
-          placeholder="Enter Venue Name"
+          placeholder={t("course.new_course:time_and_venue_tab.venue_name_placeholder")}
           className="placeholder:text-[#999999]"
           onChange={venueOnchange}
           error={venueError ? true : false}
@@ -44,6 +46,7 @@ export const VenueNameComponent = () => {
 };
 
 export const PostalCodeComponent = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
     fieldState: { error },
@@ -69,11 +72,11 @@ export const PostalCodeComponent = () => {
   }, [postalCodeValue]);
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Postal Code</div>
+      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.postal_code")}</div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={postalCodeValue}
-          placeholder="Enter Postal Code"
+          placeholder={t("course.new_course:time_and_venue_tab.postal_code_placeholder")}
           className="placeholder:text-[#999999]"
           onChange={postalCodeOnchange}
           error={error ? true : false}
@@ -89,6 +92,7 @@ export const PostalCodeComponent = () => {
 };
 
 export const StreetAddressComponent = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value: streetAddressValue, onChange: streetAddressOnchange },
     fieldState: { error },
@@ -97,11 +101,11 @@ export const StreetAddressComponent = () => {
   });
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Street Address</div>
+      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.street_address")}</div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
           value={streetAddressValue}
-          placeholder="Enter Street Address"
+          placeholder={t("course.new_course:time_and_venue_tab.street_address_placeholder")}
           className="placeholder:text-[#999999]"
           onChange={streetAddressOnchange}
           error={error ? true : false}
@@ -117,6 +121,7 @@ export const StreetAddressComponent = () => {
 };
 
 export const CityDropDown = ({ name }: { name: string }) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const [pageSize, setPageSize] = useState(10);
 
   const {
@@ -161,11 +166,11 @@ export const CityDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">City</div>
+      <div className="text-xs font-normal text-[#333333]">{t("city")}</div>
 
       <Select value={cityValue} onValueChange={cityValueOnChange}>
         <SelectTrigger className="w-full" error={cityValueError ? true : false}>
-          <SelectValue placeholder="Select City" />
+          <SelectValue placeholder={t("city_placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <Input
@@ -197,6 +202,7 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
@@ -233,14 +239,14 @@ export const StateDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
-      <div className="text-xs font-normal text-[#333333]">Province</div>
+      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.province")}</div>
 
       <Select value={stateValue} onValueChange={stateValueOnchange}>
         <SelectTrigger
           className="w-full"
           error={stateValueError ? true : false}
         >
-          <SelectValue placeholder="Select Province" />
+          <SelectValue placeholder={t("course.new_course:time_and_venue_tab.province_placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <Input
@@ -277,6 +283,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
 };
 
 export const CenterDropDown = ({ name }: { name: string }) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const [pageSize, setPageSize] = useState(10);
 
   const {
@@ -330,13 +337,13 @@ export const CenterDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Local Center</div>
+      <div className="text-xs font-normal text-[#333333]">{t("local_center")}</div>
       <Select value={centerValue} onValueChange={centerValueOnChange}>
         <SelectTrigger
           className="w-full"
           error={centerValueError ? true : false}
         >
-          <SelectValue placeholder="Select Local center" />
+          <SelectValue placeholder={t("course.new_course:time_and_venue_tab.local_center_placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <Input

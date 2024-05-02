@@ -27,6 +27,10 @@ import { Sheet, SheetContent, SheetTrigger } from 'src/ui/sheet'
 import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
+import { authProvider } from "src/authProvider"
+import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+
 function index() {
   interface ExcelColumn {
     column_name: string
@@ -749,5 +753,27 @@ const AdvanceFilter = ({ hasAliasNameFalse }: any) => {
         <Filters setAdvanceFilterOpen={setAdvanceFilterOpen} hasAliasNameFalse={hasAliasNameFalse} />
       </SheetContent>
     </Sheet>
-  )
-}
+  );
+};
+
+
+export const getServerSideProps: GetServerSideProps<{}> = async context => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "new_strings"])
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
+        permanent: false
+      }
+    }
+  }
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};

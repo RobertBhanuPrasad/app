@@ -35,6 +35,8 @@ import {
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
+import { useTranslation } from 'next-i18next';
+
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -72,6 +74,7 @@ function NewCourseStep1() {
 export default NewCourseStep1;
 
 const RegistrationGateway = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value = false, onChange },
   } = useController({
@@ -88,7 +91,7 @@ const RegistrationGateway = () => {
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
       <div className="text-[14px] font-normal">
-        Registration via 3rd party gateway
+        {t("registration_via_3rd_party_gateway")}
       </div>
       <Switch
         id="registration"
@@ -99,11 +102,11 @@ const RegistrationGateway = () => {
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">
           <div className="text-xs font-normal text-[#333333]">
-            Please input the site's URL *
+            {t("new_strings:please_input_the_site_url")}*
           </div>
           <div className="w-[320px] h-[40px] rounded-[1px] text-[#999999] font-normal">
             <Input
-              placeholder="Enter URL"
+              placeholder={t("new_strings:enter_url")}
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
               className="placeholder:text-[#999999]"
@@ -124,6 +127,7 @@ const RadioCards = () => {
 
   const { clearErrors } = useFormContext();
 
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value, onChange },
     fieldState: { error: radioError },
@@ -215,7 +219,7 @@ const RadioCards = () => {
                 <Teacher
                   color={` ${value === iAmTeachingId ? "#7677F4" : "#999999"}`}
                 />
-                I am teaching this course
+              {t("course.new_course:basic_details_tab.teaching_course")}
               </div>
             </Card>
           </Label>
@@ -249,7 +253,7 @@ const RadioCards = () => {
                     value === iAmCoTeachingId ? "#7677F4" : "#999999"
                     }`}
                 />
-                I am co-teaching this course
+              {t("course.new_course:basic_details_tab.co_teaching")}
               </div>
             </Card>
           </Label>
@@ -281,7 +285,7 @@ const RadioCards = () => {
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
               <div className="w-[240px] text-wrap text-center justify-center">
-                I am organizing this course for another teacher
+                {t("new_strings:i_am_organizing_this_course")}
               </div>
             </div>
           </Card>
@@ -331,11 +335,12 @@ const OrganizationDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
 
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333]">Organization *</div>
+        <div className="text-xs font-normal text-[#333333]">{t('organization')}*</div>
         <Select
           value={value}
           onValueChange={(value: any) => {
@@ -346,7 +351,7 @@ const OrganizationDropDown = () => {
             className="w-[320px]"
             error={organizationError ? true : false}
           >
-            <SelectValue placeholder="Select Organization" />
+            <SelectValue placeholder={t("course.new_course:basic_details_tab.organization_placeholder")} />
           </SelectTrigger>
           <SelectContent>
             <Input value={searchValue} onChange={handleSearch} />
@@ -432,15 +437,16 @@ const ProgramOrganizerDropDown = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 10);
   };
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
 
   return (
     <div className="w-80 flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        Program Organizer *
+        {t("program_organizer")} *
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Program organizer Name"
+        placeholder={t("course.new_course:basic_details_tab.program_organizer_placeholder")}
         data={options}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
