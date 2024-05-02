@@ -2,9 +2,9 @@ import _ from "lodash";
 
 /**
  * @constant languageCode
- * @description this const is used to get the languge code form the route and helps in the translation // TODO need to integrate the route
+ * @description this is used to get the languge code form the route and helps in the translation // TODO need to integrate the route
  */
-export const languageCode = "es"
+export const languageCode = "en"
 
 /**
  * @function translatedText
