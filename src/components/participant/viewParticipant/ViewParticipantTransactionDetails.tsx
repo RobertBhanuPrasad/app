@@ -201,8 +201,14 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
+        const organizationFee = row?.original?.organization_fee ? row?.original?.organization_fee : 0
+        const accomdationFee = row?.original?.accommodation_fee ? row?.original?.accommodation_fee : 0
+        const tax = row?.original?.tax ? row?.original?.tax : 0
+        const amountPaidByParticipant = organizationFee + accomdationFee + tax
+        const totalAmount = row?.original?.total_amount ? row?.original?.total_amount : 0
+        const discount = amountPaidByParticipant - totalAmount
       return (
-        <Text className="lowercase">{row?.original?.discounted_amount}</Text>
+        <Text className="lowercase">{discount}</Text>
       );
     },
   },
@@ -235,7 +241,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     cell: ({ row }) => {
       return (
         <Text className="lowercase">
-          {row?.original?.accommodation_type_id?.fee_per_person}
+          {row?.original?.accommodation_fee}
         </Text>
       );
     },
