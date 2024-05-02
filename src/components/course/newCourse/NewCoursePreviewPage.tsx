@@ -47,7 +47,6 @@ export default function NewCourseReviewPage() {
   const { data: loginUserData }: any = useGetIdentity();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
 
   // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
@@ -133,6 +132,8 @@ export default function NewCourseReviewPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data }: any = useGetIdentity();
+
+  const pathname = usePathname();
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
 
@@ -371,7 +372,8 @@ export default function NewCourseReviewPage() {
       newCourseData,
       data?.userData?.id,
       setProgramId,
-      accountingNotSubmittedStatusId
+      accountingNotSubmittedStatusId,
+      pathname
     );
 
     if (isPosted) {
@@ -791,9 +793,11 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={timeFormat?.value}
                 >
-                   {timeFormat?.value ?
-                    timeFormat?.value.split(" ")[0] + " " +
-                    timeFormat?.value.split(" ")[1] + "s"
+                  {timeFormat?.value
+                    ? timeFormat?.value.split(" ")[0] +
+                      " " +
+                      timeFormat?.value.split(" ")[1] +
+                      "s"
                     : "-"}
                 </abbr>
               </div>
