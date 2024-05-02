@@ -6,7 +6,7 @@ import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
-import { optionValue } from "src/common/translations";
+import { translatedText } from "src/common/translations";
 import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
@@ -253,7 +253,7 @@ export const CourseTypeDropDown = () => {
   const options: { label: string; value: number }[] =
     queryResult?.data?.data?.map((programType) => {
       return {
-        label: optionValue(programType?.name),
+        label: translatedText(programType?.name),
         value: programType?.id,
       };
     }) as any as { label: string; value: number }[];
@@ -454,7 +454,7 @@ const CourseNameDropDown = () => {
                   value={option.value}
                   className="h-[44px]"
                 >
-                  {optionValue(option.label)}
+                  {translatedText(option.label)}
                 </SelectItem>
                 {index < options?.length - 1 && (
                   <hr className="border-[#D6D7D8]" />

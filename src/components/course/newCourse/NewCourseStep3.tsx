@@ -54,7 +54,7 @@ import {
 } from 'src/utility/GetOptionValuesByOptionLabel'
 import { useValidateCurrentStepFields } from 'src/utility/ValidationSteps'
 import useDebounce from 'src/utility/useDebounceHook'
-import { optionValue } from 'src/common/translations'
+import { translatedText } from 'src/common/translations'
 
 function NewCourseStep3() {
   const { watch } = useFormContext()
@@ -200,7 +200,7 @@ const SchedulesHeader = () => {
             <SelectContent className="w-[161px]">
               {timeFormatOptions?.map((option: any) => (
                 <SelectItem key={option.value} value={option.value}>
-                  {optionValue(option.label)}
+                  {translatedText(option.label)}
                 </SelectItem>
               ))}
             </SelectContent>

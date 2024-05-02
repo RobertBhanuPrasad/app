@@ -1,5 +1,5 @@
 import { useOne } from '@refinedev/core'
-import { optionValue } from 'src/common/translations'
+import { translatedText } from 'src/common/translations'
 import { CardLabel, CardValue } from 'src/ui/TextTags'
 
 // Component for viewing participant course information
@@ -24,11 +24,11 @@ function ViewParticipantCourseInformation({ participantId }: any) {
 
   // Participant course information
   const coursePaticipantInformation = [
-    { key: 'Course Type', value: optionValue(participantCourseData?.data?.program_id?.program_type_id?.name) },
+    { key: 'Course Type', value: translatedText(participantCourseData?.data?.program_id?.program_type_id?.name) },
     {
       key: 'CourseName',
       value: participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
-        ? optionValue(participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name)
+        ? translatedText(participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name)
         : '-'
     },
     { key: 'Teachers', value: teacherFullNames },

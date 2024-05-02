@@ -30,7 +30,7 @@ import _ from "lodash";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PAYMENT_MODE } from "src/constants/OptionLabels";
 import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
-import { optionValue } from "src/common/translations";
+import { translatedText } from "src/common/translations";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -304,7 +304,7 @@ export const AccommodationType = ({ index }: { index: number }) => {
                     value={option.value}
                     className="h-[44px]"
                   >
-                    {optionValue(option.label)}
+                    {translatedText(option.label)}
                   </SelectItem>
                   {index < options?.length - 1 && (
                     <hr className="border-[#D6D7D8]" />

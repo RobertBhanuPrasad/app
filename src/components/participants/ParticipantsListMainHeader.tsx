@@ -7,7 +7,7 @@ import { useList, useOne } from "@refinedev/core";
 import { ChevronLeftIcon, MoveLeftIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { optionValue } from "src/common/translations";
+import { translatedText } from "src/common/translations";
 import {
   HoverCard,
   HoverCardContent,
@@ -88,8 +88,8 @@ export const ParticipantsListMainHeader = () => {
           {/* Course Name */}
           <div className="text-[32px] font-medium">
             {courseData?.data?.program_alias_name_id
-              ? optionValue(courseData?.data?.program_alias_name_id?.alias_name)
-              : optionValue(courseData?.data?.program_type_id?.name)}
+              ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
+              : translatedText(courseData?.data?.program_type_id?.name)}
           </div>
           {/* Course Info */}
           <div className="flex gap-8 pt-2">

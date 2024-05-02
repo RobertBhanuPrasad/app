@@ -2,7 +2,7 @@ import Star from "@public/assets/star";
 import { useList, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
-import { optionValue } from "src/common/translations";
+import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Input } from "src/ui/input";
@@ -207,7 +207,7 @@ export default function PaymentDetails() {
                                                     value={option.value}
                                                     className="h-[44px]"
                                                 >
-                                                    {optionValue(option.label)}
+                                                    {translatedText(option.label)}
                                                 </SelectItem>
                                             </>
                                         )

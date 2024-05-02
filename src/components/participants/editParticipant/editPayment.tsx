@@ -33,7 +33,7 @@ import { Textarea } from "src/ui/textarea";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { DialogContent } from "src/ui/dialog";
 import Tick from "@public/assets/Tick";
-import { optionValue } from "src/common/translations";
+import { translatedText } from "src/common/translations";
 interface EditPaymentProps {
   setEditPayment: React.Dispatch<React.SetStateAction<any>>;
   paymentId: number;
@@ -254,7 +254,7 @@ export default function EditPayment({
                                       value={option.value}
                                       className="h-[44px]"
                                     >
-                                      {optionValue(option.label)}
+                                      {translatedText(option.label)}
                                     </SelectItem>
                                   </>
                                 )
@@ -331,7 +331,7 @@ export default function EditPayment({
                                       value={option.value}
                                       className="h-[44px]"
                                     >
-                                      {optionValue(option.label)}
+                                      {translatedText(option.label)}
                                     </SelectItem>
                                     {index < payment_method?.length - 1 && (
                                       <hr className="border-[#D6D7D8]" />

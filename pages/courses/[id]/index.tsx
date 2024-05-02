@@ -75,7 +75,7 @@ import { Textarea } from 'src/ui/textarea'
 import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import CourseAccountingFormTab from '../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab'
-import { optionValue } from 'src/common/translations'
+import { translatedText } from 'src/common/translations'
 
 function index() {
   const { viewPreviewPage } = newCourseStore()
@@ -225,8 +225,8 @@ function ViewDetails() {
         <div className="flex flex-row justify-between">
           <div className="text-[32px] font-semibold">
             {courseData?.data?.program_alias_name_id
-              ? optionValue(courseData?.data?.program_alias_name_id?.alias_name)
-              : optionValue(courseData?.data?.program_type_id?.name)}
+              ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
+              : translatedText(courseData?.data?.program_type_id?.name)}
           </div>
           <div className="flex items-center gap-4">
             <DisplayingCourseStatus statusId={courseData?.data?.status_id?.value} />

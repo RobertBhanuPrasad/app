@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 import { CountComponent } from "pages/courses/list";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import { optionValue } from "src/common/translations";
+import { translatedText } from "src/common/translations";
 import {
   PARTICIPANT_ATTENDANCE_STATUS,
   PARTICIPANT_PAYMENT_STATUS,
@@ -574,7 +574,7 @@ function index() {
                             handleUpdateAttendanceStatus(record.id)
                           }
                         >
-                          {optionValue(record.name)}
+                          {translatedText(record.name)}
                         </DropdownMenuItem>
                       ))
                     : paymentStatusOptions?.map((record: any) => (
@@ -584,7 +584,7 @@ function index() {
                             handleBulkUpdateTransactionStatus(record.id)
                           }
                         >
-                          {optionValue(record.name)}
+                          {translatedText(record.name)}
                         </DropdownMenuItem>
                       ))}
                 </div>
@@ -715,7 +715,7 @@ const HeaderSection = () => {
   const transactionStatusValues = transactionStatusOptions?.map(
     (record: any) => {
       return {
-        label: optionValue(record?.name),
+        label: translatedText(record?.name),
         value: record?.id,
       };
     }

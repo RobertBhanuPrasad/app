@@ -3,7 +3,7 @@ import CopyIcon from "@public/assets/CopyIcon";
 import { useList, useOne } from "@refinedev/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { optionValue } from "src/common/translations";
+import { translatedText } from "src/common/translations";
 import { Header2, ItemValue } from "src/commonComponents";
 import { VISIBILITY } from "src/constants/OptionLabels";
 import { PUBLIC } from "src/constants/OptionValueOrder";
@@ -144,7 +144,7 @@ function CourseDetailsTab() {
               <Header2>Course type</Header2>
               <ItemValue>
                 {courseData?.data?.program_type_id?.name
-                  ? optionValue(courseData?.data?.program_type_id?.name)
+                  ? translatedText(courseData?.data?.program_type_id?.name)
                   : "-"}
               </ItemValue>
             </div>
@@ -266,7 +266,7 @@ function CourseDetailsTab() {
                   (item: AccommodationItem) => {
                     return (
                       <div className="flex flex-col gap-1">
-                        <Header2>{optionValue(item?.accommodation_type_id?.name as any)}</Header2>
+                        <Header2>{translatedText(item?.accommodation_type_id?.name as any)}</Header2>
                         <ItemValue>
                           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                           {item?.fee_per_person}
