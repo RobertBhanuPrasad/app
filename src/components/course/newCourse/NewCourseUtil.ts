@@ -985,7 +985,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 
   const venueBody: VenueDataBaseType = {};
 
-  if (body.isNewVenue) {
+  if (body.is_existing_venue === "new-venue") {
     venueData = body?.newVenue || {};
 
     //For New Venue directly posting data in venue table
@@ -1081,6 +1081,9 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
       }
 
       return insertData[0].id;
+    } else {
+      // if user was not edited and select the venue then just return the venue
+      return body?.existingVenue?.id;
     }
   }
 };
@@ -1272,12 +1275,11 @@ const handleProgramAccountingStatusUpdate = async (
 
 /**
  * A function to handle the synchronization of a program edge.
- *
  * @param {number} programId - The ID of the program to synchronize.
  * @return {boolean} Returns true if the synchronization is successful, false otherwise.
  */
 export const handleSyncProgramEdgeFunction = async (programId: number) => {
-  const { data, error }: any = supabaseClient.functions.invoke(
+  const { data, error }: any = await supabaseClient.functions.invoke(
     `sync-program/${programId}`,
     {
       headers: {
