@@ -1,10 +1,11 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
 import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
+import { VIEW_CUSTOMER_DEVICE_DETAILS } from 'src/constants/Tabs'
 import { TableHeader, Text } from 'src/ui/TextTags'
 import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant customer device details
-function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
+function ViewParticipantCustomerDeviceDetails({ participantId, activeTabValue }: any) {
   const query: any = {
     resource: 'participant_registration',
     id: participantId,
@@ -18,7 +19,9 @@ function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
 
   return (
     <div>
-      <p className="text-[18px] font-[600]">Customer Device Details</p>
+      <p className={` ${activeTabValue == VIEW_CUSTOMER_DEVICE_DETAILS && 'text-[#7677F4]'} text-[18px] font-[600]`}>
+        Customer Device Details
+      </p>
       <div>
         <BaseTable
           checkboxSelection={false}

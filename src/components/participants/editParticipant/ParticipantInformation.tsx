@@ -2,10 +2,11 @@ import Star from "@public/assets/star";
 import { useOne } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
+import { EDIT_PARTICIPANT_INFORMATION } from "src/constants/Tabs";
 import { Input } from "src/ui/input";
 import { Text } from "src/ui/TextTags";
 
-export default function ParticipantInformation() {
+export default function ParticipantInformation({activeTabValue}:any) {
     const { query } = useRouter();
 
     // Use useController to control the participantMemo field
@@ -30,7 +31,7 @@ export default function ParticipantInformation() {
 
     return (
         <div id="participants">
-            <Text className="font-semibold text-[18px] pt-[25px] ">
+            <Text className= {` ${activeTabValue == EDIT_PARTICIPANT_INFORMATION && 'text-[#7677F4]'} pt-[25px] text-[18px] font-[600]`}>
                 Participant Details
             </Text>
             <div className="flex py-[20px]">

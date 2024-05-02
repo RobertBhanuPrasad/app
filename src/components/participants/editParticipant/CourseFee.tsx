@@ -1,9 +1,10 @@
 import { useList } from "@refinedev/core";
 import { useRouter } from "next/router";
+import { EDIT_PARTICIPANT_COURSE_FEE } from "src/constants/Tabs";
 import { Text } from "src/ui/TextTags";
 import { formatDateString } from "src/utility/DateFunctions";
 
-export default function CourseFee() {
+export default function CourseFee({activeTabValue}:any) {
     const { query } = useRouter();
     const Id: number | undefined = query?.participantId
         ? parseInt(query?.participantId as string)
@@ -38,7 +39,7 @@ export default function CourseFee() {
     
     return (
         <div className="" id="Course">
-            <Text className="font-semibold text-[18px] pt-[25px]">
+            <Text className={` ${activeTabValue == EDIT_PARTICIPANT_COURSE_FEE && 'text-[#7677F4]'} pt-[25px] text-[18px] font-[600]`}>
                 Course Fees
             </Text>
             <div className="flex py-[20px]">

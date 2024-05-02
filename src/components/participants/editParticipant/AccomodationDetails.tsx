@@ -2,6 +2,7 @@ import Star from "@public/assets/star";
 import { useList } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
+import { EDIT_PARTICIPANT_ACCOMODATION_DETAILS } from "src/constants/Tabs";
 import { Text } from "src/ui/TextTags";
 import { Input } from "src/ui/input";
 import { RadioGroup } from "src/ui/radio-group";
@@ -15,7 +16,7 @@ import {
     SelectValue,
 } from "src/ui/select";
 
-export default function AccomodationDetails() {
+export default function AccomodationDetails({activeTabValue}:any) {
     const { getValues } = useFormContext();
     const FormData = getValues();
 
@@ -89,7 +90,7 @@ export default function AccomodationDetails() {
 
     return (
         <div id="Accomodation">
-            <Text className="font-semibold text-[18px] py-[25px]">
+            <Text className={` ${activeTabValue == EDIT_PARTICIPANT_ACCOMODATION_DETAILS && 'text-[#7677F4]'} py-[25px] text-[18px] font-[600]`}>
                 Accomodation Details
             </Text>
             <div className="flex gap-4">

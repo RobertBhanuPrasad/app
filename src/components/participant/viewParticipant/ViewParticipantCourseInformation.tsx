@@ -1,8 +1,9 @@
 import { useOne } from '@refinedev/core'
+import { VIEW_PARTICIPANT_COURSE_INFORMATION } from 'src/constants/Tabs'
 import { CardLabel, CardValue } from 'src/ui/TextTags'
 
 // Component for viewing participant course information
-function ViewParticipantCourseInformation({ participantId }: any) {
+function ViewParticipantCourseInformation({ participantId, activeTabValue }: any) {
   // Query for fetching participant registration data
   const query: any = {
     resource: 'participant_registration',
@@ -37,7 +38,13 @@ function ViewParticipantCourseInformation({ participantId }: any) {
 
   return (
     <div>
-      <p className="text-[#7677F4] text-[18px] font-[600]">Course Information </p>
+      <p
+        className={` ${
+          activeTabValue == VIEW_PARTICIPANT_COURSE_INFORMATION && 'text-[#7677F4]'
+        } text-[18px] font-[600]`}
+      >
+        Course Information
+      </p>
       <div className="grid grid-cols-3 gap-4 mt-[20px]">
         {/* Rendering course information */}
         {coursePaticipantInformation.map((info, index) => (

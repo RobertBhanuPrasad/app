@@ -4,9 +4,15 @@ interface Tab {
   id: number;
   label: string;
   content: JSX.Element;
+  value: string;
 }
 
-function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
+interface ScrollableTabsProps {
+  tabs: Tab[];
+  onTabChange: (value: string) => void; // Callback function to handle tab change
+}
+
+function ScrollableTabs({ tabs, onTabChange }: ScrollableTabsProps) {
   const [activeTab, setActiveTab] = useState<number>(0);
   const tabRefs = useRef<HTMLDivElement[]>([]);
 
@@ -18,6 +24,7 @@ function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
             const target = entry.target as HTMLElement;
             const tabIndex = parseInt(target.dataset.tabIndex || "0");
             setActiveTab(tabIndex);
+            onTabChange(tabs[tabIndex].value); // Invoke the callback with the value of the active tab
           }
         });
       },
