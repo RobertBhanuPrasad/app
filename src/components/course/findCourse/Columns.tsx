@@ -19,220 +19,220 @@ import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string }
-export const column = (hasFalseAliasName: boolean,t:any) => {
-  const finalColumns : ExtendedColumnDef<any>[] = [
+export const column = (hasFalseAliasName: boolean, t: any) => {
+  const finalColumns: ExtendedColumnDef<any>[] = [
     {
-    accessorKey: "program_code",
-    column_name: t('common:course_id'),
+      accessorKey: "program_code",
+      column_name: t('common:course_id'),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-      return <div className="w-[100px]">{t('common:course_id')}</div>;
+        return <div className="w-[100px]">{t('common:course_id')}</div>;
       },
       cell: ({ row }: any) => {
-      const router = useRouter();
+        const router = useRouter();
         return (
           <div
             onClick={() => {
-            router.push(`/courses/${row?.original?.id}`);
+              router.push(`/courses/${row?.original?.id}`);
             }}
             className="w-[100px] text-[#7677F4] font-semibold"
           >
             {row.original.program_code}
           </div>
-      );
-    },
+        );
+      },
     },
     {
-    accessorKey: "program_types",
-    column_name: t("new_strings:course_type_name"),
+      accessorKey: "program_types",
+      column_name: t("new_strings:course_type_name"),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-      return <div className="w-[150px]">{t("new_strings:course_type_name")}</div>;
+        return <div className="w-[150px]">{t("new_strings:course_type_name")}</div>;
       },
       cell: ({ row }: any) => {
-      return (
-        <div className="w-[150px]">{row?.original?.program_types?.name}</div>
-      );
-    },
+        return (
+          <div className="w-[150px]">{row?.original?.program_types?.name}</div>
+        );
+      },
     },
     {
-    accessorKey: "program_type_alias_names",
-    column_name: t("new_strings:course_name"),
+      accessorKey: "program_type_alias_names",
+      column_name: t("new_strings:course_name"),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-      return <div className="min-w-[150px]">{t("new_strings:course_name")}</div>;
+        return <div className="min-w-[150px]">{t("new_strings:course_name")}</div>;
       },
       cell: ({ row }: any) => {
-      return (
-        <div className="min-w-[150px]">
-          {row?.original?.program_type_alias_names?.alias_name}
-        </div>
-      );
-    },
+        return (
+          <div className="min-w-[150px]">
+            {row?.original?.program_type_alias_names?.alias_name}
+          </div>
+        );
+      },
     },
     {
-    accessorKey: "status",
-    column_name: t("course.find_course:course_status"),
+      accessorKey: "status",
+      column_name: t("course.find_course:course_status"),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-      return <div className="min-w-[150px]">{t("course.find_course:course_status")}</div>;
+        return <div className="min-w-[150px]">{t("course.find_course:course_status")}</div>;
       },
       cell: ({ row }: any) => {
-      return (
-        <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>
-      );
-    },
+        return (
+          <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>
+        );
+      },
     },
     {
-    accessorKey: "program_schedules",
+      accessorKey: "program_schedules",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-    column_name: t("course.find_course:start_date"),
+      column_name: t("course.find_course:start_date"),
       header: () => {
-      return <div className="min-w-[150px]">{t("course.find_course:start_date")}</div>;
+        return <div className="min-w-[150px]">{t("course.find_course:start_date")}</div>;
       },
       cell: ({ row }: any) => {
         // Check if start_date exists or not
         if (row?.original?.start_date) {
-        const startDate = format(row?.original?.start_date, "dd MMM, yyyy");
-        return (
-          <div className="min-w-[150px]">{startDate ? startDate : "-"} </div>
-        );
-      }
-    },
+          const startDate = format(row?.original?.start_date, "dd MMM, yyyy");
+          return (
+            <div className="min-w-[150px]">{startDate ? startDate : "-"} </div>
+          );
+        }
+      },
     },
     {
-    accessorKey: "state",
-    column_name: t("course.find_course:state"),
+      accessorKey: "state",
+      column_name: t("course.find_course:state"),
       header: () => {
-      return <div className="min-w-[150px]">{t("course.find_course:state")}</div>;
+        return <div className="min-w-[150px]">{t("course.find_course:state")}</div>;
       },
       cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
-    },
+        return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
+      },
     },
     {
-    accessorKey: "city",
-    column_name: t("common:city"),
+      accessorKey: "city",
+      column_name: t("common:city"),
       header: () => {
-      return <div className="min-w-[150px]">{t("common:city")}</div>;
+        return <div className="min-w-[150px]">{t("common:city")}</div>;
       },
       cell: ({ row }: any) => {
-      return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
-    },
+        return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
+      },
     },
     {
-    accessorKey: "center",
-    column_name: t("course.find_course:center"),
+      accessorKey: "center",
+      column_name: t("course.find_course:center"),
       header: () => {
-      return <div className="min-w-[150px]">{t("course.find_course:center")}</div>;
+        return <div className="min-w-[150px]">{t("course.find_course:center")}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.center?.name}</div>
-    },
+      },
     },
     {
-    accessorKey: "program_teachers",
+      accessorKey: "program_teachers",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-    column_name: t('course.find_course:teacher(s)'),
+      column_name: t('course.find_course:teacher(s)'),
       header: () => {
-      return <div className="min-w-[150px]">{t('course.find_course:teacher(s)')}</div>;
+        return <div className="min-w-[150px]">{t('course.find_course:teacher(s)')}</div>;
       },
       cell: ({ row }: any) => {
-      const teachers = row?.original?.program_teachers?.map(
-        (teacher: any) => teacher?.users?.contact_id?.full_name
-      );
+        const teachers = row?.original?.program_teachers?.map(
+          (teacher: any) => teacher?.users?.contact_id?.full_name
+        );
         return (
           <div className="flex flex-wrap min-w-[150px]">
-          <div>{teachers && teachers.join(", ")}</div>
+            <div>{teachers && teachers.join(", ")}</div>
           </div>
-      );
-    },
+        );
+      },
     },
     {
-    accessorKey: "program_organizers",
-    column_name: t('common:program_organizer'),
+      accessorKey: "program_organizers",
+      column_name: t('common:program_organizer'),
       header: () => {
-      return <div className="min-w-[150px]">{t('common:program_organizer')}</div>;
+        return <div className="min-w-[150px]">{t('common:program_organizer')}</div>;
       },
       cell: ({ row }: any) => {
         //Mapping all the programOrganizers in the comma separated name
         const organizers = row?.original?.program_organizers?.map(
           (Organizer: any) => Organizer?.users?.contact_id?.full_name
-      );
+        );
 
         return (
           <div className="flex flex-wrap min-w-[150px]">
             {/* If organisers present them map them by comma separated other wise it will display - */}
-          <div>{organizers ? organizers.join(",  ") : "-"}</div>
+            <div>{organizers ? organizers.join(",  ") : "-"}</div>
           </div>
-      );
-    },
+        );
+      },
     },
     {
-    accessorKey: "participant_registration",
-    column_name: t("course.find_course:attendees"),
+      accessorKey: "participant_registration",
+      column_name: t("course.find_course:attendees"),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-      return <div>{t("course.find_course:attendees")}</div>;
+        return <div>{t("course.find_course:attendees")}</div>;
       },
       cell: ({ row }: any) => {
-                return <div className="min-w-[150px]">{ row?.original?.participant_count}</div>
+        return <div className="min-w-[150px]">{row?.original?.participant_count}</div>
       }
     },
     {
-    accessorKey: "visibility_id",
-    column_name: t('new_strings:visibility'),
+      accessorKey: "visibility_id",
+      column_name: t('new_strings:visibility'),
       header: () => {
-      return <div>{t('new_strings:visibility')}</div>;
+        return <div>{t('new_strings:visibility')}</div>;
       },
       cell: ({ row }: any) => {
-      return (
-        <div className="min-w-[150px]">
-          {row?.original?.visibility_id?.value}
-        </div>
-      );
-    },
+        return (
+          <div className="min-w-[150px]">
+            {row?.original?.visibility_id?.value}
+          </div>
+        );
+      },
     },
     {
-    accessorKey: "course_accounting_status",
-    column_name: t('common:course_accounting_status'),
+      accessorKey: "course_accounting_status",
+      column_name: t('common:course_accounting_status'),
       header: () => {
-      return <div className="min-w-[200px]">{t('common:course_accounting_status')}</div>;
+        return <div className="min-w-[200px]">{t('common:course_accounting_status')}</div>;
       },
       cell: ({ row }: any) => {
         return (
           <div className="min-w-[200px]">
             {row?.original?.program_accounting_status_id?.value
               ? row?.original?.program_accounting_status_id?.value
-            : "-"}
+              : "-"}
           </div>
-      );
-    },
+        );
+      },
     },
     {
-    accessorKey: "Course Accounting Closure Date",
-    column_name: t('course.find_course:course_accounting_closure_date'),
+      accessorKey: "Course Accounting Closure Date",
+      column_name: t('course.find_course:course_accounting_closure_date'),
       header: () => {
-      return (
-        <div className="min-w-[250px]">{t('course.find_course:course_accounting_closure_date')}</div>
-      );
+        return (
+          <div className="min-w-[250px]">{t('course.find_course:course_accounting_closure_date')}</div>
+        );
       },
       cell: ({ row }: any) => {
-      return <div className="min-w-[250px]">-</div>;
-    },
+        return <div className="min-w-[250px]">-</div>;
+      },
     },
     {
-    accessorKey: "revenue",
-    column_name: t('new_strings:revenue'),
+      accessorKey: "revenue",
+      column_name: t('new_strings:revenue'),
       header: () => {
-      return <div className="min-w-[150px]">{t('new_strings:revenue')}</div>;
+        return <div className="min-w-[150px]">{t('new_strings:revenue')}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.revenue}</div>
@@ -240,53 +240,53 @@ export const column = (hasFalseAliasName: boolean,t:any) => {
     },
 
     {
-    id: "actions",
+      id: "actions",
       enableHiding: false,
       cell: ({ row }: any) => {
-      const {
-        setViewPreviewPage,
-        setNewCourseData,
-        setViewThankyouPage,
-        setCurrentStep,
-      } = newCourseStore();
+        const {
+          setViewPreviewPage,
+          setNewCourseData,
+          setViewThankyouPage,
+          setCurrentStep,
+        } = newCourseStore();
 
-      const router = useRouter();
-      const [isDialogOpen, setIsDialogOpen] = useState(false);
-      const [cancelSuccessModalOpen, setCancelSuccessModalOpen] =
-        useState(false);
+        const router = useRouter();
+        const [isDialogOpen, setIsDialogOpen] = useState(false);
+        const [cancelSuccessModalOpen, setCancelSuccessModalOpen] =
+          useState(false);
 
-      const courseCanceledStatusId = getOptionValueObjectByOptionOrder(
-        PROGRAM_STATUS,
-        CANCELED
-      )?.id;
+        const courseCanceledStatusId = getOptionValueObjectByOptionOrder(
+          PROGRAM_STATUS,
+          CANCELED
+        )?.id;
 
-      const { mutate } = useUpdate();
+        const { mutate } = useUpdate();
 
         const cancelCourse = async () => {
-        setIsDialogOpen(false);
+          setIsDialogOpen(false);
           await mutate({
-          resource: "program",
+            resource: "program",
             values: {
-            status_id: courseCanceledStatusId,
+              status_id: courseCanceledStatusId,
             },
-          id: row.original.id,
-        });
-        setCancelSuccessModalOpen(true);
-      };
+            id: row.original.id,
+          });
+          setCancelSuccessModalOpen(true);
+        };
 
-      const { data: loginUserData }: any = useGetIdentity();
+        const { data: loginUserData }: any = useGetIdentity();
 
         const dropDownMenuData = DisplayOptions(
           row?.original?.status_id?.id,
           row?.original?.program_accounting_status_id?.id,
           loginUserData?.userData?.user_roles[0]?.role_id?.id
-      );
+        );
 
         // here we need this variable to create default values
-      const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-        TIME_FORMAT,
-        TIME_FORMAT_12_HOURS
-      )?.id as number;
+        const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
+          TIME_FORMAT,
+          TIME_FORMAT_12_HOURS
+        )?.id as number;
 
         const handleEditCourse = async () => {
           router.push(`/courses/${row.original.id}/edit`)
@@ -299,169 +299,170 @@ export const column = (hasFalseAliasName: boolean,t:any) => {
          * switches the view to the new course page.
          */
         const handleCopyCourse = async () => {
-        setViewThankyouPage(false);
+          setViewThankyouPage(false);
 
-        let defaultValues = await handleCourseDefaultValues(
-          row.original.id,
-          timeFormat12HoursId
-        );
+          let defaultValues = await handleCourseDefaultValues(
+            row.original.id,
+            timeFormat12HoursId
+          );
           // we have to delete schedules when user click on cipy course and other we need to prefill
-        defaultValues = _.omit(defaultValues, ["id", "schedules"]);
-        setNewCourseData(defaultValues);
+          defaultValues = _.omit(defaultValues, ["id", "schedules"]);
+          setNewCourseData(defaultValues);
           // when we do copy course we have to set the current step to first step
-        setCurrentStep(1);
-        router.push({ pathname: "/courses/add", query: { action: "Copy" } });
-      };
+          setCurrentStep(1);
+          router.push({ pathname: "/courses/add", query: { action: "Copy" } });
+        };
 
-      dropDownMenuData?.unshift({ label: t('course.find_course:view_course_details'), value: 9 });
+        dropDownMenuData?.unshift({ label: t('course.find_course:view_course_details'), value: 9 });
 
         const handleSelected = (value: number) => {
-        console.log("clicked on", value);
+          console.log("clicked on", value);
 
           switch (value) {
             case 1: {
               //Need to navigate to participants list of select course.
-            router.push(`/courses/${row.original.id}/participants/list`);
-            break;
+              router.push(`/courses/${row.original.id}/participants/list`);
+              break;
             }
             case 2: {
               // TODO - Navigate to Register Participant page
-            router.push("/courses/add");
-            break;
+              router.push("/courses/add");
+              break;
             }
             case 3: {
-            handleEditCourse();
-            break;
+              handleEditCourse();
+              break;
             }
             case 4: {
-            handleCopyCourse();
-            break;
+              handleCopyCourse();
+              break;
             }
             case 5: {
-            setIsDialogOpen(true);
-            break;
+              setIsDialogOpen(true);
+              break;
             }
             case 6: {
               // TODO - Navigate to submit course accounting page
-            router.push(
-              `/courses/${row.original.id}?tab=course_accounting_form`
-            );
-            break;
+              router.push(
+                `/courses/${row.original.id}?tab=course_accounting_form`
+              );
+              break;
             }
             case 7: {
               // TODO - Navigate to view course accounting page
-            router.push("/");
-            break;
+              router.push("/");
+              break;
             }
             case 8: {
               // TODO - Navigate to edit course accounting page
-            router.push("/");
-            break;
+              router.push("/");
+              break;
             }
             case 9: {
-            router.push(`/courses/${row.original.id}`);
-            break;
+              router.push(`/courses/${row.original.id}`);
+              break;
+            }
           }
-        }
 
-        return (
-          <div className="">
-            <div className="pl-[1px]">
-              <div className="flex justify-center text-primary">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <MoreVertical className="h-5 w-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <p>
-                      {dropDownMenuData &&
-                        dropDownMenuData.map((data: any) => (
-                          <DropdownMenuItem
-                            onClick={() => {
-                            handleSelected(data.value);
-                            }}
-                          >
-                            {data.label}
-                          </DropdownMenuItem>
-                        ))}
-                    </p>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                {isDialogOpen && (
-                  <div>
-                    <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
-                      <DialogContent className="flex flex-col h-[248px] w-[425px]">
-                        <DialogHeader>
-                          <div className="flex items-center w-full justify-center">
-                            <Exclamation />
-                          </div>
-                          <DialogDescription className="font-bold text-black text-lg items-center text-center">
-                          {t('new_strings:cancel_course')}
-                          </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                          <div className="w-full flex justify-center items-center gap-5">
-                            <div>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                className="text-blue-500 w-[71px] h-[46px]"
-                                onClick={() => {
-                                setIsDialogOpen(false);
-                                }}
-                              >
-                              {t('common:no_button')}
-                              </Button>
+          return (
+            <div className="">
+              <div className="pl-[1px]">
+                <div className="flex justify-center text-primary">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreVertical className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <p>
+                        {dropDownMenuData &&
+                          dropDownMenuData.map((data: any) => (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                handleSelected(data.value);
+                              }}
+                            >
+                              {data.label}
+                            </DropdownMenuItem>
+                          ))}
+                      </p>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  {isDialogOpen && (
+                    <div>
+                      <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
+                        <DialogContent className="flex flex-col h-[248px] w-[425px]">
+                          <DialogHeader>
+                            <div className="flex items-center w-full justify-center">
+                              <Exclamation />
                             </div>
-                            <div>
-                              <Button
-                                type="button"
-                                className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
-                                onClick={() => {
-                                cancelCourse();
-                                }}
-                              >
-                              {t('common:yes_button')}
-                              </Button>
+                            <DialogDescription className="font-bold text-black text-lg items-center text-center">
+                              {t('new_strings:cancel_course')}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter>
+                            <div className="w-full flex justify-center items-center gap-5">
+                              <div>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  className="text-blue-500 w-[71px] h-[46px]"
+                                  onClick={() => {
+                                    setIsDialogOpen(false);
+                                  }}
+                                >
+                                  {t('common:no_button')}
+                                </Button>
+                              </div>
+                              <div>
+                                <Button
+                                  type="button"
+                                  className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                                  onClick={() => {
+                                    cancelCourse();
+                                  }}
+                                >
+                                  {t('common:yes_button')}
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                      <Dialog open={cancelSuccessModalOpen}>
+                        <DialogContent className="w-[414px] h-[279px]">
+                          <div className="text-center">
+                            <div className="flex justify-center">
+                              <Cross />
+                            </div>
+                            <div className="font-bold text-center my-5">
+                              {t('new_strings:course_cancel_successful')}
                             </div>
                           </div>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                    <Dialog open={cancelSuccessModalOpen}>
-                      <DialogContent className="w-[414px] h-[279px]">
-                        <div className="text-center">
-                          <div className="flex justify-center">
-                            <Cross />
-                          </div>
-                        <div className="font-bold text-center my-5">
-                          {t('new_strings:course_cancel_successful')}
-                        </div>
-                        </div>
 
-                        <div className="w-full flex items-center justify-center">
-                          <Button
-                            className=" bg-[#7677F4] w-[91px] h-[46px] text-white"
-                            onClick={() => {
-                            setCancelSuccessModalOpen(false);
-                            }}
-                          >
-                          {t('common:close')}
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                )}
+                          <div className="w-full flex items-center justify-center">
+                            <Button
+                              className=" bg-[#7677F4] w-[91px] h-[46px] text-white"
+                              onClick={() => {
+                                setCancelSuccessModalOpen(false);
+                              }}
+                            >
+                              {t('common:close')}
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-      );
-    },
-  },
+          );
+        }
+      },
+    }
   ]
   const courseNameIndex = finalColumns.findIndex(finalColumns => finalColumns.column_name === 'Course Name')
   if (hasFalseAliasName && courseNameIndex !== -1) {
