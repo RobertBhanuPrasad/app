@@ -217,7 +217,6 @@ function index() {
     });
   }
 
-
   /**
    * This holds the records of which rows are selected
    */
@@ -711,59 +710,59 @@ export const BasicFilters: React.FC<{
       </div>
       <div>
         {" "}
-        <Dialog open={open}>
-          <DialogTrigger asChild>
-            <Button
-              className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
-              variant="outline"
-            >
+        <Button
+          className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
+          variant="outline"
+        >
+          <div className="flex flex-row justify-between w-full items-center">
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <div className="flex flex-row gap-4">
+                  <div>
+                    <CalenderIcon color="#666666" />
+                  </div>
+                  {courseDate ? (
+                    <div className="flex flex-row gap-2 text-[14px]">
+                      {/* If the course from date and to date is present then only format and show the from date and to date */}
+                      <Text className="font-semibold">
+                        {courseDate.from &&
+                          format(courseDate.from, "MM/dd/yyyy")}
+                      </Text>{" "}
+                      {courseDate.to && <span>-</span>}{" "}
+                      <Text className="font-semibold">
+                        {courseDate.to && format(courseDate.to, "MM/dd/yyyy")}
+                      </Text>
+                    </div>
+                  ) : (
+                    <Text>Select Date range</Text>
+                  )}
+                </div>
+              </DialogTrigger>
+              <DialogContent
+                closeIcon={false}
+                className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"
+              >
+                <DateRangePickerComponent
+                  setOpen={setOpen}
+                  value={courseDate}
+                  onSelect={courseDateOnChange}
+                />
+              </DialogContent>
+            </Dialog>
+            {/* Here we will show cross icon only when we have certain date selected */}
+            {courseDate && (
               <div
                 onClick={() => {
-                  setOpen(true);
+                  //when we click on cross icon we need to clear the date
+                  courseDateOnChange(undefined);
                 }}
+                className="ml-auto"
               >
-                <CalenderIcon color="#666666" />
+                <CrossIcon fill="#7677F4" height={10} width={10} />
               </div>
-              {courseDate ? (
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex flex-row gap-2 text-[14px]">
-                    {/* If the course from date and to date is present then only format and show the from date and to date */}
-                    <Text className="font-semibold">
-                      {courseDate.from && format(courseDate.from, "MM/dd/yyyy")}
-                    </Text>{" "}
-                    {courseDate.to && <span>-</span>}{" "}
-                    <Text className="font-semibold">
-                      {courseDate.to && format(courseDate.to, "MM/dd/yyyy")}
-                    </Text>
-                  </div>
-                  <div
-                    onClick={() => {
-                      //when we click on cross icon we need to clear the date
-                      courseDateOnChange(undefined);
-                    }}
-                    className="ml-auto"
-                  >
-                    <CrossIcon fill="#7677F4" height={10} width={10} />
-                  </div>
-                </div>
-              ) : (
-                <div className="flex gap-2 font-normal">
-                  Select the Date Range
-                </div>
-              )}
-            </Button>
-          </DialogTrigger>
-          <DialogContent
-            closeIcon={false}
-            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"
-          >
-            <DateRangePickerComponent
-              setOpen={setOpen}
-              value={courseDate}
-              onSelect={courseDateOnChange}
-            />
-          </DialogContent>
-        </Dialog>
+            )}
+          </div>
+        </Button>
       </div>
       <div>
         <CourseTypeComponent name="course_type" />
