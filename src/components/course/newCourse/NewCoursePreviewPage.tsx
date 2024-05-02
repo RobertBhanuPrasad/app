@@ -478,7 +478,7 @@ export default function NewCourseReviewPage() {
             {(hasSuperAdminRole || hasNationalAdminRole) && (
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Registration via 3rd party gateway
+                  {t("registration_via_3rd_party_gateway")}
                 </p>
                 <abbr
                   className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -491,7 +491,7 @@ export default function NewCourseReviewPage() {
             {newCourseData?.is_registration_via_3rd_party ? (
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Registration via 3rd party gateway url
+                  {t("new_strings:registration_via_3rd_party_gateway_url")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
