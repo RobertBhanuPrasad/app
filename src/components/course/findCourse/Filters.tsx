@@ -67,22 +67,6 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
           {/* Course Name Accordion */}
           {!hasAliasNameFalse && (
             <>
-              <AccordionItem value="item-1" className="border-none">
-                <AccordionTrigger className="text-base font-semibold pr-3">
-                  <div className="flex flex-row gap-2 items-center">
-                    <div>Course Name</div>
-                    {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pb-5 pr-3">
-                  <CourseName />
-                </AccordionContent>
-              </AccordionItem>
-              <Separator />
-            </>
-          )}
-          {!hasAliasNameFalse && (
-            <>
               <AccordionItem value="item-14" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
@@ -97,7 +81,23 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
               <Separator />
             </>
           )}
-
+          {/* Course Name Accordion */}
+          {!hasAliasNameFalse && (
+            <>
+              <AccordionItem value="item-1" className="border-none">
+                <AccordionTrigger className="text-base font-semibold pr-3">
+                  <div className="flex flex-row gap-2 items-center">
+                    <div>Course Name</div>
+                    {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pb-5 pr-3">
+                  <CourseName />
+                </AccordionContent>
+              </AccordionItem>
+              <Separator />
+            </>
+          )}
           {/* Course Status Accordion */}
           <AccordionItem value="item-2" className="border-none ">
             <AccordionTrigger className="text-base font-semibold pr-3">
