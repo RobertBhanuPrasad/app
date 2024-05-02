@@ -12,12 +12,17 @@ import {
 import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
 import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
+import { IsEditCourse } from "./EditCourseUtil";
 
 export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
   setProgramId: (by: number) => void,
-  accountingNotSubmittedStatusId: number
+  accountingNotSubmittedStatusId: number,
+  /**
+   * The current url either add or edit
+   */
+  pathname: string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -357,7 +362,7 @@ export const handlePostProgramData = async (
   // We need to call one supabase edge function to update the course details in sync DB aswell to reflect the changes in unity pages
   // edge function name : sync-program
   // we need to call this edge funtion only when all program data has been saved
-  if (!(await handleSyncProgramEdgeFunction(programId))) return false;
+  if (!(await handleSyncProgramEdgeFunction(programId, pathname))) return false;
   return true;
 };
 
@@ -1278,7 +1283,14 @@ const handleProgramAccountingStatusUpdate = async (
  * @param {number} programId - The ID of the program to synchronize.
  * @return {boolean} Returns true if the synchronization is successful, false otherwise.
  */
-export const handleSyncProgramEdgeFunction = async (programId: number) => {
+export const handleSyncProgramEdgeFunction = async (
+  programId: number,
+  pathname: string
+) => {
+  const method = IsEditCourse(pathname) ? "PUT" : "POST";
+
+  console.log("method", method);
+
   const { data, error }: any = await supabaseClient.functions.invoke(
     `sync-program/${programId}`,
     {
@@ -1288,7 +1300,7 @@ export const handleSyncProgramEdgeFunction = async (programId: number) => {
         //TODO: Will need to change public schema to country code once supabase country wise set up is done/
         "country-code": "public",
       },
-      method: "POST",
+      method,
     }
   );
 
