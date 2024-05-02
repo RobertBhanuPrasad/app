@@ -14,6 +14,9 @@ import {
 } from "src/ui/hover-card";
 import { formatDate } from "src/utility/DateFunctions";
 import { supabaseClient } from "src/utility/supabaseClient";
+import { useTranslation } from 'next-i18next';
+
+
 
 export const ParticipantsListMainHeader = () => {
   const router = useRouter();
@@ -47,7 +50,7 @@ export const ParticipantsListMainHeader = () => {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <div className="flex justify-between px-8 h-auto pb-4">
       {/* Course Details Section */}
@@ -91,11 +94,11 @@ export const ParticipantsListMainHeader = () => {
                 </HoverCardTrigger>
                 <HoverCardContent>
                   <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                    {courseData?.data?.participant_count} Participants with:
-                    Transaction status = Confirmed / Pending Attendance status =
-                    Confirmed / Pending / Dropout Total participants records:
-                    {courseData?.data?.total_participant_count}
-                  </div>
+                    {courseData?.data?.participant_count} {t('course.view_course:basic_details_tab.participants_with')}:
+                    {t('course.view_course:basic_details_tab.transaction_status')} = {t('course.view_course:basic_details_tab.confirmed_pending')} {t('course.view_course:basic_details_tab.attendance_status')} =
+                    {t('course.view_course:basic_details_tab.confirmed_pending_dropout')} {t('course.view_course:basic_details_tab.total_participants_records')}:
+                    {courseData?.data?.total_part}
+                  </div>icipant_count
                 </HoverCardContent>
               </HoverCard>
             </div>
@@ -112,8 +115,7 @@ export const ParticipantsListMainHeader = () => {
                 </HoverCardTrigger>
                 <HoverCardContent>
                   <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                    Revenue from confirmed pending transaction participants
-                    revenue:
+                  {t('course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction')} {t('course.view_course:basic_details_tab.participants_revenue')}:
                     {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                     {totalRevenue}
                   </div>

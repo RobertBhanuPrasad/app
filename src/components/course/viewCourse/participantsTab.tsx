@@ -11,6 +11,8 @@ import { getColorWithDecreasedOpacity } from "src/utility/GenerateColours";
 import { useTranslation } from 'next-i18next';
 
 function ParticipantsTab() {
+  const {t} = useTranslation(["common", "course.view_course", "new_strings","course.find_course", "course.participants"])
+  
   const router = useRouter();
   const {
     query: { id },
@@ -28,13 +30,12 @@ function ParticipantsTab() {
         "attendance_cancelled_participant_count,attendance_completed_participant_count,attendance_dropout_participant_count,attendance_pending_participant_count,fee_level_breakup,gender_breakup,participant_count,revenue,total_participant_count",
     },
   });
-
   console.log(courseData);
-
+  
   if (isLoading) {
     return <LoadingIcon />;
   }
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+ 
 
   return (
     <div className="my-[31px] mb-6 overscroll ">
@@ -53,7 +54,7 @@ function ParticipantsTab() {
             className="w-[188px] h-[46px] rounded-[12px]"
             onClick={() => router.push(`/courses/${id}/participants/list`)}
           >
-            {t('new_strings:view_participant')}
+            {t('common:view_participants')}
           </Button>
         </div>
       </div>
@@ -69,8 +70,8 @@ function ParticipantsTab() {
 export default ParticipantsTab;
 
 const FeeLevelPieChart = ({ participantData }: any) => {
+  const {t} = useTranslation(["common", "course.view_course", "new_strings","course.find_course", "course.participants"])
   const baseColor = "#7677F4";
-
   const feeLevelData = Object.keys(
     participantData?.fee_level_breakup || {}
   )?.map((label: any, index: any) => {
@@ -84,7 +85,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
       ),
     };
   });
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
@@ -133,29 +134,34 @@ const FeeLevelPieChart = ({ participantData }: any) => {
 };
 
 const AttendancePieChart = ({ participantData }: any) => {
+  
+  const {t} = useTranslation(["common", "course.view_course", "new_strings","course.find_course", "course.participants"])
   const baseColor = "#7677F4";
 
   // TODO: need to translations
   const attendanceDataArray = [
+
     {
-      label: "Completed",
+      
+      label: t('course.find_course:completed'),
       value: participantData?.attendance_completed_participant_count,
     },
     {
-      label: "Pending",
+      label: t('course.participants:find_participant.pending'),
       value: participantData?.attendance_pending_participant_count,
     },
     {
-      label: "Dropout",
+      label: t('course.participants:find_participant.dropout'),
       value: participantData?.attendance_dropout_participant_count,
     },
     {
-      label: "Cancelled",
+      label: t('course.find_course:canceled'),
       value: participantData?.attendance_cancelled_participant_count,
     },
   ];
 
   const attendanceData = attendanceDataArray?.map((item: any, index: any) => {
+    // const {t} = useTranslation(["common", "course.view_course", "new_strings","course.find_course", "course.participants"])
     return {
       title: item.label,
       value: item.value,
@@ -167,7 +173,7 @@ const AttendancePieChart = ({ participantData }: any) => {
     };
   });
   console.log("attendence data", attendanceData);
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  // const {t} = useTranslation(["common", "course.view_course", "new_strings", "course.find_course", "course.participants"])
 
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6 ">
