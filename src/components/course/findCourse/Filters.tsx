@@ -21,14 +21,16 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel
 } from 'src/utility/GetOptionValuesByOptionLabel'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
-const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
+const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) => {
   console.log(hasAliasNameFalse, 'FalseAliasNamefilter')
 
   const { watch, setValue } = useFormContext()
 
   const formData = watch()
 
+  const { setAllFilterData } = newCourseStore()
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -65,22 +67,6 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
           {/* Course Name Accordion */}
           {!hasAliasNameFalse && (
             <>
-              <AccordionItem value="item-1" className="border-none">
-                <AccordionTrigger className="text-base font-semibold pr-3">
-                  <div className="flex flex-row gap-2 items-center">
-                    <div>Course Name</div>
-                    {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pb-5 pr-3">
-                  <CourseName />
-                </AccordionContent>
-              </AccordionItem>
-              <Separator />
-            </>
-          )}
-          {!hasAliasNameFalse && (
-            <>
               <AccordionItem value="item-14" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
@@ -95,7 +81,23 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
               <Separator />
             </>
           )}
-
+          {/* Course Name Accordion */}
+          {!hasAliasNameFalse && (
+            <>
+              <AccordionItem value="item-1" className="border-none">
+                <AccordionTrigger className="text-base font-semibold pr-3">
+                  <div className="flex flex-row gap-2 items-center">
+                    <div>Course Name</div>
+                    {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pb-5 pr-3">
+                  <CourseName />
+                </AccordionContent>
+              </AccordionItem>
+              <Separator />
+            </>
+          )}
           {/* Course Status Accordion */}
           <AccordionItem value="item-2" className="border-none ">
             <AccordionTrigger className="text-base font-semibold pr-3">
@@ -275,8 +277,8 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
           onClick={() => {
             setValue('temporaryadvancefilter.course_name', '')
             setValue('temporaryadvancefilter.course_type', '')
-            setValue('temporaryadvancefilter.course_status', '')
-            setValue('temporaryadvancefilter.course_accounting_status', '')
+            setValue('temporaryadvancefilter.course_status', [])
+            setValue('temporaryadvancefilter.course_accounting_status', [])
             setValue('temporaryadvancefilter.course_accounting_closure_date', '')
             setValue('temporaryadvancefilter.state', '')
             setValue('temporaryadvancefilter.city', '')
@@ -286,7 +288,8 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
             setValue('temporaryadvancefilter.is_course_fee', '')
             setValue('temporaryadvancefilter.course_teacher', '')
             setValue('temporaryadvancefilter.program_organiser', [])
-            console.log('hey form Data', formData)
+            //we need to empty the course type in basic filters also because the filter applies when we clear all in advance filter
+            setValue('course_type','')
           }}
           className="flex gap-1 items-center cursor-pointer"
         >
@@ -299,8 +302,13 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
 
             setValue('advanceFilter', temporaryData?.temporaryadvancefilter)
             setValue('course_type', temporaryData?.temporaryadvancefilter.course_type)
-
+            setAllFilterData({
+              ...formData,
+              advanceFilter: temporaryData?.temporaryadvancefilter
+            })
             setAdvanceFilterOpen(false)
+            //whenever we apply filters we will be navigated to page 1
+            setCurrent(1)
           }}
         >
           Apply
@@ -780,7 +788,7 @@ export const ProgramOrganiser = () => {
         onSearch(val)
       }}
       onChange={temporaryOnChange}
-      variant='basic'
+      variant="basic"
     />
   )
 }
