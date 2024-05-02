@@ -13,6 +13,7 @@ import { Circle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { optionValue } from 'src/common/translations'
 import { PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
 import { ACTIVE, PUBLIC } from 'src/constants/OptionValueOrder'
 import { Button } from 'src/ui/button'
@@ -135,7 +136,7 @@ useEffect(() => {
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
               <p className="text-accent-secondary">Course Name</p>
-              <p className="font-bold text-accent-primary">{data?.data?.program_type_id?.name}</p>
+              <p className="font-bold text-accent-primary">{optionValue(data?.data?.program_type_id?.name)}</p>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
               <p className="text-accent-secondary">Teachers</p>

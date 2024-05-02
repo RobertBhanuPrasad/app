@@ -402,7 +402,7 @@ const Amount = ({ index }: { index: number }) => {
 
 //   const { options } = useSelect({
 //     resource: "option_values",
-//     optionLabel: "value",
+//     optionLabel: "name",
 //     optionValue: "id",
 //     filters: [
 //       {
@@ -433,7 +433,7 @@ const Amount = ({ index }: { index: number }) => {
 //                   value={option.value}
 //                   className="h-[44px]"
 //                 >
-//                   {option.label}
+//                   {optionValue(option.label)}
 //                 </SelectItem>
 //                 {index < options?.length - 1 && (
 //                   <hr className="border-[#D6D7D8]" />

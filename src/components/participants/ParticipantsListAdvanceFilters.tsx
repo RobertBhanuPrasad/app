@@ -4,6 +4,7 @@ import FilterIcon from '@public/assets/FilterIcon'
 import { CountComponent } from 'pages/courses/list'
 import { useEffect, useRef, useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
+import { optionValue } from 'src/common/translations'
 import { FEE_LEVEL, PARTICIPANT_ATTENDANCE_STATUS, PAYMENT_METHOD, TRANSACTION_TYPE } from 'src/constants/OptionLabels'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'src/ui/accordion'
 import { Button } from 'src/ui/button'
@@ -357,7 +358,7 @@ export const TransactionType = () => {
             variant="outline"
             onClick={() => toggleTransactionStatus(status?.id)}
           >
-            {status?.value}
+            {optionValue(status?.name)}
           </Button>
         </div>
       ))}
@@ -376,7 +377,7 @@ export const PaymentMethod = () => {
 
   const paymentMethodValues = paymentMethodOptions.map((record: any) => {
     return {
-      label: record?.value,
+      label: optionValue(record?.name),
       value: record?.id
     }
   })
@@ -408,7 +409,7 @@ export const FeeLevel = () => {
 
   const feeLevelValues = feeLevelOptions.map((record: any) => {
     return {
-      label: record?.value,
+      label: optionValue(record?.name),
       value: record?.id
     }
   })
@@ -460,7 +461,7 @@ export const AttendanceStatus = () => {
             variant="outline"
             onClick={() => toggleTransactionStatus(status?.id)}
           >
-            {status?.value}
+            {optionValue(status?.name)}
           </Button>
         </div>
       ))}

@@ -14,6 +14,7 @@ import { useList, useSelect, useTable } from '@refinedev/core'
 import { format } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
+import { optionValue } from 'src/common/translations'
 import { column } from 'src/components/course/findCourse/Columns'
 import { DateRangePicker } from 'src/ui/DateRangePicker'
 import { Text } from 'src/ui/TextTags'
@@ -594,7 +595,7 @@ export const CourseTypeComponent = ({ name }: any) => {
           {options.map((option: any, index: number) => (
             <>
               <SelectItem key={option.value} value={option.value} className="h-[44px]">
-                {option.label}
+                {optionValue(option.label)}
               </SelectItem>
               {index < options?.length - 1 && <hr className="border-[#D6D7D8]" />}
             </>

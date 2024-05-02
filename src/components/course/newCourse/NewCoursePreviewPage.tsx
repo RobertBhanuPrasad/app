@@ -42,6 +42,7 @@ import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
 import { useRouter } from "next/router";
 import { usePathname, useSearchParams } from "next/navigation";
+import { optionValue } from "src/common/translations";
 
 export default function NewCourseReviewPage() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -529,9 +530,9 @@ export default function NewCourseReviewPage() {
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={courseType?.data?.name}
+                title={courseType?.data?.name ? optionValue(courseType?.data?.name) : "-"}
               >
-                {courseType?.data?.name ? courseType?.data?.name : "-"}
+                {courseType?.data?.name ? optionValue(courseType?.data?.name) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -1035,8 +1036,8 @@ const Accommodation = ({
 
   return (
     <div className="w-[291px]">
-      <abbr title={data?.data?.name} className="no-underline">
-        <CardLabel className="truncate">{data?.data?.name}</CardLabel>
+      <abbr title={optionValue(data?.data?.name)} className="no-underline">
+        <CardLabel className="truncate">{optionValue(data?.data?.name)}</CardLabel>
       </abbr>
       <abbr
         // If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined
@@ -1094,8 +1095,8 @@ const Fees = ({
 
   return (
     <div className="w-[291px]">
-      <abbr title={feeLevelData?.data?.value} className="no-underline">
-        <CardLabel className="truncate">{feeLevelData?.data?.value}</CardLabel>
+      <abbr title={optionValue(feeLevelData?.data?.name)} className="no-underline">
+        <CardLabel className="truncate">{optionValue(feeLevelData?.data?.name)}</CardLabel>
       </abbr>
       <abbr
         title={JSON.stringify(feeLevelSettingsData?.total)}
@@ -1150,11 +1151,11 @@ const EarlyBirdFees = ({
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
       <abbr
-        title={`Early Bird ${feeLevelData?.data?.value}`}
+        title={`Early Bird ${optionValue(feeLevelData?.data?.name)}`}
         className="no-underline"
       >
         <CardLabel className="truncate">
-          Early Bird {feeLevelData?.data?.value}
+          Early Bird {optionValue(feeLevelData?.data?.name)}
         </CardLabel>
       </abbr>
       <abbr

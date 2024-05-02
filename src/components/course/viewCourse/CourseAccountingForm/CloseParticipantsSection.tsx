@@ -32,6 +32,7 @@ import { TableHeader, Text } from "src/ui/TextTags";
 import { Dialog, DialogContent } from "src/ui/dialog";
 import { useRouter as useNextRouter } from "next/router";
 import Tick from "@public/assets/Tick.png";
+import { optionValue } from "src/common/translations";
 
 function CloseParticipantsSection() {
   const searchParams = useSearchParams();
@@ -286,7 +287,7 @@ function CloseParticipantsSection() {
                           value={status.id}
                           className="h-[44px]"
                         >
-                          {status.value}
+                          {optionValue(status.name as object)}
                         </SelectItem>
                       );
                     }

@@ -9,6 +9,7 @@ import _ from 'lodash'
 import { MoreVertical } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { optionValue } from 'src/common/translations'
 import { PROGRAM_STATUS, TIME_FORMAT } from 'src/constants/OptionLabels'
 import { CANCELED, TIME_FORMAT_12_HOURS } from 'src/constants/OptionValueOrder'
 import { Button } from 'src/ui/button'
@@ -52,7 +53,7 @@ export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => 
         return <div className="w-[150px]">Course Type</div>
       },
       cell: ({ row }: any) => {
-        return <div className="w-[150px]">{row?.original?.program_types?.name}</div>
+        return <div className="w-[150px]">{optionValue(row?.original?.program_types?.name)}</div>
       }
     },
     {
@@ -64,7 +65,7 @@ export const column = (hasFalseAliasName: boolean): ExtendedColumnDef<any>[] => 
         return <div className="min-w-[150px]">Course Name</div>
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.program_type_alias_names?.alias_name}</div>
+        return <div className="min-w-[150px]">{optionValue(row?.original?.program_type_alias_names?.alias_name)}</div>
       }
     },
     {
