@@ -1,4 +1,3 @@
-import { AnyPtrRecord } from "dns";
 import _ from "lodash";
 import { useTranslation } from "next-i18next";
 import {
@@ -27,7 +26,6 @@ import {
   DECLINED,
   FINANCE_ADMIN,
   FULL,
-  I_AM_CO_TEACHING,
   I_AM_TEACHING,
   NATIONAL_ADMIN,
   NOT_SUBMITTED,
@@ -41,7 +39,6 @@ import {
   TEACHER,
 } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import { UseTranslation } from "next-i18next";
 
 /**
  * Is course approved
@@ -176,7 +173,6 @@ export const DisplayOptions = (
   const {t} = useTranslation()
   // If course status is Active
   if (courseStatusId === courseActiveStatusId) {
-    
     if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
       (roleId === superAdminRoleId ||

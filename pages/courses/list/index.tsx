@@ -471,7 +471,7 @@ const {t} = useTranslation()
           </div>
         </div>
         <div>
-          {" "}
+          {' '}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -504,7 +504,6 @@ const {t} = useTranslation()
 export default index
 
 const HeaderSection = ({ hasAliasNameFalse }: any) => {
-
   const { AllFilterData, newAdvanceFilterData } = newCourseStore()
 
   return (
@@ -760,11 +759,10 @@ const AdvanceFilter = ({ hasAliasNameFalse }: any) => {
    */
   const count =
     (formData?.advanceFilter &&
-      Object.keys(formData.advanceFilter).filter((key) =>
+      Object.keys(formData.advanceFilter).filter(key =>
         Array.isArray(formData.advanceFilter[key])
           ? formData.advanceFilter[key].length > 0
-          : formData.advanceFilter[key] !== undefined &&
-            formData.advanceFilter[key] !== ""
+          : formData.advanceFilter[key] !== undefined && formData.advanceFilter[key] !== ''
       ).length) ||
     0;
   const {t} = useTranslation()

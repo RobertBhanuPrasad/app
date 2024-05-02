@@ -344,7 +344,6 @@ export function BaseTable<TData, TValue>({
                       />
                       <div className="font-bold text-[14px]">{t('course.find_course:select_all')}</div>
                     </div>
-
                     {table
                       .getAllColumns()
                       .filter((column) => column?.accessorFn)

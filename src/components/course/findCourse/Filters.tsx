@@ -22,7 +22,7 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel
 } from 'src/utility/GetOptionValuesByOptionLabel'
-import { UseTranslation } from 'next-i18next'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
   console.log(hasAliasNameFalse, 'FalseAliasNamefilter')
@@ -30,7 +30,9 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
   const { watch, setValue } = useFormContext()
 
   const formData = watch()
-const {t} = useTranslation()
+
+  const { setAllFilterData } = newCourseStore()
+  const {t} = useTranslation()
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -277,8 +279,8 @@ const {t} = useTranslation()
           onClick={() => {
             setValue('temporaryadvancefilter.course_name', '')
             setValue('temporaryadvancefilter.course_type', '')
-            setValue('temporaryadvancefilter.course_status', '')
-            setValue('temporaryadvancefilter.course_accounting_status', '')
+            setValue('temporaryadvancefilter.course_status', [])
+            setValue('temporaryadvancefilter.course_accounting_status', [])
             setValue('temporaryadvancefilter.course_accounting_closure_date', '')
             setValue('temporaryadvancefilter.state', '')
             setValue('temporaryadvancefilter.city', '')
@@ -288,7 +290,6 @@ const {t} = useTranslation()
             setValue('temporaryadvancefilter.is_course_fee', '')
             setValue('temporaryadvancefilter.course_teacher', '')
             setValue('temporaryadvancefilter.program_organiser', [])
-            console.log('hey form Data', formData)
           }}
           className="flex gap-1 items-center cursor-pointer"
         >
@@ -301,7 +302,10 @@ const {t} = useTranslation()
 
             setValue('advanceFilter', temporaryData?.temporaryadvancefilter)
             setValue('course_type', temporaryData?.temporaryadvancefilter.course_type)
-
+            setAllFilterData({
+              ...formData,
+              advanceFilter: temporaryData?.temporaryadvancefilter
+            })
             setAdvanceFilterOpen(false)
           }}
         >
