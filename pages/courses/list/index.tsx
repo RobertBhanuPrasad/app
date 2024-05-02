@@ -419,7 +419,7 @@ function index() {
       }
     ]
   })
-const {t} = useTranslation()
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <p className="font-semibold text-2xl ml-8">{t('new_strings:find_course')}</p>
@@ -441,7 +441,7 @@ const {t} = useTranslation()
               table: '',
               rowStyles: '!important border-none'
             }}
-            columns={column(hasAliasNameFalse(data),(t))}
+            columns={column(hasAliasNameFalse(data), (t))}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
@@ -491,7 +491,7 @@ const {t} = useTranslation()
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
-              {t('new_strings:csv')}
+                {t('new_strings:csv')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -507,7 +507,7 @@ const HeaderSection = ({ hasAliasNameFalse }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore()
 
   return (
-    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
+    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
         <div className="flex-[0.25]">
           <AdvanceFilter hasAliasNameFalse={hasAliasNameFalse} />
@@ -521,7 +521,7 @@ const HeaderSection = ({ hasAliasNameFalse }: any) => {
 }
 
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   return (
     <div className="relative ml-[-12px] mt-[-12px]">
       <DateRangePicker
@@ -594,7 +594,7 @@ export const CourseTypeComponent = ({ name }: any) => {
   } = useController({
     name: name,
   });
-const {t} = useTranslation()
+  const { t } = useTranslation()
   return (
     <Select
       value={value}
@@ -603,7 +603,7 @@ const {t} = useTranslation()
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder={t('common:select_course_type')} />
+        <SelectValue placeholder={t('new_strings:select_course_type')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={val => onSearch(val.target.value)} />
@@ -656,7 +656,7 @@ export const BasicFilters = () => {
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
   };
-const {t} = useTranslation()
+  const { t } = useTranslation()
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
@@ -765,7 +765,7 @@ const AdvanceFilter = ({ hasAliasNameFalse }: any) => {
           : formData.advanceFilter[key] !== undefined && formData.advanceFilter[key] !== ''
       ).length) ||
     0;
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">
@@ -804,7 +804,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async context => {
         destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
         permanent: false
       }
-}
+    }
   }
   return {
     props: {

@@ -7,7 +7,7 @@
     "course_name" : "Course Name",
     "select_the_date_range" : "Select the Date Range",
     "select_course_name" : "Select Course Name",
-    "course_type_name" : "Course Type Name",
+    "select_course_type" : "Select Course Type",
     "visibility" : "Visibility",
     "revenue" : "Revenue",
     "cancel_course":"Are you sure you want to cancel this course?",
