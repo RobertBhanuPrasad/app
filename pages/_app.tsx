@@ -13,6 +13,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Login from "./login";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { ConfigStore } from "src/zustandStore/ConfigStore";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -27,6 +31,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   const renderComponent = () => {
     const { setOptionLabelValue } = optionLabelValueStore();
 
+    const { setCountryCode, setLanguageCode } = ConfigStore();
+
+    const countryCode = useGetCountryCode();
+    const languageCode = useGetLanguageCode();
+
     const fetchOptionLabelOptionValueData = async () => {
       const { data } = await supabaseClient
         .from("option_labels")
@@ -37,6 +46,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
 
     useEffect(() => {
       fetchOptionLabelOptionValueData();
+
+      // set coutry code and language code in zustand store
+      setCountryCode(countryCode);
+      setLanguageCode(languageCode);
     }, []);
 
     const renderContent = () => <Component {...pageProps} />;
