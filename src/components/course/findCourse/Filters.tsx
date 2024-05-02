@@ -24,6 +24,7 @@ import {
 } from 'src/utility/GetOptionValuesByOptionLabel'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
+
 const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
   console.log(hasAliasNameFalse, 'FalseAliasNamefilter')
 
@@ -791,7 +792,7 @@ const {t} = useTranslation()
         onSearch(val)
       }}
       onChange={temporaryOnChange}
-      variant='basic'
+      variant="basic"
     />
   )
 }
