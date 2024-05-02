@@ -781,7 +781,10 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={timeFormat?.value}
                 >
-                  {timeFormat?.value ? timeFormat?.value : "-"}
+                   {timeFormat?.value ?
+                    timeFormat?.value.split(" ")[0] + " " +
+                    timeFormat?.value.split(" ")[1] + "s"
+                    : "-"}
                 </abbr>
               </div>
               <div className="w-[291px]">
