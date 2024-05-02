@@ -24,25 +24,7 @@ function HeaderSection() {
         '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules!inner(*)'
     }
   })
-  const [participantData, setParticipantData] = useState<any>()
-
-  const fetchData = async () => {
-    try {
-      const { data, error } = await supabaseClient.functions.invoke('get_program_participant_summary', {
-        method: 'POST',
-        body: {
-          program_id: Id
-        }
-      })
-      setParticipantData(data)
-    } catch (error) {
-      console.error('Error fetching fee data:', error)
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
+ 
   const startDate = formatDate(courseData?.data?.program_schedules[0]?.start_time)
 
   const endDate = formatDate(
@@ -51,7 +33,7 @@ function HeaderSection() {
   const { data: countryConfigData } = useList({
     resource: 'country_config'
   })
-  const totalRevenue = participantData?.income
+  const totalRevenue = courseData?.data?.revenue
   const { replace } = useRouter()
   const { programId } = newCourseStore()
 
@@ -96,7 +78,7 @@ function HeaderSection() {
           }}
           className="cursor-pointer text-[#7677F4]"
         >
-          {participantData?.participantCount}
+          {courseData?.data?.participant_count}
         </div>
         <HoverCard>
           <HoverCardTrigger>
@@ -106,9 +88,9 @@ function HeaderSection() {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              {participantData?.participantCount} Participants with: Transaction status = Confirmed / Pending Attendance
+            {courseData?.data?.participant_count} Participants with: Transaction status = Confirmed / Pending Attendance
               status = Confirmed / Pending / Dropout Total participants records:
-              {participantData?.totalParticipantCount}
+              {courseData?.data?.total_participant_count}
             </div>
           </HoverCardContent>
         </HoverCard>

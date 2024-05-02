@@ -494,7 +494,6 @@ function index() {
 export default index
 
 const HeaderSection = ({ hasAliasNameFalse }: any) => {
-
   const { AllFilterData, newAdvanceFilterData } = newCourseStore()
 
   return (
@@ -739,6 +738,7 @@ const AdvanceFilter = ({ hasAliasNameFalse }: any) => {
         <Button
           onClick={() => {
             setAdvanceFilterOpen(true)
+            setValue('temporaryadvancefilter', formData.advanceFilter)
             setValue('temporaryadvancefilter.course_type', formData?.course_type)
           }}
           className="flex flex-row gap-2 !rounded-xl"
