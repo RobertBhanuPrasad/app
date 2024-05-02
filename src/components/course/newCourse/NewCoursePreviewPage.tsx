@@ -40,7 +40,6 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-// import { EditCourseSuccessfullyInfo } from "pages/courses/[id]";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -48,8 +47,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from "src/ui/alert-dialog";
-import Exclamation from "@public/assets/Exclamation";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
 
@@ -353,7 +350,9 @@ export default function NewCourseReviewPage() {
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
 
-  const { setProgramId, setViewSuccessOnEditModal } = newCourseStore();
+  const [onEditSuccess, setOnEditSuccess] = useState(false)
+
+  const { setProgramId } = newCourseStore();
 
   /**
    * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
@@ -386,7 +385,7 @@ export default function NewCourseReviewPage() {
         resource: "program",
         invalidates: ["list"],
       });
-      setViewSuccessOnEditModal(true);
+      setOnEditSuccess(true);
     } else {
       setIsSubmitting(false);
     }
@@ -415,45 +414,8 @@ export default function NewCourseReviewPage() {
       <div className="text-[24px] my-4 font-semibold ml-6">
         Review Course Details
       </div>
-      {/* <AlertDialog open={true}>
-        <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
-          <AlertDialogHeader>
-            <div className="flex items-center w-full justify-center">
-              <Exclamation />
-            </div>
-            <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-              Are you sure you want to approve this Accounting Form
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <div className="w-full flex justify-center items-center gap-5">
-              <div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px]"
-                  onClick={() => {}}
-                >
-                  No
-                </Button>
-              </div>
-              <div>
-                <Button
-                  type="button"
-                  className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
-                  onClick={() => {
-                    approveCourseAccountingForm();
-                  }}
-                >
-                  Yes
-                </Button>
-              </div>
-            </div>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog> */}
       <section className="w-full py-8 text-base border-b bg-white">
-        <EditCourseSuccessfullyInfo />
+        <EditCourseSuccessfullyInfo onEditSuccess={onEditSuccess} setOnEditSuccess={setOnEditSuccess}  />
       </section>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
@@ -1212,12 +1174,10 @@ const EarlyBirdFees = ({
     </div>
   );
 };
-export const EditCourseSuccessfullyInfo = () => {
-  const {
-    viewSuccessOnEditModal,
-    setViewCourseAccountingSuccessModal,
-    setViewSuccessOnEditModal,
-  } = newCourseStore();
+
+// to show the success alert component while editing of course completed
+
+export const EditCourseSuccessfullyInfo = ({onEditSuccess,setOnEditSuccess}: any) => {
   const [onButtonLoading, setOnButtonLoading] = useState(false);
   const router = useRouter();
 
@@ -1230,15 +1190,14 @@ export const EditCourseSuccessfullyInfo = () => {
       .push(courseUrl)
       .then(() => {
         setOnButtonLoading(false);
-        setViewSuccessOnEditModal(false);
-        setViewCourseAccountingSuccessModal(false);
+        setOnEditSuccess(false);
       })
       .catch((e: any) => {
         console.log(e, "error while routing");
       });
   };
   return (
-    <AlertDialog open={true}>
+    <AlertDialog open={onEditSuccess}>
       <AlertDialogContent className="flex flex-col items-center justify-center h-[309px] w-[414px] !rounded-[24px] !gap-[34px] !p-[24px]">
         <AlertDialogHeader>
           <div className="flex justify-center cursor-pointer">
@@ -1261,7 +1220,8 @@ export const EditCourseSuccessfullyInfo = () => {
               className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
               onClick={handleClick}
             >
-              Go to Course Details
+              {onButtonLoading ? <LoadingIcon /> : 'Go to Course Details'}
+              
             </Button>
           </div>
         </AlertDialogFooter>

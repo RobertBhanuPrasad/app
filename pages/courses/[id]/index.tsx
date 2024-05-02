@@ -97,7 +97,6 @@ import { Textarea } from "src/ui/textarea";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
-import LoadingIcon from "@public/assets/LoadingIcon";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -1312,66 +1311,6 @@ export const ViewCourseAccountingSuccessModalOpen = () => {
             Close
           </Button>
         </div>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-};
-
-// to show the success alert component while editing of course completed
-
-export const EditCourseSuccessfullyInfo = () => {
-  const {
-    viewSuccessOnEditModal,
-    setViewCourseAccountingSuccessModal,
-    setViewSuccessOnEditModal,
-  } = newCourseStore();
-  const [onButtonLoading, setOnButtonLoading] = useState(false);
-  const router = useRouter();
-
-  const handleClick = () => {
-    const courseId = router.query.id; // Get the courseId from the router query
-    setOnButtonLoading(true)
-    // Construct the URL string with the courseId
-    const courseUrl = `/courses/${courseId}`;
-    router
-      .push(courseUrl)
-      .then(() => {
-        setOnButtonLoading(false)
-        setViewSuccessOnEditModal(false);
-        setViewCourseAccountingSuccessModal(false);
-      })
-      .catch((e) => {
-        console.log(e, "error while routing");
-      });
-  };
-  return (
-    <AlertDialog open={viewSuccessOnEditModal}>
-      <AlertDialogContent className="flex flex-col items-center justify-center h-[309px] w-[414px] !rounded-[24px] !gap-[34px] !p-[24px]">
-        <AlertDialogHeader>
-          <div className="flex justify-center cursor-pointer">
-            <Image src={Tick} alt="Tick Icon" />
-          </div>
-        </AlertDialogHeader>
-        <AlertDialogDescription className="flex flex-col !w-[366px] !h-[71px] !gap-4 text-[#333333] items-center text-center">
-          <h2 className="pt-[16px] text-[24px] font-semibold">
-            Successfully Updated
-          </h2>
-          <p className="text-[16px] font-normal">
-            Your changes have been saved successfully
-          </p>
-        </AlertDialogDescription>
-        <AlertDialogFooter>
-          <div className="w-full flex justify-center items-center gap-5">
-              <Button
-                disabled={onButtonLoading}
-                type="button"
-                className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
-                onClick={handleClick}
-              >
-                Go to Course Details
-              </Button>
-          </div>
-        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
