@@ -49,10 +49,13 @@ import {
 } from "src/ui/alert-dialog";
 import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function NewCourseReviewPage() {
   const { data: loginUserData }: any = useGetIdentity();
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
@@ -355,7 +358,7 @@ export default function NewCourseReviewPage() {
 
   const [onEditSuccess, setOnEditSuccess] = useState(false)
 
-  const { setProgramId } = newCourseStore();
+  const { setProgramId, viewEditCourse, setViewPreviewPage, setViewThankyouPage } = newCourseStore();
 
   /**
    * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
@@ -382,17 +385,35 @@ export default function NewCourseReviewPage() {
       accountingNotSubmittedStatusId,
       pathname
     );
+    console.log(isPosted, data, "data is posted");
 
-    if (isPosted) {
-      // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
-      await invalidate({
-        resource: "program",
-        invalidates: ["list"],
-      });
+    if(viewEditCourse === true) {
       setOnEditSuccess(true);
-    } else {
-      setIsSubmitting(false);
-    }
+     } else {
+      if (isPosted) {
+        // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+        await invalidate({
+          resource: "program",
+          invalidates: ["list"],
+        });
+         // i need to set params with section=thank_you
+         const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
+         current.set("section", "thank_you");
+   
+         const params = current.toString();
+   
+         router.replace(`${pathname}?${params}`);
+  
+         
+         setViewPreviewPage(false)
+         setViewThankyouPage(true)
+    
+      } else {
+        setIsSubmitting(false);
+      } 
+     }
+
+    
   };
 
   /**
@@ -1188,6 +1209,7 @@ const EarlyBirdFees = ({
 
 export const EditCourseSuccessfullyInfo = ({onEditSuccess,setOnEditSuccess}: any) => {
   const [onButtonLoading, setOnButtonLoading] = useState(false);
+  const {setViewEditCourse} = newCourseStore()
   const router = useRouter();
 
   const handleClick = () => {
@@ -1200,6 +1222,7 @@ export const EditCourseSuccessfullyInfo = ({onEditSuccess,setOnEditSuccess}: any
       .then(() => {
         setOnButtonLoading(false);
         setOnEditSuccess(false);
+        setViewEditCourse(false)
       })
       .catch((e: any) => {
         console.log(e, "error while routing");
