@@ -144,33 +144,37 @@ export const AccommodationField = ({
   const isEditCourse = IsEditCourse(pathname);
 
   /**
-   * Here we need to get the data of participants who have choosen this particular accommodation type
+   * Here we need to get the data of participants who have choosen this particular accommodation type and it should be called when it is edit course only
    */
-  const { data: accommodationTypeData } = useList({
-    resource: "participant_registration",
-    meta: {
-      select: "*, program_accommodations!inner(accommodation_type_id)",
-    },
-    filters: [
-      {
-        field: "program_accommodations.accommodation_type_id",
-        operator: "eq",
-        value: data?.accommodation_type_id,
+  let accommodationTypeData;
+  if (isEditCourse) {
+    accommodationTypeData = useList({
+      resource: "participant_registration",
+      meta: {
+        select: "*, program_accommodations!inner(accommodation_type_id)",
       },
-      {
-        field: "program_id",
-        operator: "eq",
-        value: parseInt(router.query.id as string),
-      },
-    ],
-  });
+      filters: [
+        {
+          field: "program_accommodations.accommodation_type_id",
+          operator: "eq",
+          value: data?.accommodation_type_id,
+        },
+        {
+          field: "program_id",
+          operator: "eq",
+          value: parseInt(router.query.id as string),
+        },
+      ],
+    });
+  }
+
 
   /**
    * This variable determines whether there are participants who has choosen this particular accommodation type or not based on data and is this the edit course or not
    */
   const isAccommodationDisabled: boolean =
-    accommodationTypeData?.data &&
-    accommodationTypeData?.data?.length > 0 &&
+    accommodationTypeData?.data?.data &&
+    accommodationTypeData?.data?.data?.length > 0 &&
     isEditCourse
       ? true
       : false;
