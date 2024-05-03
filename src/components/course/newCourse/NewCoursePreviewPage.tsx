@@ -389,9 +389,9 @@ export default function NewCourseReviewPage() {
     console.log(isPosted, data, "data is posted");
 
     // we are checking the course is edit or user created new course 
-    const isEdited = IsEditCourse(pathname) ? "PUT" : "POST";
+    const isEdited = IsEditCourse(pathname)
 
-    if(isEdited === "PUT") {
+    if(isEdited) {
       setOnEditSuccess(true);
      } else {
       if (isPosted) {
