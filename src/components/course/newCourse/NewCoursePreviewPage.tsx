@@ -387,11 +387,11 @@ export default function NewCourseReviewPage() {
       accountingNotSubmittedStatusId,
       pathname
     );
-    console.log(isPosted, data, "data is posted");
 
     // we are checking the course is edit or user created new course
     const isEdited = IsEditCourse(pathname);
 
+    // we have to display thank you page or success modal pop up only when the posting done successfully without any error
     if (isPosted) {
       if (isEdited) {
         setOnEditSuccess(true);
@@ -412,9 +412,8 @@ export default function NewCourseReviewPage() {
         setViewPreviewPage(false);
         setViewThankyouPage(true);
       }
-    } else {
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   };
 
   /**
