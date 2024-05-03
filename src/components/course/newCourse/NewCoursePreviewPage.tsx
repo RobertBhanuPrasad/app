@@ -413,7 +413,6 @@ export default function NewCourseReviewPage() {
         setViewThankyouPage(true);
       }
     }
-
     setIsSubmitting(false);
   };
 
