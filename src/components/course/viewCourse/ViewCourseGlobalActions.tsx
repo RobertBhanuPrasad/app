@@ -14,7 +14,7 @@ import { useTranslation } from 'next-i18next';
 
 export const ViewCourseGlobalActions = () => {
   const router = useRouter();
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["common"])
   
   const globalActionsOptions = [
     "View Participants",

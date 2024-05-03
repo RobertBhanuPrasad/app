@@ -619,7 +619,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
 
 const RejectedModalOpen = () => {
   const { viewRejectedModal, setViewRejectedModal } = newCourseStore();
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["common","new_strings"])
   return (
     <Dialog open={viewRejectedModal}>
       <DialogContent className="w-[414px] h-[279px]">

@@ -161,7 +161,6 @@ const AttendancePieChart = ({ participantData }: any) => {
   ];
 
   const attendanceData = attendanceDataArray?.map((item: any, index: any) => {
-    // const {t} = useTranslation(["common", "course.view_course", "new_strings","course.find_course", "course.participants"])
     return {
       title: item.label,
       value: item.value,
@@ -173,7 +172,7 @@ const AttendancePieChart = ({ participantData }: any) => {
     };
   });
   console.log("attendence data", attendanceData);
-  // const {t} = useTranslation(["common", "course.view_course", "new_strings", "course.find_course", "course.participants"])
+  
 
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6 ">
