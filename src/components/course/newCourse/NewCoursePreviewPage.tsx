@@ -810,7 +810,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-            {t("course.new_course:review_post_details.fee_information")}
+            {t("new_strings:fees_information")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of FeesDetails page */}
             <EditModalDialog
