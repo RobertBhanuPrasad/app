@@ -1,42 +1,32 @@
-import Form from "@components/Formfield";
-import { BaseTable } from "@components/course/findCourse/BaseTable";
-import Filters from "@components/course/findCourse/Filters";
-import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
-import { hasAliasNameFalse } from "@components/courseBusinessLogic";
-import CalenderIcon from "@public/assets/CalenderIcon";
-import ClearAll from "@public/assets/ClearAll";
-import CrossIcon from "@public/assets/CrossIcon";
-import FilterIcon from "@public/assets/FilterIcon";
-import SearchIcon from "@public/assets/Search";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { useList, useSelect, useTable } from "@refinedev/core";
-import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
-import { column } from "src/components/course/findCourse/Columns";
-import { DateRangePicker } from "src/ui/DateRangePicker";
-import { Text } from "src/ui/TextTags";
-import { Button } from "src/ui/button";
-import { Checkbox } from "src/ui/checkbox";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "src/ui/dropdown-menu";
-import { Input } from "src/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectItems,
-  SelectTrigger,
-  SelectValue,
-} from "src/ui/select";
-import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
-import { supabaseClient } from "src/utility/supabaseClient";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import Form from '@components/Formfield'
+import { BaseTable } from '@components/course/findCourse/BaseTable'
+import Filters from '@components/course/findCourse/Filters'
+import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
+import { hasAliasNameFalse } from '@components/courseBusinessLogic'
+import CalenderIcon from '@public/assets/CalenderIcon'
+import ClearAll from '@public/assets/ClearAll'
+import CrossIcon from '@public/assets/CrossIcon'
+import FilterIcon from '@public/assets/FilterIcon'
+import SearchIcon from '@public/assets/Search'
+import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
+import { ChevronDownIcon } from '@radix-ui/react-icons'
+import { useList, useSelect, useTable } from '@refinedev/core'
+import { format } from 'date-fns'
+import React, { useEffect, useState } from 'react'
+import { useController, useFormContext } from 'react-hook-form'
+import { column } from 'src/components/course/findCourse/Columns'
+import { DateRangePicker } from 'src/ui/DateRangePicker'
+import { Text } from 'src/ui/TextTags'
+import { Button } from 'src/ui/button'
+import { Checkbox } from 'src/ui/checkbox'
+import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
+import { Input } from 'src/ui/input'
+import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
+import { Sheet, SheetContent, SheetTrigger } from 'src/ui/sheet'
+import { supabaseClient } from 'src/utility/supabaseClient'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+
 import { authProvider } from "src/authProvider"
 import { GetServerSideProps } from "next"
 import { serverSideTranslations } from "next-i18next/serverSideTranslations"
@@ -845,10 +835,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
 
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-  
-
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings", "course.find_course"])
-
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "new_strings"])
   if (!authenticated) {
     return {
       props: {
@@ -860,10 +847,9 @@ export const getServerSideProps: GetServerSideProps<{}> = async context => {
       }
     }
   }
-
   return {
     props: {
-      ...translateProps
-    }
-  }
-}
+      ...translateProps,
+    },
+  };
+};

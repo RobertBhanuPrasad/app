@@ -115,24 +115,24 @@ function ViewDetails() {
   const countryName = 'India'
   const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 
-  
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
 
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
-      label: t('pages.Tabs.CourseDetailsTab'),
+      label: t('new_strings:course_details_tab'),
       disabled: false,
       tab_query_name: 'course_details'
     },
     {
       value: PARTICIPANTS_TAB,
-      label: t('pages.Tabs.participantTab'),
+      label: t('new_strings:participants_tab'),
       disabled: false,
       tab_query_name: 'participants'
     },
     {
       value: REVENUE_SUMMARY_TAB,
-      label: t('pages.Tabs.revenueSummaryTab'),
+      label:t('new_strings:revenue_summary_tab'),
       disabled: false,
       tab_query_name: 'revenue_summary'
     }
@@ -159,7 +159,7 @@ function ViewDetails() {
   } else {
     tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
-      label: t('pages.Tabs.courseAccountingFormTab'),
+      label:t('new_strings:course_accounting_form_tab'),
       disabled: true,
       tab_query_name: 'course_accounting_form'
     })
@@ -931,7 +931,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
   
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings", "course.find_course","course.participants"])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings", "course.find_course","course.participants", "new_strings"])
 
   if (!authenticated) {
     return {
