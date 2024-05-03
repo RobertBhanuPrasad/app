@@ -246,7 +246,7 @@ const FeePerPerson = ({ index }: any) => {
 };
 
 export const AccommodationType = ({ index }: { index: number }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("new_strings")
   const { watch } = useFormContext();
 
   const formData = watch().accommodation || [];

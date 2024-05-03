@@ -1186,7 +1186,7 @@ const EarlyBirdFees = ({
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("new_strings")
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}

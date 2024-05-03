@@ -741,7 +741,7 @@ const ExistingVenueDetails = () => {
 }
 
 const TimePicker = ({ index, is12HourFormat }: { index: number; is12HourFormat: Boolean }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("course.new_course")
   const { errors }: any = useFormState()
 
   const { trigger } = useFormContext()
@@ -784,7 +784,7 @@ const TimePicker = ({ index, is12HourFormat }: { index: number; is12HourFormat: 
   )
 }
 const CalenderComponent = ({ index, setOpen }: any) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },
@@ -927,7 +927,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 }
 
 const ExistingVenueList = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   const { data: loginUserData }: any = useGetIdentity()
 
   const { watch } = useFormContext()
