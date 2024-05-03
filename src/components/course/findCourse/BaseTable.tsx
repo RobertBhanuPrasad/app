@@ -292,31 +292,21 @@ export function BaseTable<TData, TValue>({
   const tableRef = useRef<HTMLDivElement>(null);
 
   /**
-   * Function to handle click event for scrolling the table container to the left.
+   * function to move the scroll bar to left using controls in action
    */
   const handlePrevButtonClick = () => {
-    // Check if tableRef is defined
     if (tableRef.current) {
-      // Get the width of the container
-      const containerWidth = tableRef.current.clientWidth;
-      // Scroll the container to the left by its width
-      tableRef.current.scrollLeft -= containerWidth;
-      // Update the state with the new scroll position
+      tableRef.current.scrollLeft -= 100;
       setScrollLeft(tableRef.current.scrollLeft);
     }
   };
 
   /**
-   * Function to handle click event for scrolling the table container to the right.
+   * function to move the scroll bar to right using controls in action
    */
   const handleNextButtonClick = () => {
-    // Check if tableRef is defined
     if (tableRef.current) {
-      // Get the width of the container
-      const containerWidth = tableRef.current.clientWidth;
-      // Scroll the container to the right by its width
-      tableRef.current.scrollLeft += containerWidth;
-      // Set scrollLeft to the maximum scroll width to scroll to the end
+      tableRef.current.scrollLeft += 100;
       setScrollLeft(
         tableRef.current.scrollWidth - tableRef.current.clientWidth
       );
