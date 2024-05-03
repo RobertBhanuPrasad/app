@@ -169,7 +169,6 @@ const RadioCards = () => {
     loginUserData?.userData?.id
   );
 
-
   /**
    * This determines whether to disable the iam organizing this course for another teacher or not
    */
@@ -302,6 +301,8 @@ const RadioCards = () => {
               value === iAmOrganizerId
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                 : ""
+            } ${
+              isDisableOrganizingForAnotherTeacher ? "cursor-not-allowed" : ""
             }`}
           >
             <RadioGroupCheckItem
