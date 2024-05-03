@@ -414,7 +414,6 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
-var initialStep=0
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
@@ -439,7 +438,7 @@ var initialStep=0
                 setClickedButton("Basic Details");
               }}
               onOpenChange={setOpenBasicDetails}
-              currentField={initialStep}
+              currentStep={1}
             />{" "}
           </div>
           {/* body */}
@@ -524,7 +523,7 @@ var initialStep=0
                 setClickedButton("Course Details");
               }}
               onOpenChange={setOpenCourseDetails}
-              currentField={initialStep+1}
+              currentStep={2}
             />{" "}
           </div>
           {/* body */}
@@ -718,7 +717,7 @@ var initialStep=0
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenVenueDetails}
-              currentField={initialStep+2}
+              currentStep={3}
             />{" "}
           </div>
           {/* body */}
@@ -834,7 +833,7 @@ var initialStep=0
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenFeesDetails}
-              currentField={initialStep+3}
+              currentStep={4}
             />{" "}
           </div>
           {/* body */}
@@ -902,7 +901,7 @@ var initialStep=0
                 setClickedButton("Accomidation Details");
               }}
               onOpenChange={setOpenAccomidationDetails}
-              currentField={initialStep+4}
+              currentStep={5}
             />{" "}
           </div>
           {newCourseData?.is_residential_program && (
@@ -950,7 +949,7 @@ var initialStep=0
                 setClickedButton("Contact Details");
               }}
               onOpenChange={setOpenContactDetails}
-              currentField={initialStep+5}
+              currentStep={6}
             />{" "}
           </div>
           {/* body */}

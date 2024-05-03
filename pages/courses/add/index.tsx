@@ -37,7 +37,11 @@ import {
   NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
 } from "src/constants/CourseConstants";
-import { PAYMENT_MODE, TIME_FORMAT, VISIBILITY } from "src/constants/OptionLabels";
+import {
+  PAYMENT_MODE,
+  TIME_FORMAT,
+  VISIBILITY,
+} from "src/constants/OptionLabels";
 import {
   PAY_ONLINE,
   PUBLIC,
@@ -65,7 +69,6 @@ function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData, "loginUserData");
 
-
   const {
     query: { section },
   } = useRouter();
@@ -91,7 +94,7 @@ function index() {
   }
 }
 function NewCourse() {
-  const { setCurrentStep} = newCourseStore();
+  const { setCurrentStep } = newCourseStore();
   const { data: loginUserData }: any = useGetIdentity();
 
   const loggedUserData = loginUserData?.userData?.id;
@@ -102,19 +105,18 @@ function NewCourse() {
     // console.log(formData);
   };
 
-
-/**
- * useEffect to run once when the component mounts.
- * It sets the current step to 1.
- * This effect has an empty dependency array to ensure it runs only once.
- */
-useEffect(() => {
   /**
-   * Set the current step to 1 when the component mounts.
-   * This initializes the component state for the first step.
+   * useEffect to run once when the component mounts.
+   * It sets the current step to 1.
+   * This effect has an empty dependency array to ensure it runs only once.
    */
-  setCurrentStep(1);
-}, []);
+  useEffect(() => {
+    /**
+     * Set the current step to 1 when the component mounts.
+     * This initializes the component state for the first step.
+     */
+    setCurrentStep(1);
+  }, []);
 
   //Finding program Organizer role id
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
@@ -237,20 +239,24 @@ useEffect(() => {
 }
 
 export default index;
-// we are writing a function here to validate the each steps in new course page and edit previewpage 
+// we are writing a function here to validate the each steps in new course page and edit previewpage
 // we are calling the same function for newcoursepreviewpagepageeditcourse also to validate
-export const requiredValidationFields=(formData:any)=>{
+export const requiredValidationFields = (formData: any) => {
   const { data: loginUserData }: any = useGetIdentity();
+
   const { data: timeZoneData } = useList({ resource: "time_zones" });
+
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
+
   let RequiredNewCourseStep1FormNames = _.omit(
     NewCourseStep1FormNames,
     formData?.is_registration_via_3rd_party
       ? []
       : ["registration_via_3rd_party_url"]
   );
+
   let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
     ...(formData?.program_type?.has_alias_name
       ? []
@@ -261,6 +267,7 @@ export const requiredValidationFields=(formData:any)=>{
       ? []
       : ["is_geo_restriction_applicable"]),
   ]);
+
   /**
    * @constant RequiredNewCourseStep3FormNames
    * @description the names which are need to trigger for the validations of step 3
@@ -269,21 +276,26 @@ export const requiredValidationFields=(formData:any)=>{
 
   // REQUIRMENT if the program type is online then we need to validate the online url , state is present or not, city is present or not, center id is present or not
   // so if it is online type then we are keeping the online_url, state_id, city_id, center_id
-  if (formData?.program_type?.is_online_program===true) {
-    RequiredNewCourseStep3FormNames.push('online_url', 'state_id', 'city_id', 'center_id')
-  } 
-  else {
-  // else we are validating the venues
-    RequiredNewCourseStep3FormNames.push('is_existing_venue')
+  if (formData?.program_type?.is_online_program === true) {
+    RequiredNewCourseStep3FormNames.push(
+      "online_url",
+      "state_id",
+      "city_id",
+      "center_id"
+    );
+  } else {
+    // else we are validating the venues
+    RequiredNewCourseStep3FormNames.push("is_existing_venue");
   }
 
   // REQUIRMENT If country does not have multiple time zones no need to validate time zone drop down
   // If there is one time zone then it will be the default time zone
   // If there are more than one time zones then we need to select the time zone
   // So we are sending the time_zone_id if there are more than 0ne time zone
-  if (timeZoneData?.total as number > 1 ) {
-    RequiredNewCourseStep3FormNames.push('time_zone_id')
+  if ((timeZoneData?.total as number) > 1) {
+    RequiredNewCourseStep3FormNames.push("time_zone_id");
   }
+
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false
       ? [
@@ -295,6 +307,7 @@ export const requiredValidationFields=(formData:any)=>{
         ]
       : []),
   ]);
+
   const validationFieldsStepWise = [
     Object.values(RequiredNewCourseStep1FormNames),
     Object.values(RequiredNewCourseStep2FormNames),
@@ -303,8 +316,9 @@ export const requiredValidationFields=(formData:any)=>{
     Object.values(RequiredNewCourseStep5FormNames),
     Object.values(NewCourseStep6FormNames),
   ];
-  return validationFieldsStepWise
-}
+
+  return validationFieldsStepWise;
+};
 
 export const NewCourseTabs = () => {
   const searchParams = useSearchParams();
@@ -342,12 +356,15 @@ export const NewCourseTabs = () => {
     }
   };
 
- 
   const formData = getValues();
+
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
+
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
-  let validationFieldsStepWise=requiredValidationFields(formData)
+
+  let validationFieldsStepWise = requiredValidationFields(formData);
+
   let isAllFieldsFilled = false;
 
   /**
