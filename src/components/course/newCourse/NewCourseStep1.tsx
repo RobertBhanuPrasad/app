@@ -3,7 +3,7 @@ import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import {
@@ -147,8 +147,6 @@ const RadioCards = () => {
   const user_roles: any[] = loginUserData?.userData?.user_roles;
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
-
-  const formData = watch();
 
   const loginInTeacherData = loginUserData?.userData?.id;
 
