@@ -584,7 +584,8 @@ export function BaseTable<TData, TValue>({
                   <SelectValue placeholder={`${pageSize}`} />
                 </SelectTrigger>
                 <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map(
+                 {/* Updated pageSize options to include [10, 25, 50, 100]. */}
+                  {[10, 25, 50, 100].map(
                     (
                       pageSize // Till now there is no limit will change after confirming TODO
                     ) => (
@@ -615,47 +616,57 @@ const DataPagination = ({
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
+  const z= [1,2,3,4]
+  const x= pageCount > 4  ?[...z, pageCount]: z
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
-      <Button
-        variant="outline"
-        className="h-8 w-8 p-0 border-none"
-        onClick={() => {
-          setCurrent(current - 1);
-        }}
-        disabled={current <= 1}
-      >
-        <div>Prev</div>
-      </Button>
+      {/* Renders a button to navigate to the previous page.Disabled if current page is the first page. */}
+      {pageCount > 1 && (
+  <Button
+    variant="outline"
+    className="h-8 w-8 p-0 border-none"
+    onClick={() => {
+      setCurrent(current - 1);
+    }}
+    disabled={current <= 1}
+  >
+    <div>Prev</div>
+  </Button>
+)}
 
-      {/*pages buttons */}
-      {[1, 2, 3, 4, 10].map((page, index, array) => (
-        <div key={index}>
-          <Button
-            variant={page === current ? "default" : "outline"}
-            onClick={() => {
-              setCurrent(page);
-            }}
-            disabled={page > pageCount}
-          >
-            {page}
-          </Button>
-          {index === 3 && array.length > 4 && <span className="p-2">...</span>}
-        </div>
-      ))}
-
-      {/*next button */}
+{/*pages buttons */}
+{/* Renders buttons for each page number.Only renders buttons for pages up to pageCount. */}
+{x.map((page, index, array) => (
+  <div key={index}>
+    {page <= pageCount && (
       <Button
-        variant="outline"
-        className="h-8 w-8 p-0 border-none"
+        variant={page === current ? "default" : "outline"}
         onClick={() => {
-          setCurrent(current + 1);
+          setCurrent(page);
         }}
-        disabled={pageCount < current + 1}
       >
-        <div>Next</div>
+        {page}
       </Button>
+    )}
+              {index === 3 && array.length > 4 && <span className="p-2">...</span>}
+  </div>
+))}
+
+{/* next button */}
+{/* Renders a button to navigate to the next page.Disabled if current page is the last page. */}
+{pageCount > 1 && (
+  <Button
+    variant="outline"
+    className="h-8 w-8 p-0 border-none"
+    onClick={() => {
+      setCurrent(current + 1);
+    }}
+    disabled={pageCount < current + 1}
+  >
+    <div>Next</div>
+  </Button>
+)}
     </div>
   );
 };
