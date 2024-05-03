@@ -47,7 +47,6 @@ export default function NewCourseReviewPage() {
   const { data: loginUserData }: any = useGetIdentity();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
 
   // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
@@ -133,6 +132,8 @@ export default function NewCourseReviewPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data }: any = useGetIdentity();
+
+  const pathname = usePathname();
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
 
@@ -371,7 +372,8 @@ export default function NewCourseReviewPage() {
       newCourseData,
       data?.userData?.id,
       setProgramId,
-      accountingNotSubmittedStatusId
+      accountingNotSubmittedStatusId,
+      pathname
     );
 
     if (isPosted) {
@@ -412,10 +414,11 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
-
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold ml-6">Review Course Details</div>
+      <div className="text-[24px] my-4 font-semibold ml-6">
+        Review Course Details
+      </div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -435,6 +438,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Basic Details");
               }}
               onOpenChange={setOpenBasicDetails}
+              currentStep={1}
             />{" "}
           </div>
           {/* body */}
@@ -519,6 +523,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Course Details");
               }}
               onOpenChange={setOpenCourseDetails}
+              currentStep={2}
             />{" "}
           </div>
           {/* body */}
@@ -568,30 +573,34 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-              Display language translation option for participants
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_language_translation_for_participants}
-              >
-                {newCourseData?.is_language_translation_for_participants ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Display language translation option for participants
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={
+                    newCourseData?.is_language_translation_for_participants
+                  }
+                >
+                  {newCourseData?.is_language_translation_for_participants
+                    ? "Yes"
+                    : "No"}
+                </abbr>
+              </div>
             )}
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-              Registration is mandatory for this course
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_registration_required}
-              >
-                {newCourseData?.is_registration_required ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Registration is mandatory for this course
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_registration_required}
+                >
+                  {newCourseData?.is_registration_required ? "Yes" : "No"}
+                </abbr>
+              </div>
             )}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -629,17 +638,17 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Is geo restriction applicable for registrations
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_geo_restriction_applicable}
-              >
-                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Is geo restriction applicable for registrations
+                </p>
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_geo_restriction_applicable}
+                >
+                  {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
+                </abbr>
+              </div>
             )}
             {/* // TODO need to do when the form filed is clear */}
             <div className="w-[291px]">
@@ -708,6 +717,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenVenueDetails}
+              currentStep={3}
             />{" "}
           </div>
           {/* body */}
@@ -781,9 +791,11 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={timeFormat?.value}
                 >
-                   {timeFormat?.value ?
-                    timeFormat?.value.split(" ")[0] + " " +
-                    timeFormat?.value.split(" ")[1] + "s"
+                  {timeFormat?.value
+                    ? timeFormat?.value.split(" ")[0] +
+                      " " +
+                      timeFormat?.value.split(" ")[1] +
+                      "s"
                     : "-"}
                 </abbr>
               </div>
@@ -821,6 +833,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenFeesDetails}
+              currentStep={4}
             />{" "}
           </div>
           {/* body */}
@@ -888,6 +901,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Accomidation Details");
               }}
               onOpenChange={setOpenAccomidationDetails}
+              currentStep={5}
             />{" "}
           </div>
           {newCourseData?.is_residential_program && (
@@ -935,6 +949,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Contact Details");
               }}
               onOpenChange={setOpenContactDetails}
+              currentStep={6}
             />{" "}
           </div>
           {/* body */}
