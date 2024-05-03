@@ -414,7 +414,6 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
-
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
@@ -439,6 +438,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Basic Details");
               }}
               onOpenChange={setOpenBasicDetails}
+              currentStep={1}
             />{" "}
           </div>
           {/* body */}
@@ -523,6 +523,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Course Details");
               }}
               onOpenChange={setOpenCourseDetails}
+              currentStep={2}
             />{" "}
           </div>
           {/* body */}
@@ -716,6 +717,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenVenueDetails}
+              currentStep={3}
             />{" "}
           </div>
           {/* body */}
@@ -831,6 +833,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenFeesDetails}
+              currentStep={4}
             />{" "}
           </div>
           {/* body */}
@@ -898,6 +901,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Accomidation Details");
               }}
               onOpenChange={setOpenAccomidationDetails}
+              currentStep={5}
             />{" "}
           </div>
           {newCourseData?.is_residential_program && (
@@ -945,6 +949,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Contact Details");
               }}
               onOpenChange={setOpenContactDetails}
+              currentStep={6}
             />{" "}
           </div>
           {/* body */}
