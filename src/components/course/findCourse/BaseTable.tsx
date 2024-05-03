@@ -616,8 +616,7 @@ const DataPagination = ({
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
-  const z= [1,2,3,4]
-  const x= pageCount > 4  ?[...z, pageCount]: z
+  const PagesArray= pageCount > 4  ?[1,2,3,4, pageCount]: [1,2,3,4]
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
@@ -637,7 +636,7 @@ const DataPagination = ({
 
 {/*pages buttons */}
 {/* Renders buttons for each page number.Only renders buttons for pages up to pageCount. */}
-{x.map((page, index, array) => (
+{PagesArray.map((page, index, array) => (
   <div key={index}>
     {page <= pageCount && (
       <Button
