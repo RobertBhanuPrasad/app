@@ -749,7 +749,7 @@ export default function NewCourseReviewPage() {
             <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  {t("online_zoom_url")}
+                  {t("course.new_course:time_and_venue_tab.online_meeting_url")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
