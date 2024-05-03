@@ -183,23 +183,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -217,19 +217,19 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -257,23 +257,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -293,23 +293,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -323,15 +323,15 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -347,23 +347,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -377,23 +377,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -409,15 +409,15 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
@@ -431,11 +431,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
@@ -459,23 +459,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -495,23 +495,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -525,15 +525,15 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -551,19 +551,19 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -580,24 +580,24 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
           label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
-        t('common:view_participants'),
-        t('common:edit_course'),
-        t('common:copy_course'),
+        t('view_participants'),
+        t('edit_course'),
+        t('copy_course'),
         t('new_strings:view_course_accounting_form'),
       ];
     } else if (
@@ -606,11 +606,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
@@ -636,7 +636,7 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
       ];
@@ -653,11 +653,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -669,7 +669,7 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -679,11 +679,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -703,11 +703,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
       ];

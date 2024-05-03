@@ -119,7 +119,7 @@ function CourseDetailsTab() {
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] ">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-            {t('common:basic_details')}
+            {t('basic_details')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -133,7 +133,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('common:course_id')}</Header2>
+              <Header2>{t('course_id')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_code
                   ? courseData?.data?.program_code
@@ -149,7 +149,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('common:course_accounting_status')}</Header2>
+              <Header2>{t('course_accounting_status')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_accounting_status_id?.value
                   ? courseData?.data?.program_accounting_status_id?.value
@@ -157,7 +157,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('common:teachers')}</Header2>
+              <Header2>{t('teachers')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_teachers?.length > 0
                   ? courseData?.data?.program_teachers
@@ -181,7 +181,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('common:available_languages_for_translation')}</Header2>
+              <Header2>{t('available_languages_for_translation')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_translation_languages?.length > 0
                   ? courseData?.data?.program_translation_languages
@@ -193,7 +193,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('common:language_course_is_taught_in')}</Header2>
+              <Header2>{t('language_course_is_taught_in')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_languages?.length > 0
                   ? courseData?.data?.program_languages
@@ -205,7 +205,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('common:program_visibility')}</Header2>
+              <Header2>{t('program_visibility')}</Header2>
               <ItemValue>
                 {courseData?.data?.visibility_id?.value
                   ? courseData?.data?.visibility_id?.value
@@ -213,7 +213,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('common:max_capacity')}</Header2>
+              <Header2>{t('max_capacity')}</Header2>
               <ItemValue>
                 {courseData?.data?.max_capacity
                   ? courseData?.data?.max_capacity
@@ -284,13 +284,13 @@ function CourseDetailsTab() {
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-            {t('common:time_and_venue')}
+            {t('time_and_venue')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div>
-              <Header2>{t('common:venue_address')}</Header2>
+              <Header2>{t('venue_address')}</Header2>
               {courseData?.data?.venue_id ? (
                 <ItemValue>
                   {courseData?.data?.venue_id?.address},
@@ -304,7 +304,7 @@ function CourseDetailsTab() {
               )}
             </div>
             <Header2>
-            {t('common:sessions')}
+            {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
                 {courseData?.data?.program_schedules?.length > 0
                   ? courseData?.data?.program_schedules?.map(
@@ -415,11 +415,11 @@ function CourseDetailsTab() {
                     return (
                       <div className="gap-[23px] flex flex-col">
                         <div>
-                          <Header2>{t('common:contact_name')}</Header2>
+                          <Header2>{t('contact_name')}</Header2>
                           <ItemValue>{item.contact_name}</ItemValue>
                         </div>
                         <div>
-                          <Header2>{t('common:contact_email')}</Header2>
+                          <Header2>{t('contact_email')}</Header2>
                           <ItemValue>{item.contact_email}</ItemValue>
                         </div>
                         <div>

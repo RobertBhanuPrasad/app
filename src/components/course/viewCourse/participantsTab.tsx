@@ -48,13 +48,13 @@ function ParticipantsTab() {
             //     // router.push('/courses/add')
             // }
           >
-            {t('common:register_participant')}
+            {t('register_participant')}
           </Button>
           <Button
             className="w-[188px] h-[46px] rounded-[12px]"
             onClick={() => router.push(`/courses/${id}/participants/list`)}
           >
-            {t('common:view_participants')}
+            {t('view_participants')}
           </Button>
         </div>
       </div>

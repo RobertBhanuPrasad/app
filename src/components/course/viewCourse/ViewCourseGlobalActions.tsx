@@ -69,7 +69,7 @@ export const ViewCourseGlobalActions = () => {
           variant="outline"
           className="flex flex-row justify-between w-[192px] h-10"
         >
-          {t('common:actions')}
+          {t('actions')}
           <DropDown />
         </Button>
       </DropdownMenuTrigger>

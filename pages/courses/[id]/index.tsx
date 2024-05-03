@@ -507,7 +507,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder={t('common:pending_approval')} />
+          <SelectValue placeholder={t('pending_approval')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
@@ -546,7 +546,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     setApproveModalOpen(false);
                   }}
                 >
-                  {t('common:no_button')}
+                  {t('no_button')}
                 </Button>
               </div>
               <div>
@@ -557,7 +557,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     approveCourse();
                   }}
                 >
-                  {t('common:yes_button')}
+                  {t('yes_button')}
                 </Button>
               </div>
             </div>
@@ -578,7 +578,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
             </DialogTitle>
             <DialogDescription>
               <Textarea
-                placeholder="Comment"
+                placeholder={t('course.view_course:course_accounting_form_tab.comment')}
                 className="border-[#E1E1E1]  h-[132px] w-[366px]"
                 onChange={(e: any) => {
                   setRejectionFeedback(e.target.value);
@@ -597,7 +597,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     setRejectModalOpen(false);
                   }}
                 >
-                  {t('common:no_button')}
+                  {t('no_button')}
                 </Button>
               </div>
               <div>
@@ -606,7 +606,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                   className="bg-[#7677F4] text-[white] w-[98px] h-[46px] rounded-[12px]"
                   onClick={rejectCourse}
                 >
-                  {t('common:reject_button')}
+                  {t('reject_button')}
                 </Button>
               </div>
             </div>
@@ -636,7 +636,7 @@ const RejectedModalOpen = () => {
               className=" bg-[#7677F4] w-[91px] h-[46px] rounded-[12px] text-[white]"
               onClick={() => setViewRejectedModal(false)}
             >
-              Close
+             {t('close')}
             </Button>
           </div>
         </DialogFooter>
@@ -665,7 +665,7 @@ const SuccessModalOpen = () => {
             }}
             className="w-[91px] h-[46px] rounded-[12px]"
           >
-            {t('common:close')}
+            {t('close')}
           </Button>
         </div>
       </DialogContent>
@@ -785,7 +785,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder={t('common:actions')} />
+          <SelectValue placeholder={t('actions')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
@@ -828,7 +828,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     setCancelCourseModalOpen(false);
                   }}
                 >
-                  {t('common:no')}
+                  {t('no')}
                 </Button>
               </div>
               <div>
@@ -839,7 +839,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     cancelCourse();
                   }}
                 >
-                {t('common:yes')}
+                {t('yes_button')}
                 </Button>
               </div>
             </div>
@@ -863,7 +863,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                 setCancelSuccessModalOpen(false);
               }}
             >
-              {t('common:close')}
+              {t('close')}
             </Button>
           </div>
         </DialogContent>
@@ -958,7 +958,7 @@ const ShareButton = () => {
     <Dialog>
       <DialogTrigger>
         <Button className="border border-primary text-primary w-[93px] bg-[white] rounded-[12px] flex gap-2 ">
-        {t('common:share_button')} <ShareIcon />
+        {t('share_button')} <ShareIcon />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[414px] h-[310px] !rounded-[24px] !p-6 ">
@@ -971,9 +971,9 @@ const ShareButton = () => {
             <Instagram />
             <LinkedInIcon />
           </div>
-          <div className="text-[14px] font-normal text-[#666666]">{t('common:or')}</div>
+          <div className="text-[14px] font-normal text-[#666666]">{t('or')}</div>
           <div className="relative w-full">
-            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">{t('common:registration_link')}</p>
+            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">{t('registration_link')}</p>
             <div className="flex justify-between gap-2 px-3 py-1 border rounded-2xl min-w-72">
               <div className="text-[14px] font-semibold">{RX_BASE_URL}</div>
               <div
@@ -994,7 +994,7 @@ const ShareButton = () => {
             </div>
           </div>
           <div className="relative w-full">
-            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">{t('common:details_page_link')}</p>
+            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">{t('details_page_link')}</p>
             <div className="flex justify-between gap-2 px-3 py-1 border rounded-2xl min-w-72">
               <div className="text-[14px] font-semibold">{CX_BASE_URL}</div>
               <div
@@ -1068,7 +1068,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({
       value: 1
     },
     {
-      label: t('common:reject_button'),
+      label: t('reject_button'),
       value: 2
     }
   ]
