@@ -64,14 +64,15 @@
  "organisation":"Organisation",
  "course type":"Course type",
  "total_participants":"Total Participants",
- 
+ "announced_by":"Announced by",
 "course_canceled_successfully":"Course canceled Successfully",
 "approve":"Approve",
 "describe_your_rejection_reason":"Describe your rejection reason",
 "course_rejected":"Course Rejected",
-"edit_course_accounting Form":" Accounting Form",
+"edit_course_accounting_form":" Accounting Form",
 "view_course_accounting_form":"View Course Accounting Form",
 "are_you_sure_you_want_to_approve":"Are you sure you want to Approve this Course",
+"the_course_got_rejected":"The course got rejected succesfully",
 
 
  "participants":"participants"

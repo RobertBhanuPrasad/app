@@ -303,7 +303,7 @@ function ViewDetails() {
         </div>
 
         <div className="flex flex-row items-center gap-2 w-full justify-end ">
-        {t('course.view_course:course_accounting_form_tab.announced_by')}: {courseData?.data?.created_by_user_id?.contact_id?.full_name}
+        {t('new_strings:announced_by')}: {courseData?.data?.created_by_user_id?.contact_id?.full_name}
           <HoverCard>
             <HoverCardTrigger>
               <Important />
@@ -628,7 +628,7 @@ const RejectedModalOpen = () => {
             <Cross />{" "}
           </div>
           <DialogTitle className="font-bold text-center">{t('new_strings:course_rejected')}</DialogTitle>
-          <DialogDescription className="text-center">{t('course.view_course:basic_details_tab.the_course_got_rejected')}</DialogDescription>
+          <DialogDescription className="text-center">{t('new_strings:the_course_got_rejected')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <div className="flex w-full items-center justify-center">
@@ -647,7 +647,7 @@ const RejectedModalOpen = () => {
 
 const SuccessModalOpen = () => {
   const { viewSuccessModal, setViewSuccessModal } = newCourseStore()
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["common", "course.view_course"])
   return (
     <Dialog open={viewSuccessModal}>
       <DialogTrigger></DialogTrigger>
@@ -1024,7 +1024,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
   
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings", "course.find_course","course.participants", "new_strings"])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings", "course.find_course","course.participants"])
 
   if (!authenticated) {
     return {

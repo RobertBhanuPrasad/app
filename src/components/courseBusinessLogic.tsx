@@ -98,7 +98,7 @@ export const DisplayOptions = (
     PROGRAM_STATUS,
     CANCELED
   )?.id;
-  const {t} = useTranslation(["common", "course.view_course", "new_strings", "course.find_course"])
+  const {t} = useTranslation(["common", "new_strings", "course.find_course"])
   const courseFullStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
     FULL
@@ -207,7 +207,7 @@ export const DisplayOptions = (
           value: 6,
         },
         {
-          label: t('new_strings:edit_course_accounting Form'),
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -233,11 +233,11 @@ export const DisplayOptions = (
           value: 5,
         },
         {
-          label: t('common:submit_course_accounting_form'),
+          label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
         {
-          label:  t('new_strings:edit_course_accounting Form'),
+          label:  t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -277,7 +277,7 @@ export const DisplayOptions = (
           value: 5,
         },
         {
-          label: t('common:submit_course_accounting_form'),
+          label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
         {
@@ -367,7 +367,7 @@ export const DisplayOptions = (
           value: 5,
         },
         {
-          label:  t('new_strings:edit_course_accounting Form'),
+          label:  t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -397,7 +397,7 @@ export const DisplayOptions = (
           value: 5,
         },
         {
-          label:  t('new_strings:edit_course_accounting Form'),
+          label:  t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -479,11 +479,11 @@ export const DisplayOptions = (
           value: 5,
         },
         {
-          label: t('common:submit_course_accounting_form'),
+          label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
         {
-          label:  t('new_strings:edit_course_accounting Form'),
+          label:  t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
@@ -567,7 +567,7 @@ export const DisplayOptions = (
           value: 5,
         },
         {
-          label:  t('new_strings:edit_course_accounting Form'),
+          label:  t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
