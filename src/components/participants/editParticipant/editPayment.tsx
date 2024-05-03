@@ -36,10 +36,12 @@ import Tick from "@public/assets/Tick";
 interface EditPaymentProps {
   setEditPayment: React.Dispatch<React.SetStateAction<any>>;
   paymentId: number;
+  closeDropdown:any
 }
 export default function EditPayment({
   setEditPayment,
   paymentId,
+  closeDropdown
 }: EditPaymentProps) {
   const { query } = useRouter();
   const { mutate } = useUpdate();
@@ -62,6 +64,7 @@ export default function EditPayment({
       id: paymentId,
     });
     setSaveChangesConfirmation(true);
+    // closeDropdown()
   };
 
   // Form fileds useControllers
@@ -459,6 +462,7 @@ export default function EditPayment({
                     onClick={() => {
                       setSaveChangesConfirmation(false);
                       setEditPayment(false);
+                      closeDropdown()
                     }}
                   >
                     <CrossIcon fill="#333333" />
@@ -474,6 +478,7 @@ export default function EditPayment({
                       onClick={() => {
                         setSaveChangesConfirmation(false);
                         setEditPayment(false);
+                        closeDropdown()
                       }}
                     >
                       Close
