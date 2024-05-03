@@ -41,7 +41,7 @@ const EditCourseReviewPage = () => {
     TIME_FORMAT_12_HOURS
   )?.id as number;
 
-  const { setNewCourseData, setViewEditCourse } = newCourseStore();
+  const { setNewCourseData } = newCourseStore();
 
   useEffect(() => {
     const fetchDefaultValues = async () => {
@@ -58,7 +58,6 @@ const EditCourseReviewPage = () => {
 
       setNewCourseData(defaultValues);
       setIsLoading(false);
-      setViewEditCourse(true)
     };
     fetchDefaultValues();
   }, []);

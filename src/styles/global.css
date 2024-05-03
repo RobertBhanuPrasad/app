@@ -217,6 +217,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* for change backdrop color of alert box on shadcn   */
   .bg-black\/80 {
     background-color: rgb(0 0 0 / 0.3) !important;
   }

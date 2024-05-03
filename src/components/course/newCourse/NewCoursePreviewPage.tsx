@@ -50,6 +50,7 @@ import {
 import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
+import { IsEditCourse } from "./EditCourseUtil";
 
 export default function NewCourseReviewPage() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -358,7 +359,7 @@ export default function NewCourseReviewPage() {
 
   const [onEditSuccess, setOnEditSuccess] = useState(false)
 
-  const { setProgramId, viewEditCourse, setViewPreviewPage, setViewThankyouPage } = newCourseStore();
+  const { setProgramId, setViewPreviewPage, setViewThankyouPage } = newCourseStore();
 
   /**
    * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
@@ -387,7 +388,10 @@ export default function NewCourseReviewPage() {
     );
     console.log(isPosted, data, "data is posted");
 
-    if(viewEditCourse === true) {
+    // we are checking the course is edit or user created new course 
+    const isEdited = IsEditCourse(pathname) ? "PUT" : "POST";
+
+    if(isEdited === "PUT") {
       setOnEditSuccess(true);
      } else {
       if (isPosted) {
@@ -1209,7 +1213,6 @@ const EarlyBirdFees = ({
 
 export const EditCourseSuccessfullyInfo = ({onEditSuccess,setOnEditSuccess}: any) => {
   const [onButtonLoading, setOnButtonLoading] = useState(false);
-  const {setViewEditCourse} = newCourseStore()
   const router = useRouter();
 
   const handleClick = () => {
@@ -1222,7 +1225,6 @@ export const EditCourseSuccessfullyInfo = ({onEditSuccess,setOnEditSuccess}: any
       .then(() => {
         setOnButtonLoading(false);
         setOnEditSuccess(false);
-        setViewEditCourse(false)
       })
       .catch((e: any) => {
         console.log(e, "error while routing");
