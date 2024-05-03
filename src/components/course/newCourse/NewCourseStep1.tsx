@@ -152,30 +152,6 @@ const RadioCards = () => {
 
   const loginInTeacherData = loginUserData?.userData?.id;
 
-  /**
-   * This variable holds the path of the url
-   */
-  const pathname = usePathname();
-
-  /**
-   * Checking whether the url contains the edit or not
-   */
-  const isEditCourse = IsEditCourse(pathname);
-
-  /**
-   * This determines whether the logged in user is a part of teacher or not
-   */
-  const isLoggedInTeacherIncluded = formData?.teacher_ids?.includes(
-    loginUserData?.userData?.id
-  );
-
-  /**
-   * This determines whether to disable the iam organizing this course for another teacher or not
-   */
-  const isDisableOrganizingForAnotherTeacher =
-    isEditCourse && !isLoggedInTeacherIncluded;
-
-
   const {
     field: { value: teachers, onChange: teachersOnChange },
   } = useController({
@@ -212,19 +188,14 @@ const RadioCards = () => {
   };
 
   return (
-    <RadioGroup
-      disabled={isDisableOrganizingForAnotherTeacher}
-      value={JSON.stringify(value)}
-      onValueChange={handleOnChange}
-    >
+    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
         {hasTeacherRole && (
+          //Added cursor not allowed to all cards if this is disabled
           <Label
             htmlFor={JSON.stringify(iAmTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
-            } ${
-              isDisableOrganizingForAnotherTeacher ? "cursor-not-allowed" : ""
             }`}
           >
             <Card
@@ -259,9 +230,7 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmCoTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
-            } ${
-              isDisableOrganizingForAnotherTeacher ? "cursor-not-allowed" : ""
-            }`}
+            } `}
           >
             <Card
               className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
@@ -301,8 +270,6 @@ const RadioCards = () => {
               value === iAmOrganizerId
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                 : ""
-            } ${
-              isDisableOrganizingForAnotherTeacher ? "cursor-not-allowed" : ""
             }`}
           >
             <RadioGroupCheckItem
