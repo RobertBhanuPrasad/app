@@ -1,10 +1,23 @@
-import Form from '@components/Formfield'
-import EditIcon from '@public/assets/EditIcon'
-import { Dialog } from '@radix-ui/react-dialog'
-import { useFormContext } from 'react-hook-form'
-import { Button } from 'src/ui/button'
-import { DialogContent, DialogFooter, DialogTrigger } from 'src/ui/dialog'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+import Form from "@components/Formfield";
+import EditIcon from "@public/assets/EditIcon";
+import { Dialog } from "@radix-ui/react-dialog";
+import { useGetIdentity, useList } from "@refinedev/core";
+import { useFormContext } from "react-hook-form";
+import {
+  NewCourseStep1FormNames,
+  NewCourseStep2FormNames,
+  NewCourseStep4FormNames,
+  NewCourseStep5FormNames,
+  NewCourseStep6FormNames,
+} from "src/constants/CourseConstants";
+import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { Button } from "src/ui/button";
+import { DialogContent, DialogFooter, DialogTrigger } from "src/ui/dialog";
+import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { validationSchema } from "./NewCourseValidations";
+import _ from "lodash";
+import { requiredValidationFields } from "pages/courses/add";
 
 /**
  * EditModalDialog Component
@@ -23,16 +36,25 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
  */
 
 interface EditModalDialogProps {
-  title: string
-  content: any
-  onClose: () => void
-  open: boolean
-  openEdit: () => void
-  onOpenChange: any
+  title: string;
+  content: any;
+  onClose: () => void;
+  open: boolean;
+  openEdit: () => void;
+  onOpenChange: any;
+  currentStep: any;
 }
 
-export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpenChange }: EditModalDialogProps) => {
-  const { newCourseData, setNewCourseData } = newCourseStore()
+export const EditModalDialog = ({
+  title,
+  content,
+  onClose,
+  open,
+  openEdit,
+  onOpenChange,
+  currentStep,
+}: EditModalDialogProps) => {
+  const { newCourseData, setNewCourseData } = newCourseStore();
 
   /**
    * ButtonsDialog Component
@@ -47,11 +69,24 @@ export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpe
   const ButtonsDialog = () => {
     const { getValues } = useFormContext();
     const formData = getValues();
-    const onSubmit = () => {
+
+    let validationFieldsStepWise = requiredValidationFields(newCourseData);
+
+    let isAllFieldsFilled = false;
+
+    const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+    const onSubmit = async () => {
       // Update newCourseData with new form data
       setNewCourseData({ ...newCourseData, ...formData });
+
+      isAllFieldsFilled = await ValidateCurrentStepFields(
+        validationFieldsStepWise[currentStep - 1]
+      );
+
       // Close the dialog
-      onClose();
+      if (isAllFieldsFilled) {
+        onClose();
+      }
     };
 
     return (
@@ -84,6 +119,7 @@ export const EditModalDialog = ({ title, content, onClose, open, openEdit, onOpe
           onSubmit={function (data: any): void {
             throw new Error("Function not implemented.");
           }}
+          schema={validationSchema()}
         >
           {content}
           <ButtonsDialog />
