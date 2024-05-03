@@ -292,6 +292,11 @@ export const getDefaultValues = async (
   return defaultValues;
 };
 
+/**
+ * This function is used to determine whether the particular url contains edit or not
+ * @param url
+ * @returns a boolean
+ */
 export const IsEditCourse = (url: string) => {
   return url.includes("/edit");
 };
