@@ -18,3 +18,18 @@ const useGetCountryCode = () => {
 };
 
 export default useGetCountryCode;
+
+/**
+ * This is a funtion where we call inside functions
+ * It can be helpful if we want to use without hooks
+ * @param locale the locale ex: zz-en , ir-en etc..,
+ * @returns country code
+ */
+export const getCountryCodeFromLocale = (locale: string) => {
+  if (locale === "en") {
+    return "publuc";
+  } else {
+    const [countryCode] = locale?.split("-") || ["zz"];
+    return countryCode;
+  }
+};

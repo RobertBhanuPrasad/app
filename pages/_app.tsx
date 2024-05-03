@@ -13,9 +13,13 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Login from "./login";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { useEffect } from "react";
-import { useRouter } from "next/router";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { useRouter, withRouter } from "next/router";
+import useGetCountryCode, {
+  getCountryCodeFromLocale,
+} from "src/utility/useGetCountryCode";
+import useGetLanguageCode, {
+  getLanguageCodeFromLocale,
+} from "src/utility/useGetLanguageCode";
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -27,14 +31,18 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
+function MyApp({
+  Component,
+  pageProps,
+  router,
+}: AppPropsWithLayout): JSX.Element {
   const renderComponent = () => {
     const { setOptionLabelValue } = optionLabelValueStore();
 
     const { setCountryCode, setLanguageCode } = ConfigStore();
 
-    const countryCode = useGetCountryCode();
-    const languageCode = useGetLanguageCode();
+    const countryCode = getCountryCodeFromLocale(router.locale as string);
+    const languageCode = getLanguageCodeFromLocale(router.locale as string);
 
     const fetchOptionLabelOptionValueData = async () => {
       const { data } = await supabaseClient
@@ -108,7 +116,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   );
 }
 
-export default appWithTranslation(MyApp);
+export default withRouter(appWithTranslation(MyApp));
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated } = await authProvider.check(context);

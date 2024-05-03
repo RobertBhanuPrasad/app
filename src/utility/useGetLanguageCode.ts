@@ -8,10 +8,15 @@ import { useRouter } from "next/router";
 const useGetLanguageCode = () => {
   const { locale } = useRouter();
 
-  console.log("locale is ", locale);
   const [_, languageCode]: string[] = locale?.split("-") || ["", "en"];
 
   return languageCode;
 };
 
 export default useGetLanguageCode;
+
+export const getLanguageCodeFromLocale = (locale: string) => {
+  const [_, languageCode]: string[] = locale?.split("-") || ["", "en"];
+
+  return languageCode;
+};
