@@ -363,104 +363,105 @@ export const column = (hasFalseAliasName: boolean, t: any) => {
               break;
             }
           }
+        }
 
-          return (
-            <div className="">
-              <div className="pl-[1px]">
-                <div className="flex justify-center text-primary">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreVertical className="h-5 w-5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <p>
-                        {dropDownMenuData &&
-                          dropDownMenuData.map((data: any) => (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                handleSelected(data.value);
-                              }}
-                            >
-                              {data.label}
-                            </DropdownMenuItem>
-                          ))}
-                      </p>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  {isDialogOpen && (
-                    <div>
-                      <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
-                        <DialogContent className="flex flex-col h-[248px] w-[425px]">
-                          <DialogHeader>
-                            <div className="flex items-center w-full justify-center">
-                              <Exclamation />
+        return (
+          <div className="">
+            <div className="pl-[1px]">
+              <div className="flex justify-center text-primary">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Open menu</span>
+                      <MoreVertical className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <p>
+                      {dropDownMenuData &&
+                        dropDownMenuData.map((data: any) => (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              handleSelected(data.value);
+                            }}
+                          >
+                            {data.label}
+                          </DropdownMenuItem>
+                        ))}
+                    </p>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {isDialogOpen && (
+                  <div>
+                    <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
+                      <DialogContent className="flex flex-col h-[248px] w-[425px]">
+                        <DialogHeader>
+                          <div className="flex items-center w-full justify-center">
+                            <Exclamation />
+                          </div>
+                          <DialogDescription className="font-bold text-black text-lg items-center text-center">
+                            {t('new_strings:cancel_course')}
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                          <div className="w-full flex justify-center items-center gap-5">
+                            <div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="text-blue-500 w-[71px] h-[46px]"
+                                onClick={() => {
+                                  setIsDialogOpen(false);
+                                }}
+                              >
+                                {t('no_button')}
+                              </Button>
                             </div>
-                            <DialogDescription className="font-bold text-black text-lg items-center text-center">
-                              {t('new_strings:cancel_course')}
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter>
-                            <div className="w-full flex justify-center items-center gap-5">
-                              <div>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  className="text-blue-500 w-[71px] h-[46px]"
-                                  onClick={() => {
-                                    setIsDialogOpen(false);
-                                  }}
-                                >
-                                  {t('no_button')}
-                                </Button>
-                              </div>
-                              <div>
-                                <Button
-                                  type="button"
-                                  className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
-                                  onClick={() => {
-                                    cancelCourse();
-                                  }}
-                                >
-                                  {t('yes_button')}
-                                </Button>
-                              </div>
-                            </div>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                      <Dialog open={cancelSuccessModalOpen}>
-                        <DialogContent className="w-[414px] h-[279px]">
-                          <div className="text-center">
-                            <div className="flex justify-center">
-                              <Cross />
-                            </div>
-                            <div className="font-bold text-center my-5">
-                              {t('new_strings:course_cancel_successful')}
+                            <div>
+                              <Button
+                                type="button"
+                                className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                                onClick={() => {
+                                  cancelCourse();
+                                }}
+                              >
+                                {t('yes_button')}
+                              </Button>
                             </div>
                           </div>
-
-                          <div className="w-full flex items-center justify-center">
-                            <Button
-                              className=" bg-[#7677F4] w-[91px] h-[46px] text-white"
-                              onClick={() => {
-                                setCancelSuccessModalOpen(false);
-                              }}
-                            >
-                              {t('close')}
-                            </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                    <Dialog open={cancelSuccessModalOpen}>
+                      <DialogContent className="w-[414px] h-[279px]">
+                        <div className="text-center">
+                          <div className="flex justify-center">
+                            <Cross />
                           </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  )}
-                </div>
+                          <div className="font-bold text-center my-5">
+                            {t('new_strings:course_cancel_successful')}
+                          </div>
+                        </div>
+
+                        <div className="w-full flex items-center justify-center">
+                          <Button
+                            className=" bg-[#7677F4] w-[91px] h-[46px] text-white"
+                            onClick={() => {
+                              setCancelSuccessModalOpen(false);
+                            }}
+                          >
+                            {t('close')}
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                )}
               </div>
             </div>
-          );
-        }
+          </div>
+        );
+
       },
     }
   ]
