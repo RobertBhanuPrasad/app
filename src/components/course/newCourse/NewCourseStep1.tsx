@@ -213,13 +213,19 @@ const RadioCards = () => {
   };
 
   return (
-    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
+    <RadioGroup
+      disabled={isDisableOrganizingForAnotherTeacher}
+      value={JSON.stringify(value)}
+      onValueChange={handleOnChange}
+    >
       <div className="flex items-center flex-row gap-7">
         {hasTeacherRole && (
           <Label
             htmlFor={JSON.stringify(iAmTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
+            } ${
+              isDisableOrganizingForAnotherTeacher ? "cursor-not-allowed" : ""
             }`}
           >
             <Card
@@ -254,6 +260,8 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmCoTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
+            } ${
+              isDisableOrganizingForAnotherTeacher ? "cursor-not-allowed" : ""
             }`}
           >
             <Card
@@ -286,17 +294,12 @@ const RadioCards = () => {
         <Label
           htmlFor={JSON.stringify(iAmOrganizerId)}
           className={`text-[#999999] font-normal ${
-            // If this is disabled then we need to add the cursor styles to disabled
-            value === iAmOrganizerId && !isDisableOrganizingForAnotherTeacher
-              ? "text-[#7677F4]"
-              : isDisableOrganizingForAnotherTeacher
-              ? "cursor-not-allowed"
-              : ""
+            value === iAmOrganizerId ? "text-[#7677F4]" : ""
           }`}
         >
           <Card
             className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
-              value === iAmOrganizerId && !isDisableOrganizingForAnotherTeacher
+              value === iAmOrganizerId
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                 : ""
             }`}
@@ -304,22 +307,15 @@ const RadioCards = () => {
             <RadioGroupCheckItem
               value={JSON.stringify(iAmOrganizerId)}
               id={JSON.stringify(iAmOrganizerId)}
-              disabled={isDisableOrganizingForAnotherTeacher}
               className={
-                value === iAmOrganizerId &&
-                !isDisableOrganizingForAnotherTeacher
+                value === iAmOrganizerId
                   ? "!bg-[#7677F4] !border-none "
                   : "!border-[#D6D7D8] !shadow-none "
               }
             />
             <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
               <Organizer
-                color={` ${
-                  value === iAmOrganizerId &&
-                  !isDisableOrganizingForAnotherTeacher
-                    ? "#7677F4"
-                    : "#999999"
-                }`}
+                color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
               <div className="w-[240px] text-wrap text-center justify-center">
                 I am organizing this course for another teacher
