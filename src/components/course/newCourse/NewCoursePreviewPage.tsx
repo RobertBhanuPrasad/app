@@ -357,9 +357,10 @@ export default function NewCourseReviewPage() {
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
 
-  const [onEditSuccess, setOnEditSuccess] = useState(false)
+  const [onEditSuccess, setOnEditSuccess] = useState(false);
 
-  const { setProgramId, setViewPreviewPage, setViewThankyouPage } = newCourseStore();
+  const { setProgramId, setViewPreviewPage, setViewThankyouPage } =
+    newCourseStore();
 
   /**
    * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
@@ -386,38 +387,34 @@ export default function NewCourseReviewPage() {
       accountingNotSubmittedStatusId,
       pathname
     );
-    console.log(isPosted, data, "data is posted");
 
-    // we are checking the course is edit or user created new course 
-    const isEdited = IsEditCourse(pathname)
+    // we are checking the course is edit or user created new course
+    const isEdited = IsEditCourse(pathname);
 
-    if(isEdited) {
-      setOnEditSuccess(true);
-     } else {
-      if (isPosted) {
+    // we have to display thank you page or success modal pop up only when the posting done successfully without any error
+    if (isPosted) {
+      if (isEdited) {
+        setOnEditSuccess(true);
+      } else {
         // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
         await invalidate({
           resource: "program",
           invalidates: ["list"],
         });
-         // i need to set params with section=thank_you
-         const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
-         current.set("section", "thank_you");
-   
-         const params = current.toString();
-   
-         router.replace(`${pathname}?${params}`);
-  
-         
-         setViewPreviewPage(false)
-         setViewThankyouPage(true)
-    
-      } else {
-        setIsSubmitting(false);
-      } 
-     }
+        // i need to set params with section=thank_you
+        const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
+        current.set("section", "thank_you");
 
-    
+        const params = current.toString();
+
+        router.replace(`${pathname}?${params}`);
+
+        setViewPreviewPage(false);
+        setViewThankyouPage(true);
+      }
+    }
+
+    setIsSubmitting(false);
   };
 
   /**
@@ -444,7 +441,10 @@ export default function NewCourseReviewPage() {
         Review Course Details
       </div>
       <section className="w-full py-8 text-base border-b bg-white">
-        <EditCourseSuccessfullyInfo onEditSuccess={onEditSuccess} setOnEditSuccess={setOnEditSuccess}  />
+        <EditCourseSuccessfullyInfo
+          onEditSuccess={onEditSuccess}
+          setOnEditSuccess={setOnEditSuccess}
+        />
       </section>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
@@ -1211,7 +1211,10 @@ const EarlyBirdFees = ({
 
 // to show the success alert component while editing of course completed
 
-export const EditCourseSuccessfullyInfo = ({onEditSuccess,setOnEditSuccess}: any) => {
+export const EditCourseSuccessfullyInfo = ({
+  onEditSuccess,
+  setOnEditSuccess,
+}: any) => {
   const [onButtonLoading, setOnButtonLoading] = useState(false);
   const router = useRouter();
 
@@ -1254,8 +1257,7 @@ export const EditCourseSuccessfullyInfo = ({onEditSuccess,setOnEditSuccess}: any
               className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
               onClick={handleClick}
             >
-              {onButtonLoading ? <LoadingIcon /> : 'Go to Course Details'}
-              
+              {onButtonLoading ? <LoadingIcon /> : "Go to Course Details"}
             </Button>
           </div>
         </AlertDialogFooter>
