@@ -616,56 +616,70 @@ const DataPagination = ({
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
-  const PagesArray= pageCount > 4  ?[1,2,3,4, pageCount]: [1,2,3,4]
+  const PagesArray = [];
+  const DOTS = ". . .";
+  if (pageCount <= 4) {
+    // If there are 4 or fewer pages, show all pages without ellipses
+    for (let i = 1; i <= pageCount; i++) {
+      PagesArray.push(i);
+    }
+  } else {
+    if (current <= 3) {
+    // If current page is 4 or less, show pages 1 to 4, then ellipses, then last page
+      PagesArray.push(1, 2, 3, 4, DOTS, pageCount);
+    } else if (current >= pageCount - 2) {
+    // If current page is near the end, show first page, ellipses, and last 4 pages
+      PagesArray.push(1, DOTS,pageCount - 3, pageCount - 2, pageCount - 1,  pageCount);
+    } else {
+    // Otherwise,first page , ellipses, current page, ellipses, and last page
+      PagesArray.push(1, DOTS, current - 1, current, current + 1, DOTS, pageCount);
+    }
+  }
+  
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
-      {/* Renders a button to navigate to the previous page.Disabled if current page is the first page. */}
+      {/* Check if there are more than one page, and if so, display a button for navigating to the previous page. */}
       {pageCount > 1 && (
-  <Button
-    variant="outline"
-    className="h-8 w-8 p-0 border-none"
-    onClick={() => {
-      setCurrent(current - 1);
-    }}
-    disabled={current <= 1}
-  >
-    <div>Prev</div>
-  </Button>
-)}
-
-{/*pages buttons */}
-{/* Renders buttons for each page number.Only renders buttons for pages up to pageCount. */}
-{PagesArray.map((page, index, array) => (
-  <div key={index}>
-    {page <= pageCount && (
-      <Button
-        variant={page === current ? "default" : "outline"}
-        onClick={() => {
-          setCurrent(page);
-        }}
-      >
-        {page}
-      </Button>
-    )}
-              {index === 3 && array.length > 4 && <span className="p-2">...</span>}
-  </div>
-))}
-
-{/* next button */}
-{/* Renders a button to navigate to the next page.Disabled if current page is the last page. */}
-{pageCount > 1 && (
-  <Button
-    variant="outline"
-    className="h-8 w-8 p-0 border-none"
-    onClick={() => {
-      setCurrent(current + 1);
-    }}
-    disabled={pageCount < current + 1}
-  >
-    <div>Next</div>
-  </Button>
-)}
+        <Button
+          variant="outline"
+          className="h-8 w-8 p-0 border-none"
+          onClick={() => setCurrent(current - 1)}
+          disabled={current <= 1}
+        >
+          <div>Prev</div>
+        </Button>
+      )}
+      {/* pages buttons */}
+      {PagesArray.map((page:any, index:any) => (
+        <div key={index}>
+      {/* Check if the current page is a placeholder for ellipsis.If yes, display the ellipsis.Otherwise, display a button for the page. */}
+          {page === DOTS ? (
+            <span className="p-2">{DOTS}</span>
+          ) : (
+            <Button
+              variant={page === current ? "default" : "outline"}
+              onClick={() => {
+                setCurrent(page);
+              }}
+            >
+              {page}
+            </Button>
+          )}
+        </div>
+      ))}
+      {/* next button */}
+      {/* Check if there are more than one page, and if so, display a button for navigating to the next page. */}
+      {pageCount > 1 && (
+        <Button
+          variant="outline"
+          className="h-8 w-8 p-0 border-none"
+          onClick={() => setCurrent(current + 1)}
+          disabled={current >= pageCount}
+        >
+          <div>Next</div>
+        </Button>
+      )}
     </div>
-  );
+  );  
 };
