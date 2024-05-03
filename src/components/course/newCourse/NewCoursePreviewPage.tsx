@@ -40,11 +40,21 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { useRouter } from "next/router";
+import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
+import { IsEditCourse } from "./EditCourseUtil";
 
 export default function NewCourseReviewPage() {
   const { data: loginUserData }: any = useGetIdentity();
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -58,8 +68,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
-    newCourseStore();
+  const { newCourseData } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -348,7 +357,10 @@ export default function NewCourseReviewPage() {
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
 
-  const { setProgramId } = newCourseStore();
+  const [onEditSuccess, setOnEditSuccess] = useState(false);
+
+  const { setProgramId, setViewPreviewPage, setViewThankyouPage } =
+    newCourseStore();
 
   /**
    * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
@@ -376,25 +388,32 @@ export default function NewCourseReviewPage() {
       pathname
     );
 
+    // we are checking the course is edit or user created new course
+    const isEdited = IsEditCourse(pathname);
+
+    // we have to display thank you page or success modal pop up only when the posting done successfully without any error
     if (isPosted) {
-      // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
-      await invalidate({
-        resource: "program",
-        invalidates: ["list"],
-      });
+      if (isEdited) {
+        setOnEditSuccess(true);
+      } else {
+        // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+        await invalidate({
+          resource: "program",
+          invalidates: ["list"],
+        });
+        // i need to set params with section=thank_you
+        const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
+        current.set("section", "thank_you");
 
-      // i need to set params with section=thank_you
-      const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
-      current.set("section", "thank_you");
+        const params = current.toString();
 
-      const params = current.toString();
+        router.replace(`${pathname}?${params}`);
 
-      router.replace(`${pathname}?${params}`);
-      // setViewPreviewPage(false)
-      // setViewThankyouPage(true)
-    } else {
-      setIsSubmitting(false);
+        setViewPreviewPage(false);
+        setViewThankyouPage(true);
+      }
     }
+    setIsSubmitting(false);
   };
 
   /**
@@ -419,6 +438,12 @@ export default function NewCourseReviewPage() {
       <div className="text-[24px] my-4 font-semibold ml-6">
         Review Course Details
       </div>
+      <section className="w-full py-8 text-base border-b bg-white">
+        <EditCourseSuccessfullyInfo
+          onEditSuccess={onEditSuccess}
+          setOnEditSuccess={setOnEditSuccess}
+        />
+      </section>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -1185,5 +1210,62 @@ const EarlyBirdFees = ({
         </CardValue>
       </abbr>
     </div>
+  );
+};
+
+// to show the success alert component while editing of course completed
+
+export const EditCourseSuccessfullyInfo = ({
+  onEditSuccess,
+  setOnEditSuccess,
+}: any) => {
+  const [onButtonLoading, setOnButtonLoading] = useState(false);
+  const router = useRouter();
+
+  const handleClick = () => {
+    const courseId = router.query.id; // Get the courseId from the router query
+    setOnButtonLoading(true);
+    // Construct the URL string with the courseId
+    const courseUrl = `/courses/${courseId}`;
+    router
+      .push(courseUrl)
+      .then(() => {
+        setOnButtonLoading(false);
+        setOnEditSuccess(false);
+      })
+      .catch((e: any) => {
+        console.log(e, "error while routing");
+      });
+  };
+  return (
+    <AlertDialog open={onEditSuccess}>
+      <AlertDialogContent className="flex flex-col items-center justify-center h-[309px] w-[414px] !rounded-[24px] !gap-[34px] !p-[24px]">
+        <AlertDialogHeader>
+          <div className="flex justify-center cursor-pointer">
+            <Tick />
+          </div>
+        </AlertDialogHeader>
+        <AlertDialogDescription className="flex flex-col !w-[366px] !h-[71px] !gap-4 text-[#333333] items-center text-center">
+          <h2 className="pt-[16px] text-[24px] font-semibold">
+            Successfully Updated
+          </h2>
+          <p className="text-[16px] font-normal">
+            Your changes have been saved successfully
+          </p>
+        </AlertDialogDescription>
+        <AlertDialogFooter>
+          <div className="w-full flex justify-center items-center gap-5">
+            <Button
+              disabled={onButtonLoading}
+              type="button"
+              className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
+              onClick={handleClick}
+            >
+              {onButtonLoading ? <LoadingIcon /> : "Go to Course Details"}
+            </Button>
+          </div>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
