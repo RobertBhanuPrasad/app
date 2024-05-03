@@ -21,6 +21,7 @@ import {
 } from "../../src/ui/table";
 
 import React, { useState } from "react";
+import { useTranslation } from 'next-i18next';
 
 import { Checkbox } from "src/ui/checkbox";
 
@@ -43,6 +44,7 @@ export function DataTable<TData, TValue>({
   pageCount,
   current,
 }: DataTableProps<TData, TValue>) {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -65,7 +67,7 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
-  });
+  }); 
 
   return (
     <div>
@@ -116,7 +118,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns?.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t("new_strings:no_results")}
                 </TableCell>
               </TableRow>
             )}

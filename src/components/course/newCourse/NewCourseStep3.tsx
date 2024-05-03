@@ -55,6 +55,8 @@ import {
 import { useValidateCurrentStepFields } from 'src/utility/ValidationSteps'
 import useDebounce from 'src/utility/useDebounceHook'
 
+import { useTranslation } from 'next-i18next';
+
 function NewCourseStep3() {
   const { watch } = useFormContext()
 
@@ -88,6 +90,7 @@ function NewCourseStep3() {
 export default NewCourseStep3
 
 const OnlineProgram = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value, onChange },
     fieldState: { error }
@@ -97,10 +100,10 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="">Online zoom URL </div>
+        <div className="">{t("course.new_course:time_and_venue_tab.online_meeting_url")} </div>
         <div className="w-80">
           <Input
-            placeholder="URL"
+            placeholder={t("new_strings:url")}
             className="rounded-[12px]"
             value={value}
             onChange={event => {
@@ -110,13 +113,13 @@ const OnlineProgram = () => {
           />
           {error && <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>}
           <div className="text-xs font-normal text-[#666666] italic w-[320px] overflow-hidden">
-            <div>Note: Participants will join your online course through your</div>
-            <div>virtual venue</div>
+            <div>{t("new_strings:note_participants")}</div>
+            <div>{t("new_strings:virtual_venue")}</div>
           </div>
         </div>
       </div>
       <div className="flex gap-2 flex-col">
-        <div>Please associate your course with a specific location for reporting purposes</div>
+        <div>{t("course.new_course:time_and_venue_tab.specific_location")}</div>
         <div className="flex gap-7">
           <div className="w-80">
             <StateDropDown name="state_id" />
@@ -148,6 +151,7 @@ const Schedules = () => {
 }
 
 const SchedulesHeader = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
     fieldState: { error: schedulesHeaderErrors }
@@ -182,7 +186,7 @@ const SchedulesHeader = () => {
 
   return (
     <div className="h-9 flex justify-between">
-      <div className="font-semibold text-[#333333] flex items-center">Event Date and Time</div>
+      <div className="font-semibold text-[#333333] flex items-center">{t("course.new_course:time_and_venue_tab.event_date_and_time")}</div>
       <div className="flex gap-4">
         <div className="w-[161px]">
           <Select
@@ -192,7 +196,7 @@ const SchedulesHeader = () => {
             }}
           >
             <SelectTrigger className="w-[161px]" error={schedulesHeaderErrors ? true : false}>
-              <SelectValue placeholder="Select Format" />
+              <SelectValue placeholder={t("new_strings:select_format")} />
             </SelectTrigger>
             <SelectContent className="w-[161px]">
               {timeFormatOptions?.map((option: any) => (
@@ -220,7 +224,7 @@ const SchedulesHeader = () => {
               }}
             >
               <SelectTrigger className="w-[257px]" error={timeZoneError ? true : false}>
-                <SelectValue placeholder="Select Time Zone" />
+                <SelectValue placeholder={t("new_strings:select_time_zone")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
@@ -373,11 +377,11 @@ const ScheduleComponent = ({
   const schedule = formData?.schedules[index]
 
   const timeFormat12HoursId = getOptionValueObjectByOptionOrder(TIME_FORMAT, TIME_FORMAT_12_HOURS)?.id
-
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
       <div className="h-4 font-[#333333] font-normal flex text-xs">
-        <div>Session {index + 1} </div>
+        <div>{t("new_strings:session")} {index + 1} </div>
         <div className="text-[#7677F4]">&nbsp;*</div>
       </div>
       <div className="h-10 flex items-center gap-6">
@@ -409,7 +413,7 @@ const ScheduleComponent = ({
               }}
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
-              <Add /> Add
+              <Add /> {t("add")}
             </div>
           )}
           {index != 0 && (
@@ -420,7 +424,7 @@ const ScheduleComponent = ({
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
               <Delete />
-              Delete
+              {t("delete_button")}
             </div>
           )}
         </div>
@@ -434,6 +438,8 @@ const ScheduleComponent = ({
 }
 
 const Venue = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+
   const { watch, setValue, resetField } = useFormContext()
 
   const removeVenue = () => {
@@ -553,7 +559,7 @@ const Venue = () => {
     isNewVenueOnchange(true)
     setOpenAddNewVenue(true)
   }
-
+  
   return (
     <div>
       <RadioGroup className="flex flex-row gap-7" value={value} onValueChange={onChange} >
@@ -573,14 +579,14 @@ const Venue = () => {
                   }`}
                 />}
                 {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
-              <div className={`${((formData?.is_existing_venue == undefined || formData?.is_existing_venue == "new-venue") && formData?.existingVenue == undefined ) && 'ml-7'}`}>Existing Venue</div>
+              <div className={`${((formData?.is_existing_venue == undefined || formData?.is_existing_venue == "new-venue") && formData?.existingVenue == undefined ) && 'ml-7'}`}>{t('course.new_course:time_and_venue_tab.existing_venue')}</div>
             </div>
             {data ? (
               <div>
                 {existingVenue ? (
                   <ExistingVenueDetails />
                 ) : (
-                  <div className="pl-[30px] leading-6 font-normal">Select a venue by clicking “View All” button</div>
+                  <div className="pl-[30px] leading-6 font-normal">{t("new_strings:select_a_venue_by_clicking_viewall_button")}</div>
                 )}
                 {/* {!(value === 'new-venue') && ( */}
                   <Dialog>
@@ -589,7 +595,7 @@ const Venue = () => {
                         variant="outline"
                         className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
                       >
-                        View All
+                      {t("course.new_course:time_and_venue_tab.view_all")}
                       </Badge>
                     </DialogTrigger>
                     <DialogContent className="!w-[858px] h-[585px] !rounded-[24px] !py-[24px] !pl-[24px] !pr-[8px]">
@@ -599,7 +605,7 @@ const Venue = () => {
                 {/* )} */}
               </div>
             ) : (
-              <div className="px-[30px] leading-6 font-normal">No existing venue found</div>
+              <div className="px-[30px] leading-6 font-normal">{t("new_strings:no_existing_venue_found")}</div>
             )}
           </div>
         </Label>
@@ -623,7 +629,7 @@ const Venue = () => {
                     }`}
                   />
                   }
-                <div>New Venue</div>
+                <div>{t("course.new_course:time_and_venue_tab.new_venue")}</div>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
@@ -660,7 +666,7 @@ const Venue = () => {
           <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue}>
               <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
-                + Add New Venue
+                + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
             <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
@@ -735,6 +741,7 @@ const ExistingVenueDetails = () => {
 }
 
 const TimePicker = ({ index, is12HourFormat }: { index: number; is12HourFormat: Boolean }) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const { errors }: any = useFormState()
 
   const { trigger } = useFormContext()
@@ -757,7 +764,7 @@ const TimePicker = ({ index, is12HourFormat }: { index: number; is12HourFormat: 
 
   return (
     <div className="flex items-center gap-6">
-      <div className="text-sm text-[#999999] font-normal">From</div>
+      <div className="text-sm text-[#999999] font-normal">{t("course.new_course:time_and_venue_tab.from")}</div>
       <div className="w-[233px]">
         <TimeSelector
           name={`${NewCourseStep3FormNames?.schedules}[${index}].start`}
@@ -765,7 +772,7 @@ const TimePicker = ({ index, is12HourFormat }: { index: number; is12HourFormat: 
           error={errors?.schedules?.[index] ? true : false}
         />
       </div>
-      <div className="text-sm text-[#999999] font-normal">To</div>
+      <div className="text-sm text-[#999999] font-normal">{t("course.new_course:time_and_venue_tab.to")}</div>
       <div className="w-[233px]">
         <TimeSelector
           name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
@@ -777,6 +784,7 @@ const TimePicker = ({ index, is12HourFormat }: { index: number; is12HourFormat: 
   )
 }
 const CalenderComponent = ({ index, setOpen }: any) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },
@@ -875,7 +883,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         <div className="border-l border-gray-300 h-full"></div>
         <div className="flex flex-col gap-4 flex-[1] p-2 h-[401px]">
           <div className="flex flex-row justify-between text-[20px] font-semibold">
-            Course
+            {t("course.new_course:time_and_venue_tab.course")}
             {/* Close button */}
             <div
               onClick={() => {
@@ -911,7 +919,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
           }}
           className="w-24 rounded-[12px]"
         >
-          Submit
+          {t("save_button")}
         </Button>
       </div>
     </div>
@@ -919,6 +927,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 }
 
 const ExistingVenueList = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const { data: loginUserData }: any = useGetIdentity()
 
   const { watch } = useFormContext()
@@ -1044,10 +1053,10 @@ const ExistingVenueList = () => {
   return (
     <div>
       <div className="rounded-[24px] ">
-        <div className="flex justify-center text-[24px] font-semibold">Existing Venues</div>
+        <div className="flex justify-center text-[24px] font-semibold">{t("course.new_course:time_and_venue_tab.existing_venues")}</div>
         <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto mt-4">
           <Input
-            placeholder="Search by Venue Name, City or state"
+            placeholder={t("new_strings:search_by_venue_name_city_or_state")}
             className="border border-gray-400 rounded-lg pl-10"
             value={searchValue}
             onChange={val => {
@@ -1092,7 +1101,7 @@ const ExistingVenueList = () => {
               handleSubmitVenueList()
             }}
           >
-            Submit
+            {t("submit_button")}
           </Button>
         </DialogClose>
       </div>
@@ -1252,22 +1261,20 @@ export const ExistingVenueListSection = ({venueData, setVenueData, item , index}
           </div>
         </div>
 
-        <div className="leading-tight">
-          {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
-          {item.postal_code}
-        </div>
-      </div>
-    </div>
-  );
-};
+                      <div className="leading-tight">
+                        {item.name}, {item.address}, {item.city_name}, {item.state_name}, {item.postal_code}
+                      </div>
+                    </div>
+                  </div>
+                
+              )
+            }
+     
+  
 
-export const AddOrEditVenue = ({
-  handleSubmit, message
-}: {
-  handleSubmit: () => void;
-  message?: boolean
-}) => {
-  const { watch } = useFormContext();
+export const AddOrEditVenue = ({ handleSubmit, message }: { handleSubmit: () => void; message?: boolean }) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const { watch } = useFormContext()
 
   const formData = watch()
 
@@ -1276,9 +1283,9 @@ export const AddOrEditVenue = ({
   return (
     <div>
       {isNewVenue ? (
-        <div className="flex justify-center text-[24px] font-semibold">New Venue</div>
+        <div className="flex justify-center text-[24px] font-semibold">{t("course.new_course:time_and_venue_tab.new_venue")}</div>
       ) : (
-        <div className="flex justify-center text-[24px] font-semibold">Edit Venue</div>
+        <div className="flex justify-center text-[24px] font-semibold">{t("new_strings:edit_venue")}</div>
       )}
       {/* TODO : Integrated after solving the error }
       {/* <MapComponent /> */}
@@ -1297,11 +1304,11 @@ export const AddOrEditVenue = ({
         </div>
       </div>
       {message && (
-        <span className="text-[#FF6D6D] text-[14px] text-md">Venue with the provided data already exists.</span>
+        <span className="text-[#FF6D6D] text-[14px] text-md">{t("new_strings:venue_with_the_provided")}</span>
       )}
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleSubmit}>{t("save_button")}</Button>
         </div>
       </DialogFooter>
     </div>
@@ -1597,23 +1604,24 @@ const TimeSelector = ({
   )
 }
 const DeleteVenueComponent = ({ handleDeleteVenue }: { handleDeleteVenue: () => void }) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   return (
     <div>
       <DialogHeader>
-        <DialogTitle className="flex justify-center">Delete</DialogTitle>
+        <DialogTitle className="flex justify-center">{t("delete_button")}</DialogTitle>
         <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-          Are you sure you want to delete the address
+          {t("new_strings:are_you_sure_you_want_to_delete_the_address")}
         </DialogDescription>
       </DialogHeader>
       <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-            No
+          {t("no")}
           </Button>
         </DialogClose>
         <DialogClose>
           <Button className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold" onClick={handleDeleteVenue}>
-            Yes
+          {t("yes")}
           </Button>
         </DialogClose>
       </DialogFooter>

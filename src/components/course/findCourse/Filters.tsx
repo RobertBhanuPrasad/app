@@ -25,7 +25,7 @@ import {
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 
-const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
+const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) => {
   console.log(hasAliasNameFalse, 'FalseAliasNamefilter')
 
   const { watch, setValue } = useFormContext()
@@ -291,6 +291,8 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
             setValue('temporaryadvancefilter.is_course_fee', '')
             setValue('temporaryadvancefilter.course_teacher', '')
             setValue('temporaryadvancefilter.program_organiser', [])
+            //we need to empty the course type in basic filters also because the filter applies when we clear all in advance filter
+            setValue('course_type','')
           }}
           className="flex gap-1 items-center cursor-pointer"
         >
@@ -308,6 +310,8 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse }: any) => {
               advanceFilter: temporaryData?.temporaryadvancefilter
             })
             setAdvanceFilterOpen(false)
+            //whenever we apply filters we will be navigated to page 1
+            setCurrent(1)
           }}
         >
           {t('common:apply_button')}
