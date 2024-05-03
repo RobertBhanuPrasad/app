@@ -1296,7 +1296,7 @@ export const handleSyncProgramEdgeFunction = async (
 
   console.log("method", method);
 
-  const supabase = supabaseClient(countryCode);
+  const supabase = supabaseClient();
 
   const { data, error }: any = await supabase.functions.invoke(
     `sync-program/${programId}`,

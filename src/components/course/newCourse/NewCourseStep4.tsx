@@ -71,7 +71,7 @@ export default function CourseTable() {
   } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
 
   const fetchFeeData = async () => {
-    const supabase = supabaseClient(countryCode);
+    const supabase = supabaseClient();
     //Sending all required params
     const { data, error } = await supabase.functions.invoke("course-fee", {
       method: "POST",
