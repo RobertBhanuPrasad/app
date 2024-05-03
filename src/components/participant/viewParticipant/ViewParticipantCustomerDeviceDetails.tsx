@@ -39,50 +39,53 @@ function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
 
 export default ViewParticipantCustomerDeviceDetails
 
+
+
+
 const columns: ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] = [
   {
-    accessorKey: 'program_type',
+    accessorKey: 'transaction_id',
     header: () => {
-      return <TableHeader>Type</TableHeader>
+      return <TableHeader>Transaction ID</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.program_type}</Text>
+      return <Text className="lowercase">{row?.original?.transaction_id}</Text>
     }
   },
   {
-    accessorKey: 'delivery_status',
+    accessorKey: 'time_stamp',
     header: () => {
-      return <TableHeader>Delivery status</TableHeader>
+      return <TableHeader>Time Stamp</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text>{row?.original?.program_type}</Text>
+      return <Text>{formatDateAndTime(row?.original?.time_stamp)}</Text>
     }
   },
   {
-    accessorKey: 'delivery_time_stamp',
+    accessorKey: 'ip_address',
     header: () => {
-      return <TableHeader>Delivery time Stamp</TableHeader>
+      return <TableHeader>IP Address</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{formatDateAndTime(row?.original?.delivery_time_stamp)}</Text>
+      return <Text className="lowercase">{row?.original?.ip_address}</Text>
     }
   },
   {
-    accessorKey: 'source',
+    accessorKey: 'operating_system',
     header: () => {
-      return <TableHeader>Source</TableHeader>
+      return <TableHeader>Operating System</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.source}</Text>
+      return <Text className="lowercase">{row?.original?.operating_system}</Text>
     }
   },
   {
-    accessorKey: 'open_time_stamp',
+    accessorKey: 'browser',
     header: () => {
-      return <TableHeader>Open time stamp</TableHeader>
+      return <TableHeader>Browser</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{formatDateAndTime(row?.original?.open_time_stamp)}</Text>
+      return <Text className="lowercase">{row?.original?.browser}</Text>
     }
   }
 ]

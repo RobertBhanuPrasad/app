@@ -1,37 +1,41 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
-import { useOne } from '@refinedev/core'
+import { useTable } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import { TableHeader, Text } from 'src/ui/TextTags'
 import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant email delivery logs
 function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
-  const query: any = {
-    resource: 'participant_registration',
-    id: participantId,
-    meta: {
-      select: 'email_delivery_logs_section' // Selecting specific fields
-    }
-  }
+ 
 
   // Fetching participant registration data
-  const { data: participantEmailDeliveryLogsData, isLoading, isError } = useOne(query)
+  const { tableQueryResult: participantEmailDeliveryLogsData } = useTable({
+    resource: 'registration_email_delivery_logs ',
+    filters: {
+      permanent: [
+        {
+          field: 'participant_registration_id',
+          operator: 'eq',
+          value: 1
+        }
+      ]
+    }
+  })
 
-  const [rowSelection, setRowSelection] = React.useState({})
   return (
     <div>
       <p className="text-[18px] font-[600] ">Email Delivery Logs</p>
       <div>
         <BaseTable
           checkboxSelection={false}
-          total={participantEmailDeliveryLogsData?.data?.email_delivery_logs_section?.length || 0}
+          total={participantEmailDeliveryLogsData?.data?.data?.length || 0}
           pagination={false}
           tableStyles={{
             table: '',
             rowStyles: ''
           }}
           columns={columns as ColumnDef<any>[]}
-          data={participantEmailDeliveryLogsData?.data?.email_delivery_logs_section || []}
+          data={participantEmailDeliveryLogsData?.data?.data || []}
           columnPinning={false}
         />
       </div>
@@ -43,48 +47,48 @@ export default ViewParticipantEmailDeliveryLogs
 
 const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
-    accessorKey: 'transaction_id',
+    accessorKey: 'program_type',
     header: () => {
-      return <TableHeader>Transaction ID</TableHeader>
+      return <TableHeader>Type</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.transaction_id}</Text>
+      return <Text className="lowercase">{row?.original?.type}</Text>
     }
   },
   {
-    accessorKey: 'time_stamp',
+    accessorKey: 'delivery_status',
     header: () => {
-      return <TableHeader>Time Stamp</TableHeader>
+      return <TableHeader>Delivery status</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text>{formatDateAndTime(row?.original?.time_stamp)}</Text>
+      return <Text>{row?.original?.delivery_status}</Text>
     }
   },
   {
-    accessorKey: 'ip_address',
+    accessorKey: 'delivery_time_stamp',
     header: () => {
-      return <TableHeader>IP Address</TableHeader>
+      return <TableHeader>Delivery time Stamp</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.ip_address}</Text>
+      return <Text className="lowercase">{formatDateAndTime(row?.original?.delivery_time_stamp)}</Text>
     }
   },
   {
-    accessorKey: 'operating_system',
+    accessorKey: 'source',
     header: () => {
-      return <TableHeader>Operating System</TableHeader>
+      return <TableHeader>Source</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.operating_system}</Text>
+      return <Text className="lowercase">{row?.original?.source}</Text>
     }
   },
   {
-    accessorKey: 'browser',
+    accessorKey: 'open_time_stamp',
     header: () => {
-      return <TableHeader>Browser</TableHeader>
+      return <TableHeader>Open time stamp</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.browser}</Text>
+      return <Text className="lowercase">{formatDateAndTime(row?.original?.open_time_stamp)}</Text>
     }
   }
 ]
