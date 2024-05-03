@@ -23,11 +23,11 @@ export const column = (hasFalseAliasName: boolean, t: any) => {
   const finalColumns: ExtendedColumnDef<any>[] = [
     {
       accessorKey: "program_code",
-      column_name: t('common:course_id'),
+      column_name: t('course_id'),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return <div className="w-[100px]">{t('common:course_id')}</div>;
+        return <div className="w-[100px]">{t('course_id')}</div>;
       },
       cell: ({ row }: any) => {
         const router = useRouter();
@@ -117,9 +117,9 @@ export const column = (hasFalseAliasName: boolean, t: any) => {
     },
     {
       accessorKey: "city",
-      column_name: t("common:city"),
+      column_name: t("city"),
       header: () => {
-        return <div className="min-w-[150px]">{t("common:city")}</div>;
+        return <div className="min-w-[150px]">{t("city")}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
@@ -156,9 +156,9 @@ export const column = (hasFalseAliasName: boolean, t: any) => {
     },
     {
       accessorKey: "program_organizers",
-      column_name: t('common:program_organizer'),
+      column_name: t('program_organizer'),
       header: () => {
-        return <div className="min-w-[150px]">{t('common:program_organizer')}</div>;
+        return <div className="min-w-[150px]">{t('program_organizer')}</div>;
       },
       cell: ({ row }: any) => {
         //Mapping all the programOrganizers in the comma separated name
@@ -202,9 +202,9 @@ export const column = (hasFalseAliasName: boolean, t: any) => {
     },
     {
       accessorKey: "course_accounting_status",
-      column_name: t('common:course_accounting_status'),
+      column_name: t('course_accounting_status'),
       header: () => {
-        return <div className="min-w-[200px]">{t('common:course_accounting_status')}</div>;
+        return <div className="min-w-[200px]">{t('course_accounting_status')}</div>;
       },
       cell: ({ row }: any) => {
         return (
@@ -413,7 +413,7 @@ export const column = (hasFalseAliasName: boolean, t: any) => {
                                     setIsDialogOpen(false);
                                   }}
                                 >
-                                  {t('common:no_button')}
+                                  {t('no_button')}
                                 </Button>
                               </div>
                               <div>
@@ -424,7 +424,7 @@ export const column = (hasFalseAliasName: boolean, t: any) => {
                                     cancelCourse();
                                   }}
                                 >
-                                  {t('common:yes_button')}
+                                  {t('yes_button')}
                                 </Button>
                               </div>
                             </div>
@@ -449,7 +449,7 @@ export const column = (hasFalseAliasName: boolean, t: any) => {
                                 setCancelSuccessModalOpen(false);
                               }}
                             >
-                              {t('common:close')}
+                              {t('close')}
                             </Button>
                           </div>
                         </DialogContent>

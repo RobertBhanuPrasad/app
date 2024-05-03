@@ -170,7 +170,7 @@ export const DisplayOptions = (
     USER_ROLE,
     FINANCE_ADMIN
   )?.id;
-  const {t} = useTranslation()
+  const { t } = useTranslation(['common', "course.find_course", "new_strings"])
   // If course status is Active
   if (courseStatusId === courseActiveStatusId) {
     if (
@@ -181,26 +181,26 @@ export const DisplayOptions = (
         roleId === teacherRoleId ||
         roleId === programOrganizerRoleId)
     ) {
-      
+
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -218,19 +218,19 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -258,23 +258,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -294,23 +294,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -324,15 +324,15 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -348,23 +348,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -378,23 +378,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -410,15 +410,15 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
@@ -432,11 +432,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
@@ -460,23 +460,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -496,23 +496,23 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -526,15 +526,15 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -552,19 +552,19 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:register_participant'),
+          label: t('register_participant'),
           value: 2,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -581,24 +581,24 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
           label: t('new_strings:view_course_accounting_form'),
           value: 7,
         },
-        t('common:view_participants'),
-        t('common:edit_course'),
-        t('common:copy_course'),
+        t('view_participants'),
+        t('edit_course'),
+        t('copy_course'),
         t('new_strings:view_course_accounting_form'),
       ];
     } else if (
@@ -607,11 +607,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
         {
-          label: t('common:copy_course'),
+          label: t('copy_course'),
           value: 4,
         },
         {
@@ -637,7 +637,7 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:view_participants'),
+          label: t('view_participants'),
           value: 1,
         },
       ];
@@ -654,11 +654,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -670,7 +670,7 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -680,11 +680,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -704,11 +704,11 @@ export const DisplayOptions = (
     ) {
       return [
         {
-          label: t('common:edit_course'),
+          label: t('edit_course'),
           value: 3,
         },
         {
-          label: t('common:cancel_course'),
+          label: t('cancel_course'),
           value: 5,
         },
       ];
@@ -1050,11 +1050,11 @@ export const isTeacherShownInTeacherField = (programCreatedUserId: number) => {
  * and in the columns we do  not need to show the course_name
  * @returns {boolean}
  */
-export const hasAliasNameFalse=(data:any)=>{
-  console.log("data was",data,data?.data?.length)
-  if(data?.data?.length!=0){
+export const hasAliasNameFalse = (data: any) => {
+  console.log("data was", data, data?.data?.length)
+  if (data?.data?.length != 0) {
     return false       // show the cpurse_name,course_type     
-  }else{
+  } else {
     return true        //do not show the course_name,and course_type
   }
 }
@@ -1065,20 +1065,20 @@ export const hasAliasNameFalse=(data:any)=>{
  * @param {number} paymentStatusId - The ID of the payment status.
  * @returns {boolean} - True if the registration completion link should be displayed, false otherwise.
  */
-export const isDisplayRegistrationCompletionLink = (isManualRegistration: boolean , paymentStatusId: number) => {
-  
+export const isDisplayRegistrationCompletionLink = (isManualRegistration: boolean, paymentStatusId: number) => {
+
   // Get the ID for pending payment status
-  const pendingPaymentStatusId =  getOptionValueObjectByOptionOrder(
+  const pendingPaymentStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id
 
   // Get the ID for failed payment status
-  const failedPaymentStatusId =  getOptionValueObjectByOptionOrder(
+  const failedPaymentStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_FAILED_PAYMENT_STATUS
   )?.id
- 
+
   // Check if it's a manual registration and the payment status is pending or failed
   if (isManualRegistration && (paymentStatusId === pendingPaymentStatusId || paymentStatusId === failedPaymentStatusId)) {
     // If the conditions are met, return true
@@ -1087,7 +1087,7 @@ export const isDisplayRegistrationCompletionLink = (isManualRegistration: boolea
     // Otherwise, return false
     return false
   }
- 
+
 }
 
 

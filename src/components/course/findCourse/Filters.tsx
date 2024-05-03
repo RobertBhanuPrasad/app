@@ -33,7 +33,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
   const formData = watch()
 
   const { setAllFilterData } = newCourseStore()
-  const { t } = useTranslation()
+  const {t} = useTranslation(['common', "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -73,7 +73,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
               <AccordionItem value="item-14" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
-                    <div>{t('common:course_type')}</div>
+                    <div>{t('course_type')}</div>
                     {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
                   </div>
                 </AccordionTrigger>
@@ -121,7 +121,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-3" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('common:course_accounting_status')}</div>
+                <div>{t('course_accounting_status')}</div>
                 {formData?.temporaryadvancefilter.course_accounting_status?.length > 0 && (
                   <CountComponent count={formData?.temporaryadvancefilter.course_accounting_status?.length} />
                 )}
@@ -179,7 +179,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-7" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('common:city')}</div>
+                <div>{t('city')}</div>
                 {formData?.temporaryadvancefilter.city && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -207,7 +207,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-9" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('common:residential_course')}</div>
+                <div>{t('residential_course')}</div>
                 {formData?.temporaryadvancefilter.is_residential_course && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -221,7 +221,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-10" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('common:program_organizer')}</div>
+                <div>{t('program_organizer')}</div>
                 {formData?.temporaryadvancefilter.program_organiser?.length > 0 && (
                   <CountComponent count={formData?.temporaryadvancefilter.program_organiser?.length} />
                 )}
@@ -297,7 +297,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary"> {t('common:clear_all')}</p>
+          <p className="text-primary"> {t('clear_all')}</p>
         </div>
         <Button
           onClick={() => {
@@ -314,7 +314,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
             setCurrent(1)
           }}
         >
-          {t('common:apply_button')}
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -351,7 +351,7 @@ export const CourseName = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation()
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}
@@ -408,7 +408,7 @@ export const State = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation()
+  const {t} = useTranslation("common")
   return (
     <Select
       value={temporaryValue}
@@ -417,7 +417,7 @@ export const State = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder={t('common:select_state')} />
+        <SelectValue placeholder={t('select_state')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={val => onSearch(val.target.value)} />
@@ -464,7 +464,7 @@ export const City = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation()
+  const {t} = useTranslation("common")
   return (
     <Select
       value={temporaryValue}
@@ -473,7 +473,7 @@ export const City = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder={t('common:city_placeholder')} />
+        <SelectValue placeholder={t('city_placeholder')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={val => onSearch(val.target.value)} />
@@ -520,7 +520,7 @@ export const Center = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation()
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}
@@ -627,7 +627,7 @@ export const CourseAccountingClosureDate = () => {
     name: 'temporaryadvancefilter.course_accounting_closure_date'
   })
   const [open, setOpen] = useState(false)
-  const { t } = useTranslation()
+  const {t} = useTranslation(["course.find_course","new_strings"])
   return (
     <Dialog open={open}>
       <p>{t('course.find_course:date_range')}</p>
@@ -665,7 +665,7 @@ export const Visibility = () => {
   const publicVisibilityId = getOptionValueObjectByOptionOrder(VISIBILITY, PUBLIC)?.id
 
   const privateVisibilityId = getOptionValueObjectByOptionOrder(VISIBILITY, PRIVATE)?.id
-  const { t } = useTranslation()
+  const {t} = useTranslation("new_strings")
   return (
     <div>
       <RadioGroup
@@ -699,7 +699,7 @@ export const ResidentialCourse = () => {
   } = useController({
     name: 'temporaryadvancefilter.is_residential_course'
   })
-  const { t } = useTranslation()
+  const {t} = useTranslation("common")
   return (
     <div>
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
@@ -707,13 +707,13 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="TRUE"
             selectedRadioValue={temporaryValue}
-            label={t('common:yes')}
+            label={t('yes')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label={t('common:no')}
+            label={t('no')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -728,7 +728,7 @@ export const CourseFees = () => {
   } = useController({
     name: 'temporaryadvancefilter.is_course_fee'
   })
-  const { t } = useTranslation()
+  const {t} = useTranslation("new_strings")
   return (
     <div>
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
@@ -783,7 +783,7 @@ export const ProgramOrganiser = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 20)
   }
-  const { t } = useTranslation()
+  const {t} = useTranslation("new_strings")
   return (
     <MultiSelect
       value={temporaryValue}
@@ -836,7 +836,7 @@ export const TeacherDropdown = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation()
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}

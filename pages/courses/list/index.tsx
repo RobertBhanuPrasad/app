@@ -441,7 +441,7 @@ function index() {
       },
     ],
   });
-  const { t } = useTranslation()
+  const {t} = useTranslation(["common","course.find_course","new_strings"])
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <p className="font-semibold text-2xl ml-8">{t('new_strings:find_course')}</p>
@@ -549,7 +549,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 };
 
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
-  const { t } = useTranslation()
+  const {t} = useTranslation(["common","new_strings"])
   return (
     <div className="relative ml-[-12px] mt-[-12px]">
       <DateRangePicker
@@ -578,7 +578,7 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
           onClick={() => setOpen(false)}
           className=" w-[94px] h-10 rounded-xl"
         >
-          {t('common:apply_button')}
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -626,7 +626,7 @@ export const CourseTypeComponent = ({ name }: any) => {
   };
 
  
-  const { t } = useTranslation()
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={value}
@@ -690,7 +690,7 @@ export const BasicFilters: React.FC<{
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
   };
-  const { t } = useTranslation()
+  const {t} = useTranslation(["common","course.find_course","new_strings"])
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
@@ -768,7 +768,7 @@ export const BasicFilters: React.FC<{
           className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
-          <div>{t('common:clear_all')}</div>
+          <div>{t('clear_all')}</div>
         </div>
         <Button
           onClick={() => {
@@ -778,7 +778,7 @@ export const BasicFilters: React.FC<{
           }}
           className="h-9 w-18 rounded-xl"
         >
-          {t('common:apply_button')}
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -802,7 +802,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
             formData.advanceFilter[key] !== ""
       ).length) ||
     0;
-  const { t } = useTranslation()
+  const {t} = useTranslation("course.find_course")
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">

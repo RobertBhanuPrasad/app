@@ -316,7 +316,7 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
-  const {t} = useTranslation()
+  const {t} = useTranslation(['common', "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
@@ -397,13 +397,13 @@ export function BaseTable<TData, TValue>({
                       className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
                     >
                       <ClearAll />
-                      <div>{t('common:clear_all')}</div>
+                      <div>{t('clear_all')}</div>
                     </div>
                     <Button
                       onClick={applyColumnVisibilityChanges}
                       className="h-9 w-18 rounded-xl"
                     >
-                      {t('common:apply_button')}
+                      {t('apply_button')}
                     </Button>
                   </div>
                 </div>
@@ -617,7 +617,7 @@ const DataPagination = ({
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
-  const {t} = useTranslation()
+  const {t} = useTranslation("common")
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
@@ -629,7 +629,7 @@ const DataPagination = ({
         }}
         disabled={current <= 1}
       >
-        <div>{t('common:prev')}</div>
+        <div>{t('prev')}</div>
       </Button>
 
       {/*pages buttons */}
@@ -657,7 +657,7 @@ const DataPagination = ({
         }}
         disabled={pageCount < current + 1}
       >
-        <div>{t('common:next')}</div>
+        <div>{t('next')}</div>
       </Button>
     </div>
   );
