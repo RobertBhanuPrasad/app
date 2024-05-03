@@ -294,3 +294,7 @@ export const getDefaultValues = async (
 
   return defaultValues;
 };
+
+export const IsEditCourse = (url: string) => {
+  return url.includes("/edit");
+};

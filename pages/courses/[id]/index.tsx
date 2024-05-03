@@ -265,6 +265,9 @@ function ViewDetails() {
                 {courseData?.data?.participant_count} Participants with:
                 Transaction status = Confirmed / Pending Attendance status =
                 Confirmed / Pending / Dropout Total participants records:
+                {courseData?.data?.participant_count} Participants with:
+                Transaction status = Confirmed / Pending Attendance status =
+                Confirmed / Pending / Dropout Total participants records:
                 {courseData?.data?.total_participant_count}
               </div>
             </HoverCardContent>
@@ -1261,7 +1264,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({
 /**
  * Component to display a success modal when the accounting form for a course is approved
  */
-const ViewCourseAccountingSuccessModalOpen = () => {
+export const ViewCourseAccountingSuccessModalOpen = () => {
   const {
     viewCourseAccountingSuccessModal,
     setViewCourseAccountingSuccessModal,

@@ -64,11 +64,14 @@ function index() {
   }
 
   //If we select course_type then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.course_type) {
+  if (AllFilterData?.advanceFilter?.course_type || AllFilterData?.course_type) {
     filters.permanent.push({
       field: "program_type_id",
       operator: "eq",
-      value: AllFilterData?.advanceFilter?.course_type,
+      //here if the course_type from advance filter has value then it will be applied otherwise if there is value in basic filters then it will apply
+      value: AllFilterData?.advanceFilter?.course_type
+        ? AllFilterData?.advanceFilter?.course_type
+        : AllFilterData?.course_type,
     });
   }
 
@@ -451,7 +454,10 @@ function index() {
     <div className="flex flex-col justify-between relative h-screen">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
       <div className="mx-8 flex flex-col gap-4 mt-4">
-        <HeaderSection hasAliasNameFalse={hasAliasNameFalse(data)} />
+        <HeaderSection
+          hasAliasNameFalse={hasAliasNameFalse(data)}
+          setCurrent={setCurrent}
+        />
         <div className="w-full">
           <BaseTable
             current={current}
@@ -530,17 +536,20 @@ function index() {
 
 export default index;
 
-const HeaderSection = ({ hasAliasNameFalse }: any) => {
+const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
     <Form onSubmit={() => {}} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
         <div className="flex-[0.25]">
-          <AdvanceFilter hasAliasNameFalse={hasAliasNameFalse} />
+          <AdvanceFilter
+            hasAliasNameFalse={hasAliasNameFalse}
+            setCurrent={setCurrent}
+          />
         </div>
         <div className="flex-[1.75]">
-          <BasicFilters />
+          <BasicFilters setCurrent={setCurrent} />
         </div>
       </div>
     </Form>
@@ -592,11 +601,19 @@ export const CountComponent = ({ count }: any) => {
 };
 
 export const CourseTypeComponent = ({ name }: any) => {
+  const {
+    field: { value, onChange },
+  } = useController({
+    name: name,
+  });
+
   const [pageSize, setPageSize] = useState(10);
   const { options, onSearch } = useSelect({
     resource: "program_types",
     optionLabel: "name",
     optionValue: "id",
+    //If there is a value which is selected in basic filters it need to be prefilled defaultly
+    defaultValue: value && value,
     onSearch: (value: any) => [
       {
         field: "name",
@@ -615,11 +632,7 @@ export const CourseTypeComponent = ({ name }: any) => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
-  const {
-    field: { value, onChange },
-  } = useController({
-    name: name,
-  });
+  console.log("heyy course type component", value);
 
   return (
     <Select
@@ -654,7 +667,9 @@ export const CourseTypeComponent = ({ name }: any) => {
   );
 };
 
-export const BasicFilters = () => {
+export const BasicFilters: React.FC<{
+  setCurrent: (number: number) => void;
+}> = ({ setCurrent }) => {
   const { watch, setValue } = useFormContext();
   const formData = watch();
 
@@ -765,6 +780,8 @@ export const BasicFilters = () => {
         <Button
           onClick={() => {
             setAllFilterData(formData);
+            //whenever we apply filters we will be navigated to page 1
+            setCurrent(1);
           }}
           className="h-9 w-18 rounded-xl"
         >
@@ -775,7 +792,7 @@ export const BasicFilters = () => {
   );
 };
 
-const AdvanceFilter = ({ hasAliasNameFalse }: any) => {
+const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { setValue, watch } = useFormContext();
   const formData = watch();
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
@@ -816,6 +833,7 @@ const AdvanceFilter = ({ hasAliasNameFalse }: any) => {
         <Filters
           setAdvanceFilterOpen={setAdvanceFilterOpen}
           hasAliasNameFalse={hasAliasNameFalse}
+          setCurrent={setCurrent}
         />
       </SheetContent>
     </Sheet>
