@@ -650,17 +650,21 @@ export default function NewCourseReviewPage() {
                 {visibility ? visibility?.value : "-"}
               </abbr>
             </div>
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Country(s) from where registrations are allowed
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={allowedCountries}
-              >
-                {allowedCountries ? allowedCountries : "-"}
-              </abbr>
-            </div>
+            {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
+            {hasSuperAdminRole &&
+              newCourseData?.is_geo_restriction_applicable && (
+                <div className="w-[291px]">
+                  <p className="text-sm font-normal text-accent-light text-[#999999]">
+                    Country(s) from where registrations are allowed
+                  </p>
+                  <abbr
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                    title={allowedCountries}
+                  >
+                    {allowedCountries ? allowedCountries : "-"}
+                  </abbr>
+                </div>
+              )}
             {hasSuperAdminRole && (
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
