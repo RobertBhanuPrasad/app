@@ -339,7 +339,7 @@ export const AccommodationType = ({
     // we need to execute this only wheb the url contains the edit course
     if (IsEditCourse(pathname) && value) {
       const fetchData = async () => {
-        const { data, error }: any = await supabaseClient
+        const { data, error }: any = await supabaseClient()
           .from("participant_registration")
           .select("id,program_accommodations!inner(*)")
           .eq("program_id", id)
