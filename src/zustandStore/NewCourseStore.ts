@@ -77,6 +77,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       viewThankyouPage: data,
     }));
   },
+
   setNewCourseData: (data: any) => {
     set(() => ({
       newCourseData: data,
