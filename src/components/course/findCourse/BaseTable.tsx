@@ -65,7 +65,7 @@ interface IBaseTable<TData, TValue> {
      */
     rowStyles?: string;
     /**
-     * Additional CSS classes to pass to table container 
+     * Additional CSS classes to pass to table container
      */
     tableContainer?: string;
     /**
@@ -292,21 +292,31 @@ export function BaseTable<TData, TValue>({
   const tableRef = useRef<HTMLDivElement>(null);
 
   /**
-   * function to move the scroll bar to left using controls in action
+   * Function to handle click event for scrolling the table container to the left.
    */
   const handlePrevButtonClick = () => {
+    // Check if tableRef is defined
     if (tableRef.current) {
-      tableRef.current.scrollLeft -= 100;
+      // Get the width of the container
+      const containerWidth = tableRef.current.clientWidth;
+      // Scroll the container to the left by its width
+      tableRef.current.scrollLeft -= containerWidth;
+      // Update the state with the new scroll position
       setScrollLeft(tableRef.current.scrollLeft);
     }
   };
 
   /**
-   * function to move the scroll bar to right using controls in action
+   * Function to handle click event for scrolling the table container to the right.
    */
   const handleNextButtonClick = () => {
+    // Check if tableRef is defined
     if (tableRef.current) {
-      tableRef.current.scrollLeft += 100;
+      // Get the width of the container
+      const containerWidth = tableRef.current.clientWidth;
+      // Scroll the container to the right by its width
+      tableRef.current.scrollLeft += containerWidth;
+      // Set scrollLeft to the maximum scroll width to scroll to the end
       setScrollLeft(
         tableRef.current.scrollWidth - tableRef.current.clientWidth
       );
@@ -321,7 +331,7 @@ export function BaseTable<TData, TValue>({
       <div className="flex flex-row justify-between">
         {columnSelector && (
           <div>
-            <DropdownMenu open={open}>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
@@ -345,10 +355,10 @@ export function BaseTable<TData, TValue>({
                     </div>
                     {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn)// Here we are filtering the columns which have accessorKey
+                      .filter((column) => column?.accessorFn) // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
-                        if (!column.getCanHide()) { 
-                          //display the disabled options 
+                        if (!column.getCanHide()) {
+                          //display the disabled options
                           return (
                             <div className="flex flex-row gap-4 items-center">
                               <Checkbox
@@ -358,7 +368,10 @@ export function BaseTable<TData, TValue>({
                                 className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                                 checked={columnVisibilityChanges[column.id]}
                                 onCheckedChange={(value: boolean) => {
-                                  handleColumnVisibilityChange(column.id, value);
+                                  handleColumnVisibilityChange(
+                                    column.id,
+                                    value
+                                  );
                                 }}
                               />
                               {column?.columnDef?.column_name}
@@ -366,26 +379,27 @@ export function BaseTable<TData, TValue>({
                           );
                         }
                       })}
-                       {table
+                    {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn && column.getCanHide())
+                      .filter(
+                        (column) => column?.accessorFn && column.getCanHide()
+                      )
                       // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
                         // display the enabled options
-                          return (
-                            <div className="flex flex-row gap-4 items-center">
-                              <Checkbox
-                                key={column.id}
-                                className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
-                                checked={columnVisibilityChanges[column.id]}
-                                onCheckedChange={(value: boolean) => {
-                                  handleColumnVisibilityChange(column.id, value);
-                                }}
-                              />
-                              {column?.columnDef?.column_name}
-                            </div>
-                          );
-                        
+                        return (
+                          <div className="flex flex-row gap-4 items-center">
+                            <Checkbox
+                              key={column.id}
+                              className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
+                              checked={columnVisibilityChanges[column.id]}
+                              onCheckedChange={(value: boolean) => {
+                                handleColumnVisibilityChange(column.id, value);
+                              }}
+                            />
+                            {column?.columnDef?.column_name}
+                          </div>
+                        );
                       })}
                   </div>
 
@@ -574,7 +588,7 @@ export function BaseTable<TData, TValue>({
 
             <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
               <Select
-                value={`${pageSize}`}
+                value={pageSize}
                 onValueChange={(value) => {
                   setPageSize(Number(value));
                   table?.setPageSize(Number(value));
