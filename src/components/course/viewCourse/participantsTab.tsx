@@ -11,7 +11,7 @@ import { getColorWithDecreasedOpacity } from "src/utility/GenerateColours";
 import { useTranslation } from 'next-i18next';
 
 function ParticipantsTab() {
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["common", "course.view_course"])
   
   const router = useRouter();
   const {
@@ -70,7 +70,7 @@ function ParticipantsTab() {
 export default ParticipantsTab;
 
 const FeeLevelPieChart = ({ participantData }: any) => {
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["course.view_course", "new_strings"])
   const baseColor = "#7677F4";
   const feeLevelData = Object.keys(
     participantData?.fee_level_breakup || {}
@@ -135,7 +135,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
 
 const AttendancePieChart = ({ participantData }: any) => {
   
-  const {t} = useTranslation(["common", "course.view_course", "course.find_course", "course.participants"])
+  const {t} = useTranslation(["course.view_course", "course.find_course", "course.participants"])
   const baseColor = "#7677F4";
 
   // TODO: need to translations
@@ -236,7 +236,7 @@ const GenderPieChart = ({ participantData }: any) => {
       };
     }
   );
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["course.view_course", "new_strings"])
 
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">

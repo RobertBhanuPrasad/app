@@ -50,7 +50,7 @@ export const ParticipantsListMainHeader = () => {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["course.view_course"])
   return (
     <div className="flex justify-between px-8 h-auto pb-4">
       {/* Course Details Section */}
