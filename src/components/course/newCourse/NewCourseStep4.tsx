@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { format } from "date-fns";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 // Define CourseTable component
 
@@ -28,6 +29,9 @@ export default function CourseTable() {
   const { watch } = useFormContext();
 
   const formData = watch();
+
+  //fetching the user's country code
+  const countryCode =useGetCountryCode()
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -67,7 +71,7 @@ export default function CourseTable() {
   } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
 
   const fetchFeeData = async () => {
-    const supabase = supabaseClient();
+    const supabase = supabaseClient(countryCode);
     //Sending all required params
     const { data, error } = await supabase.functions.invoke("course-fee", {
       method: "POST",
@@ -78,6 +82,10 @@ export default function CourseTable() {
         start_date: courseStartDate,
         program_type_id: formData?.program_type_id,
       },
+      headers:{
+        //Sending the country code for schema switching
+        "country-code":countryCode
+      }
     });
     if (error)
       console.log("error while fetching course fee level settings", error);

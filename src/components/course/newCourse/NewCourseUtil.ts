@@ -24,7 +24,8 @@ export const handlePostProgramData = async (
   /**
    * The current url either add or edit
    */
-  pathname: string
+  pathname: string,
+  countryCode:string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -215,6 +216,9 @@ export const handlePostProgramData = async (
         start_date: courseStartDate,
         program_type_id: body?.program_type_id,
       },
+      headers:{
+        "country-code":countryCode,
+      }
     }
   );
 
@@ -364,7 +368,7 @@ export const handlePostProgramData = async (
   // We need to call one supabase edge function to update the course details in sync DB aswell to reflect the changes in unity pages
   // edge function name : sync-program
   // we need to call this edge funtion only when all program data has been saved
-  if (!(await handleSyncProgramEdgeFunction(programId, pathname))) return false;
+  if (!(await handleSyncProgramEdgeFunction(programId, pathname,countryCode))) return false;
   return true;
 };
 
@@ -1285,20 +1289,23 @@ const handleProgramAccountingStatusUpdate = async (
  */
 export const handleSyncProgramEdgeFunction = async (
   programId: number,
-  pathname: string
+  pathname: string,
+  countryCode:string
 ) => {
   const method = IsEditCourse(pathname) ? "PUT" : "POST";
 
   console.log("method", method);
 
-  const { data, error }: any = await supabaseClient.functions.invoke(
+  const supabase = supabaseClient(countryCode);
+
+  const { data, error }: any = await supabase.functions.invoke(
     `sync-program/${programId}`,
     {
       headers: {
         Authorization:
           "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
         //TODO: Will need to change public schema to country code once supabase country wise set up is done/
-        "country-code": "public",
+        "country-code": countryCode,
       },
       method,
     }
