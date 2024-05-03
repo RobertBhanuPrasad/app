@@ -10,7 +10,7 @@ const useGetCountryCode = () => {
 
   //TODO: this condition we will remove later when we remove public database
   if (locale === "en") {
-    return "publuc";
+    return "public";
   } else {
     const [countryCode] = locale?.split("-") || ["zz"];
     return countryCode;
@@ -27,7 +27,7 @@ export default useGetCountryCode;
  */
 export const getCountryCodeFromLocale = (locale: string) => {
   if (locale === "en") {
-    return "publuc";
+    return "public";
   } else {
     const [countryCode] = locale?.split("-") || ["zz"];
     return countryCode;

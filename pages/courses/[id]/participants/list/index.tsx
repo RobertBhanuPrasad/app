@@ -315,6 +315,8 @@ function index() {
     },
   });
 
+  const supabase = supabaseClient();
+
   console.log("Participant table data", participantData);
 
   const [rowSelection, setRowSelection] = React.useState({});
@@ -369,7 +371,7 @@ function index() {
       .filter((key: any) => selectedRowObjects[key] === true)
       .map(Number);
 
-    const { error } = await supabaseClient
+    const { error } = await supabase
       .from("participant_registration")
       .update({ participant_attendence_status_id: attendance_status_id })
       .in("id", participantIds);
@@ -401,7 +403,7 @@ function index() {
       (record: any) => record.value == "Pending"
     )?.id;
 
-    const { data: selectedTransactionStatusValues } = await supabaseClient
+    const { data: selectedTransactionStatusValues } = await supabase
       .from("participant_payment_history")
       .select("transaction_status_id")
       .match({ program_id: programID })
@@ -416,7 +418,7 @@ function index() {
 
     if (selectTransactionStatusIds?.length) {
       if (allValuesSame(selectTransactionStatusIds)) {
-        const { error } = await supabaseClient
+        const { error } = await supabase
           .from("participant_payment_history")
           .update({ transaction_status_id: transaction_status_id })
           .match({
@@ -877,6 +879,7 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
 };
 
 const handleExportExcel = async () => {
+  const supabase = supabaseClient();
   try {
     const excelColumns = [
       {
@@ -965,7 +968,7 @@ const handleExportExcel = async () => {
     });
 
     //invoking the export_to_file function
-    const { data, error } = await supabaseClient.functions.invoke(
+    const { data, error } = await supabase.functions.invoke(
       ` export_to_file?${params}`,
       {
         headers: {
@@ -986,7 +989,7 @@ const handleExportExcel = async () => {
       const fileName = fileUrl.split("/").pop();
 
       // passing the file name to download
-      const result = await supabaseClient.storage
+      const result = await supabase.storage
         .from("export_to_excel")
         .download(fileName);
 

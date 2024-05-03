@@ -34,16 +34,18 @@ export const VenueNameComponent = () => {
           error={venueError ? true : false}
         />
         {venueError && (
-        <span className="text-[#FF6D6D] text-[12px]">
-          {venueError.message}
-        </span>
-      )}
+          <span className="text-[#FF6D6D] text-[12px]">
+            {venueError.message}
+          </span>
+        )}
       </div>
     </div>
   );
 };
 
 export const PostalCodeComponent = () => {
+  const supabase = supabaseClient();
+
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
     fieldState: { error },
@@ -54,7 +56,7 @@ export const PostalCodeComponent = () => {
 
   const fetchCityStateData = async () => {
     if (postalCodeValue?.length > 4) {
-      const { data: prefillData } = await supabaseClient
+      const { data: prefillData } = await supabase
         .from("city")
         .select("*")
         .eq("postal_code", postalCodeValue);
@@ -79,10 +81,8 @@ export const PostalCodeComponent = () => {
           error={error ? true : false}
         />
         {error && (
-        <span className="text-[#FF6D6D] text-[12px]">
-          {error.message}
-        </span>
-      )}
+          <span className="text-[#FF6D6D] text-[12px]">{error.message}</span>
+        )}
       </div>
     </div>
   );
@@ -107,10 +107,8 @@ export const StreetAddressComponent = () => {
           error={error ? true : false}
         />
         {error && (
-        <span className="text-[#FF6D6D] text-[12px]">
-          {error.message}
-        </span>
-      )}
+          <span className="text-[#FF6D6D] text-[12px]">{error.message}</span>
+        )}
       </div>
     </div>
   );

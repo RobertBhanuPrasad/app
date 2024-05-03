@@ -36,16 +36,17 @@ function MyApp({
   pageProps,
   router,
 }: AppPropsWithLayout): JSX.Element {
+  const countryCode = getCountryCodeFromLocale(router.locale as string);
+  const languageCode = getLanguageCodeFromLocale(router.locale as string);
+  const supabase = supabaseClient(countryCode);
+
   const renderComponent = () => {
     const { setOptionLabelValue } = optionLabelValueStore();
 
     const { setCountryCode, setLanguageCode } = ConfigStore();
 
-    const countryCode = getCountryCodeFromLocale(router.locale as string);
-    const languageCode = getLanguageCodeFromLocale(router.locale as string);
-
     const fetchOptionLabelOptionValueData = async () => {
-      const { data } = await supabaseClient
+      const { data } = await supabase
         .from("option_labels")
         .select("*,option_values(*)");
       console.log("Option Label Value Data", data);
@@ -94,7 +95,7 @@ function MyApp({
   return (
     <Refine
       routerProvider={routerProvider}
-      dataProvider={dataProvider(supabaseClient)}
+      dataProvider={dataProvider(supabase)}
       authProvider={authProvider}
       i18nProvider={i18nProvider}
       resources={[
