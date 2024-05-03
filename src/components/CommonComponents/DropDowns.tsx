@@ -46,7 +46,7 @@ export const VenueNameComponent = () => {
 };
 
 export const PostalCodeComponent = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["course.new_course"])
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
     fieldState: { error },
@@ -202,7 +202,7 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["course.new_course"])
   const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
@@ -283,7 +283,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
 };
 
 export const CenterDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   const [pageSize, setPageSize] = useState(10);
 
   const {

@@ -293,7 +293,7 @@ export const CourseTypeDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common'])
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
@@ -349,7 +349,7 @@ export const CourseTypeDropDown = () => {
 };
 
 const RegistrationGateway = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
   } = useController({
@@ -374,7 +374,7 @@ const RegistrationGateway = () => {
 };
 
 const CourseNameDropDown = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("new_strings")
   const [pageSize, setPageSize] = useState(10);
 
   const { watch } = useFormContext();
@@ -566,7 +566,7 @@ const TeachersDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
 
   return (
     <div className="flex gap-1 flex-col">
@@ -691,7 +691,7 @@ const AssistantTeachersDropDown = () => {
   } = useController({
     name: NewCourseStep2FormNames?.assistant_teacher_ids,
   });
- const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+ const {t} = useTranslation("course.new_course")
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
@@ -791,7 +791,7 @@ const Visibility = () => {
 };
 
 const DisplayLanguage = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   const {
     field: { value, onChange },
   } = useController({
@@ -930,7 +930,7 @@ const LanguageDropDown = () => {
   const handleOnSearch = (value: any) => {
     onSearch(value);
   };
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
 
   return (
     <div className="flex gap-1 flex-col">
@@ -1009,7 +1009,7 @@ const LanguageTranslationDropDown = () => {
   const handleOnSearch = (value: any) => {
     onSearch(value);
   };
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
@@ -1029,7 +1029,7 @@ const LanguageTranslationDropDown = () => {
 };
 
 const AllowedCountriesDropDown = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   const { watch } = useFormContext();
 
   const formData = watch();

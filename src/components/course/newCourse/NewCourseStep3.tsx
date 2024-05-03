@@ -90,7 +90,7 @@ function NewCourseStep3() {
 export default NewCourseStep3
 
 const OnlineProgram = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["course.new_course", "new_strings"])
   const {
     field: { value, onChange },
     fieldState: { error }
@@ -151,7 +151,7 @@ const Schedules = () => {
 }
 
 const SchedulesHeader = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["course.new_course", "new_strings"])
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
     fieldState: { error: schedulesHeaderErrors }
@@ -377,7 +377,7 @@ const ScheduleComponent = ({
   const schedule = formData?.schedules[index]
 
   const timeFormat12HoursId = getOptionValueObjectByOptionOrder(TIME_FORMAT, TIME_FORMAT_12_HOURS)?.id
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common',"new_strings"])
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
       <div className="h-4 font-[#333333] font-normal flex text-xs">
@@ -438,7 +438,7 @@ const ScheduleComponent = ({
 }
 
 const Venue = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["course.new_course", "new_strings"])
 
   const { watch, setValue, resetField } = useFormContext()
 
@@ -1604,7 +1604,7 @@ const TimeSelector = ({
   )
 }
 const DeleteVenueComponent = ({ handleDeleteVenue }: { handleDeleteVenue: () => void }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common',"new_strings"])
   return (
     <div>
       <DialogHeader>

@@ -132,7 +132,7 @@ function NewCourseStep6() {
 export default NewCourseStep6;
 
 export const ContactName = ({ index }: any) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -154,7 +154,7 @@ export const ContactName = ({ index }: any) => {
   );
 };
 export const ContactEmail = ({ index }: any) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -178,7 +178,7 @@ export const ContactEmail = ({ index }: any) => {
 };
 
 export const ContactMobile = ({ index }: any) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
     fieldState: { error },
