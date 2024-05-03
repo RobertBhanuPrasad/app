@@ -14,6 +14,8 @@ import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
 import { IsEditCourse } from "./EditCourseUtil";
 
+const supabase = supabaseClient();
+
 export const handlePostProgramData = async (
   body: any,
   loggedInUserId: number,
@@ -22,7 +24,8 @@ export const handlePostProgramData = async (
   /**
    * The current url either add or edit
    */
-  pathname: string
+  pathname: string,
+  countryCode:string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -105,7 +108,7 @@ export const handlePostProgramData = async (
       body[NewCourseStep2FormNames.allowed_countries];
   }
 
-  const { data: programTypeData } = await supabaseClient
+  const { data: programTypeData } = await supabase
     .from("program_types")
     .select("*")
     .eq("id", body?.program_type_id)
@@ -202,7 +205,7 @@ export const handlePostProgramData = async (
   const courseStartDate = body?.schedules?.[0]?.date?.toISOString();
 
   //Fetching fee level settings of course
-  const { data: feeData, error } = await supabaseClient.functions.invoke(
+  const { data: feeData, error } = await supabase.functions.invoke(
     "course-fee",
     {
       method: "POST",
@@ -213,6 +216,9 @@ export const handlePostProgramData = async (
         start_date: courseStartDate,
         program_type_id: body?.program_type_id,
       },
+      headers:{
+        "country-code":countryCode,
+      }
     }
   );
 
@@ -254,7 +260,7 @@ export const handlePostProgramData = async (
 
   console.log("body to create program", programBody);
 
-  const { data: programData, error: programError } = await supabaseClient
+  const { data: programData, error: programError } = await supabase
     .from("program")
     .upsert(programBody)
     .select();
@@ -295,7 +301,7 @@ export const handlePostProgramData = async (
     // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
     // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
     if (loggedInUserId && programData[0].created_by_user_id == null) {
-      await supabaseClient
+      await supabase
         .from("program")
         .update({
           created_by_user_id: loggedInUserId,
@@ -362,7 +368,7 @@ export const handlePostProgramData = async (
   // We need to call one supabase edge function to update the course details in sync DB aswell to reflect the changes in unity pages
   // edge function name : sync-program
   // we need to call this edge funtion only when all program data has been saved
-  if (!(await handleSyncProgramEdgeFunction(programId, pathname))) return false;
+  if (!(await handleSyncProgramEdgeFunction(programId, pathname,countryCode))) return false;
   return true;
 };
 
@@ -380,7 +386,7 @@ export const handlePostProgramInfoData = async (
   console.log("program details info data to create", programDetailsInfoData);
 
   const { data: programDetailsInfoResponse, error: programDetailsError } =
-    await supabaseClient
+    await supabase
       .from("program_details_info")
       .insert(programDetailsInfoData)
       .select();
@@ -406,7 +412,7 @@ export const handlePostProgramOrganizersData = async (
   //store program organizers in program_organizers table and
 
   // Step 1: Retrieve existing organizers of the program from the database
-  const { data: existingOrganizersResponse } = await supabaseClient
+  const { data: existingOrganizersResponse } = await supabase
     .from("program_organizers")
     .select("user_id")
     .eq("program_id", programId);
@@ -424,7 +430,7 @@ export const handlePostProgramOrganizersData = async (
 
   // Step 3: Remove organizers from the program_organizers table
   if (organizersToRemove.length > 0) {
-    await supabaseClient
+    await supabase
       .from("program_organizers")
       .delete()
       .eq("program_id", programId)
@@ -443,9 +449,7 @@ export const handlePostProgramOrganizersData = async (
       }));
 
     const { data: programOrganizerData, error: programOrganizerError } =
-      await supabaseClient
-        .from("program_organizers")
-        .insert(organizersToAddData);
+      await supabase.from("program_organizers").insert(organizersToAddData);
 
     console.log("program organizers data is created", programOrganizerData);
 
@@ -465,7 +469,7 @@ export const handlePostProgramTeachersData = async (
   programId: number
 ) => {
   // Step 1: Retrieve existing teachers of the program from the database
-  const { data: existingTeachersResponse } = await supabaseClient
+  const { data: existingTeachersResponse } = await supabase
     .from("program_teachers")
     .select("user_id")
     .eq("program_id", programId);
@@ -483,7 +487,7 @@ export const handlePostProgramTeachersData = async (
 
   // Step 3: Remove teachers from the program_teachers table
   if (teachersToRemove.length > 0) {
-    await supabaseClient
+    await supabase
       .from("program_teachers")
       .delete()
       .eq("program_id", programId)
@@ -506,7 +510,7 @@ export const handlePostProgramTeachersData = async (
     );
 
     const { data: programTeacherData, error: programTeacherError } =
-      await supabaseClient
+      await supabase
         .from("program_teachers")
         .insert(teachersToAddData)
         .select();
@@ -531,7 +535,7 @@ export const handlePostProgramAssistantTeachersData = async (
   programId: number
 ) => {
   // Step 1: Retrieve existing assistant teachers of the program from the database
-  const { data: existingTeachersResponse } = await supabaseClient
+  const { data: existingTeachersResponse } = await supabase
     .from("program_assistant_teachers")
     .select("user_id")
     .eq("program_id", programId);
@@ -549,7 +553,7 @@ export const handlePostProgramAssistantTeachersData = async (
 
   // Step 3: Remove assistant teachers from the program_assistant_teachers table
   if (assistantTeachersToRemove.length > 0) {
-    await supabaseClient
+    await supabase
       .from("program_assistant_teachers")
       .delete()
       .eq("program_id", programId)
@@ -573,7 +577,7 @@ export const handlePostProgramAssistantTeachersData = async (
     const {
       data: programAssistantTeacherData,
       error: programAssistantTeacherError,
-    } = await supabaseClient
+    } = await supabase
       .from("program_assistant_teachers")
       .insert(assistantTeachersToAddData)
       .select();
@@ -601,7 +605,7 @@ export const handlePostProgramLanguagesData = async (
   programId: number
 ) => {
   // Step 1: Retrieve existing languages of the program from the database
-  const { data: existingLanguagesResponse } = await supabaseClient
+  const { data: existingLanguagesResponse } = await supabase
     .from("program_languages")
     .select("language_id")
     .eq("program_id", programId);
@@ -619,7 +623,7 @@ export const handlePostProgramLanguagesData = async (
 
   // Step 3: Remove languages from the program_languages table
   if (languagesToRemove.length > 0) {
-    await supabaseClient
+    await supabase
       .from("program_languages")
       .delete()
       .eq("program_id", programId)
@@ -641,7 +645,7 @@ export const handlePostProgramLanguagesData = async (
       }));
 
     const { data: programLanguageData, error: programLanguageError } =
-      await supabaseClient
+      await supabase
         .from("program_languages")
         .insert(languagesToAddData)
         .select();
@@ -666,7 +670,7 @@ export const handlePostProgramTranslationLanguagesData = async (
   programId: number
 ) => {
   // Step 1: Retrieve existing translation languages of the program from the database
-  const { data: existingTranslationLanguagesResponse } = await supabaseClient
+  const { data: existingTranslationLanguagesResponse } = await supabase
     .from("program_translation_languages")
     .select("language_id")
     .eq("program_id", programId);
@@ -685,7 +689,7 @@ export const handlePostProgramTranslationLanguagesData = async (
 
   // Step 3: Remove translation languages from the program_translation_languages table
   if (translationLanguagesToRemove.length > 0) {
-    await supabaseClient
+    await supabase
       .from("program_translation_languages")
       .delete()
       .eq("program_id", programId)
@@ -709,7 +713,7 @@ export const handlePostProgramTranslationLanguagesData = async (
     const {
       data: programTranslationLanguageData,
       error: programTranslationLanguageError,
-    } = await supabaseClient
+    } = await supabase
       .from("program_translation_languages")
       .insert(translationLanguagesToAddData)
       .select();
@@ -738,7 +742,7 @@ export const handleProgramSchedulesData = async (
   programId: number
 ) => {
   // Delete records which are not present in body schedules and present in database
-  const { data: existingScheduleData } = await supabaseClient
+  const { data: existingScheduleData } = await supabase
     .from("program_schedules")
     .select("id")
     .eq("program_id", programId);
@@ -749,7 +753,7 @@ export const handleProgramSchedulesData = async (
   );
 
   if (scheduleIdsToDelete.length > 0) {
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from("program_schedules")
       .delete()
       .in("id", scheduleIdsToDelete)
@@ -820,7 +824,7 @@ export const handleProgramSchedulesData = async (
   );
 
   // Perform upsert operation for all schedules at once
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from("program_schedules")
     .upsert(schedulesData)
     .select();
@@ -840,7 +844,7 @@ export const handlePostAccommodations = async (
   programId: number
 ) => {
   // Delete records which are not present in body accommodations and present in database
-  const { data: existingAccommodationData } = await supabaseClient
+  const { data: existingAccommodationData } = await supabase
     .from("program_accommodations")
     .select("id")
     .eq("program_id", programId);
@@ -853,7 +857,7 @@ export const handlePostAccommodations = async (
   );
 
   if (accommodationIdsToDelete.length > 0) {
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from("program_accommodations")
       .delete()
       .in("id", accommodationIdsToDelete)
@@ -881,7 +885,7 @@ export const handlePostAccommodations = async (
   });
 
   // Perform upsert operation
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from("program_accommodations")
     .upsert(accommodationsData, { defaultToNull: false })
     .select();
@@ -901,7 +905,7 @@ export const handlePostProgramContactDetailsData = async (
   programId: number
 ) => {
   // Delete records which are not present in body contact details and present in database
-  const { data: existingContactDetailsData } = await supabaseClient
+  const { data: existingContactDetailsData } = await supabase
     .from("program_contact_details")
     .select("id")
     .eq("program_id", programId);
@@ -912,7 +916,7 @@ export const handlePostProgramContactDetailsData = async (
   );
 
   if (contactDetailsIdsToDelete.length > 0) {
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from("program_contact_details")
       .delete()
       .in("id", contactDetailsIdsToDelete)
@@ -959,7 +963,7 @@ export const handlePostProgramContactDetailsData = async (
    * If set to 'false', unspecified fields will retain their current
    * values instead of being set to null.
    */
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from("program_contact_details")
     .upsert(contactDetailsData, { defaultToNull: false })
     .select();
@@ -994,7 +998,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
     venueData = body?.newVenue || {};
 
     //For New Venue directly posting data in venue table
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from("venue")
       .insert({ ...venueData, created_by_user_id: loggedInUserId })
       .select();
@@ -1043,7 +1047,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 
     if (deleteVenueIDs && deleteVenueIDs.length > 0) {
       //Soft deleting all the venues deleted by user while creating course.
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from("venue")
         .update({ is_deleted: true })
         .in("id", deleteVenueIDs)
@@ -1061,7 +1065,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
     if (body?.isExistingVenueEdited === true) {
       // we have to temporary delete the existing venue and create new if user edits
 
-      const { data } = await supabaseClient
+      const { data } = await supabase
         .from("venue")
         .update({ is_deleted: true }) // Update the field to mark as deleted
         .eq("id", venueId);
@@ -1073,7 +1077,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
       // If the user is superAdmin or the user who is creating course created venues clicks on delete icon
       // we have to delete them from database
 
-      const { data: insertData, error } = await supabaseClient
+      const { data: insertData, error } = await supabase
         .from("venue")
         .insert(venueBody)
         .select();
@@ -1094,7 +1098,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 };
 
 export const handleProgramStatusUpdate = async (programId: number) => {
-  const { data, error }: any = await supabaseClient
+  const { data, error }: any = await supabase
     .from("program")
     .select("id,program_type_id(*)")
     .eq("id", programId);
@@ -1120,7 +1124,7 @@ export const handleProgramStatusUpdate = async (programId: number) => {
     console.log("program is_approval_required");
     console.log("patching program status_id as pending");
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from("program")
       .update({
         status_id: COURSE_PENDING_REVIEW_STATUS_ID,
@@ -1142,7 +1146,7 @@ export const handleProgramStatusUpdate = async (programId: number) => {
     console.log("program doesnt need approval which is auto approval");
     console.log("patching program status_id as active directley");
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from("program")
       .update({
         status_id: COURSE_ACTIVE_STATUS_ID,
@@ -1175,7 +1179,7 @@ export const handleProgramFeeLevelSettingsData = async (
     return true;
   }
   // Fetching the existing fee level settings data
-  const { data: existingFeeLevelSettingsData } = await supabaseClient
+  const { data: existingFeeLevelSettingsData } = await supabase
     .from("program_fee_level_settings")
     .select("id")
     .eq("program_id", programId);
@@ -1195,7 +1199,7 @@ export const handleProgramFeeLevelSettingsData = async (
   );
 
   //upsert operation for program feeLevel settings data
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from("program_fee_level_settings")
     .upsert(modifiedProgramFeeLevel)
     .select();
@@ -1221,7 +1225,7 @@ const handleGenerateProgramCode = async (
 ) => {
   // to fetch country code call users api
 
-  const { data, error }: any = await supabaseClient
+  const { data, error }: any = await supabase
     .from("users")
     .select("*,contact_id(*,country_id(*))")
     .eq("id", loggedInUserId);
@@ -1234,7 +1238,7 @@ const handleGenerateProgramCode = async (
       data[0]?.contact_id?.country_id?.abbr || "" + "C" + programId;
 
     // update program code in program
-    const { data: programData, error: programError } = await supabaseClient
+    const { data: programData, error: programError } = await supabase
       .from("program")
       .update({
         program_code: programCode,
@@ -1260,7 +1264,7 @@ const handleProgramAccountingStatusUpdate = async (
   // updating the accounting status of program to not submitted initially when the program created
 
   if (!accountingNotSubmittedStatusId) return null;
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from("program")
     .update({
       program_accounting_status_id: accountingNotSubmittedStatusId,
@@ -1285,20 +1289,23 @@ const handleProgramAccountingStatusUpdate = async (
  */
 export const handleSyncProgramEdgeFunction = async (
   programId: number,
-  pathname: string
+  pathname: string,
+  countryCode:string
 ) => {
   const method = IsEditCourse(pathname) ? "PUT" : "POST";
 
   console.log("method", method);
 
-  const { data, error }: any = await supabaseClient.functions.invoke(
+  const supabase = supabaseClient();
+
+  const { data, error }: any = await supabase.functions.invoke(
     `sync-program/${programId}`,
     {
       headers: {
         Authorization:
           "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
         //TODO: Will need to change public schema to country code once supabase country wise set up is done/
-        "country-code": "public",
+        "country-code": countryCode,
       },
       method,
     }

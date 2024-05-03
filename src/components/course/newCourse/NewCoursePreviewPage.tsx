@@ -51,8 +51,11 @@ import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
 import { IsEditCourse } from "./EditCourseUtil";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 export default function NewCourseReviewPage() {
+  const supabase = supabaseClient();
+
   const { data: loginUserData }: any = useGetIdentity();
 
   const router = useRouter();
@@ -146,24 +149,27 @@ export default function NewCourseReviewPage() {
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
 
+  //fetching the user's country code
+  const countryCode = useGetCountryCode();
+
   //Finding course start date
   const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
 
   const fetchFeeData = async () => {
     //Sending all required params
-    const { data, error } = await supabaseClient.functions.invoke(
-      "course-fee",
-      {
-        method: "POST",
-        body: {
-          state_id: stateId,
-          city_id: cityId,
-          center_id: centerId,
-          start_date: courseStartDate,
-          program_type_id: newCourseData?.program_type_id,
-        },
-      }
-    );
+    const { data, error } = await supabase.functions.invoke("course-fee", {
+      method: "POST",
+      body: {
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
+        program_type_id: newCourseData?.program_type_id,
+      },
+      headers: {
+        "country-code": countryCode,
+      },
+    });
 
     if (error)
       console.log("error while fetching course fee level settings data", error);
@@ -385,7 +391,8 @@ export default function NewCourseReviewPage() {
       data?.userData?.id,
       setProgramId,
       accountingNotSubmittedStatusId,
-      pathname
+      pathname,
+      countryCode
     );
 
     // we are checking the course is edit or user created new course

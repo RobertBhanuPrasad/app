@@ -363,8 +363,10 @@ function index() {
         columns: JSON.stringify(excelColumns),
       });
 
+      const supabase = supabaseClient();
+
       //invoking the export_to_file function
-      const { data, error } = await supabaseClient.functions.invoke(
+      const { data, error } = await supabase.functions.invoke(
         ` export_to_file?${params}`,
         {
           headers: {
@@ -385,7 +387,7 @@ function index() {
         const fileName = fileUrl.split("/").pop();
 
         // passing the file name to download
-        const result = await supabaseClient.storage
+        const result = await supabase.storage
           .from("export_to_excel")
           .download(fileName);
 
