@@ -822,18 +822,15 @@ const NewVenueDetails = () => {
 const ExistingVenueDetails = () => {
   const { getValues } = useFormContext();
   const {
-    existingVenue: { id },
+    existingVenue
   } = getValues();
 
-  const { data, isLoading } = useOne({
-    resource: "venue_view_with_names",
-    id: id,
-    meta: {
-      select: "*",
-    },
-  });
-
-  console.log("new venue data is", data);
+  //Requirement: Need to show selected venue data. Selected venue is stored in existingVenue form variable.will store only city_is and state_id in existingVenue.
+  const {data: cityData,isLoading}=useOne({
+    resource:"city",
+    meta:{select:"name,state(name)"},
+    id:existingVenue?.city_id
+  })
 
   if (isLoading) {
     return <LoadingIcon />;
@@ -841,8 +838,8 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {data?.data?.name}, {data?.data?.address},{data?.data?.city_name},{" "}
-      {data?.data?.state_name}, {data?.data?.postal_code}
+      {existingVenue?.name}, {existingVenue?.address},{cityData?.data?.name},{" "}
+      {cityData?.data?.state.name}, {existingVenue?.postal_code}
     </div>
   );
 };
