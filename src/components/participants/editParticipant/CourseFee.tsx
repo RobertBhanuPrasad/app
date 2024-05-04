@@ -14,7 +14,7 @@ export default function CourseFee() {
     const { data } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "id,transaction_fee_level_id(value),accommodation_fee,currency_code,participant_id(id,created_at),organization_fee",
+            select: "id,transaction_fee_level_id(name),accommodation_fee,currency_code,participant_id(id,created_at),organization_fee",
         },
         filters: [
             {
