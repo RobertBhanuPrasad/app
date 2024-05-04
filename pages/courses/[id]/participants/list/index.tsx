@@ -1041,7 +1041,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common","course.participants"
+    "common","course.participants","new_strings"
   ]);
 
   if (!authenticated) {
