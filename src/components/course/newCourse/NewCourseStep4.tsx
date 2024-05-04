@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { format } from "date-fns";
+import { translatedText } from "src/common/translations";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 
 // Define CourseTable component
@@ -186,7 +187,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         feeLevelId: val?.fee_level_id?.id,
         feeLevelLabel: val?.is_custom_fee
           ? val?.custom_fee_label
-          : val?.fee_level_id?.value,
+          : val?.fee_level_id?.name,
         is_enable: val?.is_enable,
         subTotal: val?.total - val?.total * taxRate,
         tax: val?.total * taxRate,
@@ -232,7 +233,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   let normalFeeColumns: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
-        return <div className="">{row?.original?.feeLevelLabel}</div>;
+        return <div className="">{translatedText(row?.original?.feeLevelLabel)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -269,7 +270,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   let editableFeeColumns: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
-        return <div className="">{row?.original?.feeLevelLabel}</div>;
+        return <div className="">{translatedText(row?.original?.feeLevelLabel)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -601,7 +602,7 @@ type FeeLevelType = {
   earlyBirdTax: number;
   earlyBirdTotal: number;
   feeLevelId: number;
-  feeLevelLabel: string;
+  feeLevelLabel: object;
   is_enable: boolean;
   subTotal: number;
   tax: number;

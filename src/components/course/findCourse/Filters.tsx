@@ -10,6 +10,7 @@ import {
 } from "pages/courses/list";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { translatedText } from "src/common/translations";
 import {
   COURSE_ACCOUNTING_STATUS,
   PROGRAM_STATUS,
@@ -436,7 +437,7 @@ export const CourseName = () => {
                 value={option.value}
                 className="h-[44px]"
               >
-                {option.label}
+                {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && (
                 <hr className="border-[#D6D7D8]" />
@@ -668,7 +669,7 @@ export const CourseStatus = () => {
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
-            {status?.value}
+            {translatedText(status?.name)}
           </Button>
         </div>
       ))}
@@ -706,7 +707,7 @@ export const CourseAccordingStatus = () => {
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
-            {status?.value}
+            {translatedText(status?.name)}
           </Button>
         </div>
       ))}

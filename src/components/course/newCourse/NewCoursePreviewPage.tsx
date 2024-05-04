@@ -50,6 +50,7 @@ import {
 import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
+import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 
@@ -482,9 +483,9 @@ export default function NewCourseReviewPage() {
 
               <abbr
                 className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
-                title={creator?.value}
+                title={translatedText(creator?.name)}
               >
-                {creator?.value ? creator?.value : "-"}
+                {creator?.name ? translatedText(creator?.name) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -566,9 +567,9 @@ export default function NewCourseReviewPage() {
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={courseType?.data?.name}
+                title={courseType?.data?.name ? translatedText(courseType?.data?.name) : "-"}
               >
-                {courseType?.data?.name ? courseType?.data?.name : "-"}
+                {courseType?.data?.name ? translatedText(courseType?.data?.name) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -653,9 +654,9 @@ export default function NewCourseReviewPage() {
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={visibility?.value}
+                title={translatedText(visibility?.name)}
               >
-                {visibility ? visibility?.value : "-"}
+                {visibility ? translatedText(visibility?.name) : "-"}
               </abbr>
             </div>
             {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
@@ -959,9 +960,9 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={paymentMethod?.value}
+                  title={translatedText(paymentMethod?.name)}
                 >
-                  {paymentMethod?.value}
+                  {translatedText(paymentMethod?.name)}
                 </abbr>
               </div>
             </div>
@@ -1089,8 +1090,8 @@ const Accommodation = ({
 
   return (
     <div className="w-[291px]">
-      <abbr title={data?.data?.name} className="no-underline">
-        <CardLabel className="truncate">{data?.data?.name}</CardLabel>
+      <abbr title={translatedText(data?.data?.name)} className="no-underline">
+        <CardLabel className="truncate">{translatedText(data?.data?.name)}</CardLabel>
       </abbr>
       <abbr
         // If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined
@@ -1148,8 +1149,8 @@ const Fees = ({
 
   return (
     <div className="w-[291px]">
-      <abbr title={feeLevelData?.data?.value} className="no-underline">
-        <CardLabel className="truncate">{feeLevelData?.data?.value}</CardLabel>
+      <abbr title={translatedText(feeLevelData?.data?.name)} className="no-underline">
+        <CardLabel className="truncate">{translatedText(feeLevelData?.data?.name)}</CardLabel>
       </abbr>
       <abbr
         title={JSON.stringify(feeLevelSettingsData?.total)}
@@ -1204,11 +1205,11 @@ const EarlyBirdFees = ({
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
       <abbr
-        title={`Early Bird ${feeLevelData?.data?.value}`}
+        title={`Early Bird ${translatedText(feeLevelData?.data?.name)}`}
         className="no-underline"
       >
         <CardLabel className="truncate">
-          Early Bird {feeLevelData?.data?.value}
+          Early Bird {translatedText(feeLevelData?.data?.name)}
         </CardLabel>
       </abbr>
       <abbr
