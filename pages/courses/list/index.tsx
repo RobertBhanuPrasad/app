@@ -207,7 +207,6 @@ function index() {
     });
   }
 
-
   /**
    * This holds the records of which rows are selected
    */
@@ -354,8 +353,10 @@ function index() {
         columns: JSON.stringify(excelColumns)
       })
 
+      const supabase = supabaseClient();
+
       //invoking the export_to_file function
-      const { data, error } = await supabaseClient.functions.invoke(
+      const { data, error } = await supabase.functions.invoke(
         ` export_to_file?${params}`,
         {
           headers: {
@@ -376,7 +377,7 @@ function index() {
         const fileName = fileUrl.split("/").pop();
 
         // passing the file name to download
-        const result = await supabaseClient.storage
+        const result = await supabase.storage
           .from("export_to_excel")
           .download(fileName);
 
@@ -697,48 +698,47 @@ export const BasicFilters: React.FC<{
       </div>
       <div>
         {" "}
-        <Dialog open={open}>
-          <DialogTrigger asChild>
-            <Button
-              className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
-              variant="outline"
-            >
-              <div
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                <CalenderIcon color="#666666" />
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Button
+            className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
+            variant="outline"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <div>
+              <CalenderIcon color="#666666" />
+            </div>
+            {courseDate ? (
+              <div className="flex justify-between items-center w-full">
+                <div className="flex flex-row gap-2 text-[14px]">
+                  {/* If the course from date and to date is present then only format and show the from date and to date */}
+                  <Text className="font-semibold">
+                    {courseDate.from && format(courseDate.from, "MM/dd/yyyy")}
+                  </Text>{" "}
+                  {courseDate.to && <span>-</span>}{" "}
+                  <Text className="font-semibold">
+                    {courseDate.to && format(courseDate.to, "MM/dd/yyyy")}
+                  </Text>
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    //when we click on cross icon we need to clear the date
+                    courseDateOnChange(undefined);
+                  }}
+                  id="cross-icon"
+                  className="ml-auto"
+                >
+                  <CrossIcon fill="#7677F4" height={10} width={10} />
+                </div>
               </div>
-              {courseDate ? (
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex flex-row gap-2 text-[14px]">
-                    {/* If the course from date and to date is present then only format and show the from date and to date */}
-                    <Text className="font-semibold">
-                      {courseDate.from && format(courseDate.from, "MM/dd/yyyy")}
-                    </Text>{" "}
-                    {courseDate.to && <span>-</span>}{" "}
-                    <Text className="font-semibold">
-                      {courseDate.to && format(courseDate.to, "MM/dd/yyyy")}
-                    </Text>
-                  </div>
-                  <div
-                    onClick={() => {
-                      //when we click on cross icon we need to clear the date
-                      courseDateOnChange(undefined);
-                    }}
-                    className="ml-auto"
-                  >
-                    <CrossIcon fill="#7677F4" height={10} width={10} />
-                  </div>
-                </div>
-              ) : (
-                <div className="flex gap-2 font-normal">
-                  Select the Date Range
-                </div>
-              )}
-            </Button>
-          </DialogTrigger>
+            ) : (
+              <div className="flex gap-2 font-normal">
+                Select the Date Range
+              </div>
+            )}
+          </Button>
           <DialogContent
             closeIcon={false}
             className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"

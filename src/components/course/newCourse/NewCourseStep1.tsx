@@ -3,6 +3,7 @@ import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
@@ -35,6 +36,7 @@ import {
 } from "src/ui/select";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { IsEditCourse } from "./EditCourseUtil";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -122,8 +124,7 @@ const RegistrationGateway = () => {
   );
 };
 const RadioCards = () => {
-
-  const { clearErrors } = useFormContext();
+  const { clearErrors, watch } = useFormContext();
 
   const {
     field: { value, onChange },
@@ -147,12 +148,15 @@ const RadioCards = () => {
   const user_roles: any[] = loginUserData?.userData?.user_roles;
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
+
   const loginInTeacherData = loginUserData?.userData?.id;
+
   const {
     field: { value: teachers, onChange: teachersOnChange },
   } = useController({
     name: NewCourseStep2FormNames?.teacher_ids,
   });
+
   const handleOnChange = (val: string) => {
     onChange(parseInt(val));
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
@@ -169,18 +173,16 @@ const RadioCards = () => {
       }
     }
     // Check if the selected value is equal to the organizer's ID
-     if (parseInt(val) === iAmOrganizerId) {
-       // If there are already teachers selected
-     if (teachers) {
-     // Remove the logged-in teacher's ID from the list of selected teachers
-      teachersOnChange(_.without(teachers, loginInTeacherData));
-     // Set a timeout to clear errors for the 'teacher_ids' field after 10 milliseconds
-      setTimeout(() => {
-        clearErrors('teacher_ids');
-      }, 10);
-     }
-
-     
+    if (parseInt(val) === iAmOrganizerId) {
+      // If there are already teachers selected
+      if (teachers) {
+        // Remove the logged-in teacher's ID from the list of selected teachers
+        teachersOnChange(_.without(teachers, loginInTeacherData));
+        // Set a timeout to clear errors for the 'teacher_ids' field after 10 milliseconds
+        setTimeout(() => {
+          clearErrors("teacher_ids");
+        }, 10);
+      }
     }
   };
 
@@ -236,18 +238,19 @@ const RadioCards = () => {
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
         {hasTeacherRole && (
+          //Added cursor not allowed to all cards if this is disabled
           <Label
             htmlFor={JSON.stringify(iAmTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
-              }`}
+            }`}
           >
             <Card
               className={` p-2 w-80 h-[106px] flex flex-row ${
                 value === iAmTeachingId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
-                : ""
-                }`}
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                  : ""
+              }`}
             >
               <div>
                 <RadioGroupCheckItem
@@ -275,14 +278,14 @@ const RadioCards = () => {
             htmlFor={JSON.stringify(iAmCoTeachingId)}
             className={`text-[#999999] font-normal ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
-              }`}
+            } `}
           >
             <Card
               className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-                : ""
-                }`}
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                  : ""
+              }`}
             >
               <RadioGroupCheckItem
                 value={JSON.stringify(iAmCoTeachingId)}
@@ -297,7 +300,7 @@ const RadioCards = () => {
                 <Coteacher
                   color={` ${
                     value === iAmCoTeachingId ? "#7677F4" : "#999999"
-                    }`}
+                  }`}
                 />
                 {iAmCoTeachingCourse}
               </div>
@@ -308,14 +311,14 @@ const RadioCards = () => {
           htmlFor={JSON.stringify(iAmOrganizerId)}
           className={`text-[#999999] font-normal ${
             value === iAmOrganizerId ? "text-[#7677F4]" : ""
-            }`}
+          }`}
         >
           <Card
             className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
               value === iAmOrganizerId
-              ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
-              : ""
-              }`}
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                : ""
+            }`}
           >
             <RadioGroupCheckItem
               value={JSON.stringify(iAmOrganizerId)}
@@ -347,6 +350,16 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
+  /**
+   * This variable holds the path of the url
+   */
+  const pathname = usePathname();
+
+  /**
+   * Checking whether the url contains the edit or not
+   */
+  const isEditCourse = IsEditCourse(pathname);
+
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
@@ -391,6 +404,8 @@ const OrganizationDropDown = () => {
           onValueChange={(value: any) => {
             onChange(value);
           }}
+          //disabling the organization dropdown when it is edit
+          disabled={isEditCourse}
         >
           <SelectTrigger
             className="w-[320px]"

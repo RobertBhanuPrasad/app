@@ -3,7 +3,9 @@ import { supabaseClient } from "src/utility/supabaseClient";
 
 // api call for getting defaultvalues for edit participant tab from payment history
 export const handleEditParticipantValues = async (participantId: number) => {
-  const { data, error } = await supabaseClient
+  const supabase = supabaseClient();
+
+  const { data, error } = await supabase
     .from("participant_payment_history")
     .select(
       "id,payment_method_id,transaction_status_id!inner(id,value),payment_date,send_payment_confirmation,transaction_status,participant_id!inner(id,memo,roommate_snore,accommodation_snore,participant_code,participant_attendence_status_id,discount_code, payment_method)"
@@ -22,7 +24,9 @@ export const handleEditParticipantValues = async (participantId: number) => {
 
 // api call for getting default values for edit payment form from payment history
 export const handleEditPaymentValues = async (paymentHistoryId: number) => {
-  const { data, error } = await supabaseClient
+  const supabase = supabaseClient();
+
+  const { data, error } = await supabase
     .from("participant_payment_history")
     .select(
       "id,payment_method_id(id,name),transaction_status_id!inner(id,name),payment_date,send_payment_confirmation"

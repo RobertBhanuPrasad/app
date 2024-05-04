@@ -4,6 +4,7 @@ import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
@@ -45,6 +46,7 @@ import {
 } from "src/ui/select";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { IsEditCourse } from "./EditCourseUtil";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -170,6 +172,17 @@ export default function NewCourseStep2() {
 
 export const CourseTypeDropDown = () => {
   const { watch, setValue, clearErrors } = useFormContext();
+
+  /**
+   * This variable holds the path of the url
+   */
+  const pathname = usePathname();
+
+
+  /**
+   * Checking whether the url contains the edit or not
+   */
+  const isEditCourse = IsEditCourse(pathname);
 
   const [pageSize, setPageSize] = useState(10);
 
@@ -312,6 +325,7 @@ export const CourseTypeDropDown = () => {
           onChange(val);
           getCourseTypeSettings(val);
         }}
+        disabled={isEditCourse}
       >
         <SelectTrigger
           className="w-[320px]"

@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../../DataTable";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useFieldArray,
   useFormContext,
@@ -13,7 +13,7 @@ import { Checkbox } from "src/ui/checkbox";
 import { Input } from "src/ui/input";
 import Delete from "@public/assets/Delete";
 import CustomSelect from "src/ui/custom-select";
-import { useOne, useSelect } from "@refinedev/core";
+import { useList, useOne, useSelect } from "@refinedev/core";
 import Add from "@public/assets/Add";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { RadioGroup } from "src/ui/radio-group";
@@ -31,6 +31,10 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { PAYMENT_MODE } from "src/constants/OptionLabels";
 import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
 import { translatedText } from "src/common/translations";
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
+import { IsEditCourse } from "./EditCourseUtil";
+import { supabaseClient } from "src/utility";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -87,30 +91,68 @@ export const AccomdationComponent = () => {
 
       <div className="my-[10px]">
         {fields.map((field: any, index: number) => (
-          <div key={field.id} className="flex items-center w-full h-auto ">
-            <div className=" w-[288px] p-[10px]">
-              <AccommodationType index={index} />
-            </div>
-            <div className="p-4  w-[288px] p-[10px]">
-              <FeePerPerson index={index} />
-            </div>
-            <div className="p-4  w-[288px] p-[10px]">
-              <AccomdationSpot index={index} />
-            </div>
-            <div className=" w-[151px]  p-[10px] flex  ">
-              <AccomdationAction
-                index={index}
-                remove={remove}
-                append={append}
-              />
-            </div>
-
-            {index < accommodations?.length - 1 && (
-              <hr className="border-[#D6D7D8]" />
-            )}
-          </div>
+          <AccommodationField
+            key={field.id}
+            data={field}
+            index={index}
+            remove={remove}
+            append={append}
+            accommodations={accommodations}
+          />
         ))}
       </div>
+    </div>
+  );
+};
+
+export const AccommodationField = ({
+  index,
+  remove,
+  append,
+  accommodations,
+  data,
+}: {
+  /**
+   * index of the particular acommodation type
+   */
+  index: number;
+  /**
+   * use controller remove method to remove the particular row
+   */
+  remove: Function;
+  /**
+   * use controller append method to add the new row
+   */
+  append: Function;
+  /**
+   * This has all accommodations data
+   */
+  accommodations: ProgramAccommodationsDataBaseType[];
+  /**
+   * This contain the particular accommodation data
+   */
+  data: ProgramAccommodationsDataBaseType;
+}) => {
+  const router = useRouter();
+
+  return (
+    <div className="flex items-center w-full h-auto">
+      <div className="w-[288px] p-[10px]">
+        <AccommodationType index={index} />
+      </div>
+      <div className="p-4 w-[288px] p-[10px]">
+        <FeePerPerson index={index} />
+      </div>
+      <div className="p-4 w-[288px] p-[10px]">
+        <AccomdationSpot index={index} />
+      </div>
+      <div className="w-[151px] p-[10px] flex">
+        <AccomdationAction index={index} remove={remove} append={append} />
+      </div>
+
+      {index < accommodations?.length - 1 && (
+        <hr className="border-[#D6D7D8]" />
+      )}
     </div>
   );
 };
@@ -149,7 +191,7 @@ export const ResidentialCourse = () => {
             value="true"
             selectedRadioValue={JSON.stringify(value)}
             label="Yes"
-            className="w-[112px] h-[40px] rounded-[12px]"            
+            className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
@@ -166,7 +208,7 @@ export const ResidentialCourse = () => {
 export const AccommodationFeeMode = () => {
   const {
     field: { value, onChange },
-    fieldState:{error}
+    fieldState: { error },
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
@@ -208,11 +250,8 @@ export const AccommodationFeeMode = () => {
         </div>
       </RadioGroup>
       {error && (
-  <span className="text-[#FF6D6D] text-[14px]">
-    {error?.message}
-  </span>
-)}
-
+        <span className="text-[#FF6D6D] text-[14px]">{error?.message}</span>
+      )}
     </div>
   );
 };
@@ -242,7 +281,14 @@ const FeePerPerson = ({ index }: any) => {
   );
 };
 
-export const AccommodationType = ({ index }: { index: number }) => {
+export const AccommodationType = ({
+  index,
+}: {
+  /**
+   * Index of the current accommodation
+   */
+  index: number;
+}) => {
   const { watch } = useFormContext();
 
   const formData = watch().accommodation || [];
@@ -282,6 +328,38 @@ export const AccommodationType = ({ index }: { index: number }) => {
     (option) => !existingAccommodationValues?.includes(option.value)
   );
 
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const pathname = usePathname();
+
+  const {
+    query: { id },
+  } = useRouter();
+
+  useEffect(() => {
+    // we need to execute this only wheb the url contains the edit course
+    if (IsEditCourse(pathname) && value) {
+      const fetchData = async () => {
+        const { data, error }: any = await supabaseClient()
+          .from("participant_registration")
+          .select("id,program_accommodations!inner(*)")
+          .eq("program_id", id)
+          .eq("program_accommodations.accommodation_type_id", value)
+          .limit(1);
+
+        if (error) {
+          console.error("some thing went wrong");
+        } else {
+          if (data && data?.length > 0) {
+            setIsDisabled(true);
+          }
+        }
+      };
+
+      fetchData();
+    }
+  }, []);
+
   return (
     <div className="w-full ">
       <Select
@@ -289,6 +367,7 @@ export const AccommodationType = ({ index }: { index: number }) => {
         onValueChange={(value: any) => {
           onChange(value);
         }}
+        disabled={isDisabled}
       >
         <SelectTrigger error={error ? true : false}>
           <SelectValue placeholder="Select Accommodation" />

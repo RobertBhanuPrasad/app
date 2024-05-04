@@ -9,8 +9,10 @@ const Login = () => {
 
   const router = useRouter();
 
+  const supabase = supabaseClient();
+
   const handleLogin = async () => {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });

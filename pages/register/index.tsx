@@ -15,6 +15,8 @@ const Signup = () => {
 
   const router = useRouter();
 
+  const supabase = supabaseClient();
+
   const { data } = useList<any>({
     resource: "option_labels",
     filters: [
@@ -37,28 +39,28 @@ const Signup = () => {
       },
     ],
   });
-console.log(data,options,"options")
+  console.log(data, options, "options");
   const handleSignup = async () => {
-    const { data, error } = await supabaseClient.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     console.log("heyy register data", data, error);
 
-    const { data: contactData } = await supabaseClient
+    const { data: contactData } = await supabase
       .from("contact")
       .insert([{ first_name: firstName, last_name: lastName }])
       .select();
 
-    const { data: userData } = await supabaseClient
+    const { data: userData } = await supabase
       .from("users")
       .insert([
         { user_identifier: data?.user?.id, contact_id: contactData?.[0]?.id },
       ])
       .select();
 
-    const { data: roleData } = await supabaseClient
+    const { data: roleData } = await supabase
       .from("user_roles")
       .insert([{ user_id: userData?.[0]?.id, role_id: roleValue }])
       .select();

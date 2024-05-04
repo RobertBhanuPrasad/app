@@ -52,8 +52,11 @@ import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
 import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 export default function NewCourseReviewPage() {
+  const supabase = supabaseClient();
+
   const { data: loginUserData }: any = useGetIdentity();
 
   const router = useRouter();
@@ -147,24 +150,27 @@ export default function NewCourseReviewPage() {
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
 
+  //fetching the user's country code
+  const countryCode = useGetCountryCode();
+
   //Finding course start date
   const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
 
   const fetchFeeData = async () => {
     //Sending all required params
-    const { data, error } = await supabaseClient.functions.invoke(
-      "course-fee",
-      {
-        method: "POST",
-        body: {
-          state_id: stateId,
-          city_id: cityId,
-          center_id: centerId,
-          start_date: courseStartDate,
-          program_type_id: newCourseData?.program_type_id,
-        },
-      }
-    );
+    const { data, error } = await supabase.functions.invoke("course-fee", {
+      method: "POST",
+      body: {
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
+        program_type_id: newCourseData?.program_type_id,
+      },
+      headers: {
+        "country-code": countryCode,
+      },
+    });
 
     if (error)
       console.log("error while fetching course fee level settings data", error);
@@ -386,7 +392,8 @@ export default function NewCourseReviewPage() {
       data?.userData?.id,
       setProgramId,
       accountingNotSubmittedStatusId,
-      pathname
+      pathname,
+      countryCode
     );
 
     // we are checking the course is edit or user created new course
@@ -652,17 +659,21 @@ export default function NewCourseReviewPage() {
                 {visibility ? translatedText(visibility?.name) : "-"}
               </abbr>
             </div>
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Country(s) from where registrations are allowed
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={allowedCountries}
-              >
-                {allowedCountries ? allowedCountries : "-"}
-              </abbr>
-            </div>
+            {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
+            {hasSuperAdminRole &&
+              newCourseData?.is_geo_restriction_applicable && (
+                <div className="w-[291px]">
+                  <p className="text-sm font-normal text-accent-light text-[#999999]">
+                    Country(s) from where registrations are allowed
+                  </p>
+                  <abbr
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                    title={allowedCountries}
+                  >
+                    {allowedCountries ? allowedCountries : "-"}
+                  </abbr>
+                </div>
+              )}
             {hasSuperAdminRole && (
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">

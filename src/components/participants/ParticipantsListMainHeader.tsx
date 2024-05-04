@@ -14,7 +14,6 @@ import {
   HoverCardTrigger,
 } from "src/ui/hover-card";
 import { formatDate } from "src/utility/DateFunctions";
-import { supabaseClient } from "src/utility/supabaseClient";
 
 export const ParticipantsListMainHeader = () => {
   const router = useRouter();
@@ -32,7 +31,6 @@ export const ParticipantsListMainHeader = () => {
     },
   });
 
- 
   const totalRevenue = courseData?.data?.revenue;
 
   const startDate = formatDate(
