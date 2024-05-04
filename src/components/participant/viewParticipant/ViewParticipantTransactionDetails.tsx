@@ -264,7 +264,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       const closeDropdown = () => {
         setDropdownOpen(false)
       }
-      
+
       const Id: number | undefined = query?.participantId ? parseInt(query.participantId as string) : undefined
 
       useEffect(() => {
@@ -283,8 +283,31 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       }, [Id])
       return (
         <div className="flex justify-center text-primary">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          <div>
+            <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm">
+              <Dialog open={editPayment}>
+                <DialogTrigger asChild={editPayment}></DialogTrigger>
+                <Form onSubmit={() => {}} defaultValues={defaultValues}>
+                  {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
+                  <EditPayment paymentId={Number(row?.original?.id)} setEditPayment={setEditPayment} />
+                </Form>
+              </Dialog>
+            </div>
+          </div>
+
+          {/* View Donation option */}
+          <div>
+            <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm ">
+              <Dialog open={viewDonation} onOpenChange={setViewDonation}>
+                <DialogTrigger asChild></DialogTrigger>
+                <DialogContent>
+                  <ViewDonationDetails setViewDonation={setViewDonation} />
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+          <DropdownMenu open={dropdownOpen}>
+            <DropdownMenuTrigger asChild={dropdownOpen}>
               <Button
                 variant="ghost"
                 className="h-8 w-8 p-0"
@@ -298,70 +321,43 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
             </DropdownMenuTrigger>
 
             {/* TODO: need to fix UI issue, on option hover option must be highlighted, tried using dropdownItmes tag, but behaving unwantedly, that's why removed dropdownItmes tag and replaced iwth div tags */}
-            {dropdownOpen && (
-              <DropdownMenuContent align="end">
-                <div className="p-[10px]">
-                  <div>
-                    <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm">
-                      <Dialog open={editPayment}>
-                        <DialogTrigger>
-                          <div
-                            onClick={() => {
-                              setEditPayment(true)
-                            }}
-                          >
-                            Edit
-                          </div>
-                        </DialogTrigger>
-                        <Form onSubmit={() => {}} defaultValues={defaultValues}>
-                          {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
-                          <EditPayment
-                            paymentId={Number(row?.original?.id)}
-                            setEditPayment={setEditPayment}
-                            closeDropdown={closeDropdown}
-                          />
-                        </Form>
-                      </Dialog>
-                    </div>
-                  </div>
-
-                  {/* View Donation option */}
-                  <div>
-                    <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm ">
-                      <Dialog open={viewDonation} onOpenChange={setViewDonation}>
-                        <DialogTrigger asChild>
-                          <div
-                            onClick={() => {
-                              setViewDonation(true)
-                            }}
-                          >
-                            View
-                          </div>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <ViewDonationDetails setViewDonation={setViewDonation} closeDropdown={closeDropdown}/>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  </div>
-                  <div
-                    onClick={() => {
-                      closeDropdown()
-                      refundTransaction()
-                    }}
-                  >
-                    <div className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm">Refund</div>
-                  </div>
-                  <div
-                    onClick={() => {
-                      closeDropdown()
-                    }}
-                  >
-                    <div className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm">Download Receipt</div>
-                  </div>
+            <DropdownMenuContent align="end" asChild={true}>
+              <div className="p-[10px]">
+                <div
+                  onClick={() => {
+                    setEditPayment(true)
+                    closeDropdown()
+                  }}
+                  className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer"
+                >
+                  Edit
                 </div>
-              </DropdownMenuContent>
-            )}
+                <div
+                  onClick={() => {
+                    setViewDonation(true)
+                    closeDropdown()
+                  }}
+                  className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer"
+                >
+                  View
+                </div>
+                <div
+                  onClick={() => {
+                    closeDropdown()
+                    refundTransaction()
+                  }}
+                >
+                  <div className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer">Refund</div>
+                </div>
+                <div
+                  onClick={() => {
+                    closeDropdown()
+                  }}
+                >
+                  <div className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer">Download Receipt</div>
+                </div>
+              </div>
+            </DropdownMenuContent>
           </DropdownMenu>
         </div>
       )

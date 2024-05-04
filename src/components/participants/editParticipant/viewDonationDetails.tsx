@@ -6,9 +6,8 @@ import { formatDateString } from 'src/utility/DateFunctions'
 
 interface ViewDonationDetailsProps {
   setViewDonation: React.Dispatch<React.SetStateAction<any>>
-  closeDropdown:any
 }
-export default function ViewDonationDetails({ setViewDonation, closeDropdown }: ViewDonationDetailsProps) {
+export default function ViewDonationDetails({ setViewDonation }: ViewDonationDetailsProps) {
   const { query } = useRouter()
   const Id: number | undefined = query?.participantId ? parseInt(query.participantId as string) : undefined
 
@@ -221,7 +220,6 @@ export default function ViewDonationDetails({ setViewDonation, closeDropdown }: 
           <Button
             onClick={() => {
               setViewDonation(false)
-              closeDropdown()
             }}
           >
             Close
