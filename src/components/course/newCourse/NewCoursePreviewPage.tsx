@@ -881,7 +881,7 @@ export default function NewCourseReviewPage() {
               courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    {t("new_strings:Eearly_bird_cutoff_period")}
+                    {t("new_strings:Early_bird_cutoff_period")}
                   </p>
                   <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                     {subtractDaysAndFormat(

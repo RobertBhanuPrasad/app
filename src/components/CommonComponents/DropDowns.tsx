@@ -121,7 +121,7 @@ export const StreetAddressComponent = () => {
 };
 
 export const CityDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation('common')
   const [pageSize, setPageSize] = useState(10);
 
   const {
