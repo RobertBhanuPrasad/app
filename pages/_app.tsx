@@ -38,7 +38,7 @@ function MyApp({
 }: AppPropsWithLayout): JSX.Element {
   const countryCode = getCountryCodeFromLocale(router.locale as string);
   const languageCode = getLanguageCodeFromLocale(router.locale as string);
-  const supabase = supabaseClient(countryCode);
+  const supabase:any = supabaseClient(countryCode);
 
   const renderComponent = () => {
     const { setOptionLabelValue } = optionLabelValueStore();
