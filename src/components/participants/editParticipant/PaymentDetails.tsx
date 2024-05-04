@@ -142,7 +142,10 @@ export default function PaymentDetails() {
       </div>
       <div className="flex py-[10px] gap-8">
         <div className="">
-          {/* TODO: need to change once requirement is clear*/}
+          {/* If the participant is registering via discount code,
+          we need to show the discount code in the special code field and it has to be disabled
+          If the participant is registering without a discount code, 
+          we won't show anything in the special code which is empty and disabled */}
           <Text className="text-[#999999]  text-[14px] ">
             Enter Special Code
           </Text>
