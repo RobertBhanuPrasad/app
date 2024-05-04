@@ -41,6 +41,7 @@ import {
 
 import DropDown from "@public/assets/DropDown";
 import { useTranslation } from "next-i18next";
+
 interface IBaseTable<TData, TValue> {
   /**
    * Columns defined for the table
