@@ -927,7 +927,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 }
 
 const ExistingVenueList = () => {
-  const {t} = useTranslation(['common', "course.new_course"])
+  const {t} = useTranslation(['common', "course.new_course","new_strings"])
   const { data: loginUserData }: any = useGetIdentity()
 
   const { watch } = useFormContext()
