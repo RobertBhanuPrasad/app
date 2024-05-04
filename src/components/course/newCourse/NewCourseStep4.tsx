@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { format } from "date-fns";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 // Define CourseTable component
 
@@ -28,6 +29,9 @@ export default function CourseTable() {
   const { watch } = useFormContext();
 
   const formData = watch();
+
+  //fetching the user's country code
+  const countryCode =useGetCountryCode()
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -67,20 +71,22 @@ export default function CourseTable() {
   } = useController({ name: NewCourseStep4FormNames?.is_early_bird_enabled });
 
   const fetchFeeData = async () => {
+    const supabase = supabaseClient();
     //Sending all required params
-    const { data, error } = await supabaseClient.functions.invoke(
-      "course-fee",
-      {
-        method: "POST",
-        body: {
-          state_id: stateId,
-          city_id: cityId,
-          center_id: centerId,
-          start_date: courseStartDate,
-          program_type_id: formData?.program_type_id,
-        },
+    const { data, error } = await supabase.functions.invoke("course-fee", {
+      method: "POST",
+      body: {
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
+        program_type_id: formData?.program_type_id,
+      },
+      headers:{
+        //Sending the country code for schema switching
+        "country-code":countryCode
       }
-    );
+    });
     if (error)
       console.log("error while fetching course fee level settings", error);
 
@@ -371,7 +377,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         });
 
         //Requirement: Early Bird Sub Total is (Early Bird Total - Tax )
-        const earlyBirdSubTotal = earlyBirdTotal - (earlyBirdTotal * taxRate);
+        const earlyBirdSubTotal = earlyBirdTotal - earlyBirdTotal * taxRate;
 
         return <div className="">{earlyBirdSubTotal}</div>;
       },
