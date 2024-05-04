@@ -39,7 +39,6 @@ import {
   TEACHER,
 } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import { useTranslation } from 'next-i18next';
 
 /**
  * Is course approved
@@ -90,6 +89,8 @@ export const DisplayOptions = (
   courseAccountingStatusId: any,
   roleId: any
 ) => {
+  const {t} = useTranslation(["common", "new_strings", "course.find_course"])
+  
   // Getting all the course status ID's
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
@@ -99,7 +100,6 @@ export const DisplayOptions = (
     PROGRAM_STATUS,
     CANCELED
   )?.id;
-  const {t} = useTranslation(["common", "new_strings", "course.find_course"])
   const courseFullStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,
     FULL
@@ -171,7 +171,6 @@ export const DisplayOptions = (
     USER_ROLE,
     FINANCE_ADMIN
   )?.id;
-  const { t } = useTranslation(['common', "course.find_course", "new_strings"])
   // If course status is Active
   if (courseStatusId === courseActiveStatusId) {
     if (
@@ -185,7 +184,6 @@ export const DisplayOptions = (
 
       return [
         {
-          label: t('view_participants'),
           label: t('view_participants'),
           value: 1,
         },
@@ -236,7 +234,6 @@ export const DisplayOptions = (
           value: 5,
         },
         {
-          label: t('course.find_course:submit_course_accounting_form'),
           label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
@@ -368,7 +365,6 @@ export const DisplayOptions = (
         },
         {
           label: t('cancel_course'),
-          label: t('cancel_course'),
           value: 5,
         },
         {
@@ -398,7 +394,6 @@ export const DisplayOptions = (
           value: 4,
         },
         {
-          label: t('cancel_course'),
           label: t('cancel_course'),
           value: 5,
         },
@@ -485,7 +480,6 @@ export const DisplayOptions = (
           value: 5,
         },
         {
-          label: t('course.find_course:submit_course_accounting_form'),
           label: t('course.find_course:submit_course_accounting_form'),
           value: 6,
         },
