@@ -44,7 +44,7 @@ export function DataTable<TData, TValue>({
   pageCount,
   current,
 }: DataTableProps<TData, TValue>) {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["new_strings"])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );

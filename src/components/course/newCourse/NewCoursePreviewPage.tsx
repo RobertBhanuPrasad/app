@@ -437,15 +437,7 @@ export default function NewCourseReviewPage() {
   });
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold ml-6">
-        {t("new_strings:review_course_details")}
-      </div>
-      <section className="w-full py-8 text-base border-b bg-white">
-        <EditCourseSuccessfullyInfo
-          onEditSuccess={onEditSuccess}
-          setOnEditSuccess={setOnEditSuccess}
-        />
-      </section>
+      <div className="text-[24px] my-4 font-semibold ml-6">{t("new_strings:review_course_details")}</div>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -749,7 +741,7 @@ export default function NewCourseReviewPage() {
             <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  {t("online_zoom_url")}
+                  {t("course.new_course:time_and_venue_tab.online_meeting_url")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -843,7 +835,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-            {t("course.new_course:review_post_details.fee_information")}
+            {t("new_strings:fees_information")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of FeesDetails page */}
             <EditModalDialog
@@ -881,7 +873,7 @@ export default function NewCourseReviewPage() {
               courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    {t("new_strings:Eearly_bird_cutoff_period")}
+                    {t("new_strings:Early_bird_cutoff_period")}
                   </p>
                   <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                     {subtractDaysAndFormat(
@@ -1186,7 +1178,7 @@ const EarlyBirdFees = ({
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("new_strings")
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}

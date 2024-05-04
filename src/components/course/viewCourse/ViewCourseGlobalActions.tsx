@@ -9,11 +9,15 @@ import {
 } from "src/ui/dropdown-menu";
 import { handleCourseDefaultValues } from "../newCourse/EditCourseUtil";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { useTranslation } from "next-i18next";
+
+import { useTranslation } from 'next-i18next';
+
 
 export const ViewCourseGlobalActions = () => {
   const router = useRouter();
-const {t} = useTranslation(['common','new_strings'])
+
+  const {t} = useTranslation(["common"])
+  
   const globalActionsOptions = [
     t('view_participants'),
     t('register_participant'),
@@ -58,6 +62,7 @@ const {t} = useTranslation(['common','new_strings'])
         break;
     }
   };
+  
 
   return (
     <DropdownMenu>
@@ -66,7 +71,7 @@ const {t} = useTranslation(['common','new_strings'])
           variant="outline"
           className="flex flex-row justify-between w-[192px] h-10"
         >
-          Actions
+          {t('actions')}
           <DropDown />
         </Button>
       </DropdownMenuTrigger>

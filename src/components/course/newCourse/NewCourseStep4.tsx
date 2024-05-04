@@ -24,7 +24,7 @@ import { useTranslation } from 'next-i18next';
 // Define CourseTable component
 
 export default function CourseTable() {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation('common')
   const [courseFeeSettings, setCourseFeeSettings] = useState();
 
   const { watch } = useFormContext();

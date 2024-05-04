@@ -74,7 +74,7 @@ function NewCourseStep1() {
 export default NewCourseStep1;
 
 const RegistrationGateway = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "new_strings"])
   const {
     field: { value = false, onChange },
   } = useController({
@@ -127,7 +127,7 @@ const RadioCards = () => {
 
   const { clearErrors } = useFormContext();
 
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["course.new_course", "new_strings"])
   const {
     field: { value, onChange },
     fieldState: { error: radioError },

@@ -46,7 +46,7 @@ export const VenueNameComponent = () => {
 };
 
 export const PostalCodeComponent = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["course.new_course"])
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
     fieldState: { error },
@@ -121,7 +121,7 @@ export const StreetAddressComponent = () => {
 };
 
 export const CityDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation('common')
   const [pageSize, setPageSize] = useState(10);
 
   const {
@@ -202,7 +202,7 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(["common","course.new_course"])
   const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
@@ -239,14 +239,14 @@ export const StateDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
-      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.province")}</div>
+      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.state")}</div>
 
       <Select value={stateValue} onValueChange={stateValueOnchange}>
         <SelectTrigger
           className="w-full"
           error={stateValueError ? true : false}
         >
-          <SelectValue placeholder={t("course.new_course:time_and_venue_tab.province_placeholder")} />
+          <SelectValue placeholder={t("select_state")} />
         </SelectTrigger>
         <SelectContent>
           <Input
@@ -283,7 +283,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
 };
 
 export const CenterDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   const [pageSize, setPageSize] = useState(10);
 
   const {

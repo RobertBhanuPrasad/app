@@ -152,7 +152,7 @@ function NewCourse() {
    * There are two different scenarios are there
    * 1. User will click new course button at that time we need to prefill the form with below object
    * 2. User will click on Edit Course or Copy Course then also we need to prefill
-   * When user coming from copy or edit course we dont need to prefill the below object because we will already set this
+   * When user coming from copy or Edit Course we dont need to prefill the below object because we will already set this
    */
   const defaultValues =
     newCourseData === null
@@ -632,7 +632,7 @@ export const NewCourseTabs = () => {
   return (
     <div>
       <p className="font-semibold text-2xl">
-        {router.query.action ? router.query.action : t("new_strings:new")} {t("new_strings:course")}
+      {router.query.action==="Copy" ? t("Copy") : t("new_strings:new")} {t("new_strings:course")}
       </p>
       <div className="mt-4">
         <Tabs value={JSON.stringify(currentStep)}>
