@@ -25,9 +25,10 @@ export const FEMALE = 2;
 export const OTHER = 3;
 
 //Participant Payment Status
-export const PARTICIPANT_SUCCESS_PAYMENT_STATUS = 1;
+export const PARTICIPANT_CONFIRMED_PAYMENT_STATUS = 1;
 export const PARTICIPANT_PENDING_PAYMENT_STATUS = 2;
 export const PARTICIPANT_FAILED_PAYMENT_STATUS = 3;
+export const PARTICIPANT_NOT_RECEIVED_PAYMENT_STATUS=4;
 
 
 //Participant Attendance Status
@@ -70,8 +71,3 @@ export const ACCOUNTING_CANCELED = 5;
 export const PAY_ONLINE = 1;
 export const PAY_OFFLINE = 2;
 
-// Transaction status
-export const NOT_RECIEVED=4;
- export const CONFIRMED=2
- export const PENDING=1
- export const FAILED=3
