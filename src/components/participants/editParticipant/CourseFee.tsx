@@ -13,7 +13,7 @@ export default function CourseFee() {
     const { data } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(id,created_at,program_id(id,program_type_id!inner(is_online_program)))",
+            select: "id,transaction_fee_level_id(value),accommodation_fee,currency_code,participant_id(id,created_at),organization_fee",
         },
         filters: [
             {
@@ -71,16 +71,7 @@ export default function CourseFee() {
                         Course Fee
                     </Text>
                     <Text className="font-semibold text-[16px]">
-                        {courseFeedata?.currency_code
-                            ? courseFeedata?.currency_code
-                            : ""}{" "}
-                        {courseFeedata?.total_amount
-                            ? courseFeedata?.participant_id?.program_id
-                                  ?.program_type_id?.is_online_program
-                                ? courseFeedata?.total_amount -
-                                  courseFeedata.accommodation_fee
-                                : courseFeedata?.total_amount
-                            : "-"}
+                        {`${courseFeedata?.currency_code ? courseFeedata?.currency_code : ''} ${courseFeedata?.organization_fee}`}
                     </Text>
                 </div>
             </div>

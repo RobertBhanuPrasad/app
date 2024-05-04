@@ -3,7 +3,6 @@ import { useList, useOne, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
-import { Button } from "src/ui/button";
 import { Input } from "src/ui/input";
 import {
   Select,
@@ -60,7 +59,7 @@ export default function PaymentDetails() {
     resource: "participant_payment_history",
     meta: {
       select:
-        "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)))",
+        "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,organization_fee",
     },
     filters: [
       {
@@ -101,29 +100,15 @@ export default function PaymentDetails() {
         <div className="w-[303px]">
           <Text className="text-[#999999]  text-[14px] ">Course Fee</Text>
           <Text className="text-[16px] font-semibold">
-            {paymentDetailData?.currency_code
-              ? paymentDetailData?.currency_code
-              : ""}{" "}
-            {paymentDetailData?.total_amount
-              ? paymentDetailData?.participant_id?.program_id?.program_type_id
-                  ?.is_online_program
-                ? paymentDetailData?.total_amount -
-                  paymentDetailData?.accommodation_fee
-                : paymentDetailData?.total_amount
-              : "-"}
+          {`${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.organization_fee}`}
           </Text>
         </div>
         <div className="w-[303px]">
           <Text className="text-[#999999]  text-[14px]  ">
-            Accomodation Fee
+            Accommodation Fee
           </Text>
           <Text className="text-[16px] font-semibold">
-            {paymentDetailData?.currency_code
-              ? paymentDetailData?.currency_code
-              : ""}{" "}
-            {paymentDetailData?.accommodation_fee
-              ? paymentDetailData?.accommodation_fee
-              : "-"}
+          {`${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.accommodation_fee}`}
           </Text>
         </div>
         <div className="w-[303px]">
@@ -131,12 +116,7 @@ export default function PaymentDetails() {
             Total Fee {`(Includes VAT)`}
           </Text>
           <Text className="text-[16px] font-semibold">
-            {paymentDetailData?.currency_code
-              ? paymentDetailData?.currency_code
-              : ""}{" "}
-            {paymentDetailData?.total_amount
-              ? paymentDetailData?.total_amount
-              : "-"}
+          {`${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.total_amount}`}
           </Text>
         </div>
       </div>
