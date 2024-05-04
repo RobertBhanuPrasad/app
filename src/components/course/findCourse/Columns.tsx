@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
 import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { Button } from "src/ui/button";
+import { translatedText } from 'src/common/translations'
+
 import {
   Dialog,
   DialogContent,
@@ -64,10 +66,8 @@ export const column = (
         return <div className="w-[150px]">Course Type</div>;
       },
       cell: ({ row }: any) => {
-        return (
-          <div className="w-[150px]">{row?.original?.program_types?.name}</div>
-        );
-      },
+        return <div className="w-[150px]">{translatedText(row?.original?.program_types?.name)}</div>
+      }
     },
     {
       accessorKey: "program_type_alias_names",
@@ -78,12 +78,8 @@ export const column = (
         return <div className="min-w-[150px]">Course Name</div>;
       },
       cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">
-            {row?.original?.program_type_alias_names?.alias_name}
-          </div>
-        );
-      },
+        return <div className="min-w-[150px]">{translatedText(row?.original?.program_type_alias_names?.alias_name)}</div>
+      }
     },
     {
       accessorKey: "status",
@@ -94,10 +90,8 @@ export const column = (
         return <div className="min-w-[150px]">Course Status</div>;
       },
       cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">{row?.original?.status_id?.value}</div>
-        );
-      },
+        return <div className="min-w-[150px]">{translatedText(row?.original?.status_id?.name)}</div>
+      }
     },
     {
       accessorKey: "program_schedules",
@@ -213,12 +207,9 @@ export const column = (
         return <div>Visibility</div>;
       },
       cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">
-            {row?.original?.visibility_id?.value}
-          </div>
-        );
-      },
+        
+        return <div className="min-w-[150px]">{translatedText(row?.original?.visibility_id?.name)}</div>
+      }
     },
     {
       accessorKey: "course_accounting_status",
@@ -229,9 +220,9 @@ export const column = (
       cell: ({ row }: any) => {
         return (
           <div className="min-w-[200px]">
-            {row?.original?.program_accounting_status_id?.value
-              ? row?.original?.program_accounting_status_id?.value
-              : "-"}
+            {row?.original?.program_accounting_status_id?.name
+              ? translatedText(row?.original?.program_accounting_status_id?.name)
+              : '-'}
           </div>
         );
       },

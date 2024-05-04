@@ -172,6 +172,7 @@ interface OptionValuesDataBaseType {
   language_code?: string;
   order?: number;
   language_id?: number | null;
+  name?: object;
 }
 
 interface ProgramAccommodationsDataBaseType {

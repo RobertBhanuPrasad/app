@@ -1,5 +1,6 @@
 import { useList } from "@refinedev/core";
 import { useRouter } from "next/router";
+import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
 import { formatDateString } from "src/utility/DateFunctions";
 
@@ -61,8 +62,8 @@ export default function CourseFee() {
                         Fee Level
                     </Text>
                     <Text className="font-semibold text-[16px]">
-                        {courseFeedata?.transaction_fee_level_id?.value
-                            ? courseFeedata?.transaction_fee_level_id?.value
+                        {courseFeedata?.transaction_fee_level_id?.name
+                            ? translatedText(courseFeedata?.transaction_fee_level_id?.name)
                             : "-"}
                     </Text>
                 </div>
