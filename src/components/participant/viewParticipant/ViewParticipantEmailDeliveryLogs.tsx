@@ -1,6 +1,7 @@
 import { BaseTable } from '@components/course/findCourse/BaseTable'
 import { useOne } from '@refinedev/core'
 import { ColumnDef } from '@tanstack/react-table'
+import { useTranslation } from 'next-i18next'
 import React from 'react'
 import { TableHeader, Text } from 'src/ui/TextTags'
 import { formatDateAndTime } from 'src/utility/DateFunctions'
@@ -18,9 +19,10 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
   const { data: participantEmailDeliveryLogsData, isLoading, isError } = useOne(query)
 
   const [rowSelection, setRowSelection] = React.useState({})
+  const {t} = useTranslation("course.participants")
   return (
     <div>
-      <p className="text-[18px] font-[600] ">Email Delivery Logs</p>
+      <p className="text-[18px] font-[600] ">{t('course.participants:view_participant.email_delivery_logs')}</p>
       <div>
         <BaseTable
           checkboxSelection={false}
