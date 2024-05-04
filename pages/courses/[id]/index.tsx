@@ -578,7 +578,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
             </DialogTitle>
             <DialogDescription>
               <Textarea
-                placeholder={t('course.view_course:course_accounting_form_tab.comment')}
+                placeholder={t('new_strings:comment')}
                 className="border-[#E1E1E1]  h-[132px] w-[366px]"
                 onChange={(e: any) => {
                   setRejectionFeedback(e.target.value);
@@ -693,7 +693,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
   );
 
   /**
-   * handle the 
+   * handle the Edit Course
    * Retrieves default values for the course with the given ID,
    * sets the retrieved values as the new course data, and
    * switches the view to the preview page.
@@ -719,7 +719,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
         timeFormat12HoursId
       );
 
-      // we have to delete schedules when user click on  and other we need to prefill
+      // we have to delete schedules when user click on copy course and other we need to prefill
 
       defaultValues = _.omit(defaultValues, ["id", "schedules"]);
       setNewCourseData(defaultValues);
@@ -828,7 +828,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     setCancelCourseModalOpen(false);
                   }}
                 >
-                  {t('no')}
+                  {t('no_button')}
                 </Button>
               </div>
               <div>

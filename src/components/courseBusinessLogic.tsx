@@ -281,7 +281,7 @@ export const DisplayOptions = (
           value: 6,
         },
         {
-          label: t('course.find_course:cancel_course'),
+          label: t('new_strings:edit_course_accounting_form'),
           value: 8,
         },
       ];
