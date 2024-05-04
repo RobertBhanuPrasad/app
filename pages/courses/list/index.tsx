@@ -696,6 +696,7 @@ export const BasicFilters: React.FC<{
     setValue("temporaryadvancefilter.course_type", "");
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
+    setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
 
   return (
