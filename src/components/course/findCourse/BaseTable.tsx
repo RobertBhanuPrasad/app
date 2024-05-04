@@ -41,6 +41,7 @@ import {
 
 import DropDown from "@public/assets/DropDown";
 
+import { useTranslation } from 'next-i18next';
 interface IBaseTable<TData, TValue> {
   /**
    * Columns defined for the table
@@ -615,6 +616,7 @@ const DataPagination = ({
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
+  const {t} = useTranslation(["common"])
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
@@ -626,7 +628,7 @@ const DataPagination = ({
         }}
         disabled={current <= 1}
       >
-        <div>Prev</div>
+        <div>{t('prev')}</div>
       </Button>
 
       {/*pages buttons */}
@@ -654,7 +656,7 @@ const DataPagination = ({
         }}
         disabled={pageCount < current + 1}
       >
-        <div>Next</div>
+        <div>{t('next')}</div>
       </Button>
     </div>
   );
