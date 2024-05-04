@@ -69,7 +69,7 @@ function index() {
         </div>
       )
     },
-    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={12} /> },
+    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={Id} /> },
     { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={12} /> },
     { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={12} /> }
   ]

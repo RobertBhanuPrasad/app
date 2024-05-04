@@ -16,7 +16,7 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
         {
           field: 'participant_registration_id',
           operator: 'eq',
-          value: 1
+          value: participantId
         }
       ]
     }
