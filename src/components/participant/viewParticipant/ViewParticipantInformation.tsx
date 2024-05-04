@@ -2,6 +2,7 @@ import { isDisplayRegistrationCompletionLink } from '@components/courseBusinessL
 import CopyIcon from '@public/assets/CopyIcon'
 import LoadingIcon from '@public/assets/LoadingIcon'
 import { useOne } from '@refinedev/core'
+import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
 import { CardLabel, CardValue } from 'src/ui/TextTags'
 import { handleCopyRegistrationLink } from 'src/utility/CopyText'
@@ -10,7 +11,7 @@ import { formatGlobalDate } from 'src/utility/DateFunctions'
 function ViewParticipantInformation({ participantId }: any) {
   // State variable to track whether the registration link has been copied
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
-
+  const {t} = useTranslation('course.participants')
   const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -54,13 +55,13 @@ function ViewParticipantInformation({ participantId }: any) {
 
   // Array containing participant information with keys and values
   const participantInfo = [
-    { key: 'Participants Name', value: contactData?.full_name ?? '-' },
-    { key: 'Memo', value: participantData?.data?.memo ?? '-' },
-    { key: 'Gender', value: contactData?.gender_id?.value ?? '-' },
-    { key: 'Date Of Birth', value: formatGlobalDate(contactData?.date_of_birth) ?? '-' },
-    { key: 'NIF', value: contactData?.nif ?? '-' },
+    { key: t('view_participant.participants_information.participants_name'), value: contactData?.full_name ?? '-' },
+    { key: t('view_participant.participants_information.memo'), value: participantData?.data?.memo ?? '-' },
+    { key: t('view_participant.participants_information.gender'), value: contactData?.gender_id?.value ?? '-' },
+    { key: t('view_participant.participants_information.date_of_birth'), value: formatGlobalDate(contactData?.date_of_birth) ?? '-' },
+    { key: t('view_participant.participants_information.nif'), value: contactData?.nif ?? '-' },
     {
-      key: 'Address',
+      key: t('view_participant.participants_information.address'),
       value: contactData
         ? contactData?.city_id?.name ??
           '' + ' ' + contactData?.state_id?.name ??
@@ -70,17 +71,17 @@ function ViewParticipantInformation({ participantId }: any) {
         : '-'
     },
     {
-      key: 'Phone Number',
+      key: t('view_participant.participants_information.phone_number'),
       value:
         contactData?.mobile_country_code && contactData?.mobile
           ? contactData?.mobile_country_code + ' ' + contactData?.mobile
           : '-'
     },
-    { key: 'Home/Work Phone', value: contactData?.work_phone ?? '-' },
-    { key: 'Occupation', value: contactData?.occupation ?? '-' },
-    { key: 'Email', value: contactData?.email ?? '-' },
+    { key: t('view_participant.participants_information.home_work_phone'), value: contactData?.work_phone ?? '-' },
+    { key: t('view_participant.participants_information.occupation'), value: contactData?.occupation ?? '-' },
+    { key: t('view_participant.participants_information.email'), value: contactData?.email ?? '-' },
     {
-      key: 'How did you find out about the program?',
+      key: t('view_participant.participants_information.how_did_you_find_out_about'),
       value: participantData?.data?.hear_program_from_id?.value ?? 'NA'
     }
   ]
@@ -97,7 +98,7 @@ const registrationLinkObjectIndex = 10
  * registration link is shown only when manual registration and payment status is failed or pending 
  */
 const registrationLinkObject = {
-  key: 'Url for registration completion',
+  key: t('view_participant.participants_information.url_for_registration_completion'),
   value: participantData?.data?.program_id?.registration_link ? (
     <div className="flex ">
       <div className="text-[14px] font-semibold text-[#7677F4] underline pr-[10px] truncate">
@@ -128,12 +129,11 @@ if (isDisplayRegistrationCompletionLink(participantData?.data?.is_manual_registr
   participantInfo.splice(registrationLinkObjectIndex, 0, registrationLinkObject);
 }
 
-
   // Render component content based on loading state
   return !isLoading ? (
     <div className="w-[303px] bg-[white] border border-[#D9D9D9] rounded-[15px] shadow-lg flex justify-center items-center">
       <div className="w-[263px]">
-        <p className="font-[600] text-[18px] font-sans">Participants Information</p>
+        <p className="font-[600] text-[18px] font-sans">{t('view_participant.participants_information.participants_information')}</p>
         {participantInfo?.map((info, index) => (
           <div key={index} className="mt-[23px]">
             <CardLabel>{info?.key}</CardLabel>
