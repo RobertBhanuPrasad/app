@@ -1,5 +1,6 @@
 import { useList } from "@refinedev/core";
 import { useRouter } from "next/router";
+import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
 import { formatDateString } from "src/utility/DateFunctions";
 
@@ -13,7 +14,7 @@ export default function CourseFee() {
     const { data } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(id,created_at,program_id(id,program_type_id!inner(is_online_program)))",
+            select: "id,transaction_fee_level_id(name),total_amount,accommodation_fee,currency_code,participant_id(id,created_at,program_id(id,program_type_id!inner(is_online_program)))",
         },
         filters: [
             {
@@ -61,8 +62,8 @@ export default function CourseFee() {
                         Fee Level
                     </Text>
                     <Text className="font-semibold text-[16px]">
-                        {courseFeedata?.transaction_fee_level_id?.value
-                            ? courseFeedata?.transaction_fee_level_id?.value
+                        {courseFeedata?.transaction_fee_level_id?.name
+                            ? translatedText(courseFeedata?.transaction_fee_level_id?.name)
                             : "-"}
                     </Text>
                 </div>

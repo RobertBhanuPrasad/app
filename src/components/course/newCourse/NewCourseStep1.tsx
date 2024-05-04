@@ -6,6 +6,7 @@ import _ from "lodash";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
+import { translatedText } from "src/common/translations";
 import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
@@ -185,6 +186,54 @@ const RadioCards = () => {
     }
   };
 
+  /**
+   * @constant data is the data from the option_labels table of Program Organizer Type name
+   * @description this const is used store the data from the option_labels table giving the name as Program Organizer Type
+   */
+  const { data } = useList({
+    resource: "option_labels",
+    filters: [
+      {
+        field: "name",
+        operator: "eq",
+        value: "Program Organizer Type",
+      },
+    ],
+  });
+
+  /**
+   * @constant programOrganizerTypeData is the data from the option_values
+   * @description this const is used to store the data from the option_values which option_label_id is Program Organizer Type
+   */
+  const { data: programOrganizerTypeData } = useList({
+    resource: "option_values",
+    filters: [
+      {
+        field: "option_label_id",
+        operator: "eq",
+        value: data?.data?.[0]?.id,
+      },
+    ],
+  });
+
+  /**
+   * @constant iAmTeachingCourse
+   * @description this const stores the data of the order 1 which is i am teaching the course
+   */
+  const iAmTeachingCourse = translatedText(_.find(programOrganizerTypeData?.data, { 'order': I_AM_TEACHING })?.name)
+
+  /**
+   * @constant iAmCoTeachingCourse
+   * @description this const stores the data of the order 2 which is i am co-teaching the course
+   */
+  const iAmCoTeachingCourse = translatedText(_.find(programOrganizerTypeData?.data, { 'order': I_AM_CO_TEACHING })?.name)
+
+  /**
+   * @constant iAmOrganisingCourse
+   * @description this const stores the data of the order 3 which is i am organizing the course
+   */
+  const iAmOrganisingCourse = translatedText(_.find(programOrganizerTypeData?.data, { 'order': I_AM_ORGANIZER })?.name)
+
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
       <div className="flex items-center flex-row gap-7">
@@ -218,7 +267,8 @@ const RadioCards = () => {
                 <Teacher
                   color={` ${value === iAmTeachingId ? "#7677F4" : "#999999"}`}
                 />
-                I am teaching this course
+
+                {iAmTeachingCourse}
               </div>
             </Card>
           </Label>
@@ -252,7 +302,7 @@ const RadioCards = () => {
                     value === iAmCoTeachingId ? "#7677F4" : "#999999"
                   }`}
                 />
-                I am co-teaching this course
+                {iAmCoTeachingCourse}
               </div>
             </Card>
           </Label>
@@ -284,7 +334,7 @@ const RadioCards = () => {
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
               <div className="w-[240px] text-wrap text-center justify-center">
-                I am organizing this course for another teacher
+                {iAmOrganisingCourse}
               </div>
             </div>
           </Card>

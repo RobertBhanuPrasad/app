@@ -10,6 +10,7 @@ import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type f
 import { MoreVertical } from "lucide-react"; // Importing icons for UI
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"; // Importing React
+import { translatedText } from "src/common/translations";
 import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
 import { TableHeader, Text } from "src/ui/TextTags";
@@ -135,7 +136,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
               : "text-[#7677F4]"
           }`}
         >
-          {row?.original?.transaction_type_id?.value}
+          {translatedText(row?.original?.transaction_type_id?.name as object)}
         </Text>
       );
     },
@@ -150,8 +151,8 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     cell: ({ row }) => {
       return (
-        <Text>
-          {row?.original?.payment_method_id?.value}
+        <Text className="lowercase">
+          {translatedText(row?.original?.payment_method_id?.name as object)}
         </Text>
       );
     },
@@ -273,8 +274,8 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text>
-          {row?.original?.transaction_fee_level_id?.value}
+        <Text className="lowercase">
+          {translatedText(row?.original?.transaction_fee_level_id?.name as object)}
         </Text>
       );
     },
@@ -288,8 +289,8 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text>
-          {row?.original?.transaction_status_id?.value}
+        <Text className="lowercase">
+          {translatedText(row?.original?.transaction_status_id?.name as object)}
         </Text>
       );
     },

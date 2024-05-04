@@ -13,6 +13,7 @@ import { Circle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { translatedText } from 'src/common/translations'
 import { PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
 import { ACTIVE, PUBLIC } from 'src/constants/OptionValueOrder'
 import { Button } from 'src/ui/button'
@@ -72,7 +73,7 @@ useEffect(() => {
     id: programId,
     meta: {
       select:
-        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,value),registration_link,details_page_link'
+        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,name),registration_link,details_page_link'
     }
   })
 
@@ -113,7 +114,7 @@ useEffect(() => {
           <div className="absolute flex items-center gap-4 right-6 top-4 rid-cols-2">
             <Button className={`width-[135px] rounded-[25px]  h-[25px] gap-2 ${statusStyles}`}>
               <Circle color={statusColorCode} fill={statusColorCode} size={5} className="text-[#FFB900]" />
-              {data?.data?.status_id?.value}
+              {translatedText(data?.data?.status_id?.name)}
             </Button>
           
               <Button variant="outline" className="text-indigo-600 border-indigo-600 " onClick={() => {router.replace('/courses/list')}}>
@@ -135,7 +136,7 @@ useEffect(() => {
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
               <p className="text-accent-secondary">Course Name</p>
-              <p className="font-bold text-accent-primary">{data?.data?.program_type_id?.name}</p>
+              <p className="font-bold text-accent-primary">{translatedText(data?.data?.program_type_id?.name)}</p>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
               <p className="text-accent-secondary">Teachers</p>
