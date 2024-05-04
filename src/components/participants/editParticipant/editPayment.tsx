@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
 import { PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
-import { PARTICIPANT_FAILED_PAYMENT_STATUS, PARTICIPANT_SUCCESS_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
+import { PARTICIPANT_CONFIRMED_PAYMENT_STATUS, PARTICIPANT_FAILED_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
 import { DateField } from 'src/ui/DateField'
 import { Text } from 'src/ui/TextTags'
 import {
@@ -88,7 +88,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
   // Getting option value constant using option order
   const CONFIRMED_ID = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
-    PARTICIPANT_SUCCESS_PAYMENT_STATUS
+    PARTICIPANT_CONFIRMED_PAYMENT_STATUS
   )?.id
   const FAILED_ID = getOptionValueObjectByOptionOrder(PARTICIPANT_PAYMENT_STATUS, PARTICIPANT_FAILED_PAYMENT_STATUS)?.id
 
