@@ -1,23 +1,28 @@
-import Form from '@components/Formfield'
-import { BaseTable } from '@components/course/findCourse/BaseTable' // Importing BaseTable component for displaying table
-import TransactionActivity from '@components/participants/TransactionActivityPopover'
-import { handleEditPaymentValues } from '@components/participants/editParticipant/EditParticipantUtil'
-import EditPayment from '@components/participants/editParticipant/editPayment'
-import ViewDonationDetails from '@components/participants/editParticipant/viewDonationDetails'
-import TransactionActivityIcon from '@public/assets/TransactionActivityIcon'
-import { useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
-import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
-import { MoreVertical } from 'lucide-react' // Importing icons for UI
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react' // Importing React
-import { PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
-import { PARTICIPANT_PENDING_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
-import { TableHeader, Text } from 'src/ui/TextTags'
-import { Button } from 'src/ui/button' // Importing Button component
-import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from 'src/ui/dropdown-menu' // Importing components for dropdown menu
-import { formatDateAndTime } from 'src/utility/DateFunctions'
-import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
+import Form from "@components/Formfield";
+import { BaseTable } from "@components/course/findCourse/BaseTable"; // Importing BaseTable component for displaying table
+import TransactionActivity from "@components/participants/TransactionActivityPopover";
+import { handleEditPaymentValues } from "@components/participants/editParticipant/EditParticipantUtil";
+import EditPayment from "@components/participants/editParticipant/editPayment";
+import ViewDonationDetails from "@components/participants/editParticipant/viewDonationDetails";
+import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
+import { useTable } from "@refinedev/core"; // Importing useTable hook for fetching table data
+import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type for defining table columns
+import { MoreVertical } from "lucide-react"; // Importing icons for UI
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react"; // Importing React
+import { translatedText } from "src/common/translations";
+import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
+import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
+import { TableHeader, Text } from "src/ui/TextTags";
+import { Button } from "src/ui/button"; // Importing Button component
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "src/ui/dropdown-menu"; // Importing components for dropdown menu
+import { formatDateAndTime } from "src/utility/DateFunctions";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 // Component for viewing participant transaction details
 function ViewParticipantTransactionDetails({ participantId }: any) {
   // Fetching table data using useTable hook
@@ -121,7 +126,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
               : 'text-[#7677F4]'
           }`}
         >
-          {row?.original?.transaction_type_id?.value}
+          {translatedText(row?.original?.transaction_type_id?.name as object)}
         </Text>
       )
     }
@@ -133,8 +138,12 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text>{row?.original?.payment_method_id?.value}</Text>
-    }
+      return (
+        <Text className="lowercase">
+          {translatedText(row?.original?.payment_method_id?.name as object)}
+        </Text>
+      );
+    },
   },
   {
     accessorKey: 'organization_fee',
@@ -228,8 +237,12 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="min-w-[120px]">Fee level</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text>{row?.original?.transaction_fee_level_id?.value}</Text>
-    }
+      return (
+        <Text className="lowercase">
+          {translatedText(row?.original?.transaction_fee_level_id?.name as object)}
+        </Text>
+      );
+    },
   },
   {
     accessorKey: 'transaction_status_id',
@@ -237,8 +250,12 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="min-w-[150px]">Transaction Status</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text>{row?.original?.transaction_status_id?.value}</Text>
-    }
+      return (
+        <Text className="lowercase">
+          {translatedText(row?.original?.transaction_status_id?.name as object)}
+        </Text>
+      );
+    },
   },
   {
     accessorKey: 'transaction_reason',

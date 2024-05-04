@@ -14,14 +14,22 @@ import {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogHeader
-} from 'src/ui/alert-dialog'
+  AlertDialogHeader,
+} from "src/ui/alert-dialog";
+import { Checkbox } from "src/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import { Textarea } from "src/ui/textarea";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { DialogContent } from "src/ui/dialog";
+import { translatedText } from "src/common/translations";
 import { Button } from 'src/ui/button'
-import { Checkbox } from 'src/ui/checkbox'
-import { DialogContent } from 'src/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
-import { Textarea } from 'src/ui/textarea'
-import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 interface EditPaymentProps {
   setEditPayment: React.Dispatch<React.SetStateAction<any>>
   paymentId: number
@@ -94,9 +102,9 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
 
   // Getting option values for transaction status dropodwn
   const { options: transactionStatus } = useSelect({
-    resource: 'option_values',
-    optionLabel: 'value',
-    optionValue: 'id',
+    resource: "option_values",
+    optionLabel: "name",
+    optionValue: "id",
     filters: [
       {
         field: 'option_label_id',
@@ -120,9 +128,9 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
 
   // Getting option values for payment method dropdown
   const { options: payment_method } = useSelect({
-    resource: 'option_values',
-    optionLabel: 'value',
-    optionValue: 'id',
+    resource: "option_values",
+    optionLabel: "name",
+    optionValue: "id",
     filters: [
       {
         field: 'option_label_id',
@@ -215,13 +223,19 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItems>
-                              {transactionStatus.map((option: any, index: number) => (
-                                <>
-                                  <SelectItem key={option.value} value={option.value} className="h-[44px]">
-                                    {option.label}
-                                  </SelectItem>
-                                </>
-                              ))}
+                              {transactionStatus.map(
+                                (option: any, index: number) => (
+                                  <>
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                      className="h-[44px]"
+                                    >
+                                      {translatedText(option.label)}
+                                    </SelectItem>
+                                  </>
+                                )
+                              )}
                             </SelectItems>
                           </SelectContent>
                         </Select>
@@ -282,14 +296,22 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItems>
-                              {payment_method?.map((option: any, index: number) => (
-                                <>
-                                  <SelectItem key={option.value} value={option.value} className="h-[44px]">
-                                    {option.label}
-                                  </SelectItem>
-                                  {index < payment_method?.length - 1 && <hr className="border-[#D6D7D8]" />}
-                                </>
-                              ))}
+                              {payment_method?.map(
+                                (option: any, index: number) => (
+                                  <>
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                      className="h-[44px]"
+                                    >
+                                      {translatedText(option.label)}
+                                    </SelectItem>
+                                    {index < payment_method?.length - 1 && (
+                                      <hr className="border-[#D6D7D8]" />
+                                    )}
+                                  </>
+                                )
+                              )}
                             </SelectItems>
                           </SelectContent>
                         </Select>
