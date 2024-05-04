@@ -100,7 +100,7 @@ export default function PaymentDetails() {
         <div className="w-[303px]">
           <Text className="text-[#999999]  text-[14px] ">Course Fee</Text>
           <Text className="text-[16px] font-semibold">
-          {`${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.organization_fee}`}
+          {paymentDetailData?.organization_fee ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.organization_fee}` : '-'}
           </Text>
         </div>
         <div className="w-[303px]">
@@ -108,7 +108,7 @@ export default function PaymentDetails() {
             Accommodation Fee
           </Text>
           <Text className="text-[16px] font-semibold">
-          {`${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.accommodation_fee}`}
+          {paymentDetailData?.accommodation_fee ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.accommodation_fee}` : '-'}
           </Text>
         </div>
         <div className="w-[303px]">
@@ -116,7 +116,7 @@ export default function PaymentDetails() {
             Total Fee {`(Includes VAT)`}
           </Text>
           <Text className="text-[16px] font-semibold">
-          {`${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.total_amount}`}
+          {paymentDetailData?.total_amount ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.total_amount}` : '-'}
           </Text>
         </div>
       </div>

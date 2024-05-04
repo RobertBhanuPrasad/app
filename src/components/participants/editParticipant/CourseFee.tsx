@@ -71,7 +71,7 @@ export default function CourseFee() {
                         Course Fee
                     </Text>
                     <Text className="font-semibold text-[16px]">
-                        {`${courseFeedata?.currency_code ? courseFeedata?.currency_code : ''} ${courseFeedata?.organization_fee}`}
+                        {courseFeedata?.organization_fee ? `${courseFeedata?.currency_code ? courseFeedata?.currency_code : ''} ${courseFeedata?.organization_fee}` : '-'}
                     </Text>
                 </div>
             </div>
