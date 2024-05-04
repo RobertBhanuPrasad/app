@@ -1276,6 +1276,12 @@ export const ExistingVenueListSection = ({
     name: "deletedVenueID",
   });
 
+  const {
+    field: { onChange: tempExistingVenueOnChange },
+  } = useController({
+    name: "tempExistingVenue",
+  });
+
   const handleCheckboxChange = (item: any) => {
     setValue(NewCourseStep3FormNames.venue_id, item.id);
   };
@@ -1322,6 +1328,17 @@ export const ExistingVenueListSection = ({
       center_id: formData?.center_id,
       postal_code: formData?.postal_code,
     };
+
+    //Requirement: Need to show updated data in venue list.So storing edited venue data in tempExistingVenue form variable
+    tempExistingVenueOnChange({
+      id: formData?.venue_id,
+      name: formData?.name,
+      address: formData?.address,
+      state_id: formData?.state_id,
+      city_id: formData?.city_id,
+      center_id: formData?.center_id,
+      postal_code: formData?.postal_code,
+    });
 
     if (isAllFieldsFilled) {
       setVenueData(allVenuesData);
@@ -1403,13 +1420,54 @@ export const ExistingVenueListSection = ({
           </div>
         </div>
 
-        <div className="leading-tight">
-          {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
-          {item.postal_code}
-        </div>
+        <VenueItem item={item} />
       </div>
     </div>
   );
+};
+
+/**
+ * @function VenueItem is used to show each venue details in venue list
+ * @item consist of all details of venue
+ */
+const VenueItem = ({ item }: { item: any }) => {
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const tempExistingVenue = formData?.tempExistingVenue;
+
+  //Requirment: If user Edit any of the information in venue.Need to show Edited Venue Data.
+  //Edit venue data is stored in tempExistingVenue variable. so if venue is edited need to show tempExistingVenue data else need to show API Data.
+  if (
+    formData?.venue_id == item?.id &&
+    formData?.venue_id == tempExistingVenue?.id
+  ) {
+    const { data: cityData, isLoading } = useOne({
+      resource: "city",
+      meta: { select: "name,state_id(name)" },
+      id: tempExistingVenue?.city_id,
+    });
+
+    if (isLoading) {
+      return <LoadingIcon />;
+    }
+
+    return (
+      <div>
+        {tempExistingVenue.name}, {tempExistingVenue.address},{" "}
+        {cityData?.data?.name}, {cityData?.data?.state_id?.name},{" "}
+        {tempExistingVenue.postal_code}
+      </div>
+    );
+  } else {
+    return (
+      <div className="leading-tight">
+        {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
+        {item.postal_code}
+      </div>
+    );
+  }
 };
 
 export const AddOrEditVenue = ({
