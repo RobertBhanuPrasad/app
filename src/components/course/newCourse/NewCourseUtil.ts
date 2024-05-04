@@ -314,7 +314,7 @@ export const handlePostProgramData = async (
     //TODO: We are doing this in frontend for only first deployment
     //TODO: We have to remove from here and need to keep in backend for code
     if (!programData[0]?.program_code) {
-      await handleGenerateProgramCode(programId, loggedInUserId);
+      await handleGenerateProgramCode(programId, countryCode);
     }
   }
 
@@ -368,7 +368,8 @@ export const handlePostProgramData = async (
   // We need to call one supabase edge function to update the course details in sync DB aswell to reflect the changes in unity pages
   // edge function name : sync-program
   // we need to call this edge funtion only when all program data has been saved
-  if (!(await handleSyncProgramEdgeFunction(programId, pathname,countryCode))) return false;
+  if (!(await handleSyncProgramEdgeFunction(programId, pathname, countryCode)))
+    return false;
   return true;
 };
 
@@ -1221,36 +1222,33 @@ export const handleProgramFeeLevelSettingsData = async (
  */
 const handleGenerateProgramCode = async (
   programId: number,
-  loggedInUserId: number
+  countryCode: string
 ) => {
   // to fetch country code call users api
 
-  const { data, error }: any = await supabase
-    .from("users")
-    .select("*,contact_id(*,country_id(*))")
-    .eq("id", loggedInUserId);
-  if (error) {
-    console.log("error while fetch user data", error);
+  //If the country code is public then we initialised as INDIA country code for now
+  if (countryCode == "public") {
+    countryCode = "IN";
+  }
+
+  /**
+   * Program code constructed using country code and letter C and program Id represented as 5 digit number
+   */
+  let programCode = countryCode + "C" + programId.toString().padStart(5, "0");
+
+  // update program code in program
+  const { data: programData, error: programError } = await supabase
+    .from("program")
+    .update({
+      program_code: programCode,
+    })
+    .eq("id", programId)
+    .select();
+
+  if (programError) {
+    console.log("erorr while updating program code", programError);
   } else {
-    console.log("user data", data);
-
-    let programCode =
-      data[0]?.contact_id?.country_id?.abbr || "" + "C" + programId;
-
-    // update program code in program
-    const { data: programData, error: programError } = await supabase
-      .from("program")
-      .update({
-        program_code: programCode,
-      })
-      .eq("id", programId)
-      .select();
-
-    if (programError) {
-      console.log("erorr while updating program code", programError);
-    } else {
-      console.log("program code updated successfully", programData);
-    }
+    console.log("program code updated successfully", programData);
   }
 };
 
