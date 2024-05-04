@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { CountComponent, CourseTypeComponent, DateRangePickerComponent } from 'pages/courses/list'
 import { useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
+import { translatedText } from 'src/common/translations'
 import { COURSE_ACCOUNTING_STATUS, PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
 import { PRIVATE, PUBLIC } from 'src/constants/OptionValueOrder'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'src/ui/accordion'
@@ -364,7 +365,7 @@ export const CourseName = () => {
           {options.map((option: any, index: number) => (
             <>
               <SelectItem key={option.value} value={option.value} className="h-[44px]">
-                {option.label}
+                {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && <hr className="border-[#D6D7D8]" />}
             </>
@@ -573,7 +574,7 @@ export const CourseStatus = () => {
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
-            {status?.value}
+            {translatedText(status?.name)}
           </Button>
         </div>
       ))}
@@ -607,7 +608,7 @@ export const CourseAccordingStatus = () => {
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
-            {status?.value}
+            {translatedText(status?.name)}
           </Button>
         </div>
       ))}

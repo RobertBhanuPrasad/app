@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
 import TransactionActivity from "./TransactionActivityPopover";
+import { translatedText } from "src/common/translations";
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -245,7 +246,7 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className=" capitalize text-left !min-w-[150px] pl-4">
-          {row?.original?.price_category_id?.fee_level_id?.value}
+          {translatedText(row?.original?.price_category_id?.fee_level_id?.name)}
         </div>
       );
     },
@@ -339,8 +340,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_method?.value
-            ? row?.original?.payment_method?.value
+          {row?.original?.payment_method?.name
+            ? translatedText(row?.original?.payment_method?.name)
             : "-"}
         </div>
       );
@@ -378,8 +379,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left">
-          {row?.original?.payment_status_id?.value
-            ? row?.original?.payment_status_id?.value
+          {row?.original?.payment_status_id?.name
+            ? translatedText(row?.original?.payment_status_id?.name)
             : "-"}
         </div>
       );
@@ -412,8 +413,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     cell: ({ row }: any) => {
       return (
         <div className="text-left !min-w-[150px] pl-4">
-          {row?.original?.participant_attendence_status_id?.value
-            ? row?.original?.participant_attendence_status_id?.value
+          {row?.original?.participant_attendence_status_id?.name
+            ? translatedText(row?.original?.participant_attendence_status_id?.name)
             : "-"}
         </div>
       );

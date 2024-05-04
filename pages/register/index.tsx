@@ -1,6 +1,7 @@
 import { useList, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { translatedText } from "src/common/translations";
 import { supabaseClient } from "src/utility";
 
 const Signup = () => {
@@ -28,7 +29,7 @@ const Signup = () => {
   });
   const { options } = useSelect({
     resource: "option_values",
-    optionLabel: "value",
+    optionLabel: "name",
     optionValue: "id",
     filters: [
       {
@@ -139,7 +140,7 @@ const Signup = () => {
             >
               {options?.map((option: any) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {translatedText(option.label)}
                 </option>
               ))}
             </select>
