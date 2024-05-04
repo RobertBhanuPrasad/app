@@ -1,32 +1,43 @@
-import Form from '@components/Formfield'
-import { BaseTable } from '@components/course/findCourse/BaseTable'
-import Filters from '@components/course/findCourse/Filters'
-import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
-import { hasAliasNameFalse } from '@components/courseBusinessLogic'
-import CalenderIcon from '@public/assets/CalenderIcon'
-import ClearAll from '@public/assets/ClearAll'
-import CrossIcon from '@public/assets/CrossIcon'
-import FilterIcon from '@public/assets/FilterIcon'
-import SearchIcon from '@public/assets/Search'
-import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
-import { ChevronDownIcon } from '@radix-ui/react-icons'
-import { useList, useSelect, useTable } from '@refinedev/core'
-import { format } from 'date-fns'
-import React, { useEffect, useState } from 'react'
-import { useController, useFormContext } from 'react-hook-form'
-import { translatedText } from 'src/common/translations'
-import { column } from 'src/components/course/findCourse/Columns'
-import { DateRangePicker } from 'src/ui/DateRangePicker'
-import { Text } from 'src/ui/TextTags'
-import { Button } from 'src/ui/button'
-import { Checkbox } from 'src/ui/checkbox'
-import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
-import { Input } from 'src/ui/input'
-import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
-import { Sheet, SheetContent, SheetTrigger } from 'src/ui/sheet'
-import { supabaseClient } from 'src/utility/supabaseClient'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+import Form from "@components/Formfield";
+import { BaseTable } from "@components/course/findCourse/BaseTable";
+import Filters from "@components/course/findCourse/Filters";
+import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
+import { hasAliasNameFalse } from "@components/courseBusinessLogic";
+import CalenderIcon from "@public/assets/CalenderIcon";
+import ClearAll from "@public/assets/ClearAll";
+import CrossIcon from "@public/assets/CrossIcon";
+import FilterIcon from "@public/assets/FilterIcon";
+import SearchIcon from "@public/assets/Search";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { useList, useSelect, useTable } from "@refinedev/core";
+import { format } from "date-fns";
+import React, { useEffect, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
+import { translatedText } from "src/common/translations";
+import { column } from "src/components/course/findCourse/Columns";
+import { DateRangePicker } from "src/ui/DateRangePicker";
+import { Text } from "src/ui/TextTags";
+import { Button } from "src/ui/button";
+import { Checkbox } from "src/ui/checkbox";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "src/ui/dropdown-menu";
+import { Input } from "src/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
+import { supabaseClient } from "src/utility/supabaseClient";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
   interface ExcelColumn {
@@ -226,7 +237,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        '*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)'
+        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
     sorters: {
@@ -246,28 +257,32 @@ function index() {
   /**
    *This is the query to get data to show in the table
    */
-  const { tableQueryResult: programData } = useTable({
-    resource: "program",
-    meta: {
-      select:
-        '*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)'
-    },
-    filters: {
-      permanent: [
-        {
-          field: "id",
-          operator: "in",
-          value: filteredIds,
-        },
-      ],
-    },
-    sorters: {
-      permanent: [
-        // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-        { field: "created_at", order: "desc" },
-      ],
-    },
-  });
+  const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
+    useTable({
+      resource: "program",
+      meta: {
+        select:
+          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+      },
+      pagination: {
+        pageSize: pageSize,
+      },
+      filters: {
+        permanent: [
+          {
+            field: "id",
+            operator: "in",
+            value: filteredIds,
+          },
+        ],
+      },
+      sorters: {
+        permanent: [
+          // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
+          { field: "created_at", order: "desc" },
+        ],
+      },
+    });
 
   /**
    * The variable holds whether all rows are selected or not
@@ -310,8 +325,8 @@ function index() {
           path: ["program_type_alias_names", "alias_name"],
         },
         {
-          column_name: 'Course Status',
-          path: ['status_id', 'name']
+          column_name: "Course Status",
+          path: ["status_id", "name"],
         },
         {
           column_name: "Start Date",
@@ -334,14 +349,14 @@ function index() {
           path: ["participant_registration", "length"],
         },
         {
-          column_name: 'Visibility',
-          path: ['visibility_id', 'name']
+          column_name: "Visibility",
+          path: ["visibility_id", "name"],
         },
         {
-          column_name: 'Course Accounting Status',
-          path: ['program_accounting_status_id', 'name']
-        }
-      ]
+          column_name: "Course Accounting Status",
+          path: ["program_accounting_status_id", "name"],
+        },
+      ];
 
       /**
        * This holds the params need to send for export excel function like table name , select query , columns
@@ -349,9 +364,9 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          ',program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)',
-        columns: JSON.stringify(excelColumns)
-      })
+          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+        columns: JSON.stringify(excelColumns),
+      });
 
       const supabase = supabaseClient();
 
@@ -458,7 +473,11 @@ function index() {
             pageCount={pageCount}
             total={FilterProgramData?.data?.total || 0}
             pageSize={pageSize}
-            setPageSize={setPageSize}
+            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+            setPageSize={(number) => {
+              setPageSize(number);
+              displayDataSetPageSize(number);
+            }}
             pagination={true}
             tableStyles={{
               table: "",
@@ -640,7 +659,11 @@ export const CourseTypeComponent = ({ name }: any) => {
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options.map((option: any, index: number) => (
             <>
-              <SelectItem key={option.value} value={option.value} className="h-[44px]">
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
                 {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && (
@@ -665,9 +688,9 @@ export const BasicFilters: React.FC<{
   } = useController({
     name: "course_id",
   });
-  const handleKeyPress = (e: { key: string; preventDefault: () => void; }) => {
-    if (e.key === 'Enter') {
-      e.preventDefault(); 
+  const handleKeyPress = (e: { key: string; preventDefault: () => void }) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
     }
   };
   const {
