@@ -144,7 +144,7 @@ export function BaseTable<TData, TValue>({
   data,
   tableStyles,
   current,
-  setCurrent,
+  setCurrent= () => {},
   pageCount,
   total=0,
   setPageSize = () => {},
@@ -578,6 +578,7 @@ export function BaseTable<TData, TValue>({
               <Select
                 value={`${pageSize}`}
                 onValueChange={(value) => {
+                  setCurrent(1)
                   setPageSize(Number(value));
                   table?.setPageSize(Number(value));
                 }}
