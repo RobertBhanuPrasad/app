@@ -149,7 +149,7 @@ export function BaseTable<TData, TValue>({
   data,
   tableStyles,
   current,
-  setCurrent,
+  setCurrent= () => {},
   pageCount,
   total = 0,
   setPageSize = () => {},
@@ -583,34 +583,35 @@ export function BaseTable<TData, TValue>({
               pageCount={pageCount}
               total={total}
             />
-            {total >= 10 && (
-              <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
-                <Select
-                  value={pageSize}
-                  onValueChange={(value) => {
-                    setPageSize(Number(value));
-                    table?.setPageSize(Number(value));
-                  }}
-                >
-                  <SelectTrigger className="h-8 w-[131px]">
-                    <SelectValue placeholder={`${pageSize}`} />
-                  </SelectTrigger>
-                  <SelectContent side="top">
-                    {/* Updated pageSize options to include [10, 25, 50, 100]. */}
-                    {[10, 25, 50, 100].map(
-                      (
-                        pageSize // Till now there is no limit will change after confirming TODO
-                      ) => (
-                        <SelectItem key={pageSize} value={`${pageSize}`}>
-                          Showing {pageSize}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
-                <div>of {total}</div>
-              </div>
-            )}
+            {total>=10 &&  
+            <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
+              <Select
+                value={pageSize}
+                onValueChange={(value) => {
+                  setCurrent(1)
+                  setPageSize(Number(value));
+                  table?.setPageSize(Number(value));
+                }}
+              >
+              <SelectTrigger className="h-8 w-[131px]">
+                  <div className="text-[#666666]">Showing</div>
+                  <SelectValue/>
+              </SelectTrigger>
+                <SelectContent side="top">
+                 {/* Updated pageSize options to include [10, 25, 50, 100]. */}
+                  {[10, 25, 50, 100].map(
+                    (
+                      pageSize // Till now there is no limit will change after confirming TODO
+                    ) => (
+                      <SelectItem key={pageSize} value={`${pageSize}`}>
+                        {pageSize}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
+              <div>of {total}</div>
+            </div>}
           </div>
         )}
       </div>
