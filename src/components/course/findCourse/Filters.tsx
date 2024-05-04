@@ -3,6 +3,7 @@ import ClearAllIcon from '@public/assets/ClearAllIcon'
 import CrossIcon from '@public/assets/CrossIcon'
 import { useSelect } from '@refinedev/core'
 import { format } from 'date-fns'
+import { useTranslation } from 'next-i18next'
 import { CountComponent, CourseTypeComponent, DateRangePickerComponent } from 'pages/courses/list'
 import { useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
@@ -23,6 +24,7 @@ import {
 } from 'src/utility/GetOptionValuesByOptionLabel'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
+
 const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) => {
   console.log(hasAliasNameFalse, 'FalseAliasNamefilter')
 
@@ -31,10 +33,11 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
   const formData = watch()
 
   const { setAllFilterData } = newCourseStore()
+  const {t} = useTranslation(['common', "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
-        <p className="text-2xl font-semibold">Filter By</p>
+        <p className="text-2xl font-semibold">{t('course.find_course:filter_by')}</p>
         <div
           onClick={() => {
             setAdvanceFilterOpen(false)
@@ -64,14 +67,14 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
             'item-14'
           ]}
         >
-          {/* Course Name Accordion */}
+          {/* Course Type Accordion */}
           {!hasAliasNameFalse && (
             <>
               <AccordionItem value="item-14" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
-                    <div>Course Type</div>
-                    {formData?.temporaryadvancefilter.course_type && <CountComponent count={1} />}
+                    <div>{t('course_type')}</div>
+                    {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pb-5 pr-3">
@@ -87,8 +90,8 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
-                    <div>Course Name</div>
-                    {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
+                    <div>{t('new_strings:course_name')}</div>
+                    {formData?.temporaryadvancefilter.course_type && <CountComponent count={1} />}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pb-5 pr-3">
@@ -102,7 +105,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-2" className="border-none ">
             <AccordionTrigger className="text-base font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Course Status</div>
+                <div>{t('course.find_course:course_status')}</div>
                 {formData?.temporaryadvancefilter.course_status?.length > 0 && (
                   <CountComponent count={formData?.temporaryadvancefilter.course_status?.length} />
                 )}
@@ -118,7 +121,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-3" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Course Accounting Status</div>
+                <div>{t('course_accounting_status')}</div>
                 {formData?.temporaryadvancefilter.course_accounting_status?.length > 0 && (
                   <CountComponent count={formData?.temporaryadvancefilter.course_accounting_status?.length} />
                 )}
@@ -134,7 +137,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-4" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Course Accounting Closure Date</div>
+                <div>{t('course.find_course:course_accounting_closure_date')} </div>
                 {formData?.temporaryadvancefilter.course_accounting_closure_date && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -148,7 +151,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-5" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div> Course Visibility</div>
+                <div> {t('course.find_course:course_visibility')}</div>
                 {formData?.temporaryadvancefilter.visibility && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -162,7 +165,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-6" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>State</div>
+                <div>{t('course.find_course:state')}</div>
                 {formData?.temporaryadvancefilter.state && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -176,7 +179,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-7" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>City</div>
+                <div>{t('city')}</div>
                 {formData?.temporaryadvancefilter.city && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -190,7 +193,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-8" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Center</div>
+                <div>{t('course.find_course:center')}</div>
                 {formData?.temporaryadvancefilter.center && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -204,7 +207,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-9" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Residential Course</div>
+                <div>{t('residential_course')}</div>
                 {formData?.temporaryadvancefilter.is_residential_course && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -218,7 +221,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-10" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Program Organiser</div>
+                <div>{t('program_organizer')}</div>
                 {formData?.temporaryadvancefilter.program_organiser?.length > 0 && (
                   <CountComponent count={formData?.temporaryadvancefilter.program_organiser?.length} />
                 )}
@@ -236,7 +239,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-11" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Teacher Name</div>
+                <div>{t('course.find_course:teacher_name')}</div>
                 {formData?.temporaryadvancefilter.course_teacher && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -252,7 +255,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           <AccordionItem value="item-12" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Course Fees</div>
+                <div>{t('course.find_course:course_fees')}</div>
                 {formData?.temporaryadvancefilter.is_course_fee && <CountComponent count={1} />}
               </div>
             </AccordionTrigger>
@@ -266,7 +269,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           {/* Reconciliation Status Accordion */}
           <AccordionItem value="item-13" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
-              Reconciliation Status
+              {t('course.find_course:reconciliation_status')}
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3"></AccordionContent>
           </AccordionItem>
@@ -294,7 +297,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary"> Clear All</p>
+          <p className="text-primary"> {t('clear_all')}</p>
         </div>
         <Button
           onClick={() => {
@@ -311,7 +314,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
             setCurrent(1)
           }}
         >
-          Apply
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -348,6 +351,7 @@ export const CourseName = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}
@@ -356,7 +360,7 @@ export const CourseName = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select Course Name" />
+        <SelectValue placeholder={t('new_strings:select_course_name')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={val => onSearch(val.target.value)} />
@@ -404,6 +408,7 @@ export const State = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
+  const {t} = useTranslation("common")
   return (
     <Select
       value={temporaryValue}
@@ -412,7 +417,7 @@ export const State = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select State " />
+        <SelectValue placeholder={t('select_state')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={val => onSearch(val.target.value)} />
@@ -459,6 +464,7 @@ export const City = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
+  const {t} = useTranslation("common")
   return (
     <Select
       value={temporaryValue}
@@ -467,7 +473,7 @@ export const City = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select City " />
+        <SelectValue placeholder={t('city_placeholder')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={val => onSearch(val.target.value)} />
@@ -514,6 +520,7 @@ export const Center = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}
@@ -522,7 +529,7 @@ export const Center = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select Center " />
+        <SelectValue placeholder={t('new_strings:select_center')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={val => onSearch(val.target.value)} />
@@ -567,9 +574,8 @@ export const CourseStatus = () => {
       {courseStatusData?.map((status: any, index: number) => (
         <div key={index}>
           <Button
-            className={`rounded-full h-[28px] text-sm font-normal ${
-              temporaryValue?.includes(status?.id) ? 'bg-primary text-white' : 'bg-white border border-[#D6D7D8]'
-            }`}
+            className={`rounded-full h-[28px] text-sm font-normal ${temporaryValue?.includes(status?.id) ? 'bg-primary text-white' : 'bg-white border border-[#D6D7D8]'
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -601,9 +607,8 @@ export const CourseAccordingStatus = () => {
       {courseAccountingStatusData?.map((status: any, index: any) => (
         <div key={index}>
           <Button
-            className={`rounded-full h-[28px] text-sm font-normal ${
-              temporaryValue?.includes(status?.id) ? 'bg-primary text-white' : 'bg-white border border-[#D6D7D8]'
-            }`}
+            className={`rounded-full h-[28px] text-sm font-normal ${temporaryValue?.includes(status?.id) ? 'bg-primary text-white' : 'bg-white border border-[#D6D7D8]'
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -622,9 +627,10 @@ export const CourseAccountingClosureDate = () => {
     name: 'temporaryadvancefilter.course_accounting_closure_date'
   })
   const [open, setOpen] = useState(false)
+  const {t} = useTranslation(["course.find_course","new_strings"])
   return (
     <Dialog open={open}>
-      <p>Date Range</p>
+      <p>{t('course.find_course:date_range')}</p>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)} className="w-full gap-2 justify-start mt-2" variant="outline">
           <CalenderIcon color="#666666" />
@@ -638,7 +644,7 @@ export const CourseAccountingClosureDate = () => {
               format(value.from, 'MM/dd/yyyy')
             )
           ) : (
-            <div className="flex gap-2 font-normal">Select the Date Range</div>
+            <div className="flex gap-2 font-normal">{t('new_strings:select_the_date_range')}</div>
           )}
         </Button>
       </DialogTrigger>
@@ -659,7 +665,7 @@ export const Visibility = () => {
   const publicVisibilityId = getOptionValueObjectByOptionOrder(VISIBILITY, PUBLIC)?.id
 
   const privateVisibilityId = getOptionValueObjectByOptionOrder(VISIBILITY, PRIVATE)?.id
-
+  const {t} = useTranslation("new_strings")
   return (
     <div>
       <RadioGroup
@@ -672,13 +678,13 @@ export const Visibility = () => {
           <RadioButtonCard
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label="Public"
+            label={t('new_strings:public')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label="Private"
+            label={t('new_strings:private')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -693,7 +699,7 @@ export const ResidentialCourse = () => {
   } = useController({
     name: 'temporaryadvancefilter.is_residential_course'
   })
-
+  const {t} = useTranslation("common")
   return (
     <div>
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
@@ -701,13 +707,13 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="TRUE"
             selectedRadioValue={temporaryValue}
-            label="Yes"
+            label={t('yes')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label="No"
+            label={t('no')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -722,7 +728,7 @@ export const CourseFees = () => {
   } = useController({
     name: 'temporaryadvancefilter.is_course_fee'
   })
-
+  const {t} = useTranslation("new_strings")
   return (
     <div>
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
@@ -730,13 +736,13 @@ export const CourseFees = () => {
           <RadioButtonCard
             value="TRUE"
             selectedRadioValue={temporaryValue}
-            label="Default"
+            label={t('new_strings:default')}
             className="p-2 h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label="Custom"
+            label={t('new_strings:custom')}
             className="p-2 h-[40px] rounded-[12px]"
           />
         </div>
@@ -759,14 +765,14 @@ export const ProgramOrganiser = () => {
     meta: {
       select: '*,contact_id!inner(full_name),user_roles!inner(role_id)'
     },
-    optionLabel: 'contact_id.full_name',
-    optionValue: 'id',
+    optionLabel: "contact_id.full_name",
+    optionValue: "id",
     onSearch: value => [
       {
         field: 'contact_id.full_name',
         operator: 'contains',
         value
-      }
+      },
     ],
     pagination: {
       pageSize: pageSize,
@@ -777,11 +783,11 @@ export const ProgramOrganiser = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 20)
   }
-
+  const {t} = useTranslation("new_strings")
   return (
     <MultiSelect
       value={temporaryValue}
-      placeholder="Select Program Organiser"
+      placeholder={t('new_strings:select_program_organiser')}
       data={options}
       onBottomReached={handleOnBottomReached}
       onSearch={(val: string) => {
@@ -830,7 +836,7 @@ export const TeacherDropdown = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}
@@ -839,7 +845,7 @@ export const TeacherDropdown = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select Teacher" />
+        <SelectValue placeholder={t('new_strings:select_teacher')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={val => onSearch(val.target.value)} />
