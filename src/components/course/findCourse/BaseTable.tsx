@@ -73,6 +73,11 @@ interface IBaseTable<TData, TValue> {
      */
     tableHeader?: string;
   };
+  /**
+   * When there are no results then we have to show this placeholder
+   */
+  noRecordsPlaceholder?: string;
+  /**
 
   /**
    * Function to update the current page number
@@ -156,6 +161,7 @@ export function BaseTable<TData, TValue>({
   rowSelection,
   setRowSelection,
   columnSelector,
+  noRecordsPlaceholder,
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
@@ -559,9 +565,9 @@ export function BaseTable<TData, TValue>({
                   <TableRow>
                     <TableCell
                       colSpan={columns?.length}
-                      className="h-24 text-center"
+                      className="h-24 text-left"
                     >
-                      No results.
+                      {noRecordsPlaceholder}
                     </TableCell>
                   </TableRow>
                 )}
