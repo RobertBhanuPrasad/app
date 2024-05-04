@@ -1,5 +1,5 @@
 import Star from "@public/assets/star";
-import { useList, useSelect } from "@refinedev/core";
+import { useList, useOne, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
 import { Text } from "src/ui/TextTags";
@@ -16,11 +16,6 @@ import {
 
 export default function PaymentDetails() {
   // Use useController to control the participant_code,participant_attendance_status field
-  const {
-    field: { value: participant_code, onChange: specialCodeChange },
-  } = useController({
-    name: "participant_code",
-  });
   const {
     field: {
       value: participant_attendence_status_id,
@@ -88,6 +83,15 @@ export default function PaymentDetails() {
   });
   const paymentDetailData = paymentData?.data?.data[0];
 
+
+  const {data:discountCode} = useOne({
+    resource: 'participant_registration',
+    id: Id,
+    meta : {
+      select : 'discount_code'
+    }
+  })
+
   return (
     <div className="flex-row pb-[5px]" id="Payment">
       <Text className="font-semibold text-[18px] py-[25px]">
@@ -146,26 +150,10 @@ export default function PaymentDetails() {
           <div className="flex gap-4">
             <div>
               <Input
-                value={participant_code}
-                className="w-[268px] !h-[40px] resize-none font-semibold"
-                onChange={(val) =>
-                  val?.target?.value == ""
-                    ? specialCodeChange(undefined)
-                    : specialCodeChange(val?.target?.value)
-                }
+                value={discountCode?.data?.discount_code}
+                className="w-[268px] !h-[40px] resize-none font-semibold rounded-xl border-[#E1E1E1]"
+                disabled={true}
               />
-            </div>
-            <div>
-              <Button
-                onClick={(e) => {
-                  e.preventDefault(),
-                    specialCodeChange((e?.target as HTMLInputElement)?.value);
-                }}
-                // TODO: need to wirte the valid condition to enable the button
-                disabled={!participant_code && true}
-              >
-                Apply
-              </Button>
             </div>
           </div>
         </div>
