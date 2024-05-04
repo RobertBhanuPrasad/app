@@ -837,7 +837,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
 
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "course.find_course","new_strings"])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "new_strings", "course.find_course"])
   if (!authenticated) {
     return {
       props: {
