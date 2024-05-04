@@ -2,6 +2,7 @@ import Star from "@public/assets/star";
 import { useList, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
+import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Input } from "src/ui/input";
@@ -43,18 +44,18 @@ export default function PaymentDetails() {
     ],
   });
 
-  const { options: attendanceOptions } = useSelect({
-    resource: "option_values",
-    optionLabel: "value",
-    optionValue: "id",
-    filters: [
-      {
-        field: "option_label_id",
-        operator: "eq",
-        value: data?.data[0]?.id,
-      },
-    ],
-  });
+    const { options: attendanceOptions } = useSelect({
+        resource: "option_values",
+        optionLabel: "name",
+        optionValue: "id",
+        filters: [
+            {
+                field: "option_label_id",
+                operator: "eq",
+                value: data?.data[0]?.id,
+            },
+        ],
+    });
 
   // participant_payment_history contains numerous records of same participant, getting the latest history record
   const { query } = useRouter();
@@ -199,7 +200,7 @@ export default function PaymentDetails() {
                         value={option.value}
                         className="h-[44px]"
                       >
-                        {option.label}
+                        {translatedText(option.label)}
                       </SelectItem>
                     </>
                   ))}

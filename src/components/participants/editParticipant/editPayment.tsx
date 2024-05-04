@@ -1,18 +1,14 @@
-import { Button } from "src/ui/button";
-import Form from "@components/Formfield";
-import CrossIcon from "@public/assets/CrossIcon";
-import { useList, useOne, useSelect, useUpdate } from "@refinedev/core";
-import _ from "lodash";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
-import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
-import {
-  PARTICIPANT_FAILED_PAYMENT_STATUS,
-  PARTICIPANT_CONFIRMED_PAYMENT_STATUS,
-} from "src/constants/OptionValueOrder";
-import { DateField } from "src/ui/DateField";
-import { Text } from "src/ui/TextTags";
+import CrossIcon from '@public/assets/CrossIcon'
+import Tick from '@public/assets/Tick'
+import { useList, useOne, useSelect, useUpdate } from '@refinedev/core'
+import _ from 'lodash'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { useController, useFormContext } from 'react-hook-form'
+import { PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
+import { PARTICIPANT_CONFIRMED_PAYMENT_STATUS, PARTICIPANT_FAILED_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
+import { DateField } from 'src/ui/DateField'
+import { Text } from 'src/ui/TextTags'
 import {
   AlertDialog,
   AlertDialogContent,
@@ -32,170 +28,158 @@ import {
 import { Textarea } from "src/ui/textarea";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { DialogContent } from "src/ui/dialog";
-import Tick from "@public/assets/Tick";
+import { translatedText } from "src/common/translations";
+import { Button } from 'src/ui/button'
 interface EditPaymentProps {
-  setEditPayment: React.Dispatch<React.SetStateAction<any>>;
-  paymentId: number;
+  setEditPayment: React.Dispatch<React.SetStateAction<any>>
+  paymentId: number
 }
-export default function EditPayment({
-  setEditPayment,
-  paymentId,
-}: EditPaymentProps) {
-  const { query } = useRouter();
-  const { mutate } = useUpdate();
-  const { watch, reset } = useFormContext();
-  const [cancelEditPayment, setcancelEditPayment] = useState(false);
-  const [saveChangesConfirmation, setSaveChangesConfirmation] = useState(false);
-  let formData = watch();
-  const [initialValue, setinitialValue] = useState(formData);
+export default function EditPayment({ setEditPayment, paymentId }: EditPaymentProps) {
+  const { query } = useRouter()
+  const { mutate } = useUpdate()
+  const { watch, reset } = useFormContext()
+  const [cancelEditPayment, setcancelEditPayment] = useState(false)
+  const [saveChangesConfirmation, setSaveChangesConfirmation] = useState(false)
+  let formData = watch()
+  const [initialValue, setinitialValue] = useState(formData)
 
   // Posting edit payment form data to payment history api
   const onFormSubmission = () => {
     mutate({
-      resource: "participant_payment_history",
+      resource: 'participant_payment_history',
       values: {
         send_payment_confirmation: formData?.send_payment_confirmation,
         payment_date: formData?.payment_date,
         payment_method_id: formData?.payment_method_id,
-        transaction_status_id: formData?.transaction_status_id,
+        transaction_status_id: formData?.transaction_status_id
       },
-      id: paymentId,
-    });
-    setSaveChangesConfirmation(true);
-  };
+      id: paymentId
+    })
+    setSaveChangesConfirmation(true)
+  }
 
   // Form fileds useControllers
   const {
-    field: { value: transaction_status_id, onChange: transactionOnchange },
+    field: { value: transaction_status_id, onChange: transactionOnchange }
   } = useController({
-    name: "transaction_status_id",
-  });
+    name: 'transaction_status_id'
+  })
 
   const {
-    field: { value: payment_date, onChange: paymentDateOnchange },
+    field: { value: payment_date, onChange: paymentDateOnchange }
   } = useController({
-    name: "payment_date",
-  });
+    name: 'payment_date'
+  })
   const {
-    field: { value: payment_method_id, onChange: paymentMethodOnchange },
+    field: { value: payment_method_id, onChange: paymentMethodOnchange }
   } = useController({
-    name: "payment_method_id",
-  });
+    name: 'payment_method_id'
+  })
   const {
-    field: {
-      value: send_payment_confirmation,
-      onChange: emailConfirmatiOnchange,
-    },
+    field: { value: send_payment_confirmation, onChange: emailConfirmatiOnchange }
   } = useController({
-    name: "send_payment_confirmation",
-  });
+    name: 'send_payment_confirmation'
+  })
 
   // Getting option label for transaction status
   const { data: transaction_data } = useList<any>({
-    resource: "option_labels",
+    resource: 'option_labels',
     filters: [
       {
-        field: "name",
-        operator: "eq",
-        value: "Participant Payment Status",
-      },
-    ],
-  });
+        field: 'name',
+        operator: 'eq',
+        value: 'Participant Payment Status'
+      }
+    ]
+  })
 
   // Getting option value constant using option order
   const CONFIRMED_ID = getOptionValueObjectByOptionOrder(
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_CONFIRMED_PAYMENT_STATUS
-  )?.id;
-  const FAILED_ID = getOptionValueObjectByOptionOrder(
-    PARTICIPANT_PAYMENT_STATUS,
-    PARTICIPANT_FAILED_PAYMENT_STATUS
-  )?.id;
+  )?.id
+  const FAILED_ID = getOptionValueObjectByOptionOrder(PARTICIPANT_PAYMENT_STATUS, PARTICIPANT_FAILED_PAYMENT_STATUS)?.id
 
   // Getting option values for transaction status dropodwn
   const { options: transactionStatus } = useSelect({
     resource: "option_values",
-    optionLabel: "value",
+    optionLabel: "name",
     optionValue: "id",
     filters: [
       {
-        field: "option_label_id",
-        operator: "eq",
-        value: transaction_data?.data[0]?.id,
-      },
-    ],
-  });
+        field: 'option_label_id',
+        operator: 'eq',
+        value: transaction_data?.data[0]?.id
+      }
+    ]
+  })
 
   // Getting option label for payment method
   const { data: payment_data } = useList<any>({
-    resource: "option_labels",
+    resource: 'option_labels',
     filters: [
       {
-        field: "name",
-        operator: "eq",
-        value: "Payment Method",
-      },
-    ],
-  });
+        field: 'name',
+        operator: 'eq',
+        value: 'Payment Method'
+      }
+    ]
+  })
 
   // Getting option values for payment method dropdown
   const { options: payment_method } = useSelect({
     resource: "option_values",
-    optionLabel: "value",
+    optionLabel: "name",
     optionValue: "id",
     filters: [
       {
-        field: "option_label_id",
-        operator: "eq",
-        value: payment_data?.data[0]?.id,
-      },
-    ],
-  });
+        field: 'option_label_id',
+        operator: 'eq',
+        value: payment_data?.data[0]?.id
+      }
+    ]
+  })
 
   // getting participant contact name for particular participant id
-  const Id: number | undefined = query?.participantId
-    ? parseInt(query.participantId as string)
-    : undefined;
+  const Id: number | undefined = query?.participantId ? parseInt(query.participantId as string) : undefined
   const { data } = useOne({
-    resource: "participant_registration",
+    resource: 'participant_registration',
     id: Number(Id),
     meta: {
-      select: "contact_id(full_name)",
-    },
-  });
+      select: 'contact_id(full_name)'
+    }
+  })
 
   // Getting transaction details for the particular payment history id
   const transactionData = useOne({
-    resource: "participant_payment_history",
+    resource: 'participant_payment_history',
     id: paymentId,
     meta: {
-      select:
-        "id,payment_transaction_id,response_message,error_message,payment_method_id",
-    },
-  });
+      select: 'id,payment_transaction_id,response_message,error_message,payment_method_id'
+    }
+  })
 
   // Both functions are confirmation popups to save or cancel the changes of the edit payment form
   const cancelConfirmation = () => {
-    // Picks common keys form both objects and compares if any value is editted or not
-    const commonKeys = _.intersection(_.keys(initialValue), _.keys(formData));
-    const initialData = _.pick(initialValue, commonKeys);
-    const formValues = _.pick(formData, commonKeys);
+    const initialData = _.omitBy(initialValue, _.isUndefined)
+    const formValues = _.omitBy(formData, _.isUndefined)
     if (!_.isEqual(initialData, formValues)) {
-      setcancelEditPayment(true);
+      setcancelEditPayment(true)
     } else {
-      setEditPayment(false);
+      setEditPayment(false)
     }
-  };
+  }
+
   const cancelEditPaymentHandler = () => {
-    setcancelEditPayment(false);
-    setEditPayment(false);
-    reset();
-  };
+    setcancelEditPayment(false)
+    setEditPayment(false)
+    reset()
+  }
 
   return (
     <DialogContent
       handleClickCloseButton={() => {
-        cancelConfirmation();
+        cancelConfirmation()
       }}
     >
       <div>
@@ -203,9 +187,7 @@ export default function EditPayment({
           <div>
             <div>
               <div>
-                <Text className="flex justify-center text-[24px] font-semibold ">
-                  Edit Payment
-                </Text>
+                <Text className="flex justify-center text-[24px] font-semibold ">Edit Payment</Text>
                 <div className="flex flex-row">
                   <div className="flex-1">
                     <div className="py-[5px]">
@@ -213,11 +195,7 @@ export default function EditPayment({
                       <div>
                         <Textarea
                           disabled={true}
-                          value={
-                            data?.data?.contact_id?.full_name
-                              ? data?.data?.contact_id?.full_name
-                              : "-"
-                          }
+                          value={data?.data?.contact_id?.full_name ? data?.data?.contact_id?.full_name : '-'}
                           className="!w-[278px] resize-none !important !h-[40px] cursor-not-allowed outline-none rounded-[12px]"
                         />
                       </div>
@@ -237,7 +215,7 @@ export default function EditPayment({
                           }
                           value={transaction_status_id}
                           onValueChange={(val: any) => {
-                            transactionOnchange(val);
+                            transactionOnchange(val)
                           }}
                         >
                           <SelectTrigger className="w-[278px]">
@@ -253,7 +231,7 @@ export default function EditPayment({
                                       value={option.value}
                                       className="h-[44px]"
                                     >
-                                      {option.label}
+                                      {translatedText(option.label)}
                                     </SelectItem>
                                   </>
                                 )
@@ -265,15 +243,11 @@ export default function EditPayment({
                     </div>
 
                     <div className="py-[5px] ">
-                      <Text className="py-[5px] outline-none">
-                        Transaction ID
-                      </Text>
+                      <Text className="py-[5px] outline-none">Transaction ID</Text>
                       <div>
                         <Textarea
                           disabled={true}
-                          value={
-                            transactionData?.data?.data?.payment_transaction_id
-                          }
+                          value={transactionData?.data?.data?.payment_transaction_id}
                           className="!w-[278px] resize-none !important h-[40px]"
                         />
                       </div>
@@ -314,7 +288,7 @@ export default function EditPayment({
                           }
                           value={payment_method_id}
                           onValueChange={(val: any) => {
-                            paymentMethodOnchange(val);
+                            paymentMethodOnchange(val)
                           }}
                         >
                           <SelectTrigger className="w-[278px]">
@@ -330,7 +304,7 @@ export default function EditPayment({
                                       value={option.value}
                                       className="h-[44px]"
                                     >
-                                      {option.label}
+                                      {translatedText(option.label)}
                                     </SelectItem>
                                     {index < payment_method?.length - 1 && (
                                       <hr className="border-[#D6D7D8]" />
@@ -345,9 +319,7 @@ export default function EditPayment({
                     </div>
 
                     <div className="py-[5px]">
-                      <Text className="py-[5px] outline-none">
-                        Response Message
-                      </Text>
+                      <Text className="py-[5px] outline-none">Response Message</Text>
                       <div>
                         <Textarea
                           disabled={true}
@@ -371,10 +343,7 @@ export default function EditPayment({
 
                   <div className="flex gap-4 py-[30px]">
                     <div>
-                      <Checkbox
-                        checked={send_payment_confirmation}
-                        onCheckedChange={emailConfirmatiOnchange}
-                      />
+                      <Checkbox checked={send_payment_confirmation} onCheckedChange={emailConfirmatiOnchange} />
                     </div>
                     <Text>Send Payment confirmation mail?</Text>
                   </div>
@@ -385,7 +354,7 @@ export default function EditPayment({
               <div>
                 <Button
                   onClick={() => {
-                    cancelConfirmation();
+                    cancelConfirmation()
                   }}
                   className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold"
                 >
@@ -396,7 +365,7 @@ export default function EditPayment({
                 <Button
                   className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] "
                   onClick={() => {
-                    onFormSubmission();
+                    onFormSubmission()
                   }}
                 >
                   Save
@@ -410,15 +379,11 @@ export default function EditPayment({
             >
               <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
                 <AlertDialogHeader>
-                  <div
-                    className="flex justify-end cursor-pointer"
-                    onClick={() => setcancelEditPayment(false)}
-                  >
+                  <div className="flex justify-end cursor-pointer" onClick={() => setcancelEditPayment(false)}>
                     <CrossIcon />
                   </div>
                   <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
-                    Changes made will be lost. Are you sure you want to
-                    continue?
+                    Changes made will be lost. Are you sure you want to continue?
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -429,7 +394,7 @@ export default function EditPayment({
                         variant="outline"
                         className="rounded-[12px] w-[71px] h-[46px]"
                         onClick={() => {
-                          setcancelEditPayment(false);
+                          setcancelEditPayment(false)
                         }}
                       >
                         No
@@ -440,7 +405,7 @@ export default function EditPayment({
                         type="button"
                         className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
                         onClick={() => {
-                          cancelEditPaymentHandler();
+                          cancelEditPaymentHandler()
                         }}
                       >
                         Yes
@@ -457,8 +422,8 @@ export default function EditPayment({
                   <div
                     className="cursor-pointer"
                     onClick={() => {
-                      setSaveChangesConfirmation(false);
-                      setEditPayment(false);
+                      setSaveChangesConfirmation(false)
+                      setEditPayment(false)
                     }}
                   >
                     <CrossIcon fill="#333333" />
@@ -466,14 +431,12 @@ export default function EditPayment({
                 </div>
                 <div className="w-full flex flex-col text-center items-center gap-4">
                   <Tick />
-                  <div className="w-full font-bold text-[20px]">
-                    Changes saved successfully
-                  </div>
+                  <div className="w-full font-bold text-[20px]">Changes saved successfully</div>
                   <div>
                     <Button
                       onClick={() => {
-                        setSaveChangesConfirmation(false);
-                        setEditPayment(false);
+                        setSaveChangesConfirmation(false)
+                        setEditPayment(false)
                       }}
                     >
                       Close
@@ -486,5 +449,5 @@ export default function EditPayment({
         </div>
       </div>
     </DialogContent>
-  );
+  )
 }

@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { format } from "date-fns";
+import { translatedText } from "src/common/translations";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 
 // Define CourseTable component
@@ -115,6 +116,7 @@ export default function CourseTable() {
   if (courseFeeSettings == undefined || isLoading) {
     return <LoadingIcon />;
   }
+  console.log(courseFeeSettings,'courseFeeSettings')
   return (
     <div className="flex flex-col gap-[18px]">
       <div className="font-semibold text-base text-[#333333]">Fee</div>
@@ -186,13 +188,13 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         feeLevelId: val?.fee_level_id?.id,
         feeLevelLabel: val?.is_custom_fee
           ? val?.custom_fee_label
-          : val?.fee_level_id?.value,
+          : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
         subTotal: val?.total - val?.total * taxRate,
         tax: val?.total * taxRate,
         total: JSON.stringify(val?.total),
       };
-
+      
       //Need to insert early bird fee if early bird fee is enabled in settings
       if (courseFeeSettings?.[0]?.is_early_bird_fee_enabled) {
         modifiedFeeLevels = {
@@ -209,7 +211,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { fields: feeLevels, append } = useFieldArray({
     name: "program_fee_level_settings",
   });
-
+  console.log(courseFeeData,'courseFeeData')
   useEffect(() => {
     //Initializing setting data into form if fee is editable.Appending only if we have no data present in field
     if (isFeeEditable && feeLevels?.length == 0) {

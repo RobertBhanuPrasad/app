@@ -30,6 +30,7 @@ import _ from "lodash";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PAYMENT_MODE } from "src/constants/OptionLabels";
 import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
+import { translatedText } from "src/common/translations";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import { IsEditCourse } from "./EditCourseUtil";
@@ -382,7 +383,7 @@ export const AccommodationType = ({
                     value={option.value}
                     className="h-[44px]"
                   >
-                    {option.label}
+                    {translatedText(option.label)}
                   </SelectItem>
                   {index < options?.length - 1 && (
                     <hr className="border-[#D6D7D8]" />

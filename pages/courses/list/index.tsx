@@ -14,6 +14,7 @@ import { useList, useSelect, useTable } from "@refinedev/core";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { translatedText } from "src/common/translations";
 import { column } from "src/components/course/findCourse/Columns";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Text } from "src/ui/TextTags";
@@ -236,7 +237,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
     sorters: {
@@ -256,28 +257,32 @@ function index() {
   /**
    *This is the query to get data to show in the table
    */
-  const { tableQueryResult: programData } = useTable({
-    resource: "program",
-    meta: {
-      select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
-    },
-    filters: {
-      permanent: [
-        {
-          field: "id",
-          operator: "in",
-          value: filteredIds,
-        },
-      ],
-    },
-    sorters: {
-      permanent: [
-        // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-        { field: "created_at", order: "desc" },
-      ],
-    },
-  });
+  const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
+    useTable({
+      resource: "program",
+      meta: {
+        select:
+          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+      },
+      pagination: {
+        pageSize: pageSize,
+      },
+      filters: {
+        permanent: [
+          {
+            field: "id",
+            operator: "in",
+            value: filteredIds,
+          },
+        ],
+      },
+      sorters: {
+        permanent: [
+          // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
+          { field: "created_at", order: "desc" },
+        ],
+      },
+    });
 
   /**
    * The variable holds whether all rows are selected or not
@@ -321,7 +326,7 @@ function index() {
         },
         {
           column_name: "Course Status",
-          path: ["status_id", "value"],
+          path: ["status_id", "name"],
         },
         {
           column_name: "Start Date",
@@ -345,11 +350,11 @@ function index() {
         },
         {
           column_name: "Visibility",
-          path: ["visibility_id", "value"],
+          path: ["visibility_id", "name"],
         },
         {
           column_name: "Course Accounting Status",
-          path: ["program_accounting_status_id", "value"],
+          path: ["program_accounting_status_id", "name"],
         },
       ];
 
@@ -359,7 +364,7 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
         columns: JSON.stringify(excelColumns),
       });
 
@@ -468,12 +473,17 @@ function index() {
             pageCount={pageCount}
             total={FilterProgramData?.data?.total || 0}
             pageSize={pageSize}
-            setPageSize={setPageSize}
+            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+            setPageSize={(number) => {
+              setPageSize(number);
+              displayDataSetPageSize(number);
+            }}
             pagination={true}
             tableStyles={{
               table: "",
               rowStyles: "!important border-none",
             }}
+            noRecordsPlaceholder="There are no courses"
             columns={column(hasAliasNameFalse(data))}
             data={programData?.data?.data || []}
             columnPinning={true}
@@ -654,7 +664,7 @@ export const CourseTypeComponent = ({ name }: any) => {
                 value={option.value}
                 className="h-[44px]"
               >
-                {option.label}
+                {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && (
                 <hr className="border-[#D6D7D8]" />
@@ -678,7 +688,11 @@ export const BasicFilters: React.FC<{
   } = useController({
     name: "course_id",
   });
-
+  const handleKeyPress = (e: { key: string; preventDefault: () => void }) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
   const {
     field: { value: courseDate, onChange: courseDateOnChange },
   } = useController({
@@ -696,6 +710,7 @@ export const BasicFilters: React.FC<{
     setValue("temporaryadvancefilter.course_type", "");
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
+    setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
 
   return (
@@ -705,6 +720,7 @@ export const BasicFilters: React.FC<{
         <Input
           value={value}
           onChange={onChange}
+          onKeyDown={handleKeyPress}
           type="text"
           className="border-none focus:outline-none"
           placeholder={`Search by Course ID`}

@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { CountComponent } from "pages/courses/list";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { translatedText } from "src/common/translations";
 import {
   PARTICIPANT_ATTENDANCE_STATUS,
   PARTICIPANT_PAYMENT_STATUS,
@@ -300,6 +301,9 @@ function index() {
     setCurrent,
   } = useTable({
     resource: "participant_registration",
+    pagination: {
+      pageSize: 25, //pageSize is set to 25
+    },
     meta: {
       select:
         "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
@@ -575,7 +579,7 @@ function index() {
                             handleUpdateAttendanceStatus(record.id)
                           }
                         >
-                          {record.value}
+                          {translatedText(record.name)}
                         </DropdownMenuItem>
                       ))
                     : paymentStatusOptions?.map((record: any) => (
@@ -585,7 +589,7 @@ function index() {
                             handleBulkUpdateTransactionStatus(record.id)
                           }
                         >
-                          {record.value}
+                          {translatedText(record.name)}
                         </DropdownMenuItem>
                       ))}
                 </div>
@@ -716,7 +720,7 @@ const HeaderSection = () => {
   const transactionStatusValues = transactionStatusOptions?.map(
     (record: any) => {
       return {
-        label: record?.value,
+        label: translatedText(record?.name),
         value: record?.id,
       };
     }
