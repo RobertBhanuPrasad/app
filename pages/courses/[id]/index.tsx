@@ -128,7 +128,7 @@ function ViewDetails() {
     },
   });
 
-  const totalRevenue = courseData?.data?.revenue
+  const totalRevenue = courseData?.data?.revenue;
 
   const startDate = formatDate(
     courseData?.data?.program_schedules[0]?.start_time
@@ -262,11 +262,11 @@ function ViewDetails() {
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-
-              {courseData?.data?.participant_count} Participants with: Transaction status = Confirmed / Pending
-                Attendance status = Confirmed / Pending / Dropout Total participants records:
+                {courseData?.data?.participant_count} Participants with:
+                Transaction status = Confirmed / Pending Attendance status =
+                Confirmed / Pending / Dropout. <br></br> Total participants
+                records:
                 {courseData?.data?.total_participant_count}
-
               </div>
             </HoverCardContent>
           </HoverCard>
@@ -1077,6 +1077,7 @@ const PendingCourseAccountingFormApprovalDropDown = ({
     CLOSED
   )?.id;
 
+  const supabase = supabaseClient();
   const options = [
     {
       label: "Approve",
@@ -1117,12 +1118,12 @@ const PendingCourseAccountingFormApprovalDropDown = ({
    * Close the approve modal
    */
   const approveCourseAccountingForm = async () => {
-    await supabaseClient
+    await supabase
       .from("program")
       .update({ program_accounting_status_id: accountingClosedStatusId })
       .eq("id", courseId);
 
-    await supabaseClient.from("program_accounting_activity").insert({
+    await supabase.from("program_accounting_activity").insert({
       caf_status_id: accountingClosedStatusId,
       user_id: loginUserData?.userData?.id,
     });
@@ -1302,6 +1303,7 @@ const ViewCourseAccountingRejectedModalOpen = ({
 }: {
   courseId: number;
 }) => {
+  const supabase = supabaseClient();
   const {
     viewCourseAccountingRejectedDescriptionModal,
     setViewCourseAccountingRejectedDescriptionModal,
@@ -1327,12 +1329,12 @@ const ViewCourseAccountingRejectedModalOpen = ({
    */
   const rejectCourse = async () => {
     // Make an asynchronous call to update the program resource
-    await supabaseClient
+    await supabase
       .from("program")
       .update({ program_accounting_status_id: accountingRejectedStatusId })
       .eq("id", courseId);
 
-    await supabaseClient.from("program_accounting_activity").insert({
+    await supabase.from("program_accounting_activity").insert({
       caf_status_id: accountingRejectedStatusId,
       user_id: loginUserData?.userData?.id,
       comment: rejectionFeedback,

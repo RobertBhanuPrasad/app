@@ -65,7 +65,7 @@ interface IBaseTable<TData, TValue> {
      */
     rowStyles?: string;
     /**
-     * Additional CSS classes to pass to table container 
+     * Additional CSS classes to pass to table container
      */
     tableContainer?: string;
     /**
@@ -321,7 +321,7 @@ export function BaseTable<TData, TValue>({
       <div className="flex flex-row justify-between">
         {columnSelector && (
           <div>
-            <DropdownMenu open={open}>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
@@ -345,10 +345,10 @@ export function BaseTable<TData, TValue>({
                     </div>
                     {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn)// Here we are filtering the columns which have accessorKey
+                      .filter((column) => column?.accessorFn) // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
-                        if (!column.getCanHide()) { 
-                          //display the disabled options 
+                        if (!column.getCanHide()) {
+                          //display the disabled options
                           return (
                             <div className="flex flex-row gap-4 items-center">
                               <Checkbox
@@ -358,7 +358,10 @@ export function BaseTable<TData, TValue>({
                                 className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                                 checked={columnVisibilityChanges[column.id]}
                                 onCheckedChange={(value: boolean) => {
-                                  handleColumnVisibilityChange(column.id, value);
+                                  handleColumnVisibilityChange(
+                                    column.id,
+                                    value
+                                  );
                                 }}
                               />
                               {column?.columnDef?.column_name}
@@ -366,26 +369,27 @@ export function BaseTable<TData, TValue>({
                           );
                         }
                       })}
-                       {table
+                    {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn && column.getCanHide())
+                      .filter(
+                        (column) => column?.accessorFn && column.getCanHide()
+                      )
                       // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
                         // display the enabled options
-                          return (
-                            <div className="flex flex-row gap-4 items-center">
-                              <Checkbox
-                                key={column.id}
-                                className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
-                                checked={columnVisibilityChanges[column.id]}
-                                onCheckedChange={(value: boolean) => {
-                                  handleColumnVisibilityChange(column.id, value);
-                                }}
-                              />
-                              {column?.columnDef?.column_name}
-                            </div>
-                          );
-                        
+                        return (
+                          <div className="flex flex-row gap-4 items-center">
+                            <Checkbox
+                              key={column.id}
+                              className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
+                              checked={columnVisibilityChanges[column.id]}
+                              onCheckedChange={(value: boolean) => {
+                                handleColumnVisibilityChange(column.id, value);
+                              }}
+                            />
+                            {column?.columnDef?.column_name}
+                          </div>
+                        );
                       })}
                   </div>
 
@@ -574,7 +578,7 @@ export function BaseTable<TData, TValue>({
 
             <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
               <Select
-                value={`${pageSize}`}
+                value={pageSize}
                 onValueChange={(value) => {
                   setPageSize(Number(value));
                   table?.setPageSize(Number(value));
