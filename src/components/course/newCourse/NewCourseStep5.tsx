@@ -117,7 +117,7 @@ export const AccomdationComponent = () => {
 };
 
 export const ResidentialCourse = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation('common')
   const {
     field: { value, onChange },
   } = useController({
@@ -166,7 +166,7 @@ export const ResidentialCourse = () => {
 };
 
 export const AccommodationFeeMode = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
     fieldState:{error}
@@ -246,7 +246,7 @@ const FeePerPerson = ({ index }: any) => {
 };
 
 export const AccommodationType = ({ index }: { index: number }) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation("new_strings")
   const { watch } = useFormContext();
 
   const formData = watch().accommodation || [];
@@ -376,7 +376,7 @@ const AccomdationAction = ({
   const handleDeleteRow = (index: number) => {
     remove(index);
   };
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation('common')
   return (
     <div className="w-[150px] flex gap-4 ">
       {/* Button to add a new row */}

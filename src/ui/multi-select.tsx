@@ -120,7 +120,7 @@ export function MultiSelect({
   const selectables = filteredData.filter(
     (obj) => !selected.includes(obj.value)
   );
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation('common')
 
   return (
     <div className={`grid w-full items-center ${headerStyles}`}>

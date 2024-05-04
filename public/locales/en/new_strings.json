@@ -22,7 +22,7 @@
  "note":"Note:",
  "enter_comma":"Enter comma separated list of email addresses.",
  "review_course_details":"Review Course Details",
- "Eearly_bird_cutoff_period":"Early bird cut-off period",
+ "Early_bird_cutoff_period":"Early bird cut-off period",
  "accommodation_information":"Accommodation Information",
  "contact_phone":"Contact Phone",
  "bcc_registration_confirmation_email":"BCC registration confirmation email",
@@ -40,12 +40,13 @@
  "edit_venue":"Edit Venue",
  "venue_with_the_provided":"Venue with the provided data already exists.",
  "center":"Center",
- "no_results":"No results",
+ "no_results":"No results.",
  "registration_via_3rd_party_gateway_url":"Registration via 3rd party gateway url",
  "select_a_venue_by_clicking_viewall_button":"Select a venue by clicking “View All” button",
  "early_bird":"Early Bird",
  "new":"New",
  "course":"Course",
+ "fees_information":"Fees Information",
 
 
 

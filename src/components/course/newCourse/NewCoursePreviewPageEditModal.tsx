@@ -55,7 +55,7 @@ export const EditModalDialog = ({
   onOpenChange,
   currentStep,
 }: EditModalDialogProps) => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common'])
   const { newCourseData, setNewCourseData } = newCourseStore();
 
   /**

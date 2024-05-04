@@ -143,7 +143,6 @@ function ViewDetails() {
   const countryName = "India";
   const {t} = useTranslation(["common", "course.view_course", "new_strings"])
 
-
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
