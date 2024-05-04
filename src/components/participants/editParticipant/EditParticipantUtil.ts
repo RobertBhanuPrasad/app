@@ -1,3 +1,4 @@
+import { translatedText } from "src/common/translations";
 import { supabaseClient } from "src/utility/supabaseClient";
 
 // api call for getting defaultvalues for edit participant tab from payment history
@@ -28,7 +29,7 @@ export const handleEditPaymentValues = async (paymentHistoryId: number) => {
   const { data, error } = await supabase
     .from("participant_payment_history")
     .select(
-      "id,payment_method_id(id,value),transaction_status_id!inner(id,value),payment_date,send_payment_confirmation"
+      "id,payment_method_id(id,name),transaction_status_id!inner(id,name),payment_date,send_payment_confirmation"
     )
     .eq("id", paymentHistoryId);
   if (!error) {
@@ -92,16 +93,16 @@ export const getDefaultValues = async (
     defaultValues.transaction_status_id = data.transaction_status_id?.id;
 
   // transaction_status
-  if (data.transaction_status_id?.value)
-    defaultValues.transaction_status_value = data.transaction_status_id?.value;
+  if (data.transaction_status_id?.name)
+    defaultValues.transaction_status_value = translatedText(data.transaction_status_id?.name);
 
   //payment_method_id
   if (data.payment_method_id)
     defaultValues.payment_method_id = data.payment_method_id?.id;
 
   // payment_method
-  if (data.payment_method_id?.value)
-    defaultValues.payment_method_value = data.payment_method_id?.value;
+  if (data.payment_method_id?.name)
+    defaultValues.payment_method_value = translatedText(data.payment_method_id?.name);
 
   // payment_date
   if (data.payment_date) defaultValues.payment_date = data.payment_date;

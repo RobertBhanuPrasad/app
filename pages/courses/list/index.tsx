@@ -1,42 +1,32 @@
-import Form from "@components/Formfield";
-import { BaseTable } from "@components/course/findCourse/BaseTable";
-import Filters from "@components/course/findCourse/Filters";
-import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
-import { hasAliasNameFalse } from "@components/courseBusinessLogic";
-import CalenderIcon from "@public/assets/CalenderIcon";
-import ClearAll from "@public/assets/ClearAll";
-import CrossIcon from "@public/assets/CrossIcon";
-import FilterIcon from "@public/assets/FilterIcon";
-import SearchIcon from "@public/assets/Search";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { useList, useSelect, useTable } from "@refinedev/core";
-import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
-import { column } from "src/components/course/findCourse/Columns";
-import { DateRangePicker } from "src/ui/DateRangePicker";
-import { Text } from "src/ui/TextTags";
-import { Button } from "src/ui/button";
-import { Checkbox } from "src/ui/checkbox";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "src/ui/dropdown-menu";
-import { Input } from "src/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectItems,
-  SelectTrigger,
-  SelectValue,
-} from "src/ui/select";
-import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
-import { supabaseClient } from "src/utility/supabaseClient";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import Form from '@components/Formfield'
+import { BaseTable } from '@components/course/findCourse/BaseTable'
+import Filters from '@components/course/findCourse/Filters'
+import NewCourseReviewPage from '@components/course/newCourse/NewCoursePreviewPage'
+import { hasAliasNameFalse } from '@components/courseBusinessLogic'
+import CalenderIcon from '@public/assets/CalenderIcon'
+import ClearAll from '@public/assets/ClearAll'
+import CrossIcon from '@public/assets/CrossIcon'
+import FilterIcon from '@public/assets/FilterIcon'
+import SearchIcon from '@public/assets/Search'
+import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
+import { ChevronDownIcon } from '@radix-ui/react-icons'
+import { useList, useSelect, useTable } from '@refinedev/core'
+import { format } from 'date-fns'
+import React, { useEffect, useState } from 'react'
+import { useController, useFormContext } from 'react-hook-form'
+import { translatedText } from 'src/common/translations'
+import { column } from 'src/components/course/findCourse/Columns'
+import { DateRangePicker } from 'src/ui/DateRangePicker'
+import { Text } from 'src/ui/TextTags'
+import { Button } from 'src/ui/button'
+import { Checkbox } from 'src/ui/checkbox'
+import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
+import { Input } from 'src/ui/input'
+import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
+import { Sheet, SheetContent, SheetTrigger } from 'src/ui/sheet'
+import { supabaseClient } from 'src/utility/supabaseClient'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 function index() {
   interface ExcelColumn {
@@ -236,7 +226,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        '*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)'
     },
     filters: filters,
     sorters: {
@@ -260,7 +250,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        '*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)'
     },
     filters: {
       permanent: [
@@ -320,8 +310,8 @@ function index() {
           path: ["program_type_alias_names", "alias_name"],
         },
         {
-          column_name: "Course Status",
-          path: ["status_id", "value"],
+          column_name: 'Course Status',
+          path: ['status_id', 'name']
         },
         {
           column_name: "Start Date",
@@ -344,14 +334,14 @@ function index() {
           path: ["participant_registration", "length"],
         },
         {
-          column_name: "Visibility",
-          path: ["visibility_id", "value"],
+          column_name: 'Visibility',
+          path: ['visibility_id', 'name']
         },
         {
-          column_name: "Course Accounting Status",
-          path: ["program_accounting_status_id", "value"],
-        },
-      ];
+          column_name: 'Course Accounting Status',
+          path: ['program_accounting_status_id', 'name']
+        }
+      ]
 
       /**
        * This holds the params need to send for export excel function like table name , select query , columns
@@ -359,9 +349,9 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
-        columns: JSON.stringify(excelColumns),
-      });
+          ',program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)',
+        columns: JSON.stringify(excelColumns)
+      })
 
       const supabase = supabaseClient();
 
@@ -474,6 +464,7 @@ function index() {
               table: "",
               rowStyles: "!important border-none",
             }}
+            noRecordsPlaceholder="There are no courses"
             columns={column(hasAliasNameFalse(data))}
             data={programData?.data?.data || []}
             columnPinning={true}
@@ -649,12 +640,8 @@ export const CourseTypeComponent = ({ name }: any) => {
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options.map((option: any, index: number) => (
             <>
-              <SelectItem
-                key={option.value}
-                value={option.value}
-                className="h-[44px]"
-              >
-                {option.label}
+              <SelectItem key={option.value} value={option.value} className="h-[44px]">
+                {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && (
                 <hr className="border-[#D6D7D8]" />
@@ -678,7 +665,11 @@ export const BasicFilters: React.FC<{
   } = useController({
     name: "course_id",
   });
-
+  const handleKeyPress = (e: { key: string; preventDefault: () => void; }) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); 
+    }
+  };
   const {
     field: { value: courseDate, onChange: courseDateOnChange },
   } = useController({
@@ -696,6 +687,7 @@ export const BasicFilters: React.FC<{
     setValue("temporaryadvancefilter.course_type", "");
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
+    setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
 
   return (
@@ -705,6 +697,7 @@ export const BasicFilters: React.FC<{
         <Input
           value={value}
           onChange={onChange}
+          onKeyDown={handleKeyPress}
           type="text"
           className="border-none focus:outline-none"
           placeholder={`Search by Course ID`}

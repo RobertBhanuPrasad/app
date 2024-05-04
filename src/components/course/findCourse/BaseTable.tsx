@@ -73,6 +73,11 @@ interface IBaseTable<TData, TValue> {
      */
     tableHeader?: string;
   };
+  /**
+   * When there are no results then we have to show this placeholder
+   */
+  noRecordsPlaceholder?: string;
+  /**
 
   /**
    * Function to update the current page number
@@ -146,7 +151,7 @@ export function BaseTable<TData, TValue>({
   current,
   setCurrent= () => {},
   pageCount,
-  total=0,
+  total = 0,
   setPageSize = () => {},
   pageSize,
   pagination = false,
@@ -156,6 +161,7 @@ export function BaseTable<TData, TValue>({
   rowSelection,
   setRowSelection,
   columnSelector,
+  noRecordsPlaceholder = "No results",
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
@@ -559,9 +565,9 @@ export function BaseTable<TData, TValue>({
                   <TableRow>
                     <TableCell
                       colSpan={columns?.length}
-                      className="h-24 text-center"
+                      className="h-24 text-left"
                     >
-                      No results.
+                      {noRecordsPlaceholder}
                     </TableCell>
                   </TableRow>
                 )}
@@ -617,12 +623,12 @@ interface DataPaginationProps {
   setCurrent?: (value: React.SetStateAction<number>) => void;
   current?: number;
   pageCount?: number;
-  total?:number;
+  total?: number;
 }
 
 const DataPagination = ({
   setCurrent = () => {},
-  total=0,
+  total = 0,
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
@@ -635,17 +641,32 @@ const DataPagination = ({
     }
   } else {
     if (current <= 3) {
-    // If current page is 4 or less, show pages 1 to 4, then ellipses, then last page
+      // If current page is 4 or less, show pages 1 to 4, then ellipses, then last page
       PagesArray.push(1, 2, 3, 4, DOTS, pageCount);
     } else if (current >= pageCount - 2) {
-    // If current page is near the end, show first page, ellipses, and last 4 pages
-      PagesArray.push(1, DOTS,pageCount - 3, pageCount - 2, pageCount - 1,  pageCount);
+      // If current page is near the end, show first page, ellipses, and last 4 pages
+      PagesArray.push(
+        1,
+        DOTS,
+        pageCount - 3,
+        pageCount - 2,
+        pageCount - 1,
+        pageCount
+      );
     } else {
-    // Otherwise,first page , ellipses, current page, ellipses, and last page
-      PagesArray.push(1, DOTS, current - 1, current, current + 1, DOTS, pageCount);
+      // Otherwise,first page , ellipses, current page, ellipses, and last page
+      PagesArray.push(
+        1,
+        DOTS,
+        current - 1,
+        current,
+        current + 1,
+        DOTS,
+        pageCount
+      );
     }
   }
-  
+
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
@@ -661,23 +682,24 @@ const DataPagination = ({
         </Button>
       )}
       {/* pages buttons */}
-      {total >=10 && PagesArray.map((page:any, index:any) => (
-        <div key={index}>
-      {/* Check if the current page is a placeholder for ellipsis.If yes, display the ellipsis.Otherwise, display a button for the page. */}
-          {page === DOTS ? (
-            <span className="p-2">{DOTS}</span>
-          ) : (
-            <Button
-              variant={page === current ? "default" : "outline"}
-              onClick={() => {
-                setCurrent(page);
-              }}
-            >
-              {page}
-            </Button>
-          )}
-        </div>
-      ))}
+      {total >= 10 &&
+        PagesArray.map((page: any, index: any) => (
+          <div key={index}>
+            {/* Check if the current page is a placeholder for ellipsis.If yes, display the ellipsis.Otherwise, display a button for the page. */}
+            {page === DOTS ? (
+              <span className="p-2">{DOTS}</span>
+            ) : (
+              <Button
+                variant={page === current ? "default" : "outline"}
+                onClick={() => {
+                  setCurrent(page);
+                }}
+              >
+                {page}
+              </Button>
+            )}
+          </div>
+        ))}
       {/* next button */}
       {/* Check if there are more than one page, and if so, display a button for navigating to the next page. */}
       {pageCount > 1 && (
@@ -691,5 +713,5 @@ const DataPagination = ({
         </Button>
       )}
     </div>
-  );  
+  );
 };
