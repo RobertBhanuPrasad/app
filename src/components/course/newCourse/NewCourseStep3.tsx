@@ -822,18 +822,15 @@ const NewVenueDetails = () => {
 const ExistingVenueDetails = () => {
   const { getValues } = useFormContext();
   const {
-    existingVenue: { id },
+    existingVenue
   } = getValues();
 
-  const { data, isLoading } = useOne({
-    resource: "venue_view_with_names",
-    id: id,
-    meta: {
-      select: "*",
-    },
-  });
-
-  console.log("new venue data is", data);
+  //Requirement: Need to show selected venue data. Selected venue is stored in existingVenue form variable.will store only city_is and state_id in existingVenue.
+  const {data: cityData,isLoading}=useOne({
+    resource:"city",
+    meta:{select:"name,state(name)"},
+    id:existingVenue?.city_id
+  })
 
   if (isLoading) {
     return <LoadingIcon />;
@@ -841,8 +838,8 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {data?.data?.name}, {data?.data?.address},{data?.data?.city_name},{" "}
-      {data?.data?.state_name}, {data?.data?.postal_code}
+      {existingVenue?.name}, {existingVenue?.address},{cityData?.data?.name},{" "}
+      {cityData?.data?.state.name}, {existingVenue?.postal_code}
     </div>
   );
 };
@@ -1276,6 +1273,12 @@ export const ExistingVenueListSection = ({
     name: "deletedVenueID",
   });
 
+  const {
+    field: { onChange: tempExistingVenueOnChange },
+  } = useController({
+    name: "tempExistingVenue",
+  });
+
   const handleCheckboxChange = (item: any) => {
     setValue(NewCourseStep3FormNames.venue_id, item.id);
   };
@@ -1322,6 +1325,17 @@ export const ExistingVenueListSection = ({
       center_id: formData?.center_id,
       postal_code: formData?.postal_code,
     };
+
+    //Requirement: Need to show updated data in venue list.So storing edited venue data in tempExistingVenue form variable
+    tempExistingVenueOnChange({
+      id: formData?.venue_id,
+      name: formData?.name,
+      address: formData?.address,
+      state_id: formData?.state_id,
+      city_id: formData?.city_id,
+      center_id: formData?.center_id,
+      postal_code: formData?.postal_code,
+    });
 
     if (isAllFieldsFilled) {
       setVenueData(allVenuesData);
@@ -1403,13 +1417,54 @@ export const ExistingVenueListSection = ({
           </div>
         </div>
 
-        <div className="leading-tight">
-          {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
-          {item.postal_code}
-        </div>
+        <VenueItem item={item} />
       </div>
     </div>
   );
+};
+
+/**
+ * @function VenueItem is used to show each venue details in venue list
+ * @item consist of all details of venue
+ */
+const VenueItem = ({ item }: { item: any }) => {
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  const tempExistingVenue = formData?.tempExistingVenue;
+
+  //Requirment: If user Edit any of the information in venue.Need to show Edited Venue Data.
+  //Edit venue data is stored in tempExistingVenue variable. so if venue is edited need to show tempExistingVenue data else need to show API Data.
+  if (
+    formData?.venue_id == item?.id &&
+    formData?.venue_id == tempExistingVenue?.id
+  ) {
+    const { data: cityData, isLoading } = useOne({
+      resource: "city",
+      meta: { select: "name,state_id(name)" },
+      id: tempExistingVenue?.city_id,
+    });
+
+    if (isLoading) {
+      return <LoadingIcon />;
+    }
+
+    return (
+      <div>
+        {tempExistingVenue.name}, {tempExistingVenue.address},{" "}
+        {cityData?.data?.name}, {cityData?.data?.state_id?.name},{" "}
+        {tempExistingVenue.postal_code}
+      </div>
+    );
+  } else {
+    return (
+      <div className="leading-tight">
+        {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
+        {item.postal_code}
+      </div>
+    );
+  }
 };
 
 export const AddOrEditVenue = ({
