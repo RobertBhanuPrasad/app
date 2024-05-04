@@ -9,22 +9,23 @@ import {
 } from "src/ui/dropdown-menu";
 import { handleCourseDefaultValues } from "../newCourse/EditCourseUtil";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useTranslation } from "next-i18next";
 
 export const ViewCourseGlobalActions = () => {
   const router = useRouter();
-
+const {t} = useTranslation(['common','new_strings'])
   const globalActionsOptions = [
-    "View Participants",
-    "Register Participant",
+    t('view_participants'),
+    t('register_participant'),
     // "Register with online credit card payment",
     // "View Pending/Failed Tranactions",
-    "Edit Course",
-    "Copy Course",
-    "Cancel Course",
+    t('edit_course'),
+    t('copy_course'),
+    t('cancel_course'),
     // "New Discount Code",
-    "Submit Course Accounting Form",
-    "Upload Attendance Record",
-    "Download Receipt",
+    t('new_strings:submit_course_accounting_form'),
+    t('new_strings:upload_attendence_record'),
+    t('new_strings:download_receipt')
     // "Manage Google Adwords",
   ];
 

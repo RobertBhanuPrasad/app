@@ -62,7 +62,13 @@
  "view_course":"view course",
 
 
- "participants":"participants"
+ "participants":"participants",
+  "to":"to",
+  "participants_tool_tip_text":"Participants with : Transaction status = Confirmed / Pending Attendance status = Confirmed / Pending / Dropout Total participants records:",
+  "revenue_tool_tip_text":"Revenue from confirmed pending transaction participants revenue:",
+  "submit_course_accounting_form":"Submit Course Accounting Form",
+  "upload_attendence_record":"Upload Attendance Record",
+  "download_receipt":"Download Receipt"
 
 
 }

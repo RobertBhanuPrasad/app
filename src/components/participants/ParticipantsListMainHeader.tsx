@@ -5,6 +5,7 @@ import Important from "@public/assets/Important";
 import ParticipantsIcon from "@public/assets/ParticipantsIcon";
 import { useList, useOne } from "@refinedev/core";
 import { ChevronLeftIcon, MoveLeftIcon } from "lucide-react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import {
@@ -48,6 +49,7 @@ export const ParticipantsListMainHeader = () => {
     resource: "country_config",
   });
 
+  const {t} = useTranslation(['common','new_strings'])
   return (
     <div className="flex justify-between px-8 h-auto pb-4">
       {/* Course Details Section */}
@@ -72,12 +74,12 @@ export const ParticipantsListMainHeader = () => {
           <div className="flex gap-8 pt-2">
             {/* Course ID */}
             <div className="items-center font-medium">
-              Course ID: {courseData?.data?.program_code}
+              {t("course_id")}: {courseData?.data?.program_code}
             </div>
             {/* Course Schedule */}
             <div className="flex gap-2 items-center border-x-2 px-6">
               <CalenderIcon color="#7677F4" />
-              {startDate} to {endDate}
+              {startDate} {t("new_strings:to")} {endDate}
             </div>
             {/* Participant Count */}
             <div className="flex gap-2 items-center">
@@ -91,9 +93,8 @@ export const ParticipantsListMainHeader = () => {
                 </HoverCardTrigger>
                 <HoverCardContent>
                   <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                    {courseData?.data?.participant_count} Participants with:
-                    Transaction status = Confirmed / Pending Attendance status =
-                    Confirmed / Pending / Dropout Total participants records:
+                    {courseData?.data?.participant_count}
+                    {t("new_strings:participants_tool_tip_text")}
                     {courseData?.data?.total_participant_count}
                   </div>
                 </HoverCardContent>
@@ -112,8 +113,7 @@ export const ParticipantsListMainHeader = () => {
                 </HoverCardTrigger>
                 <HoverCardContent>
                   <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                    Revenue from confirmed pending transaction participants
-                    revenue:
+                   {t("new_strings:revenue_tool_tip_text")}
                     {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                     {totalRevenue}
                   </div>
