@@ -50,9 +50,11 @@ import {
 import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useTranslation } from 'next-i18next';
 import { IsEditCourse } from "./EditCourseUtil";
 
 export default function NewCourseReviewPage() {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const { data: loginUserData }: any = useGetIdentity();
 
   const router = useRouter();
@@ -271,7 +273,7 @@ export default function NewCourseReviewPage() {
     return (
       <div className="w-[291px]">
         <p className="text-sm font-normal text-accent-light text-[#999999]">
-          Sessions
+          {t("sessions")}
         </p>
         {newCourseData?.schedules?.map((data: any) => {
           const schedule = `${formatDateString(data.date)} | ${
@@ -436,7 +438,7 @@ export default function NewCourseReviewPage() {
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
-        Review Course Details
+        {t("new_strings:review_course_details")}
       </div>
       <section className="w-full py-8 text-base border-b bg-white">
         <EditCourseSuccessfullyInfo
@@ -450,7 +452,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center">
             <p className="font-semibold text-accent-primary text-[#333333]">
-              Basic Details
+              {t("basic_details")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of BasicDetails page */}
             <EditModalDialog
@@ -470,7 +472,7 @@ export default function NewCourseReviewPage() {
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                Creator
+              {t("course.new_course:review_post_details.creator")}
               </p>
 
               <abbr
@@ -482,7 +484,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Organization
+                {t("organization")}
               </p>
               <abbr
                 className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
@@ -493,7 +495,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Program Organizer
+                {t("program_organizer")}
               </p>
               <abbr
                 className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
@@ -505,7 +507,7 @@ export default function NewCourseReviewPage() {
             {(hasSuperAdminRole || hasNationalAdminRole) && (
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Registration via 3rd party gateway
+                  {t("registration_via_3rd_party_gateway")}
                 </p>
                 <abbr
                   className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -518,7 +520,7 @@ export default function NewCourseReviewPage() {
             {newCourseData?.is_registration_via_3rd_party ? (
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Registration via 3rd party gateway url
+                  {t("new_strings:registration_via_3rd_party_gateway_url")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -535,7 +537,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-              Course Details
+            {t("course.new_course:review_post_details.course_details")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of CourseDetails page */}
             <EditModalDialog
@@ -555,7 +557,7 @@ export default function NewCourseReviewPage() {
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Type
+                {t("course_type")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -566,7 +568,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Teacher
+              {t("teacher")}
               </p>
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}
@@ -577,7 +579,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Language(s) course is taught in
+                {t("language_course_is_taught_in")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -588,7 +590,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Available language(s) for translation
+                {t("available_languages_for_translation")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -598,38 +600,34 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             {hasSuperAdminRole && (
-              <div className="w-[291px]">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Display language translation option for participants
-                </p>
-                <abbr
-                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={
-                    newCourseData?.is_language_translation_for_participants
-                  }
-                >
-                  {newCourseData?.is_language_translation_for_participants
-                    ? "Yes"
-                    : "No"}
-                </abbr>
-              </div>
+            <div className="w-[291px]">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
+              {t("course.new_course:course_details_tab.display_language_option")}
+              </p>
+              <abbr
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.is_language_translation_for_participants}
+              >
+                {newCourseData?.is_language_translation_for_participants ? "Yes" : "No"}
+              </abbr>
+            </div>
             )}
             {hasSuperAdminRole && (
-              <div className="w-[291px]">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Registration is mandatory for this course
-                </p>
-                <abbr
-                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={newCourseData?.is_registration_required}
-                >
-                  {newCourseData?.is_registration_required ? "Yes" : "No"}
-                </abbr>
-              </div>
+            <div className="w-[291px]">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
+              {t("course.new_course:course_details_tab.registration_mandatory")}
+              </p>
+              <abbr
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.is_registration_required}
+              >
+                {newCourseData?.is_registration_required ? "Yes" : "No"}
+              </abbr>
+            </div>
             )}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Max Capacity
+                {t("max_capacity")}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -642,7 +640,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Program Visibility
+                {t("program_visibility")}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
@@ -653,7 +651,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Country(s) from where registrations are allowed
+                {t("countries_from_where_registrations_are_allowed")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -663,22 +661,22 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             {hasSuperAdminRole && (
-              <div className="w-[291px]">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Is geo restriction applicable for registrations
-                </p>
-                <abbr
-                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                  title={newCourseData?.is_geo_restriction_applicable}
-                >
-                  {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
-                </abbr>
-              </div>
+            <div className="w-[291px]">
+              <p className="text-sm font-normal text-accent-light text-[#999999]">
+                {t("is_geo_restriction")}
+              </p>
+              <abbr
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                title={newCourseData?.is_geo_restriction_applicable}
+              >
+                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
+              </abbr>
+            </div>
             )}
             {/* // TODO need to do when the form filed is clear */}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Description
+                {t("course_description")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -694,7 +692,7 @@ export default function NewCourseReviewPage() {
 
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Course Notes
+                {t("course_notes")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -710,7 +708,7 @@ export default function NewCourseReviewPage() {
 
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Email Notes
+                {t("email_notes")}
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -729,7 +727,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-              Time and Venue
+              {t("time_and_venue")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of VenueDetails page */}
             <EditModalDialog
@@ -751,7 +749,7 @@ export default function NewCourseReviewPage() {
             <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Online zoom URL
+                  {t("online_zoom_url")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -762,7 +760,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Province
+                {t("course.new_course:time_and_venue_tab.province")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -773,7 +771,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  City
+                {t("city")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -784,7 +782,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Center
+                  {t("new_strings:Center")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -799,7 +797,7 @@ export default function NewCourseReviewPage() {
             <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Venue Address
+                  {t("venue_address")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -810,7 +808,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Time Format
+                  {t("course.new_course:review_post_details.time_formate")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -826,7 +824,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  Time Zone
+                {t("course.new_course:review_post_details.time_zone")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -845,7 +843,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-              Fees Information
+            {t("course.new_course:review_post_details.fee_information")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of FeesDetails page */}
             <EditModalDialog
@@ -883,7 +881,7 @@ export default function NewCourseReviewPage() {
               courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Early bird cut-off period
+                    {t("new_strings:Eearly_bird_cutoff_period")}
                   </p>
                   <p className="font-semibold truncate no-underline text-accent-secondary text-[#666666]">
                     {subtractDaysAndFormat(
@@ -897,13 +895,13 @@ export default function NewCourseReviewPage() {
 
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                Disable Pay Later Label123?
+                {t("course.new_course:fees_tab.disable")}
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title="Yes"
               >
-                Yes
+                {t("yes")}
               </abbr>
             </div>
           </div>
@@ -913,7 +911,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-              Accommodation Information
+              {t("new_strings:accommodation_information")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of AccomidationDetails page */}
             <EditModalDialog
@@ -944,7 +942,7 @@ export default function NewCourseReviewPage() {
 
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                  Accommodation fee payment mode
+                  {t("course.new_course:accommodation_tab.accommodation_fee")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -961,7 +959,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-              Contact Info
+              {t("new_strings:contact_info")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of ContactDetails page */}
             <EditModalDialog
@@ -983,7 +981,7 @@ export default function NewCourseReviewPage() {
               <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] pb-4 mt-2 ">
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Email
+                    {t("contact_email")}
                   </p>
                   <abbr
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -994,7 +992,7 @@ export default function NewCourseReviewPage() {
                 </div>
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Phone
+                    {t("new_strings:contact_phone")}
                   </p>
                   <abbr
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -1005,7 +1003,7 @@ export default function NewCourseReviewPage() {
                 </div>
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    Contact Name
+                    {t("contact_name")}
                   </p>
                   <abbr
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -1020,7 +1018,7 @@ export default function NewCourseReviewPage() {
 
           <div className="w-[291px] mt-4">
             <p className="text-sm font-normal text-accent-light text-[#999999]">
-              BCC registration confirmation email
+              {t("new_strings:bcc_registration_confirmation_email")}
             </p>
             <div className="truncate">
               <abbr
@@ -1040,7 +1038,7 @@ export default function NewCourseReviewPage() {
               <LoadingIcon />
             </Button>
           ) : (
-            <Button onClick={handClickContinue}>Continue</Button>
+            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
           )}
         </div>
       </div>
@@ -1188,7 +1186,7 @@ const EarlyBirdFees = ({
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
@@ -1197,7 +1195,7 @@ const EarlyBirdFees = ({
         className="no-underline"
       >
         <CardLabel className="truncate">
-          Early Bird {feeLevelData?.data?.value}
+          {t("new_strings:early_bird")} {feeLevelData?.data?.value}
         </CardLabel>
       </abbr>
       <abbr

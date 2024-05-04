@@ -44,6 +44,7 @@ interface EditModalDialogProps {
   onOpenChange: any;
   currentStep: any;
 }
+import { useTranslation } from 'next-i18next';
 
 export const EditModalDialog = ({
   title,
@@ -54,6 +55,7 @@ export const EditModalDialog = ({
   onOpenChange,
   currentStep,
 }: EditModalDialogProps) => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const { newCourseData, setNewCourseData } = newCourseStore();
 
   /**
@@ -95,10 +97,10 @@ export const EditModalDialog = ({
           onClick={onClose}
           className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
         >
-          Cancel
+          {t("cancel_button")}
         </Button>
         <Button className="w-[100px]" onClick={onSubmit}>
-          Save
+          {t("save_button")}
         </Button>
       </DialogFooter>
     );
