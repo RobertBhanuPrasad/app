@@ -664,7 +664,11 @@ export const BasicFilters: React.FC<{
   } = useController({
     name: "course_id",
   });
-
+  const handleKeyPress = (e: { key: string; preventDefault: () => void; }) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); 
+    }
+  };
   const {
     field: { value: courseDate, onChange: courseDateOnChange },
   } = useController({
@@ -691,6 +695,7 @@ export const BasicFilters: React.FC<{
         <Input
           value={value}
           onChange={onChange}
+          onKeyDown={handleKeyPress}
           type="text"
           className="border-none focus:outline-none"
           placeholder={`Search by Course ID`}
