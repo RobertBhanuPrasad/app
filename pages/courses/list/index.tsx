@@ -464,6 +464,7 @@ function index() {
               table: "",
               rowStyles: "!important border-none",
             }}
+            noRecordsPlaceholder="There are no courses"
             columns={column(hasAliasNameFalse(data))}
             data={programData?.data?.data || []}
             columnPinning={true}
