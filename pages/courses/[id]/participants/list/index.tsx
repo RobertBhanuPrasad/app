@@ -605,7 +605,7 @@ function index() {
             total={participantData?.data?.total || 0}
             pageSize={pageSize}
             setPageSize={setPageSize}
-            pagination={participantData?.data?.total && participantData?.data?.total<10 ? false: true}
+            pagination={true}
             tableStyles={{
               table: "",
               rowStyles: "",

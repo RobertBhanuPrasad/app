@@ -146,7 +146,7 @@ export function BaseTable<TData, TValue>({
   current,
   setCurrent,
   pageCount,
-  total,
+  total=0,
   setPageSize = () => {},
   pageSize,
   pagination = false,
@@ -570,8 +570,9 @@ export function BaseTable<TData, TValue>({
               setCurrent={setCurrent}
               current={current}
               pageCount={pageCount}
+              total={total}
             />
-
+            {total>=10 &&  
             <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
               <Select
                 value={`${pageSize}`}
@@ -597,7 +598,7 @@ export function BaseTable<TData, TValue>({
                 </SelectContent>
               </Select>
               <div>of {total}</div>
-            </div>
+            </div>}
           </div>
         )}
       </div>
@@ -609,10 +610,12 @@ interface DataPaginationProps {
   setCurrent?: (value: React.SetStateAction<number>) => void;
   current?: number;
   pageCount?: number;
+  total?:number;
 }
 
 const DataPagination = ({
   setCurrent = () => {},
+  total=0,
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
@@ -651,7 +654,7 @@ const DataPagination = ({
         </Button>
       )}
       {/* pages buttons */}
-      {PagesArray.map((page:any, index:any) => (
+      {total >=10 && PagesArray.map((page:any, index:any) => (
         <div key={index}>
       {/* Check if the current page is a placeholder for ellipsis.If yes, display the ellipsis.Otherwise, display a button for the page. */}
           {page === DOTS ? (
