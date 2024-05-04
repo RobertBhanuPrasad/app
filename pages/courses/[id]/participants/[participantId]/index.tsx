@@ -17,10 +17,11 @@ import {
     VIEW_PARTICIPANT_TRANSACTION_DETAILS,
     VIEW_PARTICIPANT_UTM_PARAMETERS,
 } from "src/constants/Tabs";
+import { useTranslation } from 'next-i18next';
 
 function index() {
     const router = useRouter();
-
+    const {t} = useTranslation(["course.participants"])
     const Id: number | undefined = router?.query?.participantId
         ? parseInt(router.query.participantId as string)
         : undefined;
@@ -28,7 +29,7 @@ function index() {
     const tabTriggers: any = [
         {
             value: VIEW_PARTICIPANT_COURSE_INFORMATION,
-            label: "Course Information",
+            label: t('course.participants:view_participant.course_information_tab.course_information'),
             disabled: false,
         },
         {
@@ -55,7 +56,7 @@ function index() {
     const tabs = [
         {
             id: 0,
-            label: "Course Information ",
+            label: t('course.participants:view_participant.course_information_tab.course_information'),
             content: (
                 <div>
                     <ViewParticipantCourseInformation participantId={Id} />
@@ -114,7 +115,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
 
     const translateProps = await serverSideTranslations(
         context.locale ?? "en",
-        ["common"]
+        ["common", "course.participants", "course.view_course", "new_strings"]
     );
 
     if (!authenticated) {

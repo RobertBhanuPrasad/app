@@ -78,7 +78,8 @@
 
 
 
- "participants":"participants"
+ "participants":"participants",
+ "coursename":"CourseName"
 
 
 }
