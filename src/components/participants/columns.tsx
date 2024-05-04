@@ -14,14 +14,16 @@ import { useTranslation } from 'next-i18next';
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-export const columns: ExtendedColumnDef<any>[] = [
+export const columns = () =>
+{
+  const {t} = useTranslation(['course.participants'])
+  const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "participant_code",
     column_name: "Registration ID",
     enablePinning: true,
     enableHiding: false,
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return <div className="min-w-[150px] text-left">
       {t('course.participants:find_participant.registration_id')}</div>;
     },
@@ -50,7 +52,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "created_at",
     column_name: "Registration Date",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants']) 
       return (
         <div>
           <Button
@@ -81,7 +82,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     enableHiding: false,
     enableSorting: true,
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div>
           <Button
@@ -113,7 +113,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "NIF",
     column_name: "NIF",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return <div className="text-left"> {t('course.participants:find_participant.nif')}</div>;
     },
 
@@ -131,7 +130,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Date of Birth",
     column_name: "Date of Birth",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div>
           <Button
@@ -165,7 +163,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Phone",
     enableHiding: false,
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div>
           <Button
@@ -198,7 +195,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Email",
     enableHiding: false,
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div>
           <Button
@@ -231,7 +227,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Fee Level",
     enableHiding: false,
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div>
           <Button
@@ -264,7 +259,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Amount",
     enableHiding: false,
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div>
           <Button
@@ -296,7 +290,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Transaction Type",
     column_name: "Transaction Type",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return <div className="min-w-[150px] text-left">{t('course.participants:view_participant.transaction_type')}</div>;
     },
 
@@ -320,7 +313,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Transaction ID",
     column_name: "Transaction ID",
     header: ({ column }) => {
-     const {t} = useTranslation(['course.participants'])
       return <div className=" min-w-[200px] text-left">{t('course.participants:view_participant.transaction_id')}</div>;
     },
 
@@ -343,7 +335,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Payment Method",
     column_name: "Payment Method",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return <div className="min-w-[200px] text-left">{t('course.participants:view_participant.payment_method')}</div>;
     },
 
@@ -363,7 +354,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Balance",
     column_name: "Balance",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return <div className="text-left">{t('course.participants:find_participant.balance_due(EUR)')}</div>;
     },
 
@@ -384,7 +374,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Transaction Status",
     enableHiding: false,
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return <div className="min-w-[150px] text-left">{t('course.participants:find_participant.transaction_status')}</div>;
     },
 
@@ -405,7 +394,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     column_name: "Attendance Status",
     enableHiding: false,
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div>
           <Button
@@ -439,7 +427,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Program Agreement Version",
     column_name: "Program Agreement Version",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return <div className="text-left">{t('course.participants:find_participant.program_agreement_version')}</div>;
     },
 
@@ -459,7 +446,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Program Agreement Status",
     column_name: "Program Agreement Status",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div className="min-w-[150px] text-left">{t('course.participants:find_participant.program_agreement_status')}</div>
       );
@@ -481,7 +467,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Program Agreement Date",
     column_name: "Program Agreement Date",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div className="min-w-[150px] text-left">{t('course.participants:find_participant.program_agreement_date')}</div>
       );
@@ -502,7 +487,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Health Declaration Status",
     column_name: "Health Declaration Status",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div className="min-w-[150px] text-left">{t('course.participants:find_participant.health_declaration_status')}</div>
       );
@@ -524,7 +508,6 @@ export const columns: ExtendedColumnDef<any>[] = [
     accessorKey: "Health Declaration Consent Date",
     column_name: "Health Declaration Consent Date",
     header: ({ column }) => {
-      const {t} = useTranslation(['course.participants'])
       return (
         <div className="min-w-[150px] text-left">
           {t('course.participants:find_participant.health_declaration_consent_date')}
@@ -589,6 +572,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     },
   },
 ];
+
+return columns
+
+}
 
 export function formatDate(date: string): string {
   const options: Intl.DateTimeFormatOptions = {

@@ -610,7 +610,7 @@ function index() {
               table: "",
               rowStyles: "",
             }}
-            columns={columns}
+            columns={columns()}
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
