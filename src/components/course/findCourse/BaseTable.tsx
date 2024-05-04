@@ -40,6 +40,7 @@ import {
 } from "src/ui/select";
 
 import DropDown from "@public/assets/DropDown";
+import { useTranslation } from "next-i18next";
 
 import { useTranslation } from 'next-i18next';
 interface IBaseTable<TData, TValue> {
@@ -316,7 +317,7 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
-
+  const {t} = useTranslation(['common', "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
@@ -329,7 +330,7 @@ export function BaseTable<TData, TValue>({
                   variant="outline"
                   className="flex flex-row justify-between w-[192px] h-10"
                 >
-                  Columns
+                  {t('course.find_course:columns')}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -342,11 +343,12 @@ export function BaseTable<TData, TValue>({
                         checked={selectAll}
                         onCheckedChange={handleSelectAllChange}
                       />
-                      <div className="font-bold text-[14px]">Select All</div>
+                      <div className="font-bold text-[14px]">{t('course.find_course:select_all')}</div>
                     </div>
                     {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn)// Here we are filtering the columns which have accessorKey
+                      .filter((column) => column?.accessorFn)
+                      // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
                         if (!column.getCanHide()) { 
                           //display the disabled options 
@@ -396,13 +398,13 @@ export function BaseTable<TData, TValue>({
                       className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
                     >
                       <ClearAll />
-                      <div>Clear All</div>
+                      <div>{t('clear_all')}</div>
                     </div>
                     <Button
                       onClick={applyColumnVisibilityChanges}
                       className="h-9 w-18 rounded-xl"
                     >
-                      Apply
+                      {t('apply_button')}
                     </Button>
                   </div>
                 </div>
@@ -557,7 +559,7 @@ export function BaseTable<TData, TValue>({
                       colSpan={columns?.length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      {t('new_strings:no_results')}
                     </TableCell>
                   </TableRow>
                 )}
@@ -590,13 +592,13 @@ export function BaseTable<TData, TValue>({
                       pageSize // Till now there is no limit will change after confirming TODO
                     ) => (
                       <SelectItem key={pageSize} value={`${pageSize}`}>
-                        Showing {pageSize}
+                        {t('course.find_course:showing')} {pageSize}
                       </SelectItem>
                     )
                   )}
                 </SelectContent>
               </Select>
-              <div>of {total}</div>
+              <div>{t('course.find_course:of')} {total}</div>
             </div>
           </div>
         )}
@@ -616,7 +618,7 @@ const DataPagination = ({
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
-  const {t} = useTranslation(["common"])
+  const {t} = useTranslation("common")
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}

@@ -12,6 +12,10 @@ import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 import { ChevronDownIcon } from '@radix-ui/react-icons'
 import { useList, useSelect, useTable } from '@refinedev/core'
 import { format } from 'date-fns'
+import { useTranslation } from 'next-i18next'
+import { authProvider } from "src/authProvider"
+import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
 import React, { useEffect, useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
 import { column } from 'src/components/course/findCourse/Columns'
@@ -26,10 +30,6 @@ import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectVa
 import { Sheet, SheetContent, SheetTrigger } from 'src/ui/sheet'
 import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
-
-import { authProvider } from "src/authProvider"
-import { GetServerSideProps } from "next"
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"
 
 function index() {
   interface ExcelColumn {
@@ -441,10 +441,10 @@ function index() {
       },
     ],
   });
-
+  const {t} = useTranslation(["common","course.find_course","new_strings"])
   return (
     <div className="flex flex-col justify-between relative h-screen">
-      <p className="font-semibold text-2xl ml-8">Find Course</p>
+      <p className="font-semibold text-2xl ml-8">{t('new_strings:find_course')}</p>
       <div className="mx-8 flex flex-col gap-4 mt-4">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
@@ -466,7 +466,7 @@ function index() {
               table: "",
               rowStyles: "!important border-none",
             }}
-            columns={column(hasAliasNameFalse(data))}
+            columns={column(hasAliasNameFalse(data), (t))}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
@@ -481,15 +481,15 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>Select All</div>
+            <div>{t('course.find_course:select_all')}</div>
             <div className="font-semibold">
               {FilterProgramData?.data?.total || 0}
             </div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            Selected: {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
-            Out of{" "}
+            {t('course.find_course:selected')}: {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
+            {t('course.find_course:out_of')}{" "}
             <div className="font-semibold">
               {FilterProgramData?.data?.total || 0}
             </div>{" "}
@@ -504,7 +504,7 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl"
                 disabled={!allSelected}
               >
-                Export <ChevronDownIcon className="w-5 h-5" />
+                {t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
@@ -512,11 +512,11 @@ function index() {
                 onClick={handleExportExcel}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                Excel
+                {t('new_strings:excel')}
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
-                Csv
+                {t('new_strings:csv')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -532,7 +532,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
+    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
         <div className="flex-[0.25]">
           <AdvanceFilter
@@ -549,6 +549,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 };
 
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
+  const {t} = useTranslation(["common","new_strings"])
   return (
     <div className="relative ml-[-12px] mt-[-12px]">
       <DateRangePicker
@@ -571,13 +572,13 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
           }
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
-          Reset
+          {t('new_strings:reset_button')}
         </Button>
         <Button
           onClick={() => setOpen(false)}
           className=" w-[94px] h-10 rounded-xl"
         >
-          Apply
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -599,7 +600,7 @@ export const CourseTypeComponent = ({ name }: any) => {
     name: name,
   });
 
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);;
   const { options, onSearch } = useSelect({
     resource: "program_types",
     optionLabel: "name",
@@ -624,8 +625,8 @@ export const CourseTypeComponent = ({ name }: any) => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
-  console.log("heyy course type component", value);
-
+ 
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={value}
@@ -634,7 +635,7 @@ export const CourseTypeComponent = ({ name }: any) => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select Course Type" />
+        <SelectValue placeholder={t('new_strings:select_course_type')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -689,7 +690,7 @@ export const BasicFilters: React.FC<{
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
   };
-
+  const {t} = useTranslation(["common","course.find_course","new_strings"])
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
@@ -699,7 +700,7 @@ export const BasicFilters: React.FC<{
           onChange={onChange}
           type="text"
           className="border-none focus:outline-none"
-          placeholder={`Search by Course ID`}
+          placeholder={t('course.find_course:search_by_course_id')}
         />
       </div>
       <div>
@@ -741,7 +742,7 @@ export const BasicFilters: React.FC<{
                 </div>
               ) : (
                 <div className="flex gap-2 font-normal">
-                  Select the Date Range
+                  {t('new_strings:select_the_date_range')}
                 </div>
               )}
             </Button>
@@ -767,7 +768,7 @@ export const BasicFilters: React.FC<{
           className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
-          <div>Clear All</div>
+          <div>{t('clear_all')}</div>
         </div>
         <Button
           onClick={() => {
@@ -777,7 +778,7 @@ export const BasicFilters: React.FC<{
           }}
           className="h-9 w-18 rounded-xl"
         >
-          Apply
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -801,6 +802,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
             formData.advanceFilter[key] !== ""
       ).length) ||
     0;
+  const {t} = useTranslation("course.find_course")
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">
@@ -816,7 +818,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           className="flex flex-row gap-2 !rounded-xl"
           variant="outline"
         >
-          All Filters
+          {t('course.find_course:all_filters')}
           <FilterIcon />
           {count > 0 && <CountComponent count={count} />}
         </Button>
