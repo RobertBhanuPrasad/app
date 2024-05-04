@@ -9,14 +9,6 @@ import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { EditParticipantFormNames } from 'src/constants/CourseConstants'
 import {
-  EDIT_PARTICIPANT_ACCOMODATION_DETAILS,
-  EDIT_PARTICIPANT_COURSE_FEE,
-  EDIT_PARTICIPANT_INFORMATION,
-  EDIT_PARTICIPANT_PAYMENT_DETAILS,
-  VIEW_PARTICIPANT_TRANSACTION_DETAILS,
-  VIEW_PARTICIPANT_UTM_PARAMETERS
-} from 'src/constants/Tabs'
-import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
@@ -29,6 +21,7 @@ import AccomodationDetails from './AccomodationDetails'
 import CourseFee from './CourseFee'
 import ParticipantInformation from './ParticipantInformation'
 import PaymentDetails from './PaymentDetails'
+import { EDIT_PARTICIPANT_ACCOMODATION_DETAILS, EDIT_PARTICIPANT_COURSE_FEE, EDIT_PARTICIPANT_INFORMATION, EDIT_PARTICIPANT_PAYMENT_DETAILS, VIEW_PARTICIPANT_TRANSACTION_DETAILS, VIEW_PARTICIPANT_UTM_PARAMETERS } from 'src/constants/Tabs'
 
 export default function EditParticipantTabs() {
   const { watch } = useFormContext()

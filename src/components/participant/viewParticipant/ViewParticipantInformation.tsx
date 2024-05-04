@@ -131,7 +131,7 @@ if (isDisplayRegistrationCompletionLink(participantData?.data?.is_manual_registr
 
   // Render component content based on loading state
   return !isLoading ? (
-    <div className="w-[303px] bg-[white] border border-[#D9D9D9] rounded-[15px] shadow-lg flex justify-center items-center">
+    <div className="py-[20px] w-[303px] bg-[white] border border-[#D9D9D9] rounded-[15px] shadow-lg flex justify-center items-center">
       <div className="w-[263px]">
         <p className="font-[600] text-[18px] font-sans">Participants Information</p>
         {participantInfo?.map((info, index) => (

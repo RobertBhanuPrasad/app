@@ -65,7 +65,7 @@ interface IBaseTable<TData, TValue> {
      */
     rowStyles?: string;
     /**
-     * Additional CSS classes to pass to table container 
+     * Additional CSS classes to pass to table container
      */
     tableContainer?: string;
     /**
@@ -146,7 +146,7 @@ export function BaseTable<TData, TValue>({
   current,
   setCurrent,
   pageCount,
-  total,
+  total=0,
   setPageSize = () => {},
   pageSize,
   pagination = false,
@@ -321,7 +321,7 @@ export function BaseTable<TData, TValue>({
       <div className="flex flex-row justify-between">
         {columnSelector && (
           <div>
-            <DropdownMenu open={open}>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
@@ -345,10 +345,10 @@ export function BaseTable<TData, TValue>({
                     </div>
                     {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn)// Here we are filtering the columns which have accessorKey
+                      .filter((column) => column?.accessorFn) // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
-                        if (!column.getCanHide()) { 
-                          //display the disabled options 
+                        if (!column.getCanHide()) {
+                          //display the disabled options
                           return (
                             <div className="flex flex-row gap-4 items-center">
                               <Checkbox
@@ -358,7 +358,10 @@ export function BaseTable<TData, TValue>({
                                 className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
                                 checked={columnVisibilityChanges[column.id]}
                                 onCheckedChange={(value: boolean) => {
-                                  handleColumnVisibilityChange(column.id, value);
+                                  handleColumnVisibilityChange(
+                                    column.id,
+                                    value
+                                  );
                                 }}
                               />
                               {column?.columnDef?.column_name}
@@ -366,26 +369,27 @@ export function BaseTable<TData, TValue>({
                           );
                         }
                       })}
-                       {table
+                    {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn && column.getCanHide())
+                      .filter(
+                        (column) => column?.accessorFn && column.getCanHide()
+                      )
                       // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
                         // display the enabled options
-                          return (
-                            <div className="flex flex-row gap-4 items-center">
-                              <Checkbox
-                                key={column.id}
-                                className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
-                                checked={columnVisibilityChanges[column.id]}
-                                onCheckedChange={(value: boolean) => {
-                                  handleColumnVisibilityChange(column.id, value);
-                                }}
-                              />
-                              {column?.columnDef?.column_name}
-                            </div>
-                          );
-                        
+                        return (
+                          <div className="flex flex-row gap-4 items-center">
+                            <Checkbox
+                              key={column.id}
+                              className="w-6 h-6 border-[1px] !border-[#D0D5DD] rounded-lg"
+                              checked={columnVisibilityChanges[column.id]}
+                              onCheckedChange={(value: boolean) => {
+                                handleColumnVisibilityChange(column.id, value);
+                              }}
+                            />
+                            {column?.columnDef?.column_name}
+                          </div>
+                        );
                       })}
                   </div>
 
@@ -418,6 +422,7 @@ export function BaseTable<TData, TValue>({
               setCurrent={setCurrent}
               current={current}
               pageCount={pageCount}
+              total={total}
             />
           )}
         </div>
@@ -570,11 +575,12 @@ export function BaseTable<TData, TValue>({
               setCurrent={setCurrent}
               current={current}
               pageCount={pageCount}
+              total={total}
             />
-
+            {total>=10 &&  
             <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
               <Select
-                value={`${pageSize}`}
+                value={pageSize}
                 onValueChange={(value) => {
                   setPageSize(Number(value));
                   table?.setPageSize(Number(value));
@@ -584,7 +590,8 @@ export function BaseTable<TData, TValue>({
                   <SelectValue placeholder={`${pageSize}`} />
                 </SelectTrigger>
                 <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map(
+                 {/* Updated pageSize options to include [10, 25, 50, 100]. */}
+                  {[10, 25, 50, 100].map(
                     (
                       pageSize // Till now there is no limit will change after confirming TODO
                     ) => (
@@ -596,7 +603,7 @@ export function BaseTable<TData, TValue>({
                 </SelectContent>
               </Select>
               <div>of {total}</div>
-            </div>
+            </div>}
           </div>
         )}
       </div>
@@ -608,54 +615,79 @@ interface DataPaginationProps {
   setCurrent?: (value: React.SetStateAction<number>) => void;
   current?: number;
   pageCount?: number;
+  total?:number;
 }
 
 const DataPagination = ({
   setCurrent = () => {},
+  total=0,
   current = 1,
   pageCount = 1,
 }: DataPaginationProps) => {
+  const PagesArray = [];
+  const DOTS = ". . .";
+  if (pageCount <= 4) {
+    // If there are 4 or fewer pages, show all pages without ellipses
+    for (let i = 1; i <= pageCount; i++) {
+      PagesArray.push(i);
+    }
+  } else {
+    if (current <= 3) {
+    // If current page is 4 or less, show pages 1 to 4, then ellipses, then last page
+      PagesArray.push(1, 2, 3, 4, DOTS, pageCount);
+    } else if (current >= pageCount - 2) {
+    // If current page is near the end, show first page, ellipses, and last 4 pages
+      PagesArray.push(1, DOTS,pageCount - 3, pageCount - 2, pageCount - 1,  pageCount);
+    } else {
+    // Otherwise,first page , ellipses, current page, ellipses, and last page
+      PagesArray.push(1, DOTS, current - 1, current, current + 1, DOTS, pageCount);
+    }
+  }
+  
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
-      <Button
-        variant="outline"
-        className="h-8 w-8 p-0 border-none"
-        onClick={() => {
-          setCurrent(current - 1);
-        }}
-        disabled={current <= 1}
-      >
-        <div>Prev</div>
-      </Button>
-
-      {/*pages buttons */}
-      {[1, 2, 3, 4, 10].map((page, index, array) => (
+      {/* Check if there are more than one page, and if so, display a button for navigating to the previous page. */}
+      {pageCount > 1 && (
+        <Button
+          variant="outline"
+          className="h-8 w-8 p-0 border-none"
+          onClick={() => setCurrent(current - 1)}
+          disabled={current <= 1}
+        >
+          <div>Prev</div>
+        </Button>
+      )}
+      {/* pages buttons */}
+      {total >=10 && PagesArray.map((page:any, index:any) => (
         <div key={index}>
-          <Button
-            variant={page === current ? "default" : "outline"}
-            onClick={() => {
-              setCurrent(page);
-            }}
-            disabled={page > pageCount}
-          >
-            {page}
-          </Button>
-          {index === 3 && array.length > 4 && <span className="p-2">...</span>}
+      {/* Check if the current page is a placeholder for ellipsis.If yes, display the ellipsis.Otherwise, display a button for the page. */}
+          {page === DOTS ? (
+            <span className="p-2">{DOTS}</span>
+          ) : (
+            <Button
+              variant={page === current ? "default" : "outline"}
+              onClick={() => {
+                setCurrent(page);
+              }}
+            >
+              {page}
+            </Button>
+          )}
         </div>
       ))}
-
-      {/*next button */}
-      <Button
-        variant="outline"
-        className="h-8 w-8 p-0 border-none"
-        onClick={() => {
-          setCurrent(current + 1);
-        }}
-        disabled={pageCount < current + 1}
-      >
-        <div>Next</div>
-      </Button>
+      {/* next button */}
+      {/* Check if there are more than one page, and if so, display a button for navigating to the next page. */}
+      {pageCount > 1 && (
+        <Button
+          variant="outline"
+          className="h-8 w-8 p-0 border-none"
+          onClick={() => setCurrent(current + 1)}
+          disabled={current >= pageCount}
+        >
+          <div>Next</div>
+        </Button>
+      )}
     </div>
-  );
+  );  
 };

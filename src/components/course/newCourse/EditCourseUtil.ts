@@ -8,7 +8,9 @@ export const handleCourseDefaultValues = async (
   programId: number,
   timeFormat12HoursId: number
 ) => {
-  const { data, error } = await supabaseClient
+  const supabase = supabaseClient();
+
+  const { data, error } = await supabase
     .from("program")
     .select(
       "*,program_organizers(*),program_teachers(*),program_assistant_teachers(*),program_languages(*),program_translation_languages(*),program_schedules(*),program_accommodations(*),program_contact_details(*),program_fee_level_settings(*)"
@@ -135,10 +137,11 @@ export const getDefaultValues = async (
   if (data?.program_alias_name_id)
     defaultValues.program_alias_name_id = data.program_alias_name_id as number;
 
+  const supabase = supabaseClient();
   //Step 3
 
   // if the selected program_type contains is_online_program to true then load online_url, state_id,city_id and center_id
-  const { data: programTypeData }: any = await supabaseClient
+  const { data: programTypeData }: any = await supabase
     .from("program_types")
     .select("*")
     .eq("id", data.program_type_id);
@@ -157,7 +160,7 @@ export const getDefaultValues = async (
 
     // for form to match requirement we need to store venue data into existingVenue form name
     if (data.venue_id) {
-      const { data: venueData }: any = await supabaseClient
+      const { data: venueData }: any = await supabase
         .from("venue_view_with_names")
         .select("*")
         .eq("id", data.venue_id);
@@ -261,7 +264,7 @@ export const getDefaultValues = async (
     defaultValues.is_early_bird_enabled = data.is_early_bird_enabled;
 
   //If program_fee_settings_id is null then program as it's own fee levels
-  if (data.program_fee_settings_id==null) {
+  if (data.program_fee_settings_id == null) {
     defaultValues.program_fee_level_settings =
       data.program_fee_level_settings as any;
 
@@ -290,4 +293,13 @@ export const getDefaultValues = async (
       data.bcc_registration_confirmation_email;
 
   return defaultValues;
+};
+
+/**
+ * This function is used to determine whether the particular url contains edit or not
+ * @param url
+ * @returns a boolean
+ */
+export const IsEditCourse = (url: string) => {
+  return url.includes("/edit");
 };

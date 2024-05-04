@@ -40,14 +40,26 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { useRouter } from "next/router";
+import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
+import { IsEditCourse } from "./EditCourseUtil";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 export default function NewCourseReviewPage() {
+  const supabase = supabaseClient();
+
   const { data: loginUserData }: any = useGetIdentity();
+
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
 
   // Checking weather login user is super admin or not
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
@@ -59,8 +71,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData, setViewPreviewPage, setViewThankyouPage } =
-    newCourseStore();
+  const { newCourseData } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -134,26 +145,31 @@ export default function NewCourseReviewPage() {
 
   const { data }: any = useGetIdentity();
 
+  const pathname = usePathname();
+
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
+
+  //fetching the user's country code
+  const countryCode = useGetCountryCode();
 
   //Finding course start date
   const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
 
   const fetchFeeData = async () => {
     //Sending all required params
-    const { data, error } = await supabaseClient.functions.invoke(
-      "course-fee",
-      {
-        method: "POST",
-        body: {
-          state_id: stateId,
-          city_id: cityId,
-          center_id: centerId,
-          start_date: courseStartDate,
-          program_type_id: newCourseData?.program_type_id,
-        },
-      }
-    );
+    const { data, error } = await supabase.functions.invoke("course-fee", {
+      method: "POST",
+      body: {
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
+        program_type_id: newCourseData?.program_type_id,
+      },
+      headers: {
+        "country-code": countryCode,
+      },
+    });
 
     if (error)
       console.log("error while fetching course fee level settings data", error);
@@ -347,7 +363,10 @@ export default function NewCourseReviewPage() {
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
 
-  const { setProgramId } = newCourseStore();
+  const [onEditSuccess, setOnEditSuccess] = useState(false);
+
+  const { setProgramId, setViewPreviewPage, setViewThankyouPage } =
+    newCourseStore();
 
   /**
    * invalidate is used to access the mutate function of useInvalidate() and useInvalidate() is a hook that can be used to invalidate the state of a particular resource
@@ -371,28 +390,37 @@ export default function NewCourseReviewPage() {
       newCourseData,
       data?.userData?.id,
       setProgramId,
-      accountingNotSubmittedStatusId
+      accountingNotSubmittedStatusId,
+      pathname,
+      countryCode
     );
 
+    // we are checking the course is edit or user created new course
+    const isEdited = IsEditCourse(pathname);
+
+    // we have to display thank you page or success modal pop up only when the posting done successfully without any error
     if (isPosted) {
-      // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
-      await invalidate({
-        resource: "program",
-        invalidates: ["list"],
-      });
+      if (isEdited) {
+        setOnEditSuccess(true);
+      } else {
+        // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+        await invalidate({
+          resource: "program",
+          invalidates: ["list"],
+        });
+        // i need to set params with section=thank_you
+        const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
+        current.set("section", "thank_you");
 
-      // i need to set params with section=thank_you
-      const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
-      current.set("section", "thank_you");
+        const params = current.toString();
 
-      const params = current.toString();
+        router.replace(`${pathname}?${params}`);
 
-      router.replace(`${pathname}?${params}`);
-      // setViewPreviewPage(false)
-      // setViewThankyouPage(true)
-    } else {
-      setIsSubmitting(false);
+        setViewPreviewPage(false);
+        setViewThankyouPage(true);
+      }
     }
+    setIsSubmitting(false);
   };
 
   /**
@@ -412,10 +440,17 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
-
   return (
     <div className="pb-12">
-      <div className="text-[24px] my-4 font-semibold ml-6">Review Course Details</div>
+      <div className="text-[24px] my-4 font-semibold ml-6">
+        Review Course Details
+      </div>
+      <section className="w-full py-8 text-base border-b bg-white">
+        <EditCourseSuccessfullyInfo
+          onEditSuccess={onEditSuccess}
+          setOnEditSuccess={setOnEditSuccess}
+        />
+      </section>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -435,6 +470,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Basic Details");
               }}
               onOpenChange={setOpenBasicDetails}
+              currentStep={1}
             />{" "}
           </div>
           {/* body */}
@@ -519,6 +555,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Course Details");
               }}
               onOpenChange={setOpenCourseDetails}
+              currentStep={2}
             />{" "}
           </div>
           {/* body */}
@@ -568,30 +605,34 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-              Display language translation option for participants
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_language_translation_for_participants}
-              >
-                {newCourseData?.is_language_translation_for_participants ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Display language translation option for participants
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={
+                    newCourseData?.is_language_translation_for_participants
+                  }
+                >
+                  {newCourseData?.is_language_translation_for_participants
+                    ? "Yes"
+                    : "No"}
+                </abbr>
+              </div>
             )}
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-              Registration is mandatory for this course
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_registration_required}
-              >
-                {newCourseData?.is_registration_required ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Registration is mandatory for this course
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_registration_required}
+                >
+                  {newCourseData?.is_registration_required ? "Yes" : "No"}
+                </abbr>
+              </div>
             )}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -617,29 +658,33 @@ export default function NewCourseReviewPage() {
                 {visibility ? visibility?.value : "-"}
               </abbr>
             </div>
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Country(s) from where registrations are allowed
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={allowedCountries}
-              >
-                {allowedCountries ? allowedCountries : "-"}
-              </abbr>
-            </div>
+            {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
+            {hasSuperAdminRole &&
+              newCourseData?.is_geo_restriction_applicable && (
+                <div className="w-[291px]">
+                  <p className="text-sm font-normal text-accent-light text-[#999999]">
+                    Country(s) from where registrations are allowed
+                  </p>
+                  <abbr
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                    title={allowedCountries}
+                  >
+                    {allowedCountries ? allowedCountries : "-"}
+                  </abbr>
+                </div>
+              )}
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                Is geo restriction applicable for registrations
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_geo_restriction_applicable}
-              >
-                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  Is geo restriction applicable for registrations
+                </p>
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_geo_restriction_applicable}
+                >
+                  {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
+                </abbr>
+              </div>
             )}
             {/* // TODO need to do when the form filed is clear */}
             <div className="w-[291px]">
@@ -708,6 +753,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenVenueDetails}
+              currentStep={3}
             />{" "}
           </div>
           {/* body */}
@@ -781,9 +827,11 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={timeFormat?.value}
                 >
-                   {timeFormat?.value ?
-                    timeFormat?.value.split(" ")[0] + " " +
-                    timeFormat?.value.split(" ")[1] + "s"
+                  {timeFormat?.value
+                    ? timeFormat?.value.split(" ")[0] +
+                      " " +
+                      timeFormat?.value.split(" ")[1] +
+                      "s"
                     : "-"}
                 </abbr>
               </div>
@@ -821,6 +869,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Venue Details");
               }}
               onOpenChange={setOpenFeesDetails}
+              currentStep={4}
             />{" "}
           </div>
           {/* body */}
@@ -888,6 +937,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Accomidation Details");
               }}
               onOpenChange={setOpenAccomidationDetails}
+              currentStep={5}
             />{" "}
           </div>
           {newCourseData?.is_residential_program && (
@@ -935,6 +985,7 @@ export default function NewCourseReviewPage() {
                 setClickedButton("Contact Details");
               }}
               onOpenChange={setOpenContactDetails}
+              currentStep={6}
             />{" "}
           </div>
           {/* body */}
@@ -1170,5 +1221,62 @@ const EarlyBirdFees = ({
         </CardValue>
       </abbr>
     </div>
+  );
+};
+
+// to show the success alert component while editing of course completed
+
+export const EditCourseSuccessfullyInfo = ({
+  onEditSuccess,
+  setOnEditSuccess,
+}: any) => {
+  const [onButtonLoading, setOnButtonLoading] = useState(false);
+  const router = useRouter();
+
+  const handleClick = () => {
+    const courseId = router.query.id; // Get the courseId from the router query
+    setOnButtonLoading(true);
+    // Construct the URL string with the courseId
+    const courseUrl = `/courses/${courseId}`;
+    router
+      .push(courseUrl)
+      .then(() => {
+        setOnButtonLoading(false);
+        setOnEditSuccess(false);
+      })
+      .catch((e: any) => {
+        console.log(e, "error while routing");
+      });
+  };
+  return (
+    <AlertDialog open={onEditSuccess}>
+      <AlertDialogContent className="flex flex-col items-center justify-center h-[309px] w-[414px] !rounded-[24px] !gap-[34px] !p-[24px]">
+        <AlertDialogHeader>
+          <div className="flex justify-center cursor-pointer">
+            <Tick />
+          </div>
+        </AlertDialogHeader>
+        <AlertDialogDescription className="flex flex-col !w-[366px] !h-[71px] !gap-4 text-[#333333] items-center text-center">
+          <h2 className="pt-[16px] text-[24px] font-semibold">
+            Successfully Updated
+          </h2>
+          <p className="text-[16px] font-normal">
+            Your changes have been saved successfully
+          </p>
+        </AlertDialogDescription>
+        <AlertDialogFooter>
+          <div className="w-full flex justify-center items-center gap-5">
+            <Button
+              disabled={onButtonLoading}
+              type="button"
+              className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
+              onClick={handleClick}
+            >
+              {onButtonLoading ? <LoadingIcon /> : "Go to Course Details"}
+            </Button>
+          </div>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };

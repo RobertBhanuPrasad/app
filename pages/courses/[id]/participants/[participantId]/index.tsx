@@ -36,7 +36,7 @@ function index() {
       id: 1,
       label: 'Transaction Details',
       content: (
-        <div>
+        <div id="transaction-details-tab">
           {' '}
           <ViewParticipantTransactionDetails participantId={Id} activeTabValue={activeTabValue} />
         </div>
