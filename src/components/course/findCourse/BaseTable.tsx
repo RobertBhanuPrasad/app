@@ -587,9 +587,10 @@ export function BaseTable<TData, TValue>({
                   table?.setPageSize(Number(value));
                 }}
               >
-                <SelectTrigger className="h-8 w-[131px]">
-                  <SelectValue placeholder={`${pageSize}`} />
-                </SelectTrigger>
+              <SelectTrigger className="h-8 w-[131px]">
+                  <div className="text-[#666666]">Showing</div>
+                  <SelectValue/>
+              </SelectTrigger>
                 <SelectContent side="top">
                  {/* Updated pageSize options to include [10, 25, 50, 100]. */}
                   {[10, 25, 50, 100].map(
@@ -597,7 +598,7 @@ export function BaseTable<TData, TValue>({
                       pageSize // Till now there is no limit will change after confirming TODO
                     ) => (
                       <SelectItem key={pageSize} value={`${pageSize}`}>
-                        Showing {pageSize}
+                        {pageSize}
                       </SelectItem>
                     )
                   )}
