@@ -40,8 +40,6 @@ import {
 } from "src/ui/select";
 
 import DropDown from "@public/assets/DropDown";
-import { useTranslation } from "next-i18next";
-
 import { useTranslation } from 'next-i18next';
 interface IBaseTable<TData, TValue> {
   /**
