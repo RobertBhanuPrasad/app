@@ -2,7 +2,7 @@
 interface AccommodationTypesDataBaseType {
   id?: number;
   created_at?: Date;
-  name?: string;
+  name?: object;
 }
 
 interface CenterDataBaseType {

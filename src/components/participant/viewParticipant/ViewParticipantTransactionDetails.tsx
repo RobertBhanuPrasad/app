@@ -200,7 +200,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text>{row?.original?.accommodation_type_id?.accommodation_type_id?.name}</Text>
+      return <Text>{translatedText(row?.original?.accommodation_type_id?.accommodation_type_id?.name as object)}</Text>
     }
   },
   {
