@@ -238,6 +238,10 @@ function index() {
       select:
         "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
     },
+    //initially we have to show 25 records
+    pagination: {
+      pageSize: 25,
+    },
     filters: filters,
     sorters: {
       permanent: [
@@ -256,11 +260,19 @@ function index() {
   /**
    *This is the query to get data to show in the table
    */
-  const { tableQueryResult: programData } = useTable({
+  const {
+    tableQueryResult: programData,
+    setCurrent: displayDataSetCurrent,
+    setPageSize: displayDataSetPageSize,
+  } = useTable({
     resource: "program",
     meta: {
       select:
         "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+    },
+    pagination: {
+      pageSize: pageSize,
+      current: current,
     },
     filters: {
       permanent: [
@@ -464,11 +476,19 @@ function index() {
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
             checkboxSelection={true}
-            setCurrent={setCurrent}
+            //Here we have to set the current page of the query we use to display data in table and for query we apply filters
+            setCurrent={(number) => {
+              setCurrent(number);
+              displayDataSetCurrent(number);
+            }}
             pageCount={pageCount}
             total={FilterProgramData?.data?.total || 0}
             pageSize={pageSize}
-            setPageSize={setPageSize}
+            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+            setPageSize={(number) => {
+              setPageSize(number);
+              displayDataSetPageSize(number);
+            }}
             pagination={true}
             tableStyles={{
               table: "",
