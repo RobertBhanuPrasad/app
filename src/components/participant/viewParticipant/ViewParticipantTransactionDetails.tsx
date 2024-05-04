@@ -206,7 +206,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
         const tax = row?.original?.tax ? row?.original?.tax : 0
         const amountPaidByParticipant = organizationFee + accomdationFee + tax
         const totalAmount = row?.original?.total_amount ? row?.original?.total_amount : 0
-        const discount = (amountPaidByParticipant - totalAmount).toFixed(2)
+        const discount = (parseFloat(amountPaidByParticipant.toString()) - parseFloat(totalAmount.toString())).toFixed(2)
       return (
         <Text>{discount}</Text>
       );
