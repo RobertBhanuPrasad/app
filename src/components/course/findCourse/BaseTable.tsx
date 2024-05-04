@@ -418,6 +418,7 @@ export function BaseTable<TData, TValue>({
               setCurrent={setCurrent}
               current={current}
               pageCount={pageCount}
+              total={total}
             />
           )}
         </div>
