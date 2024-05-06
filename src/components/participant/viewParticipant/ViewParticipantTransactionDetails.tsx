@@ -8,6 +8,7 @@ import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
 import { useTable } from "@refinedev/core"; // Importing useTable hook for fetching table data
 import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type for defining table columns
 import { MoreVertical } from "lucide-react"; // Importing icons for UI
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"; // Importing React
 import { translatedText } from "src/common/translations";
@@ -273,6 +274,9 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     cell: ({ row }) => {
       const refundTransaction = () => {}
 
+      const {t} = useTranslation('course.participants')
+
+
       const [editPayment, setEditPayment] = useState(false)
       const [viewDonation, setViewDonation] = useState(false)
       const { query } = useRouter()
@@ -349,7 +353,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                   }}
                   className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer"
                 >
-                  Edit
+                   {t('edit_participant.participants_information_tab.edit')}
                 </div>
                 <div
                   onClick={() => {
@@ -358,7 +362,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                   }}
                   className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer"
                 >
-                  View
+                   {t('edit_participant.participants_information_tab.view')}
                 </div>
                 <div
                   onClick={() => {
@@ -366,14 +370,14 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                     refundTransaction()
                   }}
                 >
-                  <div className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer">Refund</div>
+                  <div className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer">{t('edit_participant.participants_information_tab.refund')}</div>
                 </div>
                 <div
                   onClick={() => {
                     closeDropdown()
                   }}
                 >
-                  <div className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer">Download Receipt</div>
+                  <div className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer">{t('edit_participant.participants_information_tab.download_receipt')}</div>
                 </div>
               </div>
             </DropdownMenuContent>
