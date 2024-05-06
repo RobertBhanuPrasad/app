@@ -386,7 +386,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     <CrossIcon />
                   </div>
                   <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
-                  {t('new_strings:changes_made_will_be_lost. Are_you_sure_you_want_to_continue?')}
+                  {t('new_strings:changes_made_will_be_lost. Are_you_sure_you_want_to_continue')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
