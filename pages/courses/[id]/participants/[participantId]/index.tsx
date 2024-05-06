@@ -19,13 +19,14 @@ import {
     VIEW_PARTICIPANT_UTM_PARAMETERS,
 } from "src/constants/Tabs";
 
+
 function index() {
     const {t} = useTranslation("course.participants")
     const router = useRouter();
     const Id: number | undefined = router?.query?.participantId
         ? parseInt(router.query.participantId as string)
         : undefined;
-
+    
     const tabTriggers: any = [
         {
             value: VIEW_PARTICIPANT_COURSE_INFORMATION,
@@ -44,7 +45,7 @@ function index() {
         },
         {
             value: VIEW_CUSTOMER_DEVICE_DETAILS,
-            label: "Customer Device Details",
+            label: t('course.participants:view_participant.customer_device_details'),
             disabled: false,
         },
         {
@@ -80,7 +81,7 @@ function index() {
         },
         {
             id: 3,
-            label: "Customer Device Details",
+            label: t('course.participants:view_participant.customer_device_details'),
             content: (
                 <ViewParticipantCustomerDeviceDetails participantId={Id} />
             ),
