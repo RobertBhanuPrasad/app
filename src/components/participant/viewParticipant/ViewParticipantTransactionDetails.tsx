@@ -17,7 +17,6 @@ import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrd
 import { TableHeader, Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button"; // Importing Button component
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
- import { useTranslation } from 'next-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
