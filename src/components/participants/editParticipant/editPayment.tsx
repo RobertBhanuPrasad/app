@@ -30,11 +30,13 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { DialogContent } from "src/ui/dialog";
 import { translatedText } from "src/common/translations";
 import { Button } from 'src/ui/button'
+import { useTranslation } from 'next-i18next';
 interface EditPaymentProps {
   setEditPayment: React.Dispatch<React.SetStateAction<any>>
   paymentId: number
 }
 export default function EditPayment({ setEditPayment, paymentId }: EditPaymentProps) {
+  const {t} = useTranslation(["common","course.view_course", "new_strings"])
   const { query } = useRouter()
   const { mutate } = useUpdate()
   const { watch, reset } = useFormContext()
@@ -187,11 +189,11 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
           <div>
             <div>
               <div>
-                <Text className="flex justify-center text-[24px] font-semibold ">Edit Payment</Text>
+                <Text className="flex justify-center text-[24px] font-semibold ">{t("new_strings:Edit_Payment")}</Text>
                 <div className="flex flex-row">
                   <div className="flex-1">
                     <div className="py-[5px]">
-                      <Text className="py-[5px] ">Participant Name</Text>
+                      <Text className="py-[5px] ">{t("course.view_course:revenue_summary_tab.participant_name")}</Text>
                       <div>
                         <Textarea
                           disabled={true}
@@ -202,7 +204,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     </div>
 
                     <div className="w-[278px] py-[5px]">
-                      <Text className="py-[5px]">Transaction Status</Text>
+                      <Text className="py-[5px]">{t("course.view_course:revenue_summary_tab.transaction_status")}</Text>
                       <div>
                         {/*  when transaction status is confirmed or failed need to disable select */}
                         <Select
@@ -219,7 +221,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           }}
                         >
                           <SelectTrigger className="w-[278px]">
-                            <SelectValue placeholder="Select Transaction Status" />
+                            <SelectValue placeholder={t("new_strings: select_transaction_status")} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItems>
@@ -243,7 +245,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     </div>
 
                     <div className="py-[5px] ">
-                      <Text className="py-[5px] outline-none">Transaction ID</Text>
+                      <Text className="py-[5px] outline-none">{t("new_strings: transaction_id")}</Text>
                       <div>
                         <Textarea
                           disabled={true}
@@ -256,13 +258,13 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
 
                   <div className="flex-1">
                     <div className="py-[5px]">
-                      <Text className="py-[5px]">Payment Date</Text>
+                      <Text className="py-[5px]">{t("new_strings: payment_date")}</Text>
                       {/* TODO: need to disable it for confirmed and failed transaction ids */}
                       <div>
                         <DateField
                           value={payment_date as Date}
                           onChange={paymentDateOnchange}
-                          placeholder="Select Date"
+                          placeholder={t("new_strings: select_date")}
                           className="!w-[278px] h-[40px] rounded-[12px]"
                           disabled={
                             transaction_status_id == FAILED_ID
@@ -276,7 +278,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     </div>
 
                     <div className="py-[5px]">
-                      <Text className="py-[5px]">Payment Method</Text>
+                      <Text className="py-[5px]">{t("new_strings: payment_method")}</Text>
                       <div className="!w-[278px]">
                         <Select
                           disabled={
@@ -292,7 +294,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           }}
                         >
                           <SelectTrigger className="w-[278px]">
-                            <SelectValue placeholder="Select Payment Method" />
+                            <SelectValue placeholder={t("new_strings: select_payment_method")} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItems>
@@ -319,7 +321,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     </div>
 
                     <div className="py-[5px]">
-                      <Text className="py-[5px] outline-none">Response Message</Text>
+                      <Text className="py-[5px] outline-none">{t("new_strings: response_message")}</Text>
                       <div>
                         <Textarea
                           disabled={true}
@@ -332,7 +334,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                 </div>
 
                 <div className="flex flex-col py-[5px]">
-                  <Text className="py-[5px] outline-none">Error Message</Text>
+                  <Text className="py-[5px] outline-none">{t("new_strings: error_message")}</Text>
                   <div>
                     <Textarea
                       disabled={true}
@@ -345,7 +347,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     <div>
                       <Checkbox checked={send_payment_confirmation} onCheckedChange={emailConfirmatiOnchange} />
                     </div>
-                    <Text>Send Payment confirmation mail?</Text>
+                    <Text>{t("new_strings: send_payment_confirmation_mail")}</Text>
                   </div>
                 </div>
               </div>
@@ -358,7 +360,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                   }}
                   className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold"
                 >
-                  Cancel
+                  {t("cancel_button")}
                 </Button>
               </div>
               <div>
@@ -368,7 +370,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     onFormSubmission()
                   }}
                 >
-                  Save
+                 {t("save_button")}
                 </Button>
               </div>
             </div>

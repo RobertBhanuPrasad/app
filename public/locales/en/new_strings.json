@@ -98,7 +98,16 @@
 
 
 
- "participants":"participants"
-
+ "participants":"participants",
+ "Edit_Payment": "Edit Payment",
+ "select_transaction_status":"Select Transaction Status",
+ "transaction_id": "Transaction ID",
+ "payment_date": "Payment Date",
+ "select_date": "Select Date",
+ "payment_method":"Payment Method",
+ "select_payment_method":"Select Payment Method",
+ "response_message":"Response Message",
+ "error_message":"Error Message",
+ "send_payment_confirmation_mail":"Send Payment confirmation mail?"
 
 }
