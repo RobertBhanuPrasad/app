@@ -199,6 +199,7 @@ export const column = (
         const router = useRouter()
 
         return (
+          //when click on this navigate to participant listing page
           <div className="min-w-[150px] text-primary cursor-pointer font-semibold" onClick={()=>router.push(`/courses/${row.original.id}/participants/list`)}>
             {row?.original?.participant_count}
           </div>
