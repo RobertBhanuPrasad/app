@@ -11,12 +11,13 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         <Navbar />
         <Breadcrumb />
       </div>
-      {/* <Image
-        src={background}
-        alt="bg"
-        className=" absolute w-full"
-      /> */}
-      <div className="mt-[120px]">{children}</div>
+
+      <div className="mt-[120px]">
+        <div className="absolute -top-[145px] -z-10 w-full">
+          <Image src={background} alt="bg" className="w-full h-[300px]" />
+        </div>
+        {children}
+      </div>
     </div>
   );
 };
