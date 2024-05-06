@@ -371,7 +371,7 @@ export const TransactionType = () => {
 }
 
 export const PaymentMethod = () => {
-  const {t}= useTranslation(["common" , "course.participant", "new_strings"])
+  const {t}= useTranslation( "new_strings")
   const {
     field: { value: paymentMethods, onChange: onSelectChange }
   } = useController({
@@ -392,7 +392,7 @@ export const PaymentMethod = () => {
     <div>
       <MultiSelect
         value={paymentMethods}
-        placeholder={t("new_strings:select_payment_method_placeholder")}
+        placeholder={t("new_strings:select_payment_method")}
         data={paymentMethodValues}
         onBottomReached={() => {}}
         onSearch={() => {}}
@@ -405,7 +405,7 @@ export const PaymentMethod = () => {
 }
 
 export const FeeLevel = () => {
-  const {t} = useTranslation(["common" , "course.participant"])
+  const {t} = useTranslation("course.participant")
   const {
     field: { value: feeLevels, onChange: onSelectChange }
   } = useController({
@@ -477,7 +477,7 @@ export const AttendanceStatus = () => {
 }
 
 export const HealthConsentStatus = () => {
-  const {t}= useTranslation(["common" , "course.participant"])
+  const {t}= useTranslation(["course.find_course" , "course.participant"])
   const { getValues } = useFormContext()
   const formData = getValues()
 
@@ -537,7 +537,7 @@ export const HealthConsentStatus = () => {
 }
 
 export const ProgramAgreementStatus = () => {
-  const {t} = useTranslation()
+  const {t} = useTranslation(["course.find_course","course.participants"])
   const { getValues } = useFormContext()
   const formData = getValues()
 

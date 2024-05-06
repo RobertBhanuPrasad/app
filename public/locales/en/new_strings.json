@@ -101,21 +101,28 @@
 
 "health_consent_status" :"Health Consent Status",
 
-"select_payment_method_placeholder": "Select Payment Method",
+
 
 "completed": "completed",
 
-"coursename":"Course Name",
+
+ "changes_made_will_be_lost_are_you_sure_you_want_to_continue":"Changes made will be lost. Are you sure you want to continue?",
+"Changes_saved_successfully":"Changes saved successfully",
+
 
 "organization_fee":"Organization Fee",
 "expense_fee":"Expense Fee",
-"tax":"Tax",
+
 "accommodation_fee":"Accommodation Fee",
 "total_fee":"Total Fee",
+"send_payment_confirmation_mail": "Send Payment confirmation mail?",
 
+"orgainization":"Orgainization",
+"select_payment_method":"Select Payment Method",
+"select_transaction_status":"Select Transaction Status",
+"select_date":"Select Date",
  "do_you_snore": "Do you snore?",
  "roommate_snores": "Would you object to having room mate who snores?",
-
  "coursename":"Course Name",
 "tax":"Tax"
 }

@@ -37,7 +37,7 @@ const Filters = ({
   const formData = watch();
 
   const { setAllFilterData } = newCourseStore()
-  const {t} = useTranslation(['common', "course.find_course", "new_strings"])
+  const {t} = useTranslation(["common", "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -77,9 +77,8 @@ const Filters = ({
               <AccordionItem value="item-14" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
-                    <div>{t('course_type')}</div>
+                    <div>{t("course_type")}</div>
                     {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
-                    <div>Course Type</div>
                     {formData?.temporaryadvancefilter.course_type && (
                       <CountComponent count={1} />
                     )}
@@ -98,7 +97,7 @@ const Filters = ({
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
-                    <div>Course Name</div>
+                    <div>{t("new_strings:course_name")}</div>
                     {formData?.temporaryadvancefilter.course_name && (
                       <CountComponent count={1} />
                     )}
