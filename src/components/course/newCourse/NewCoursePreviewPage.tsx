@@ -51,10 +51,14 @@ import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslation } from 'next-i18next';
+import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 export default function NewCourseReviewPage() {
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const supabase = supabaseClient();
+
   const { data: loginUserData }: any = useGetIdentity();
 
   const router = useRouter();
@@ -148,24 +152,27 @@ export default function NewCourseReviewPage() {
 
   const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
 
+  //fetching the user's country code
+  const countryCode = useGetCountryCode();
+
   //Finding course start date
   const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
 
   const fetchFeeData = async () => {
     //Sending all required params
-    const { data, error } = await supabaseClient.functions.invoke(
-      "course-fee",
-      {
-        method: "POST",
-        body: {
-          state_id: stateId,
-          city_id: cityId,
-          center_id: centerId,
-          start_date: courseStartDate,
-          program_type_id: newCourseData?.program_type_id,
-        },
-      }
-    );
+    const { data, error } = await supabase.functions.invoke("course-fee", {
+      method: "POST",
+      body: {
+        state_id: stateId,
+        city_id: cityId,
+        center_id: centerId,
+        start_date: courseStartDate,
+        program_type_id: newCourseData?.program_type_id,
+      },
+      headers: {
+        "country-code": countryCode,
+      },
+    });
 
     if (error)
       console.log("error while fetching course fee level settings data", error);
@@ -387,7 +394,8 @@ export default function NewCourseReviewPage() {
       data?.userData?.id,
       setProgramId,
       accountingNotSubmittedStatusId,
-      pathname
+      pathname,
+      countryCode
     );
 
     // we are checking the course is edit or user created new course
@@ -469,9 +477,9 @@ export default function NewCourseReviewPage() {
 
               <abbr
                 className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
-                title={creator?.value}
+                title={translatedText(creator?.name)}
               >
-                {creator?.value ? creator?.value : "-"}
+                {creator?.name ? translatedText(creator?.name) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -553,9 +561,9 @@ export default function NewCourseReviewPage() {
               </p>
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={courseType?.data?.name}
+                title={courseType?.data?.name ? translatedText(courseType?.data?.name) : "-"}
               >
-                {courseType?.data?.name ? courseType?.data?.name : "-"}
+                {courseType?.data?.name ? translatedText(courseType?.data?.name) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -636,9 +644,9 @@ export default function NewCourseReviewPage() {
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={visibility?.value}
+                title={translatedText(visibility?.name)}
               >
-                {visibility ? visibility?.value : "-"}
+                {visibility ? translatedText(visibility?.name) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -652,6 +660,21 @@ export default function NewCourseReviewPage() {
                 {allowedCountries ? allowedCountries : "-"}
               </abbr>
             </div>
+            {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
+            {hasSuperAdminRole &&
+              newCourseData?.is_geo_restriction_applicable && (
+                <div className="w-[291px]">
+                  <p className="text-sm font-normal text-accent-light text-[#999999]">
+                    Country(s) from where registrations are allowed
+                  </p>
+                  <abbr
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                    title={allowedCountries}
+                  >
+                    {allowedCountries ? allowedCountries : "-"}
+                  </abbr>
+                </div>
+              )}
             {hasSuperAdminRole && (
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -938,9 +961,9 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={paymentMethod?.value}
+                  title={translatedText(paymentMethod?.name)}
                 >
-                  {paymentMethod?.value}
+                  {translatedText(paymentMethod?.name)}
                 </abbr>
               </div>
             </div>
@@ -1068,8 +1091,8 @@ const Accommodation = ({
 
   return (
     <div className="w-[291px]">
-      <abbr title={data?.data?.name} className="no-underline">
-        <CardLabel className="truncate">{data?.data?.name}</CardLabel>
+      <abbr title={translatedText(data?.data?.name)} className="no-underline">
+        <CardLabel className="truncate">{translatedText(data?.data?.name)}</CardLabel>
       </abbr>
       <abbr
         // If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined
@@ -1127,8 +1150,8 @@ const Fees = ({
 
   return (
     <div className="w-[291px]">
-      <abbr title={feeLevelData?.data?.value} className="no-underline">
-        <CardLabel className="truncate">{feeLevelData?.data?.value}</CardLabel>
+      <abbr title={translatedText(feeLevelData?.data?.name)} className="no-underline">
+        <CardLabel className="truncate">{translatedText(feeLevelData?.data?.name)}</CardLabel>
       </abbr>
       <abbr
         title={JSON.stringify(feeLevelSettingsData?.total)}
@@ -1183,11 +1206,11 @@ const EarlyBirdFees = ({
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
       <abbr
-        title={`Early Bird ${feeLevelData?.data?.value}`}
+        title={`Early Bird ${translatedText(feeLevelData?.data?.name)}`}
         className="no-underline"
       >
         <CardLabel className="truncate">
-          {t("new_strings:early_bird")} {feeLevelData?.data?.value}
+          {t("new_strings:early_bird")} {translatedText(feeLevelData?.data?.name)}
         </CardLabel>
       </abbr>
       <abbr

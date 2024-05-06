@@ -7,6 +7,7 @@ import { useTranslation } from 'next-i18next'
 import { CountComponent, CourseTypeComponent, DateRangePickerComponent } from 'pages/courses/list'
 import { useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
+import { translatedText } from 'src/common/translations'
 import { COURSE_ACCOUNTING_STATUS, PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
 import { PRIVATE, PUBLIC } from 'src/constants/OptionValueOrder'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'src/ui/accordion'
@@ -20,17 +21,20 @@ import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectVa
 import { Separator } from 'src/ui/separator'
 import {
   getOptionValueObjectByOptionOrder,
-  getOptionValuesByOptionLabel
-} from 'src/utility/GetOptionValuesByOptionLabel'
-import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+  getOptionValuesByOptionLabel,
+} from "src/utility/GetOptionValuesByOptionLabel";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
+const Filters = ({
+  setAdvanceFilterOpen,
+  hasAliasNameFalse,
+  setCurrent,
+}: any) => {
+  console.log(hasAliasNameFalse, "FalseAliasNamefilter");
 
-const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) => {
-  console.log(hasAliasNameFalse, 'FalseAliasNamefilter')
+  const { watch, setValue } = useFormContext();
 
-  const { watch, setValue } = useFormContext()
-
-  const formData = watch()
+  const formData = watch();
 
   const { setAllFilterData } = newCourseStore()
   const {t} = useTranslation(['common', "course.find_course", "new_strings"])
@@ -40,7 +44,7 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
         <p className="text-2xl font-semibold">{t('course.find_course:filter_by')}</p>
         <div
           onClick={() => {
-            setAdvanceFilterOpen(false)
+            setAdvanceFilterOpen(false);
           }}
         >
           <CrossIcon width={16} height={16} fill="#333333" />
@@ -51,20 +55,20 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
         <Accordion
           type="multiple"
           defaultValue={[
-            'item-1',
-            'item-2',
-            'item-3',
-            'item-4',
-            'item-5',
-            'item-6',
-            'item-7',
-            'item-8',
-            'item-9',
-            'item-10',
-            'item-11',
-            'item-12',
-            'item-13',
-            'item-14'
+            "item-1",
+            "item-2",
+            "item-3",
+            "item-4",
+            "item-5",
+            "item-6",
+            "item-7",
+            "item-8",
+            "item-9",
+            "item-10",
+            "item-11",
+            "item-12",
+            "item-13",
+            "item-14",
           ]}
         >
           {/* Course Type Accordion */}
@@ -75,6 +79,10 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
                   <div className="flex flex-row gap-2 items-center">
                     <div>{t('course_type')}</div>
                     {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
+                    <div>Course Type</div>
+                    {formData?.temporaryadvancefilter.course_type && (
+                      <CountComponent count={1} />
+                    )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pb-5 pr-3">
@@ -90,8 +98,10 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
-                    <div>{t('new_strings:course_name')}</div>
-                    {formData?.temporaryadvancefilter.course_type && <CountComponent count={1} />}
+                    <div>Course Name</div>
+                    {formData?.temporaryadvancefilter.course_name && (
+                      <CountComponent count={1} />
+                    )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pb-5 pr-3">
@@ -107,7 +117,11 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
               <div className="flex flex-row gap-2 items-center">
                 <div>{t('course.find_course:course_status')}</div>
                 {formData?.temporaryadvancefilter.course_status?.length > 0 && (
-                  <CountComponent count={formData?.temporaryadvancefilter.course_status?.length} />
+                  <CountComponent
+                    count={
+                      formData?.temporaryadvancefilter.course_status?.length
+                    }
+                  />
                 )}
               </div>
             </AccordionTrigger>
@@ -122,8 +136,14 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t('course_accounting_status')}</div>
-                {formData?.temporaryadvancefilter.course_accounting_status?.length > 0 && (
-                  <CountComponent count={formData?.temporaryadvancefilter.course_accounting_status?.length} />
+                {formData?.temporaryadvancefilter.course_accounting_status
+                  ?.length > 0 && (
+                  <CountComponent
+                    count={
+                      formData?.temporaryadvancefilter.course_accounting_status
+                        ?.length
+                    }
+                  />
                 )}
               </div>
             </AccordionTrigger>
@@ -278,21 +298,26 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
       <div className="flex left-0 items-center  gap-4 absolute bottom-0 h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end pr-6">
         <div
           onClick={() => {
-            setValue('temporaryadvancefilter.course_name', '')
-            setValue('temporaryadvancefilter.course_type', '')
-            setValue('temporaryadvancefilter.course_status', [])
-            setValue('temporaryadvancefilter.course_accounting_status', [])
-            setValue('temporaryadvancefilter.course_accounting_closure_date', '')
-            setValue('temporaryadvancefilter.state', '')
-            setValue('temporaryadvancefilter.city', '')
-            setValue('temporaryadvancefilter.center', '')
-            setValue('temporaryadvancefilter.visibility', '')
-            setValue('temporaryadvancefilter.is_residential_course', '')
-            setValue('temporaryadvancefilter.is_course_fee', '')
-            setValue('temporaryadvancefilter.course_teacher', '')
-            setValue('temporaryadvancefilter.program_organiser', [])
+            setValue("temporaryadvancefilter.course_name", "");
+            setValue("temporaryadvancefilter.course_type", "");
+            setValue("temporaryadvancefilter.course_status", []);
+            setValue("temporaryadvancefilter.course_accounting_status", []);
+            setValue(
+              "temporaryadvancefilter.course_accounting_closure_date",
+              ""
+            );
+            setValue("temporaryadvancefilter.state", "");
+            setValue("temporaryadvancefilter.city", "");
+            setValue("temporaryadvancefilter.center", "");
+            setValue("temporaryadvancefilter.visibility", "");
+            setValue("temporaryadvancefilter.is_residential_course", "");
+            setValue("temporaryadvancefilter.is_course_fee", "");
+            setValue("temporaryadvancefilter.course_teacher", "");
+            setValue("temporaryadvancefilter.program_organiser", []);
             //we need to empty the course type in basic filters also because the filter applies when we clear all in advance filter
-            setValue('course_type','')
+            setValue("course_type", "");
+            setAllFilterData({ advanceFilter: {} });
+            setValue("advanceFilter", {}); //clearing all the advancefilter form Data
           }}
           className="flex gap-1 items-center cursor-pointer"
         >
@@ -301,53 +326,56 @@ const Filters = ({ setAdvanceFilterOpen, hasAliasNameFalse ,setCurrent }: any) =
         </div>
         <Button
           onClick={() => {
-            const temporaryData = { ...formData }
+            const temporaryData = { ...formData };
 
-            setValue('advanceFilter', temporaryData?.temporaryadvancefilter)
-            setValue('course_type', temporaryData?.temporaryadvancefilter.course_type)
+            setValue("advanceFilter", temporaryData?.temporaryadvancefilter);
+            setValue(
+              "course_type",
+              temporaryData?.temporaryadvancefilter.course_type
+            );
             setAllFilterData({
               ...formData,
-              advanceFilter: temporaryData?.temporaryadvancefilter
-            })
-            setAdvanceFilterOpen(false)
+              advanceFilter: temporaryData?.temporaryadvancefilter,
+            });
+            setAdvanceFilterOpen(false);
             //whenever we apply filters we will be navigated to page 1
-            setCurrent(1)
+            setCurrent(1);
           }}
         >
           {t('apply_button')}
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Filters
+export default Filters;
 
 export const CourseName = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.course_name'
-  })
+    name: "temporaryadvancefilter.course_name",
+  });
 
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch } = useSelect({
-    resource: 'program_type_alias_names',
-    optionLabel: 'alias_name',
-    optionValue: 'id',
+    resource: "program_type_alias_names",
+    optionLabel: "alias_name",
+    optionValue: "id",
     pagination: {
       pageSize: pageSize,
-      mode: 'server'
+      mode: "server",
     },
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'alias_name',
-        operator: 'contains',
-        value
-      }
-    ]
-  })
+        field: "alias_name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
@@ -356,54 +384,60 @@ export const CourseName = () => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
-        temporaryOnChange(val)
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
         <SelectValue placeholder={t('new_strings:select_course_name')} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={val => onSearch(val.target.value)} />
+        <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options.map((option: any, index: number) => (
             <>
-              <SelectItem key={option.value} value={option.value} className="h-[44px]">
-                {option.label}
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
+                {translatedText(option.label)}
               </SelectItem>
-              {index < options?.length - 1 && <hr className="border-[#D6D7D8]" />}
+              {index < options?.length - 1 && (
+                <hr className="border-[#D6D7D8]" />
+              )}
             </>
           ))}
         </SelectItems>
       </SelectContent>
     </Select>
-  )
-}
+  );
+};
 
 export const State = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.state'
-  })
+    name: "temporaryadvancefilter.state",
+  });
 
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch } = useSelect({
-    resource: 'state',
-    optionLabel: 'name',
-    optionValue: 'id',
+    resource: "state",
+    optionLabel: "name",
+    optionValue: "id",
     pagination: {
       pageSize: pageSize,
-      mode: 'server'
+      mode: "server",
     },
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'name',
-        operator: 'contains',
-        value
-      }
-    ]
-  })
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
@@ -413,54 +447,60 @@ export const State = () => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
-        temporaryOnChange(val)
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
         <SelectValue placeholder={t('select_state')} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={val => onSearch(val.target.value)} />
+        <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options.map((option: any, index: number) => (
             <>
-              <SelectItem key={option.value} value={option.value} className="h-[44px]">
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
                 {option.label}
               </SelectItem>
-              {index < options?.length - 1 && <hr className="border-[#D6D7D8]" />}
+              {index < options?.length - 1 && (
+                <hr className="border-[#D6D7D8]" />
+              )}
             </>
           ))}
         </SelectItems>
       </SelectContent>
     </Select>
-  )
-}
+  );
+};
 
 export const City = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.city'
-  })
+    name: "temporaryadvancefilter.city",
+  });
 
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch } = useSelect({
-    resource: 'city',
-    optionLabel: 'name',
-    optionValue: 'id',
+    resource: "city",
+    optionLabel: "name",
+    optionValue: "id",
     pagination: {
       pageSize: pageSize,
-      mode: 'server'
+      mode: "server",
     },
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'name',
-        operator: 'contains',
-        value
-      }
-    ]
-  })
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
@@ -469,53 +509,59 @@ export const City = () => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
-        temporaryOnChange(val)
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
         <SelectValue placeholder={t('city_placeholder')} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={val => onSearch(val.target.value)} />
+        <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options.map((option: any, index: number) => (
             <>
-              <SelectItem key={option.value} value={option.value} className="h-[44px]">
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
                 {option.label}
               </SelectItem>
-              {index < options?.length - 1 && <hr className="border-[#D6D7D8]" />}
+              {index < options?.length - 1 && (
+                <hr className="border-[#D6D7D8]" />
+              )}
             </>
           ))}
         </SelectItems>
       </SelectContent>
     </Select>
-  )
-}
+  );
+};
 
 export const Center = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.center'
-  })
-  const [pageSize, setPageSize] = useState(10)
+    name: "temporaryadvancefilter.center",
+  });
+  const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch } = useSelect({
-    resource: 'center',
-    optionLabel: 'name',
-    optionValue: 'id',
+    resource: "center",
+    optionLabel: "name",
+    optionValue: "id",
     pagination: {
       pageSize: pageSize,
-      mode: 'server'
+      mode: "server",
     },
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'name',
-        operator: 'contains',
-        value
-      }
-    ]
-  })
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+  });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
@@ -525,104 +571,119 @@ export const Center = () => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
-        temporaryOnChange(val)
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
         <SelectValue placeholder={t('new_strings:select_center')} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={val => onSearch(val.target.value)} />
+        <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options.map((option: any, index: number) => (
             <>
-              <SelectItem key={option.value} value={option.value} className="h-[44px]">
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
                 {option.label}
               </SelectItem>
-              {index < options?.length - 1 && <hr className="border-[#D6D7D8]" />}
+              {index < options?.length - 1 && (
+                <hr className="border-[#D6D7D8]" />
+              )}
             </>
           ))}
         </SelectItems>
       </SelectContent>
     </Select>
-  )
-}
+  );
+};
 
 export const CourseStatus = () => {
-  const { getValues } = useFormContext()
+  const { getValues } = useFormContext();
 
-  let courseStatusData = getOptionValuesByOptionLabel(PROGRAM_STATUS)?.[0]?.option_values
+  let courseStatusData =
+    getOptionValuesByOptionLabel(PROGRAM_STATUS)?.[0]?.option_values;
 
   const {
-    field: { value: temporaryValue = [], onChange: temporaryOnChange }
+    field: { value: temporaryValue = [], onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.course_status'
-  })
+    name: "temporaryadvancefilter.course_status",
+  });
 
-  const formData = getValues()
+  const formData = getValues();
 
-  console.log('heyy value', temporaryValue, formData)
+  console.log("heyy value", temporaryValue, formData);
 
   const toggleCourseStatus = (id: number) => {
     const updatedValue = temporaryValue?.includes(id)
       ? temporaryValue?.filter((val: number) => val !== id)
-      : [...temporaryValue, id]
-    temporaryOnChange(updatedValue)
-  }
+      : [...temporaryValue, id];
+    temporaryOnChange(updatedValue);
+  };
   return (
     <div className="flex gap-2 flex-wrap">
       {courseStatusData?.map((status: any, index: number) => (
         <div key={index}>
           <Button
-            className={`rounded-full h-[28px] text-sm font-normal ${temporaryValue?.includes(status?.id) ? 'bg-primary text-white' : 'bg-white border border-[#D6D7D8]'
-              }`}
+            className={`rounded-full h-[28px] text-sm font-normal ${
+              temporaryValue?.includes(status?.id)
+                ? "bg-primary text-white"
+                : "bg-white border border-[#D6D7D8]"
+            }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
-            {status?.value}
+            {translatedText(status?.name)}
           </Button>
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 export const CourseAccordingStatus = () => {
-  const courseAccountingStatusData = getOptionValuesByOptionLabel(COURSE_ACCOUNTING_STATUS)?.[0]?.option_values
+  const courseAccountingStatusData = getOptionValuesByOptionLabel(
+    COURSE_ACCOUNTING_STATUS
+  )?.[0]?.option_values;
 
   const {
-    field: { value: temporaryValue = [], onChange: temporaryOnChange }
+    field: { value: temporaryValue = [], onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.course_accounting_status'
-  })
+    name: "temporaryadvancefilter.course_accounting_status",
+  });
 
   const toggleCourseStatus = (id: number) => {
     const updatedValue = temporaryValue?.includes(id)
       ? temporaryValue?.filter((val: number) => val !== id)
-      : [...temporaryValue, id]
-    temporaryOnChange(updatedValue)
-  }
+      : [...temporaryValue, id];
+    temporaryOnChange(updatedValue);
+  };
   return (
     <div className="flex gap-2 flex-wrap">
       {courseAccountingStatusData?.map((status: any, index: any) => (
         <div key={index}>
           <Button
-            className={`rounded-full h-[28px] text-sm font-normal ${temporaryValue?.includes(status?.id) ? 'bg-primary text-white' : 'bg-white border border-[#D6D7D8]'
-              }`}
+            className={`rounded-full h-[28px] text-sm font-normal ${
+              temporaryValue?.includes(status?.id)
+                ? "bg-primary text-white"
+                : "bg-white border border-[#D6D7D8]"
+            }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
-            {status?.value}
+            {translatedText(status?.name)}
           </Button>
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 export const CourseAccountingClosureDate = () => {
   const {
-    field: { value, onChange }
+    field: { value, onChange },
   } = useController({
     name: 'temporaryadvancefilter.course_accounting_closure_date'
   })
@@ -632,16 +693,21 @@ export const CourseAccountingClosureDate = () => {
     <Dialog open={open}>
       <p>{t('course.find_course:date_range')}</p>
       <DialogTrigger asChild>
-        <Button onClick={() => setOpen(true)} className="w-full gap-2 justify-start mt-2" variant="outline">
+        <Button
+          onClick={() => setOpen(true)}
+          className="w-full gap-2 justify-start mt-2"
+          variant="outline"
+        >
           <CalenderIcon color="#666666" />
 
           {value?.from ? (
             value?.to ? (
               <>
-                {format(value.from, 'MM/dd/yyyy')} - {format(value.to, 'MM/dd/yyyy')}
+                {format(value.from, "MM/dd/yyyy")} -{" "}
+                {format(value.to, "MM/dd/yyyy")}
               </>
             ) : (
-              format(value.from, 'MM/dd/yyyy')
+              format(value.from, "MM/dd/yyyy")
             )
           ) : (
             <div className="flex gap-2 font-normal">{t('new_strings:select_the_date_range')}</div>
@@ -649,29 +715,41 @@ export const CourseAccountingClosureDate = () => {
         </Button>
       </DialogTrigger>
       <DialogContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl">
-        <DateRangePickerComponent setOpen={setOpen} value={value} onSelect={onChange} />
+        <DateRangePickerComponent
+          setOpen={setOpen}
+          value={value}
+          onSelect={onChange}
+        />
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
 export const Visibility = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.visibility'
-  })
+    name: "temporaryadvancefilter.visibility",
+  });
 
-  const publicVisibilityId = getOptionValueObjectByOptionOrder(VISIBILITY, PUBLIC)?.id
+  const publicVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PUBLIC
+  )?.id;
 
-  const privateVisibilityId = getOptionValueObjectByOptionOrder(VISIBILITY, PRIVATE)?.id
+  const privateVisibilityId = getOptionValueObjectByOptionOrder(
+    VISIBILITY,
+    PRIVATE
+  )?.id;
+
   const {t} = useTranslation("new_strings")
+
   return (
     <div>
       <RadioGroup
         value={JSON.stringify(temporaryValue)}
         onValueChange={(val: string) => {
-          temporaryOnChange(parseInt(val))
+          temporaryOnChange(parseInt(val));
         }}
       >
         <div className="flex flex-row gap-6 ">
@@ -690,12 +768,12 @@ export const Visibility = () => {
         </div>
       </RadioGroup>
     </div>
-  )
-}
+  );
+};
 
 export const ResidentialCourse = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
     name: 'temporaryadvancefilter.is_residential_course'
   })
@@ -719,12 +797,12 @@ export const ResidentialCourse = () => {
         </div>
       </RadioGroup>
     </div>
-  )
-}
+  );
+};
 
 export const CourseFees = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
     name: 'temporaryadvancefilter.is_course_fee'
   })
@@ -748,22 +826,22 @@ export const CourseFees = () => {
         </div>
       </RadioGroup>
     </div>
-  )
-}
+  );
+};
 
 export const ProgramOrganiser = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.program_organiser'
-  })
+    name: "temporaryadvancefilter.program_organiser",
+  });
 
-  const [pageSize, setPageSize] = useState(20)
+  const [pageSize, setPageSize] = useState(20);
 
   const { options, queryResult, onSearch } = useSelect({
-    resource: 'users',
+    resource: "users",
     meta: {
-      select: '*,contact_id!inner(full_name),user_roles!inner(role_id)'
+      select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
     },
     optionLabel: "contact_id.full_name",
     optionValue: "id",
@@ -776,9 +854,9 @@ export const ProgramOrganiser = () => {
     ],
     pagination: {
       pageSize: pageSize,
-      mode: 'server'
-    }
-  })
+      mode: "server",
+    },
+  });
   const handleOnBottomReached = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 20)
@@ -791,47 +869,48 @@ export const ProgramOrganiser = () => {
       data={options}
       onBottomReached={handleOnBottomReached}
       onSearch={(val: string) => {
-        onSearch(val)
+        onSearch(val);
       }}
       onChange={temporaryOnChange}
       variant="basic"
     />
-  )
-}
+  );
+};
 
 export const TeacherDropdown = () => {
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.course_teacher'
-  })
+    name: "temporaryadvancefilter.course_teacher",
+  });
 
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch, queryResult } = useSelect({
-    resource: 'users',
+    resource: "users",
     meta: {
-      select: '*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))'
+      select:
+        "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
     },
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'contact_id.full_name',
-        operator: 'contains',
-        value
-      }
+        field: "contact_id.full_name",
+        operator: "contains",
+        value,
+      },
     ],
     pagination: {
       pageSize: pageSize,
-      mode: 'server'
-    }
-  })
+      mode: "server",
+    },
+  });
 
-  const teachers: any = queryResult.data?.data?.map(val => {
+  const teachers: any = queryResult.data?.data?.map((val) => {
     return {
-      label: val?.contact_id?.first_name + ' ' + val?.contact_id?.last_name,
-      value: val?.id
-    }
-  })
+      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
+      value: val?.id,
+    };
+  });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
@@ -841,25 +920,31 @@ export const TeacherDropdown = () => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
-        temporaryOnChange(val)
+        temporaryOnChange(val);
       }}
     >
       <SelectTrigger className="w-80">
         <SelectValue placeholder={t('new_strings:select_teacher')} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={val => onSearch(val.target.value)} />
+        <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {teachers?.map((option: any, index: number) => (
             <>
-              <SelectItem key={option.value} value={option.value} className="h-[44px]">
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
                 {option.label}
               </SelectItem>
-              {index < options?.length - 1 && <hr className="border-[#D6D7D8]" />}
+              {index < options?.length - 1 && (
+                <hr className="border-[#D6D7D8]" />
+              )}
             </>
           ))}
         </SelectItems>
       </SelectContent>
     </Select>
-  )
-}
+  );
+};
