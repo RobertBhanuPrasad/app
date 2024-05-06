@@ -98,7 +98,7 @@
 
 
 
- "participants":"participants"
-
-
+ "participants":"participants",
+ "changes_made_will_be_lost. Are_you_sure_you_want_to_continue?":"Changes made will be lost. Are you sure you want to continue?",
+"Changes_saved_successfully":"Changes saved successfully"
 }

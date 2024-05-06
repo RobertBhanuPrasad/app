@@ -30,11 +30,14 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { DialogContent } from "src/ui/dialog";
 import { translatedText } from "src/common/translations";
 import { Button } from 'src/ui/button'
+import { useTranslation } from 'next-i18next'
+
 interface EditPaymentProps {
   setEditPayment: React.Dispatch<React.SetStateAction<any>>
   paymentId: number
 }
 export default function EditPayment({ setEditPayment, paymentId }: EditPaymentProps) {
+  const {t}= useTranslation(['common','course.participants','new_strings'])
   const { query } = useRouter()
   const { mutate } = useUpdate()
   const { watch, reset } = useFormContext()
@@ -187,11 +190,11 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
           <div>
             <div>
               <div>
-                <Text className="flex justify-center text-[24px] font-semibold ">Edit Payment</Text>
+                <Text className="flex justify-center text-[24px] font-semibold ">{t('course.participants:edit_participant.participants_information_tab.edit_payment')}</Text>
                 <div className="flex flex-row">
                   <div className="flex-1">
                     <div className="py-[5px]">
-                      <Text className="py-[5px] ">Participant Name</Text>
+                      <Text className="py-[5px] ">{t('course.participants:edit_participant.participants_information_tab.participant_name')}</Text>
                       <div>
                         <Textarea
                           disabled={true}
@@ -202,7 +205,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     </div>
 
                     <div className="w-[278px] py-[5px]">
-                      <Text className="py-[5px]">Transaction Status</Text>
+                      <Text className="py-[5px]">{t('course.participants:find_participant.transaction_status')}</Text>
                       <div>
                         {/*  when transaction status is confirmed or failed need to disable select */}
                         <Select
@@ -243,7 +246,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     </div>
 
                     <div className="py-[5px] ">
-                      <Text className="py-[5px] outline-none">Transaction ID</Text>
+                      <Text className="py-[5px] outline-none">{t('course.participants:view_participant.transaction_id')}</Text>
                       <div>
                         <Textarea
                           disabled={true}
@@ -256,7 +259,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
 
                   <div className="flex-1">
                     <div className="py-[5px]">
-                      <Text className="py-[5px]">Payment Date</Text>
+                      <Text className="py-[5px]">{t('course.participants:edit_participant.participants_information_tab.payment_date')}</Text>
                       {/* TODO: need to disable it for confirmed and failed transaction ids */}
                       <div>
                         <DateField
@@ -276,7 +279,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     </div>
 
                     <div className="py-[5px]">
-                      <Text className="py-[5px]">Payment Method</Text>
+                      <Text className="py-[5px]">{t('course.participants:find_participant.payment_method')}</Text>
                       <div className="!w-[278px]">
                         <Select
                           disabled={
@@ -319,7 +322,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     </div>
 
                     <div className="py-[5px]">
-                      <Text className="py-[5px] outline-none">Response Message</Text>
+                      <Text className="py-[5px] outline-none">{t('course.participants:edit_participant.participants_information_tab.response_message')}</Text>
                       <div>
                         <Textarea
                           disabled={true}
@@ -332,7 +335,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                 </div>
 
                 <div className="flex flex-col py-[5px]">
-                  <Text className="py-[5px] outline-none">Error Message</Text>
+                  <Text className="py-[5px] outline-none">{t('course.participants:edit_participant.participants_information_tab.error_message')}</Text>
                   <div>
                     <Textarea
                       disabled={true}
@@ -345,7 +348,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     <div>
                       <Checkbox checked={send_payment_confirmation} onCheckedChange={emailConfirmatiOnchange} />
                     </div>
-                    <Text>Send Payment confirmation mail?</Text>
+                    <Text>{t('course.participants:edit_participant.participants_information_tab.send_payment_confirmation_mail')}</Text>
                   </div>
                 </div>
               </div>
@@ -358,7 +361,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                   }}
                   className="border rounded-xl border-[#7677F4] bg-[white] w-[87px] h-[46px] text-[#7677F4] font-semibold"
                 >
-                  Cancel
+                  {t('cancel_button')}
                 </Button>
               </div>
               <div>
@@ -368,7 +371,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     onFormSubmission()
                   }}
                 >
-                  Save
+                  {t('save_button')}
                 </Button>
               </div>
             </div>
@@ -383,7 +386,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     <CrossIcon />
                   </div>
                   <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
-                    Changes made will be lost. Are you sure you want to continue?
+                  {t('new_strings:changes_made_will_be_lost. Are_you_sure_you_want_to_continue?')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -397,7 +400,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           setcancelEditPayment(false)
                         }}
                       >
-                        No
+                        {t('no')}
                       </Button>
                     </div>
                     <div>
@@ -408,7 +411,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           cancelEditPaymentHandler()
                         }}
                       >
-                        Yes
+                        {t('yes')}
                       </Button>
                     </div>
                   </div>
@@ -431,7 +434,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                 </div>
                 <div className="w-full flex flex-col text-center items-center gap-4">
                   <Tick />
-                  <div className="w-full font-bold text-[20px]">Changes saved successfully</div>
+                  <div className="w-full font-bold text-[20px]">{t('new_strings:Changes_saved_successfully')}</div>
                   <div>
                     <Button
                       onClick={() => {
@@ -439,7 +442,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                         setEditPayment(false)
                       }}
                     >
-                      Close
+                      {t('close')}
                     </Button>
                   </div>
                 </div>
