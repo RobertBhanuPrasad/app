@@ -34,7 +34,7 @@ function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
             table: '',
             rowStyles: ''
           }}
-          columns={columns (t)}
+          columns={columns()}
           data={participantCustomerDeviceDetailsData?.data?.customer_device_details_section || []}
           columnPinning={false}
         />
@@ -44,7 +44,12 @@ function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
 }
 
 export default ViewParticipantCustomerDeviceDetails
-const columns = (t :any): ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] => [
+
+const columns = () => {
+
+  const {t} = useTranslation(["course.participants"])
+
+  const columns: ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] = [
   
   {
     accessorKey: 'program_type',
@@ -92,3 +97,7 @@ const columns = (t :any): ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType
     }
   }
 ]
+
+return columns
+
+}
