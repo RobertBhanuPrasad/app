@@ -761,25 +761,7 @@ const Visibility = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px]">
-              <div className="flex flex-row gap-1 items-center">
-                <Globe />
-                Public
-              </div>
-              <div>
-                There are a lot of things you can do in space, and space
-                essentially is unlimited resources.
-              </div>
-              <div className="my-2">
-                <hr></hr>
-              </div>
-              <div className="flex flex-row gap-1 items-center">
-                <LockIcon />
-                Private
-              </div>
-              <div>
-                There are a lot of things you can do in space, and space
-                essentially is unlimited resources.
-              </div>
+            Public courses will be listed on Art of Living website, but private courses will not be listed. When changing the visibility from private to public, it can take up to 15 minutes for the webpage to be published on the Art of Living website.
             </div>
           </HoverCardContent>
         </HoverCard>
