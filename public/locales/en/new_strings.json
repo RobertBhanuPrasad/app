@@ -98,7 +98,10 @@
 
 
 
- "participants":"participants"
+ "participants":"participants",
+ "do_you_snore?": "Do you snore?",
+ "roommate_snores?": "Would you object to having room mate who snores?"
+
 
 
 }
