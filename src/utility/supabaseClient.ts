@@ -1,4 +1,5 @@
 import { createClient } from "@refinedev/supabase";
+import { ConfigStore } from "src/zustandStore/ConfigStore";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -7,11 +8,27 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   throw new Error("Supabase URL or key is not defined");
 }
 
-export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  db: {
-    schema: "public",
-  },
-  auth: {
-    persistSession: true,
-  },
-});
+/**
+ * supabase client
+ * @param schema - schema
+ * @returns supabaseClient
+ */
+export const supabaseClient = (schema?: string) => {
+  /**
+   * To get country code or language code we need useRouter hook becuase in that we have locale attribute
+   * but we cant call hook inside this file becuase there was no component or hooks here
+   * so we need to store in zustand we need to get the data with getState it will helpful for that
+   */
+  const { countryCode } = ConfigStore.getState();
+
+  if (schema === undefined) schema = countryCode || "public";
+
+  return createClient(SUPABASE_URL, SUPABASE_KEY, {
+    db: {
+      schema,
+    },
+    auth: {
+      persistSession: true,
+    },
+  });
+};

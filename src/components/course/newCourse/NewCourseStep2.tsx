@@ -4,8 +4,10 @@ import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
 import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
+import { translatedText } from "src/common/translations";
 import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
@@ -45,6 +47,7 @@ import {
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from 'next-i18next';
+import { IsEditCourse } from "./EditCourseUtil";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -163,6 +166,17 @@ export default function NewCourseStep2() {
 export const CourseTypeDropDown = () => {
   const { watch, setValue, clearErrors } = useFormContext();
 
+  /**
+   * This variable holds the path of the url
+   */
+  const pathname = usePathname();
+
+
+  /**
+   * Checking whether the url contains the edit or not
+   */
+  const isEditCourse = IsEditCourse(pathname);
+
   const [pageSize, setPageSize] = useState(10);
 
   const [searchValue, searchOnChange] = useState("");
@@ -245,10 +259,10 @@ export const CourseTypeDropDown = () => {
   const options: { label: string; value: number }[] =
     queryResult?.data?.data?.map((programType) => {
       return {
-        label: programType?.name,
+        label: translatedText(programType?.name),
         value: programType?.id,
       };
-    }) as { label: string; value: number }[];
+    }) as any as { label: string; value: number }[];
 
   const {
     field: { value: courseSettings, onChange: setCourseTypeSettings },
@@ -305,6 +319,7 @@ export const CourseTypeDropDown = () => {
           onChange(val);
           getCourseTypeSettings(val);
         }}
+        disabled={isEditCourse}
       >
         <SelectTrigger
           className="w-[320px]"
@@ -449,7 +464,7 @@ const CourseNameDropDown = () => {
                   value={option.value}
                   className="h-[44px]"
                 >
-                  {option.label}
+                  {translatedText(option.label)}
                 </SelectItem>
                 {index < options?.length - 1 && (
                   <hr className="border-[#D6D7D8]" />
