@@ -26,7 +26,7 @@ import { formatDateAndTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 // Component for viewing participant transaction details
 function ViewParticipantTransactionDetails({ participantId }: any) {
-  const {t} = useTranslation("course.participants")
+  const {t} = useTranslation(["course.participants", "course.view_course"])
   // Fetching table data using useTable hook
   let {
     tableQueryResult: participantTransactionDetailsData, // Table data result
@@ -155,7 +155,7 @@ const columns = () => {
     {
       accessorKey: 'organization_fee',
       header: () => {
-        return <TableHeader className=" min-w-[170px]">{t("new_strings:organization_fee")} (EUR)</TableHeader>
+        return <TableHeader className=" min-w-[170px]">{t("course.view_course:revenue_summary_tab.organization_fee")} (EUR)</TableHeader>
       },
   
       cell: ({ row }) => {
@@ -165,7 +165,7 @@ const columns = () => {
     {
       accessorKey: 'expense_fee',
       header: () => {
-        return <TableHeader className=" min-w-[150px]">{t("new_strings:expense_fee")} (EUR)</TableHeader>
+        return <TableHeader className=" min-w-[150px]">{t("course.view_course:revenue_summary_tab.expense_fee")} (EUR)</TableHeader>
       },
   
       cell: ({ row }) => {
@@ -213,7 +213,7 @@ const columns = () => {
     {
       accessorKey: 'accommodation_fee',
       header: () => {
-        return <TableHeader className=" min-w-[200px]">{t("new_strings:accommodation_fee")} (EUR)</TableHeader>
+        return <TableHeader className=" min-w-[200px]">{t("course.participants:edit_participant.participants_information_tab.accommodation_fee")} (EUR)</TableHeader>
       },
   
       cell: ({ row }) => {
@@ -223,7 +223,7 @@ const columns = () => {
     {
       accessorKey: 'total_amount',
       header: () => {
-        return <TableHeader className="min-w-[120px]">{t("new_strings:total_fee")} (EUR)</TableHeader>
+        return <TableHeader className="min-w-[120px]">{t("course.view_course:revenue_summary_tab.total_fee")} (EUR)</TableHeader>
       },
       cell: ({ row }) => {
         return <Text>{row?.original?.total_amount}</Text>

@@ -39,7 +39,7 @@ export const column = (
   const finalColumns = [
     {
       accessorKey: "program_code",
-      column_name: "{t('course_id')}",
+      column_name: t('course_id'),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
