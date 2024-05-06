@@ -15,7 +15,7 @@ import {
 } from "src/ui/hover-card";
 import { formatDate } from "src/utility/DateFunctions";
 import { supabaseClient } from "src/utility/supabaseClient";
-import { useTranslation } from 'next-i18next';
+
 
 
 
