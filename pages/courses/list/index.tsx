@@ -654,7 +654,7 @@ export const CourseTypeComponent = ({ name }: any) => {
       value={value}
       onValueChange={(val: any) => {
         onChange(val);
-        // we are making the course name value undefined if the course type is changed
+        // we are making the course name value empty string  if the course type is changed so that it will show the placeholder in course name  if we change the value in course type downdown 
         temporaryOnChange('')
       }}
     >
