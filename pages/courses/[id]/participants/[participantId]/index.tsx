@@ -10,6 +10,7 @@ import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
+import { useTranslation } from 'next-i18next';
 import {
     VIEW_CUSTOMER_DEVICE_DETAILS,
     VIEW_PARTICIPANT_COURSE_INFORMATION,
@@ -19,8 +20,8 @@ import {
 } from "src/constants/Tabs";
 
 function index() {
+    const {t} = useTranslation("course.participants")
     const router = useRouter();
-
     const Id: number | undefined = router?.query?.participantId
         ? parseInt(router.query.participantId as string)
         : undefined;
@@ -28,7 +29,7 @@ function index() {
     const tabTriggers: any = [
         {
             value: VIEW_PARTICIPANT_COURSE_INFORMATION,
-            label: "Course Information",
+            label: t('course.participants:view_participant.course_information_tab.course_information'),
             disabled: false,
         },
         {
@@ -55,7 +56,7 @@ function index() {
     const tabs = [
         {
             id: 0,
-            label: "Course Information ",
+            label: t('course.participants:view_participant.course_information_tab.course_information'),
             content: (
                 <div>
                     <ViewParticipantCourseInformation participantId={Id} />
@@ -64,7 +65,7 @@ function index() {
         },
         {
             id: 1,
-            label: "Transaction Details",
+            label: t('course.participants:view_participant.transaction_details'),
             content: (
                 <div>
                     {" "}
@@ -114,7 +115,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
 
     const translateProps = await serverSideTranslations(
         context.locale ?? "en",
-        ["common", "course.participants"]
+        ["common", "course.participants","new_strings"]
     );
 
     if (!authenticated) {
