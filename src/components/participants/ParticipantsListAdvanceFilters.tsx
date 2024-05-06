@@ -20,7 +20,7 @@ import { useTranslation } from 'next-i18next';
 
 export function ParticipantsAdvanceFilter() {
 
-  const {t} = useTranslation("new_strings")
+  const {t} = useTranslation(["common", "new_strings" ,"course.participants" ])
   const { setParticpantFiltersData, advanceFilterCount, setAdvanceFilterCount } = ParticipantStore()
   const { watch, setValue, getValues } = useFormContext()
   const formData = watch()
@@ -247,7 +247,7 @@ export function ParticipantsAdvanceFilter() {
                   className="flex gap-1 items-center cursor-pointer"
                 >
                   <ClearAllIcon />
-                  <p className="text-primary font-semibold"> {t("common:clear_all")}</p>
+                  <p className="text-primary font-semibold"> {t("clear_all")}</p>
                 </div>
                 <Button
                   className=" font-bold"
@@ -260,7 +260,7 @@ export function ParticipantsAdvanceFilter() {
                     setCount(filterCount)
                   }}
                 >
-                 {t("common:apply_button")}
+                 {t("apply_button")}
                 </Button>
               </div>
             </SheetFooter>
@@ -272,7 +272,7 @@ export function ParticipantsAdvanceFilter() {
 }
 
 export const ContactDetails = () => {
-  const {t} = useTranslation()
+  const {t} =  useTranslation(["common" , "course.participant"])
   const {
     field: { value: contactName, onChange: onNameChange }
   } = useController({
@@ -371,7 +371,7 @@ export const TransactionType = () => {
 }
 
 export const PaymentMethod = () => {
-  const {t} = useTranslation()
+  const {t}= useTranslation(["common" , "course.participant"])
   const {
     field: { value: paymentMethods, onChange: onSelectChange }
   } = useController({
@@ -405,7 +405,7 @@ export const PaymentMethod = () => {
 }
 
 export const FeeLevel = () => {
-  const {t} = useTranslation()
+  const {t} = useTranslation(["common" , "course.participant"])
   const {
     field: { value: feeLevels, onChange: onSelectChange }
   } = useController({
@@ -477,7 +477,7 @@ export const AttendanceStatus = () => {
 }
 
 export const HealthConsentStatus = () => {
-  const {t} = useTranslation()
+  const {t}= useTranslation(["common" , "course.participant"])
   const { getValues } = useFormContext()
   const formData = getValues()
 
