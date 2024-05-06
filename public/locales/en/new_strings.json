@@ -93,7 +93,11 @@
 
 
 
- "participants":"participants"
-
+ "participants":"participants",
+"organization_fee":"Organization Fee",
+"expense_fee":"Expense Fee",
+"tax":"Tax",
+"accommodation_fee":"Accommodation Fee",
+"total_fee":"Total Fee"
 
 }
