@@ -134,7 +134,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                {t('find_participant.transaction_type')}
+                                {t('course.participants:find_participant.transaction_type')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]?.participant_id
@@ -147,7 +147,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                {t('find_participant.transaction_status')}
+                                {t('course.participants:find_participant.transaction_status')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]
@@ -160,7 +160,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                {t('view_participant.transaction_id')}
+                                {t('course.participants:view_participant.transaction_id')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]
