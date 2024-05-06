@@ -92,7 +92,7 @@ function index() {
     ];
     return (
         <div>
-            <div className="top-0 sticky z-[50] bg-white shadow-xl w-full">
+            <div className="top-[94px] sticky z-[50] bg-white shadow-md w-full">
                 <ParticipantsListMainHeader />
             </div>
             <div className="flex p-[20px]">
