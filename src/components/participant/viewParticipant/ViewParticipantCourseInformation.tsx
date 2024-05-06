@@ -1,4 +1,5 @@
 import { useOne } from '@refinedev/core'
+import { translatedText } from 'src/common/translations'
 import { CardLabel, CardValue } from 'src/ui/TextTags'
 import { useTranslation } from 'next-i18next';
 
@@ -27,11 +28,11 @@ function ViewParticipantCourseInformation({ participantId }: any) {
 
   // Participant course information
   const coursePaticipantInformation = [
-    { key: t('common:course_type'), value: participantCourseData?.data?.program_id?.program_type_id?.name },
+    { key: t('common:course_type'), value: translatedText(participantCourseData?.data?.program_id?.program_type_id?.name) },
     {
       key: t('new_strings:coursename'),
       value: participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
-        ? participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
+        ? translatedText(participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name)
         : '-'
     },
     { key: t('common:teachers'), value: teacherFullNames },

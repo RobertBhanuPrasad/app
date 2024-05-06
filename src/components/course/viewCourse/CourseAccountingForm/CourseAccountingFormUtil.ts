@@ -1,6 +1,8 @@
 import { supabaseClient } from "src/utility";
 import _ from "lodash";
 
+const supabase = supabaseClient();
+
 export const handleSaveCourseAccountingFormData = async (
   data: CourseAccountingFormFieldTypes
 ) => {
@@ -19,7 +21,7 @@ export const handleSaveCourseAccountingFormData = async (
     // Step 3: If user filled course_accounting_user_consent field then we have to store this also
     // patch program table with course_accounting_user_consent this column
     if (data.course_accounting_user_consent !== undefined) {
-      const { data: programData, error } = await supabaseClient
+      const { data: programData, error } = await supabase
         .from("program")
         .update({
           course_accounting_user_consent: data.course_accounting_user_consent,
@@ -46,11 +48,13 @@ export const handlePostProgramRevenueData = async (
   data: ProgramOfflineRevenueDatabaseType[],
   programId: number
 ) => {
+  const supabase = supabaseClient();
+
   try {
     console.log("data to add to  program_offline_revenue data:", data);
 
     // Step 1: Retrieve existing revenue entries of the program from the database
-    const { data: existingRevenueResponse } = await supabaseClient
+    const { data: existingRevenueResponse } = await supabase
       .from("program_offline_revenue")
       .select("id")
       .eq("program_id", programId);
@@ -68,7 +72,7 @@ export const handlePostProgramRevenueData = async (
 
     // Step 3: Remove revenue entries from the program_revenue table
     if (revenueToRemove.length > 0) {
-      const { data: deletedData, error: deletedError } = await supabaseClient
+      const { data: deletedData, error: deletedError } = await supabase
         .from("program_offline_revenue")
         .delete()
         .eq("program_id", programId)
@@ -115,7 +119,7 @@ export const handlePostProgramRevenueData = async (
       );
 
       const { data: programRevenueData, error: programRevenueError } =
-        await supabaseClient
+        await supabase
           .from("program_offline_revenue")
           .upsert(revenueToAddData)
           .select();
@@ -163,10 +167,12 @@ export const handleSubmitCAF = async (
   courseAccountingPendingReviewtatusId: number,
   loggedInUserId: number
 ) => {
+  const supabase = supabaseClient();
+
   data.program_id = 11;
   try {
     // Update the course accounting status of the program
-    const { data: programData, error: programError } = await supabaseClient
+    const { data: programData, error: programError } = await supabase
       .from("program")
       .update({
         program_accounting_status_id: courseAccountingPendingReviewtatusId,
@@ -184,7 +190,7 @@ export const handleSubmitCAF = async (
     const {
       data: programAccountingActivityData,
       error: programAccountingActivityError,
-    } = await supabaseClient.from("program_accounting_activity").insert({
+    } = await supabase.from("program_accounting_activity").insert({
       program_id: data.program_id,
       caf_status_id: courseAccountingPendingReviewtatusId,
       user_id: loggedInUserId,

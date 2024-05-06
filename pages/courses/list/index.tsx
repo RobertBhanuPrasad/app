@@ -12,6 +12,10 @@ import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 import { ChevronDownIcon } from '@radix-ui/react-icons'
 import { useList, useSelect, useTable } from '@refinedev/core'
 import { format } from 'date-fns'
+import { useTranslation } from 'next-i18next'
+import { authProvider } from "src/authProvider"
+import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
 import React, { useEffect, useState } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
 import { column } from 'src/components/course/findCourse/Columns'
@@ -26,10 +30,7 @@ import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectVa
 import { Sheet, SheetContent, SheetTrigger } from 'src/ui/sheet'
 import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
-
-import { authProvider } from "src/authProvider"
-import { GetServerSideProps } from "next"
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import { translatedText } from 'src/common/translations'
 
 function index() {
   interface ExcelColumn {
@@ -210,7 +211,6 @@ function index() {
     });
   }
 
-
   /**
    * This holds the records of which rows are selected
    */
@@ -230,7 +230,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
     sorters: {
@@ -250,28 +250,32 @@ function index() {
   /**
    *This is the query to get data to show in the table
    */
-  const { tableQueryResult: programData } = useTable({
-    resource: "program",
-    meta: {
-      select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
-    },
-    filters: {
-      permanent: [
-        {
-          field: "id",
-          operator: "in",
-          value: filteredIds,
-        },
-      ],
-    },
-    sorters: {
-      permanent: [
-        // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-        { field: "created_at", order: "desc" },
-      ],
-    },
-  });
+  const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
+    useTable({
+      resource: "program",
+      meta: {
+        select:
+          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+      },
+      pagination: {
+        pageSize: pageSize,
+      },
+      filters: {
+        permanent: [
+          {
+            field: "id",
+            operator: "in",
+            value: filteredIds,
+          },
+        ],
+      },
+      sorters: {
+        permanent: [
+          // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
+          { field: "created_at", order: "desc" },
+        ],
+      },
+    });
 
   /**
    * The variable holds whether all rows are selected or not
@@ -315,7 +319,7 @@ function index() {
         },
         {
           column_name: "Course Status",
-          path: ["status_id", "value"],
+          path: ["status_id", "name"],
         },
         {
           column_name: "Start Date",
@@ -339,11 +343,11 @@ function index() {
         },
         {
           column_name: "Visibility",
-          path: ["visibility_id", "value"],
+          path: ["visibility_id", "name"],
         },
         {
           column_name: "Course Accounting Status",
-          path: ["program_accounting_status_id", "value"],
+          path: ["program_accounting_status_id", "name"],
         },
       ];
 
@@ -353,12 +357,14 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,value), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
         columns: JSON.stringify(excelColumns),
       });
 
+      const supabase = supabaseClient();
+
       //invoking the export_to_file function
-      const { data, error } = await supabaseClient.functions.invoke(
+      const { data, error } = await supabase.functions.invoke(
         ` export_to_file?${params}`,
         {
           headers: {
@@ -379,7 +385,7 @@ function index() {
         const fileName = fileUrl.split("/").pop();
 
         // passing the file name to download
-        const result = await supabaseClient.storage
+        const result = await supabase.storage
           .from("export_to_excel")
           .download(fileName);
 
@@ -441,10 +447,10 @@ function index() {
       },
     ],
   });
-
+  const {t} = useTranslation(["common","course.find_course","new_strings"])
   return (
     <div className="flex flex-col justify-between relative h-screen">
-      <p className="font-semibold text-2xl ml-8">Find Course</p>
+      <p className="font-semibold text-2xl ml-8">{t('new_strings:find_course')}</p>
       <div className="mx-8 flex flex-col gap-4 mt-4">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
@@ -460,13 +466,17 @@ function index() {
             pageCount={pageCount}
             total={FilterProgramData?.data?.total || 0}
             pageSize={pageSize}
-            setPageSize={setPageSize}
+            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+            setPageSize={(number) => {
+              setPageSize(number);
+              displayDataSetPageSize(number);
+            }}
             pagination={true}
             tableStyles={{
               table: "",
               rowStyles: "!important border-none",
             }}
-            columns={column(hasAliasNameFalse(data))}
+            columns={column(hasAliasNameFalse(data), (t))}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
@@ -481,15 +491,15 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>Select All</div>
+            <div>{t('course.find_course:select_all')}</div>
             <div className="font-semibold">
               {FilterProgramData?.data?.total || 0}
             </div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            Selected: {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
-            Out of{" "}
+            {t('course.find_course:selected')}: {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
+            {t('course.find_course:out_of')}{" "}
             <div className="font-semibold">
               {FilterProgramData?.data?.total || 0}
             </div>{" "}
@@ -504,7 +514,7 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl"
                 disabled={!allSelected}
               >
-                Export <ChevronDownIcon className="w-5 h-5" />
+                {t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
@@ -512,11 +522,11 @@ function index() {
                 onClick={handleExportExcel}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                Excel
+                {t('new_strings:excel')}
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
-                Csv
+                {t('new_strings:csv')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -532,7 +542,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
+    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
         <div className="flex-[0.25]">
           <AdvanceFilter
@@ -549,6 +559,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 };
 
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
+  const {t} = useTranslation(["common","new_strings"])
   return (
     <div className="relative ml-[-12px] mt-[-12px]">
       <DateRangePicker
@@ -571,13 +582,13 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
           }
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
-          Reset
+          {t('new_strings:reset_button')}
         </Button>
         <Button
           onClick={() => setOpen(false)}
           className=" w-[94px] h-10 rounded-xl"
         >
-          Apply
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -599,7 +610,7 @@ export const CourseTypeComponent = ({ name }: any) => {
     name: name,
   });
 
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);;
   const { options, onSearch } = useSelect({
     resource: "program_types",
     optionLabel: "name",
@@ -624,8 +635,8 @@ export const CourseTypeComponent = ({ name }: any) => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
-  console.log("heyy course type component", value);
-
+ 
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={value}
@@ -634,7 +645,7 @@ export const CourseTypeComponent = ({ name }: any) => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select Course Type" />
+        <SelectValue placeholder={t('new_strings:select_course_type')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -646,7 +657,7 @@ export const CourseTypeComponent = ({ name }: any) => {
                 value={option.value}
                 className="h-[44px]"
               >
-                {option.label}
+                {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && (
                 <hr className="border-[#D6D7D8]" />
@@ -670,7 +681,11 @@ export const BasicFilters: React.FC<{
   } = useController({
     name: "course_id",
   });
-
+  const handleKeyPress = (e: { key: string; preventDefault: () => void }) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
   const {
     field: { value: courseDate, onChange: courseDateOnChange },
   } = useController({
@@ -688,8 +703,9 @@ export const BasicFilters: React.FC<{
     setValue("temporaryadvancefilter.course_type", "");
     setValue("temporaryadvancefilter", "");
     setValue("advanceFilter", "");
+    setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
-
+  const {t} = useTranslation(["common","course.find_course","new_strings"])
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
@@ -697,55 +713,55 @@ export const BasicFilters: React.FC<{
         <Input
           value={value}
           onChange={onChange}
+          onKeyDown={handleKeyPress}
           type="text"
           className="border-none focus:outline-none"
-          placeholder={`Search by Course ID`}
+          placeholder={t('course.find_course:search_by_course_id')}
         />
       </div>
       <div>
         {" "}
-        <Dialog open={open}>
-          <DialogTrigger asChild>
-            <Button
-              className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
-              variant="outline"
-            >
-              <div
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                <CalenderIcon color="#666666" />
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Button
+            className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
+            variant="outline"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <div>
+              <CalenderIcon color="#666666" />
+            </div>
+            {courseDate ? (
+              <div className="flex justify-between items-center w-full">
+                <div className="flex flex-row gap-2 text-[14px]">
+                  {/* If the course from date and to date is present then only format and show the from date and to date */}
+                  <Text className="font-semibold">
+                    {courseDate.from && format(courseDate.from, "MM/dd/yyyy")}
+                  </Text>{" "}
+                  {courseDate.to && <span>-</span>}{" "}
+                  <Text className="font-semibold">
+                    {courseDate.to && format(courseDate.to, "MM/dd/yyyy")}
+                  </Text>
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    //when we click on cross icon we need to clear the date
+                    courseDateOnChange(undefined);
+                  }}
+                  id="cross-icon"
+                  className="ml-auto"
+                >
+                  <CrossIcon fill="#7677F4" height={10} width={10} />
+                </div>
               </div>
-              {courseDate ? (
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex flex-row gap-2 text-[14px]">
-                    {/* If the course from date and to date is present then only format and show the from date and to date */}
-                    <Text className="font-semibold">
-                      {courseDate.from && format(courseDate.from, "MM/dd/yyyy")}
-                    </Text>{" "}
-                    {courseDate.to && <span>-</span>}{" "}
-                    <Text className="font-semibold">
-                      {courseDate.to && format(courseDate.to, "MM/dd/yyyy")}
-                    </Text>
-                  </div>
-                  <div
-                    onClick={() => {
-                      //when we click on cross icon we need to clear the date
-                      courseDateOnChange(undefined);
-                    }}
-                    className="ml-auto"
-                  >
-                    <CrossIcon fill="#7677F4" height={10} width={10} />
-                  </div>
-                </div>
-              ) : (
-                <div className="flex gap-2 font-normal">
-                  Select the Date Range
-                </div>
-              )}
-            </Button>
-          </DialogTrigger>
+            ) : (
+              <div className="flex gap-2 font-normal">
+                Select the Date Range
+              </div>
+            )}
+          </Button>
           <DialogContent
             closeIcon={false}
             className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"
@@ -767,7 +783,7 @@ export const BasicFilters: React.FC<{
           className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
-          <div>Clear All</div>
+          <div>{t('clear_all')}</div>
         </div>
         <Button
           onClick={() => {
@@ -777,7 +793,7 @@ export const BasicFilters: React.FC<{
           }}
           className="h-9 w-18 rounded-xl"
         >
-          Apply
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -801,6 +817,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
             formData.advanceFilter[key] !== ""
       ).length) ||
     0;
+  const {t} = useTranslation("course.find_course")
   return (
     <Sheet open={advanceFilterOpen}>
       <SheetTrigger className="p-0">
@@ -816,7 +833,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           className="flex flex-row gap-2 !rounded-xl"
           variant="outline"
         >
-          All Filters
+          {t('course.find_course:all_filters')}
           <FilterIcon />
           {count > 0 && <CountComponent count={count} />}
         </Button>
