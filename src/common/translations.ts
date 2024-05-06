@@ -1,10 +1,14 @@
 import _ from "lodash";
+import { useRouter } from "next/router";
 
 /**
  * @constant languageCode
  * @description this is used to get the languge code form the route and helps in the translation // TODO need to integrate the route
  */
-export const languageCode = "en"
+export const languageCode = () => {
+    const router = useRouter();
+    return JSON.stringify(router.locale)
+}
 
 /**
  * @function translatedText
@@ -14,5 +18,5 @@ export const languageCode = "en"
  * @returns value to the respected key which is a string
  */
 export const translatedText = (name :  object) => {
-return _.get(name,languageCode);
+return _.get(name,languageCode());
 }
