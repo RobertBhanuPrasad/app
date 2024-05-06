@@ -609,6 +609,11 @@ export const CourseTypeComponent = ({ name }: any) => {
   } = useController({
     name: name,
   });
+  const {
+    field: { value: temporaryValue, onChange: temporaryOnChange }
+  } = useController({
+    name: 'temporaryadvancefilter.course_name'
+  })
 
   const [pageSize, setPageSize] = useState(10);;
   const { options, onSearch } = useSelect({
@@ -642,6 +647,8 @@ export const CourseTypeComponent = ({ name }: any) => {
       value={value}
       onValueChange={(val: any) => {
         onChange(val);
+        // we are making the course name value empty string  if the course type is changed so that it will show the placeholder in course name  if we change the value in course type downdown 
+        temporaryOnChange('')
       }}
     >
       <SelectTrigger className="w-80">
