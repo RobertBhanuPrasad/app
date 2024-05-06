@@ -32,7 +32,7 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
             table: '',
             rowStyles: ''
           }}
-          columns={columns as ColumnDef<any>[]}
+          columns={columns (t)}
           data={participantEmailDeliveryLogsData?.data?.email_delivery_logs_section || []}
           columnPinning={false}
         />
@@ -43,11 +43,11 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
 
 export default ViewParticipantEmailDeliveryLogs
 
-const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
+const columns = (t : any) : ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] => [
   {
     accessorKey: 'transaction_id',
     header: () => {
-      return <TableHeader>Transaction ID</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.transaction_id')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.transaction_id}</Text>
@@ -56,7 +56,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'time_stamp',
     header: () => {
-      return <TableHeader>Time Stamp</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.time_stamp')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text>{formatDateAndTime(row?.original?.time_stamp)}</Text>
@@ -65,7 +65,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'ip_address',
     header: () => {
-      return <TableHeader>IP Address</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.ip_address')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.ip_address}</Text>
@@ -74,7 +74,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'operating_system',
     header: () => {
-      return <TableHeader>Operating System</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.operating_system')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.operating_system}</Text>
@@ -83,7 +83,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'browser',
     header: () => {
-      return <TableHeader>Browser</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.browser')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text className="lowercase">{row?.original?.browser}</Text>

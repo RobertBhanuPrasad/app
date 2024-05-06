@@ -7,6 +7,7 @@ import ViewParticipantTransactionDetails from "@components/participant/viewParti
 import ViewParticipantUtmParameters from "@components/participant/viewParticipant/ViewParticipantUtmParameters";
 import { ParticipantsListMainHeader } from "@components/participants/ParticipantsListMainHeader";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
@@ -19,6 +20,7 @@ import {
 } from "src/constants/Tabs";
 
 function index() {
+    const {t} = useTranslation("course.participants")
     const router = useRouter();
 
     const Id: number | undefined = router?.query?.participantId
@@ -74,7 +76,7 @@ function index() {
         },
         {
             id: 2,
-            label: "Email Delivery Logs",
+            label: t('course.participants:view_participant.email_delivery_logs'),
             content: <ViewParticipantEmailDeliveryLogs participantId={Id} />,
         },
         {
