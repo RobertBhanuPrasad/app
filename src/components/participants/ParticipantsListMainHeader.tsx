@@ -7,13 +7,13 @@ import { useList, useOne } from "@refinedev/core";
 import { ChevronLeftIcon, MoveLeftIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { translatedText } from "src/common/translations";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "src/ui/hover-card";
 import { formatDate } from "src/utility/DateFunctions";
-import { supabaseClient } from "src/utility/supabaseClient";
 
 export const ParticipantsListMainHeader = () => {
   const router = useRouter();
@@ -31,7 +31,6 @@ export const ParticipantsListMainHeader = () => {
     },
   });
 
- 
   const totalRevenue = courseData?.data?.revenue;
 
   const startDate = formatDate(
@@ -65,8 +64,8 @@ export const ParticipantsListMainHeader = () => {
           {/* Course Name */}
           <div className="text-[32px] font-medium">
             {courseData?.data?.program_alias_name_id
-              ? courseData?.data?.program_alias_name_id?.alias_name
-              : courseData?.data?.program_type_id?.name}
+              ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
+              : translatedText(courseData?.data?.program_type_id?.name)}
           </div>
           {/* Course Info */}
           <div className="flex gap-8 pt-2">

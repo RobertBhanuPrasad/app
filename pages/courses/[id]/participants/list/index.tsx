@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { CountComponent } from "pages/courses/list";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { translatedText } from "src/common/translations";
 import {
   PARTICIPANT_ATTENDANCE_STATUS,
   PARTICIPANT_PAYMENT_STATUS,
@@ -300,6 +301,9 @@ function index() {
     setCurrent,
   } = useTable({
     resource: "participant_registration",
+    pagination: {
+      pageSize: 25, //pageSize is set to 25
+    },
     meta: {
       select:
         "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
@@ -314,6 +318,8 @@ function index() {
       ],
     },
   });
+
+  const supabase = supabaseClient();
 
   console.log("Participant table data", participantData);
 
@@ -369,7 +375,7 @@ function index() {
       .filter((key: any) => selectedRowObjects[key] === true)
       .map(Number);
 
-    const { error } = await supabaseClient
+    const { error } = await supabase
       .from("participant_registration")
       .update({ participant_attendence_status_id: attendance_status_id })
       .in("id", participantIds);
@@ -401,7 +407,7 @@ function index() {
       (record: any) => record.value == "Pending"
     )?.id;
 
-    const { data: selectedTransactionStatusValues } = await supabaseClient
+    const { data: selectedTransactionStatusValues } = await supabase
       .from("participant_payment_history")
       .select("transaction_status_id")
       .match({ program_id: programID })
@@ -416,7 +422,7 @@ function index() {
 
     if (selectTransactionStatusIds?.length) {
       if (allValuesSame(selectTransactionStatusIds)) {
-        const { error } = await supabaseClient
+        const { error } = await supabase
           .from("participant_payment_history")
           .update({ transaction_status_id: transaction_status_id })
           .match({
@@ -573,7 +579,7 @@ function index() {
                             handleUpdateAttendanceStatus(record.id)
                           }
                         >
-                          {record.value}
+                          {translatedText(record.name)}
                         </DropdownMenuItem>
                       ))
                     : paymentStatusOptions?.map((record: any) => (
@@ -583,7 +589,7 @@ function index() {
                             handleBulkUpdateTransactionStatus(record.id)
                           }
                         >
-                          {record.value}
+                          {translatedText(record.name)}
                         </DropdownMenuItem>
                       ))}
                 </div>
@@ -714,7 +720,7 @@ const HeaderSection = () => {
   const transactionStatusValues = transactionStatusOptions?.map(
     (record: any) => {
       return {
-        label: record?.value,
+        label: translatedText(record?.name),
         value: record?.id,
       };
     }
@@ -877,6 +883,7 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
 };
 
 const handleExportExcel = async () => {
+  const supabase = supabaseClient();
   try {
     const excelColumns = [
       {
@@ -965,7 +972,7 @@ const handleExportExcel = async () => {
     });
 
     //invoking the export_to_file function
-    const { data, error } = await supabaseClient.functions.invoke(
+    const { data, error } = await supabase.functions.invoke(
       ` export_to_file?${params}`,
       {
         headers: {
@@ -986,7 +993,7 @@ const handleExportExcel = async () => {
       const fileName = fileUrl.split("/").pop();
 
       // passing the file name to download
-      const result = await supabaseClient.storage
+      const result = await supabase.storage
         .from("export_to_excel")
         .download(fileName);
 

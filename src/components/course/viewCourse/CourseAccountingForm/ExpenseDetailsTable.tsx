@@ -24,10 +24,7 @@ import { useList, useOne, useSelect } from "@refinedev/core";
 import { Header } from "src/ui/TextTags";
 import { TableHeader } from "src/ui/TextTags";
 import { DateField } from "src/ui/DateField";
-import {
-  RadioGroup,
-  RadioGroupCircleItem,
-} from "src/ui/radio-group";
+import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
 import { Label } from "src/ui/label";
 import classNames from "classnames";
 import { supabaseClient } from "src/utility";
@@ -402,7 +399,7 @@ const Amount = ({ index }: { index: number }) => {
 
 //   const { options } = useSelect({
 //     resource: "option_values",
-//     optionLabel: "value",
+//     optionLabel: "name",
 //     optionValue: "id",
 //     filters: [
 //       {
@@ -433,7 +430,7 @@ const Amount = ({ index }: { index: number }) => {
 //                   value={option.value}
 //                   className="h-[44px]"
 //                 >
-//                   {option.label}
+//                   {optionValue(option.label)}
 //                 </SelectItem>
 //                 {index < options?.length - 1 && (
 //                   <hr className="border-[#D6D7D8]" />
@@ -820,6 +817,8 @@ const RadioItem: React.FC<RadioItemProps> = ({
  * @returns
  */
 const NameOfPersonToReimburse = ({ index }: { index: number }) => {
+  const supabase = supabaseClient();
+
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -854,7 +853,7 @@ const NameOfPersonToReimburse = ({ index }: { index: number }) => {
     const fetchData = async () => {
       // We are getting the daa from the supaBaseClient from the program table and program_organizers, program_assistant_teachers, program_teachers all these tables are related to the program
       // so by giving the program id we can get all the data.
-      const { data } = await supabaseClient
+      const { data } = await supabase
         .from("program")
         .select(
           "program_organizers(user_id(contact_id(*))),program_assistant_teachers(*,user_id(contact_id(*))),program_teachers(*,user_id(contact_id(*)))"
