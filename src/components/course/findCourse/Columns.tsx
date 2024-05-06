@@ -196,8 +196,10 @@ export const column = (
         return <div>Attendees</div>;
       },
       cell: ({ row }: any) => {
+        const router = useRouter()
+
         return (
-          <div className="min-w-[150px]">
+          <div className="min-w-[150px] text-primary cursor-pointer font-semibold" onClick={()=>router.push(`/courses/${row.original.id}/participants/list`)}>
             {row?.original?.participant_count}
           </div>
         );
