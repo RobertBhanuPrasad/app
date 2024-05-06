@@ -108,5 +108,9 @@
 "orgainization":"Orgainization",
 "select_payment_method":"Select Payment Method",
 "select_transaction_status":"Select Transaction Status",
-"select_date":"Select Date"
+"select_date":"Select Date",
+ "do_you_snore": "Do you snore?",
+ "roommate_snores": "Would you object to having room mate who snores?",
+ "coursename":"Course Name",
+"tax":"Tax"
 }
