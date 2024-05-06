@@ -1016,7 +1016,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
                   {course?.program_id?.state_id?.name}
                 </div>
                 <div className="font-semibold text-[16px]">
-                  {course.program_id?.program_type_id?.name}
+                  {translatedText(course.program_id?.program_type_id?.name)}
                 </div>
               </div>
             ))}
