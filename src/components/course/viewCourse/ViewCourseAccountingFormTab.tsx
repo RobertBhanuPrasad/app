@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "sr
 import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
 import { BaseTable } from "../findCourse/BaseTable";
+import { translatedText } from "src/common/translations";
 
 
 const ViewCourseAccountingFormTab = ({ programId }: { programId: number }) => {
@@ -187,7 +188,7 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
     const { tableQueryResult: changeLogData } = useTable({
         resource: "program_accounting_activity",
         meta: {
-            select: "*,user_id(contact_id(full_name)), caf_status_id(id,value) ,created_at ,comment",
+            select: "*,user_id(contact_id(full_name)), caf_status_id(id,name) ,created_at ,comment",
         },
         pagination: {
             pageSize: 1000,
@@ -359,8 +360,8 @@ export const changeLogSummaryColumns: ExtendedColumnDef<any>[] = [
         },
         cell: ({ row }) => {
             return (
-                <abbr className="no-underline" title={`${row.original.caf_status_id.value} (${row.original.comment})`}>
-                    <Text className="max-w-[450px] truncate">{`${row.original.caf_status_id.value} (${row.original.comment})`}</Text>
+                <abbr className="no-underline" title={`${translatedText(row.original.caf_status_id.name)} (${row.original.comment})`}>
+                    <Text className="max-w-[450px] truncate">{`${translatedText(row.original.caf_status_id.name)} (${row.original.comment})`}</Text>
                 </abbr>
             );
         },
