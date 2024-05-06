@@ -35,7 +35,7 @@ function ViewParticipantCourseInformation({ participantId }: any) {
         ? translatedText(participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name)
         : '-'
     },
-    { key: t('teachers'), value: teacherFullNames },
+    { key: t('course.participants:view_participant.course_information_tab.Teachers(S)'), value: teacherFullNames },
     { key: t('course.participants:view_participant.course_information_tab.attendance_status'), value: participantCourseData?.data?.participant_attendence_status_id?.value },
     { key: t('course.participants:view_participant.course_information_tab.discount_amount'), value: participantCourseData?.data?.discounted_amount }
   ]

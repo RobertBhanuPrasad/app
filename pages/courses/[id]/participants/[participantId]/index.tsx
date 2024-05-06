@@ -18,12 +18,10 @@ import {
     VIEW_PARTICIPANT_TRANSACTION_DETAILS,
     VIEW_PARTICIPANT_UTM_PARAMETERS,
 } from "src/constants/Tabs";
-import { useTranslation } from 'next-i18next';
 
 function index() {
     const {t} = useTranslation("course.participants")
     const router = useRouter();
-    const {t} = useTranslation(["course.participants"])
     const Id: number | undefined = router?.query?.participantId
         ? parseInt(router.query.participantId as string)
         : undefined;
