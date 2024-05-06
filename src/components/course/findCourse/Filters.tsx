@@ -416,7 +416,7 @@ export const CourseName = () => {
         value,
       },
     ],
-    // we are filtering the data because we have displaying the particular coursename whose selected course type has the course alias name in the dropdown to select
+    // requirement: we need to show the course_alias_name to the selected course type in the dropdown
     // for the MVP-1195
     filters: [
       {
