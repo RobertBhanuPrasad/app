@@ -28,14 +28,14 @@ function ViewParticipantCourseInformation({ participantId }: any) {
 
   // Participant course information
   const coursePaticipantInformation = [
-    { key: t('common:course_type'), value: translatedText(participantCourseData?.data?.program_id?.program_type_id?.name) },
+    { key: t('course_type'), value: translatedText(participantCourseData?.data?.program_id?.program_type_id?.name) },
     {
       key: t('new_strings:coursename'),
       value: participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
         ? translatedText(participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name)
         : '-'
     },
-    { key: t('common:teachers'), value: teacherFullNames },
+    { key: t('teachers'), value: teacherFullNames },
     { key: t('course.view_course:participants_tab.attendance_status'), value: participantCourseData?.data?.participant_attendence_status_id?.value },
     { key: t('course.participants:view_participant.course_information_tab.discount_amount'), value: participantCourseData?.data?.discounted_amount }
   ]
