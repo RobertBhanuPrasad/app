@@ -21,8 +21,10 @@ import AccomodationDetails from './AccomodationDetails'
 import CourseFee from './CourseFee'
 import ParticipantInformation from './ParticipantInformation'
 import PaymentDetails from './PaymentDetails'
+import { useTranslation } from 'next-i18next'
 
 export default function EditParticipantTabs() {
+  const {t} = useTranslation('course.participants')
   const { watch } = useFormContext()
   const router = useRouter()
   let formData = watch()
@@ -93,7 +95,7 @@ export default function EditParticipantTabs() {
   let tabs = [
     {
       id: 0,
-      label: 'Participants Information',
+      label: t('edit_participant.participants_information_tab.participant_information'),
       content: (
         <div>
           <ParticipantInformation />
@@ -102,7 +104,7 @@ export default function EditParticipantTabs() {
     },
     {
       id: 1,
-      label: 'Course Fees',
+      label: t('edit_participant.participants_information_tab.course_fees'),
       content: (
         <div>
           <CourseFee />
@@ -111,7 +113,7 @@ export default function EditParticipantTabs() {
     },
     {
       id: 2,
-      label: 'Accommodation Details',
+      label: t('edit_participant.participants_information_tab.accommodation_details'),
       content: (
         <div>
           <AccomodationDetails />
@@ -120,7 +122,7 @@ export default function EditParticipantTabs() {
     },
     {
       id: 3,
-      label: 'Payment Details',
+      label: t('edit_participant.participants_information_tab.payment_details'),
       content: (
         <div>
           <PaymentDetails />
@@ -129,7 +131,7 @@ export default function EditParticipantTabs() {
     },
     {
       id: 4,
-      label: 'Transaction Details',
+      label: t('view_participant.transaction_details'),
       content: (
         <div>
           <ViewParticipantTransactionDetails participantId={Id} />
@@ -138,7 +140,7 @@ export default function EditParticipantTabs() {
     },
     {
       id: 5,
-      label: 'UTM Parameters',
+      label: t('view_participant.utm_parameters'),
       content: (
         <div>
           <ViewParticipantUtmParameters participantId={Id} />

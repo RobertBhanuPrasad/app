@@ -1,5 +1,6 @@
 import Star from "@public/assets/star";
 import { useList } from "@refinedev/core";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";
@@ -19,6 +20,7 @@ import {
 export default function AccomodationDetails() {
     const { getValues } = useFormContext();
     const FormData = getValues();
+    const {t} = useTranslation(['course.participants','new_strings'])
 
     // Use useController to control the accommodation_snore,roommate_snore
     const {
@@ -91,14 +93,14 @@ export default function AccomodationDetails() {
     return (
         <div id="Accomodation">
             <Text className="font-semibold text-[18px] py-[25px]">
-                Accomodation Details
+                {t('edit_participant.participants_information_tab.accommodation_details')}
             </Text>
             <div className="flex gap-4">
                 <div className="text-[#999999] gap-2">
                     <div className="flex gap-2">
                         <div>
                             <Text className="text-[#999999] text-[14px]">
-                                Accomodation Type
+                                {t('edit_participant.participants_information_tab.accommodation_type')}
                             </Text>
                         </div>
                         <div>
@@ -151,7 +153,7 @@ export default function AccomodationDetails() {
                 </div>
                 <div className="w-[303px] ">
                     <Text className="text-[#999999] text-[14px]">
-                        Fee per Person
+                        {t('edit_participant.participants_information_tab.fee_per_person')}
                     </Text>
                     <Text className="py-[5px] font-semibold">
                         {accommodationData?.currency_code
@@ -164,7 +166,7 @@ export default function AccomodationDetails() {
                 </div>
                 <div className="text-[#999999] ">
                     <Text className="text-[#999999] text-[14px] ">
-                        Roommate Preferences 1
+                        {t('edit_participant.participants_information_tab.roommate_preferences_1')}
                     </Text>
                     <Input
                         value={
@@ -181,7 +183,7 @@ export default function AccomodationDetails() {
             <div className="flex gap-6 py-[10px]">
                 <div className="text-[#999999] ">
                     <Text className="text-[#999999] text-[14px]">
-                        Roommate Preferences 2
+                        {t('edit_participant.participants_information_tab.roommate_preferences_2')}
                     </Text>
                     <Input
                         value={
@@ -196,7 +198,7 @@ export default function AccomodationDetails() {
                 </div>
                 <div className="text-[#999999] ">
                     <Text className="text-[#999999] text-[14px]">
-                        Roommate Preferences 3
+                        {t('edit_participant.participants_information_tab.roommate_preferences_3')}
                     </Text>
                     <Input
                         value={
@@ -215,7 +217,7 @@ export default function AccomodationDetails() {
                         <div>
                             <Text className="text-[#999999] text-[14px]">
                                 {" "}
-                                Do you snore?
+                                {t('new_strings:do_you_snore')}
                             </Text>
                         </div>
                         <div>
@@ -262,7 +264,7 @@ export default function AccomodationDetails() {
                 <div className="flex gap-2">
                     <div>
                         <Text className="text-[#999999] text-[14px] py-[5px]">
-                            Would you object to having room mate who snores?
+                            {t('new_strings:roommate_snores')}
                         </Text>
                     </div>
                     <div>

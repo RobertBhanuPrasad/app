@@ -98,7 +98,7 @@ export const ParticipantsListMainHeader = () => {
                     {t('course.view_course:basic_details_tab.transaction_status')} = {t('course.view_course:basic_details_tab.confirmed_pending')} {t('course.view_course:basic_details_tab.attendance_status')} =
                     {t('course.view_course:basic_details_tab.confirmed_pending_dropout')} {t('course.view_course:basic_details_tab.total_participants_records')}:
                     {courseData?.data?.total_part}
-                  </div>icipant_count
+                  </div>
                 </HoverCardContent>
               </HoverCard>
             </div>

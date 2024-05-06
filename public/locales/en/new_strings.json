@@ -94,12 +94,9 @@
 
 
  "participants":"participants",
+ "do_you_snore": "Do you snore?",
+ "roommate_snores": "Would you object to having room mate who snores?",
+
  "coursename":"Course Name",
-
-"organization_fee":"Organization Fee",
-"expense_fee":"Expense Fee",
-"tax":"Tax",
-"accommodation_fee":"Accommodation Fee",
-"total_fee":"Total Fee"
-
+"tax":"Tax"
 }

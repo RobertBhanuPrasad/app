@@ -1,5 +1,6 @@
 import Star from "@public/assets/star";
 import { useOne } from "@refinedev/core";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
 import { Input } from "src/ui/input";
@@ -7,6 +8,7 @@ import { Text } from "src/ui/TextTags";
 
 export default function ParticipantInformation() {
     const { query } = useRouter();
+    const {t} = useTranslation('course.participants')
 
     // Use useController to control the participantMemo field
     const {
@@ -31,12 +33,12 @@ export default function ParticipantInformation() {
     return (
         <div id="participants">
             <Text className="font-semibold text-[18px] pt-[25px] ">
-                Participant Details
+                {t('edit_participant.participants_information_tab.participants_details')}
             </Text>
             <div className="flex py-[20px]">
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px] ">
-                        Participants
+                        {t('edit_participant.participants_information_tab.participants')}
                     </Text>
                     <Text className="text-[16px] font-semibold">
                         {data?.data?.contact_id?.full_name
@@ -48,7 +50,7 @@ export default function ParticipantInformation() {
                     <div className="w-[303px]">
                         <div className="flex gap-2">
                             <div>
-                                <Text>Memo</Text>
+                                <Text>{t('edit_participant.participants_information_tab.memo')}</Text>
                             </div>
                             <div>
                                 <Star />
