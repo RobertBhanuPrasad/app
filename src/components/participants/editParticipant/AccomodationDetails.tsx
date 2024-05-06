@@ -217,7 +217,7 @@ export default function AccomodationDetails() {
                         <div>
                             <Text className="text-[#999999] text-[14px]">
                                 {" "}
-                                {t('new_strings:do_you_snore?')}
+                                {t('new_strings:do_you_snore')}
                             </Text>
                         </div>
                         <div>
@@ -264,7 +264,7 @@ export default function AccomodationDetails() {
                 <div className="flex gap-2">
                     <div>
                         <Text className="text-[#999999] text-[14px] py-[5px]">
-                            {t('new_strings:roommate_snores?')}
+                            {t('new_strings:roommate_snores')}
                         </Text>
                     </div>
                     <div>
