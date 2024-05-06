@@ -18,11 +18,11 @@ type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
 export const columns = () =>
 {
-  const {t} = useTranslation(['course.participants'])
+  const {t} = useTranslation(['common','course.participants'])
   const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "participant_code",
-    column_name: "Registration ID",
+    column_name: t('course.participants:find_participant.registration_id'),
     enablePinning: true,
     enableHiding: false,
     header: ({ column }) => {
@@ -52,7 +52,7 @@ export const columns = () =>
   },
   {
     accessorKey: "created_at",
-    column_name: "Registration Date",
+    column_name: t('course.participants:find_participant.registration_date'),
     header: ({ column }) => {
       return (
         <div>
@@ -80,7 +80,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Name",
-    column_name: "Name",
+    column_name: t('course.participants:find_participant.name'),
     enableHiding: false,
     enableSorting: true,
     header: ({ column }) => {
@@ -113,7 +113,7 @@ export const columns = () =>
   },
   {
     accessorKey: "NIF",
-    column_name: "NIF",
+    column_name: t('course.participants:find_participant.nif'),
     header: ({ column }) => {
       return <div className="text-left"> {t('course.participants:find_participant.nif')}</div>;
     },
@@ -130,7 +130,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Date of Birth",
-    column_name: "Date of Birth",
+    column_name: t('course.participants:find_participant.date_of_birth'),
     header: ({ column }) => {
       return (
         <div>
@@ -162,7 +162,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Phone",
-    column_name: "Phone",
+    column_name: t('course.participants:find_participant.phone'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -194,7 +194,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Email",
-    column_name: "Email",
+    column_name: t('course.participants:find_participant.email'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -226,7 +226,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Fee Level",
-    column_name: "Fee Level",
+    column_name: t('course.participants:view_participant.fee_level'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -258,7 +258,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Amount",
-    column_name: "Amount",
+    column_name: t('course.participants:find_participant.amount(EUR)'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -290,7 +290,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Transaction Type",
-    column_name: "Transaction Type",
+    column_name: t('course.participants:view_participant.transaction_type'),
     header: ({ column }) => {
       return <div className="min-w-[150px] text-left">{t('course.participants:view_participant.transaction_type')}</div>;
     },
@@ -313,7 +313,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Transaction ID",
-    column_name: "Transaction ID",
+    column_name: t('course.participants:view_participant.transaction_id'),
     header: ({ column }) => {
       return <div className=" min-w-[200px] text-left">{t('course.participants:view_participant.transaction_id')}</div>;
     },
@@ -335,7 +335,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Payment Method",
-    column_name: "Payment Method",
+    column_name: t('course.participants:view_participant.payment_method'),
     header: ({ column }) => {
       return <div className="min-w-[200px] text-left">{t('course.participants:view_participant.payment_method')}</div>;
     },
@@ -354,7 +354,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Balance",
-    column_name: "Balance",
+    column_name: t('course.participants:find_participant.balance_due(EUR)'),
     header: ({ column }) => {
       return <div className="text-left">{t('course.participants:find_participant.balance_due(EUR)')}</div>;
     },
@@ -373,7 +373,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Transaction Status",
-    column_name: "Transaction Status",
+    column_name: t('course.participants:find_participant.transaction_status'),
     enableHiding: false,
     header: ({ column }) => {
       return <div className="min-w-[150px] text-left">{t('course.participants:find_participant.transaction_status')}</div>;
@@ -393,7 +393,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Attendance Status",
-    column_name: "Attendance Status",
+    column_name: t('course.participants:find_participant.attendance_status'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -427,7 +427,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Program Agreement Version",
-    column_name: "Program Agreement Version",
+    column_name: t('course.participants:find_participant.program_agreement_version'),
     header: ({ column }) => {
       return <div className="text-left">{t('course.participants:find_participant.program_agreement_version')}</div>;
     },
@@ -446,7 +446,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Program Agreement Status",
-    column_name: "Program Agreement Status",
+    column_name: t('course.participants:find_participant.program_agreement_status'),
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">{t('course.participants:find_participant.program_agreement_status')}</div>
@@ -467,7 +467,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Program Agreement Date",
-    column_name: "Program Agreement Date",
+    column_name: t('course.participants:find_participant.program_agreement_date'),
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">{t('course.participants:find_participant.program_agreement_date')}</div>
@@ -487,7 +487,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Health Declaration Status",
-    column_name: "Health Declaration Status",
+    column_name: t('course.participants:find_participant.health_declaration_status'),
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">{t('course.participants:find_participant.health_declaration_status')}</div>
@@ -508,7 +508,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Health Declaration Consent Date",
-    column_name: "Health Declaration Consent Date",
+    column_name: t('course.participants:find_participant.health_declaration_consent_date'),
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">
@@ -535,7 +535,7 @@ export const columns = () =>
     enableHiding: false,
     cell: ({ row }) => {
       const optionsValues = [
-        "View Participant",
+        t('view_participants'),
         "Edit Participant",
         // TODO(Not in MVP scope): Integrate these actions later
         // "Transfer",
