@@ -8,6 +8,7 @@ import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
 import { useTable } from "@refinedev/core"; // Importing useTable hook for fetching table data
 import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type for defining table columns
 import { MoreVertical } from "lucide-react"; // Importing icons for UI
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"; // Importing React
 import { translatedText } from "src/common/translations";
