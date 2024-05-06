@@ -26,13 +26,13 @@ function NewCourseStep6() {
   // useEffect to add an initial contact field if none exists
   useEffect(() => {
     if (fields.length === 0) {
-      append(null);
+      append('');
     }
   }, []);
 
   // Function to handle adding a new contact item
   const handleAddItem = () => {
-    append(null);
+    append('');
   };
 
   // Function to handle deleting a contact item based on index

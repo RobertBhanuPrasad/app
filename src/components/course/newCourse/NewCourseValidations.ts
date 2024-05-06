@@ -49,9 +49,7 @@ export const validationSchema = () => {
     visibility_id: z.number(),
     is_language_translation_for_participants: z.boolean().optional(),
     is_geo_restriction_applicable: z.boolean(),
-    language_ids: z
-      .array(z.number())
-      .nonempty({ message: "Please select at least one Language" }),
+    language_ids: z.array(z.number()).optional(),
     translation_language_ids: z
       .array(z.number(), {
         required_error: "Please select atleast one Language translation",
@@ -111,16 +109,16 @@ export const validationSchema = () => {
     // Step 6 Schema
     contact: contactValidationSchema,
     bcc_registration_confirmation_email: z
-      .string({ required_error: "At least on email is required." })
+      .string()
       .regex(
         /^(?:[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
-      ),
+      )
+      .optional(),
   });
 };
-
 
 const feelLevelsValidationSchema = z.array(
   z.object({
@@ -132,18 +130,11 @@ const feelLevelsValidationSchema = z.array(
 
 const contactValidationSchema = z.array(
   z.object({
-    contact_name: z
-      .string()
-      .regex(/^[a-zA-Z\s]+$/, { message: "Contact Name is a required field." }),
+    contact_name: z.string().optional(),
     contact_email: z
       .string({ required_error: "Contact email is a required field." })
       .email({ message: "Please enter correct Email" }),
-    contact_number: z.union([
-      z
-        .string({ required_error: "Contact mobile is a required field." })
-        .regex(/^\d+$/),
-      z.number(),
-    ]),
+    contact_number: z.union([z.string().regex(/^\d+$/), z.number()]).optional(),
   })
 );
 const accommodationValidationSchema = z.array(
