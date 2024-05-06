@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
 import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
+import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { translatedText } from 'src/common/translations'
 
@@ -50,9 +51,11 @@ export const column = (
             onClick={() => {
               router.push(`/courses/${row?.original?.id}`);
             }}
-            className="w-[100px] text-[#7677F4] font-semibold"
+            className="w-[100px]"
           >
-            {row.original.program_code}
+            <Text className="text-[#7677F4] font-semibold cursor-pointer">
+              {row.original.program_code}
+            </Text>
           </div>
         );
       },

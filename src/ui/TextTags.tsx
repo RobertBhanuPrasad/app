@@ -80,7 +80,7 @@ const TableHeader: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children,
  * @param Example "Instructions in course accounting form"
  */
 const Text: React.FC<HTMLAttributes<HTMLParagraphElement>> = ({ children, className, ...props }) => {
-  console.log(children,'children')
+
   return (
     <p className={cn('text-sm font-normal text-[#333333]',className)} {...props}>
       {children}
