@@ -27,7 +27,6 @@
  "contact_phone":"Contact Phone",
  "bcc_registration_confirmation_email":"BCC registration confirmation email",
  "course_name":"Course Name",
- "copied":"copied",
  "copy_links":" Copy 2 Links",
  "online":"Online",
  "select_course_alias_name":"Select course alias name",
@@ -59,8 +58,6 @@
 
 
     "find_course":"Find Courses",
-    "no_results" : "No results.",
-    "course_name" : "Course Name",
     "select_the_date_range" : "Select the Date Range",
     "select_course_name" : "Select Course Name",
     "select_course_type" : "Select Course Type",
@@ -90,15 +87,19 @@
  "approve":"Approve",
  "describe_your_rejection_reason":"Describe your rejection reason",
  "course_rejected":"Course Rejected",
- "edit_course_accounting_form":" Accounting Form",
- "view_course_accounting_form":"View Course Accounting Form",
  "are_you_sure_you_want_to_approve":"Are you sure you want to Approve this Course",
  "the_course_got_rejected":"The course got rejected succesfully",
  "comment":"Comment.",
 
 
 
- "participants":"participants"
+ "participants":"participants",
+ "coursename":"Course Name",
 
+"organization_fee":"Organization Fee",
+"expense_fee":"Expense Fee",
+"tax":"Tax",
+"accommodation_fee":"Accommodation Fee",
+"total_fee":"Total Fee"
 
 }
