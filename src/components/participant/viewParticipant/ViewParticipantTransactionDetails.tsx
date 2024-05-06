@@ -353,7 +353,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
                   }}
                   className="p-[5px] hover:bg-[#7677F4]/[0.1] rounded-sm cursor-pointer"
                 >
-                   {t('edit_participant.participants_information_tab.view')}
+                   {t('edit_participant.participants_information_tab.edit')}
                 </div>
                 <div
                   onClick={() => {
