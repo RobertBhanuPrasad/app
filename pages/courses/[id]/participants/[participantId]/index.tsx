@@ -10,6 +10,7 @@ import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
+import { useTranslation } from 'next-i18next';
 import {
     VIEW_CUSTOMER_DEVICE_DETAILS,
     VIEW_PARTICIPANT_COURSE_INFORMATION,
@@ -19,6 +20,7 @@ import {
 } from "src/constants/Tabs";
 
 function index() {
+    const {t} = useTranslation("course.participants")
     const router = useRouter();
 
     const Id: number | undefined = router?.query?.participantId
@@ -64,7 +66,7 @@ function index() {
         },
         {
             id: 1,
-            label: "Transaction Details",
+            label: t('course.participants:view_participant.transaction_details'),
             content: (
                 <div>
                     {" "}
