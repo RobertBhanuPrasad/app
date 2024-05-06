@@ -596,7 +596,7 @@ export function BaseTable<TData, TValue>({
                 }}
               >
               <SelectTrigger className="h-8 w-[131px]">
-                  <div className="text-[#666666]">Showing</div>
+                  <div className="text-[#666666]">{t('course.find_course:showing')}</div>
                   <SelectValue/>
               </SelectTrigger>
                 <SelectContent side="top">
@@ -606,7 +606,7 @@ export function BaseTable<TData, TValue>({
                       pageSize // Till now there is no limit will change after confirming TODO
                     ) => (
                       <SelectItem key={pageSize} value={`${pageSize}`}>
-                        {t('course.find_course:showing')} {pageSize}
+                        {pageSize}
                       </SelectItem>
                     )
                   )}

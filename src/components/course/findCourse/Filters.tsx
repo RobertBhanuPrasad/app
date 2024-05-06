@@ -754,7 +754,7 @@ export const Visibility = () => {
     PRIVATE
   )?.id;
 
-  const {t} = useTranslation("new_strings")
+  const {t} = useTranslation("common")
 
   return (
     <div>
@@ -768,13 +768,13 @@ export const Visibility = () => {
           <RadioButtonCard
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label={t('new_strings:public')}
+            label={t('public')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label={t('new_strings:private')}
+            label={t('private')}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>

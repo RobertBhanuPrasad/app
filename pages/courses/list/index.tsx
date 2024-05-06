@@ -641,7 +641,7 @@ export const CourseTypeComponent = ({ name }: any) => {
   };
 
  
-  const {t} = useTranslation("new_strings")
+  const {t} = useTranslation("common")
   return (
     <Select
       value={value}
@@ -652,7 +652,7 @@ export const CourseTypeComponent = ({ name }: any) => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder={t('new_strings:select_course_type')} />
+        <SelectValue placeholder={t('select_course_type')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
