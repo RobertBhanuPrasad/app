@@ -332,7 +332,7 @@ export function BaseTable<TData, TValue>({
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
-                  className="flex flex-row justify-between w-[192px] h-10"
+                  className="flex flex-row justify-between w-[192px] h-10  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
                 >
                   Columns
                   <DropDown />
@@ -409,7 +409,7 @@ export function BaseTable<TData, TValue>({
                     </div>
                     <Button
                       onClick={applyColumnVisibilityChanges}
-                      className="h-9 w-18 rounded-xl"
+                      className="h-9 w-18 rounded-xl hover:bg-[#5E5FC3]"
                     >
                       Apply
                     </Button>
@@ -694,6 +694,7 @@ const DataPagination = ({
                 onClick={() => {
                   setCurrent(page);
                 }}
+                className={page === current ? 'hover:bg-[#5E5FC3]' : 'hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]'}
               >
                 {page}
               </Button>
