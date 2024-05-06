@@ -105,6 +105,8 @@
 "total_fee":"Total Fee",
 "send_payment_confirmation_mail": "Send Payment confirmation mail?",
 
-"orgainization":"Orgainization"
-
+"orgainization":"Orgainization",
+"select_payment_method":"Select Payment Method",
+"select_transaction_status":"Select Transaction Status",
+"select_date":"Select Date"
 }

@@ -222,7 +222,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           }}
                         >
                           <SelectTrigger className="w-[278px]">
-                            <SelectValue placeholder="Select Transaction Status" />
+                            <SelectValue placeholder={t('new_strings:select_transaction_status')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItems>
@@ -265,7 +265,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                         <DateField
                           value={payment_date as Date}
                           onChange={paymentDateOnchange}
-                          placeholder="Select Date"
+                          placeholder={t('new_strings:select_date')}
                           className="!w-[278px] h-[40px] rounded-[12px]"
                           disabled={
                             transaction_status_id == FAILED_ID
@@ -295,7 +295,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           }}
                         >
                           <SelectTrigger className="w-[278px]">
-                            <SelectValue placeholder="Select Payment Method" />
+                            <SelectValue placeholder={t('new_strings:select_payment_method')}/>
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItems>
