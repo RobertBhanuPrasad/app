@@ -123,7 +123,7 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="flex flex-row gap-1 ">Online zoom URL 
+        <div className="flex flex-row gap-1 items-center">Online zoom URL <div className="text-[#7677F4]"> *</div>
         <HoverCard>
           <HoverCardTrigger>
             <Important />

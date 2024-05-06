@@ -150,7 +150,7 @@ export default function NewCourseStep2() {
           </HoverCard>
         </div>
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          Course Description *
+        Email Notes *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
