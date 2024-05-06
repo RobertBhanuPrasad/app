@@ -17,7 +17,7 @@ function ViewParticipantCourseInformation({ participantId }: any) {
     }
     
   }
-  const {t} = useTranslation(["common", "course.view_course", "course.participants", "new_strings"])
+  const {t} = useTranslation(["common", "course.participants", "new_strings"])
   // Fetching participant course data
   const { data: participantCourseData, isLoading, isError } = useOne(query)
 
@@ -36,7 +36,7 @@ function ViewParticipantCourseInformation({ participantId }: any) {
         : '-'
     },
     { key: t('teachers'), value: teacherFullNames },
-    { key: t('course.view_course:participants_tab.attendance_status'), value: participantCourseData?.data?.participant_attendence_status_id?.value },
+    { key: t('course.participants:view_participant.course_information_tab.attendance_status'), value: participantCourseData?.data?.participant_attendence_status_id?.value },
     { key: t('course.participants:view_participant.course_information_tab.discount_amount'), value: participantCourseData?.data?.discounted_amount }
   ]
 
