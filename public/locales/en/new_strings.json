@@ -94,6 +94,18 @@
 
 
  "participants":"participants",
+
+
+
+
+
+"health_consent_status" :"Health Consent Status",
+
+
+
+"completed": "completed",
+
+
  "changes_made_will_be_lost_are_you_sure_you_want_to_continue":"Changes made will be lost. Are you sure you want to continue?",
 "Changes_saved_successfully":"Changes saved successfully",
  "coursename":"Course Name",
@@ -101,12 +113,12 @@
 
 "organization_fee":"Organization Fee",
 "expense_fee":"Expense Fee",
-"tax":"Tax",
+
 "accommodation_fee":"Accommodation Fee",
 "total_fee":"Total Fee",
 "send_payment_confirmation_mail": "Send Payment confirmation mail?",
 
-"orgainization":"Orgainizationnn",
+"orgainization":"Orgainization",
 "select_payment_method":"Select Payment Method",
 "select_transaction_status":"Select Transaction Status",
 "select_date":"Select Date",
