@@ -655,7 +655,7 @@ export const CourseTypeComponent = ({ name }: any) => {
       onValueChange={(val: any) => {
         onChange(val);
         // we are making the course name value undefined if the course type is changed
-        temporaryOnChange(undefined)
+        temporaryOnChange('')
       }}
     >
       <SelectTrigger className="w-80">
