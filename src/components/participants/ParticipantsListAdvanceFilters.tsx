@@ -20,7 +20,7 @@ import { useTranslation } from 'next-i18next';
 
 export function ParticipantsAdvanceFilter() {
 
-  const {t} = useTranslation(["common", "new_strings" ,"course.participants" ])
+  const {t} = useTranslation(["common", "new_strings" ,"course.participants", "course.find_course", "course.view_course" ])
   const { setParticpantFiltersData, advanceFilterCount, setAdvanceFilterCount } = ParticipantStore()
   const { watch, setValue, getValues } = useFormContext()
   const formData = watch()
@@ -89,7 +89,7 @@ export function ParticipantsAdvanceFilter() {
           <div className="max-h-[90vh] overflow-y-auto scrollbar pr-4">
             <SheetHeader className="p-3 text-2xl font-semibold flex flex-row">
               <div className="flex justify-between items-center flex-grow">
-                <div className="text-2xl font-semibold">{t("new_strings:filter_by")}</div>
+                <div className="text-2xl font-semibold">{t("course.find_course:filter_by")}</div>
                 <div
                   onClick={() => {
                     setOpenAdvFilter(false)
@@ -105,7 +105,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-1">
                 <AccordionTrigger>
                   <div className="flex flex-row gap-3 items-center">
-                    <div>{t("new_strings:contact_details")}</div>
+                    <div>{t("course.view_course:basic_details_tab.contact_details")}</div>
                     {getContactCount()}
                   </div>
                 </AccordionTrigger>
@@ -118,7 +118,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-4">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>{t("new_strings:transaction_type")}</div>
+                    <div>{t("course.participants:find_participant.transaction_type")}</div>
                     {formData?.tempFilters?.transaction_type?.length > 0 && (
                       <CountComponent count={formData?.tempFilters?.transaction_type?.length} />
                     )}
@@ -371,7 +371,7 @@ export const TransactionType = () => {
 }
 
 export const PaymentMethod = () => {
-  const {t}= useTranslation(["common" , "course.participant"])
+  const {t}= useTranslation(["common" , "course.participant", "new_strings"])
   const {
     field: { value: paymentMethods, onChange: onSelectChange }
   } = useController({
@@ -508,7 +508,7 @@ export const HealthConsentStatus = () => {
           htmlFor="terms"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          {t("new_strings:completed")}
+          {t("course.find_course:completed")}
         </label>
       </div>
       <div
@@ -568,7 +568,7 @@ export const ProgramAgreementStatus = () => {
           htmlFor="terms"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          {t("new_strings:completed")}
+          {t("course.find_course:completed")}
         </label>
       </div>
       <div
