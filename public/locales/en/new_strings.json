@@ -97,6 +97,7 @@
  "changes_made_will_be_lost_are_you_sure_you_want_to_continue":"Changes made will be lost. Are you sure you want to continue?",
 "Changes_saved_successfully":"Changes saved successfully",
  "coursename":"Course Name",
+ "balance_due":"Balance Due",
 
 "organization_fee":"Organization Fee",
 "expense_fee":"Expense Fee",
@@ -111,6 +112,6 @@
 "select_date":"Select Date",
  "do_you_snore": "Do you snore?",
  "roommate_snores": "Would you object to having room mate who snores?",
- "coursename":"Course Name",
-"tax":"Tax"
+ "view_participant" : "View Participant",
+ "edit_participant" : "Edit Participant"
 }

@@ -616,7 +616,7 @@ function index() {
               table: "",
               rowStyles: "",
             }}
-            columns={columns}
+            columns={columns()}
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
@@ -1048,7 +1048,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common","course.participants","new_strings"
+    "common","course.participants","new_strings", "course.find_course"
   ]);
 
   if (!authenticated) {
