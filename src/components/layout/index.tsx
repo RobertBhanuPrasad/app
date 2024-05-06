@@ -11,7 +11,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       <div className="absolute top-0 left-0 w-full z-10 inset-0">
         <Navbar />
         <Breadcrumb />
-        <div className="mt-9">
+        <div className="mt-4">
           <div className="">{children}</div>
         </div>
       </div>

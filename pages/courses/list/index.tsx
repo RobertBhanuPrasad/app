@@ -456,9 +456,9 @@ function index() {
   });
 
   return (
-    <div className="flex flex-col justify-between relative h-screen">
+    <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
-      <div className="mx-8 flex flex-col gap-4 mt-4">
+      <div className="mx-8 flex flex-col gap-[72px] mt-4">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
@@ -551,7 +551,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 
   return (
     <Form onSubmit={() => {}} defaultValues={AllFilterData}>
-      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
+      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
             hasAliasNameFalse={hasAliasNameFalse}
@@ -651,7 +651,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         onChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="min-w-[150px] w-[50%]">
         <SelectValue placeholder="Select Course Type" />
       </SelectTrigger>
       <SelectContent>
@@ -714,8 +714,8 @@ export const BasicFilters: React.FC<{
   };
 
   return (
-    <div className="flex flex-row items-center justify-between">
-      <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
+    <div className="flex gap-x-[2%] flex-row items-center justify-between">
+      <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
         <SearchIcon />
         <Input
           value={value}
@@ -726,11 +726,11 @@ export const BasicFilters: React.FC<{
           placeholder={`Search by Course ID`}
         />
       </div>
-      <div>
+      <>
         {" "}
         <Dialog open={open} onOpenChange={setOpen}>
           <Button
-            className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
+            className="w-[50%] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
             variant="outline"
             onClick={() => {
               setOpen(true);
@@ -780,14 +780,14 @@ export const BasicFilters: React.FC<{
             />
           </DialogContent>
         </Dialog>
-      </div>
-      <div>
+      </>
+      <>
         <CourseTypeComponent name="course_type" />
-      </div>
-      <div className="flex flex-row gap-4 items-center">
+      </>
+      <div className="flex flex-row w-[50%] gap-x-[8px] items-center justify-end">
         <div
           onClick={handleClearAll}
-          className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
+          className="flex min-w-[90px] flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
           <div>Clear All</div>
@@ -839,8 +839,8 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           className="flex flex-row gap-2 !rounded-xl"
           variant="outline"
         >
-          All Filters
           <FilterIcon />
+          All Filters
           {count > 0 && <CountComponent count={count} />}
         </Button>
       </SheetTrigger>
