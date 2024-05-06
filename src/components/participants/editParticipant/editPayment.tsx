@@ -348,7 +348,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                     <div>
                       <Checkbox checked={send_payment_confirmation} onCheckedChange={emailConfirmatiOnchange} />
                     </div>
-                    <Text>{t('course.participants:edit_participant.participants_information_tab.send_payment_confirmation_mail')}</Text>
+                    <Text>{t('new_strings:send_payment_confirmation_mail')}</Text>
                   </div>
                 </div>
               </div>

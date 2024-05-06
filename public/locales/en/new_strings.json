@@ -100,6 +100,7 @@
 "expense_fee":"Expense Fee",
 "tax":"Tax",
 "accommodation_fee":"Accommodation Fee",
-"total_fee":"Total Fee"
+"total_fee":"Total Fee",
+"send_payment_confirmation_mail": "Send Payment confirmation mail?"
 
 }
