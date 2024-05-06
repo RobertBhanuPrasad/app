@@ -416,7 +416,7 @@ export const CourseName = () => {
         value,
       },
     ],
-    // requirement: we need to show the course_alias_name to the selected course type in the dropdown
+    // requirement: we need to show the course_alias_name to the selected course type only in the course_type dropdown
     // for the MVP-1195
     filters: [
       {
