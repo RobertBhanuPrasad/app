@@ -535,8 +535,8 @@ export const columns = () =>
     enableHiding: false,
     cell: ({ row }) => {
       const optionsValues = [
-        t('view_participants'),
-        "Edit Participant",
+        t("new_strings: view_participant"),
+        t("new_strings: edit_participant"),
         // TODO(Not in MVP scope): Integrate these actions later
         // "Transfer",
         // "Send Email",

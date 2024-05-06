@@ -111,5 +111,7 @@
 "select_transaction_status":"Select Transaction Status",
 "select_date":"Select Date",
  "do_you_snore": "Do you snore?",
- "roommate_snores": "Would you object to having room mate who snores?"
+ "roommate_snores": "Would you object to having room mate who snores?",
+ "view_participant" : "View Participant",
+ "edit_participant" : "Edit Participant"
 }
