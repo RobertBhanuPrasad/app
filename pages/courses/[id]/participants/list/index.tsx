@@ -463,7 +463,7 @@ function index() {
 
   return (
     <div className="flex flex-col justify-between relative h-screen">
-      <div className="top-[90px] sticky z-50 bg-white shadow-md w-full">
+      <div className="top-[90px] sticky z-[60] bg-white shadow-md w-full">
         <ParticipantsListMainHeader />
       </div>
       <span>
