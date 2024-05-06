@@ -462,8 +462,8 @@ function index() {
     useState("Bulk Actions");
 
   return (
-    <div className="flex flex-col justify-between relative h-screen">
-      <div className="top-[90px] sticky z-[60] bg-white shadow-md w-full">
+    <div>
+      <div className="top-[96px] z-10 sticky bg-[white] h-[83px] shadow-md w-full">
         <ParticipantsListMainHeader />
       </div>
       <span>
