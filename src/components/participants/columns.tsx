@@ -18,7 +18,7 @@ type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
 export const columns = () =>
 {
-  const {t} = useTranslation(['common','course.participants'])
+  const {t} = useTranslation(['common','course.participants','new_strings'])
   const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "participant_code",
@@ -258,7 +258,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Amount",
-    column_name: t('course.participants:find_participant.amount(EUR)'),
+    column_name: t('edit_participant.participants_information_tab.amount'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -267,7 +267,7 @@ export const columns = () =>
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-             {t('course.participants:find_participant.amount(EUR)')}
+             {t('course.participants:edit_participant.participants_information_tab.amount')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -354,9 +354,9 @@ export const columns = () =>
   },
   {
     accessorKey: "Balance",
-    column_name: t('course.participants:find_participant.balance_due(EUR)'),
+    column_name: t('new_strings:balance_due'),
     header: ({ column }) => {
-      return <div className="text-left">{t('course.participants:find_participant.balance_due(EUR)')}</div>;
+      return <div className="text-left">{t('new_strings:balance_due')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
