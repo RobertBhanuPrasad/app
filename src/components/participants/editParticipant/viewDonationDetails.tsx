@@ -1,5 +1,7 @@
 import { useList, useOne } from "@refinedev/core";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { formatDateString } from "src/utility/DateFunctions";
@@ -10,6 +12,7 @@ interface ViewDonationDetailsProps {
 export default function ViewDonationDetails({
     setViewDonation,
 }: ViewDonationDetailsProps) {
+    const {t}= useTranslation(['common','course.participants','new_strings'])
     const { query } = useRouter();
     const Id: number | undefined = query?.participantId
         ? parseInt(query.participantId as string)
@@ -19,7 +22,7 @@ export default function ViewDonationDetails({
     const { data: donationData } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(value),transaction_status_id(value),payment_transaction_id",
+            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(name),transaction_status_id(name),payment_transaction_id",
         },
         filters: [
             {
@@ -49,18 +52,18 @@ export default function ViewDonationDetails({
         <div>
             <div>
                 <Text className="flex justify-center text-[24px] font-semibold ">
-                    View Donation Details
+                {t('course.participants:edit_participant.participants_information_tab.view_donation_details')}
                 </Text>
                 <div className="flex flex-col ">
                     <Text className="text-[18px] font-semibold py-[15px]">
-                        Donation Details
+                    {t('course.participants:edit_participant.participants_information_tab.donation_details')}
                     </Text>
                     <hr />
                     <div className="flex flex-col gap-4 py-[20px]">
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    orgainization
+                                {t('new_strings:orgainization')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]?.participant_id
@@ -73,7 +76,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Amount
+                                {t('course.participants:edit_participant.participants_information_tab.amount')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]?.currency_code &&
@@ -87,7 +90,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Donation Type
+                                {t('course.participants:edit_participant.participants_information_tab.donation_type')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]?.participant_id
@@ -100,7 +103,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Donation Date
+                                {t('course.participants:edit_participant.participants_information_tab.donation_date')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]?.participant_id
@@ -118,20 +121,20 @@ export default function ViewDonationDetails({
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Payment Method
+                                {t('course.participants:edit_participant.participants_information_tab.payment_method')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]?.payment_method_id
-                                        ?.value
-                                        ? donationData?.data[0]
-                                              ?.payment_method_id?.value
+                                        ?.name
+                                        ? translatedText(donationData?.data[0]
+                                              ?.payment_method_id?.name)
                                         : "-"}
                                 </Text>
                             </div>
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Transaction Type
+                                {t('course.participants:find_participant.transaction_type')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]?.participant_id
@@ -144,20 +147,20 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Transaction Status
+                                {t('course.participants:find_participant.transaction_status')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]
-                                        ?.transaction_status_id?.value
-                                        ? donationData?.data[0]
-                                              ?.transaction_status_id?.value
+                                        ?.transaction_status_id?.name
+                                        ? translatedText(donationData?.data[0]
+                                              ?.transaction_status_id?.name)
                                         : "-"}
                                 </Text>
                             </div>
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Transaction ID
+                                {t('course.participants:view_participant.transaction_id')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {donationData?.data[0]
@@ -172,14 +175,14 @@ export default function ViewDonationDetails({
                 </div>
                 <div className="flex flex-col">
                     <Text className="text-[18px] font-semibold py-[15px]">
-                        Personal Details
+                    {t('course.participants:edit_participant.participants_information_tab.personal_details')}
                     </Text>
                     <hr />
                     <div className="flex flex-col gap-4 py-[20px]">
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Name
+                                {t('course.participants:edit_participant.participants_information_tab.name')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id?.full_name
@@ -191,7 +194,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Date of Birth
+                                {t('course.participants:edit_participant.participants_information_tab.date_of_birth')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id
@@ -207,7 +210,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Address
+                                {t('course.participants:edit_participant.participants_information_tab.address')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id
@@ -220,7 +223,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Country
+                                {t('course.participants:edit_participant.participants_information_tab.country')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id?.country_id
@@ -235,7 +238,7 @@ export default function ViewDonationDetails({
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Zip/Postal Code
+                                {t('course.participants:edit_participant.participants_information_tab.zip/postal_code')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id?.postal_code
@@ -247,7 +250,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    State
+                                {t('course.participants:edit_participant.participants_information_tab.state')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id?.state_id
@@ -260,7 +263,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    City
+                                {t('city')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id?.city_id
@@ -273,7 +276,7 @@ export default function ViewDonationDetails({
 
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Mobile
+                                {t('course.participants:edit_participant.participants_information_tab.mobile')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id?.mobile
@@ -286,7 +289,7 @@ export default function ViewDonationDetails({
                         <div className="flex pr-[20px]">
                             <div className="w-[225px]">
                                 <Text className="text-[#999999] text-[14px]">
-                                    Email ID
+                                {t('course.participants:edit_participant.participants_information_tab.email_id')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
                                     {contactData?.data?.contact_id?.email
@@ -316,7 +319,7 @@ export default function ViewDonationDetails({
                 </div>
                 <div className="flex justify-center">
                     <Button onClick={() => setViewDonation(false)}>
-                        Close
+                    {t('close')}
                     </Button>
                 </div>
             </div>
