@@ -22,7 +22,6 @@ import {
 function index() {
     const {t} = useTranslation("course.participants")
     const router = useRouter();
-
     const Id: number | undefined = router?.query?.participantId
         ? parseInt(router.query.participantId as string)
         : undefined;
@@ -30,7 +29,7 @@ function index() {
     const tabTriggers: any = [
         {
             value: VIEW_PARTICIPANT_COURSE_INFORMATION,
-            label: "Course Information",
+            label: t('course.participants:view_participant.course_information_tab.course_information'),
             disabled: false,
         },
         {
@@ -57,7 +56,7 @@ function index() {
     const tabs = [
         {
             id: 0,
-            label: "Course Information ",
+            label: t('course.participants:view_participant.course_information_tab.course_information'),
             content: (
                 <div>
                     <ViewParticipantCourseInformation participantId={Id} />
