@@ -631,10 +631,10 @@ export const NewCourseTabs = () => {
       <p className="font-semibold text-2xl">
         {router.query.action ? router.query.action : "New"} Course
       </p>
-      <div className="mt-4">
+      <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row">
-            <TabsList className="h-[513px] bg-[#7677F41B] w-[238px] rounded-l-[24px] shadow-md py-10">
+            <TabsList className="h-[513px] bg-[#7677F41B]  w-[238px] rounded-l-[24px] shadow-md py-10">
               <div className="flex flex-col  h-full gap-4 ">
                 {stepTitles.map((tab, index) => (
                   <TabsTrigger
