@@ -2,6 +2,7 @@ import { BaseOption, CrudFilter, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { Text } from "src/ui/TextTags";
 import { Input } from "src/ui/input";
 import {
   Select,
@@ -25,7 +26,7 @@ export const VenueNameComponent = () => {
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        {t("course.new_course:time_and_venue_tab.venue_name")} <div className="text-[#7677F4]"> *</div>
+        {t("course.new_course:time_and_venue_tab.venue_name")}
       </div>
       <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
         <Input
@@ -164,7 +165,10 @@ export const CityDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">{t("city")}</div>
+      <div className="flex flex-row items-center gap-1">
+        <Text className="text-xs font-normal text-[#333333]">{t("city")}</Text>
+        <Text className="text-[#7677F4]">*</Text>
+      </div>
 
       <Select value={cityValue} onValueChange={cityValueOnChange}>
         <SelectTrigger className="w-full" error={cityValueError ? true : false}>
@@ -237,7 +241,10 @@ export const StateDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
-      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.state")}</div>
+      <div className="flex flex-row items-center gap-1">
+        <Text className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.state")}</Text>
+        <Text className="text-[#7677F4]">*</Text>
+      </div>
 
       <Select value={stateValue} onValueChange={stateValueOnchange}>
         <SelectTrigger
@@ -335,7 +342,13 @@ export const CenterDropDown = ({ name }: { name: string }) => {
 
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">{t("local_center")}</div>
+      <div className="flex flex-row gap-1 items-center">
+        <Text className="text-xs font-normal text-[#333333]">
+          {" "}
+          {t("local_center")}
+        </Text>
+        <Text className="text-[#7677F4]">*</Text>
+      </div>
       <Select value={centerValue} onValueChange={centerValueOnChange}>
         <SelectTrigger
           className="w-full"

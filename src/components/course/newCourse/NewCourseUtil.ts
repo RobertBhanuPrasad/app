@@ -1003,10 +1003,16 @@ export const handlePostProgramContactDetailsData = async (
   ]?.map((contactData: any) => {
     const dataObject: ProgramContactDetailsDataBaseType = {
       program_id: programId,
-      contact_name: contactData.contact_name,
       contact_email: contactData.contact_email,
-      contact_number: contactData.contact_number,
     };
+
+    if (contactData?.contact_name) {
+      dataObject.contact_name = contactData.contact_name;
+    }
+
+    if (contactData?.contact_number) {
+      dataObject.contact_number = contactData.contact_number;
+    }
 
     if (contactData.id) {
       dataObject.id = contactData.id;
