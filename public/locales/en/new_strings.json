@@ -97,20 +97,14 @@
 "Changes_saved_successfully":"Changes saved successfully",
  "balance_due":"Balance Due",
 
-"organization_fee":"Organization Fee",
-"expense_fee":"Expense Fee",
 
-"accommodation_fee":"Accommodation Fee",
-"total_fee":"Total Fee",
 "send_payment_confirmation_mail": "Send Payment confirmation mail?",
 
 "orgainization":"Orgainization",
 "select_payment_method":"Select Payment Method",
 "select_transaction_status":"Select Transaction Status",
 "select_date":"Select Date",
- "do_you_snore": "Do you snore?",
  "roommate_snores": "Would you object to having room mate who snores?",
- "view_participant" : "View Participant",
  "edit_participant" : "Edit Participant",
  "revenue_from_confirmed_pending_transaction_participants_revenue" : "Revenue from confirmed pending transaction participants revenue:",
  "participants_header_hover_text":"Participants with: Transaction status = Confirmed / Pending Attendance status =  Confirmed / Pending / Dropout Total participants records:",

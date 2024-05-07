@@ -217,7 +217,7 @@ export default function AccomodationDetails() {
                         <div>
                             <Text className="text-[#999999] text-[14px]">
                                 {" "}
-                                {t('new_strings:do_you_snore')}
+                                {t('assisted_registration.do_you_snore')}
                             </Text>
                         </div>
                         <div>
