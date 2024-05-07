@@ -462,12 +462,12 @@ function index() {
   return (
     <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
-      <div className="mx-8 flex flex-col gap-[72px] mt-4 bg-[white]">
+      <div className="mx-8 flex flex-col mt-4 bg-[white]">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-        <div className="w-full">
+        <div className="w-full mb-[76px]">
           <BaseTable
             current={current}
             rowSelection={rowSelection}
@@ -555,7 +555,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 
   return (
     <Form onSubmit={() => {}} defaultValues={AllFilterData}>
-      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4 gap-x-[2%]">
+      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
             hasAliasNameFalse={hasAliasNameFalse}
@@ -662,7 +662,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         temporaryOnChange("");
       }}
     >
-      <SelectTrigger className="min-w-[150px] w-[50%] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
+      <SelectTrigger className={`hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4] ${name === 'course_type' ? 'min-w-[150px] w-[50%]' : ''}`}>
         <SelectValue placeholder="Select Course Type" />
       </SelectTrigger>
       <SelectContent>

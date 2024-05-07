@@ -576,7 +576,7 @@ export function BaseTable<TData, TValue>({
           </div>
         </div>
         {pagination && (
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-[24px]">
             <DataPagination
               setCurrent={setCurrent}
               current={current}
