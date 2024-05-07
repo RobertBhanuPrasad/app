@@ -151,20 +151,24 @@ function index() {
   }
 
   //If we select course fee then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.is_course_fee === true) {
-    //If the program_fee_setting_id is not null then it has default fee if it is null then we have our custom fee
-    filters.permanent.push({
-      field: "program_fee_setting_id",
-      operator: "neq",
-      value: null,
-    });
-  } else {
-    filters.permanent.push({
-      field: "program_fee_setting_id",
-      operator: "eq",
-      value: null,
-    });
+  if (AllFilterData?.advanceFilter?.is_course_fee) {
+    //If the course_fee is true means it is default else it is custom fee
+    if (AllFilterData?.advanceFilter?.is_course_fee == "TRUE") {
+      //If the program_fee_setting_id is not null then it has default fee if it is null then we have our custom fee here we check if any id is present or not by value greater than 0
+      filters.permanent.push({
+        field: "program_fee_settings_id",
+        operator: "gt",
+        value: 0,
+      });
+    } else {
+      filters.permanent.push({
+        field: "program_fee_settings_id",
+        operator: "null",
+        value: true,
+      });
+    }
   }
+
   //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
     //Here the date picker uses the GMT time so , iam adding  1 day that is next day for from and to of course date
@@ -255,7 +259,7 @@ function index() {
       resource: "program",
       meta: {
         select:
-          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
       },
       pagination: {
         pageSize: pageSize,
@@ -610,10 +614,10 @@ export const CourseTypeComponent = ({ name }: any) => {
     name: name,
   });
   const {
-    field: { value: temporaryValue, onChange: temporaryOnChange }
+    field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.course_name'
-  })
+    name: "temporaryadvancefilter.course_name",
+  });
 
   const [pageSize, setPageSize] = useState(10);;
   const { options, onSearch } = useSelect({
@@ -647,8 +651,8 @@ export const CourseTypeComponent = ({ name }: any) => {
       value={value}
       onValueChange={(val: any) => {
         onChange(val);
-        // we are making the course name value empty string  if the course type is changed so that it will show the placeholder in course name  if we change the value in course type downdown 
-        temporaryOnChange('')
+        // we are making the course name value empty string  if the course type is changed so that it will show the placeholder in course name  if we change the value in course type downdown
+        temporaryOnChange("");
       }}
     >
       <SelectTrigger className="w-80">

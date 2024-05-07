@@ -78,6 +78,8 @@ import {
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
 import { translatedText } from 'src/common/translations'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "src/ui/hover-card";
+import Important from "@public/assets/Important";
 
 import { useTranslation } from 'next-i18next';
 
@@ -124,7 +126,20 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="">{t("course.new_course:time_and_venue_tab.online_meeting_url")} </div>
+        <div className="flex flex-row gap-1 items-center">{t("course.new_course:time_and_venue_tab.online_meeting_url")} <div className="text-[#7677F4]"> *</div>
+        <HoverCard>
+          <HoverCardTrigger>
+            <Important />
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <div className="w-[231px] text-wrap !rounded-[15px]">
+            Provide complete URL, starting with http:// or https://
+Link to online meeting URL will be included in registration confirmation email sent to participants.
+If meeting URL is edited, then participants will be automatically redirected to the updated URL.            </div>
+          </HoverCardContent>
+        </HoverCard>
+        </div>
+       
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}

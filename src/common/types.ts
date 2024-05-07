@@ -237,7 +237,7 @@ interface ProgramFeeLevelSettingsDataBaseType {
   tax?: number;
   is_enable?: boolean;
   program_fee_setting_id?: number | ProgramFeeSettingsDataBaseType;
-  custom_fee_label?: string;
+  custom_fee_label?: Object;
   early_bird_sub_total?: number;
   early_bird_tax?: number;
   early_bird_total?: number;

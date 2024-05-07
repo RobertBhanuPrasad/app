@@ -698,6 +698,7 @@ const {t} = useTranslation("common")
                 onClick={() => {
                   setCurrent(page);
                 }}
+                className="h-8 w-8 p-0 "
               >
                 {page}
               </Button>
