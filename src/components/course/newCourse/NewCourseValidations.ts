@@ -71,9 +71,12 @@ export const validationSchema = () => {
     is_existing_venue: z.string({
       required_error: "Venue is a required fields",
     }),
-    online_url: z
-      .string({ required_error: " Online meeting URL is a required fields" })
-      .url({ message: "Online meeting URL is not valid" }),
+    online_url: z.string({
+    required_error: "Online meeting URL is a required field"
+    })
+    .nonempty({ message: "Online meeting URL is a required field" })
+    .url({ message: "Online meeting URL is not valid" }),
+  
     hour_format_id: z.number({
       required_error: "Time format is a required field",
     }),

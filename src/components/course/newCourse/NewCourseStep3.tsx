@@ -78,6 +78,8 @@ import {
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
 import { translatedText } from 'src/common/translations'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "src/ui/hover-card";
+import Important from "@public/assets/Important";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -121,7 +123,20 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="">Online zoom URL </div>
+        <div className="flex flex-row gap-1 items-center">Online zoom URL <div className="text-[#7677F4]"> *</div>
+        <HoverCard>
+          <HoverCardTrigger>
+            <Important />
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <div className="w-[231px] text-wrap !rounded-[15px]">
+            Provide complete URL, starting with http:// or https://
+Link to online meeting URL will be included in registration confirmation email sent to participants.
+If meeting URL is edited, then participants will be automatically redirected to the updated URL.            </div>
+          </HoverCardContent>
+        </HoverCard>
+        </div>
+       
         <div className="w-80">
           <Input
             placeholder="URL"
@@ -1016,7 +1031,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
                   {course?.program_id?.state_id?.name}
                 </div>
                 <div className="font-semibold text-[16px]">
-                  {course.program_id?.program_type_id?.name}
+                  {translatedText(course.program_id?.program_type_id?.name)}
                 </div>
               </div>
             ))}
