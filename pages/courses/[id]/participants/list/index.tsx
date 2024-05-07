@@ -972,8 +972,6 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
 const handleExportExcel = async (excelColumns:any) => {
   const supabase = supabaseClient();
   try {
-    excelColumns
-
     const params = new URLSearchParams({
       table_name: "participant_registration",
       select:
