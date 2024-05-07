@@ -21,7 +21,7 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
       ]
     }
   })
-
+  
   return (
     <div>
       <p className="text-[18px] font-[600] ">Email Delivery Logs</p>
@@ -47,12 +47,12 @@ export default ViewParticipantEmailDeliveryLogs
 
 const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
-    accessorKey: 'program_type',
+    accessorKey: 'type',
     header: () => {
       return <TableHeader>Type</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.type}</Text>
+      return <Text>{row?.original?.type}</Text>
     }
   },
   {
@@ -70,7 +70,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
       return <TableHeader>Delivery time Stamp</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{formatDateAndTime(row?.original?.delivery_time_stamp)}</Text>
+      return <Text>{row?.original?.delivery_time_stamp ? `${row.original.delivery_time_stamp.slice(0,10)} ${row.original.delivery_time_stamp.slice(11,19)}` : '-'}</Text>
     }
   },
   {
@@ -79,7 +79,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
       return <TableHeader>Source</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.source}</Text>
+      return <Text>{row?.original?.source}</Text>
     }
   },
   {
@@ -88,7 +88,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
       return <TableHeader>Open time stamp</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{formatDateAndTime(row?.original?.open_time_stamp)}</Text>
+      return <Text>{row?.original?.open_time_stamp ? `${row.original.open_time_stamp.slice(0,10)} ${row.original.open_time_stamp.slice(11,19)}` : '-'}</Text>
     }
   }
 ]

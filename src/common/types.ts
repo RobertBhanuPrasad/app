@@ -566,7 +566,7 @@ interface ParticipantReassignmentHistoryDataBaseType {
 
 interface ParticipantEmailDeliveryLogsDataBaseType {
 
-  program_type?: number;
+  type?: string;
   delivery_status?: string;
   delivery_time_stamp?: string;
   source?: string;
