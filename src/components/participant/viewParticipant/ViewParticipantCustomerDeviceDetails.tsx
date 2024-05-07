@@ -52,48 +52,48 @@ const columns = () => {
   const columns: ColumnDef<ParticipantCustomerDeviceDetailsDataBaseType>[] = [
   
   {
-    accessorKey: 'program_type',
+    accessorKey: 'transaction_id',
     header: () => {
       return <TableHeader>{t('course.participants:view_participant.type')}</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.program_type}</Text>
+      return <Text className="lowercase">{row?.original?.transaction_id}</Text>
     }
   },
   {
-    accessorKey: 'delivery_status',
+    accessorKey: 'time_stamp',
     header: () => {
       return <TableHeader>{t('course.participants:view_participant.delivery_status')}</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text>{row?.original?.program_type}</Text>
+      return <Text>{formatDateAndTime(row?.original?.time_stamp)}</Text>
     }
   },
   {
-    accessorKey: 'delivery_time_stamp',
+    accessorKey: 'ip_address',
     header: () => {
       return <TableHeader>{t('course.participants:view_participant.delivery_time_stamp')}</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{formatDateAndTime(row?.original?.delivery_time_stamp)}</Text>
+      return <Text className="lowercase">{row?.original?.ip_address}</Text>
     }
   },
   {
-    accessorKey: 'source',
+    accessorKey: 'operating_system',
     header: () => {
       return <TableHeader>{t('course.participants:view_participant.source')}</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{row?.original?.source}</Text>
+      return <Text className="lowercase">{row?.original?.operating_system}</Text>
     }
   },
   {
-    accessorKey: 'open_time_stamp',
+    accessorKey: 'browser',
     header: () => {
       return <TableHeader>{t('course.participants:view_participant.open_time_stamp')}</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text className="lowercase">{formatDateAndTime(row?.original?.open_time_stamp)}</Text>
+      return <Text className="lowercase">{row?.original?.browser}</Text>
     }
   }
 ]

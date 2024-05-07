@@ -65,7 +65,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
           </div>
         </div>
       </div>
-      <div className="!w-[1000px] rounded-[10px]">
+      <div>
         {/* BaseTable component for rendering table */}
         <BaseTable
           checkboxSelection={false}
@@ -102,6 +102,7 @@ const columns = () => {
       // This any will be removed after internal dataStructure implementation
       cell: ({ row }) => {
         return <div>{row?.original?.payment_transaction_id}</div>
+        
       }
     },
     {
