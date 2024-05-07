@@ -49,9 +49,7 @@ export const validationSchema = () => {
     visibility_id: z.number(),
     is_language_translation_for_participants: z.boolean().optional(),
     is_geo_restriction_applicable: z.boolean(),
-    language_ids: z
-      .array(z.number())
-      .nonempty({ message: "Please select at least one Language" }),
+    language_ids: z.array(z.number()).optional(),
     translation_language_ids: z
       .array(z.number(), {
         required_error: "Please select atleast one Language translation",
@@ -116,14 +114,13 @@ export const validationSchema = () => {
     bcc_registration_confirmation_email: z
       .string({ required_error: "At least on email is required." })
       .regex(
-        /^(?:[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
+        /^(?:[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
       ),
   });
 };
-
 
 const feelLevelsValidationSchema = z.array(
   z.object({
@@ -149,6 +146,7 @@ const contactValidationSchema = z.array(
     ]),
   })
 );
+
 const accommodationValidationSchema = z.array(
   z.object({
     accommodation_type_id: z.number({

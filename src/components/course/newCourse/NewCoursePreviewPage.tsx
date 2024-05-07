@@ -446,7 +446,7 @@ export default function NewCourseReviewPage() {
       <div className="text-[24px] my-4 font-semibold ml-6">
         Review Course Details
       </div>
-      <section className="w-full py-8 text-base border-b bg-white">
+      <section className="w-full text-base bg-white">
         <EditCourseSuccessfullyInfo
           onEditSuccess={onEditSuccess}
           setOnEditSuccess={setOnEditSuccess}

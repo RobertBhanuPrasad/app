@@ -64,6 +64,7 @@ const Filters = ({
           onClick={() => {
             setAdvanceFilterOpen(false);
           }}
+          className="cursor-pointer"
         >
           <div className="cursor-pointer">
           <CrossIcon width={16} height={16} fill="#333333" />

@@ -119,7 +119,7 @@ export default function CourseTable() {
   console.log(courseFeeSettings,'courseFeeSettings')
   return (
     <div className="flex flex-col gap-[18px]">
-      <div className="font-semibold text-base text-[#333333]">Fee</div>
+      <div className="font-semibold text-base text-[#333333]">Fees</div>
       <CourseFeeTable
         courseFeeSettings={courseFeeSettings}
         organizationData={organizationData?.data}
