@@ -451,7 +451,7 @@ function index() {
       },
     ],
   });
-  const {t} = useTranslation(["common","course.find_course","new_strings"])
+  const {t} = useTranslation(["common","course.find_course","new_strings","course.view_course"])
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <p className="font-semibold text-2xl ml-8">{t('new_strings:find_courses')}</p>
@@ -480,7 +480,7 @@ function index() {
               table: "",
               rowStyles: "!important border-none",
             }}
-            columns={column(hasAliasNameFalse(data), (t))}
+            columns={column(hasAliasNameFalse(data), t)}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
@@ -769,7 +769,7 @@ export const BasicFilters: React.FC<{
               </div>
             ) : (
               <div className="flex gap-2 font-normal">
-                Select the Date Range
+                {t("new_strings:select_the_date_range")}
               </div>
             )}
           </Button>
@@ -863,7 +863,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
 
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "new_strings", "course.find_course"])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "course.view_course", "new_strings", "course.find_course"])
   if (!authenticated) {
     return {
       props: {

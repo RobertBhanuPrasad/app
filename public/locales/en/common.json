@@ -45,7 +45,7 @@
   "active": "Active",
   "course_accounting_status": "Course Accounting Status",
   "public": "Public",
-  "private": "Private",
+  "private": "Private", 
   "select_state": "Select State",
   "residential_course": "Residential Course",
   "registration_via_3rd_party_gateway": "Registration via 3rd party gateway",

@@ -61,7 +61,6 @@
     "select_course_name" : "Select Course Name",
     "course_type_name" : "Course Type Name",
     "visibility" : "Visibility",
-    "revenue" : "Revenue",
     "cancel_course":"Are you sure you want to cancel this course?",
     "course_cancel_successful" : "Course canceled Successfully",
     "reset_button" : "Reset",

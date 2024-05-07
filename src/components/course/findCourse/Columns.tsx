@@ -68,7 +68,6 @@ export const column = (
       enableHiding: false,
       header: () => {
         return <div className="w-[150px]">{t("new_strings:course_type_name")}</div>;
-        return <div className="w-[150px]">Course Type</div>;
       },
       cell: ({ row }: any) => {
         return <div className="w-[150px]">{translatedText(row?.original?.program_types?.name)}</div>
@@ -245,9 +244,9 @@ export const column = (
     },
     {
       accessorKey: "revenue",
-      column_name: t('new_strings:revenue'),
+      column_name: t('course.view_course:revenue_summary_tab.revenue'),
       header: () => {
-        return <div className="min-w-[150px]">{t('new_strings:revenue')}</div>;
+        return <div className="min-w-[150px]">{t('course.view_course:revenue_summary_tab.revenue')}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.revenue}</div>;
