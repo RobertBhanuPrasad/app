@@ -77,8 +77,12 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
-import { translatedText } from 'src/common/translations'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "src/ui/hover-card";
+import { translatedText } from "src/common/translations";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "src/ui/hover-card";
 import Important from "@public/assets/Important";
 
 function NewCourseStep3() {
@@ -123,20 +127,24 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="flex flex-row gap-1 items-center">Online zoom URL <div className="text-[#7677F4]"> *</div>
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px]">
-            Provide complete URL, starting with http:// or https://
-Link to online meeting URL will be included in registration confirmation email sent to participants.
-If meeting URL is edited, then participants will be automatically redirected to the updated URL.            </div>
-          </HoverCardContent>
-        </HoverCard>
+        <div className="flex flex-row gap-1 items-center">
+          Online zoom URL <div className="text-[#7677F4]"> *</div>
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px]">
+                Provide complete URL, starting with http:// or https:// Link to
+                online meeting URL will be included in registration confirmation
+                email sent to participants. If meeting URL is edited, then
+                participants will be automatically redirected to the updated
+                URL.{" "}
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
-       
+
         <div className="w-80">
           <Input
             placeholder="URL"
@@ -915,7 +923,34 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
 
-  const { trigger } = useFormContext();
+  const [pageSize, setPageSize] = useState(10);
+
+  const { trigger, watch } = useFormContext();
+
+  const formData = watch();
+
+  /**
+   * This variable holds the state id
+   */
+  let stateId: number = 0;
+
+  /**
+   * This variable holds the city id
+   */
+  let cityId: number = 0;
+
+  if (formData?.is_online_program) {
+    stateId = formData?.state_id;
+    cityId = formData?.city_id;
+  } else {
+    if (formData.is_existing_venue == "new-venue") {
+      stateId = formData?.newVenue?.state_id;
+      cityId = formData?.newVenue?.city_id;
+    } else if (formData?.is_existing_venue == "existing-venue") {
+      stateId = formData?.existingVenue?.state_id;
+      cityId = formData?.existingVenue?.city_id;
+    }
+  }
 
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date
   const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
@@ -926,7 +961,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       {
         field: "organization_id",
         operator: "eq",
-        value: 1,
+        value: formData?.organization_id,
       },
     ],
   });
@@ -947,25 +982,25 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   // Add additional filters based on organization calendar settings
   const filter = [...dateFilters];
   if (settingsData) {
-    if (settingsData?.data[0]?.is_city_enabled) {
+    if (settingsData?.data[0]?.is_city_enabled && cityId) {
       filter.push({
         field: "program_id.city_id.id",
         operator: "eq",
-        value: 1,
+        value: cityId,
       });
     }
-    if (settingsData?.data[0]?.is_state_enabled) {
+    if (settingsData?.data[0]?.is_state_enabled && stateId) {
       filter.push({
         field: "program_id.state_id.id",
         operator: "eq",
-        value: 1,
+        value: stateId,
       });
     }
     if (settingsData?.data[0]?.is_venue_enabled) {
       filter.push({
         field: "program_id.venue_id",
         operator: "eq",
-        value: 1,
+        value: formData?.venue_id,
       });
     }
   }
@@ -976,8 +1011,12 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       select:
         "*,program_id!inner(program_type_id!inner(name),city_id!inner(id ,name),state_id!inner(id ,name),venue_id))",
     },
+    pagination: {
+      pageSize: pageSize,
+    },
     filters: filter,
   });
+
   // Handle date selection in the calendar
   const handleOnSelect = (selected: Date | undefined) => {
     setDate(selected);
@@ -1011,22 +1050,36 @@ const CalenderComponent = ({ index, setOpen }: any) => {
             Course
             {/* Close button */}
           </div>
-          <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
-            {/* Display course details */}
-            {data?.data?.map((course: any) => (
-              <div key={course.id}>
-                <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                  {formatTime(course.start_time)} -{" "}
-                  {formatTime(course?.end_time)} .{" "}
-                  {course?.program_id?.city_id?.name},{" "}
-                  {course?.program_id?.state_id?.name}
+
+          {/* Added get scroll alert so that when we reached at end of the scroll another set of records will loads */}
+          <GetScrollTypesAlert
+            id="course-calender"
+            onBottom={() => {
+              if (data && (data?.total as number) >= pageSize) {
+                setPageSize((previousLimit: number) => previousLimit + 10);
+              }
+            }}
+          >
+            <div
+              id={"course-calender"}
+              className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto"
+            >
+              {/* Display course details */}
+              {data?.data?.map((course: any) => (
+                <div key={course.id}>
+                  <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                    {formatTime(course.start_time)} -{" "}
+                    {formatTime(course?.end_time)} .{" "}
+                    {course?.program_id?.city_id?.name},{" "}
+                    {course?.program_id?.state_id?.name}
+                  </div>
+                  <div className="font-semibold text-[16px]">
+                    {translatedText(course.program_id?.program_type_id?.name)}
+                  </div>
                 </div>
-                <div className="font-semibold text-[16px]">
-                  {translatedText(course.program_id?.program_type_id?.name)}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </GetScrollTypesAlert>
         </div>
       </div>
       {/* Submit button */}
