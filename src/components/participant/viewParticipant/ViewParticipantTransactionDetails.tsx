@@ -65,7 +65,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
           </div>
         </div>
       </div>
-      <div>
+      <div className="w-full rounded-[10px] ">
         {/* BaseTable component for rendering table */}
         <BaseTable
           checkboxSelection={false}

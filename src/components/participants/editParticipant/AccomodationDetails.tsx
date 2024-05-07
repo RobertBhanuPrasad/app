@@ -156,12 +156,7 @@ export default function AccomodationDetails() {
                         {t('edit_participant.participants_information_tab.fee_per_person')}
                     </Text>
                     <Text className="py-[5px] font-semibold">
-                        {accommodationData?.currency_code
-                            ? accommodationData?.currency_code
-                            : ""}{" "}
-                        {accommodationData?.accommodation_fee
-                            ? accommodationData?.accommodation_fee
-                            : "-"}
+                    {accommodationData?.accommodation_fee ? `${accommodationData?.currency_code ? accommodationData?.currency_code : ''} ${accommodationData?.accommodation_fee?.toFixed(2)}` : '-'}
                     </Text>
                 </div>
                 <div className="text-[#999999] ">
