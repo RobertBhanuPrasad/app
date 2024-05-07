@@ -8,4 +8,4 @@ export default function Index() {
   );
 }
 
-Index.noLayout = true;
+Index.noLayout = false;

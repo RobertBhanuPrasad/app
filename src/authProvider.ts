@@ -5,7 +5,9 @@ import { supabaseClient } from "./utility";
 
 export const authProvider: AuthBindings = {
   login: async ({ email, password }) => {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    const supabase = supabaseClient();
+
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -39,8 +41,10 @@ export const authProvider: AuthBindings = {
     };
   },
   logout: async () => {
+    const supabase = supabaseClient();
+
     nookies.destroy(null, "token");
-    const { error } = await supabaseClient.auth.signOut();
+    const { error } = await supabase.auth.signOut();
 
     if (error) {
       return {
@@ -55,10 +59,17 @@ export const authProvider: AuthBindings = {
     };
   },
   register: async ({ email, password }) => {
+    const supabase = supabaseClient();
+
     try {
-      const { data, error } = await supabaseClient.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            user_name: "Bhargavi",
+          },
+        },
       });
 
       if (error) {
@@ -90,8 +101,10 @@ export const authProvider: AuthBindings = {
     };
   },
   check: async (ctx) => {
+    const supabase = supabaseClient();
+
     const { token } = nookies.get(ctx);
-    const { data } = await supabaseClient.auth.getUser(token);
+    const { data } = await supabase.auth.getUser(token);
     const { user } = data;
 
     if (user) {
@@ -106,7 +119,9 @@ export const authProvider: AuthBindings = {
     };
   },
   getPermissions: async () => {
-    const user = await supabaseClient.auth.getUser();
+    const supabase = supabaseClient();
+
+    const user = await supabase.auth.getUser();
 
     if (user) {
       return user.data.user?.role;
@@ -115,15 +130,25 @@ export const authProvider: AuthBindings = {
     return null;
   },
   getIdentity: async () => {
-    const { data } = await supabaseClient.auth.getUser();
+    const supabase = supabaseClient();
 
-    if (data?.user) {
+    const { data } = await supabase.auth.getUser();
+    const { data: userData, error } = await supabase
+      .from("users")
+      .select(
+        "*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
+      )
+      .eq("user_identifier", data?.user?.id);
+
+    if (error) {
+      console.error("Error while fetching login user data", error);
+    }
+    if (userData) {
       return {
-        ...data.user,
-        name: data.user.email,
+        data,
+        userData: userData?.[0],
       };
     }
-
     return null;
   },
   onError: async (error) => {

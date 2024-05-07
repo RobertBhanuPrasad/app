@@ -63,6 +63,12 @@
       "404": "Leider existiert diese Seite nicht.",
       "resource404": "Haben Sie die {{resource}} resource erstellt?",
       "backHome": "Zurück"
+    },
+    "Tabs": {
+      "CourseDetailsTab": "Course Details",
+      "participantTab": "Participants",
+      "revenueSummaryTab": "Revenue Summary",
+      "courseAccountingFormTab": "Course Accounting Form"
     }
   },
   "actions": {
