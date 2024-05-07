@@ -37,7 +37,7 @@ const Filters = ({
   const formData = watch();
 
   const { setAllFilterData } = newCourseStore()
-  const { t } = useTranslation(["common", "course.find_course", "new_strings"])
+  const {t} = useTranslation(["common", "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
@@ -389,7 +389,7 @@ export const CourseName = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation("new_strings")
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}
@@ -452,7 +452,7 @@ export const State = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation("common")
+  const {t} = useTranslation("common")
   return (
     <Select
       value={temporaryValue}
@@ -514,7 +514,7 @@ export const City = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation("common")
+  const {t} = useTranslation("common")
   return (
     <Select
       value={temporaryValue}
@@ -576,7 +576,7 @@ export const Center = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation("new_strings")
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}
@@ -696,7 +696,7 @@ export const CourseAccountingClosureDate = () => {
     name: 'temporaryadvancefilter.course_accounting_closure_date'
   })
   const [open, setOpen] = useState(false)
-  const { t } = useTranslation(["course.find_course", "new_strings"])
+  const {t} = useTranslation(["course.find_course", "new_strings"])
   return (
     <Dialog open={open}>
       <p>{t('date_range')}</p>
@@ -750,7 +750,7 @@ export const Visibility = () => {
     PRIVATE
   )?.id;
 
-  const { t } = useTranslation("common")
+  const {t} = useTranslation("common")
 
   return (
     <div>
@@ -785,7 +785,7 @@ export const ResidentialCourse = () => {
   } = useController({
     name: 'temporaryadvancefilter.is_residential_course'
   })
-  const { t } = useTranslation("common")
+  const {t} = useTranslation("common")
   return (
     <div>
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
@@ -814,7 +814,7 @@ export const CourseFees = () => {
   } = useController({
     name: 'temporaryadvancefilter.is_course_fee'
   })
-  const { t } = useTranslation("new_strings")
+  const {t} = useTranslation("new_strings")
   return (
     <div>
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
@@ -869,7 +869,7 @@ export const ProgramOrganiser = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 20)
   }
-  const { t } = useTranslation("new_strings")
+  const {t} = useTranslation("new_strings")
   return (
     <MultiSelect
       value={temporaryValue}
@@ -923,7 +923,7 @@ export const TeacherDropdown = () => {
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10)
   }
-  const { t } = useTranslation("new_strings")
+  const {t} = useTranslation("new_strings")
   return (
     <Select
       value={temporaryValue}
