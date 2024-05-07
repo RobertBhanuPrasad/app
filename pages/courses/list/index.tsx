@@ -503,7 +503,7 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>Select All jncdsjnfsdnfjknj</div>
+            <div>Select All</div>
             <div className="font-semibold">
               {FilterProgramData?.data?.total || 0}
             </div>
