@@ -1,5 +1,5 @@
 import Star from "@public/assets/star";
-import { useList, useOne, useSelect } from "@refinedev/core";
+import { useList,useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
 import { translatedText } from "src/common/translations";
