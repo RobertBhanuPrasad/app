@@ -25,7 +25,7 @@ export const handlePostProgramData = async (
    * The current url either add or edit
    */
   pathname: string,
-  countryCode:string
+  countryCode: string
 ) => {
   console.log("i will post course data in this functions", body);
 
@@ -216,9 +216,9 @@ export const handlePostProgramData = async (
         start_date: courseStartDate,
         program_type_id: body?.program_type_id,
       },
-      headers:{
-        "country-code":countryCode,
-      }
+      headers: {
+        "country-code": countryCode,
+      },
     }
   );
 
@@ -368,8 +368,8 @@ export const handlePostProgramData = async (
   // We need to call one supabase edge function to update the course details in sync DB aswell to reflect the changes in unity pages
   // edge function name : sync-program
   // we need to call this edge funtion only when all program data has been saved
-  if (!(await handleSyncProgramEdgeFunction(programId, pathname, countryCode)))
-    return false;
+  // if (!(await handleSyncProgramEdgeFunction(programId, pathname, countryCode)))
+  //   return false;
   return true;
 };
 
@@ -929,6 +929,7 @@ export const handlePostProgramContactDetailsData = async (
     );
   }
 
+
   // Prepare contact details data
   const contactDetailsData: ProgramContactDetailsDataBaseType[] = body[
     NewCourseStep6FormNames.contact
@@ -937,7 +938,9 @@ export const handlePostProgramContactDetailsData = async (
       program_id: programId,
       contact_name: contactData.contact_name,
       contact_email: contactData.contact_email,
-      contact_number: contactData.contact_number,
+      //here if the contact_number is empty string it should be null 
+      contact_number:
+        contactData.contact_number === "" ? null : contactData.contact_number,
     };
 
     if (contactData.id) {
@@ -1288,7 +1291,7 @@ const handleProgramAccountingStatusUpdate = async (
 export const handleSyncProgramEdgeFunction = async (
   programId: number,
   pathname: string,
-  countryCode:string
+  countryCode: string
 ) => {
   const method = IsEditCourse(pathname) ? "PUT" : "POST";
 
