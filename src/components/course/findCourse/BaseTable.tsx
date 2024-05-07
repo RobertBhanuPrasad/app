@@ -324,7 +324,7 @@ export function BaseTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between h-[50px]">
+      <div className="flex flex-row justify-between items-center h-[50px]">
         {columnSelector && (
           <div>
             <DropdownMenu open={open} onOpenChange={setOpen}>

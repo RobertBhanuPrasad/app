@@ -273,7 +273,7 @@ const Filters = ({
           <AccordionItem value="item-10" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>Program Organiser</div>
+                <div>Program Organizer</div>
                 {formData?.temporaryadvancefilter.program_organiser?.length >
                   0 && (
                   <CountComponent
