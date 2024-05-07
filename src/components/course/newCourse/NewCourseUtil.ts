@@ -1005,8 +1005,7 @@ export const handlePostProgramContactDetailsData = async (
       program_id: programId,
       contact_name: contactData.contact_name,
       contact_email: contactData.contact_email,
-      contact_number: "hsbdhbhwsdbv hjsb jh",
-      a: 10,
+      contact_number: contactData.contact_number,
     };
 
     if (contactData.id) {
