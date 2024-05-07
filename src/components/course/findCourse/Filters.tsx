@@ -390,6 +390,9 @@ const Filters = ({
 export default Filters;
 
 export const CourseName = () => {
+  const { watch } = useFormContext()
+  const formdata = watch()
+
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
@@ -413,6 +416,15 @@ export const CourseName = () => {
         value,
       },
     ],
+    // requirement: we need to show the course_alias_name to the selected course type only in the course_type dropdown
+    // for the MVP-1195
+    filters: [
+      {
+        field: 'program_type_id',
+        operator: 'eq',
+        value: formdata?.temporaryadvancefilter?.course_type
+      }
+    ]
   });
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);

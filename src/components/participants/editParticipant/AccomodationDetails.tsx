@@ -2,6 +2,7 @@ import Star from "@public/assets/star";
 import { useList } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController, useFormContext } from "react-hook-form";
+import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
 import { Input } from "src/ui/input";
 import { RadioGroup } from "src/ui/radio-group";
@@ -135,9 +136,9 @@ export default function AccomodationDetails() {
                                                     className="h-[44px]"
                                                 >
                                                     {
-                                                        option
+                                                        translatedText(option
                                                             .accommodation_type_id
-                                                            .name
+                                                            .name)
                                                     }
                                                 </SelectItem>
                                             </>
