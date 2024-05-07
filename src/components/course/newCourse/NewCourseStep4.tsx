@@ -187,7 +187,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       let modifiedFeeLevels: any = {
         feeLevelId: val?.fee_level_id?.id,
         feeLevelLabel: val?.is_custom_fee
-          ? val?.custom_fee_label
+          ? translatedText(val?.custom_fee_label)
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
         subTotal: val?.total - val?.total * taxRate,
