@@ -116,7 +116,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
 
     const translateProps = await serverSideTranslations(
         context.locale ?? "en",
-        ["common", "course.participants","new_strings","course.view_course"]
+        ["common", "course.participants","new_strings","course.find_course", "course.view_course"]
     );
 
     if (!authenticated) {

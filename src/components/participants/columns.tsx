@@ -258,7 +258,7 @@ export const columns = () =>
   },
   {
     accessorKey: "Amount",
-    column_name: t('edit_participant.participants_information_tab.amount'),
+    column_name: t('course.participants:edit_participant.participants_information_tab.amount'),
     enableHiding: false,
     header: ({ column }) => {
       return (
