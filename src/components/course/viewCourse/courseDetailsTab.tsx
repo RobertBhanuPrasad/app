@@ -142,7 +142,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('new_strings:course type')}</Header2>
+              <Header2>{t('new_strings:course_type')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_type_id?.name
                   ? translatedText(courseData?.data?.program_type_id?.name)

@@ -42,9 +42,6 @@
 
 
 
- "course_details_tab":"Course Details",
- "participants_tab":"Participants",
- "revenue_summary_tab":"Revenue Summary",
  "course_accounting_form_tab":"Course Accounting Form",
 
 
@@ -73,15 +70,16 @@
  "view_course":"view course",
  "copied":"copied",
  "organisation":"Organisation",
- "course type":"Course type",
+ "course_type":"Course type",
  "total_participants":"Total Participants",
  "announced_by":"Announced by",
  "approve":"Approve",
- "describe_your_rejection_reason":"Describe your rejection reason",
+ 
  "course_rejected":"Course Rejected",
  "are_you_sure_you_want_to_approve":"Are you sure you want to Approve this Course",
- "the_course_got_rejected":"The course got rejected succesfully",
+ 
  "comment":"Comment.",
+ "upload_attendance_record":"Upload Attendance Record",
 
 
 
@@ -98,7 +96,6 @@
 "health_consent_status" :"Health Consent Status",
 "changes_made_will_be_lost_are_you_sure_you_want_to_continue":"Changes made will be lost. Are you sure you want to continue?",
 "Changes_saved_successfully":"Changes saved successfully",
- "coursename":"Course Name",
  "balance_due":"Balance Due",
 
 "organization_fee":"Organization Fee",

@@ -30,7 +30,7 @@ function ViewParticipantCourseInformation({ participantId }: any) {
   const coursePaticipantInformation = [
     { key: t('course_type'), value: translatedText(participantCourseData?.data?.program_id?.program_type_id?.name) },
     {
-      key: t('new_strings:coursename'),
+      key: t('new_strings:course_name'),
       value: participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name
         ? translatedText(participantCourseData?.data?.program_id?.program_alias_name_id?.alias_name)
         : '-'
