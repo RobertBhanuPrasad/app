@@ -836,7 +836,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
       ).length) ||
     0;
   return (
-    <Sheet open={advanceFilterOpen}>
+    <Sheet open={advanceFilterOpen} onOpenChange={setAdvanceFilterOpen}>
       <SheetTrigger className="p-0">
         <Button
           onClick={() => {
