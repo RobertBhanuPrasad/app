@@ -97,7 +97,7 @@ import { Textarea } from "src/ui/textarea";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
-import { translatedText } from 'src/common/translations'
+import { translatedText } from "src/common/translations";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -233,7 +233,9 @@ function ViewDetails() {
         <div className="flex flex-row justify-between">
           <div className="text-[32px] font-semibold">
             {courseData?.data?.program_alias_name_id
-              ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
+              ? translatedText(
+                  courseData?.data?.program_alias_name_id?.alias_name
+                )
               : translatedText(courseData?.data?.program_type_id?.name)}
           </div>
           <div className="flex items-center gap-4">
@@ -342,7 +344,7 @@ function ViewDetails() {
           </HoverCard>
         </div>
       </div>
-      <div className="w-full mt-6">
+      <div className="w-full mt-6 ">
         <Tabs
           onValueChange={(val: string) => {
             // to store the tab Data
@@ -353,7 +355,7 @@ function ViewDetails() {
           }}
           value={getTabQueryName()}
         >
-          <TabsList className="flex flex-row gap-10  bg-white !rounded-none  w-full border-b h-12 px-8">
+          <TabsList className="flex flex-row gap-10  bg-white !rounded-none sticky top-[94px]  w-full border-b h-12 px-8">
             {tabTriggers.map((trigger: any, index: number) => (
               <TabsTrigger
                 key={index}

@@ -48,13 +48,13 @@ export const ParticipantsListMainHeader = () => {
   });
 
   return (
-    <div className="flex justify-between px-8 h-auto pb-4">
+    <div className="flex justify-between w-full px-8 h-auto ">
       {/* Course Details Section */}
       <div className="flex gap-2">
         <ChevronLeftIcon
           color="#7677F4"
-          height={50}
-          width={50}
+          height={32}
+          width={32}
           className="cursor-pointer"
           onClick={() => {
             router.back();
@@ -62,16 +62,20 @@ export const ParticipantsListMainHeader = () => {
         />
         <div>
           {/* Course Name */}
-          <div className="text-[32px] font-medium">
+          <div className="text-[24px] font-medium">
             {courseData?.data?.program_alias_name_id
-              ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
+              ? translatedText(
+                  courseData?.data?.program_alias_name_id?.alias_name
+                )
               : translatedText(courseData?.data?.program_type_id?.name)}
           </div>
           {/* Course Info */}
           <div className="flex gap-8 pt-2">
             {/* Course ID */}
-            <div className="items-center font-medium">
-              Course ID: {courseData?.data?.program_code}
+            <div className="items-center text-[16px] font-medium">
+              <span className="text-[#666666] ">
+                Course ID: {courseData?.data?.program_code}
+              </span>
             </div>
             {/* Course Schedule */}
             <div className="flex gap-2 items-center border-x-2 px-6">

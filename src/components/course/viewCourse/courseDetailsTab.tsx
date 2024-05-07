@@ -26,7 +26,7 @@ interface LanguageItem {
 
 interface ProgramFeeItem {
   fee_level_id?: {
-    name?: object
+    name?: object;
   };
   total?: number;
 }
@@ -115,7 +115,7 @@ function CourseDetailsTab() {
        * Basic details card
        */}
       <div>
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] ">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)] ">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Basic Details
@@ -151,7 +151,9 @@ function CourseDetailsTab() {
               <Header2>Course Accounting Status</Header2>
               <ItemValue>
                 {courseData?.data?.program_accounting_status_id?.name
-                  ? translatedText(courseData?.data?.program_accounting_status_id?.name)
+                  ? translatedText(
+                      courseData?.data?.program_accounting_status_id?.name
+                    )
                   : "-"}
               </ItemValue>
             </div>
@@ -239,7 +241,7 @@ function CourseDetailsTab() {
        * Fee and accommodation card
        */}
       <div>
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Fee and Accommodation
@@ -251,7 +253,9 @@ function CourseDetailsTab() {
               ? programFees?.map((item: ProgramFeeItem) => {
                   return (
                     <div className="flex flex-col gap-1">
-                      <Header2>{translatedText(item?.fee_level_id?.name as object)}</Header2>
+                      <Header2>
+                        {translatedText(item?.fee_level_id?.name as object)}
+                      </Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                         {item?.total}
@@ -265,7 +269,11 @@ function CourseDetailsTab() {
                   (item: AccommodationItem) => {
                     return (
                       <div className="flex flex-col gap-1">
-                        <Header2>{translatedText(item?.accommodation_type_id?.name as any)}</Header2>
+                        <Header2>
+                          {translatedText(
+                            item?.accommodation_type_id?.name as any
+                          )}
+                        </Header2>
                         <ItemValue>
                           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                           {item?.fee_per_person}
@@ -280,7 +288,7 @@ function CourseDetailsTab() {
       </div>
 
       <div className="flex flex-col gap-[30px]">
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Time and Venue
@@ -326,7 +334,7 @@ function CourseDetailsTab() {
         {/**
          * Registration Links card*/}
 
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Registration Links
@@ -400,7 +408,7 @@ function CourseDetailsTab() {
         {/**
          * Contact details card
          */}
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
               Contact Details

@@ -332,7 +332,7 @@ export function BaseTable<TData, TValue>({
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
-                  className="flex flex-row justify-between w-[192px] h-10"
+                  className="flex flex-row justify-between w-[192px] h-10  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
                 >
                   Columns
                   <DropDown />
@@ -405,11 +405,11 @@ export function BaseTable<TData, TValue>({
                       className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
                     >
                       <ClearAll />
-                      <div>Clear All</div>
+                      <div className="hover:text-[#5E5FC3]">Clear All</div>
                     </div>
                     <Button
                       onClick={applyColumnVisibilityChanges}
-                      className="h-9 w-18 rounded-xl"
+                      className="h-9 w-18 rounded-xl hover:bg-[#5E5FC3]"
                     >
                       Apply
                     </Button>
@@ -455,7 +455,7 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableHead
                           className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#F1F1FE]"
+                            columnPinning && "sticky left-0 bg-[#F1F1FE]"
                           }`}
                         >
                           <Checkbox
@@ -477,11 +477,11 @@ export function BaseTable<TData, TValue>({
                               index === 0 &&
                               `sticky ${
                                 checkboxSelection ? "left-10" : "left-0"
-                              } z-10 bg-[#F1F1FE] drop-shadow-right`
+                              }  bg-[#F1F1FE] drop-shadow-right`
                             } ${
                               columnPinning &&
                               index === headerGroup.headers.length - 1 &&
-                              `sticky right-0 z-10 bg-[#F1F1FE] drop-shadow-left w-[50px]`
+                              `sticky right-0 bg-[#F1F1FE] drop-shadow-left w-[50px]`
                             } text-[#333333] `}
                             key={header?.id}
                           >
@@ -523,7 +523,7 @@ export function BaseTable<TData, TValue>({
                       {checkboxSelection && (
                         <TableCell
                           className={`${
-                            columnPinning && "sticky left-0 z-10 bg-[#FFFFFF] "
+                            columnPinning && "sticky left-0 bg-[#FFFFFF] "
                           }`}
                         >
                           <Checkbox
@@ -545,11 +545,11 @@ export function BaseTable<TData, TValue>({
                             index === 0 &&
                             `sticky ${
                               checkboxSelection ? "left-10" : "left-0"
-                            }  top-0 z-10 bg-[#FFFFFF] drop-shadow-right`
+                            }  top-0 bg-[#FFFFFF] drop-shadow-right`
                           } ${
                             columnPinning &&
                             index === row.getVisibleCells().length - 1 &&
-                            `sticky right-0 top-0 bg-[#FFFFFF] z-10 w-[50px] drop-shadow-left`
+                            `sticky right-0 top-0 bg-[#FFFFFF] w-[50px] drop-shadow-left`
                           } text-[#333333]`}
                           key={cell.id}
                         >
@@ -694,6 +694,7 @@ const DataPagination = ({
                 onClick={() => {
                   setCurrent(page);
                 }}
+                className={`h-8 w-8 p-0 ${page === current ? 'hover:bg-[#5E5FC3]' : 'hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]'}`}
               >
                 {page}
               </Button>
