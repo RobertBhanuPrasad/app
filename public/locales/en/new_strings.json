@@ -68,6 +68,7 @@
     "custom" : "Custom",
     "edit_course_accounting_form" : "Edit Course Accounting Form",
     "view_course_accounting_form" : "View Course Accounting Form",
+    "participant_registration":"Participant Registration",
 
  "view_course":"view course",
  "copied":"copied",
@@ -85,7 +86,11 @@
 
 
  "participants":"participants",
-
+ "upload_attendance_record":"Upload Attendance Record",
+ "search_by_registration_date":"Search by Registration Date",
+ "update_attendance_status":"Update Attendance Status",
+ "update_transaction_status":"Update Transaction Status",
+ "bulk_actions":"Bulk Actions",
 
 
 
