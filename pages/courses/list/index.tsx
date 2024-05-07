@@ -310,47 +310,47 @@ function index() {
        */
       const excelColumns: ExcelColumn[] = [
         {
-          column_name: "Course ID",
+          column_name: t('course_id'),
           path: ["program_code"],
         },
         {
-          column_name: "Course Type Name",
+          column_name: t("new_strings:course_type_name"),
           path: ["program_types", "name"],
         },
         {
-          column_name: "Course Name",
+          column_name: t("new_strings:course_name"),
           path: ["program_type_alias_names", "alias_name"],
         },
         {
-          column_name: "Course Status",
+          column_name: t("course.find_course:course_status"),
           path: ["status_id", "name"],
         },
         {
-          column_name: "Start Date",
+          column_name: t("course.find_course:start_date"),
           path: ["program_schedules", "start_time"],
         },
         {
-          column_name: "State",
+          column_name: t("course.find_course:state"),
           path: ["state", "name"],
         },
         {
-          column_name: "City",
+          column_name: t("city"),
           path: ["city", "name"],
         },
         {
-          column_name: "Center",
+          column_name: t("course.find_course:center"),
           path: ["center", "name"],
         },
         {
-          column_name: "Attendes",
+          column_name: t("course.find_course:attendees"),
           path: ["participant_registration", "length"],
         },
         {
-          column_name: "Visibility",
+          column_name: t('new_strings:visibility'),
           path: ["visibility_id", "name"],
         },
         {
-          column_name: "Course Accounting Status",
+          column_name: t('course_accounting_status'),
           path: ["program_accounting_status_id", "name"],
         },
       ];
@@ -451,7 +451,7 @@ function index() {
       },
     ],
   });
-  const {t} = useTranslation(["common","course.find_course","new_strings"])
+  const {t} = useTranslation(["common","course.find_course","new_strings","course.view_course"])
   return (
     <div className="flex flex-col justify-between relative h-screen">
       <p className="font-semibold text-2xl ml-8">{t('new_strings:find_courses')}</p>
@@ -480,8 +480,9 @@ function index() {
               table: "",
               rowStyles: "!important border-none",
             }}
-            columns={column(hasAliasNameFalse(data), (t))}
-            data={programData?.data?.data || []}
+            noRecordsPlaceholder={t('new_strings:there_are_no_courses')}
+            columns={column(hasAliasNameFalse(data), t)}
+            data={[]}
             columnPinning={true}
             columnSelector={true}
           />
@@ -769,7 +770,7 @@ export const BasicFilters: React.FC<{
               </div>
             ) : (
               <div className="flex gap-2 font-normal">
-                Select the Date Range
+                {t("new_strings:select_the_date_range")}
               </div>
             )}
           </Button>
@@ -863,7 +864,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
 
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "new_strings", "course.find_course"])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.new_course", "course.view_course", "new_strings", "course.find_course"])
   if (!authenticated) {
     return {
       props: {

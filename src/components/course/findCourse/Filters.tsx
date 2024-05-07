@@ -78,7 +78,6 @@ const Filters = ({
                 <AccordionTrigger className="text-base font-semibold pr-3">
                   <div className="flex flex-row gap-2 items-center">
                     <div>{t("course_type")}</div>
-                    {formData?.temporaryadvancefilter.course_name && <CountComponent count={1} />}
                     {formData?.temporaryadvancefilter.course_type && (
                       <CountComponent count={1} />
                     )}
@@ -137,13 +136,13 @@ const Filters = ({
                 <div>{t('course_accounting_status')}</div>
                 {formData?.temporaryadvancefilter.course_accounting_status
                   ?.length > 0 && (
-                  <CountComponent
-                    count={
-                      formData?.temporaryadvancefilter.course_accounting_status
-                        ?.length
-                    }
-                  />
-                )}
+                    <CountComponent
+                      count={
+                        formData?.temporaryadvancefilter.course_accounting_status
+                          ?.length
+                      }
+                    />
+                  )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -638,11 +637,10 @@ export const CourseStatus = () => {
       {courseStatusData?.map((status: any, index: number) => (
         <div key={index}>
           <Button
-            className={`rounded-full h-[28px] text-sm font-normal ${
-              temporaryValue?.includes(status?.id)
+            className={`rounded-full h-[28px] text-sm font-normal ${temporaryValue?.includes(status?.id)
                 ? "bg-primary text-white"
                 : "bg-white border border-[#D6D7D8]"
-            }`}
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -676,11 +674,10 @@ export const CourseAccordingStatus = () => {
       {courseAccountingStatusData?.map((status: any, index: any) => (
         <div key={index}>
           <Button
-            className={`rounded-full h-[28px] text-sm font-normal ${
-              temporaryValue?.includes(status?.id)
+            className={`rounded-full h-[28px] text-sm font-normal ${temporaryValue?.includes(status?.id)
                 ? "bg-primary text-white"
                 : "bg-white border border-[#D6D7D8]"
-            }`}
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -699,7 +696,7 @@ export const CourseAccountingClosureDate = () => {
     name: 'temporaryadvancefilter.course_accounting_closure_date'
   })
   const [open, setOpen] = useState(false)
-  const {t} = useTranslation(["course.find_course","new_strings"])
+  const {t} = useTranslation(["course.find_course", "new_strings"])
   return (
     <Dialog open={open}>
       <p>{t('date_range')}</p>

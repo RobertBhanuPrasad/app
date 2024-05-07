@@ -55,7 +55,6 @@
     "select_course_name" : "Select Course Name",
     "course_type_name" : "Course Type Name",
     "visibility" : "Visibility",
-    "revenue" : "Revenue",
     "cancel_course":"Are you sure you want to cancel this course?",
     "course_cancel_successful" : "Course canceled Successfully",
     "reset_button" : "Reset",
@@ -68,6 +67,7 @@
     "custom" : "Custom",
     "edit_course_accounting_form" : "Edit Course Accounting Form",
     "view_course_accounting_form" : "View Course Accounting Form",
+    "there_are_no_courses" : "There are no courses",
     "participant_registration":"Participant Registration",
 
  "view_course":"view course",
