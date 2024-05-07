@@ -46,8 +46,11 @@ const Filters = ({
           onClick={() => {
             setAdvanceFilterOpen(false);
           }}
+          className="cursor-pointer"
         >
+          <div className="cursor-pointer">
           <CrossIcon width={16} height={16} fill="#333333" />
+          </div>
         </div>
       </div>
       <Separator />
@@ -320,9 +323,10 @@ const Filters = ({
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary"> {t('clear_all')}</p>
+          <p className="text-primary hover:text-[#5E5FC3]">{t('clear_all')}</p>
         </div>
         <Button
+        className="hover:bg-[#5E5FC3]"
           onClick={() => {
             const temporaryData = { ...formData };
 
@@ -397,7 +401,7 @@ export const CourseName = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t('select_course_name')} />
       </SelectTrigger>
       <SelectContent>
@@ -460,7 +464,7 @@ export const State = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t('select_state')} />
       </SelectTrigger>
       <SelectContent>
@@ -522,7 +526,7 @@ export const City = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t('city_placeholder')} />
       </SelectTrigger>
       <SelectContent>
@@ -584,8 +588,8 @@ export const Center = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
-        <SelectValue placeholder={t('select_center')} />
+      <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
+        <SelectValue placeholder={t('city_placeholder')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -637,10 +641,11 @@ export const CourseStatus = () => {
       {courseStatusData?.map((status: any, index: number) => (
         <div key={index}>
           <Button
-            className={`rounded-full h-[28px] text-sm font-normal ${temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white"
-                : "bg-white border border-[#D6D7D8]"
-              }`}
+            className={`rounded-full h-[28px] text-sm font-normal ${
+              temporaryValue?.includes(status?.id)
+                ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+            }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -674,10 +679,11 @@ export const CourseAccordingStatus = () => {
       {courseAccountingStatusData?.map((status: any, index: any) => (
         <div key={index}>
           <Button
-            className={`rounded-full h-[28px] text-sm font-normal ${temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white"
-                : "bg-white border border-[#D6D7D8]"
-              }`}
+            className={`rounded-full h-[28px] text-sm font-normal ${
+              temporaryValue?.includes(status?.id)
+                ? "bg-primary text-white hover:bg-[#5E5FC3]"
+                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+            }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -703,7 +709,7 @@ export const CourseAccountingClosureDate = () => {
       <DialogTrigger asChild>
         <Button
           onClick={() => setOpen(true)}
-          className="w-full gap-2 justify-start mt-2"
+          className="w-full gap-2 justify-start mt-2 hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
         >
           <CalenderIcon color="#666666" />
@@ -765,13 +771,13 @@ export const Visibility = () => {
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
             label={t('public')}
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
             label={t('private')}
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
       </RadioGroup>
@@ -794,13 +800,13 @@ export const ResidentialCourse = () => {
             value="TRUE"
             selectedRadioValue={temporaryValue}
             label={t('yes')}
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
             label={t('no')}
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
       </RadioGroup>
@@ -823,13 +829,13 @@ export const CourseFees = () => {
             value="TRUE"
             selectedRadioValue={temporaryValue}
             label={t('default')}
-            className="p-2 h-[40px] rounded-[12px]"
+            className="p-2 h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
             label={t('custom')}
-            className="p-2 h-[40px] rounded-[12px]"
+            className="p-2 h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
       </RadioGroup>
@@ -881,6 +887,7 @@ export const ProgramOrganiser = () => {
       }}
       onChange={temporaryOnChange}
       variant="basic"
+      selectBoxStyles={{header: 'border-[1px] rounded-[12px] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]'}}
     />
   );
 };
@@ -931,7 +938,7 @@ export const TeacherDropdown = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80 hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t('select_teacher')} />
       </SelectTrigger>
       <SelectContent>

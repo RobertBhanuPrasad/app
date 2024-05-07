@@ -824,16 +824,14 @@ const NewVenueDetails = () => {
 
 const ExistingVenueDetails = () => {
   const { getValues } = useFormContext();
-  const {
-    existingVenue
-  } = getValues();
+  const { existingVenue } = getValues();
 
   //Requirement: Need to show selected venue data. Selected venue is stored in existingVenue form variable.will store only city_is and state_id in existingVenue.
-  const {data: cityData,isLoading}=useOne({
-    resource:"city",
-    meta:{select:"name,state(name)"},
-    id:existingVenue?.city_id
-  })
+  const { data: cityData, isLoading } = useOne({
+    resource: "city",
+    meta: { select: "name,state(name)" },
+    id: existingVenue?.city_id,
+  });
 
   if (isLoading) {
     return <LoadingIcon />;
@@ -1002,13 +1000,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
           <div className="flex flex-row justify-between text-[20px] font-semibold">
             {t("course.new_course:time_and_venue_tab.course")}
             {/* Close button */}
-            <div
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
-              <X className="h-6 w-6" />
-            </div>
           </div>
           <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
             {/* Display course details */}
