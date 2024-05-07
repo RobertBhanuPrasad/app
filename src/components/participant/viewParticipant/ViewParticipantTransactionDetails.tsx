@@ -139,7 +139,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {translatedText(row?.original?.payment_method_id?.name as object)}
         </Text>
       );
@@ -238,7 +238,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {translatedText(row?.original?.transaction_fee_level_id?.name as object)}
         </Text>
       );
@@ -251,7 +251,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {translatedText(row?.original?.transaction_status_id?.name as object)}
         </Text>
       );

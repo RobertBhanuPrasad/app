@@ -565,20 +565,21 @@ interface ParticipantReassignmentHistoryDataBaseType {
 }
 
 interface ParticipantEmailDeliveryLogsDataBaseType {
+
+  type?: string;
+  delivery_status?: string;
+  delivery_time_stamp?: string;
+  source?: string;
+  open_time_stamp?: string;
+}
+
+interface ParticipantCustomerDeviceDetailsDataBaseType {
   id?: number;
   browser?: string;
   ip_address?: string;
   time_stamp?: string;
   transaction_id?: string;
   operating_system?: string;
-}
-
-interface ParticipantCustomerDeviceDetailsDataBaseType {
-  program_type?: number;
-  delivery_status?: string;
-  delivery_time_stamp?: string;
-  source?: string;
-  open_time_stamp?: string;
 }
 
 interface ParticipantUtmParametersDataBaseType {
