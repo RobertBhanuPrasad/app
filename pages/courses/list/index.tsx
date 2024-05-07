@@ -158,20 +158,24 @@ function index() {
   }
 
   //If we select course fee then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.is_course_fee === true) {
-    //If the program_fee_setting_id is not null then it has default fee if it is null then we have our custom fee
-    filters.permanent.push({
-      field: "program_fee_setting_id",
-      operator: "neq",
-      value: null,
-    });
-  } else {
-    filters.permanent.push({
-      field: "program_fee_setting_id",
-      operator: "eq",
-      value: null,
-    });
+  if (AllFilterData?.advanceFilter?.is_course_fee) {
+    //If the course_fee is true means it is default else it is custom fee
+    if (AllFilterData?.advanceFilter?.is_course_fee == "TRUE") {
+      //If the program_fee_setting_id is not null then it has default fee if it is null then we have our custom fee here we check if any id is present or not by value greater than 0
+      filters.permanent.push({
+        field: "program_fee_settings_id",
+        operator: "gt",
+        value: 0,
+      });
+    } else {
+      filters.permanent.push({
+        field: "program_fee_settings_id",
+        operator: "null",
+        value: true,
+      });
+    }
   }
+
   //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
     //Here the date picker uses the GMT time so , iam adding  1 day that is next day for from and to of course date
@@ -262,7 +266,7 @@ function index() {
       resource: "program",
       meta: {
         select:
-          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
       },
       pagination: {
         pageSize: pageSize,
@@ -458,7 +462,7 @@ function index() {
   return (
     <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
-      <div className="mx-8 flex flex-col gap-[72px] mt-4">
+      <div className="mx-8 flex flex-col gap-[72px] mt-4 bg-[white]">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
@@ -491,7 +495,7 @@ function index() {
           />
         </div>
       </div>
-      <div className="bottom-0 sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+      <div className="bottom-0 sticky absolute flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-row items-center gap-2">
             <Checkbox
@@ -519,7 +523,7 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl"
+                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
                 disabled={!allSelected}
               >
                 Export <ChevronDownIcon className="w-5 h-5" />
@@ -587,13 +591,13 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
               to: undefined,
             })
           }
-          className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
+          className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold hover:text-[#5E5FC3] hover:border-solid hover:border hover:border-[1px] hover:border-[#5E5FC3]"
         >
           Reset
         </Button>
         <Button
           onClick={() => setOpen(false)}
-          className=" w-[94px] h-10 rounded-xl"
+          className=" w-[94px] h-10 rounded-xl hover:bg-[#5E5FC3]"
         >
           Apply
         </Button>
@@ -615,6 +619,11 @@ export const CourseTypeComponent = ({ name }: any) => {
     field: { value, onChange },
   } = useController({
     name: name,
+  });
+  const {
+    field: { value: temporaryValue, onChange: temporaryOnChange },
+  } = useController({
+    name: "temporaryadvancefilter.course_name",
   });
 
   const [pageSize, setPageSize] = useState(10);
@@ -649,9 +658,11 @@ export const CourseTypeComponent = ({ name }: any) => {
       value={value}
       onValueChange={(val: any) => {
         onChange(val);
+        // we are making the course name value empty string  if the course type is changed so that it will show the placeholder in course name  if we change the value in course type downdown
+        temporaryOnChange("");
       }}
     >
-      <SelectTrigger className="min-w-[150px] w-[50%]">
+      <SelectTrigger className="min-w-[150px] w-[50%] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder="Select Course Type" />
       </SelectTrigger>
       <SelectContent>
@@ -715,7 +726,7 @@ export const BasicFilters: React.FC<{
 
   return (
     <div className="flex gap-x-[2%] flex-row items-center justify-between">
-      <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
+      <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SearchIcon />
         <Input
           value={value}
@@ -730,7 +741,7 @@ export const BasicFilters: React.FC<{
         {" "}
         <Dialog open={open} onOpenChange={setOpen}>
           <Button
-            className="w-[50%] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
+            className="w-[50%] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             variant="outline"
             onClick={() => {
               setOpen(true);
@@ -790,7 +801,7 @@ export const BasicFilters: React.FC<{
           className="flex min-w-[90px] flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
-          <div>Clear All</div>
+          <div className="hover:text-[#5E5FC3]">Clear All</div>
         </div>
         <Button
           onClick={() => {
@@ -798,7 +809,7 @@ export const BasicFilters: React.FC<{
             //whenever we apply filters we will be navigated to page 1
             setCurrent(1);
           }}
-          className="h-9 w-18 rounded-xl"
+          className="h-9 w-18 rounded-xl hover:bg-[#5E5FC3]"
         >
           Apply
         </Button>
@@ -825,7 +836,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
       ).length) ||
     0;
   return (
-    <Sheet open={advanceFilterOpen}>
+    <Sheet open={advanceFilterOpen} onOpenChange={setAdvanceFilterOpen}>
       <SheetTrigger className="p-0">
         <Button
           onClick={() => {
@@ -836,7 +847,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
               formData?.course_type
             );
           }}
-          className="flex flex-row gap-2 !rounded-xl"
+          className="flex flex-row gap-2 !rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
         >
           <FilterIcon />
