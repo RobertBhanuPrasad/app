@@ -77,11 +77,15 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
-import { translatedText } from 'src/common/translations'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "src/ui/hover-card";
+import { translatedText } from "src/common/translations";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "src/ui/hover-card";
 import Important from "@public/assets/Important";
 
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -116,7 +120,7 @@ function NewCourseStep3() {
 export default NewCourseStep3;
 
 const OnlineProgram = () => {
-  const {t} = useTranslation(["course.new_course", "new_strings"])
+  const { t } = useTranslation(["course.new_course", "new_strings"]);
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -126,17 +130,21 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="flex flex-row gap-1 items-center">{t("course.new_course:time_and_venue_tab.online_meeting_url")} <div className="text-[#7677F4]"> *</div>
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px]">{t("new_strings:online_course_hovered_text")}</div>
-          </HoverCardContent>
-        </HoverCard>
+        <div className="flex flex-row gap-1 items-center">
+          {t("course.new_course:time_and_venue_tab.online_meeting_url")}{" "}
+          <div className="text-[#7677F4]"> *</div>
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px]">
+                {t("new_strings:online_course_hovered_text")}
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
-       
+
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}
@@ -193,7 +201,7 @@ const Schedules = () => {
 };
 
 const SchedulesHeader = () => {
-  const {t} = useTranslation(["course.new_course", "new_strings"])
+  const { t } = useTranslation(["course.new_course", "new_strings"]);
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
     fieldState: { error: schedulesHeaderErrors },
@@ -231,7 +239,9 @@ const SchedulesHeader = () => {
 
   return (
     <div className="h-9 flex justify-between">
-      <div className="font-semibold text-[#333333] flex items-center">{t("course.new_course:time_and_venue_tab.event_date_and_time")}</div>
+      <div className="font-semibold text-[#333333] flex items-center">
+        {t("course.new_course:time_and_venue_tab.event_date_and_time")}
+      </div>
       <div className="flex gap-4">
         <div className="w-[161px]">
           <Select
@@ -240,7 +250,10 @@ const SchedulesHeader = () => {
               hoursFormatOnChange(val);
             }}
           >
-            <SelectTrigger className="w-[161px]" error={schedulesHeaderErrors ? true : false}>
+            <SelectTrigger
+              className="w-[161px]"
+              error={schedulesHeaderErrors ? true : false}
+            >
               <SelectValue placeholder={t("new_strings:select_format")} />
             </SelectTrigger>
             <SelectContent className="w-[161px]">
@@ -270,7 +283,10 @@ const SchedulesHeader = () => {
                 timeZonesOnChange(value);
               }}
             >
-              <SelectTrigger className="w-[257px]" error={timeZoneError ? true : false}>
+              <SelectTrigger
+                className="w-[257px]"
+                error={timeZoneError ? true : false}
+              >
                 <SelectValue placeholder={t("new_strings:select_time_zone")} />
               </SelectTrigger>
               <SelectContent>
@@ -436,12 +452,17 @@ const ScheduleComponent = ({
 
   const schedule = formData?.schedules[index];
 
-  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(TIME_FORMAT, TIME_FORMAT_12_HOURS)?.id
-  const {t} = useTranslation(['common',"course.new_course"])
+  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id;
+  const { t } = useTranslation(["common", "course.new_course"]);
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
       <div className="h-4 font-[#333333] font-normal flex text-xs">
-        <div>{t("course.new_course:time_and_venue_tab.session")} {index + 1} </div>
+        <div>
+          {t("course.new_course:time_and_venue_tab.session")} {index + 1}{" "}
+        </div>
         <div className="text-[#7677F4]">&nbsp;*</div>
       </div>
       <div className="h-10 flex items-center gap-6">
@@ -510,9 +531,9 @@ const ScheduleComponent = ({
 };
 
 const Venue = () => {
-  const {t} = useTranslation(["course.new_course", "new_strings"])
+  const { t } = useTranslation(["course.new_course", "new_strings"]);
 
-  const { watch, setValue, resetField } = useFormContext()
+  const { watch, setValue, resetField } = useFormContext();
 
   const removeVenue = () => {
     setValue("newVenue", undefined);
@@ -623,17 +644,17 @@ const Venue = () => {
   const handleOpenAddNewVenue = () => {
     // we are making the state varaible to false for not showing the warning message so that after
     // closing the dialog it will not show the data
-    setwarningmessage(false)
-    resetField('center_id')
-    resetField('state_id')
-    resetField('address')
-    resetField('postal_code')
-    resetField('city_id')
-    resetField('name')
-    isNewVenueOnchange(true)
-    setOpenAddNewVenue(true)
-  }
-  
+    setwarningmessage(false);
+    resetField("center_id");
+    resetField("state_id");
+    resetField("address");
+    resetField("postal_code");
+    resetField("city_id");
+    resetField("name");
+    isNewVenueOnchange(true);
+    setOpenAddNewVenue(true);
+  };
+
   return (
     <div>
       <RadioGroup
@@ -670,7 +691,7 @@ const Venue = () => {
                   "ml-7"
                 }`}
               >
-                {t('course.new_course:time_and_venue_tab.existing_venue')}
+                {t("course.new_course:time_and_venue_tab.existing_venue")}
               </div>
             </div>
             {data ? (
@@ -689,7 +710,7 @@ const Venue = () => {
                       variant="outline"
                       className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
                     >
-                       {t("course.new_course:time_and_venue_tab.view_all")}
+                      {t("course.new_course:time_and_venue_tab.view_all")}
                     </Badge>
                   </DialogTrigger>
                   <DialogContent className="!w-[858px] h-[585px] !rounded-[24px] !py-[24px] !pl-[24px] !pr-[8px]">
@@ -700,7 +721,7 @@ const Venue = () => {
               </div>
             ) : (
               <div className="px-[30px] leading-6 font-normal">
-              {t("new_strings:no_existing_venue_found")}
+                {t("new_strings:no_existing_venue_found")}
               </div>
             )}
           </div>
@@ -727,7 +748,9 @@ const Venue = () => {
                       }`}
                     />
                   )}
-                  <div>{t("course.new_course:time_and_venue_tab.new_venue")}</div>
+                  <div>
+                    {t("course.new_course:time_and_venue_tab.new_venue")}
+                  </div>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Dialog
@@ -852,7 +875,7 @@ const TimePicker = ({
   index: number;
   is12HourFormat: Boolean;
 }) => {
-  const {t} = useTranslation("course.new_course")
+  const { t } = useTranslation("course.new_course");
 
   const { errors }: any = useFormState();
 
@@ -876,7 +899,9 @@ const TimePicker = ({
 
   return (
     <div className="flex items-center gap-6">
-      <div className="text-sm text-[#999999] font-normal">{t("course.new_course:time_and_venue_tab.from")}</div>
+      <div className="text-sm text-[#999999] font-normal">
+        {t("course.new_course:time_and_venue_tab.from")}
+      </div>
       <div className="w-[233px]">
         <TimeSelector
           name={`${NewCourseStep3FormNames?.schedules}[${index}].start`}
@@ -884,7 +909,9 @@ const TimePicker = ({
           error={errors?.schedules?.[index] ? true : false}
         />
       </div>
-      <div className="text-sm text-[#999999] font-normal">{t("course.new_course:time_and_venue_tab.to")}</div>
+      <div className="text-sm text-[#999999] font-normal">
+        {t("course.new_course:time_and_venue_tab.to")}
+      </div>
       <div className="w-[233px]">
         <TimeSelector
           name={`${NewCourseStep3FormNames?.schedules}[${index}].end`}
@@ -896,7 +923,7 @@ const TimePicker = ({
   );
 };
 const CalenderComponent = ({ index, setOpen }: any) => {
-  const {t} = useTranslation(['common', "course.new_course"])
+  const { t } = useTranslation(["common", "course.new_course"]);
   // Get the date value and onChange function from the controller
   const {
     field: { value: dateValue, onChange },
@@ -905,7 +932,34 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     name: `${NewCourseStep3FormNames?.schedules}[${index}].date`,
   });
 
-  const { trigger } = useFormContext();
+  const [pageSize, setPageSize] = useState(10);
+
+  const { trigger, watch } = useFormContext();
+
+  const formData = watch();
+
+  /**
+   * This variable holds the state id
+   */
+  let stateId: number = 0;
+
+  /**
+   * This variable holds the city id
+   */
+  let cityId: number = 0;
+
+  if (formData?.is_online_program) {
+    stateId = formData?.state_id;
+    cityId = formData?.city_id;
+  } else {
+    if (formData.is_existing_venue == "new-venue") {
+      stateId = formData?.newVenue?.state_id;
+      cityId = formData?.newVenue?.city_id;
+    } else if (formData?.is_existing_venue == "existing-venue") {
+      stateId = formData?.existingVenue?.state_id;
+      cityId = formData?.existingVenue?.city_id;
+    }
+  }
 
   // Initialize state for the selected date, defaulting to the provided dateValue or today's date
   const [date, setDate] = useState<any>(dateValue ? dateValue : new Date());
@@ -916,7 +970,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       {
         field: "organization_id",
         operator: "eq",
-        value: 1,
+        value: formData?.organization_id,
       },
     ],
   });
@@ -937,25 +991,25 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   // Add additional filters based on organization calendar settings
   const filter = [...dateFilters];
   if (settingsData) {
-    if (settingsData?.data[0]?.is_city_enabled) {
+    if (settingsData?.data[0]?.is_city_enabled && cityId) {
       filter.push({
         field: "program_id.city_id.id",
         operator: "eq",
-        value: 1,
+        value: cityId,
       });
     }
-    if (settingsData?.data[0]?.is_state_enabled) {
+    if (settingsData?.data[0]?.is_state_enabled && stateId) {
       filter.push({
         field: "program_id.state_id.id",
         operator: "eq",
-        value: 1,
+        value: stateId,
       });
     }
     if (settingsData?.data[0]?.is_venue_enabled) {
       filter.push({
         field: "program_id.venue_id",
         operator: "eq",
-        value: 1,
+        value: formData?.venue_id,
       });
     }
   }
@@ -966,8 +1020,12 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       select:
         "*,program_id!inner(program_type_id!inner(name),city_id!inner(id ,name),state_id!inner(id ,name),venue_id))",
     },
+    pagination: {
+      pageSize: pageSize,
+    },
     filters: filter,
   });
+
   // Handle date selection in the calendar
   const handleOnSelect = (selected: Date | undefined) => {
     setDate(selected);
@@ -1001,22 +1059,36 @@ const CalenderComponent = ({ index, setOpen }: any) => {
             {t("course.new_course:time_and_venue_tab.course")}
             {/* Close button */}
           </div>
-          <div className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto">
-            {/* Display course details */}
-            {data?.data?.map((course: any) => (
-              <div key={course.id}>
-                <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
-                  {formatTime(course.start_time)} -{" "}
-                  {formatTime(course?.end_time)} .{" "}
-                  {course?.program_id?.city_id?.name},{" "}
-                  {course?.program_id?.state_id?.name}
+
+          {/* Added get scroll alert so that when we reached at end of the scroll another set of records will loads */}
+          <GetScrollTypesAlert
+            id="course-calender"
+            onBottom={() => {
+              if (data && (data?.total as number) >= pageSize) {
+                setPageSize((previousLimit: number) => previousLimit + 10);
+              }
+            }}
+          >
+            <div
+              id={"course-calender"}
+              className="flex flex-col gap-4 max-h-[352px] scrollbar overflow-y-auto"
+            >
+              {/* Display course details */}
+              {data?.data?.map((course: any) => (
+                <div key={course.id}>
+                  <div className="text-[12px] text-[#999999] tracking-wider font-semibold">
+                    {formatTime(course.start_time)} -{" "}
+                    {formatTime(course?.end_time)} .{" "}
+                    {course?.program_id?.city_id?.name},{" "}
+                    {course?.program_id?.state_id?.name}
+                  </div>
+                  <div className="font-semibold text-[16px]">
+                    {translatedText(course.program_id?.program_type_id?.name)}
+                  </div>
                 </div>
-                <div className="font-semibold text-[16px]">
-                  {translatedText(course.program_id?.program_type_id?.name)}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </GetScrollTypesAlert>
         </div>
       </div>
       {/* Submit button */}
@@ -1039,8 +1111,8 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 };
 
 const ExistingVenueList = () => {
-  const {t} = useTranslation(['common', "course.new_course","new_strings"])
-  const { data: loginUserData }: any = useGetIdentity()
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
+  const { data: loginUserData }: any = useGetIdentity();
 
   const { watch } = useFormContext();
 
@@ -1171,7 +1243,7 @@ const ExistingVenueList = () => {
     <div>
       <div className="rounded-[24px] ">
         <div className="flex justify-center text-[24px] font-semibold">
-        {t("course.new_course:time_and_venue_tab.existing_venues")}
+          {t("course.new_course:time_and_venue_tab.existing_venues")}
         </div>
         <div className="relative w-[390px] h-[40px] flex justify-end items-center mx-auto mt-4">
           <Input
@@ -1419,7 +1491,7 @@ export const ExistingVenueListSection = ({
       </div>
     </div>
   );
-}
+};
 
 /**
  * @function VenueItem is used to show each venue details in venue list
@@ -1474,7 +1546,7 @@ export const AddOrEditVenue = ({
 }) => {
   const { watch } = useFormContext();
 
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   const formData = watch();
 
@@ -1483,9 +1555,13 @@ export const AddOrEditVenue = ({
   return (
     <div>
       {isNewVenue ? (
-        <div className="flex justify-center text-[24px] font-semibold">{t("course.new_course:time_and_venue_tab.new_venue")}</div>
+        <div className="flex justify-center text-[24px] font-semibold">
+          {t("course.new_course:time_and_venue_tab.new_venue")}
+        </div>
       ) : (
-        <div className="flex justify-center text-[24px] font-semibold">{t("new_strings:edit_venue")}</div>
+        <div className="flex justify-center text-[24px] font-semibold">
+          {t("new_strings:edit_venue")}
+        </div>
       )}
       {/* TODO : Integrated after solving the error }
       {/* <MapComponent /> */}
@@ -1504,7 +1580,9 @@ export const AddOrEditVenue = ({
         </div>
       </div>
       {message && (
-        <span className="text-[#FF6D6D] text-[14px] text-md">{t("new_strings:venue_with_the_provided")}</span>
+        <span className="text-[#FF6D6D] text-[14px] text-md">
+          {t("new_strings:venue_with_the_provided")}
+        </span>
       )}
       <DialogFooter>
         <div className="w-full flex items-center justify-center mt-5">
@@ -1819,13 +1897,14 @@ const DeleteVenueComponent = ({
 }: {
   handleDeleteVenue: () => void;
 }) => {
-
-  const {t} = useTranslation(['common',"new_strings"])
+  const { t } = useTranslation(["common", "new_strings"]);
 
   return (
     <div>
       <DialogHeader>
-        <DialogTitle className="flex justify-center">{t("delete_button")}</DialogTitle>
+        <DialogTitle className="flex justify-center">
+          {t("delete_button")}
+        </DialogTitle>
         <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
           {t("new_strings:are_you_sure_you_want_to_delete_the_address")}
         </DialogDescription>
@@ -1833,12 +1912,15 @@ const DeleteVenueComponent = ({
       <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-          {t("no")}
+            {t("no")}
           </Button>
         </DialogClose>
         <DialogClose>
-          <Button className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold" onClick={handleDeleteVenue}>
-          {t("yes")}
+          <Button
+            className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+            onClick={handleDeleteVenue}
+          >
+            {t("yes")}
           </Button>
         </DialogClose>
       </DialogFooter>
