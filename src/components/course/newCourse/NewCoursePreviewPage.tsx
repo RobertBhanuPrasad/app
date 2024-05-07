@@ -663,17 +663,6 @@ export default function NewCourseReviewPage() {
                 {visibility ? translatedText(visibility?.name) : "-"}
               </abbr>
             </div>
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                {t("countries_from_where_registrations_are_allowed")}
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={allowedCountries}
-              >
-                {allowedCountries ? allowedCountries : "-"}
-              </abbr>
-            </div>
             {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
             {hasSuperAdminRole &&
               newCourseData?.is_geo_restriction_applicable && (

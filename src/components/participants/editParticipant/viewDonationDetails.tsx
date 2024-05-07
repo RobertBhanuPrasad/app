@@ -22,7 +22,7 @@ export default function ViewDonationDetails({
     const { data: donationData } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(name),transaction_status_id(name),payment_transaction_id",
+            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(name),transaction_status_id(name),payment_transaction_id,program_id(organization_id(name)),created_at",
         },
         filters: [
             {
@@ -38,7 +38,7 @@ export default function ViewDonationDetails({
             },
         ],
     });
-
+    
     // Getting participant contact detials for that particular participantId from router
     const { data: contactData } = useOne({
         resource: "participant_registration",
@@ -66,11 +66,7 @@ export default function ViewDonationDetails({
                                 {t('new_strings:orgainization')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {donationData?.data[0]?.participant_id
-                                        ?.organisation_id?.name
-                                        ? donationData?.data[0]?.participant_id
-                                              ?.organisation_id?.name
-                                        : "-"}
+                                    {donationData?.data[0]?.program_id?.organization_id?.name ? donationData?.data[0]?.program_id?.organization_id?.name : "-"}
                                 </Text>
                             </div>
 
@@ -93,11 +89,7 @@ export default function ViewDonationDetails({
                                 {t('course.participants:edit_participant.participants_information_tab.donation_type')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {donationData?.data[0]?.participant_id
-                                        ?.donation_type?.value
-                                        ? donationData?.data[0]?.participant_id
-                                              ?.donation_type?.value
-                                        : "-"}
+                                    One Time
                                 </Text>
                             </div>
 
@@ -106,14 +98,7 @@ export default function ViewDonationDetails({
                                 {t('course.participants:edit_participant.participants_information_tab.donation_date')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {donationData?.data[0]?.participant_id
-                                        ?.donation_date
-                                        ? formatDateString(
-                                              new Date(
-                                                  donationData?.data[0]?.participant_id?.donation_date
-                                              )
-                                          )
-                                        : "-"}
+                                    {donationData?.data[0]?.created_at ? formatDateString(new Date((donationData?.data[0]?.created_at))) : "-"}
                                 </Text>
                             </div>
                         </div>
