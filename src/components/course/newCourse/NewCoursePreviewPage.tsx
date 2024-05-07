@@ -920,7 +920,7 @@ export default function NewCourseReviewPage() {
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title="Yes"
+                title={t("yes")}
               >
                 {t("yes")}
               </abbr>

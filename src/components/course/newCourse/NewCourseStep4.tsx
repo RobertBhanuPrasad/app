@@ -541,7 +541,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             <div className="w-80 mt-9">
               <div className="flex justify-between">
                 <div className="font-normal text-base text-sm">
-                  {t("new_strings:Eearly_bird_cutoff_period")}
+                  {t("new_strings:Early_bird_cutoff_period")}
                 </div>
                 <div className="font-normal italic text-base text-sm text-[#7677F4]">
                   {earlyBirdCutOff} {t("course.new_course:fees_tab.days_left")}
