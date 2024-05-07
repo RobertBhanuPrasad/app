@@ -134,7 +134,9 @@ const contactValidationSchema = z.array(
     contact_email: z
       .string({ required_error: "Contact email is a required field." })
       .email({ message: "Please enter correct Email" }),
-    contact_number: z.union([z.string().regex(/^\d+$/), z.number()]).optional(),
+    contact_number: z
+      .string()
+      .optional(),
   })
 );
 const accommodationValidationSchema = z.array(
