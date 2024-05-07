@@ -966,7 +966,7 @@ export const handlePostProgramContactDetailsData = async (
    */
   const { data, error } = await supabase
     .from("program_contact_details")
-    .upsert(contactDetailsData)
+    .upsert(contactDetailsData, { defaultToNull: false })
     .select();
 
   // Handle upsert result
