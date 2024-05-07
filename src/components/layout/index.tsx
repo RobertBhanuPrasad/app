@@ -7,7 +7,7 @@ import { Breadcrumb } from "../breadcrumb";
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <div className="layout relative w-full h-full">
-      <div className="fixed top-0 left-0 w-full h-[96px] bg-[white] z-10">
+      <div className="fixed top-0 left-0 w-full h-[96px] bg-[white] z-20">
         <Navbar />
         <Breadcrumb />
       </div>
