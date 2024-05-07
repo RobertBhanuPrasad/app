@@ -63,7 +63,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
           </div>
         </div>
       </div>
-      <div className="!w-[1000px] rounded-[10px]">
+      <div className="w-full rounded-[10px] ">
         {/* BaseTable component for rendering table */}
         <BaseTable
           checkboxSelection={false}
@@ -139,8 +139,8 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
 
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
-          {translatedText(row?.original?.payment_method_id?.name as object)}
+        <Text>
+          {row?.original?.sub_payment_method}
         </Text>
       );
     },
@@ -152,7 +152,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text>{row?.original?.organization_fee}</Text>
+      return <Text>{row?.original?.organization_fee?.toFixed(2)}</Text>
     }
   },
   {
@@ -162,7 +162,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text>{row?.original?.expense_fee}</Text>
+      return <Text>{row?.original?.expense_fee ? row?.original?.expense_fee?.toFixed(2) : '-'}</Text>
     }
   },
   {
@@ -172,7 +172,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text>{row?.original?.tax}</Text>
+      return <Text>{row?.original?.tax?.toFixed(2)}</Text>
     }
   },
   {
@@ -200,7 +200,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text>{translatedText(row?.original?.accommodation_type_id?.accommodation_type_id?.name as object)}</Text>
+      return <Text>{row?.original?.accommodation_type_id ? translatedText(row?.original?.accommodation_type_id?.accommodation_type_id?.name as object) : '-'}</Text>
     }
   },
   {
@@ -210,7 +210,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
 
     cell: ({ row }) => {
-      return <Text>{row?.original?.accommodation_fee}</Text>
+      return <Text>{row?.original?.accommodation_fee ? row?.original?.accommodation_fee?.toFixed(2) : '-'}</Text>
     }
   },
   {
@@ -219,7 +219,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="min-w-[120px]">Total fee (EUR)</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text>{row?.original?.total_amount}</Text>
+      return <Text>{row?.original?.total_amount?.toFixed(2)}</Text>
     }
   },
   {
@@ -228,7 +228,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader className="min-w-[120px]">Source</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text>{row?.original?.source_text}</Text>
+      return <Text>{row?.original?.source_text ? row?.original?.source_text : '-'}</Text>
     }
   },
   {
@@ -238,7 +238,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {translatedText(row?.original?.transaction_fee_level_id?.name as object)}
         </Text>
       );
@@ -251,7 +251,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <Text className="lowercase">
+        <Text>
           {translatedText(row?.original?.transaction_status_id?.name as object)}
         </Text>
       );
@@ -263,7 +263,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
       return <TableHeader>Reason</TableHeader>
     },
     cell: ({ row }) => {
-      return <Text>{row?.original?.transaction_reason}</Text>
+      return <Text>{row?.original?.transaction_reason ? row?.original?.transaction_reason : '-'}</Text>
     }
   },
 
