@@ -140,7 +140,7 @@ const columns: ColumnDef<ParticipantPaymentHistoryDataBaseType>[] = [
     cell: ({ row }) => {
       return (
         <Text>
-          {translatedText(row?.original?.payment_method_id?.name as object)}
+          {row?.original?.sub_payment_method}
         </Text>
       );
     },
