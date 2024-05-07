@@ -60,7 +60,7 @@ export default function PaymentDetails() {
     resource: "participant_payment_history",
     meta: {
       select:
-        "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,organization_fee",
+        "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,organization_fee,participant_id(discount_code)",
     },
     filters: [
       {
@@ -83,14 +83,9 @@ export default function PaymentDetails() {
   });
   const paymentDetailData = paymentData?.data?.data[0];
 
+ 
 
-  const {data:discountCode} = useOne({
-    resource: 'participant_registration',
-    id: Id,
-    meta : {
-      select : 'discount_code'
-    }
-  })
+
 
   return (
     <div className="flex-row pb-[5px]" id="Payment">
@@ -134,7 +129,7 @@ export default function PaymentDetails() {
           <div className="flex gap-4">
             <div>
               <Input
-                value={discountCode?.data?.discount_code}
+                value={paymentDetailData?.participant_id?.discount_code}
                 className="w-[268px] !h-[40px] resize-none font-semibold rounded-xl border-[#E1E1E1]"
                 disabled={true}
               />
