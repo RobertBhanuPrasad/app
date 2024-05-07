@@ -495,7 +495,7 @@ function index() {
           />
         </div>
       </div>
-      <div className="bottom-0 sticky absolute flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+      <div className="bottom-0 fixed flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-row items-center gap-2">
             <Checkbox
@@ -503,7 +503,7 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>Select All</div>
+            <div>Select All jncdsjnfsdnfjknj</div>
             <div className="font-semibold">
               {FilterProgramData?.data?.total || 0}
             </div>
