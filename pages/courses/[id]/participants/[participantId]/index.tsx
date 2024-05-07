@@ -76,7 +76,7 @@ function index() {
         },
         {
             id: 2,
-            label: t('course.participants:view_participant.email_delivery_logs'),
+            label: t('view_participant.email_delivery_logs'),
             content: <ViewParticipantEmailDeliveryLogs participantId={Id} />,
         },
         {

@@ -32,7 +32,7 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
             table: '',
             rowStyles: ''
           }}
-          columns={columns (t)}
+          columns={columns(t)}
           data={participantEmailDeliveryLogsData?.data?.email_delivery_logs_section || []}
           columnPinning={false}
         />
