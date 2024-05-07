@@ -142,24 +142,24 @@ function ViewDetails() {
   );
 
   const countryName = "India";
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["course.view_course", "new_strings", "course.particicipants","course.new_course"])
 
   const tabTriggers: any = [
     {
       value: COURSE_DETAILS_TAB,
-      label: t('new_strings:course_details_tab'),
+      label: t("course.new_course:review_post_details.course_details"),
       disabled: false,
       tab_query_name: "course_details",
     },
     {
       value: PARTICIPANTS_TAB,
-      label: t('new_strings:participants_tab'),
+      label:t('course.participants:edit_participant.participants_information_tab.participants'),
       disabled: false,
       tab_query_name: "participants",
     },
     {
       value: REVENUE_SUMMARY_TAB,
-      label:t('new_strings:revenue_summary_tab'),
+      label:t('course.view_course:revenue_summary_tab.revenue_summary'),
       disabled: false,
       tab_query_name: "revenue_summary",
     },
@@ -262,10 +262,7 @@ function ViewDetails() {
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                {courseData?.data?.participant_count} Participants with:
-                Transaction status = Confirmed / Pending Attendance status =
-                Confirmed / Pending / Dropout. <br></br> Total participants
-                records:
+                {courseData?.data?.participant_count} {t('new_strings:participants_header_hover_text')}
                 {courseData?.data?.total_participant_count}
               </div>
             </HoverCardContent>
@@ -573,7 +570,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
             </div>
             <DialogTitle className="text-gray-500 text-sm font-normal pt-2">
               {" "}
-              {t('new_strings:describe_your_rejection_reason')}
+              {t('course.view_course:basic_details_tab.describe_your_rejection_reason')}
               <span className="text-blue-500">{t('course.view_course:basic_details_tab.(optional)')}</span>
             </DialogTitle>
             <DialogDescription>
@@ -619,7 +616,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
 
 const RejectedModalOpen = () => {
   const { viewRejectedModal, setViewRejectedModal } = newCourseStore();
-  const {t} = useTranslation(["common","new_strings"])
+  const {t} = useTranslation(["common","new_strings" ,"course.view_course"])
   return (
     <Dialog open={viewRejectedModal}>
       <DialogContent className="w-[414px] h-[279px]">
@@ -628,7 +625,7 @@ const RejectedModalOpen = () => {
             <Cross />{" "}
           </div>
           <DialogTitle className="font-bold text-center">{t('new_strings:course_rejected')}</DialogTitle>
-          <DialogDescription className="text-center">{t('new_strings:the_course_got_rejected')}</DialogDescription>
+          <DialogDescription className="text-center">{t('course.view_course:basic_details_tab.the_course_got_rejected')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <div className="flex w-full items-center justify-center">
@@ -1024,7 +1021,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
   
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings", "course.find_course","course.participants"])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings", "course.find_course", "course.new_course", "course.participants"])
 
   if (!authenticated) {
     return {
