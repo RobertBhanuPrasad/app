@@ -21,12 +21,12 @@ import CalenderIcon from "@public/assets/CalenderIcon";
 import { format } from "date-fns";
 import { translatedText } from "src/common/translations";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { DateField } from "src/ui/DateField";
 
 // Define CourseTable component
 
 export default function CourseTable() {
   const [courseFeeSettings, setCourseFeeSettings] = useState();
-
   const { watch } = useFormContext();
 
   const formData = watch();
@@ -500,6 +500,28 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   const [selectedDate, setSelectedData] = useState(earlyBirdStartDate);
 
+  /**
+   * @function handleDisableEarlyBirdCutOff is used to determine whether early bird calender is disabled or not.
+   * @returns bool. If true early bird calender is not clickable (non editable). If true early bird calender is clickable (editable)
+   */
+  const handleDisableEarlyBirdCutOff = () => {
+    //Requirment: If National Admin or Super admin is creating a course Then Early bird cutoff fee is editable. 
+    if (isUserNationAdminOrSuperAdmin) return false;
+
+    //Requirement: Early bird cutoff is editable if
+    if (
+      //Early Bird column is enabled by users
+      showEarlyBirdColumns &&
+      //Early Bird Fee Enabled in settings
+      courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
+      //Early Bird Cut off Editable in settings
+      courseFeeSettings?.[0]?.is_early_bird_cut_off_editable
+    )
+      return false;
+    //In rest all cases false
+    return true;
+  };
+
   return (
     <div className="flex flex-col justify-center">
       {/* Enable Early Bird fee if it is enabled in settings */}
@@ -527,15 +549,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       </div>
 
       <div>
-        {/* Requirment: Show the early bird calender when 
-      1.Super or National Admin is logged in 
-      2.Early bird fee enabled in settings
-      3.Early bird fee enabled by user
-      4.Early bird cut off editable in settings */}
-        {isFeeEditable &&
-          showEarlyBirdColumns &&
-          courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
-          courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
+        {
+          // Need to show early bird calender if early bird fee is enabled
+          showEarlyBirdColumns && (
             <div className="w-80 mt-9">
               <div className="flex justify-between">
                 <div className="font-normal text-base text-sm">
@@ -545,50 +561,30 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
                   {earlyBirdCutOff} Days left
                 </div>
               </div>
-              <div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      onClick={() => {}}
-                      className={`w-full h-[40px] flex flex-row items-center justify-start gap-2 ${
-                        errors?.schedules && "border-[#FF6D6D]"
-                      }`}
-                      variant="outline"
-                    >
-                      <div>
-                        <CalenderIcon color="#999999" />
-                      </div>
-                      <div>
-                        {format(new Date(selectedDate), "dd MMM, yyyy")}
-                      </div>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
-                    <DateCalendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={(date: any) => {
-                        setSelectedData(date);
-                        const differenceInMilliseconds: number =
-                          courseStartDate.getTime() - date.getTime();
+              <DateField
+                value={selectedDate as Date}
+                onChange={(date: any) => {
+                  setSelectedData(date);
+                  const differenceInMilliseconds: number =
+                    courseStartDate.getTime() - date.getTime();
 
-                        // Convert milliseconds to days
-                        const oneDayInMilliseconds: number =
-                          1000 * 60 * 60 * 24;
+                  // Convert milliseconds to days
+                  const oneDayInMilliseconds: number = 1000 * 60 * 60 * 24;
 
-                        const differenceInDays: number = Math.floor(
-                          differenceInMilliseconds / oneDayInMilliseconds
-                        );
+                  const differenceInDays: number = Math.floor(
+                    differenceInMilliseconds / oneDayInMilliseconds
+                  );
 
-                        setEarlyBirdCutOff(differenceInDays);
-                      }}
-                      className="rounded-md"
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
+                  setEarlyBirdCutOff(differenceInDays);
+                }}
+                placeholder=" "
+                className="!w-80"
+                disabled={handleDisableEarlyBirdCutOff()}
+                disableDate={courseStartDate}
+              />
             </div>
-          )}
+          )
+        }
       </div>
     </div>
   );
