@@ -876,7 +876,7 @@ export const ProgramOrganiser = () => {
   return (
     <MultiSelect
       value={temporaryValue}
-      placeholder={t('select_program_organiser')}
+      placeholder={t('select_program_organizer')}
       data={options}
       onBottomReached={handleOnBottomReached}
       onSearch={(val: string) => {
