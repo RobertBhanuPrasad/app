@@ -118,7 +118,14 @@ export const validationSchema = () => {
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
-      ),
+      ).refine((value) => {
+        //Requirement: Duplicate emails are not allowed
+        const emails = value.split(",").map((email) => email.trim());
+        const uniqueEmails = new Set(emails);
+        return emails.length === uniqueEmails.size;
+      }, {
+        message: "Duplicate emails are not allowed",
+      })
   });
 };
 
