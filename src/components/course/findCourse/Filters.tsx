@@ -399,7 +399,7 @@ export const CourseName = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder={t('new_strings:select_course_name')} />
+        <SelectValue placeholder={t('select_course_name')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -586,7 +586,7 @@ export const Center = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder={t('new_strings:select_center')} />
+        <SelectValue placeholder={t('select_center')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -702,7 +702,7 @@ export const CourseAccountingClosureDate = () => {
   const {t} = useTranslation(["course.find_course","new_strings"])
   return (
     <Dialog open={open}>
-      <p>{t('course.find_course:date_range')}</p>
+      <p>{t('date_range')}</p>
       <DialogTrigger asChild>
         <Button
           onClick={() => setOpen(true)}
@@ -825,13 +825,13 @@ export const CourseFees = () => {
           <RadioButtonCard
             value="TRUE"
             selectedRadioValue={temporaryValue}
-            label={t('new_strings:default')}
+            label={t('default')}
             className="p-2 h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label={t('new_strings:custom')}
+            label={t('custom')}
             className="p-2 h-[40px] rounded-[12px]"
           />
         </div>
@@ -876,7 +876,7 @@ export const ProgramOrganiser = () => {
   return (
     <MultiSelect
       value={temporaryValue}
-      placeholder={t('new_strings:select_program_organiser')}
+      placeholder={t('select_program_organizer')}
       data={options}
       onBottomReached={handleOnBottomReached}
       onSearch={(val: string) => {
@@ -935,7 +935,7 @@ export const TeacherDropdown = () => {
       }}
     >
       <SelectTrigger className="w-80">
-        <SelectValue placeholder={t('new_strings:select_teacher')} />
+        <SelectValue placeholder={t('select_teacher')} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
