@@ -662,7 +662,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         temporaryOnChange("");
       }}
     >
-      <SelectTrigger className={`hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4] ${name === 'course_type' ? 'min-w-[150px] w-[50%]' : ''}`}>
+      <SelectTrigger className={`w-full hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]`}>
         <SelectValue placeholder="Select Course Type" />
       </SelectTrigger>
       <SelectContent>
@@ -792,9 +792,9 @@ export const BasicFilters: React.FC<{
           </DialogContent>
         </Dialog>
       </>
-      <>
+      <div className="min-w-[150px] w-[50%]">
         <CourseTypeComponent name="course_type" />
-      </>
+      </div>
       <div className="flex flex-row w-[50%] gap-x-[8px] items-center justify-end">
         <div
           onClick={handleClearAll}
