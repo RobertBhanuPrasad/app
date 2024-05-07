@@ -482,7 +482,7 @@ function index() {
             }}
             noRecordsPlaceholder={t('new_strings:there_are_no_courses')}
             columns={column(hasAliasNameFalse(data), t)}
-            data={[]}
+            data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
           />
