@@ -12,19 +12,14 @@
  "text_entered_in_the_email_notes":"Text entered in the 'Email Notes' field will be included in the registration confirmation email only irrespective of the transaction status (Email notes will not be shown on the Art of Living Website)",
  "no_existing_venue_found":"No existing venue found",
  "search_by_venue_name_city_or_state":"Search by Venue Name, City or state",
- "session":"Session",
  "are_you_sure_you_want_to_delete_the_address":"Are you sure you want to delete the address",
- "vat_reg":"VAT Reg.",
- "total_early_bird_fees":"Total Early bird Fees",
  "fee_per_person":"Fee per person",
  "inc_vat":"Inc. VAT",
- "select_accommodation":"Select Accommodation",
  "note":"Note:",
  "enter_comma":"Enter comma separated list of email addresses.",
  "review_course_details":"Review Course Details",
  "Early_bird_cutoff_period":"Early bird cut-off period",
  "accommodation_information":"Accommodation Information",
- "contact_phone":"Contact Phone",
  "bcc_registration_confirmation_email":"BCC registration confirmation email",
  "course_name":"Course Name",
  "copy_links":"Copy 2 Links",
@@ -37,7 +32,6 @@
  "select_time_zone":"Select Time Zone",
  "edit_venue":"Edit Venue",
  "venue_with_the_provided":"Venue with the provided data already exists.",
- "center":"Center",
  "no_results":"No results.",
  "registration_via_3rd_party_gateway_url":"Registration via 3rd party gateway url",
  "select_a_venue_by_clicking_viewall_button":"Select a venue by clicking “View All” button",
@@ -74,6 +68,7 @@
     "edit_course_accounting_form" : "Edit Course Accounting Form",
     "view_course_accounting_form" : "View Course Accounting Form",
     "there_are_no_courses" : "There are no courses",
+    "participant_registration":"Participant Registration",
 
  "view_course":"view course",
  "copied":"copied",
@@ -91,7 +86,11 @@
 
 
  "participants":"participants",
-
+ "upload_attendance_record":"Upload Attendance Record",
+ "search_by_registration_date":"Search by Registration Date",
+ "update_attendance_status":"Update Attendance Status",
+ "update_transaction_status":"Update Transaction Status",
+ "bulk_actions":"Bulk Actions",
 
 
 
@@ -118,5 +117,6 @@
  "view_participant" : "View Participant",
  "edit_participant" : "Edit Participant",
  "revenue_from_confirmed_pending_transaction_participants_revenue" : "Revenue from confirmed pending transaction participants revenue:",
- "participants_header_hover_text":"Participants with: Transaction status = Confirmed / Pending Attendance status =  Confirmed / Pending / Dropout Total participants records:"
+ "participants_header_hover_text":"Participants with: Transaction status = Confirmed / Pending Attendance status =  Confirmed / Pending / Dropout Total participants records:",
+ "online_course_hovered_text":"Provide complete URL, starting with http:// or https:// Link to online meeting URL will be included in registration confirmation email sent to participants. If meeting URL is edited, then participants will be automatically redirected to the updated URL."
 }

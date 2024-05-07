@@ -257,7 +257,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:vat_reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -308,7 +308,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:vat_reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -366,7 +366,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:total_early_bird_fees")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.total early")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -403,7 +403,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat_reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -433,7 +433,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:total_early_bird_fees")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.total early")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -541,7 +541,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             <div className="w-80 mt-9">
               <div className="flex justify-between">
                 <div className="font-normal text-base text-sm">
-                  {t("new_strings:Eearly_bird_cutoff_period")}
+                  {t("new_strings:Early_bird_cutoff_period")}
                 </div>
                 <div className="font-normal italic text-base text-sm text-[#7677F4]">
                   {earlyBirdCutOff} {t("course.new_course:fees_tab.days_left")}

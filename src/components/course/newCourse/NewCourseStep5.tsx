@@ -294,7 +294,7 @@ export const AccommodationType = ({
   index: number;
 }) => {
 
-  const {t} = useTranslation("new_strings")
+  const {t} = useTranslation("course.participants")
 
   const { watch } = useFormContext();
 
@@ -377,7 +377,7 @@ export const AccommodationType = ({
         disabled={isDisabled}
       >
         <SelectTrigger error={error ? true : false}>
-          <SelectValue placeholder={t("new_strings:select_accommodation")} />
+          <SelectValue placeholder={t("course.participants:assisted_registration.accommodation_placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <Input onChange={(val) => onSearch(val.target.value)} />

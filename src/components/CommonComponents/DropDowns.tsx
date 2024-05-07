@@ -15,7 +15,7 @@ import { supabaseClient } from "src/utility";
 import { useTranslation } from 'next-i18next';
 
 export const VenueNameComponent = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   const {
     field: { value: venueName, onChange: venueOnchange },
     fieldState: { error: venueError },
@@ -47,7 +47,7 @@ export const VenueNameComponent = () => {
 
 export const PostalCodeComponent = () => {
   const supabase = supabaseClient();
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
 
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
@@ -92,7 +92,7 @@ export const PostalCodeComponent = () => {
 };
 
 export const StreetAddressComponent = () => {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course"])
   const {
     field: { value: streetAddressValue, onChange: streetAddressOnchange },
     fieldState: { error },

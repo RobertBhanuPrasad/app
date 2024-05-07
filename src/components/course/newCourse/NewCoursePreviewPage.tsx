@@ -56,7 +56,7 @@ import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 
 export default function NewCourseReviewPage() {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const {t} = useTranslation(['common', "course.new_course", "course.view_course", "new_strings"])
   const supabase = supabaseClient();
 
   const { data: loginUserData }: any = useGetIdentity();
@@ -446,6 +446,12 @@ export default function NewCourseReviewPage() {
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">{t("new_strings:review_course_details")}</div>
+      <section className="w-full py-8 text-base border-b bg-white">
+        <EditCourseSuccessfullyInfo
+          onEditSuccess={onEditSuccess}
+          setOnEditSuccess={setOnEditSuccess}
+        />
+      </section>
       <div className="w-full p-6 text-base bg-white shadow-sm max-h-fit rounded-3xl">
         {/* Basic Details */}
         <section className="w-full pb-8 text-base border-b">
@@ -456,7 +462,7 @@ export default function NewCourseReviewPage() {
             </p>
             {/* Here we are calling EditModalDialog for passing the data of BasicDetails page */}
             <EditModalDialog
-              title="Basic Details"
+              title={t("basic_details")}
               content={<NewCourseStep1 />}
               onClose={() => setOpenBasicDetails(false)}
               open={openBasicDetails}
@@ -541,7 +547,7 @@ export default function NewCourseReviewPage() {
             </p>
             {/* Here we are calling EditModalDialog for passing the data of CourseDetails page */}
             <EditModalDialog
-              title="Course Details"
+              title={t("course.new_course:review_post_details.course_details")}
               content={<NewCourseStep2 />}
               onClose={() => setOpenCourseDetails(false)}
               open={openCourseDetails}
@@ -665,7 +671,7 @@ export default function NewCourseReviewPage() {
               newCourseData?.is_geo_restriction_applicable && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999]">
-                    Country(s) from where registrations are allowed
+                    {t("countries_from_where_registrations_are_allowed")}
                   </p>
                   <abbr
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -797,7 +803,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  {t("new_strings:Center")}
+                  {t("course.view_course:course_accounting_form_tab.center")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -914,7 +920,7 @@ export default function NewCourseReviewPage() {
               </p>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title="Yes"
+                title={t("yes")}
               >
                 {t("yes")}
               </abbr>

@@ -132,10 +132,7 @@ const OnlineProgram = () => {
             <Important />
           </HoverCardTrigger>
           <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px]">
-            Provide complete URL, starting with http:// or https://
-Link to online meeting URL will be included in registration confirmation email sent to participants.
-If meeting URL is edited, then participants will be automatically redirected to the updated URL.            </div>
+            <div className="w-[231px] text-wrap !rounded-[15px]">{t("new_strings:online_course_hovered_text")}</div>
           </HoverCardContent>
         </HoverCard>
         </div>
@@ -440,11 +437,11 @@ const ScheduleComponent = ({
   const schedule = formData?.schedules[index];
 
   const timeFormat12HoursId = getOptionValueObjectByOptionOrder(TIME_FORMAT, TIME_FORMAT_12_HOURS)?.id
-  const {t} = useTranslation(['common',"new_strings"])
+  const {t} = useTranslation(['common',"course.new_course"])
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
       <div className="h-4 font-[#333333] font-normal flex text-xs">
-        <div>{t("new_strings:session")} {index + 1} </div>
+        <div>{t("course.new_course:time_and_venue_tab.session")} {index + 1} </div>
         <div className="text-[#7677F4]">&nbsp;*</div>
       </div>
       <div className="h-10 flex items-center gap-6">

@@ -14,7 +14,7 @@ import { useTranslation } from 'next-i18next';
 
 export const ViewCourseGlobalActions = () => {
   const router = useRouter();
-  const {t} = useTranslation(["common","course.find_course","course.participants"])
+  const {t} = useTranslation(["common","course.find_course","course.participants","new_strings"])
   
   const globalActionsOptions = [
     t("view_participants"),
@@ -25,9 +25,9 @@ export const ViewCourseGlobalActions = () => {
     t("copy_course"),
     t("cancel_course"),
     // "New Discount Code",
-    "Submit Course Accounting Form",
-    "Upload Attendance Record",
-    "Download Receipt",
+    t('course.find_course:submit_course_accounting_form'),
+    t('new_strings:upload_attendance_record'),
+    t('course.participants:edit_participant.participants_information_tab.download_receipt'),
     // "Manage Google Adwords",
   ];
 

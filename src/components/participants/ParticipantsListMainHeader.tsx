@@ -66,7 +66,7 @@ export const ParticipantsListMainHeader = () => {
         />
         <div>
           {/* Course Name */}
-          <div className="text-[32px] font-medium bg-[red]">
+          <div className="text-[32px] font-medium">
             {courseData?.data?.program_alias_name_id
               ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
               : translatedText(courseData?.data?.program_type_id?.name)}
