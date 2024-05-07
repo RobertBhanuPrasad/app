@@ -18,7 +18,7 @@ type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
 export const columns = () =>
 {
-  const {t} = useTranslation(['common','course.participants','new_strings'])
+  const {t} = useTranslation(['common','course.participants','new_strings', 'course.view_course'])
   const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "participant_code",
@@ -535,7 +535,7 @@ export const columns = () =>
     enableHiding: false,
     cell: ({ row }) => {
       const optionsValues = [
-        t("new_strings:view_participant"),
+        t("course.view_course:participants_tab.view_participant"),
         t("new_strings:edit_participant"),
         // TODO(Not in MVP scope): Integrate these actions later
         // "Transfer",
