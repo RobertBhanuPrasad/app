@@ -997,19 +997,22 @@ export const handlePostProgramContactDetailsData = async (
     );
   }
 
-
   // Prepare contact details data
   const contactDetailsData: ProgramContactDetailsDataBaseType[] = body[
     NewCourseStep6FormNames.contact
   ]?.map((contactData: any) => {
     const dataObject: ProgramContactDetailsDataBaseType = {
       program_id: programId,
-      contact_name: contactData.contact_name,
       contact_email: contactData.contact_email,
-      //here if the contact_number is empty string it should be null 
-      contact_number:
-        contactData.contact_number === "" ? null : contactData.contact_number,
     };
+
+    if (contactData?.contact_name) {
+      dataObject.contact_name = contactData.contact_name;
+    }
+
+    if (contactData?.contact_number) {
+      dataObject.contact_number = contactData.contact_number;
+    }
 
     if (contactData.id) {
       dataObject.id = contactData.id;
