@@ -88,13 +88,16 @@ export const validationSchema = () => {
       required_error: "Time zone is a required field",
     }),
     schedules: scheduleValidationSchema,
-    name: z.string({ required_error: "Venu Name is a required field." }),
-    address: z.string({ required_error: "Address is a required field." }),
+    name: z.string().optional(),
+    address: z
+      .string({ required_error: "Address is a required field." })
+      .optional(),
     postal_code: z
       .string({
         required_error: "Postal Code is a required field.",
       })
-      .regex(/^\d+$/, { message: "Please provide a valid Postal Code" }),
+      .regex(/^\d*$/, { message: "Please provide a valid Postal Code" })
+      .optional(),
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
