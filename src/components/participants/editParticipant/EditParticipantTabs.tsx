@@ -24,7 +24,7 @@ import PaymentDetails from './PaymentDetails'
 import { useTranslation } from 'next-i18next'
 
 export default function EditParticipantTabs() {
-  const {t} = useTranslation('course.participants')
+  const {t} = useTranslation(['course.participants', "common", "new_strings"])
   const { watch } = useFormContext()
   const router = useRouter()
   let formData = watch()
@@ -178,7 +178,7 @@ export default function EditParticipantTabs() {
             }}
             className="border border-[#7677F4] bg-[white] w-[101px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]"
           >
-            Cancel
+          {t("common:cancel_button")}
           </Button>
         </div>
         <div>
@@ -188,7 +188,7 @@ export default function EditParticipantTabs() {
               onFormSubmission(formData)
             }}
           >
-            Save
+            {t("common:save_button")}
           </Button>
         </div>
         <AlertDialog open={cancelEditParticipant} onOpenChange={setcancelEditParticipant}>
@@ -198,7 +198,8 @@ export default function EditParticipantTabs() {
                 <CrossIcon />
               </div>
               <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
-                Changes made will be lost. Are you sure you want to continue?
+            {t("new_strings:changes_made_will_be_lost_are_you_sure_you_want_to_continue")}
+
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -212,7 +213,8 @@ export default function EditParticipantTabs() {
                       setcancelEditParticipant(false)
                     }}
                   >
-                    No
+                  {t("common:no")}
+
                   </Button>
                 </div>
                 <div>
@@ -223,7 +225,8 @@ export default function EditParticipantTabs() {
                       cancelEditParticipantHandler()
                     }}
                   >
-                    Yes
+                  {t("common:yes")}
+
                   </Button>
                 </div>
               </div>

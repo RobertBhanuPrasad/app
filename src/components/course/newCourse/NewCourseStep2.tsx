@@ -862,7 +862,7 @@ const GeoRestriction = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              {t("new_strings:text_entered_in_the_email_notes_field")}
+              {t("new_strings:text_entered_in_the_email_notes")}
             </div>
           </HoverCardContent>
         </HoverCard>

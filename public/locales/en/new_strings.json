@@ -4,7 +4,7 @@
  "contact_info":"Contact Info",
  "i_am_organizing_this_course":"I am organizing this course for another teacher",
  "please_input_the_site_url":"Please input the site's URL",
- "there_are_a_lot_of_things":" There are a lot of things you can do in space, and space essentially is unlimited resources.",
+ "there_are_a_lot_of_things":"There are a lot of things you can do in space, and space essentially is unlimited resources.",
  "if_this_field_is_blank":"If this field is blank, then the course capacity is unlimited.",
  "enter_url":"Enter URL",
  "course_description_text":"Course Description text is managed by National Admin. If the National Admin has allowed Organizers / Teachers to edit Course description then only this field will be editable. If you want to change the course description and this field is not editable kindly contact your National Admin.",
@@ -27,10 +27,9 @@
  "contact_phone":"Contact Phone",
  "bcc_registration_confirmation_email":"BCC registration confirmation email",
  "course_name":"Course Name",
- "copy_links":" Copy 2 Links",
+ "copy_links":"Copy 2 Links",
  "online":"Online",
  "select_course_alias_name":"Select course alias name",
- "text_entered_in_the_email_notes_field":"Text entered in the 'Email Notes' field will be included in the registration confirmation email only irrespective of the transaction status (Email notes will not be shown on the Art of Living Website)",
  "url":"URL",
  "note_participants":"Note: Participants will join your online course through your",
  "virtual_venue":"virtual venue",
@@ -82,7 +81,6 @@
  "course type":"Course type",
  "total_participants":"Total Participants",
  "announced_by":"Announced by",
- "course_canceled_successfully":"Course canceled Successfully",
  "approve":"Approve",
  "describe_your_rejection_reason":"Describe your rejection reason",
  "course_rejected":"Course Rejected",
@@ -99,13 +97,7 @@
 
 
 "health_consent_status" :"Health Consent Status",
-
-
-
-"completed": "completed",
-
-
- "changes_made_will_be_lost_are_you_sure_you_want_to_continue":"Changes made will be lost. Are you sure you want to continue?",
+"changes_made_will_be_lost_are_you_sure_you_want_to_continue":"Changes made will be lost. Are you sure you want to continue?",
 "Changes_saved_successfully":"Changes saved successfully",
  "coursename":"Course Name",
  "balance_due":"Balance Due",
@@ -124,5 +116,7 @@
  "do_you_snore": "Do you snore?",
  "roommate_snores": "Would you object to having room mate who snores?",
  "view_participant" : "View Participant",
- "edit_participant" : "Edit Participant"
+ "edit_participant" : "Edit Participant",
+ "revenue_from_confirmed_pending_transaction_participants_revenue" : "Revenue from confirmed pending transaction participants revenue:",
+ "participants_header_hover_text":"Participants with: Transaction status = Confirmed / Pending Attendance status =  Confirmed / Pending / Dropout Total participants records:"
 }

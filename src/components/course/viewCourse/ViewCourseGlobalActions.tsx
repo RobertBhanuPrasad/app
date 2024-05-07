@@ -14,16 +14,16 @@ import { useTranslation } from 'next-i18next';
 
 export const ViewCourseGlobalActions = () => {
   const router = useRouter();
-  const {t} = useTranslation(["common"])
+  const {t} = useTranslation(["common","course.find_course","course.participants"])
   
   const globalActionsOptions = [
-    "View Participants",
-    "Register Participant",
+    t("view_participants"),
+    t("register_participant"),
     // "Register with online credit card payment",
     // "View Pending/Failed Tranactions",
-    "Edit Course",
-    "Copy Course",
-    "Cancel Course",
+    t("edit_course"),
+    t("copy_course"),
+    t("cancel_course"),
     // "New Discount Code",
     "Submit Course Accounting Form",
     "Upload Attendance Record",

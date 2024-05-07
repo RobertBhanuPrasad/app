@@ -50,7 +50,7 @@ export const ParticipantsListMainHeader = () => {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-  const {t} = useTranslation(["course.view_course"])
+  const {t} = useTranslation(["course.view_course", "course.new_course", "new_strings", "common"])
   return (
     <div className="flex justify-between px-8 h-auto pb-4">
       {/* Course Details Section */}
@@ -66,7 +66,7 @@ export const ParticipantsListMainHeader = () => {
         />
         <div>
           {/* Course Name */}
-          <div className="text-[32px] font-medium">
+          <div className="text-[32px] font-medium bg-[red]">
             {courseData?.data?.program_alias_name_id
               ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
               : translatedText(courseData?.data?.program_type_id?.name)}
@@ -75,12 +75,12 @@ export const ParticipantsListMainHeader = () => {
           <div className="flex gap-8 pt-2">
             {/* Course ID */}
             <div className="items-center font-medium">
-              Course ID: {courseData?.data?.program_code}
+              {t("common:course_id")}: {courseData?.data?.program_code}
             </div>
             {/* Course Schedule */}
             <div className="flex gap-2 items-center border-x-2 px-6">
               <CalenderIcon color="#7677F4" />
-              {startDate} to {endDate}
+              {startDate} {t('course.new_course:time_and_venue_tab.to')} {endDate}
             </div>
             {/* Participant Count */}
             <div className="flex gap-2 items-center">
@@ -93,11 +93,9 @@ export const ParticipantsListMainHeader = () => {
                   <Important />
                 </HoverCardTrigger>
                 <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                    {courseData?.data?.participant_count} {t('course.view_course:basic_details_tab.participants_with')}:
-                    {t('course.view_course:basic_details_tab.transaction_status')} = {t('course.view_course:basic_details_tab.confirmed_pending')} {t('course.view_course:basic_details_tab.attendance_status')} =
-                    {t('course.view_course:basic_details_tab.confirmed_pending_dropout')} {t('course.view_course:basic_details_tab.total_participants_records')}:
-                    {courseData?.data?.total_part}
+                <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                    {courseData?.data?.participant_count} {t("new_strings:participants_header_hover_text")}
+                    {courseData?.data?.total_participant_count}
                   </div>
                 </HoverCardContent>
               </HoverCard>
@@ -114,8 +112,8 @@ export const ParticipantsListMainHeader = () => {
                   <Important />
                 </HoverCardTrigger>
                 <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                  {t('course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction')} {t('course.view_course:basic_details_tab.participants_revenue')}:
+                <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                    {t("new_strings:revenue_from_confirmed_pending_transaction_participants_revenue")}
                     {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                     {totalRevenue}
                   </div>

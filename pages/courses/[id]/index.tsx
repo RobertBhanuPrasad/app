@@ -852,7 +852,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
             <div className="flex justify-center">
               <Cross />
             </div>
-            <div className="font-bold text-center my-5">{t('new_strings:course_canceled_successfully')}</div>
+            <div className="font-bold text-center my-5">{t('new_strings:course_cancel_successful')}</div>
           </div>
 
           <div className="w-full flex items-center justify-center">
