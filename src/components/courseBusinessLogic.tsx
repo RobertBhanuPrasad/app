@@ -89,8 +89,8 @@ export const DisplayOptions = (
   courseAccountingStatusId: any,
   roleId: any
 ) => {
-  const {t} = useTranslation(["common", "new_strings", "course.find_course"])
-  
+  const { t } = useTranslation(["common", "new_strings", "course.find_course"])
+
   // Getting all the course status ID's
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(
     PROGRAM_STATUS,

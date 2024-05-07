@@ -454,7 +454,7 @@ function index() {
   const {t} = useTranslation(["common","course.find_course","new_strings"])
   return (
     <div className="flex flex-col justify-between relative h-screen">
-      <p className="font-semibold text-2xl ml-8">{t('new_strings:find_course')}</p>
+      <p className="font-semibold text-2xl ml-8">{t('new_strings:find_courses')}</p>
       <div className="mx-8 flex flex-col gap-4 mt-4">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
