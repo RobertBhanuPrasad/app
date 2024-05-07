@@ -310,47 +310,47 @@ function index() {
        */
       const excelColumns: ExcelColumn[] = [
         {
-          column_name: "Course ID",
+          column_name: t('course_id'),
           path: ["program_code"],
         },
         {
-          column_name: "Course Type Name",
+          column_name: t("new_strings:course_type_name"),
           path: ["program_types", "name"],
         },
         {
-          column_name: "Course Name",
+          column_name: t("new_strings:course_name"),
           path: ["program_type_alias_names", "alias_name"],
         },
         {
-          column_name: "Course Status",
+          column_name: t("course.find_course:course_status"),
           path: ["status_id", "name"],
         },
         {
-          column_name: "Start Date",
+          column_name: t("course.find_course:start_date"),
           path: ["program_schedules", "start_time"],
         },
         {
-          column_name: "State",
+          column_name: t("course.find_course:state"),
           path: ["state", "name"],
         },
         {
-          column_name: "City",
+          column_name: t("city"),
           path: ["city", "name"],
         },
         {
-          column_name: "Center",
+          column_name: t("course.find_course:center"),
           path: ["center", "name"],
         },
         {
-          column_name: "Attendes",
+          column_name: t("course.find_course:attendees"),
           path: ["participant_registration", "length"],
         },
         {
-          column_name: "Visibility",
+          column_name: t('new_strings:visibility'),
           path: ["visibility_id", "name"],
         },
         {
-          column_name: "Course Accounting Status",
+          column_name: t('course_accounting_status'),
           path: ["program_accounting_status_id", "name"],
         },
       ];
@@ -480,8 +480,9 @@ function index() {
               table: "",
               rowStyles: "!important border-none",
             }}
+            noRecordsPlaceholder={t('new_strings:there_are_no_courses')}
             columns={column(hasAliasNameFalse(data), t)}
-            data={programData?.data?.data || []}
+            data={[]}
             columnPinning={true}
             columnSelector={true}
           />
