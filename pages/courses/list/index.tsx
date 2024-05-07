@@ -460,9 +460,9 @@ function index() {
   });
 
   return (
-    <div className="flex flex-col justify-between relative h-screen">
+    <div className="flex flex-col justify-between h-screen">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
-      <div className="mx-8 flex flex-col gap-4 mt-4">
+      <div className="mx-8 flex flex-col gap-4 mt-4 bg-[white]">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
@@ -495,7 +495,7 @@ function index() {
           />
         </div>
       </div>
-      <div className="bottom-0 sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+      <div className="bottom-0 sticky absolute flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-row items-center gap-2">
             <Checkbox
@@ -523,7 +523,7 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl"
+                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
                 disabled={!allSelected}
               >
                 Export <ChevronDownIcon className="w-5 h-5" />
@@ -591,13 +591,13 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
               to: undefined,
             })
           }
-          className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
+          className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold hover:text-[#5E5FC3] hover:border-solid hover:border hover:border-[1px] hover:border-[#5E5FC3]"
         >
           Reset
         </Button>
         <Button
           onClick={() => setOpen(false)}
-          className=" w-[94px] h-10 rounded-xl"
+          className=" w-[94px] h-10 rounded-xl hover:bg-[#5E5FC3]"
         >
           Apply
         </Button>
@@ -662,7 +662,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         temporaryOnChange("");
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80 hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder="Select Course Type" />
       </SelectTrigger>
       <SelectContent>
@@ -726,7 +726,7 @@ export const BasicFilters: React.FC<{
 
   return (
     <div className="flex flex-row items-center justify-between">
-      <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
+      <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SearchIcon />
         <Input
           value={value}
@@ -741,7 +741,7 @@ export const BasicFilters: React.FC<{
         {" "}
         <Dialog open={open} onOpenChange={setOpen}>
           <Button
-            className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
+            className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             variant="outline"
             onClick={() => {
               setOpen(true);
@@ -801,7 +801,7 @@ export const BasicFilters: React.FC<{
           className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
-          <div>Clear All</div>
+          <div className="hover:text-[#5E5FC3]">Clear All</div>
         </div>
         <Button
           onClick={() => {
@@ -809,7 +809,7 @@ export const BasicFilters: React.FC<{
             //whenever we apply filters we will be navigated to page 1
             setCurrent(1);
           }}
-          className="h-9 w-18 rounded-xl"
+          className="h-9 w-18 rounded-xl hover:bg-[#5E5FC3]"
         >
           Apply
         </Button>
@@ -836,7 +836,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
       ).length) ||
     0;
   return (
-    <Sheet open={advanceFilterOpen}>
+    <Sheet open={advanceFilterOpen} onOpenChange={setAdvanceFilterOpen}>
       <SheetTrigger className="p-0">
         <Button
           onClick={() => {
@@ -847,7 +847,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
               formData?.course_type
             );
           }}
-          className="flex flex-row gap-2 !rounded-xl"
+          className="flex flex-row gap-2 !rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
         >
           All Filters

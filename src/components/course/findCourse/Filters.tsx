@@ -64,8 +64,11 @@ const Filters = ({
           onClick={() => {
             setAdvanceFilterOpen(false);
           }}
+          className="cursor-pointer"
         >
+          <div className="cursor-pointer">
           <CrossIcon width={16} height={16} fill="#333333" />
+          </div>
         </div>
       </div>
       <Separator />
@@ -360,9 +363,10 @@ const Filters = ({
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary"> Clear All</p>
+          <p className="text-primary hover:text-[#5E5FC3]">Clear All</p>
         </div>
         <Button
+        className="hover:bg-[#5E5FC3]"
           onClick={() => {
             const temporaryData = { ...formData };
 
@@ -436,7 +440,7 @@ export const CourseName = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder="Select Course Name" />
       </SelectTrigger>
       <SelectContent>
@@ -498,7 +502,7 @@ export const State = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder="Select State " />
       </SelectTrigger>
       <SelectContent>
@@ -559,7 +563,7 @@ export const City = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder="Select City " />
       </SelectTrigger>
       <SelectContent>
@@ -620,7 +624,7 @@ export const Center = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder="Select Center " />
       </SelectTrigger>
       <SelectContent>
@@ -675,8 +679,8 @@ export const CourseStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white"
-                : "bg-white border border-[#D6D7D8]"
+                ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
@@ -713,8 +717,8 @@ export const CourseAccordingStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white"
-                : "bg-white border border-[#D6D7D8]"
+                ? "bg-primary text-white hover:bg-[#5E5FC3]"
+                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
@@ -740,7 +744,7 @@ export const CourseAccountingClosureDate = () => {
       <DialogTrigger asChild>
         <Button
           onClick={() => setOpen(true)}
-          className="w-full gap-2 justify-start mt-2"
+          className="w-full gap-2 justify-start mt-2 hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
         >
           <CalenderIcon color="#666666" />
@@ -800,13 +804,13 @@ export const Visibility = () => {
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
             label="Public"
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
             label="Private"
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
       </RadioGroup>
@@ -829,13 +833,13 @@ export const ResidentialCourse = () => {
             value="TRUE"
             selectedRadioValue={temporaryValue}
             label="Yes"
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
             label="No"
-            className="w-[112px] h-[40px] rounded-[12px]"
+            className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
       </RadioGroup>
@@ -858,13 +862,13 @@ export const CourseFees = () => {
             value="TRUE"
             selectedRadioValue={temporaryValue}
             label="Default"
-            className="p-2 h-[40px] rounded-[12px]"
+            className="p-2 h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
             label="Custom"
-            className="p-2 h-[40px] rounded-[12px]"
+            className="p-2 h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
       </RadioGroup>
@@ -916,6 +920,7 @@ export const ProgramOrganiser = () => {
       }}
       onChange={temporaryOnChange}
       variant="basic"
+      selectBoxStyles={{header: 'border-[1px] rounded-[12px] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]'}}
     />
   );
 };
@@ -966,7 +971,7 @@ export const TeacherDropdown = () => {
         temporaryOnChange(val);
       }}
     >
-      <SelectTrigger className="w-80">
+      <SelectTrigger className="w-80 hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder="Select Teacher" />
       </SelectTrigger>
       <SelectContent>

@@ -1,10 +1,9 @@
 import Star from "@public/assets/star";
-import { useList, useSelect } from "@refinedev/core";
+import { useList,useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
-import { Button } from "src/ui/button";
 import { Input } from "src/ui/input";
 import {
   Select,
@@ -17,11 +16,6 @@ import {
 
 export default function PaymentDetails() {
   // Use useController to control the participant_code,participant_attendance_status field
-  const {
-    field: { value: participant_code, onChange: specialCodeChange },
-  } = useController({
-    name: "participant_code",
-  });
   const {
     field: {
       value: participant_attendence_status_id,
@@ -66,7 +60,7 @@ export default function PaymentDetails() {
     resource: "participant_payment_history",
     meta: {
       select:
-        "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,participant_id(program_id(id,program_type_id!inner(is_online_program)))",
+        "id,transaction_fee_level_id(value),total_amount,accommodation_fee,currency_code,organization_fee,participant_id(discount_code)",
     },
     filters: [
       {
@@ -89,6 +83,10 @@ export default function PaymentDetails() {
   });
   const paymentDetailData = paymentData?.data?.data[0];
 
+ 
+
+
+
   return (
     <div className="flex-row pb-[5px]" id="Payment">
       <Text className="font-semibold text-[18px] py-[25px]">
@@ -98,29 +96,15 @@ export default function PaymentDetails() {
         <div className="w-[303px]">
           <Text className="text-[#999999]  text-[14px] ">Course Fee</Text>
           <Text className="text-[16px] font-semibold">
-            {paymentDetailData?.currency_code
-              ? paymentDetailData?.currency_code
-              : ""}{" "}
-            {paymentDetailData?.total_amount
-              ? paymentDetailData?.participant_id?.program_id?.program_type_id
-                  ?.is_online_program
-                ? paymentDetailData?.total_amount -
-                  paymentDetailData?.accommodation_fee
-                : paymentDetailData?.total_amount
-              : "-"}
+          {paymentDetailData?.organization_fee ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.organization_fee?.toFixed(2)}` : '-'}
           </Text>
         </div>
         <div className="w-[303px]">
           <Text className="text-[#999999]  text-[14px]  ">
-            Accomodation Fee
+            Accommodation Fee
           </Text>
           <Text className="text-[16px] font-semibold">
-            {paymentDetailData?.currency_code
-              ? paymentDetailData?.currency_code
-              : ""}{" "}
-            {paymentDetailData?.accommodation_fee
-              ? paymentDetailData?.accommodation_fee
-              : "-"}
+          {paymentDetailData?.accommodation_fee ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.accommodation_fee?.toFixed(2)}` : '-'}
           </Text>
         </div>
         <div className="w-[303px]">
@@ -128,18 +112,16 @@ export default function PaymentDetails() {
             Total Fee {`(Includes VAT)`}
           </Text>
           <Text className="text-[16px] font-semibold">
-            {paymentDetailData?.currency_code
-              ? paymentDetailData?.currency_code
-              : ""}{" "}
-            {paymentDetailData?.total_amount
-              ? paymentDetailData?.total_amount
-              : "-"}
+          {paymentDetailData?.total_amount ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.total_amount?.toFixed(2)}` : '-'}
           </Text>
         </div>
       </div>
       <div className="flex py-[10px] gap-8">
         <div className="">
-          {/* TODO: need to change once requirement is clear*/}
+          {/* If the participant is registering via discount code,
+          we need to show the discount code in the special code field and it has to be disabled
+          If the participant is registering without a discount code, 
+          we won't show anything in the special code which is empty and disabled */}
           <Text className="text-[#999999]  text-[14px] ">
             Enter Special Code
           </Text>
@@ -147,26 +129,10 @@ export default function PaymentDetails() {
           <div className="flex gap-4">
             <div>
               <Input
-                value={participant_code}
-                className="w-[268px] !h-[40px] resize-none font-semibold"
-                onChange={(val) =>
-                  val?.target?.value == ""
-                    ? specialCodeChange(undefined)
-                    : specialCodeChange(val?.target?.value)
-                }
+                value={paymentDetailData?.participant_id?.discount_code}
+                className="w-[268px] !h-[40px] resize-none font-semibold rounded-xl border-[#E1E1E1]"
+                disabled={true}
               />
-            </div>
-            <div>
-              <Button
-                onClick={(e) => {
-                  e.preventDefault(),
-                    specialCodeChange((e?.target as HTMLInputElement)?.value);
-                }}
-                // TODO: need to wirte the valid condition to enable the button
-                disabled={!participant_code && true}
-              >
-                Apply
-              </Button>
             </div>
           </div>
         </div>
