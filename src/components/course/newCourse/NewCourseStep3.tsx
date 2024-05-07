@@ -1065,6 +1065,8 @@ const ExistingVenueList = () => {
   const formData = watch();
 
   const [searchValue, searchOnChange] = useState<string>("");
+  
+  const [isLoading, setIsLoading] = useState(false)
 
   const debouncedSearchValue = useDebounce(searchValue, 500);
 
@@ -1097,6 +1099,7 @@ const ExistingVenueList = () => {
 
   //Fetching venue data after search
   useEffect(() => {
+    setIsLoading(true)
     setVenueData([]);
     setOtherVenueSkip(0);
 
@@ -1148,7 +1151,7 @@ const ExistingVenueList = () => {
       )
       .eq("is_deleted", false) // this line to filter out records where is_deleted is false
       .range(otherVenueSkip, otherVenueSkip + 5);
-
+      setIsLoading(false)
     return data;
   };
 
@@ -1217,9 +1220,9 @@ const ExistingVenueList = () => {
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
 
             {/* loader for existing venue list  */}
-            {filteredVenueData?.length === 0 ? (
+            {filteredVenueData?.length === 0 ?  (
               <div className="flex w-[100%] flex-row items-center justify-center">
-                <LoadingIcon></LoadingIcon>
+               {isLoading ? <LoadingIcon></LoadingIcon> : <p>No Venues</p>} 
               </div>
             ) : (
               filteredVenueData?.map((item: any, index: number) => (
