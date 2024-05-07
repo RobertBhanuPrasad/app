@@ -694,7 +694,7 @@ const DataPagination = ({
                 onClick={() => {
                   setCurrent(page);
                 }}
-                className={page === current ? 'hover:bg-[#5E5FC3]' : 'hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]'}
+                className={page === current ? 'hover:bg-[#5E5FC3]' : 'h-8 w-8 p-0  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]'}
               >
                 {page}
               </Button>
