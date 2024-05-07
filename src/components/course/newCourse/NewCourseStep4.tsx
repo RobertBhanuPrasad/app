@@ -257,7 +257,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:vat_reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -308,7 +308,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:vat_reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -366,7 +366,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:total_early_bird_fees")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.total early")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 
@@ -403,7 +403,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat_reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
     {
       cell: ({ row }) => {
@@ -433,7 +433,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:total_early_bird_fees")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.total early")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
     },
   ];
 

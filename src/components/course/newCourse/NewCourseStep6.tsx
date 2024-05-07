@@ -50,7 +50,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Name */}
           <div className="w-80 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? t("contact_name") : `Contact Name ${index + 1}`}{" "}
+              {index === 0 ? t("contact_name") : `${t("contact_name")} ${index + 1}`}{" "}
               <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactName index={index} />
@@ -59,7 +59,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Email */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? t("contact_email") : `Contact Email ${index + 1}`}{" "}
+              {index === 0 ? t("contact_email") : `${t("contact_email")} ${index + 1}`}{" "}
               <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactEmail index={index} />
@@ -68,7 +68,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Number */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? t("course.new_course:contact_info_tab.contact_number") : `Contact Number ${index + 1}`}{" "}
+              {index === 0 ? t("course.new_course:contact_info_tab.contact_number") : `${t("course.new_course:contact_info_tab.contact_number")} ${index + 1}`}{" "}
               <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactMobile index={index} />
