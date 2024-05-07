@@ -65,7 +65,9 @@ const Filters = ({
             setAdvanceFilterOpen(false);
           }}
         >
+          <div className="cursor-pointer">
           <CrossIcon width={16} height={16} fill="#333333" />
+          </div>
         </div>
       </div>
       <Separator />
@@ -360,7 +362,7 @@ const Filters = ({
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary"> Clear All</p>
+          <p className="text-primary hover:text-[#5E5FC3]">Clear All</p>
         </div>
         <Button
         className="hover:bg-[#5E5FC3]"

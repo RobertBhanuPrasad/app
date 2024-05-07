@@ -405,7 +405,7 @@ export function BaseTable<TData, TValue>({
                       className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
                     >
                       <ClearAll />
-                      <div>Clear All</div>
+                      <div className="hover:text-[#5E5FC3]">Clear All</div>
                     </div>
                     <Button
                       onClick={applyColumnVisibilityChanges}
