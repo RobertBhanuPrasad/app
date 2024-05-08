@@ -51,7 +51,6 @@ function NewCourseStep6() {
           <div className="w-80 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
               {index === 0 ? t("contact_name") : `${t("contact_name")} ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactName index={index} />
           </div>
@@ -69,7 +68,6 @@ function NewCourseStep6() {
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
               {index === 0 ? t("course.new_course:contact_info_tab.contact_number") : `${t("course.new_course:contact_info_tab.contact_number")} ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactMobile index={index} />
           </div>
@@ -104,7 +102,6 @@ function NewCourseStep6() {
       <div className="w-80 h-24 flex gap-1 flex-col ">
         <div className="flex flex-row text-xs font-normal text-[#333333]">
         {t("course.new_course:contact_info_tab.send_bcc")}{" "}
-          <div className="text-[#7677F4]"> *</div>
         </div>
         <Textarea
           value={courseEmails}
