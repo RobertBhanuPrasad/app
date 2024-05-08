@@ -120,7 +120,7 @@ export default function NewCourseStep2() {
       </div>
       <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          {t("course_description")} *
+          {t("course_description")} <div className="text-[#7677F4]"> *</div>
           <HoverCard>
             <HoverCardTrigger>
               <Important />
@@ -133,7 +133,7 @@ export default function NewCourseStep2() {
           </HoverCard>
         </div>
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-        {t("course_notes")} *
+        {t("course_notes")}<div className="text-[#7677F4]"> *</div>
           <HoverCard>
             <HoverCardTrigger>
               <Important />
@@ -146,7 +146,7 @@ export default function NewCourseStep2() {
           </HoverCard>
         </div>
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          {t("email_notes")} *
+          {t("email_notes")}<div className="text-[#7677F4]"> *</div>
           <HoverCard>
             <HoverCardTrigger>
               <Important />
@@ -311,7 +311,7 @@ export const CourseTypeDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("course_type")} <div className="text-[#7677F4]"> *</div>
+        {t("course_type")}&nbsp;<div className="text-[#7677F4] "> *</div>
       </div>
       <Select
         value={value}
@@ -438,7 +438,7 @@ const CourseNameDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("new_strings:course_name")} <div className="text-[#7677F4]">*</div>
+        {t("new_strings:course_name")} <div className="text-[#7677F4]"> *</div>
       </div>
 
       <Select
@@ -586,7 +586,7 @@ const TeachersDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row">
-        {t("teacher")}<div className="text-[#7677F4]">*</div>
+        {t("teacher")}&nbsp;<div className="text-[#7677F4]">*</div>
       </div>
       {/* 
         // Here i have to show teachers based on program created user 
@@ -856,7 +856,7 @@ const GeoRestriction = () => {
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
         {t("is_geo_restriction")}
-        <div className="text-[#7677F4]">*</div>
+        <div className="text-[#7677F4]"> *</div>
         <HoverCard>
           <HoverCardTrigger>
             <Important />
@@ -951,8 +951,8 @@ const LanguageDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className=" flex flex-row text-xs font-normal text-[#333333]">
-        {t("language_course_is_taught_in")}
-        <div className="text-[#7677F4]"> *</div>
+        {t("language_course_is_taught_in")}&nbsp;
+        <div className="text-[#7677F4]">*</div>
       </div>
       <MultiSelect
         value={value}
@@ -1073,7 +1073,7 @@ const AllowedCountriesDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("countries_from_where_registrations_are_allowed")}
+        {t("countries_from_where_registrations_are_allowed")}&nbsp;
         <div className="text-[#7677F4]">*</div>
       </div>
       <MultiSelect
@@ -1106,7 +1106,7 @@ const MaximumCapacity = () => {
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
         <Text className="text-xs ">{t("max_capacity")}</Text>
-        <Text className="text-[#7677F4]">*</Text>
+        <Text className="text-[#7677F4]"> *</Text>
         {/* popover to show the note to maximum capacity */}
         <HoverCard>
           <HoverCardTrigger>

@@ -103,7 +103,7 @@ function NewCourseStep6() {
       {/* Additional section for BCC registration confirmation email */}
       <div className="w-80 h-24 flex gap-1 flex-col ">
         <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("course.new_course:contact_info_tab.send_bcc")}{" "}
+        {t("course.new_course:contact_info_tab.send_bcc")}&nbsp;
           <div className="text-[#7677F4]"> *</div>
         </div>
         <Textarea

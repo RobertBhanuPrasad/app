@@ -403,7 +403,7 @@ const OrganizationDropDown = () => {
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333]">{t('organization')}*</div>
+        <div className="text-xs font-normal text-[#333333]">{t('organization')} *</div>
         <Select
           value={value}
           onValueChange={(value: any) => {
