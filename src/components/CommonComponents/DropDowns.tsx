@@ -13,10 +13,10 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { supabaseClient } from "src/utility";
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 
 export const VenueNameComponent = () => {
-  const {t} = useTranslation(['common', "course.new_course"])
+  const { t } = useTranslation(["common", "course.new_course"]);
   const {
     field: { value: venueName, onChange: venueOnchange },
     fieldState: { error: venueError },
@@ -28,11 +28,13 @@ export const VenueNameComponent = () => {
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
         {t("course.new_course:time_and_venue_tab.venue_name")}
       </div>
-      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
+      <div className="w-[278px] h-[40px] rounded-[1px]  font-semibold text-sm">
         <Input
           value={venueName}
-          placeholder={t("course.new_course:time_and_venue_tab.venue_name_placeholder")}
-          className="placeholder:text-[#999999]"
+          placeholder={t(
+            "course.new_course:time_and_venue_tab.venue_name_placeholder"
+          )}
+          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={venueOnchange}
           error={venueError ? true : false}
         />
@@ -48,7 +50,7 @@ export const VenueNameComponent = () => {
 
 export const PostalCodeComponent = () => {
   const supabase = supabaseClient();
-  const {t} = useTranslation(['common', "course.new_course"])
+  const { t } = useTranslation(["common", "course.new_course"]);
 
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
@@ -75,12 +77,16 @@ export const PostalCodeComponent = () => {
   }, [postalCodeValue]);
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.postal_code")}</div>
-      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
+      <div className="text-xs font-normal text-[#333333]">
+        {t("course.new_course:time_and_venue_tab.postal_code")}
+      </div>
+      <div className="w-[278px] h-[40px] rounded-[1px]  font-semibold text-sm">
         <Input
           value={postalCodeValue}
-          placeholder={t("course.new_course:time_and_venue_tab.postal_code_placeholder")}
-          className="placeholder:text-[#999999]"
+          placeholder={t(
+            "course.new_course:time_and_venue_tab.postal_code_placeholder"
+          )}
+          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={postalCodeOnchange}
           error={error ? true : false}
         />
@@ -93,7 +99,7 @@ export const PostalCodeComponent = () => {
 };
 
 export const StreetAddressComponent = () => {
-  const {t} = useTranslation(['common', "course.new_course"])
+  const { t } = useTranslation(["common", "course.new_course"]);
   const {
     field: { value: streetAddressValue, onChange: streetAddressOnchange },
     fieldState: { error },
@@ -102,12 +108,16 @@ export const StreetAddressComponent = () => {
   });
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.street_address")}</div>
-      <div className="w-[278px] h-[40px] rounded-[1px] text-[#999999] font-normal">
+      <div className="text-xs font-normal text-[#333333]">
+        {t("course.new_course:time_and_venue_tab.street_address")}
+      </div>
+      <div className="w-[278px] h-[40px] rounded-[1px]  font-semibold text-sm">
         <Input
           value={streetAddressValue}
-          placeholder={t("course.new_course:time_and_venue_tab.street_address_placeholder")}
-          className="placeholder:text-[#999999]"
+          placeholder={t(
+            "course.new_course:time_and_venue_tab.street_address_placeholder"
+          )}
+          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={streetAddressOnchange}
           error={error ? true : false}
         />
@@ -120,7 +130,7 @@ export const StreetAddressComponent = () => {
 };
 
 export const CityDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation('common')
+  const { t } = useTranslation("common");
   const [pageSize, setPageSize] = useState(10);
 
   const {
@@ -171,7 +181,10 @@ export const CityDropDown = ({ name }: { name: string }) => {
       </div>
 
       <Select value={cityValue} onValueChange={cityValueOnChange}>
-        <SelectTrigger className="w-full" error={cityValueError ? true : false}>
+        <SelectTrigger
+          error={cityValueError ? true : false}
+          className="font-semibold text-sm "
+        >
           <SelectValue placeholder={t("city_placeholder")} />
         </SelectTrigger>
         <SelectContent>
@@ -204,7 +217,7 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation(["common","course.new_course"])
+  const { t } = useTranslation(["common", "course.new_course"]);
   const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
@@ -242,13 +255,15 @@ export const StateDropDown = ({ name }: { name: string }) => {
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
       <div className="flex flex-row items-center gap-1">
-        <Text className="text-xs font-normal text-[#333333]">{t("course.new_course:time_and_venue_tab.state")}</Text>
+        <Text className="text-xs font-normal text-[#333333]">
+          {t("course.new_course:time_and_venue_tab.state")}
+        </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
 
       <Select value={stateValue} onValueChange={stateValueOnchange}>
         <SelectTrigger
-          className="w-full"
+          className="w-full font-semibold text-sm"
           error={stateValueError ? true : false}
         >
           <SelectValue placeholder={t("select_state")} />
@@ -288,7 +303,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
 };
 
 export const CenterDropDown = ({ name }: { name: string }) => {
-  const {t} = useTranslation(['common', "course.new_course"])
+  const { t } = useTranslation(["common", "course.new_course"]);
   const [pageSize, setPageSize] = useState(10);
 
   const {
@@ -351,10 +366,14 @@ export const CenterDropDown = ({ name }: { name: string }) => {
       </div>
       <Select value={centerValue} onValueChange={centerValueOnChange}>
         <SelectTrigger
-          className="w-full"
+          className="w-full font-semibold text-sm"
           error={centerValueError ? true : false}
         >
-          <SelectValue placeholder={t("course.new_course:time_and_venue_tab.local_center_placeholder")} />
+          <SelectValue
+            placeholder={t(
+              "course.new_course:time_and_venue_tab.local_center_placeholder"
+            )}
+          />
         </SelectTrigger>
         <SelectContent>
           <Input

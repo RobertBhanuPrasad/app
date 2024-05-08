@@ -1,24 +1,44 @@
-import CalenderIcon from '@public/assets/CalenderIcon'
-import ClearAllIcon from '@public/assets/ClearAllIcon'
-import CrossIcon from '@public/assets/CrossIcon'
-import { useSelect } from '@refinedev/core'
-import { format } from 'date-fns'
-import { useTranslation } from 'next-i18next'
-import { CountComponent, CourseTypeComponent, DateRangePickerComponent } from 'pages/courses/list'
-import { useState } from 'react'
-import { useController, useFormContext } from 'react-hook-form'
-import { translatedText } from 'src/common/translations'
-import { COURSE_ACCOUNTING_STATUS, PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
-import { PRIVATE, PUBLIC } from 'src/constants/OptionValueOrder'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'src/ui/accordion'
-import { Button } from 'src/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
-import { Input } from 'src/ui/input'
-import { MultiSelect } from 'src/ui/multi-select'
-import { RadioGroup } from 'src/ui/radio-group'
-import { RadioButtonCard } from 'src/ui/radioButtonCard'
-import { Select, SelectContent, SelectItem, SelectItems, SelectTrigger, SelectValue } from 'src/ui/select'
-import { Separator } from 'src/ui/separator'
+import CalenderIcon from "@public/assets/CalenderIcon";
+import ClearAllIcon from "@public/assets/ClearAllIcon";
+import CrossIcon from "@public/assets/CrossIcon";
+import { useSelect } from "@refinedev/core";
+import { format } from "date-fns";
+import { useTranslation } from "next-i18next";
+import {
+  CountComponent,
+  CourseTypeComponent,
+  DateRangePickerComponent,
+} from "pages/courses/list";
+import { useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
+import { translatedText } from "src/common/translations";
+import {
+  COURSE_ACCOUNTING_STATUS,
+  PROGRAM_STATUS,
+  VISIBILITY,
+} from "src/constants/OptionLabels";
+import { PRIVATE, PUBLIC } from "src/constants/OptionValueOrder";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "src/ui/accordion";
+import { Button } from "src/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { Input } from "src/ui/input";
+import { MultiSelect } from "src/ui/multi-select";
+import { RadioGroup } from "src/ui/radio-group";
+import { RadioButtonCard } from "src/ui/radioButtonCard";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItems,
+  SelectTrigger,
+  SelectValue,
+} from "src/ui/select";
+import { Separator } from "src/ui/separator";
 import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
@@ -36,12 +56,14 @@ const Filters = ({
 
   const formData = watch();
 
-  const { setAllFilterData } = newCourseStore()
-  const {t} = useTranslation(["common", "course.find_course", "new_strings"])
+  const { setAllFilterData } = newCourseStore();
+  const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-between items-center">
-        <p className="text-2xl font-semibold">{t('course.find_course:filter_by')}</p>
+        <p className="text-2xl font-semibold">
+          {t("course.find_course:filter_by")}
+        </p>
         <div
           onClick={() => {
             setAdvanceFilterOpen(false);
@@ -49,7 +71,7 @@ const Filters = ({
           className="cursor-pointer"
         >
           <div className="cursor-pointer">
-          <CrossIcon width={16} height={16} fill="#333333" />
+            <CrossIcon width={16} height={16} fill="#333333" />
           </div>
         </div>
       </div>
@@ -116,7 +138,7 @@ const Filters = ({
           <AccordionItem value="item-2" className="border-none ">
             <AccordionTrigger className="text-base font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('course.find_course:course_status')}</div>
+                <div>{t("course.find_course:course_status")}</div>
                 {formData?.temporaryadvancefilter.course_status?.length > 0 && (
                   <CountComponent
                     count={
@@ -136,16 +158,16 @@ const Filters = ({
           <AccordionItem value="item-3" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('course_accounting_status')}</div>
+                <div>{t("course_accounting_status")}</div>
                 {formData?.temporaryadvancefilter.course_accounting_status
                   ?.length > 0 && (
-                    <CountComponent
-                      count={
-                        formData?.temporaryadvancefilter.course_accounting_status
-                          ?.length
-                      }
-                    />
-                  )}
+                  <CountComponent
+                    count={
+                      formData?.temporaryadvancefilter.course_accounting_status
+                        ?.length
+                    }
+                  />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -158,8 +180,13 @@ const Filters = ({
           <AccordionItem value="item-4" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('course.find_course:course_accounting_closure_date')} </div>
-                {formData?.temporaryadvancefilter.course_accounting_closure_date && <CountComponent count={1} />}
+                <div>
+                  {t("course.find_course:course_accounting_closure_date")}{" "}
+                </div>
+                {formData?.temporaryadvancefilter
+                  .course_accounting_closure_date && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -172,8 +199,10 @@ const Filters = ({
           <AccordionItem value="item-5" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div> {t('course.find_course:course_visibility')}</div>
-                {formData?.temporaryadvancefilter.visibility && <CountComponent count={1} />}
+                <div> {t("course.find_course:course_visibility")}</div>
+                {formData?.temporaryadvancefilter.visibility && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -186,8 +215,10 @@ const Filters = ({
           <AccordionItem value="item-6" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('course.find_course:state')}</div>
-                {formData?.temporaryadvancefilter.state && <CountComponent count={1} />}
+                <div>{t("course.find_course:state")}</div>
+                {formData?.temporaryadvancefilter.state && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -200,8 +231,10 @@ const Filters = ({
           <AccordionItem value="item-7" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('city')}</div>
-                {formData?.temporaryadvancefilter.city && <CountComponent count={1} />}
+                <div>{t("city")}</div>
+                {formData?.temporaryadvancefilter.city && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -214,8 +247,10 @@ const Filters = ({
           <AccordionItem value="item-8" className="border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('course.find_course:center')}</div>
-                {formData?.temporaryadvancefilter.center && <CountComponent count={1} />}
+                <div>{t("course.find_course:center")}</div>
+                {formData?.temporaryadvancefilter.center && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -228,8 +263,10 @@ const Filters = ({
           <AccordionItem value="item-9" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('residential_course')}</div>
-                {formData?.temporaryadvancefilter.is_residential_course && <CountComponent count={1} />}
+                <div>{t("residential_course")}</div>
+                {formData?.temporaryadvancefilter.is_residential_course && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -242,9 +279,14 @@ const Filters = ({
           <AccordionItem value="item-10" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('program_organizer')}</div>
-                {formData?.temporaryadvancefilter.program_organiser?.length > 0 && (
-                  <CountComponent count={formData?.temporaryadvancefilter.program_organiser?.length} />
+                <div>{t("program_organizer")}</div>
+                {formData?.temporaryadvancefilter.program_organiser?.length >
+                  0 && (
+                  <CountComponent
+                    count={
+                      formData?.temporaryadvancefilter.program_organiser?.length
+                    }
+                  />
                 )}
               </div>
             </AccordionTrigger>
@@ -260,8 +302,10 @@ const Filters = ({
           <AccordionItem value="item-11" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('course.find_course:teacher_name')}</div>
-                {formData?.temporaryadvancefilter.course_teacher && <CountComponent count={1} />}
+                <div>{t("course.find_course:teacher_name")}</div>
+                {formData?.temporaryadvancefilter.course_teacher && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -276,8 +320,10 @@ const Filters = ({
           <AccordionItem value="item-12" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t('course.find_course:course_fees')}</div>
-                {formData?.temporaryadvancefilter.is_course_fee && <CountComponent count={1} />}
+                <div>{t("course.find_course:course_fees")}</div>
+                {formData?.temporaryadvancefilter.is_course_fee && (
+                  <CountComponent count={1} />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -290,7 +336,7 @@ const Filters = ({
           {/* Reconciliation Status Accordion */}
           <AccordionItem value="item-13" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
-              {t('course.find_course:reconciliation_status')}
+              {t("course.find_course:reconciliation_status")}
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3"></AccordionContent>
           </AccordionItem>
@@ -323,10 +369,10 @@ const Filters = ({
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary hover:text-[#5E5FC3]">{t('clear_all')}</p>
+          <p className="text-primary hover:text-[#5E5FC3]">{t("clear_all")}</p>
         </div>
         <Button
-        className="hover:bg-[#5E5FC3]"
+          className="hover:bg-[#5E5FC3]"
           onClick={() => {
             const temporaryData = { ...formData };
 
@@ -344,7 +390,7 @@ const Filters = ({
             setCurrent(1);
           }}
         >
-          {t('apply_button')}
+          {t("apply_button")}
         </Button>
       </div>
     </div>
@@ -354,8 +400,8 @@ const Filters = ({
 export default Filters;
 
 export const CourseName = () => {
-  const { watch } = useFormContext()
-  const formdata = watch()
+  const { watch } = useFormContext();
+  const formdata = watch();
 
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
@@ -384,16 +430,16 @@ export const CourseName = () => {
     // for the MVP-1195
     filters: [
       {
-        field: 'program_type_id',
-        operator: 'eq',
-        value: formdata?.temporaryadvancefilter?.course_type
-      }
-    ]
+        field: "program_type_id",
+        operator: "eq",
+        value: formdata?.temporaryadvancefilter?.course_type,
+      },
+    ],
   });
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10)
-  }
-  const {t} = useTranslation("new_strings")
+    setPageSize((previousLimit: number) => previousLimit + 10);
+  };
+  const { t } = useTranslation("new_strings");
   return (
     <Select
       value={temporaryValue}
@@ -402,7 +448,7 @@ export const CourseName = () => {
       }}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
-        <SelectValue placeholder={t('select_course_name')} />
+        <SelectValue placeholder={t("select_course_name")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -454,9 +500,9 @@ export const State = () => {
   });
 
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10)
-  }
-  const {t} = useTranslation("common")
+    setPageSize((previousLimit: number) => previousLimit + 10);
+  };
+  const { t } = useTranslation("common");
   return (
     <Select
       value={temporaryValue}
@@ -465,7 +511,7 @@ export const State = () => {
       }}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
-        <SelectValue placeholder={t('select_state')} />
+        <SelectValue placeholder={t("select_state")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -516,9 +562,9 @@ export const City = () => {
     ],
   });
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10)
-  }
-  const {t} = useTranslation("common")
+    setPageSize((previousLimit: number) => previousLimit + 10);
+  };
+  const { t } = useTranslation("common");
   return (
     <Select
       value={temporaryValue}
@@ -527,7 +573,7 @@ export const City = () => {
       }}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
-        <SelectValue placeholder={t('city_placeholder')} />
+        <SelectValue placeholder={t("city_placeholder")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -578,9 +624,9 @@ export const Center = () => {
   });
 
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10)
-  }
-  const {t} = useTranslation("new_strings")
+    setPageSize((previousLimit: number) => previousLimit + 10);
+  };
+  const { t } = useTranslation("new_strings");
   return (
     <Select
       value={temporaryValue}
@@ -589,7 +635,7 @@ export const Center = () => {
       }}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
-        <SelectValue placeholder={t('city_placeholder')} />
+        <SelectValue placeholder={t("city_placeholder")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -699,13 +745,13 @@ export const CourseAccountingClosureDate = () => {
   const {
     field: { value, onChange },
   } = useController({
-    name: 'temporaryadvancefilter.course_accounting_closure_date'
-  })
-  const [open, setOpen] = useState(false)
-  const {t} = useTranslation(["course.find_course", "new_strings"])
+    name: "temporaryadvancefilter.course_accounting_closure_date",
+  });
+  const [open, setOpen] = useState(false);
+  const { t } = useTranslation(["course.find_course", "new_strings"]);
   return (
     <Dialog open={open}>
-      <p>{t('date_range')}</p>
+      <p>{t("date_range")}</p>
       <DialogTrigger asChild>
         <Button
           onClick={() => setOpen(true)}
@@ -724,7 +770,9 @@ export const CourseAccountingClosureDate = () => {
               format(value.from, "MM/dd/yyyy")
             )
           ) : (
-            <div className="flex gap-2 font-normal">{t('new_strings:select_the_date_range')}</div>
+            <div className="flex gap-2 font-normal">
+              {t("new_strings:select_the_date_range")}
+            </div>
           )}
         </Button>
       </DialogTrigger>
@@ -756,7 +804,7 @@ export const Visibility = () => {
     PRIVATE
   )?.id;
 
-  const {t} = useTranslation("common")
+  const { t } = useTranslation("common");
 
   return (
     <div>
@@ -770,13 +818,13 @@ export const Visibility = () => {
           <RadioButtonCard
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label={t('public')}
+            label={t("public")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
             selectedRadioValue={JSON.stringify(temporaryValue)}
-            label={t('private')}
+            label={t("private")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
@@ -789,9 +837,9 @@ export const ResidentialCourse = () => {
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.is_residential_course'
-  })
-  const {t} = useTranslation("common")
+    name: "temporaryadvancefilter.is_residential_course",
+  });
+  const { t } = useTranslation("common");
   return (
     <div>
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
@@ -799,13 +847,13 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="TRUE"
             selectedRadioValue={temporaryValue}
-            label={t('yes')}
+            label={t("yes")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label={t('no')}
+            label={t("no")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
@@ -818,9 +866,9 @@ export const CourseFees = () => {
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
-    name: 'temporaryadvancefilter.is_course_fee'
-  })
-  const {t} = useTranslation("new_strings")
+    name: "temporaryadvancefilter.is_course_fee",
+  });
+  const { t } = useTranslation("new_strings");
   return (
     <div>
       <RadioGroup value={temporaryValue} onValueChange={temporaryOnChange}>
@@ -828,13 +876,13 @@ export const CourseFees = () => {
           <RadioButtonCard
             value="TRUE"
             selectedRadioValue={temporaryValue}
-            label={t('default')}
+            label={t("default")}
             className="p-2 h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label={t('custom')}
+            label={t("custom")}
             className="p-2 h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
@@ -859,11 +907,11 @@ export const ProgramOrganiser = () => {
     },
     optionLabel: "contact_id.full_name",
     optionValue: "id",
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'contact_id.full_name',
-        operator: 'contains',
-        value
+        field: "contact_id.full_name",
+        operator: "contains",
+        value,
       },
     ],
     pagination: {
@@ -873,13 +921,13 @@ export const ProgramOrganiser = () => {
   });
   const handleOnBottomReached = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
-      setPageSize((previousLimit: number) => previousLimit + 20)
-  }
-  const {t} = useTranslation("new_strings")
+      setPageSize((previousLimit: number) => previousLimit + 20);
+  };
+  const { t } = useTranslation("new_strings");
   return (
     <MultiSelect
       value={temporaryValue}
-      placeholder={t('select_program_organizer')}
+      placeholder={t("select_program_organizer")}
       data={options}
       onBottomReached={handleOnBottomReached}
       onSearch={(val: string) => {
@@ -887,7 +935,10 @@ export const ProgramOrganiser = () => {
       }}
       onChange={temporaryOnChange}
       variant="basic"
-      selectBoxStyles={{header: 'border-[1px] rounded-[12px] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]'}}
+      selectBoxStyles={{
+        header:
+          "border-[1px] rounded-[12px] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]",
+      }}
     />
   );
 };
@@ -928,9 +979,9 @@ export const TeacherDropdown = () => {
   });
 
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10)
-  }
-  const {t} = useTranslation("new_strings")
+    setPageSize((previousLimit: number) => previousLimit + 10);
+  };
+  const { t } = useTranslation("new_strings");
   return (
     <Select
       value={temporaryValue}
@@ -939,7 +990,7 @@ export const TeacherDropdown = () => {
       }}
     >
       <SelectTrigger className="w-80 hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
-        <SelectValue placeholder={t('select_teacher')} />
+        <SelectValue placeholder={t("select_teacher")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
