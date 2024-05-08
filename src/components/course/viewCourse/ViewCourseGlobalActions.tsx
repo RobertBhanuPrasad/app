@@ -9,22 +9,25 @@ import {
 } from "src/ui/dropdown-menu";
 import { handleCourseDefaultValues } from "../newCourse/EditCourseUtil";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useTranslation } from 'next-i18next';
+
 
 export const ViewCourseGlobalActions = () => {
   const router = useRouter();
-
+  const {t} = useTranslation(["common","course.find_course","course.participants","new_strings"])
+  
   const globalActionsOptions = [
-    "View Participants",
-    "Register Participant",
+    t("view_participants"),
+    t("register_participant"),
     // "Register with online credit card payment",
     // "View Pending/Failed Tranactions",
-    "Edit Course",
-    "Copy Course",
-    "Cancel Course",
+    t("edit_course"),
+    t("copy_course"),
+    t("cancel_course"),
     // "New Discount Code",
-    "Submit Course Accounting Form",
-    "Upload Attendance Record",
-    "Download Receipt",
+    t('course.find_course:submit_course_accounting_form'),
+    t('new_strings:upload_attendance_record'),
+    t('course.participants:edit_participant.participants_information_tab.download_receipt'),
     // "Manage Google Adwords",
   ];
 
@@ -57,6 +60,7 @@ export const ViewCourseGlobalActions = () => {
         break;
     }
   };
+  
 
   return (
     <DropdownMenu>
@@ -65,7 +69,7 @@ export const ViewCourseGlobalActions = () => {
           variant="outline"
           className="flex flex-row justify-between w-[192px] h-10"
         >
-          Actions
+          {t('actions')}
           <DropDown />
         </Button>
       </DropdownMenuTrigger>
