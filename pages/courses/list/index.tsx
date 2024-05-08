@@ -460,14 +460,14 @@ function index() {
   });
 
   return (
-    <div className="flex flex-col justify-between h-screen">
+    <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">Find Course</p>
-      <div className="mx-8 flex flex-col gap-4 mt-4 bg-[white]">
+      <div className="mx-8 flex flex-col mt-4 bg-[white]">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-        <div className="w-full">
+        <div className="w-full mb-[76px]">
           <BaseTable
             current={current}
             rowSelection={rowSelection}
@@ -495,7 +495,7 @@ function index() {
           />
         </div>
       </div>
-      <div className="bottom-0 sticky absolute flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+      <div className="bottom-0 fixed flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-row items-center gap-2">
             <Checkbox
@@ -555,7 +555,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 
   return (
     <Form onSubmit={() => {}} defaultValues={AllFilterData}>
-      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
+      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
             hasAliasNameFalse={hasAliasNameFalse}
@@ -662,7 +662,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         temporaryOnChange("");
       }}
     >
-      <SelectTrigger className="w-80 hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
+      <SelectTrigger className={`w-full hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]`}>
         <SelectValue placeholder="Select Course Type" />
       </SelectTrigger>
       <SelectContent>
@@ -725,8 +725,8 @@ export const BasicFilters: React.FC<{
   };
 
   return (
-    <div className="flex flex-row items-center justify-between">
-      <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
+    <div className="flex gap-x-[2%] flex-row items-center justify-between">
+      <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SearchIcon />
         <Input
           value={value}
@@ -737,11 +737,11 @@ export const BasicFilters: React.FC<{
           placeholder={`Search by Course ID`}
         />
       </div>
-      <div>
+      <>
         {" "}
         <Dialog open={open} onOpenChange={setOpen}>
           <Button
-            className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+            className="w-[50%] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             variant="outline"
             onClick={() => {
               setOpen(true);
@@ -791,14 +791,14 @@ export const BasicFilters: React.FC<{
             />
           </DialogContent>
         </Dialog>
-      </div>
-      <div>
+      </>
+      <div className="min-w-[150px] w-[50%]">
         <CourseTypeComponent name="course_type" />
       </div>
-      <div className="flex flex-row gap-4 items-center">
+      <div className="flex flex-row w-[50%] gap-x-[8px] items-center justify-end">
         <div
           onClick={handleClearAll}
-          className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
+          className="flex min-w-[90px] flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
           <div className="hover:text-[#5E5FC3]">Clear All</div>
@@ -850,8 +850,8 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           className="flex flex-row gap-2 !rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
         >
-          All Filters
           <FilterIcon />
+          All Filters
           {count > 0 && <CountComponent count={count} />}
         </Button>
       </SheetTrigger>
