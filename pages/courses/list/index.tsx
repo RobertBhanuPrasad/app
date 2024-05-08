@@ -521,7 +521,7 @@ function index() {
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            {t("course.find_course:selected")}:{" "}
+            {t("course.find_course:selected")}{" "}
             {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
             {t("course.find_course:out_of")}{" "}
             <div className="font-semibold">

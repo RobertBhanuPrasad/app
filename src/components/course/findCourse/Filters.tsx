@@ -161,13 +161,13 @@ const Filters = ({
                 <div>{t("course_accounting_status")}</div>
                 {formData?.temporaryadvancefilter.course_accounting_status
                   ?.length > 0 && (
-                  <CountComponent
-                    count={
-                      formData?.temporaryadvancefilter.course_accounting_status
-                        ?.length
-                    }
-                  />
-                )}
+                    <CountComponent
+                      count={
+                        formData?.temporaryadvancefilter.course_accounting_status
+                          ?.length
+                      }
+                    />
+                  )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -185,8 +185,8 @@ const Filters = ({
                 </div>
                 {formData?.temporaryadvancefilter
                   .course_accounting_closure_date && (
-                  <CountComponent count={1} />
-                )}
+                    <CountComponent count={1} />
+                  )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -282,12 +282,12 @@ const Filters = ({
                 <div>{t("program_organizer")}</div>
                 {formData?.temporaryadvancefilter.program_organiser?.length >
                   0 && (
-                  <CountComponent
-                    count={
-                      formData?.temporaryadvancefilter.program_organiser?.length
-                    }
-                  />
-                )}
+                    <CountComponent
+                      count={
+                        formData?.temporaryadvancefilter.program_organiser?.length
+                      }
+                    />
+                  )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -635,7 +635,7 @@ export const Center = () => {
       }}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
-        <SelectValue placeholder={t("city_placeholder")} />
+        <SelectValue placeholder={t("select_center")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -689,9 +689,9 @@ export const CourseStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white  hover:bg-[#5E5FC3]"
-                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-            }`}
+              ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -727,9 +727,9 @@ export const CourseAccordingStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white hover:bg-[#5E5FC3]"
-                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-            }`}
+              ? "bg-primary text-white hover:bg-[#5E5FC3]"
+              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
