@@ -40,6 +40,7 @@ import {
 } from "src/ui/select";
 
 import DropDown from "@public/assets/DropDown";
+import { useTranslation } from "next-i18next";
 
 interface IBaseTable<TData, TValue> {
   /**
@@ -321,10 +322,10 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
-
+  const {t} = useTranslation(['common', "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between items-center h-[50px]">
         {columnSelector && (
           <div>
             <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -334,7 +335,7 @@ export function BaseTable<TData, TValue>({
                   variant="outline"
                   className="flex flex-row justify-between w-[192px] h-10  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
                 >
-                  Columns
+                  {t('course.find_course:columns')}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -347,11 +348,12 @@ export function BaseTable<TData, TValue>({
                         checked={selectAll}
                         onCheckedChange={handleSelectAllChange}
                       />
-                      <div className="font-bold text-[14px]">Select All</div>
+                      <div className="font-bold text-[14px]">{t('course.find_course:select_all')}</div>
                     </div>
                     {table
                       .getAllColumns()
-                      .filter((column) => column?.accessorFn) // Here we are filtering the columns which have accessorKey
+                      .filter((column) => column?.accessorFn)
+                      // Here we are filtering the columns which have accessorKey
                       .map((column: any) => {
                         if (!column.getCanHide()) {
                           //display the disabled options
@@ -405,13 +407,13 @@ export function BaseTable<TData, TValue>({
                       className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
                     >
                       <ClearAll />
-                      <div className="hover:text-[#5E5FC3]">Clear All</div>
+                      <div className="hover:text-[#5E5FC3]">{t('clear_all')}</div>
                     </div>
                     <Button
                       onClick={applyColumnVisibilityChanges}
                       className="h-9 w-18 rounded-xl hover:bg-[#5E5FC3]"
                     >
-                      Apply
+                      {t('apply_button')}
                     </Button>
                   </div>
                 </div>
@@ -576,7 +578,7 @@ export function BaseTable<TData, TValue>({
           </div>
         </div>
         {pagination && (
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-[24px]">
             <DataPagination
               setCurrent={setCurrent}
               current={current}
@@ -594,7 +596,7 @@ export function BaseTable<TData, TValue>({
                 }}
               >
               <SelectTrigger className="h-8 w-[131px]">
-                  <div className="text-[#666666]">Showing</div>
+                  <div className="text-[#666666]">{t('course.find_course:showing')}</div>
                   <SelectValue/>
               </SelectTrigger>
                 <SelectContent side="top">
@@ -610,7 +612,7 @@ export function BaseTable<TData, TValue>({
                   )}
                 </SelectContent>
               </Select>
-              <div>of {total}</div>
+              <div>{t('course.find_course:of')} {total}</div>
             </div>}
           </div>
         )}
@@ -667,6 +669,8 @@ const DataPagination = ({
     }
   }
 
+const {t} = useTranslation("common")
+
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
       {/* prev button */}
@@ -678,7 +682,7 @@ const DataPagination = ({
           onClick={() => setCurrent(current - 1)}
           disabled={current <= 1}
         >
-          <div>Prev</div>
+          <div>{t('prev')}</div>
         </Button>
       )}
       {/* pages buttons */}
@@ -710,7 +714,7 @@ const DataPagination = ({
           onClick={() => setCurrent(current + 1)}
           disabled={current >= pageCount}
         >
-          <div>Next</div>
+          <div>{t('next')}</div>
         </Button>
       )}
     </div>

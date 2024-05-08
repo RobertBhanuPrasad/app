@@ -91,13 +91,16 @@ export const validationSchema = () => {
       required_error: "Time zone is a required field",
     }),
     schedules: scheduleValidationSchema,
-    name: z.string({ required_error: "Venu Name is a required field." }),
-    address: z.string({ required_error: "Address is a required field." }),
+    name: z.string().optional(),
+    address: z
+      .string({ required_error: "Address is a required field." })
+      .optional(),
     postal_code: z
       .string({
         required_error: "Postal Code is a required field.",
       })
-      .regex(/^\d+$/, { message: "Please provide a valid Postal Code" }),
+      .regex(/^\d*$/, { message: "Please provide a valid Postal Code" })
+      .optional(),
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
@@ -112,13 +115,20 @@ export const validationSchema = () => {
     // Step 6 Schema
     contact: contactValidationSchema,
     bcc_registration_confirmation_email: z
-      .string({ required_error: "At least on email is required." })
+      .string()
       .regex(
-        /^(?:[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:,[ ]*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
+        /^(?:[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?:,[ ]*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
-      ),
+      ).refine((value) => {
+        //Requirement: Duplicate emails are not allowed
+        const emails = value.split(",").map((email) => email.trim());
+        const uniqueEmails = new Set(emails);
+        return emails.length === uniqueEmails.size;
+      }, {
+        message: "Duplicate emails are not allowed",
+      }).optional()
   });
 };
 
@@ -134,16 +144,16 @@ const contactValidationSchema = z.array(
   z.object({
     contact_name: z
       .string()
-      .regex(/^[a-zA-Z\s]+$/, { message: "Contact Name is a required field." }),
+      .regex(/^[a-zA-Z\s]*$/)
+      .nullable()
+      .optional(),
     contact_email: z
       .string({ required_error: "Contact email is a required field." })
       .email({ message: "Please enter correct Email" }),
-    contact_number: z.union([
-      z
-        .string({ required_error: "Contact mobile is a required field." })
-        .regex(/^\d+$/),
-      z.number(),
-    ]),
+    contact_number: z
+      .union([z.string().regex(/^(\d+)?$/), z.number()])
+      .nullable()
+      .optional(),
   })
 );
 
