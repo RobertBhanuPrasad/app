@@ -1010,7 +1010,7 @@ export default function NewCourseReviewPage() {
                 </div>
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
-                    {t("new_strings:contact_phone")}
+                    {t("course.new_course:contact_info_tab.contact_number")}
                   </p>
                   <abbr
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -1260,6 +1260,8 @@ export const EditCourseSuccessfullyInfo = ({
         console.log(e, "error while routing");
       });
   };
+  const {t} = useTranslation("new_strings")
+
   return (
     <AlertDialog open={onEditSuccess}>
       <AlertDialogContent className="flex flex-col items-center justify-center h-[309px] w-[414px] !rounded-[24px] !gap-[34px] !p-[24px]">
@@ -1270,10 +1272,10 @@ export const EditCourseSuccessfullyInfo = ({
         </AlertDialogHeader>
         <AlertDialogDescription className="flex flex-col !w-[366px] !h-[71px] !gap-4 text-[#333333] items-center text-center">
           <h2 className="pt-[16px] text-[24px] font-semibold">
-            Successfully Updated
+          {t("successfully_updated")}
           </h2>
           <p className="text-[16px] font-normal">
-            Your changes have been saved successfully
+          {t("your_changes_have_been_saved_successfully")}
           </p>
         </AlertDialogDescription>
         <AlertDialogFooter>
@@ -1284,7 +1286,7 @@ export const EditCourseSuccessfullyInfo = ({
               className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
               onClick={handleClick}
             >
-              {onButtonLoading ? <LoadingIcon /> : "Go to Course Details"}
+              {onButtonLoading ? <LoadingIcon /> : t("go_to_course_details")}
             </Button>
           </div>
         </AlertDialogFooter>
