@@ -14,6 +14,10 @@ import {
   HoverCardTrigger,
 } from "src/ui/hover-card";
 import { formatDate } from "src/utility/DateFunctions";
+import { supabaseClient } from "src/utility/supabaseClient";
+import { useTranslation } from 'next-i18next';
+
+
 
 export const ParticipantsListMainHeader = () => {
   const router = useRouter();
@@ -46,15 +50,15 @@ export const ParticipantsListMainHeader = () => {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-
+  const {t} = useTranslation(["course.view_course", "course.new_course", "new_strings", "common"])
   return (
-    <div className="flex justify-between px-8 h-auto pb-4">
+    <div className="flex justify-between w-full px-8 h-auto ">
       {/* Course Details Section */}
       <div className="flex gap-2">
         <ChevronLeftIcon
           color="#7677F4"
-          height={50}
-          width={50}
+          height={32}
+          width={32}
           className="cursor-pointer"
           onClick={() => {
             router.back();
@@ -62,21 +66,25 @@ export const ParticipantsListMainHeader = () => {
         />
         <div>
           {/* Course Name */}
-          <div className="text-[32px] font-medium">
+          <div className="text-[24px] font-medium">
             {courseData?.data?.program_alias_name_id
-              ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
+              ? translatedText(
+                  courseData?.data?.program_alias_name_id?.alias_name
+                )
               : translatedText(courseData?.data?.program_type_id?.name)}
           </div>
           {/* Course Info */}
           <div className="flex gap-8 pt-2">
             {/* Course ID */}
-            <div className="items-center font-medium">
-              Course ID: {courseData?.data?.program_code}
+            <div className="items-center text-[16px] font-medium">
+              <span className="text-[#666666] ">
+              {t("common:course_id")}: {courseData?.data?.program_code}
+              </span>
             </div>
             {/* Course Schedule */}
             <div className="flex gap-2 items-center border-x-2 px-6">
               <CalenderIcon color="#7677F4" />
-              {startDate} to {endDate}
+              {startDate} {t('course.new_course:time_and_venue_tab.to')} {endDate}
             </div>
             {/* Participant Count */}
             <div className="flex gap-2 items-center">
@@ -89,10 +97,8 @@ export const ParticipantsListMainHeader = () => {
                   <Important />
                 </HoverCardTrigger>
                 <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                    {courseData?.data?.participant_count} Participants with:
-                    Transaction status = Confirmed / Pending Attendance status =
-                    Confirmed / Pending / Dropout Total participants records:
+                <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                    {courseData?.data?.participant_count} {t("new_strings:participants_header_hover_text")}
                     {courseData?.data?.total_participant_count}
                   </div>
                 </HoverCardContent>
@@ -110,9 +116,8 @@ export const ParticipantsListMainHeader = () => {
                   <Important />
                 </HoverCardTrigger>
                 <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                    Revenue from confirmed pending transaction participants
-                    revenue:
+                <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                    {t("new_strings:revenue_from_confirmed_pending_transaction_participants_revenue")}
                     {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                     {totalRevenue}
                   </div>

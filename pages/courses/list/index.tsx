@@ -12,9 +12,12 @@ import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useList, useSelect, useTable } from "@refinedev/core";
 import { format } from "date-fns";
+import { useTranslation } from "next-i18next";
+import { authProvider } from "src/authProvider";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import { translatedText } from "src/common/translations";
 import { column } from "src/components/course/findCourse/Columns";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Text } from "src/ui/TextTags";
@@ -38,6 +41,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { translatedText } from "src/common/translations";
 
 function index() {
   interface ExcelColumn {
@@ -158,20 +162,24 @@ function index() {
   }
 
   //If we select course fee then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.is_course_fee === true) {
-    //If the program_fee_setting_id is not null then it has default fee if it is null then we have our custom fee
-    filters.permanent.push({
-      field: "program_fee_setting_id",
-      operator: "neq",
-      value: null,
-    });
-  } else {
-    filters.permanent.push({
-      field: "program_fee_setting_id",
-      operator: "eq",
-      value: null,
-    });
+  if (AllFilterData?.advanceFilter?.is_course_fee) {
+    //If the course_fee is true means it is default else it is custom fee
+    if (AllFilterData?.advanceFilter?.is_course_fee == "TRUE") {
+      //If the program_fee_setting_id is not null then it has default fee if it is null then we have our custom fee here we check if any id is present or not by value greater than 0
+      filters.permanent.push({
+        field: "program_fee_settings_id",
+        operator: "gt",
+        value: 0,
+      });
+    } else {
+      filters.permanent.push({
+        field: "program_fee_settings_id",
+        operator: "null",
+        value: true,
+      });
+    }
   }
+
   //If we select date range for course then we have to write filter to fetch the courses based on the range , we will push to filters
   if (AllFilterData?.course_date) {
     //Here the date picker uses the GMT time so , iam adding  1 day that is next day for from and to of course date
@@ -262,7 +270,7 @@ function index() {
       resource: "program",
       meta: {
         select:
-          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,value),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,value) ,program_accounting_status_id(id,value)",
+          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
       },
       pagination: {
         pageSize: pageSize,
@@ -313,47 +321,47 @@ function index() {
        */
       const excelColumns: ExcelColumn[] = [
         {
-          column_name: "Course ID",
+          column_name: t("course_id"),
           path: ["program_code"],
         },
         {
-          column_name: "Course Type Name",
+          column_name: t("new_strings:course_type_name"),
           path: ["program_types", "name"],
         },
         {
-          column_name: "Course Name",
+          column_name: t("new_strings:course_name"),
           path: ["program_type_alias_names", "alias_name"],
         },
         {
-          column_name: "Course Status",
+          column_name: t("course.find_course:course_status"),
           path: ["status_id", "name"],
         },
         {
-          column_name: "Start Date",
+          column_name: t("course.find_course:start_date"),
           path: ["program_schedules", "start_time"],
         },
         {
-          column_name: "State",
+          column_name: t("course.find_course:state"),
           path: ["state", "name"],
         },
         {
-          column_name: "City",
+          column_name: t("city"),
           path: ["city", "name"],
         },
         {
-          column_name: "Center",
+          column_name: t("course.find_course:center"),
           path: ["center", "name"],
         },
         {
-          column_name: "Attendes",
+          column_name: t("course.find_course:attendees"),
           path: ["participant_registration", "length"],
         },
         {
-          column_name: "Visibility",
+          column_name: t("new_strings:visibility"),
           path: ["visibility_id", "name"],
         },
         {
-          column_name: "Course Accounting Status",
+          column_name: t("course_accounting_status"),
           path: ["program_accounting_status_id", "name"],
         },
       ];
@@ -454,16 +462,23 @@ function index() {
       },
     ],
   });
-
+  const { t } = useTranslation([
+    "common",
+    "course.find_course",
+    "new_strings",
+    "course.view_course",
+  ]);
   return (
-    <div className="flex flex-col justify-between relative h-screen">
-      <p className="font-semibold text-2xl ml-8">Find Course</p>
-      <div className="mx-8 flex flex-col gap-4 mt-4">
+    <div className="flex flex-col justify-between relative">
+      <p className="font-semibold text-2xl ml-8">
+        {t("new_strings:find_courses")}
+      </p>
+      <div className="mx-8 flex flex-col mt-4 bg-[white]">
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-        <div className="w-full">
+        <div className="w-full mb-[76px]">
           <BaseTable
             current={current}
             rowSelection={rowSelection}
@@ -483,15 +498,15 @@ function index() {
               table: "",
               rowStyles: "!important border-none",
             }}
-            noRecordsPlaceholder="There are no courses"
-            columns={column(hasAliasNameFalse(data))}
+            noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
+            columns={column(hasAliasNameFalse(data), t)}
             data={programData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
           />
         </div>
       </div>
-      <div className="bottom-0 sticky absolute flex flex-row px-8 justify-between m-0 z-[100] bg-[white] left-0 items-center h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+      <div className="bottom-0 fixed flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-row items-center gap-2">
             <Checkbox
@@ -499,15 +514,16 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>Select All</div>
+            <div>{t("course.find_course:select_all")}</div>
             <div className="font-semibold">
               {FilterProgramData?.data?.total || 0}
             </div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            Selected: {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
-            Out of{" "}
+            {t("course.find_course:selected")}:{" "}
+            {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
+            {t("course.find_course:out_of")}{" "}
             <div className="font-semibold">
               {FilterProgramData?.data?.total || 0}
             </div>{" "}
@@ -519,10 +535,11 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl"
+                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
                 disabled={!allSelected}
               >
-                Export <ChevronDownIcon className="w-5 h-5" />
+                {t("course.find_course:export")}{" "}
+                <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
@@ -530,11 +547,11 @@ function index() {
                 onClick={handleExportExcel}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                Excel
+                {t("new_strings:excel")}
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
-                Csv
+                {t("new_strings:csv")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -551,7 +568,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 
   return (
     <Form onSubmit={() => {}} defaultValues={AllFilterData}>
-      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4">
+      <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
             hasAliasNameFalse={hasAliasNameFalse}
@@ -567,6 +584,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 };
 
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
+  const { t } = useTranslation(["common", "new_strings"]);
   return (
     <div className="relative ml-[-12px] mt-[-12px]">
       <DateRangePicker
@@ -587,15 +605,15 @@ export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
               to: undefined,
             })
           }
-          className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
+          className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold hover:text-[#5E5FC3] hover:border-solid hover:border hover:border-[1px] hover:border-[#5E5FC3]"
         >
-          Reset
+          {t("new_strings:reset_button")}
         </Button>
         <Button
           onClick={() => setOpen(false)}
-          className=" w-[94px] h-10 rounded-xl"
+          className=" w-[94px] h-10 rounded-xl hover:bg-[#5E5FC3]"
         >
-          Apply
+          {t("apply_button")}
         </Button>
       </div>
     </div>
@@ -615,6 +633,11 @@ export const CourseTypeComponent = ({ name }: any) => {
     field: { value, onChange },
   } = useController({
     name: name,
+  });
+  const {
+    field: { value: temporaryValue, onChange: temporaryOnChange },
+  } = useController({
+    name: "temporaryadvancefilter.course_name",
   });
 
   const [pageSize, setPageSize] = useState(10);
@@ -642,17 +665,20 @@ export const CourseTypeComponent = ({ name }: any) => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
-  console.log("heyy course type component", value);
-
+  const { t } = useTranslation("common");
   return (
     <Select
       value={value}
       onValueChange={(val: any) => {
         onChange(val);
+        // we are making the course name value empty string  if the course type is changed so that it will show the placeholder in course name  if we change the value in course type downdown
+        temporaryOnChange("");
       }}
     >
-      <SelectTrigger className="w-80">
-        <SelectValue placeholder="Select Course Type" />
+      <SelectTrigger
+        className={`w-full hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]`}
+      >
+        <SelectValue placeholder={t("select_course_type")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -712,10 +738,10 @@ export const BasicFilters: React.FC<{
     setValue("advanceFilter", "");
     setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
-
+  const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
-    <div className="flex flex-row items-center justify-between">
-      <div className="flex flex-row justify-center items-center border border-[1px] px-2 rounded-xl">
+    <div className="flex gap-x-[2%] flex-row items-center justify-between">
+      <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SearchIcon />
         <Input
           value={value}
@@ -723,14 +749,14 @@ export const BasicFilters: React.FC<{
           onKeyDown={handleKeyPress}
           type="text"
           className="border-none focus:outline-none"
-          placeholder={`Search by Course ID`}
+          placeholder={t("course.find_course:search_by_course_id")}
         />
       </div>
-      <div>
+      <>
         {" "}
         <Dialog open={open} onOpenChange={setOpen}>
           <Button
-            className="w-[291px] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl"
+            className="w-[50%] h-[40px] flex flex-row items-center justify-start gap-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             variant="outline"
             onClick={() => {
               setOpen(true);
@@ -765,7 +791,7 @@ export const BasicFilters: React.FC<{
               </div>
             ) : (
               <div className="flex gap-2 font-normal">
-                Select the Date Range
+                {t("new_strings:select_the_date_range")}
               </div>
             )}
           </Button>
@@ -780,17 +806,17 @@ export const BasicFilters: React.FC<{
             />
           </DialogContent>
         </Dialog>
-      </div>
-      <div>
+      </>
+      <div className="min-w-[150px] w-[50%]">
         <CourseTypeComponent name="course_type" />
       </div>
-      <div className="flex flex-row gap-4 items-center">
+      <div className="flex flex-row w-[50%] gap-x-[8px] items-center justify-end">
         <div
           onClick={handleClearAll}
-          className="flex flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
+          className="flex min-w-[90px] flex-row gap-2 items-center text-sm font-semibold text-[#7677F4] cursor-pointer"
         >
           <ClearAll />
-          <div>Clear All</div>
+          <div className="hover:text-[#5E5FC3]">{t("clear_all")}</div>
         </div>
         <Button
           onClick={() => {
@@ -798,9 +824,9 @@ export const BasicFilters: React.FC<{
             //whenever we apply filters we will be navigated to page 1
             setCurrent(1);
           }}
-          className="h-9 w-18 rounded-xl"
+          className="h-9 w-18 rounded-xl hover:bg-[#5E5FC3]"
         >
-          Apply
+          {t("apply_button")}
         </Button>
       </div>
     </div>
@@ -824,8 +850,9 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
             formData.advanceFilter[key] !== ""
       ).length) ||
     0;
+  const { t } = useTranslation("course.find_course");
   return (
-    <Sheet open={advanceFilterOpen}>
+    <Sheet open={advanceFilterOpen} onOpenChange={setAdvanceFilterOpen}>
       <SheetTrigger className="p-0">
         <Button
           onClick={() => {
@@ -836,11 +863,11 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
               formData?.course_type
             );
           }}
-          className="flex flex-row gap-2 !rounded-xl"
+          className="flex flex-row gap-2 !rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
         >
-          All Filters
           <FilterIcon />
+          {t("course.find_course:all_filters")}
           {count > 0 && <CountComponent count={count} />}
         </Button>
       </SheetTrigger>
@@ -853,4 +880,33 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
       </SheetContent>
     </Sheet>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+    "course.new_course",
+    "course.view_course",
+    "new_strings",
+    "course.find_course",
+  ]);
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
 };

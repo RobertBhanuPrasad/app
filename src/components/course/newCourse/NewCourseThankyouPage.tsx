@@ -20,8 +20,10 @@ import { Button } from 'src/ui/button'
 import { formatDateTime } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
+import { useTranslation } from 'next-i18next';
 
 const NewCourseThankyouPage = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false)
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
   const { programId,setNewCourseData } = newCourseStore()
@@ -118,51 +120,51 @@ useEffect(() => {
             </Button>
           
               <Button variant="outline" className="text-indigo-600 border-indigo-600 " onClick={() => {router.replace('/courses/list')}}>
-                Go to Course Listing
+              {t("course.new_course:congratulations_page.go_to_course_listing")}
               </Button>
           
           </div>
           <Image src={ThankyouGif} alt="My Image" width={148} height={148} className="mx-auto" />
           <div className="mx-auto text-center max-w-fit ">
-            <p className="text-2xl font-semibold text-accent-primary">Congratulations!</p>
-            <p className="text-accent-secondary">You have successfully announced a course</p>
+            <p className="text-2xl font-semibold text-accent-primary">{t("course.new_course:congratulations_page.congratulations")}</p>
+            <p className="text-accent-secondary">{t("course.new_course:congratulations_page.you_have_successfully")}</p>
           </div>
           {/* body: Course details view section */}
           <div className="flex h-auto px-4 py-4 m-5 text-base border-2 border-indigo-600 border-dashed rounded-2xl bg-indigo-50">
             <div className="flex-[1] p-4 border-r border-light">
-              <p className=" text-accent-secondary">Course ID</p>
+              <p className=" text-accent-secondary">{t("course_id")}</p>
                 <p className="font-bold cursor-pointer text-accent-primary" onClick={()=>{router.replace(`/courses/${programId}`)}}>{data?.data?.program_code}
                 </p>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
-              <p className="text-accent-secondary">Course Name</p>
+              <p className="text-accent-secondary">{t("new_strings:course_name")}</p>
               <p className="font-bold text-accent-primary">{translatedText(data?.data?.program_type_id?.name)}</p>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
-              <p className="text-accent-secondary">Teachers</p>
+              <p className="text-accent-secondary">{t("teachers")}</p>
               <p className="font-bold text-accent-primary">{teachers ? teachers : '-'}</p>
             </div>
             {/* // TODO need to do when the form filed is clear */}
             {/* If it is an online course in the venue section we have to show online text that can be hyperlinked which will take the user to the meeting url on click  */}
             {data?.data?.program_type_id?.is_online_program === true ? 
             (  <div className="flex-[2.5] p-4 border-r border-light">
-              <p className="text-accent-secondary">Venue</p>
+              <p className="text-accent-secondary">{t("course.new_course:congratulations_page.venue")}</p>
               <p className="font-bold text-accent-primary">
                 {data?.data?.online_url ? (
-                  <a href={data?.data?.online_url} className="text-blue-600 hover:text-blue-800 ">Online</a>
+                  <a href={data?.data?.online_url} className="text-blue-600 hover:text-blue-800 ">{t("new_strings:online")}</a>
                   ) : ( "-")}
              </p>
               </div>) :
             (
               // for offline we have to show the venue details 
             <div className="flex-[2.5] p-4 border-r border-light">
-              <p className="text-accent-secondary">Venue</p>
+              <p className="text-accent-secondary">{t("course.new_course:congratulations_page.venue")}</p>
               <p className="font-bold text-accent-primary">{venue ? venue : '-'}</p>
             </div>
             )
           }
             <div className="flex-[2.5] p-4 ">
-              <p className="text-accent-secondary">Course Date (UTC 05:00)</p>
+              <p className="text-accent-secondary">{t("course.new_course:congratulations_page.course_date")} (UTC 05:00)</p>
               {data?.data?.program_schedules?.map((data: any) => {
                 return (
                   <p className="font-semibold truncate text-accent-secondary">
@@ -177,7 +179,7 @@ useEffect(() => {
           {data?.data?.status_id?.id === courseActiveStatusId && (
             <section>
               <div className="">
-                <p className="mx-auto text-accent-secondary max-w-fit">Share in Social Platforms</p>
+                <p className="mx-auto text-accent-secondary max-w-fit">{t("course.new_course:congratulations_page.share_in_social")}</p>
                 {/* Social media icons */}
                 <div className="flex items-center justify-center gap-4 my-4">
                   <Image src={WhatsappIcon} alt="whats app icon"></Image>
@@ -187,13 +189,13 @@ useEffect(() => {
                   <Image src={linkedInIcon} alt="Linked in icon"></Image>
                 </div>
               </div>
-              <p className="mx-auto text-accent-secondary max-w-fit">Or</p>
+              <p className="mx-auto text-accent-secondary max-w-fit">{t("or")}</p>
               {/* Hyper links section */}
               {/* We have to display the links only when the course is active */}
               <div className="flex items-center justify-center gap-4 mt-4 ">
                 <div className="relative">
                   <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
-                    Registration link
+                    {t("registration_link")}
                   </p>
                   <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
                     <h4 id="textToCopy" className="">
@@ -208,7 +210,7 @@ useEffect(() => {
                       <CopyIcon />
                       {copiedDetailsPageLink ? (
                         <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                          copied
+                          {t("new_strings:copied")}
                         </div>
                       ) : (
                         ''
@@ -221,7 +223,7 @@ useEffect(() => {
                 {data?.data?.visibility_id?.id == publicVisibilityId && (
                   <div className="relative ">
                     <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
-                      Details page link
+                      {t("details_page_link")}
                     </p>
 
                     <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
@@ -237,7 +239,7 @@ useEffect(() => {
                         <CopyIcon />
                         {copiedRegistrationLink ? (
                           <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                            copied
+                             {t("new_strings:copied")}
                           </div>
                         ) : (
                           ''
@@ -257,7 +259,7 @@ useEffect(() => {
                       variant="outline"
                       className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
                     >
-                      Copy 2 Links
+                      {t("new_strings:copy_links")}
                     </Button>
                   </div>
                 )}

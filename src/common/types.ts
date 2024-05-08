@@ -2,7 +2,7 @@
 interface AccommodationTypesDataBaseType {
   id?: number;
   created_at?: Date;
-  name?: string;
+  name?: object;
 }
 
 interface CenterDataBaseType {
@@ -237,7 +237,7 @@ interface ProgramFeeLevelSettingsDataBaseType {
   tax?: number;
   is_enable?: boolean;
   program_fee_setting_id?: number | ProgramFeeSettingsDataBaseType;
-  custom_fee_label?: string;
+  custom_fee_label?: Object;
   early_bird_sub_total?: number;
   early_bird_tax?: number;
   early_bird_total?: number;
@@ -565,20 +565,21 @@ interface ParticipantReassignmentHistoryDataBaseType {
 }
 
 interface ParticipantEmailDeliveryLogsDataBaseType {
+
+  type?: string;
+  delivery_status?: string;
+  delivery_time_stamp?: string;
+  source?: string;
+  open_time_stamp?: string;
+}
+
+interface ParticipantCustomerDeviceDetailsDataBaseType {
   id?: number;
   browser?: string;
   ip_address?: string;
   time_stamp?: string;
   transaction_id?: string;
   operating_system?: string;
-}
-
-interface ParticipantCustomerDeviceDetailsDataBaseType {
-  program_type?: number;
-  delivery_status?: string;
-  delivery_time_stamp?: string;
-  source?: string;
-  open_time_stamp?: string;
 }
 
 interface ParticipantUtmParametersDataBaseType {
