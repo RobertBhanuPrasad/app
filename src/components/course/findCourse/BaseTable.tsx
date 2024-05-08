@@ -162,7 +162,7 @@ export function BaseTable<TData, TValue>({
   rowSelection,
   setRowSelection,
   columnSelector,
-  noRecordsPlaceholder = "No results",
+  noRecordsPlaceholder = useTranslation("new_strings").t('no_results'),
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
