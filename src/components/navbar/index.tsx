@@ -1,10 +1,20 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
-import React from "react";
-import Logo from "@public/assets/Logo";
-import Bell from "@public/assets/Bell";
-import TableMenu from "@public/assets/TableMenu";
-import { Avatar, AvatarFallback, AvatarImage } from "src/ui/avatar";
+import Bell from '@public/assets/Bell'
+import Logo from '@public/assets/Logo'
+import LogoutIcon from '@public/assets/LogoutIcon'
+import TableMenu from '@public/assets/TableMenu'
+import { useGetIdentity } from '@refinedev/core'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { destroyCookie } from 'nookies'
+import { useEffect, useState } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from 'src/ui/dropdown-menu'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,34 +22,65 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "src/ui/navigation-menu";
+  navigationMenuTriggerStyle
+} from 'src/ui/navigation-menu'
+import { supabaseClient } from 'src/utility'
 
 function Navbar() {
   // Define navigation components and their respective routes
   const components = [
     {
-      title: "New Course",
-      href: "/courses/add",
+      title: 'New Course',
+      href: '/courses/add'
     },
     {
-      title: "Find Course",
-      href: "/courses/list",
+      title: 'Find Course',
+      href: '/courses/list'
     },
     {
-      title: "Discount Codes",
-      href: "/Courses/DiscountCodes",
-    },
-  ];
+      title: 'Discount Codes',
+      href: '/Courses/DiscountCodes'
+    }
+  ]
+
+  const supabase = supabaseClient()
+
+  const { data: loginUserData }: any = useGetIdentity()
+
+  const [loggedInUser, setLoggedInUser] = useState('')
+
+  const router = useRouter()
 
   // Get the current pathname using the useRouter hook
-  const { pathname } = useRouter();
+  const { pathname } = useRouter()
 
   // Split the pathname into segments
-  const pathSegments = pathname.split("/");
+  const pathSegments = pathname.split('/')
 
   // Extract the first segment of the pathname
-  const firstRouteName = pathSegments.find((segment) => segment !== "");
+  const firstRouteName = pathSegments.find(segment => segment !== '')
+
+  // to logged out the current user
+  const handleLogOut = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (!error) {
+      destroyCookie(null, 'token') // Remove the token cookie
+      router.push('/login') // Redirect to the login page
+    }
+    console.log('error is', error)
+  }
+
+  useEffect(() => {
+    // to get the name of the logged in user
+    const fetchData = async () => {
+      const { data } = await supabase
+        .from('contact')
+        .select('full_name')
+        .eq('full_name', loginUserData?.userData?.contact_id?.full_name)
+      setLoggedInUser(data?.[0]?.full_name)
+    }
+    fetchData()
+  }, [])
 
   return (
     <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
@@ -54,7 +95,7 @@ function Navbar() {
               <NavigationMenuTrigger>Home</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[160px] gap-3 py-4 px-2 ">
-                  {components.map((component) => (
+                  {components.map(component => (
                     <li key={component.title}>
                       <MenuList Name={component.title} route={component.href} />
                     </li>
@@ -65,33 +106,23 @@ function Navbar() {
             {/* Administer Navigation */}
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Administer
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Administer</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Contacts Navigation */}
             <NavigationMenuItem>
               <Link href="/Contacts" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Contacts
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Contacts</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Courses Navigation */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger
-                className={
-                  firstRouteName === "Courses"
-                    ? "!text-[#7677F4] font-semibold"
-                    : ""
-                }
-              >
+              <NavigationMenuTrigger className={firstRouteName === 'Courses' ? '!text-[#7677F4] font-semibold' : ''}>
                 Courses
               </NavigationMenuTrigger>
               <NavigationMenuContent className="NavigationMenuViewport">
                 <ul className="grid w-[160px] gap-3 py-4 px-2 ">
-                  {components.map((component) => (
+                  {components.map(component => (
                     <li key={component.title}>
                       <MenuList Name={component.title} route={component.href} />
                     </li>
@@ -102,25 +133,19 @@ function Navbar() {
             {/* Events Navigation */}
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Events
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Events</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Teachers Navigation */}
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Teachers
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Teachers</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Mailings Navigation */}
             <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Mailings
-                </NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Mailings</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             {/* Menu Navigation */}
@@ -140,18 +165,30 @@ function Navbar() {
         </NavigationMenu>
       </div>
       {/* Bell and Avatar */}
-      <div className="flex flex-row items-center gap-4  ">
+      <div className="flex flex-row items-center gap-4 ">
         <Bell />
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[312px]">
+            <p className="text-primary text-base font-semibold pl-3 py-5">{loggedInUser}</p>
+            <DropdownMenuSeparator className="bg-primary mx-[12px]" />
+            <DropdownMenuItem onClick={handleLogOut} className="flex gap-3 pl-3 py-5">
+              <LogoutIcon />
+              <p className="text-[#FF0000] font-semibold text-sm cursor-pointer">Log Out</p>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
-  );
+  )
 }
 
-export default Navbar;
+export default Navbar
 
 // Component to render each menu item
 const MenuList = ({ Name, route }: any) => {
@@ -163,5 +200,5 @@ const MenuList = ({ Name, route }: any) => {
         </NavigationMenuLink>
       </Link>
     </div>
-  );
-};
+  )
+}
