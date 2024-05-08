@@ -1565,8 +1565,8 @@ export const AddOrEditVenue = ({
       )}
       {/* TODO : Integrated after solving the error }
       {/* <MapComponent /> */}
-      <div className="w-[586px] h-[140px] border my-5"></div>
-      <div className="flex flex-row gap-[30px]">
+      {/* <div className="w-[586px] h-[140px] border my-5"></div> */}
+      <div className="flex flex-row gap-[30px] mt-10">
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />
