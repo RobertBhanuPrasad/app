@@ -344,11 +344,11 @@ export const column = (
               router.push(`/courses/${row.original.id}/participants/list`);
               break;
             }
-            case 2: {
-              // TODO - Navigate to Register Participant page
-              router.push("/courses/add");
-              break;
-            }
+            // case 2: {
+            //   // TODO - Navigate to Register Participant page
+            //   router.push("/courses/add");
+            //   break;
+            // }
             case 3: {
               handleEditCourse();
               break;
@@ -361,23 +361,23 @@ export const column = (
               setIsDialogOpen(true);
               break;
             }
-            case 6: {
-              // TODO - Navigate to submit course accounting page
-              router.push(
-                `/courses/${row.original.id}?tab=course_accounting_form`
-              );
-              break;
-            }
-            case 7: {
-              // TODO - Navigate to view course accounting page
-              router.push("/");
-              break;
-            }
-            case 8: {
-              // TODO - Navigate to edit course accounting page
-              router.push("/");
-              break;
-            }
+            // case 6: {
+            //   // TODO - Navigate to submit course accounting page
+            //   router.push(
+            //     `/courses/${row.original.id}?tab=course_accounting_form`
+            //   );
+            //   break;
+            // }
+            // case 7: {
+            //   // TODO - Navigate to view course accounting page
+            //   router.push("/");
+            //   break;
+            // }
+            // case 8: {
+            //   // TODO - Navigate to edit course accounting page
+            //   router.push("/");
+            //   break;
+            // }
             case 9: {
               router.push(`/courses/${row.original.id}`);
               break;

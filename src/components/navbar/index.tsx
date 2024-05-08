@@ -26,10 +26,10 @@ function Navbar() {
       title: "Find Course",
       href: "/courses/list",
     },
-    {
-      title: "Discount Codes",
-      href: "/Courses/DiscountCodes",
-    },
+    // {
+    //   title: "Discount Codes",
+    //   href: "/Courses/DiscountCodes",
+    // },
   ];
 
   // Get the current pathname using the useRouter hook
