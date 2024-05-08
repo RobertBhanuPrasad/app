@@ -89,7 +89,7 @@ export default function ViewDonationDetails({
                                 {t('course.participants:edit_participant.participants_information_tab.donation_type')}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    One Time
+                                    {t('new_strings:one_time')}
                                 </Text>
                             </div>
 

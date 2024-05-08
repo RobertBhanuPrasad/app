@@ -14,12 +14,15 @@ function ViewParticipantUtmParameters({ participantId }: any) {
     }
   }
 
+  const {t} = useTranslation("course.participants")
+
+
   // Fetching participant registration data
   const { data: utmParametersData, isLoading, isError } = useOne(query)
 
   return (
     <div>
-      <p className="text-[18px] font-[600] ">UTM Parameters</p>
+      <p className="text-[18px] font-[600] ">{t('course.participants:view_participant.utm_parameters')}</p>
       <div>
         <BaseTable
           checkboxSelection={false}
@@ -49,7 +52,7 @@ const columns = () => {
     {
       accessorKey: 'program_type_id',
       header: () => {
-        return <TableHeader>{t("view_participant: id")}</TableHeader>
+        return <TableHeader>{t('course.participants:view_participant.id')}</TableHeader>
       },
       cell: ({ row }) => {
         return <Text className="lowercase">{row?.original?.program_type_id}</Text>
@@ -58,7 +61,7 @@ const columns = () => {
     {
       accessorKey: 'source',
       header: () => {
-        return <TableHeader>{t("view_participant: source")}</TableHeader>
+        return <TableHeader>{t('course.participants:view_participant.source')}</TableHeader>
       },
       cell: ({ row }) => {
         return <Text>{row?.original?.source}</Text>
@@ -67,7 +70,7 @@ const columns = () => {
     {
       accessorKey: 'medium',
       header: () => {
-        return <TableHeader>{t("view_participant: medium")}</TableHeader>
+        return <TableHeader>{t('course.participants:view_participant.medium')}</TableHeader>
       },
       cell: ({ row }) => {
         return <Text className="lowercase">{row?.original?.medium}</Text>
@@ -76,7 +79,7 @@ const columns = () => {
     {
       accessorKey: 'campaign',
       header: () => {
-        return <TableHeader>{t("view_participant: campaign")}</TableHeader>
+        return <TableHeader>{t('course.participants:view_participant.campaign')}</TableHeader>
       },
       cell: ({ row }) => {
         return <Text className="lowercase">{row?.original?.campaign}</Text>
@@ -85,7 +88,7 @@ const columns = () => {
     {
       accessorKey: 'term',
       header: () => {
-        return <TableHeader>{t("view_participant: term")}</TableHeader>
+        return <TableHeader>{t('course.participants:view_participant.term')}</TableHeader>
       },
       cell: ({ row }) => {
         return <Text className="lowercase">{row?.original?.term}</Text>
@@ -94,7 +97,7 @@ const columns = () => {
     {
       accessorKey: 'content',
       header: () => {
-        return <TableHeader>{t("view_participant: content")}</TableHeader>
+        return <TableHeader>{t('course.participants:view_participant.content')}</TableHeader>
       },
       cell: ({ row }) => {
         return <Text className="lowercase">{row?.original?.content}</Text>
@@ -103,7 +106,7 @@ const columns = () => {
     {
       accessorKey: 'http_refer',
       header: () => {
-        return <TableHeader>{t("view_participant: http_refer")}</TableHeader>
+        return <TableHeader>{t('course.participants:view_participant.http_refer')}</TableHeader>
       },
       cell: ({ row }) => {
         return <Text className="lowercase">{row?.original?.http_refer}</Text>

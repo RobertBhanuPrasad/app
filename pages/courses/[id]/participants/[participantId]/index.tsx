@@ -35,12 +35,12 @@ function index() {
         },
         {
             value: VIEW_PARTICIPANT_TRANSACTION_DETAILS,
-            label: "Transaction Details",
+            label: t('course.participants:view_participant.transaction_details'),
             disabled: false,
         },
         {
             value: VIEW_PARTICIPANT_EMAIL_DELIVERY_LOGS,
-            label: "Email Delivery Logs",
+            label: t('course.participants:view_participant.email_delivery_logs'),
             disabled: false,
         },
         {
@@ -50,7 +50,7 @@ function index() {
         },
         {
             value: VIEW_PARTICIPANT_UTM_PARAMETERS,
-            label: "UTM Parameters",
+            label: t('course.participants:view_participant.utm_parameters'),
             disabled: false,
         },
     ];
@@ -76,7 +76,7 @@ function index() {
         },
         {
             id: 2,
-            label: "Email Delivery Logs",
+            label: t('course.participants:view_participant.email_delivery_logs'),
             content: <ViewParticipantEmailDeliveryLogs participantId={Id} />,
         },
         {
@@ -88,7 +88,7 @@ function index() {
         },
         {
             id: 4,
-            label: "UTM Parameters",
+            label: t('course.participants:view_participant.utm_parameters'),
             content: <ViewParticipantUtmParameters participantId={Id} />,
         },
     ];
@@ -116,7 +116,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
 
     const translateProps = await serverSideTranslations(
         context.locale ?? "en",
-        ["common", "course.participants","new_strings","course.find_course", "course.view_course"]
+        ["common", "course.participants","new_strings","course.find_course", "course.view_course", "course.new_course"]
     );
 
     if (!authenticated) {
