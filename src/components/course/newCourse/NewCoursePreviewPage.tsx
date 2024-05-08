@@ -818,7 +818,7 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
                   title={VenueData ? VenueData : "-"}
                 >
                   {VenueData ? VenueData : "-"}
