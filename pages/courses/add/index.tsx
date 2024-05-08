@@ -65,8 +65,7 @@ import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
-import { useTranslation } from "next-i18next";
-import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import { useTranslation } from 'next-i18next';
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -155,31 +154,25 @@ function NewCourse() {
    * 2. User will click on Edit Course or Copy Course then also we need to prefill
    * When user coming from copy or Edit Course we dont need to prefill the below object because we will already set this
    */
-  /**
-   * This variable holds the path of the url
-   */
-  const pathname = usePathname();
+  const defaultValues =
+    newCourseData === null
+      ? {
+          [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
+          [NewCourseStep2FormNames?.is_language_translation_for_participants]:
+            true,
+          //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
+          [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
+            ? true
+            : undefined,
 
-  /**
-   * Checking whether the url contains the edit or not and if not edit we need to fill few fields default
-   */
-  const defaultValues = !IsEditCourse(pathname)
-    ? {
-        [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
-        [NewCourseStep2FormNames?.is_language_translation_for_participants]:
-          true,
-        //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
-        [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
-          ? true
-          : undefined,
-
-        // is_geo_restriction_applicable is visible to super admin and default it is no
-        [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
-        [NewCourseStep5FormNames?.accommodation_fee_payment_mode]: payOnlineId,
-        [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
-        [NewCourseStep5FormNames?.is_residential_program]: false,
-      }
-    : newCourseData;
+          // is_geo_restriction_applicable is visible to super admin and default it is no
+          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
+          [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
+            payOnlineId,
+          [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
+          [NewCourseStep5FormNames?.is_residential_program]: false,
+        }
+      : newCourseData;
 
   // fetch data from country_config table for time format
   const {
@@ -206,14 +199,14 @@ function NewCourse() {
 
   // check how many records are there in time_zones table
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
-  if (timeZonesData?.data?.length === 1 && !IsEditCourse(pathname)) {
+  if (timeZonesData?.data?.length === 1 && newCourseData === null) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
       timeZonesData?.data[0]?.id;
   }
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
-  // and same we need to set only if it is not edit course
-  if (!IsEditCourse(pathname)) {
+  // and same we need to set only if newCourseData is null
+  if (newCourseData === null) {
     if (data?.data[0]?.hour_format_id) {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
         data?.data[0]?.hour_format_id;
@@ -330,7 +323,7 @@ export const requiredValidationFields = (formData: any) => {
 };
 
 export const NewCourseTabs = () => {
-  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
+  const {t} = useTranslation(['common', 'course.new_course', "new_strings"])
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -444,13 +437,13 @@ export const NewCourseTabs = () => {
    */
   const handleClickPrevious = () => {
     setCurrentStep(currentStep - 1);
-  };
+  }; 
 
   // Array of step titles, icons, and colors
   const stepTitles = [
     {
       value: BASIC_DETAILS_STEP_NUMBER,
-      label: t("basic_details"),
+      label: t('basic_details'),
       // If the current step is BASIC_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === BASIC_DETAILS_STEP_NUMBER ||
@@ -639,8 +632,7 @@ export const NewCourseTabs = () => {
   return (
     <div>
       <p className="font-semibold text-2xl">
-        {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
-        {t("new_strings:course")}
+      {router.query.action==="Copy" ? t("Copy") : t("new_strings:new")} {t("new_strings:course")}
       </p>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
@@ -774,11 +766,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-    "course.new_course",
-    "new_strings",
-    "course.participants",
-    "course.view_course",
+    "common","course.new_course", "new_strings", "course.participants","course.view_course"
   ]);
 
   if (!authenticated) {
