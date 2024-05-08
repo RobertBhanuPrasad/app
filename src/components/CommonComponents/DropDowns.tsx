@@ -13,327 +13,396 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { supabaseClient } from "src/utility";
+import { useTranslation } from "next-i18next";
 
 export const VenueNameComponent = () => {
+  const { t } = useTranslation(["common", "course.new_course"]);
   const {
     field: { value: venueName, onChange: venueOnchange },
-    fieldState: { error: venueError }
+    fieldState: { error: venueError },
   } = useController({
-    name: 'name'
-  })
+    name: "name",
+  });
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Venue Name
+        {t("course.new_course:time_and_venue_tab.venue_name")}
       </div>
       <div className="w-[278px] h-[40px] rounded-[1px]  font-semibold text-sm">
         <Input
           value={venueName}
-          placeholder="Enter Venue Name"
+          placeholder={t(
+            "course.new_course:time_and_venue_tab.venue_name_placeholder"
+          )}
           className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={venueOnchange}
           error={venueError ? true : false}
         />
-        {venueError && <span className="text-[#FF6D6D] text-[12px]">{venueError.message}</span>}
+        {venueError && (
+          <span className="text-[#FF6D6D] text-[12px]">
+            {venueError.message}
+          </span>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const PostalCodeComponent = () => {
-  const supabase = supabaseClient()
+  const supabase = supabaseClient();
+  const { t } = useTranslation(["common", "course.new_course"]);
 
   const {
     field: { value: postalCodeValue, onChange: postalCodeOnchange },
-    fieldState: { error }
+    fieldState: { error },
   } = useController({
-    name: 'postal_code'
-  })
-  const { setValue } = useFormContext()
+    name: "postal_code",
+  });
+  const { setValue } = useFormContext();
 
   const fetchCityStateData = async () => {
     if (postalCodeValue?.length > 4) {
-      const { data: prefillData } = await supabase.from('city').select('*').eq('postal_code', postalCodeValue)
+      const { data: prefillData } = await supabase
+        .from("city")
+        .select("*")
+        .eq("postal_code", postalCodeValue);
       if (prefillData && prefillData?.length > 0) {
-        setValue('city_id', prefillData?.[0]?.id)
-        setValue('state_id', prefillData?.[0]?.state_id)
+        setValue("city_id", prefillData?.[0]?.id);
+        setValue("state_id", prefillData?.[0]?.state_id);
       }
     }
-  }
+  };
   useEffect(() => {
-    fetchCityStateData()
-  }, [postalCodeValue])
+    fetchCityStateData();
+  }, [postalCodeValue]);
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Postal Code</div>
+      <div className="text-xs font-normal text-[#333333]">
+        {t("course.new_course:time_and_venue_tab.postal_code")}
+      </div>
       <div className="w-[278px] h-[40px] rounded-[1px]  font-semibold text-sm">
         <Input
           value={postalCodeValue}
-          placeholder="Enter Postal Code"
+          placeholder={t(
+            "course.new_course:time_and_venue_tab.postal_code_placeholder"
+          )}
           className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={postalCodeOnchange}
           error={error ? true : false}
         />
-        {error && <span className="text-[#FF6D6D] text-[12px]">{error.message}</span>}
+        {error && (
+          <span className="text-[#FF6D6D] text-[12px]">{error.message}</span>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const StreetAddressComponent = () => {
+  const { t } = useTranslation(["common", "course.new_course"]);
   const {
     field: { value: streetAddressValue, onChange: streetAddressOnchange },
-    fieldState: { error }
+    fieldState: { error },
   } = useController({
-    name: 'address'
-  })
+    name: "address",
+  });
   return (
     <div className="flex gap-1 flex-col h-[60px]">
-      <div className="text-xs font-normal text-[#333333]">Street Address</div>
+      <div className="text-xs font-normal text-[#333333]">
+        {t("course.new_course:time_and_venue_tab.street_address")}
+      </div>
       <div className="w-[278px] h-[40px] rounded-[1px]  font-semibold text-sm">
         <Input
           value={streetAddressValue}
-          placeholder="Enter Street Address"
+          placeholder={t(
+            "course.new_course:time_and_venue_tab.street_address_placeholder"
+          )}
           className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={streetAddressOnchange}
           error={error ? true : false}
         />
-        {error && <span className="text-[#FF6D6D] text-[12px]">{error.message}</span>}
+        {error && (
+          <span className="text-[#FF6D6D] text-[12px]">{error.message}</span>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const CityDropDown = ({ name }: { name: string }) => {
-  const [pageSize, setPageSize] = useState(10)
+  const { t } = useTranslation("common");
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     field: { value: cityValue, onChange: cityValueOnChange },
-    fieldState: { error: cityValueError }
-  } = useController({ name })
+    fieldState: { error: cityValueError },
+  } = useController({ name });
 
-  const { watch, setValue } = useFormContext()
-  const formData = watch()
+  const { watch, setValue } = useFormContext();
+  const formData = watch();
 
-  let filter: Array<CrudFilter> = []
+  let filter: Array<CrudFilter> = [];
   if (formData?.state_id) {
     filter.push({
-      field: 'state_id',
-      operator: 'eq',
-      value: formData?.state_id
-    })
+      field: "state_id",
+      operator: "eq",
+      value: formData?.state_id,
+    });
   }
 
   const { options, onSearch } = useSelect({
-    resource: 'city',
-    optionLabel: 'name',
-    optionValue: 'id',
+    resource: "city",
+    optionLabel: "name",
+    optionValue: "id",
     filters: filter,
     defaultValue: cityValue,
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'name',
-        operator: 'contains',
-        value
-      }
+        field: "name",
+        operator: "contains",
+        value,
+      },
     ],
     pagination: {
-      mode: 'server',
-      pageSize: pageSize
-    }
-  })
+      mode: "server",
+      pageSize: pageSize,
+    },
+  });
 
   const handleOnBottomReached = () => {
-    setPageSize((previousLimit: number) => previousLimit + 10)
-  }
+    setPageSize((previousLimit: number) => previousLimit + 10);
+  };
 
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="flex flex-row items-center gap-1">
-        <Text className="text-xs font-normal text-[#333333]">City</Text>
+        <Text className="text-xs font-normal text-[#333333]">{t("city")}</Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
 
       <Select value={cityValue} onValueChange={cityValueOnChange}>
-        <SelectTrigger error={cityValueError ? true : false} className="font-semibold text-sm ">
-          <SelectValue placeholder="Select City"/>
+        <SelectTrigger
+          error={cityValueError ? true : false}
+          className="font-semibold text-sm "
+        >
+          <SelectValue placeholder={t("city_placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <Input
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              const value = event.target.value
-              onSearch(value)
+              const value = event.target.value;
+              onSearch(value);
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
             {options.map((option: BaseOption) => (
-              <SelectItem key={option.value} value={option.value} className="h-[44px]">
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
                 {option.label}
               </SelectItem>
             ))}
           </SelectItems>
         </SelectContent>
       </Select>
-      {cityValueError && <span className="text-[#FF6D6D] text-[12px]">{cityValueError.message}</span>}
+      {cityValueError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {cityValueError.message}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const [pageSize, setPageSize] = useState(10)
+  const { t } = useTranslation(["common", "course.new_course"]);
+  const [pageSize, setPageSize] = useState(10);
 
-  const [selectOptions, setSelectOptions] = useState<any>([])
+  const [selectOptions, setSelectOptions] = useState<any>([]);
 
   const {
     field: { value: stateValue, onChange: stateValueOnchange },
-    fieldState: { error: stateValueError }
+    fieldState: { error: stateValueError },
   } = useController({
-    name
-  })
+    name,
+  });
 
   const { options, onSearch: stateOnsearch } = useSelect({
-    resource: 'state',
-    meta: { select: '*' },
-    optionLabel: 'name',
-    optionValue: 'id',
+    resource: "state",
+    meta: { select: "*" },
+    optionLabel: "name",
+    optionValue: "id",
     defaultValue: stateValue,
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'name',
-        operator: 'contains',
-        value
-      }
+        field: "name",
+        operator: "contains",
+        value,
+      },
     ],
     pagination: {
-      mode: 'server',
-      pageSize: pageSize
-    }
-  })
+      mode: "server",
+      pageSize: pageSize,
+    },
+  });
 
   const handleOnBottomReached = () => {
-    setPageSize(pageSize => pageSize + 10)
-  }
+    setPageSize((pageSize) => pageSize + 10);
+  };
 
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
       <div className="flex flex-row items-center gap-1">
-        <Text className="text-xs font-normal text-[#333333]">Province</Text>
+        <Text className="text-xs font-normal text-[#333333]">
+          {t("course.new_course:time_and_venue_tab.state")}
+        </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
 
       <Select value={stateValue} onValueChange={stateValueOnchange}>
-        <SelectTrigger className="w-full font-semibold text-sm" error={stateValueError ? true : false}>
-          <SelectValue placeholder="Select Province" />
+        <SelectTrigger
+          className="w-full font-semibold text-sm"
+          error={stateValueError ? true : false}
+        >
+          <SelectValue placeholder={t("select_state")} />
         </SelectTrigger>
         <SelectContent>
           <Input
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              const value = event.target.value
-              stateOnsearch(value)
+              const value = event.target.value;
+              stateOnsearch(value);
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
             {options?.map((option: BaseOption, index: number) => (
               <>
-                <SelectItem key={option.value} value={option.value} className="h-[44px]">
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
                   {option.label}
                 </SelectItem>
-                {index < selectOptions.length - 1 && <hr className="border-[#D6D7D8]" />}
+                {index < selectOptions.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
               </>
             ))}
           </SelectItems>
         </SelectContent>
       </Select>
-      {stateValueError && <span className="text-[#FF6D6D] text-[12px]">{stateValueError.message}</span>}
+      {stateValueError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {stateValueError.message}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 export const CenterDropDown = ({ name }: { name: string }) => {
-  const [pageSize, setPageSize] = useState(10)
+  const { t } = useTranslation(["common", "course.new_course"]);
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     field: { value: centerValue, onChange: centerValueOnChange },
-    fieldState: { error: centerValueError }
-  } = useController({ name })
+    fieldState: { error: centerValueError },
+  } = useController({ name });
 
-  const { watch, setValue } = useFormContext()
-  const formData = watch()
+  const { watch, setValue } = useFormContext();
+  const formData = watch();
 
-  let filter: Array<CrudFilter> = []
+  let filter: Array<CrudFilter> = [];
 
   if (formData?.city_id) {
     filter.push({
-      field: 'city_id',
-      operator: 'eq',
-      value: formData.city_id
-    })
+      field: "city_id",
+      operator: "eq",
+      value: formData.city_id,
+    });
   }
 
   if (formData?.state_id) {
     filter.push({
-      field: 'state_id',
-      operator: 'eq',
-      value: formData.state_id
-    })
+      field: "state_id",
+      operator: "eq",
+      value: formData.state_id,
+    });
   }
 
   const { options, onSearch: centerOnSearch } = useSelect({
-    resource: 'center',
-    optionLabel: 'name',
-    optionValue: 'id',
+    resource: "center",
+    optionLabel: "name",
+    optionValue: "id",
     filters: filter,
     defaultValue: centerValue,
-    onSearch: value => [
+    onSearch: (value) => [
       {
-        field: 'name',
-        operator: 'contains',
-        value
-      }
+        field: "name",
+        operator: "contains",
+        value,
+      },
     ],
     pagination: {
-      mode: 'server',
-      pageSize: pageSize
-    }
-  })
+      mode: "server",
+      pageSize: pageSize,
+    },
+  });
 
   const handleOnBottomReached = () => {
-    setPageSize(prevPageSize => prevPageSize + 10)
-  }
+    setPageSize((prevPageSize) => prevPageSize + 10);
+  };
 
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="flex flex-row gap-1 items-center">
         <Text className="text-xs font-normal text-[#333333]">
           {" "}
-          Local Center
+          {t("local_center")}
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
       <Select value={centerValue} onValueChange={centerValueOnChange}>
-        <SelectTrigger className="w-full font-semibold text-sm" error={centerValueError ? true : false}>
-          <SelectValue placeholder="Select Local center" />
+        <SelectTrigger
+          className="w-full font-semibold text-sm"
+          error={centerValueError ? true : false}
+        >
+          <SelectValue
+            placeholder={t(
+              "course.new_course:time_and_venue_tab.local_center_placeholder"
+            )}
+          />
         </SelectTrigger>
         <SelectContent>
           <Input
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              const value = event.target.value
-              centerOnSearch(value)
+              const value = event.target.value;
+              centerOnSearch(value);
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
             {options.map((option: BaseOption) => (
-              <SelectItem key={option.value} value={option.value} className="h-[44px]">
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-[44px]"
+              >
                 {option.label}
               </SelectItem>
             ))}
           </SelectItems>
         </SelectContent>
       </Select>
-      {centerValueError && <span className="text-[#FF6D6D] text-[12px]">{centerValueError.message}</span>}
+      {centerValueError && (
+        <span className="text-[#FF6D6D] text-[12px]">
+          {centerValueError.message}
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
 // export const MapComponent = () => {
 //   const {

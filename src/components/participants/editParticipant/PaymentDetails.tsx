@@ -1,5 +1,6 @@
 import Star from "@public/assets/star";
 import { useList,useSelect } from "@refinedev/core";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useController } from "react-hook-form";
 import { translatedText } from "src/common/translations";
@@ -15,6 +16,7 @@ import {
 } from "src/ui/select";
 
 export default function PaymentDetails() {
+  const {t} = useTranslation(['common', 'course.participants'])
   // Use useController to control the participant_code,participant_attendance_status field
   const {
     field: {
@@ -90,18 +92,18 @@ export default function PaymentDetails() {
   return (
     <div className="flex-row pb-[5px]" id="Payment">
       <Text className="font-semibold text-[18px] py-[25px]">
-        Payment Details
+        {t('course.participants:edit_participant.participants_information_tab.payment_details')}
       </Text>
       <div className="flex ">
         <div className="w-[303px]">
-          <Text className="text-[#999999]  text-[14px] ">Course Fee</Text>
+          <Text className="text-[#999999]  text-[14px] ">{t('course.participants:edit_participant.participants_information_tab.course_fee')}</Text>
           <Text className="text-[16px] font-semibold">
           {paymentDetailData?.organization_fee ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.organization_fee?.toFixed(2)}` : '-'}
           </Text>
         </div>
         <div className="w-[303px]">
           <Text className="text-[#999999]  text-[14px]  ">
-            Accommodation Fee
+          {t('course.participants:edit_participant.participants_information_tab.accommodation_fee')}
           </Text>
           <Text className="text-[16px] font-semibold">
           {paymentDetailData?.accommodation_fee ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.accommodation_fee?.toFixed(2)}` : '-'}
@@ -109,7 +111,7 @@ export default function PaymentDetails() {
         </div>
         <div className="w-[303px]">
           <Text className="text-[#999999]  text-[14px] ">
-            Total Fee {`(Includes VAT)`}
+            {t('course.participants:edit_participant.participants_information_tab.total_fee')}
           </Text>
           <Text className="text-[16px] font-semibold">
           {paymentDetailData?.total_amount ? `${paymentDetailData?.currency_code ? paymentDetailData?.currency_code : ''} ${paymentDetailData?.total_amount?.toFixed(2)}` : '-'}
@@ -123,7 +125,7 @@ export default function PaymentDetails() {
           If the participant is registering without a discount code, 
           we won't show anything in the special code which is empty and disabled */}
           <Text className="text-[#999999]  text-[14px] ">
-            Enter Special Code
+            {t('course.participants:edit_participant.participants_information_tab.enter_special_code')}
           </Text>
 
           <div className="flex gap-4">
@@ -140,7 +142,7 @@ export default function PaymentDetails() {
           <div className="flex gap-2">
             <div>
               <Text className="text-[#999999] text-[14px]  ">
-                Attendance Status
+              {t('course.participants:edit_participant.participants_information_tab.attendance_status')}
               </Text>
             </div>
             <div>

@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import isEqual from "lodash/isEqual";
 import _, { uniqBy } from "lodash";
 import DropDown from "@public/assets/DropDown";
+import { useTranslation } from 'next-i18next';
 
 // Define the shape of each data item
 export type DataItem = Record<"value" | "label", string>;
@@ -119,6 +120,7 @@ export function MultiSelect({
   const selectables = filteredData.filter(
     (obj) => !selected.includes(obj.value)
   );
+  const {t} = useTranslation('common')
 
   return (
     <div className={`grid w-full items-center ${headerStyles}`}>
@@ -226,7 +228,7 @@ export function MultiSelect({
                       setOpen(true);
                     }}
                   >
-                    + Add
+                    + {t("add")}
                   </button>
                 </div>
               </div>

@@ -1,4 +1,5 @@
 import { useList } from "@refinedev/core";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
@@ -6,6 +7,7 @@ import { formatDateString } from "src/utility/DateFunctions";
 
 export default function CourseFee() {
     const { query } = useRouter();
+    const {t} = useTranslation('course.participants')
     const Id: number | undefined = query?.participantId
         ? parseInt(query?.participantId as string)
         : undefined;
@@ -40,12 +42,12 @@ export default function CourseFee() {
     return (
         <div className="" id="Course">
             <Text className="font-semibold text-[18px] pt-[25px]">
-                Course Fees
+                {t('edit_participant.participants_information_tab.course_fees')}
             </Text>
             <div className="flex py-[20px]">
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px]">
-                        Registartion Date
+                        {t('edit_participant.participants_information_tab.registration_date')}
                     </Text>
                     <Text className="font-semibold text-[16px]">
                         {courseFeedata?.participant_id?.created_at
@@ -59,7 +61,7 @@ export default function CourseFee() {
                 </div>
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px] ">
-                        Fee Level
+                        {t('view_participant.fee_level')}
                     </Text>
                     <Text className="font-semibold text-[16px]">
                         {courseFeedata?.transaction_fee_level_id?.name
@@ -69,7 +71,7 @@ export default function CourseFee() {
                 </div>
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px] ">
-                        Course Fee
+                        {t('edit_participant.participants_information_tab.course_fee')}
                     </Text>
                     <Text className="font-semibold text-[16px]">
                         {courseFeedata?.organization_fee ? `${courseFeedata?.currency_code ? courseFeedata?.currency_code : ''} ${courseFeedata?.organization_fee?.toFixed(2)}` : '-'}
