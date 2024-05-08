@@ -325,7 +325,7 @@ export function BaseTable<TData, TValue>({
   const {t} = useTranslation(['common', "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row justify-between items-center h-[50px]">
         {columnSelector && (
           <div>
             <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -578,7 +578,7 @@ export function BaseTable<TData, TValue>({
           </div>
         </div>
         {pagination && (
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-[24px]">
             <DataPagination
               setCurrent={setCurrent}
               current={current}
