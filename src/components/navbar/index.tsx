@@ -160,8 +160,8 @@ function Navbar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback className='uppercase'>{loginUserData?.userData?.contact_id?.first_name?.[0].concat(loginUserData?.userData?.contact_id?.last_name?.[0])}</AvatarFallback>
+              <AvatarImage src="https://github.png" />
+              <AvatarFallback>{loginUserData?.userData?.contact_id?.first_name[0].concat(loginUserData?.userData?.contact_id?.last_name[0]).toUpperCase()}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[312px]">
