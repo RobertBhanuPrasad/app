@@ -19,14 +19,15 @@ import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import CalenderIcon from "@public/assets/CalenderIcon";
 import { format } from "date-fns";
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 import { translatedText } from "src/common/translations";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { Text } from "src/ui/TextTags";
 
 // Define CourseTable component
 
 export default function CourseTable() {
-  const {t} = useTranslation('common')
+  const { t } = useTranslation("common");
   const [courseFeeSettings, setCourseFeeSettings] = useState();
 
   const { watch } = useFormContext();
@@ -34,7 +35,7 @@ export default function CourseTable() {
   const formData = watch();
 
   //fetching the user's country code
-  const countryCode =useGetCountryCode()
+  const countryCode = useGetCountryCode();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -85,10 +86,10 @@ export default function CourseTable() {
         start_date: courseStartDate,
         program_type_id: formData?.program_type_id,
       },
-      headers:{
+      headers: {
         //Sending the country code for schema switching
-        "country-code":countryCode
-      }
+        "country-code": countryCode,
+      },
     });
     if (error)
       console.log("error while fetching course fee level settings", error);
@@ -118,7 +119,7 @@ export default function CourseTable() {
   if (courseFeeSettings == undefined || isLoading) {
     return <LoadingIcon />;
   }
-  console.log(courseFeeSettings,'courseFeeSettings')
+  console.log(courseFeeSettings, "courseFeeSettings");
   return (
     <div className="flex flex-col gap-[18px]">
       <div className="font-semibold text-base text-[#333333]">{t("fees")}</div>
@@ -130,12 +131,14 @@ export default function CourseTable() {
   );
 }
 function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   //If Fee is not found based on users selection then need to show this
   if (courseFeeSettings?.length == 0) {
     return (
       <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
-        {t("there_is_no_price_set_for_current_settings_select_course_type_and_city_center")}
+        {t(
+          "there_is_no_price_set_for_current_settings_select_course_type_and_city_center"
+        )}
       </div>
     );
   }
@@ -196,7 +199,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         tax: val?.total * taxRate,
         total: JSON.stringify(val?.total),
       };
-      
+
       //Need to insert early bird fee if early bird fee is enabled in settings
       if (courseFeeSettings?.[0]?.is_early_bird_fee_enabled) {
         modifiedFeeLevels = {
@@ -213,7 +216,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { fields: feeLevels, append } = useFieldArray({
     name: "program_fee_level_settings",
   });
-  console.log(courseFeeData,'courseFeeData')
+  console.log(courseFeeData, "courseFeeData");
   useEffect(() => {
     //Initializing setting data into form if fee is editable.Appending only if we have no data present in field
     if (isFeeEditable && feeLevels?.length == 0) {
@@ -248,7 +251,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.normal_fee")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.normal_fee")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
@@ -257,7 +262,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     {
       cell: ({ row }) => {
@@ -265,7 +272,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.fee")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.fee")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
   ];
 
@@ -293,7 +302,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.normal_fee")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.normal_fee")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
@@ -308,7 +319,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     {
       cell: ({ row }) => {
@@ -338,7 +351,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.fee")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.fee")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
   ];
 
@@ -350,7 +365,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.early_bird")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.early_bird")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     organizationData?.tax_enabled && {
       cell: ({ row }) => {
@@ -358,7 +375,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat_reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat_reg")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     {
       cell: ({ row }) => {
@@ -366,7 +385,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.total early")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.total early")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
   ];
 
@@ -387,7 +408,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.early_bird")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.early_bird")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
@@ -403,7 +426,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.vat reg")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     {
       cell: ({ row }) => {
@@ -433,7 +458,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.total early")}(${countryConfigData?.data?.[0]?.default_currency_code})`,
+      header: `${t("course.new_course:fees_tab.total early")}(${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
   ];
 
@@ -540,8 +567,11 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
             <div className="w-80 mt-9">
               <div className="flex justify-between">
-                <div className="font-normal text-base text-sm">
-                  {t("new_strings:Early_bird_cutoff_period")}
+                <div className="flex flex-row gap-1 items-center">
+                  <Text className="text-xs font-normal text-[#333333]">
+                    {t("new_strings:Early_bird_cutoff_period")}
+                  </Text>{" "}
+                  <Text className="text-[#7677F4]">*</Text>
                 </div>
                 <div className="font-normal italic text-base text-sm text-[#7677F4]">
                   {earlyBirdCutOff} {t("course.new_course:fees_tab.days_left")}

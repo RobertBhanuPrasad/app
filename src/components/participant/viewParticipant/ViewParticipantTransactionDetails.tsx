@@ -333,14 +333,11 @@ const columns = () => {
                 </Dialog>
               </div>
             </div>
-            <DropdownMenu open={dropdownOpen}>
+            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild={dropdownOpen}>
                 <Button
                   variant="ghost"
                   className="h-8 w-8 p-0"
-                  onClick={() => {
-                    setDropdownOpen(!dropdownOpen)
-                  }}
                 >
                   <span className="sr-only">Open menu</span>
                   <MoreVertical className="h-5 w-5" />
