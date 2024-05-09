@@ -184,16 +184,21 @@ export const ContactMobile = ({ index }: any) => {
   return (
     <div>
       <Input
-        placeholder={t("course.new_course:contact_info_tab.select_contact_number")}
+        placeholder={t(
+          "course.new_course:contact_info_tab.select_contact_number"
+        )}
+        className="w-58"
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
         }}
         error={error ? true : false}
       />
-      {error && (
-        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
-      )}
+      <Text>
+        {error && (
+          <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+        )}
+      </Text>
     </div>
   );
 };
