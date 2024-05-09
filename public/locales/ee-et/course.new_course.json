@@ -1,0 +1,99 @@
+{
+  "basic_details_tab": {
+    "teaching_course": "Ma õpetan seda kursust",
+    "co_teaching": "Ma olen selle kursuse kaasõpetaja",
+    "organizing_this_course": "Ma korraldan seda kursust",
+    "organization_placeholder": "Valige organisatsioon",
+    "program_organizer_placeholder": "Sisestage programmi korraldaja nimi"
+  },
+  "course_details_tab": {
+    "teacher": "Õpetaja",
+    "teacher_placeholder": "Sisestage õpetaja nimi",
+    "assistant_teacher": "Abiõpetaja",
+    "languages_taught_placeholder": "Valige keel",
+    "display_language_option": "Kuvage osalejatele keele tõlkimise võimalus",
+    "available_languages_placeholder": "Valige tõlkekeeled",
+    "registration_mandatory": "Registreerimine on selle kursuse jaoks kohustuslik",
+    "max_capacity": "Maksimaalne mahutavus",
+    "max_capacity_placeholder": "Sisestage osalejate arv",
+    "registrations_restriction": "I geopiirang, mis kehtib registreerimisel",
+    "country_registrations_allowed_placeholder": "Sisestage riigid"
+  },
+  "time_and_venue_tab": {
+    "existing_venue": "Olemasolev koht",
+    "no_existing_venue_found": "Olemasolevat ei ole leitud",
+    "add_new_venue": "Lisa uus toimumiskoht",
+    "event_date_and_time": "Sündmuse kuupäev ja kellaaeg",
+    "session": "Sessioon",
+    "from": "Alates",
+    "to": "Kuni",
+    "new_venue": "Uus toimumiskoht",
+    "venue_name": "Koha nimi",
+    "venue_name_placeholder": "Sisestage toimumiskoha nimi",
+    "street_address": "Tänava aadress",
+    "street_address_placeholder": "Valige tänava aadress",
+    "postal_code": "Postiindeks",
+    "postal_code_placeholder": "Sisestage postiindeks",
+    "province": "Provints",
+    "province_placeholder": "Valige provints",
+    "local_center_placeholder": "Valige kohalik keskus",
+    "view_all": "Vaata kõiki",
+    "existing_venues": "Olemasolevad kohad",
+    "search_by_venue_name": "Otsi koha nime järgi. Linn või osariik",
+    "course_date_and_time": "Kursuse kuupäev ja kellaaeg",
+    "course": "Kursus",
+    "online_meeting_url": "Kohtumise veebipõhine URL",
+    "online_meeting_url_placeholder": "Sisestage veebipõhise kohtumise URL",
+    "online_meeting_note": "Märkus: Osalejad liituvad veebikursusega teie virtuaalse toimumiskoha kaudu.",
+    "specific_location": "Palun seostage oma kursus aruandluse jaoks konkreetse asukohaga."
+  },
+  "fees_tab": {
+    "enable_fees": "Võimaldage tasud",
+    "normal_fee": "Tavaline tasu",
+    "vat reg": "VAT Reg.",
+    "fee": "Kogutasu",
+    "enable_early": "Kas lubada varajase broneeringu tasu?",
+    "disable": "Lülita välja Pay Later Label?",
+    "early_bird": "Varajase broneeringu tasud",
+    "total early": "Varajase broneeringu tasu kokku",
+    "early_bird_cutoff": "Varajase lindprioriteedi tsitaadiperiood",
+    "days_left": "Allesjäänud päevad"
+  },
+  "accommodation_tab": {
+    "accommodation_type": "Majutuse tüüp",
+    "fee_per_person": "Hind inimese kohta Inc. KÄIBEMAKSU",
+    "number_of_spots": "Vabade kohtade arv",
+    "note": "Märkus : Kui vabade kohtade arv on tühi, siis on see piiramatu.",
+    "accommodation_fee": "Majutustasu makseviis",
+    "pay_online": "Online-maksmine",
+    "pay_offline": "Makske võrguühenduseta"
+  },
+  "contact_info_tab": {
+    "contact_number": "Kontaktnumber",
+    "select_contact": "Valige kontaktisiku nimi",
+    "select_contact_email": "Valige kontakt e-posti aadress",
+    "select_contact_number": "Valige kontaktnumber",
+    "send_bcc": "Saatke BCC registreerimise kinnituse e-kiri aadressile",
+    "select_course": "Vali kursuse e-posti aadress",
+    "note_enter_comma": "Märkus: Sisestage komadega eraldatud e-posti aadresside nimekiri.",
+    "review_details": "Läbivaatamise üksikasjad"
+  },
+  "review_post_details": {
+    "creator": "Looja",
+    "course_details": "Kursuse üksikasjad",
+    "time_formate": "Aeg Formaat",
+    "time_zone": "Ajavöönd",
+    "fee_information": "Tasu teave",
+    "there_is_no_price": "Praeguste seadete jaoks ei ole hinda.Valige kursuse tüüp ja linn/keskus."
+  },
+  "congratulations_page": {
+    "congratulations": "Palju õnne!",
+    "you_have_successfully": "Te olete edukalt kursuse välja kuulutanud",
+    "go_to_course_listing": "Mine kursuste loetellu",
+    "venue": "Toimumiskoht",
+    "course_date": "Kursuse kuupäev",
+    "share_in_social": "Jaga sotsiaalsetel platvormidel",
+    "your_course_has_been_submitted": "Teie kursus on esitatud kinnitamiseks",
+    "review_pending": "Läbivaatamine pooleli"
+  }
+}

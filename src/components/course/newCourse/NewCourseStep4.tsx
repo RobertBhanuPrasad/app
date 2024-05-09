@@ -375,7 +375,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat_reg")}(${
+      header: `${t("new_strings:vat_reg")}(${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
