@@ -77,8 +77,12 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
-import { translatedText } from 'src/common/translations'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "src/ui/hover-card";
+import { translatedText } from "src/common/translations";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "src/ui/hover-card";
 import Important from "@public/assets/Important";
 
 function NewCourseStep3() {
@@ -123,20 +127,24 @@ const OnlineProgram = () => {
   return (
     <div className="h-[218px] flex flex-col gap-8">
       <div>
-        <div className="flex flex-row gap-1 items-center">Online zoom URL <div className="text-[#7677F4]"> *</div>
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px]">
-            Provide complete URL, starting with http:// or https://
-Link to online meeting URL will be included in registration confirmation email sent to participants.
-If meeting URL is edited, then participants will be automatically redirected to the updated URL.            </div>
-          </HoverCardContent>
-        </HoverCard>
+        <div className="flex flex-row gap-1 items-center">
+          Online zoom URL <div className="text-[#7677F4]"> *</div>
+          <HoverCard>
+            <HoverCardTrigger>
+              <Important />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="w-[231px] text-wrap !rounded-[15px]">
+                Provide complete URL, starting with http:// or https:// Link to
+                online meeting URL will be included in registration confirmation
+                email sent to participants. If meeting URL is edited, then
+                participants will be automatically redirected to the updated
+                URL.{" "}
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
-       
+
         <div className="w-80">
           <Input
             placeholder="URL"
@@ -837,16 +845,14 @@ const NewVenueDetails = () => {
 
 const ExistingVenueDetails = () => {
   const { getValues } = useFormContext();
-  const {
-    existingVenue
-  } = getValues();
+  const { existingVenue } = getValues();
 
   //Requirement: Need to show selected venue data. Selected venue is stored in existingVenue form variable.will store only city_is and state_id in existingVenue.
-  const {data: cityData,isLoading}=useOne({
-    resource:"city",
-    meta:{select:"name,state(name)"},
-    id:existingVenue?.city_id
-  })
+  const { data: cityData, isLoading } = useOne({
+    resource: "city",
+    meta: { select: "name,state(name)" },
+    id: existingVenue?.city_id,
+  });
 
   if (isLoading) {
     return <LoadingIcon />;
@@ -1065,8 +1071,8 @@ const ExistingVenueList = () => {
   const formData = watch();
 
   const [searchValue, searchOnChange] = useState<string>("");
-  
-  const [isLoading, setIsLoading] = useState(false)
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const debouncedSearchValue = useDebounce(searchValue, 500);
 
@@ -1099,7 +1105,7 @@ const ExistingVenueList = () => {
 
   //Fetching venue data after search
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     setVenueData([]);
     setOtherVenueSkip(0);
 
@@ -1115,6 +1121,7 @@ const ExistingVenueList = () => {
       modifiedVenueData = _.uniqBy(modifiedVenueData, "id");
     }
     setVenueData(modifiedVenueData);
+    setIsLoading(false);
   };
   /**
    * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
@@ -1151,7 +1158,6 @@ const ExistingVenueList = () => {
       )
       .eq("is_deleted", false) // this line to filter out records where is_deleted is false
       .range(otherVenueSkip, otherVenueSkip + 5);
-      setIsLoading(false)
     return data;
   };
 
@@ -1220,9 +1226,9 @@ const ExistingVenueList = () => {
             {/* <div className="flex flex-row flex-wrap gap-6 "> */}
 
             {/* loader for existing venue list  */}
-            {filteredVenueData?.length === 0 ?  (
+            {filteredVenueData?.length === 0 ? (
               <div className="flex w-[100%] flex-row items-center justify-center">
-               {isLoading ? <LoadingIcon></LoadingIcon> : <p>No Venues</p>} 
+                {isLoading ? <LoadingIcon></LoadingIcon> : <p>No Venues</p>}
               </div>
             ) : (
               filteredVenueData?.map((item: any, index: number) => (
