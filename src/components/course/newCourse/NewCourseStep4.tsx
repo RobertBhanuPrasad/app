@@ -196,7 +196,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
         subTotal: val?.total - val?.total * taxRate,
-        tax: val?.total * taxRate,
+        tax: (val?.total * taxRate).toFixed(2),
         total: JSON.stringify(val?.total),
       };
 
@@ -206,7 +206,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           ...modifiedFeeLevels,
           earlyBirdSubTotal:
             val?.early_bird_total - val?.early_bird_total * taxRate,
-          earlyBirdTax: val?.early_bird_total * taxRate,
+          earlyBirdTax: (val?.early_bird_total * taxRate).toFixed(2),
           earlyBirdTotal: JSON.stringify(val?.early_bird_total || ""),
         };
       }
