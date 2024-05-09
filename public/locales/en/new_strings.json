@@ -134,5 +134,6 @@
   "a_session_date_and_time_must_be_greater_than_today_date_and_time": "A session date and time must be greater than today date and time",
   "session_start_time_must_be_greater_than_end_time": "Session start time must be greater than end time",
   "a_session_cannot_start_before_ending_another_session": "A session cannot start before ending another session",
-  "program_organizer": "Program organizer"
+  "program_organizer": "Program organizer",
+  "vat_reg": "VAT REG."
 }
