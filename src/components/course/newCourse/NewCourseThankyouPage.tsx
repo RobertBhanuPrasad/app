@@ -151,7 +151,7 @@ useEffect(() => {
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.venue")}</p>
               <p className="font-bold text-accent-primary">
                 {data?.data?.online_url ? (
-                  <a href={data?.data?.online_url} className="text-blue-600 hover:text-blue-800 ">{t("new_strings:online")}</a>
+                  <a href={data?.data?.online_url} className="text-blue-600 hover:text-blue-800" target='_blank'>{t("new_strings:online")}</a>
                   ) : ( "-")}
              </p>
               </div>) :
