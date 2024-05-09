@@ -69,12 +69,13 @@ export const validationSchema = () => {
     is_existing_venue: z.string({
       required_error: "Venue is a required fields",
     }),
-    online_url: z.string({
-    required_error: "Online meeting URL is a required field"
-    })
-    .nonempty({ message: "Online meeting URL is a required field" })
-    .url({ message: "Online meeting URL is not valid" }),
-  
+    online_url: z
+      .string({
+        required_error: "Online meeting URL is a required field",
+      })
+      .nonempty({ message: "Online meeting URL is a required field" })
+      .url({ message: "Online meeting URL is not valid" }),
+
     hour_format_id: z.number({
       required_error: "Time format is a required field",
     }),
@@ -121,14 +122,19 @@ export const validationSchema = () => {
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
-      ).refine((value) => {
-        //Requirement: Duplicate emails are not allowed
-        const emails = value.split(",").map((email) => email.trim());
-        const uniqueEmails = new Set(emails);
-        return emails.length === uniqueEmails.size;
-      }, {
-        message: "Duplicate emails are not allowed",
-      }).optional()
+      )
+      .refine(
+        (value) => {
+          //Requirement: Duplicate emails are not allowed
+          const emails = value.split(",").map((email) => email.trim());
+          const uniqueEmails = new Set(emails);
+          return emails.length === uniqueEmails.size;
+        },
+        {
+          message: "Duplicate emails are not allowed",
+        }
+      )
+      .optional(),
   });
 };
 
@@ -149,13 +155,18 @@ const contactValidationSchema = z.array(
       .optional(),
     contact_email: z
       .string({ required_error: "Contact email is a required field." })
+      .nonempty({ message: "Contact email is a required field." })
       .email({ message: "Please enter correct Email" }),
     contact_number: z
-      .union([z.string().regex(/^(\d+)?$/), z.number()])
+      .union([
+        z
+          .string()
+          .regex(/^\+?[\d\s]*$/, "Contact number must only contain numbers."),
+        z.number(),
+      ])
       .nullable()
       .optional(),
   })
-  
 );
 
 const accommodationValidationSchema = z.array(
