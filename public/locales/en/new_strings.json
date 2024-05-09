@@ -106,5 +106,6 @@
  "online_course_hovered_text":"Provide complete URL, starting with http:// or https:// Link to online meeting URL will be included in registration confirmation email sent to participants. If meeting URL is edited, then participants will be automatically redirected to the updated URL.",
  "your_changes_have_been_saved_successfully" : "Your changes have been saved successfully",
  "successfully_updated":"Successfully Updated",
- "go_to_course_details":"Go to Course Details"
+ "go_to_course_details":"Go to Course Details",
+ "vat_reg":"VAT REG."
 }
