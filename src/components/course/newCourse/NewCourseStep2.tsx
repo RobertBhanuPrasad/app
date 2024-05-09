@@ -309,8 +309,8 @@ export const CourseTypeDropDown = () => {
   const { t } = useTranslation(["common"]);
   return (
     <div className="flex gap-1 flex-col">
-      <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("course_type")} <div className="text-[#7677F4]"> *</div>
+      <div className="text-xs font-normal text-[#333333]">
+        {t("course_type")} <span className="text-[#7677F4]">*</span>
       </div>
       <Select
         value={value}
@@ -436,8 +436,8 @@ const CourseNameDropDown = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("new_strings:course_name")} <div className="text-[#7677F4]">*</div>
+      <div className="text-xs font-normal text-[#333333]">
+        {t("new_strings:course_name")} <span className="text-[#7677F4]">*</span>
       </div>
 
       <Select
@@ -586,9 +586,9 @@ const TeachersDropDown = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333] flex flex-row">
+      <div className="text-xs font-normal text-[#333333]">
         {t("teacher")}
-        <div className="text-[#7677F4]">*</div>
+        <span className="text-[#7677F4]"> *</span>
       </div>
       {/* 
         // Here i have to show teachers based on program created user 
