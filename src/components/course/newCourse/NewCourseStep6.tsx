@@ -7,6 +7,7 @@ import { NewCourseStep6FormNames } from "src/constants/CourseConstants";
 import { Input } from "src/ui/input";
 import { Textarea } from "src/ui/textarea";
 import { useTranslation } from 'next-i18next';
+import { Text } from "src/ui/TextTags";
 
 function NewCourseStep6() {
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
@@ -51,7 +52,6 @@ function NewCourseStep6() {
           <div className="w-80 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
               {index === 0 ? t("contact_name") : `${t("contact_name")} ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactName index={index} />
           </div>
@@ -60,7 +60,7 @@ function NewCourseStep6() {
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
               {index === 0 ? t("contact_email") : `${t("contact_email")} ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
+              <Text className="text-[#7677F4]"> *</Text>
             </div>
             <ContactEmail index={index} />
           </div>
@@ -69,7 +69,6 @@ function NewCourseStep6() {
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
               {index === 0 ? t("course.new_course:contact_info_tab.contact_number") : `${t("course.new_course:contact_info_tab.contact_number")} ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
             </div>
             <ContactMobile index={index} />
           </div>
@@ -104,7 +103,6 @@ function NewCourseStep6() {
       <div className="w-80 h-24 flex gap-1 flex-col ">
         <div className="flex flex-row text-xs font-normal text-[#333333]">
         {t("course.new_course:contact_info_tab.send_bcc")}{" "}
-          <div className="text-[#7677F4]"> *</div>
         </div>
         <Textarea
           value={courseEmails}
@@ -186,16 +184,21 @@ export const ContactMobile = ({ index }: any) => {
   return (
     <div>
       <Input
-        placeholder={t("course.new_course:contact_info_tab.select_contact_number")}
+        placeholder={t(
+          "course.new_course:contact_info_tab.select_contact_number"
+        )}
+        className="w-58"
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
         }}
         error={error ? true : false}
       />
-      {error && (
-        <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
-      )}
+      <Text>
+        {error && (
+          <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
+        )}
+      </Text>
     </div>
   );
 };
