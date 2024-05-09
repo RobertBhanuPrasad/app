@@ -1120,6 +1120,8 @@ const ExistingVenueList = () => {
 
   const [searchValue, searchOnChange] = useState<string>("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const debouncedSearchValue = useDebounce(searchValue, 500);
 
   const [otherVenueSkip, setOtherVenueSkip] = useState<number>(0);
@@ -1151,6 +1153,7 @@ const ExistingVenueList = () => {
 
   //Fetching venue data after search
   useEffect(() => {
+    setIsLoading(true);
     setVenueData([]);
     setOtherVenueSkip(0);
 
@@ -1166,6 +1169,7 @@ const ExistingVenueList = () => {
       modifiedVenueData = _.uniqBy(modifiedVenueData, "id");
     }
     setVenueData(modifiedVenueData);
+    setIsLoading(false);
   };
   /**
    * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
@@ -1202,7 +1206,6 @@ const ExistingVenueList = () => {
       )
       .eq("is_deleted", false) // this line to filter out records where is_deleted is false
       .range(otherVenueSkip, otherVenueSkip + 5);
-
     return data;
   };
 
@@ -1273,7 +1276,7 @@ const ExistingVenueList = () => {
             {/* loader for existing venue list  */}
             {filteredVenueData?.length === 0 ? (
               <div className="flex w-[100%] flex-row items-center justify-center">
-                <LoadingIcon></LoadingIcon>
+                {isLoading ? <LoadingIcon></LoadingIcon> : <p>No Venues</p>}
               </div>
             ) : (
               filteredVenueData?.map((item: any, index: number) => (
@@ -1566,7 +1569,7 @@ export const AddOrEditVenue = ({
       {/* TODO : Integrated after solving the error }
       {/* <MapComponent /> */}
       {/* <div className="w-[586px] h-[140px] border my-5"></div> */}
-      <div className="flex flex-row gap-[30px]">
+      <div className="flex flex-row gap-[30px] mt-10">
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />

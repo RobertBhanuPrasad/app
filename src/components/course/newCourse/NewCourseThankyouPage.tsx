@@ -178,17 +178,18 @@ useEffect(() => {
           {/* Thank you page footer  */}
           {data?.data?.status_id?.id === courseActiveStatusId && (
             <section>
-              <div className="">
-                <p className="mx-auto text-accent-secondary max-w-fit">{t("course.new_course:congratulations_page.share_in_social")}</p>
+              {/* TODO  : for now may-13 release it has to be hidden */}
+              {/* <div className="">
+                {/* <p className="mx-auto text-accent-secondary max-w-fit">{t("course.new_course:congratulations_page.share_in_social")}</p> */}
                 {/* Social media icons */}
-                <div className="flex items-center justify-center gap-4 my-4">
+                {/* <div className="flex items-center justify-center gap-4 my-4">
                   <Image src={WhatsappIcon} alt="whats app icon"></Image>
                   <Image src={facebookIcon} alt="facebook icon"></Image>
                   <Image src={twitterIcon} alt="twitter icon"></Image>
                   <Image src={InstagramIcon} alt="Instagram icon"></Image>
                   <Image src={linkedInIcon} alt="Linked in icon"></Image>
-                </div>
-              </div>
+                </div> */}
+              {/* </div> */} 
               <p className="mx-auto text-accent-secondary max-w-fit">{t("or")}</p>
               {/* Hyper links section */}
               {/* We have to display the links only when the course is active */}
