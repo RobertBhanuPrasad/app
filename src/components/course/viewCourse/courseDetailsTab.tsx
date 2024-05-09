@@ -63,10 +63,21 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,name),program_type_id(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(name))),program_fee_level_settings(*,fee_level_id(name)),max_capacity,visibility_id(id,name)",
+        "*,online_url,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,name),program_type_id(*),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(name))),program_fee_level_settings(*,fee_level_id(name)),max_capacity,visibility_id(id,name)",
     },
   });
 
+  
+  const venue =
+  courseData?.data?.venue_id?.name + 
+  ', ' +
+  courseData?.data?.venue_id?.address + 
+  ', ' +
+  courseData?.data?.venue_id?.city_id?.name + 
+  ', ' +
+  courseData?.data?.venue_id?.state_id.name +
+   ', ' +
+  courseData?.data?.venue_id?.postal_code
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
@@ -260,12 +271,12 @@ function CourseDetailsTab() {
                       </Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                        {item?.total}
+                        {(item?.total)?.toFixed(2)}
                       </ItemValue>
                     </div>
                   );
                 })
-              : "-"}
+              : ""}
             {courseData?.data?.program_accommodations?.length > 0
               ? courseData?.data?.program_accommodations?.map(
                   (item: AccommodationItem) => {
@@ -284,7 +295,7 @@ function CourseDetailsTab() {
                     );
                   }
                 )
-              : "-"}
+              : ""}
           </CardContent>
         </Card>
       </div>
@@ -300,17 +311,15 @@ function CourseDetailsTab() {
           <CardContent className="gap-[23px] flex flex-col">
             <div>
               <Header2>{t('venue_address')}</Header2>
-              {courseData?.data?.venue_id ? (
-                <ItemValue>
-                  {courseData?.data?.venue_id?.address},
-                  {courseData?.data?.venue_id?.center_id?.name},
-                  {courseData?.data?.venue_id?.city_id?.name},
-                  {courseData?.data?.venue_id?.state_id?.name}{" "}
-                  {courseData?.data?.venue_id?.postal_code}
-                </ItemValue>
-              ) : (
-                "-"
-              )}
+              {courseData?.data?.program_type_id?.is_online_program == true ?
+              (courseData?.data?.online_url ? ( <a href= {courseData?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target="_blank">{t("new_strings:online")}</a>
+            ) : ( "-"))
+          :
+          (courseData?.data?.venue_id ? (
+            <ItemValue>
+              {venue}
+            </ItemValue>
+          ):( "-"))}
             </div>
             <Header2>
             {t('sessions')}
