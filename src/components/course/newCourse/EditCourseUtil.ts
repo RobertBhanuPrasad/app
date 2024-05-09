@@ -264,6 +264,14 @@ export const getDefaultValues = async (
     defaultValues.is_early_bird_enabled = data.is_early_bird_enabled;
 
 
+  //If program_fee_settings_id is null then program as it's own fee levels
+  if (data.program_fee_settings_id == null) {
+    defaultValues.program_fee_level_settings =
+      data.program_fee_level_settings as any;
+
+    defaultValues.early_bird_cut_off_period = data.early_bird_cut_off_period;
+  }
+
   // Step 5
   if (data.program_accommodations)
     defaultValues.accommodation = data.program_accommodations;
