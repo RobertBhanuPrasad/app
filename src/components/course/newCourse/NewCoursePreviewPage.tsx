@@ -587,7 +587,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                {t("teacher")}
+              {t("new_strings:teacher")}
               </p>
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}
@@ -1182,7 +1182,7 @@ const Fees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.total}
+          {(feeLevelSettingsData?.total)?.toFixed(2)}
         </CardValue>
       </abbr>
     </div>
@@ -1243,7 +1243,7 @@ const EarlyBirdFees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.early_bird_total}
+          {(feeLevelSettingsData?.early_bird_total)?.toFixed(2)}
         </CardValue>
       </abbr>
     </div>

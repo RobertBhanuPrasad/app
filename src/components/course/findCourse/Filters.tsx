@@ -325,7 +325,7 @@ const Filters = ({
           <AccordionItem value="item-12" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t("course.find_course:course_fees")}</div>
+                <div>{t("new_strings:course_fees")}</div>
                 {formData?.temporaryadvancefilter.is_course_fee && (
                   <CountComponent count={1} />
                 )}
@@ -859,7 +859,7 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label={t("no")}
+            label={t("no_button")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
