@@ -27,16 +27,8 @@ import {
 } from 'src/ui/navigation-menu'
 import { supabaseClient } from 'src/utility'
 
-interface getFirstAndLastName {
-  id: number
-  first_name: string
-  last_name: string
-}
 
 function Navbar() {
-  const [loggedInUser, setLoggedInUser] = useState('')
-
-  const [fallBackName, setFallBackName] = useState('')
 
   const { data: loginUserData }: any = useGetIdentity()
 
@@ -66,31 +58,8 @@ function Navbar() {
   // Split the pathname into segments
   const pathSegments = pathname.split('/')
 
-  // to get the name of the logged in user
-  const fetchData = async () => {
-    const { data } = await supabase
-      .from('contact')
-      .select('full_name')
-      .eq('full_name', loginUserData?.userData?.contact_id?.full_name)
-    setLoggedInUser(data?.[0]?.full_name)
-
-    const firstCharacters =
-      (await userName?.data?.first_name) && userName?.data?.last_name
-        ? userName.data.first_name[0].concat(userName.data.last_name[0])
-        : ''
-    setFallBackName(firstCharacters)
-  }
-  fetchData()
-
   // Extract the first segment of the pathname
   const firstRouteName = pathSegments.find(segment => segment !== '')
-
-  const {
-    data: userName,
-  } = useOne<getFirstAndLastName>({
-    resource: 'contact',
-    id: loginUserData?.userData?.contact_id?.id
-  })
 
   // to logged out the current user
   const handleLogOut = async () => {
@@ -192,12 +161,12 @@ function Navbar() {
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
               <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>{fallBackName}</AvatarFallback>
+              <AvatarFallback>{loginUserData?.userData?.contact_id?.first_name[0].concat(loginUserData?.userData?.contact_id?.last_name[0])}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[312px]">
-            {loggedInUser ? (
-              <p className="text-primary text-base font-semibold pl-3 py-5">{loggedInUser}</p>
+            {loginUserData ? (
+              <p className="text-primary text-base font-semibold pl-3 py-5">{loginUserData?.userData?.contact_id?.full_name}</p>
             ) : (
               <LoadingIcon></LoadingIcon>
             )}
