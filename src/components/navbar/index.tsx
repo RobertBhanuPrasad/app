@@ -1,12 +1,13 @@
 import Bell from '@public/assets/Bell'
+import LoadingIcon from '@public/assets/LoadingIcon'
 import Logo from '@public/assets/Logo'
 import LogoutIcon from '@public/assets/LogoutIcon'
 import TableMenu from '@public/assets/TableMenu'
-import { useGetIdentity } from '@refinedev/core'
+import { useGetIdentity, useOne } from '@refinedev/core'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { destroyCookie } from 'nookies'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar'
 import {
   DropdownMenu,
@@ -26,7 +27,21 @@ import {
 } from 'src/ui/navigation-menu'
 import { supabaseClient } from 'src/utility'
 
+interface getFirstAndLastName {
+  id: number
+  first_name: string
+  last_name: string
+}
+
 function Navbar() {
+  const [loggedInUser, setLoggedInUser] = useState('')
+
+  const [fallBackName, setFallBackName] = useState('')
+
+  const { data: loginUserData }: any = useGetIdentity()
+
+  const router = useRouter()
+
   // Define navigation components and their respective routes
   const components = [
     {
@@ -45,42 +60,47 @@ function Navbar() {
 
   const supabase = supabaseClient()
 
-  const { data: loginUserData }: any = useGetIdentity()
-
-  const [loggedInUser, setLoggedInUser] = useState('')
-
-  const router = useRouter()
-
   // Get the current pathname using the useRouter hook
-  const { pathname } = useRouter()
+  const { pathname } = router
 
   // Split the pathname into segments
   const pathSegments = pathname.split('/')
 
+  // to get the name of the logged in user
+  const fetchData = async () => {
+    const { data } = await supabase
+      .from('contact')
+      .select('full_name')
+      .eq('full_name', loginUserData?.userData?.contact_id?.full_name)
+    setLoggedInUser(data?.[0]?.full_name)
+
+    const firstCharacters =
+      (await userName?.data?.first_name) && userName?.data?.last_name
+        ? userName.data.first_name[0].concat(userName.data.last_name[0])
+        : ''
+    setFallBackName(firstCharacters)
+  }
+  fetchData()
+
   // Extract the first segment of the pathname
   const firstRouteName = pathSegments.find(segment => segment !== '')
+
+  const {
+    data: userName,
+  } = useOne<getFirstAndLastName>({
+    resource: 'contact',
+    id: loginUserData?.userData?.contact_id?.id
+  })
 
   // to logged out the current user
   const handleLogOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (!error) {
       destroyCookie(null, 'token') // Remove the token cookie
-      router.push('/login') // Redirect to the login page
+      router.replace('/login') // Redirect to the login page
     }
     console.log('error is', error)
   }
-
-  useEffect(() => {
-    // to get the name of the logged in user
-    const fetchData = async () => {
-      const { data } = await supabase
-        .from('contact')
-        .select('full_name')
-        .eq('full_name', loginUserData?.userData?.contact_id?.full_name)
-      setLoggedInUser(data?.[0]?.full_name)
-    }
-    fetchData()
-  }, [])
 
   return (
     <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
@@ -169,13 +189,17 @@ function Navbar() {
         <Bell />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar>
+            <Avatar className="cursor-pointer">
               <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>{fallBackName}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[312px]">
-            <p className="text-primary text-base font-semibold pl-3 py-5">{loggedInUser}</p>
+            {loggedInUser ? (
+              <p className="text-primary text-base font-semibold pl-3 py-5">{loggedInUser}</p>
+            ) : (
+              <LoadingIcon></LoadingIcon>
+            )}
             <DropdownMenuSeparator className="bg-primary mx-[12px]" />
             <DropdownMenuItem onClick={handleLogOut} className="flex gap-3 pl-3 py-5">
               <LogoutIcon />
