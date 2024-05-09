@@ -796,7 +796,7 @@ const Venue = () => {
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+            <DialogContent className="!w-[636px] !h-[400px] pt-6 px-[25px] !rounded-[24px]">
               <AddOrEditVenue
                 handleSubmit={handleAddNewVenue}
                 message={warningmessage}
@@ -1555,7 +1555,7 @@ export const AddOrEditVenue = ({
   return (
     <div>
       {isNewVenue ? (
-        <div className="flex justify-center text-[24px] font-semibold">
+        <div className="flex justify-center text-[24px] font-semibold mb-5">
           {t("course.new_course:time_and_venue_tab.new_venue")}
         </div>
       ) : (
