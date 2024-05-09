@@ -17,9 +17,10 @@ module.exports = {
       "ee-et",
       "fi-fi",
       "cz-cs",
-      "ca-fr"
+      "ca-fr",
+      "pt-pt",
     ],
-    lowerCaseLng: true
+    lowerCaseLng: true,
   },
   localePath: path.resolve("./public/locales"),
 };
