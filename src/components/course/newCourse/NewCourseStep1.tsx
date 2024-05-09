@@ -38,7 +38,8 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { IsEditCourse } from "./EditCourseUtil";
 
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
+import { Text } from "src/ui/TextTags";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -77,7 +78,7 @@ function NewCourseStep1() {
 export default NewCourseStep1;
 
 const RegistrationGateway = () => {
-  const {t} = useTranslation(['common', "new_strings"])
+  const { t } = useTranslation(["common", "new_strings"]);
   const {
     field: { value = false, onChange },
   } = useController({
@@ -104,8 +105,11 @@ const RegistrationGateway = () => {
       />
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">
-          <div className="text-xs font-normal text-[#333333]">
-            {t("new_strings:please_input_the_site_url")}*
+          <div className="flex flex-row gap-1 items-center">
+            <Text className="text-xs font-normal text-[#333333]">
+              {t("new_strings:please_input_the_site_url")}
+            </Text>{" "}
+            <Text className="text-[#7677F4]">*</Text>
           </div>
           <div className="w-[320px] h-[40px] rounded-[1px] text-[#999999] font-normal">
             <Input
@@ -129,7 +133,7 @@ const RegistrationGateway = () => {
 const RadioCards = () => {
   const { clearErrors, watch } = useFormContext();
 
-  const {t} = useTranslation(["course.new_course", "new_strings"])
+  const { t } = useTranslation(["course.new_course", "new_strings"]);
   const {
     field: { value, onChange },
     fieldState: { error: radioError },
@@ -224,19 +228,25 @@ const RadioCards = () => {
    * @constant iAmTeachingCourse
    * @description this const stores the data of the order 1 which is i am teaching the course
    */
-  const iAmTeachingCourse = translatedText(_.find(programOrganizerTypeData?.data, { 'order': I_AM_TEACHING })?.name)
+  const iAmTeachingCourse = translatedText(
+    _.find(programOrganizerTypeData?.data, { order: I_AM_TEACHING })?.name
+  );
 
   /**
    * @constant iAmCoTeachingCourse
    * @description this const stores the data of the order 2 which is i am co-teaching the course
    */
-  const iAmCoTeachingCourse = translatedText(_.find(programOrganizerTypeData?.data, { 'order': I_AM_CO_TEACHING })?.name)
+  const iAmCoTeachingCourse = translatedText(
+    _.find(programOrganizerTypeData?.data, { order: I_AM_CO_TEACHING })?.name
+  );
 
   /**
    * @constant iAmOrganisingCourse
    * @description this const stores the data of the order 3 which is i am organizing the course
    */
-  const iAmOrganisingCourse = translatedText(_.find(programOrganizerTypeData?.data, { 'order': I_AM_ORGANIZER })?.name)
+  const iAmOrganisingCourse = translatedText(
+    _.find(programOrganizerTypeData?.data, { order: I_AM_ORGANIZER })?.name
+  );
 
   return (
     <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
@@ -398,12 +408,17 @@ const OrganizationDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
-        <div className="text-xs font-normal text-[#333333]">{t('organization')}*</div>
+        <div className="flex flex-row gap-1 items-center">
+          <Text className="text-xs font-normal text-[#333333]">
+            {t("organization")}
+          </Text>{" "}
+          <Text className="text-[#7677F4]">*</Text>
+        </div>
         <Select
           value={value}
           onValueChange={(value: any) => {
@@ -416,7 +431,11 @@ const OrganizationDropDown = () => {
             className="w-[320px]"
             error={organizationError ? true : false}
           >
-            <SelectValue placeholder={t("course.new_course:basic_details_tab.organization_placeholder")} />
+            <SelectValue
+              placeholder={t(
+                "course.new_course:basic_details_tab.organization_placeholder"
+              )}
+            />
           </SelectTrigger>
           <SelectContent>
             <Input value={searchValue} onChange={handleSearch} />
@@ -502,16 +521,21 @@ const ProgramOrganizerDropDown = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 10);
   };
-  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   return (
     <div className="w-80 flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">
-        {t("program_organizer")} *
+      <div className="flex flex-row gap-1 items-center">
+        <Text className="text-xs font-normal text-[#333333]">
+          {t("program_organizer")}
+        </Text>{" "}
+        <Text className="text-[#7677F4]">*</Text>
       </div>
       <MultiSelect
         value={value}
-        placeholder={t("course.new_course:basic_details_tab.program_organizer_placeholder")}
+        placeholder={t(
+          "course.new_course:basic_details_tab.program_organizer_placeholder"
+        )}
         data={options}
         onBottomReached={handleOnBottomReached}
         onSearch={(val: string) => {
