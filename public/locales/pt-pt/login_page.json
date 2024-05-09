@@ -1,0 +1,38 @@
+{
+    "login": {
+      "revert_to_harmony": "Reverter para Harmony",
+      "log_in": "Iniciar sessão",
+      "username": "Nome de Utilizador",
+      "enter_username": "Insira Nome de Utilizador",
+      "password": "Palavra-passe",
+      "enter_password": "Insira Palavra-passe",
+      "remember_password": "Lembrar Palavra-passe",
+      "forgot_Password": "Esqueceu a Palavra-passe?",
+      "copyright": "Direitos de Autor©",
+      "art_of_living": "Arte de Viver",
+      "all_rights_reserved": "Todos os Direitos Reservados",
+      "forgot_password": "Esqueci a Palavra-passe",
+      "username_or_email_address": "Nome de utilizador ou endereço de e-mail",
+      "enter_username_or_email_address": "Digite o nome de utilizador ou endereço de e-mail",
+      "email_new_password": "Enviar nova palavra-passe por e-mail",
+      "back_to": "Voltar",
+      "login": {
+        "": "Iniciar sessão"
+      },
+      "new_password_sent_to_your_registered_email": "Nova palavra-passe enviada para o seu e-mail registado",
+      "back_to_login": "Voltar para Iniciar Sessão",
+      "change_language": "Mudar de Língua",
+      "go_to_harmony_classic": "Ir para o Harmony Classic",
+      "help_desk": "Balcão de Ajuda",
+      "Role:_National_Admin": "Função: Administrador Nacional",
+      "view_profile": "Ver Perfil",
+      "update_profile": "Atualizar Perfil",
+      "national_admin": "Administrador Nacional",
+      "change_password": "Mudar Palavra-passe",
+      "course_history": "Histórico do Curso",
+      "event_history": "Histórico do Evento",
+      "communication_preferences": "Preferências de comunicação",
+      "download_account": "Descarregar Conta",
+      "log_out": "Sair"
+    }
+  }

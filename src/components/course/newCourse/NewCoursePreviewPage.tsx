@@ -1182,7 +1182,7 @@ const Fees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.total}
+          {(feeLevelSettingsData?.total)?.toFixed(2)}
         </CardValue>
       </abbr>
     </div>
@@ -1243,7 +1243,7 @@ const EarlyBirdFees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.early_bird_total}
+          {(feeLevelSettingsData?.early_bird_total)?.toFixed(2)}
         </CardValue>
       </abbr>
     </div>
