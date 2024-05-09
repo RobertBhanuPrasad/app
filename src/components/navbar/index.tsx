@@ -46,7 +46,7 @@ function Navbar() {
       {/* Logo */}
       <Logo />
       {/* Navigation Menu */}
-      <div className="flex items-center justify-center mr-auto px-10" >
+      <div className="flex items-center justify-center mr-auto pl-[10%]" >
         <NavigationMenu className="text-[#999999]">
           <NavigationMenuList>
             {/* TODO  : for now may-13 release it has to be hidden */}
