@@ -365,7 +365,7 @@ const Sessions = () => {
     // and we need to set to 06:00PM as start time and end time as 08:00PM for all countries
     // in future if client asks we need to set date and time as per each country what ever theu want
 
-    if (formData?.hoursFormatId === timeFormat12HoursId) {
+    if (formData?.hour_format_id === timeFormat12HoursId) {
       tempSchedule["startHour"] = "06";
       tempSchedule["startMinute"] = "00";
       tempSchedule["endHour"] = "08";
@@ -502,7 +502,7 @@ const ScheduleComponent = ({
               }}
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
-              <Add /> {t("add")}
+              <Add /> {t("add_button")}
             </div>
           )}
           {index != 0 && (
@@ -1915,7 +1915,7 @@ const DeleteVenueComponent = ({
       <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-            {t("no")}
+            {t("no_button")}
           </Button>
         </DialogClose>
         <DialogClose>

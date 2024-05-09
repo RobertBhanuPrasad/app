@@ -217,7 +217,7 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const { t } = useTranslation(["common", "course.new_course"]);
+  const { t } = useTranslation(["common", "course.new_course","course.find_course"]);
   const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
@@ -256,7 +256,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
     <div className="flex gap-1 flex-col h-[60px] w-full">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">
-          {t("course.new_course:time_and_venue_tab.state")}
+          {t("course.find_course:state")}
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
