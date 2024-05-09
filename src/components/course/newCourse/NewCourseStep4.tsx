@@ -195,9 +195,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           ? translatedText(val?.custom_fee_label)
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
-        subTotal: val?.total - val?.total * taxRate,
+        subTotal: (val?.total - val?.total * taxRate).toFixed(2),
         tax: val?.total * taxRate,
-        total: JSON.stringify(val?.total),
+        total: parseFloat(val?.total).toFixed(2),
       };
 
       //Need to insert early bird fee if early bird fee is enabled in settings
@@ -205,9 +205,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         modifiedFeeLevels = {
           ...modifiedFeeLevels,
           earlyBirdSubTotal:
-            val?.early_bird_total - val?.early_bird_total * taxRate,
+            (val?.early_bird_total - val?.early_bird_total * taxRate).toFixed(2),
           earlyBirdTax: val?.early_bird_total * taxRate,
-          earlyBirdTotal: JSON.stringify(val?.early_bird_total || ""),
+          earlyBirdTotal: parseFloat(val?.early_bird_total || "").toFixed(2),
         };
       }
       return modifiedFeeLevels;
