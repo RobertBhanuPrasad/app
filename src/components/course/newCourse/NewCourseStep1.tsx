@@ -549,7 +549,7 @@ const ProgramOrganizerDropDown = () => {
             };
           } else {
             return {
-              disable: false,
+              disable: true,
             };
           }
         }}
