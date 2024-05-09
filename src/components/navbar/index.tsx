@@ -161,11 +161,11 @@ function Navbar() {
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
               <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>{loginUserData?.userData?.contact_id?.first_name[0].concat(loginUserData?.userData?.contact_id?.last_name[0])}</AvatarFallback>
+              <AvatarFallback className='uppercase'>{loginUserData?.userData?.contact_id?.first_name?.[0].concat(loginUserData?.userData?.contact_id?.last_name?.[0])}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[312px]">
-            {loginUserData ? (
+            {loginUserData?.userData ? (
               <p className="text-primary text-base font-semibold pl-3 py-5">{loginUserData?.userData?.contact_id?.full_name}</p>
             ) : (
               <LoadingIcon></LoadingIcon>
