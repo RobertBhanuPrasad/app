@@ -271,7 +271,7 @@ function CourseDetailsTab() {
                       </Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                        {item?.total}
+                        {(item?.total)?.toFixed(2)}
                       </ItemValue>
                     </div>
                   );
