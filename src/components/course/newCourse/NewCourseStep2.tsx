@@ -118,7 +118,9 @@ export default function NewCourseStep2() {
           </div>
         )}
       </div>
-      <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
+      
+      {/* TODO  : for now may-13 release it has to be hidden */}
+      {/* <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
           {t("course_description")} *
           <HoverCard>
@@ -158,7 +160,7 @@ export default function NewCourseStep2() {
             </HoverCardContent>
           </HoverCard>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
