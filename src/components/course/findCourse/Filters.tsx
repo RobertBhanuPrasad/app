@@ -325,7 +325,7 @@ const Filters = ({
           <AccordionItem value="item-12" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t("course.find_course:course_fees")}</div>
+                <div>{t("new_strings:course_fees")}</div>
                 {formData?.temporaryadvancefilter.is_course_fee && (
                   <CountComponent count={1} />
                 )}

@@ -151,9 +151,9 @@ export const column = (
       accessorKey: "program_teachers",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-      column_name: t('course.find_course:teacher(s)'),
+      column_name: t('course.participants:view_participant.course_information_tab.Teachers(S)'),
       header: () => {
-        return <div className="min-w-[150px]">{t('course.find_course:teacher(s)')}</div>;
+        return <div className="min-w-[150px]">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
       },
       cell: ({ row }: any) => {
         const teachers = row?.original?.program_teachers?.map(
