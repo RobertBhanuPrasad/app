@@ -110,8 +110,9 @@ function Navbar() {
       <div className="flex items-center justify-center ">
         <NavigationMenu className="text-[#999999]">
           <NavigationMenuList>
+            {/* TODO  : for now may-13 release it has to be hidden */}
             {/* Home Navigation */}
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <NavigationMenuTrigger>Home</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[160px] gap-3 py-4 px-2 ">
@@ -122,19 +123,19 @@ function Navbar() {
                   ))}
                 </ul>
               </NavigationMenuContent>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
             {/* Administer Navigation */}
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Administer</NavigationMenuLink>
               </Link>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
             {/* Contacts Navigation */}
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <Link href="/Contacts" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Contacts</NavigationMenuLink>
               </Link>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
             {/* Courses Navigation */}
             <NavigationMenuItem>
               <NavigationMenuTrigger className={firstRouteName === 'Courses' ? '!text-[#7677F4] font-semibold' : ''}>
@@ -151,25 +152,25 @@ function Navbar() {
               </NavigationMenuContent>
             </NavigationMenuItem>
             {/* Events Navigation */}
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Events</NavigationMenuLink>
               </Link>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
             {/* Teachers Navigation */}
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Teachers</NavigationMenuLink>
               </Link>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
             {/* Mailings Navigation */}
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Mailings</NavigationMenuLink>
               </Link>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
             {/* Menu Navigation */}
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   <div className=" flex flex-row items-center gap-2">
@@ -180,7 +181,7 @@ function Navbar() {
                   </div>
                 </NavigationMenuLink>
               </Link>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
           </NavigationMenuList>
         </NavigationMenu>
       </div>
