@@ -760,7 +760,7 @@ const Venue = () => {
                     <DialogTrigger onClick={handleOpenEditNewVenue}>
                       <EditIcon />
                     </DialogTrigger>
-                    <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                    <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
                       <AddOrEditVenue handleSubmit={handleAddNewVenue} />
                     </DialogContent>
                   </Dialog>
@@ -796,7 +796,7 @@ const Venue = () => {
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[400px] pt-6 px-[25px] !rounded-[24px]">
+            <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] !rounded-[24px]">
               <AddOrEditVenue
                 handleSubmit={handleAddNewVenue}
                 message={warningmessage}
@@ -1303,7 +1303,7 @@ const ExistingVenueList = () => {
               handleSubmitVenueList();
             }}
           >
-            {t("submit_button")}
+            {t("save_button")}
           </Button>
         </DialogClose>
       </div>
@@ -1463,7 +1463,7 @@ export const ExistingVenueListSection = ({
                 >
                   <EditIcon />
                 </DialogTrigger>
-                <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
                   <AddOrEditVenue
                     handleSubmit={() => {
                       handleSubmitExistingVenue(index);
@@ -1588,10 +1588,10 @@ export const AddOrEditVenue = ({
         </span>
       )}
       <DialogFooter>
-        <div className="w-full flex items-center justify-center mt-5">
+        <div className="w-full flex items-center justify-center mt-8">
           <Button onClick={handleSubmit}>{t("save_button")}</Button>
         </div>
-      </DialogFooter>
+      </DialogFooter> 
     </div>
   );
 };
