@@ -316,13 +316,14 @@ export const CenterDropDown = ({ name }: { name: string }) => {
 
   let filter: Array<CrudFilter> = [];
 
-  if (formData?.city_id) {
-    filter.push({
-      field: "city_id",
-      operator: "eq",
-      value: formData.city_id,
-    });
-  }
+  //TODO: Right now center are state based not city based.
+  // if (formData?.city_id) {
+  //   filter.push({
+  //     field: "city_id",
+  //     operator: "eq",
+  //     value: formData.city_id,
+  //   });
+  // }
 
   if (formData?.state_id) {
     filter.push({
