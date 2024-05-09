@@ -1300,7 +1300,7 @@ const ExistingVenueList = () => {
               handleSubmitVenueList();
             }}
           >
-            {t("submit_button")}
+            {t("save_button")}
           </Button>
         </DialogClose>
       </div>
