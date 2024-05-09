@@ -582,7 +582,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-              {t("teacher")}
+              {t("new_strings:teacher")}
               </p>
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}

@@ -439,7 +439,7 @@ export const column = (
                                   cancelCourse();
                                 }}
                               >
-                                {t('yes_button')}
+                                {t('yes')}
                               </Button>
                             </div>
                           </div>

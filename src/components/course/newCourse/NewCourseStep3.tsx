@@ -502,7 +502,7 @@ const ScheduleComponent = ({
               }}
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
-              <Add /> {t("add")}
+              <Add /> {t("add_button")}
             </div>
           )}
           {index != 0 && (
@@ -1912,7 +1912,7 @@ const DeleteVenueComponent = ({
       <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-            {t("no")}
+            {t("no_button")}
           </Button>
         </DialogClose>
         <DialogClose>

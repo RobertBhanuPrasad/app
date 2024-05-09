@@ -83,7 +83,7 @@ function NewCourseStep6() {
                 className="text-[#7677F4] flex flex-row gap-1 justify-center items-center cursor-pointer"
               >
                 <Add />
-                {t("add")}
+                {t("add_button")}
               </div>
             )}
             {/* Except for first row we need to show delete icon */}
