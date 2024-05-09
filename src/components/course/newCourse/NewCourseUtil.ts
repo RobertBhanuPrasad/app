@@ -14,7 +14,7 @@ import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
 import { IsEditCourse } from "./EditCourseUtil";
 
-const supabase = supabaseClient();
+// const supabase = supabaseClient();
 
 export const handlePostProgramData = async (
   body: any,
@@ -25,8 +25,10 @@ export const handlePostProgramData = async (
    * The current url either add or edit
    */
   pathname: string,
-  countryCode:string
+  countryCode: string
 ) => {
+const supabase = supabaseClient();
+
   console.log("i will post course data in this functions", body);
 
   let programId = body.id;
@@ -216,9 +218,9 @@ export const handlePostProgramData = async (
         start_date: courseStartDate,
         program_type_id: body?.program_type_id,
       },
-      headers:{
-        "country-code":countryCode,
-      }
+      headers: {
+        "country-code": countryCode,
+      },
     }
   );
 
@@ -323,38 +325,93 @@ export const handlePostProgramData = async (
   // if anyone of above was returning false it means there was an error so we will not display thank you page
   // so that he will click again continue
 
-  if (!(await handlePostProgramOrganizersData(body, programId))) return false;
-
-  if (!(await handlePostProgramTeachersData(body, programId))) return false;
-
-  if (!(await handlePostProgramAssistantTeachersData(body, programId)))
+  if (!(await handlePostProgramOrganizersData(body, programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
     return false;
+  }
 
-  if (!(await handlePostProgramLanguagesData(body, programId))) return false;
-
-  if (!(await handlePostProgramTranslationLanguagesData(body, programId)))
+  if (!(await handlePostProgramTeachersData(body, programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
     return false;
+  }
 
-  if (!(await handleProgramSchedulesData(body, programId))) return false;
-
-  if (!(await handleProgramFeeLevelSettingsData(body, programId))) return false;
-
-  if (!(await handlePostProgramContactDetailsData(body, programId)))
+  if (!(await handlePostProgramAssistantTeachersData(body, programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
     return false;
+  }
 
+  if (!(await handlePostProgramLanguagesData(body, programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
+    return false;
+  }
+
+  if (!(await handlePostProgramTranslationLanguagesData(body, programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
+    return false;
+  }
+  if (!(await handleProgramSchedulesData(body, programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
+    return false;
+  }
+
+  if (!(await handleProgramFeeLevelSettingsData(body, programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
+    return false;
+  }
+
+  if (!(await handlePostProgramContactDetailsData(body, programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
+    return false;
+  }
   //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
   if (
     programTypeData?.is_online_program === false &&
     body[NewCourseStep5FormNames.is_residential_program]
   ) {
-    if (!(await handlePostAccommodations(body, programId))) return false;
+    if (!(await handlePostAccommodations(body, programId))) {
+      // if the course is not created then we need to delete the program and its childrens tables
+      // and we need to delete only when user in add course page when error occurs
+      // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+      handleDeleteProgramTables(programId, pathname);
+      return false;
+    }
   }
 
   //now after all data was stored into respective table we have to update status of program
   //Requirement: If the slected program_type of the program contains is_approval_required:true then we have to update status of program to "pending_approval"
   //Requirement: If the slected program_type of the program contains is_approval_required:false then we have to update status of program to "active"
 
-  if (!(await handleProgramStatusUpdate(programId))) return false;
+  if (!(await handleProgramStatusUpdate(programId))) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
+    return false;
+  }
 
   // we have to update the accounting status of program to not submitted
   if (
@@ -362,14 +419,27 @@ export const handlePostProgramData = async (
       programId,
       accountingNotSubmittedStatusId
     ))
-  )
+  ) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
     return false;
+  }
 
   // We need to call one supabase edge function to update the course details in sync DB aswell to reflect the changes in unity pages
   // edge function name : sync-program
   // we need to call this edge funtion only when all program data has been saved
-  if (!(await handleSyncProgramEdgeFunction(programId, pathname, countryCode)))
+  if (
+    !(await handleSyncProgramEdgeFunction(programId, pathname, countryCode))
+  ) {
+    // if the course is not created then we need to delete the program and its childrens tables
+    // and we need to delete only when user in add course page when error occurs
+    // when user in edit page and any error occurs ideally we dont need to delete program and children tables
+    handleDeleteProgramTables(programId, pathname);
     return false;
+  }
+
   return true;
 };
 
@@ -377,6 +447,8 @@ export const handlePostProgramInfoData = async (
   body: any,
   programId: number
 ) => {
+const supabase = supabaseClient();
+
   // store is_registration_via_3rd_party,registration_via_3rd_party_url data in program_details_info
   const programDetailsInfoData: ProgramDetailsInfoDataBaseType = {
     //TODO: need to remove 31
@@ -410,6 +482,8 @@ export const handlePostProgramOrganizersData = async (
   body: any,
   programId: number
 ) => {
+const supabase = supabaseClient();
+
   //store program organizers in program_organizers table and
 
   // Step 1: Retrieve existing organizers of the program from the database
@@ -469,6 +543,9 @@ export const handlePostProgramTeachersData = async (
   body: any,
   programId: number
 ) => {
+
+const supabase = supabaseClient();
+
   // Step 1: Retrieve existing teachers of the program from the database
   const { data: existingTeachersResponse } = await supabase
     .from("program_teachers")
@@ -535,6 +612,8 @@ export const handlePostProgramAssistantTeachersData = async (
   body: any,
   programId: number
 ) => {
+const supabase = supabaseClient();
+
   // Step 1: Retrieve existing assistant teachers of the program from the database
   const { data: existingTeachersResponse } = await supabase
     .from("program_assistant_teachers")
@@ -605,6 +684,9 @@ export const handlePostProgramLanguagesData = async (
   body: any,
   programId: number
 ) => {
+
+const supabase = supabaseClient();
+
   // Step 1: Retrieve existing languages of the program from the database
   const { data: existingLanguagesResponse } = await supabase
     .from("program_languages")
@@ -670,6 +752,9 @@ export const handlePostProgramTranslationLanguagesData = async (
   body: any,
   programId: number
 ) => {
+
+const supabase = supabaseClient();
+
   // Step 1: Retrieve existing translation languages of the program from the database
   const { data: existingTranslationLanguagesResponse } = await supabase
     .from("program_translation_languages")
@@ -742,6 +827,8 @@ export const handleProgramSchedulesData = async (
   body: any,
   programId: number
 ) => {
+const supabase = supabaseClient();
+
   // Delete records which are not present in body schedules and present in database
   const { data: existingScheduleData } = await supabase
     .from("program_schedules")
@@ -844,6 +931,9 @@ export const handlePostAccommodations = async (
   body: any,
   programId: number
 ) => {
+
+const supabase = supabaseClient();
+
   // Delete records which are not present in body accommodations and present in database
   const { data: existingAccommodationData } = await supabase
     .from("program_accommodations")
@@ -905,6 +995,9 @@ export const handlePostProgramContactDetailsData = async (
   body: any,
   programId: number
 ) => {
+
+const supabase = supabaseClient();
+
   // Delete records which are not present in body contact details and present in database
   const { data: existingContactDetailsData } = await supabase
     .from("program_contact_details")
@@ -935,10 +1028,16 @@ export const handlePostProgramContactDetailsData = async (
   ]?.map((contactData: any) => {
     const dataObject: ProgramContactDetailsDataBaseType = {
       program_id: programId,
-      contact_name: contactData.contact_name,
       contact_email: contactData.contact_email,
-      contact_number: contactData.contact_number,
     };
+
+    if (contactData?.contact_name) {
+      dataObject.contact_name = contactData.contact_name;
+    }
+
+    if (contactData?.contact_number) {
+      dataObject.contact_number = contactData.contact_number;
+    }
 
     if (contactData.id) {
       dataObject.id = contactData.id;
@@ -987,6 +1086,8 @@ export const handlePostProgramContactDetailsData = async (
  * @param body formData
  */
 const handlePostVenueData = async (body: any, loggedInUserId: number) => {
+const supabase = supabaseClient();
+
   // if body.isNewVenue true then first we have to create a new venue and then add it to program table with created venue_id
   // if user select and created new venue in step-3 then we have to create new venue and add it to program table
   // if user sleect existed venue and updated the venue details by clicking edit icon in existed venue popup then we have to update existing venue table right
@@ -1099,6 +1200,8 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
 };
 
 export const handleProgramStatusUpdate = async (programId: number) => {
+const supabase = supabaseClient();
+
   const { data, error }: any = await supabase
     .from("program")
     .select("id,program_type_id(*)")
@@ -1173,6 +1276,8 @@ export const handleProgramFeeLevelSettingsData = async (
   body: any,
   programId: number
 ) => {
+const supabase = supabaseClient();
+
   if (
     body?.program_fee_level_settings?.length == 0 ||
     !body?.program_fee_level_settings
@@ -1224,6 +1329,9 @@ const handleGenerateProgramCode = async (
   programId: number,
   countryCode: string
 ) => {
+
+const supabase = supabaseClient();
+
   // to fetch country code call users api
 
   //If the country code is public then we initialised as INDIA country code for now
@@ -1259,6 +1367,8 @@ const handleProgramAccountingStatusUpdate = async (
   programId: number,
   accountingNotSubmittedStatusId: number
 ) => {
+const supabase = supabaseClient();
+
   // updating the accounting status of program to not submitted initially when the program created
 
   if (!accountingNotSubmittedStatusId) return null;
@@ -1288,7 +1398,7 @@ const handleProgramAccountingStatusUpdate = async (
 export const handleSyncProgramEdgeFunction = async (
   programId: number,
   pathname: string,
-  countryCode:string
+  countryCode: string
 ) => {
   const method = IsEditCourse(pathname) ? "PUT" : "POST";
 
@@ -1316,4 +1426,156 @@ export const handleSyncProgramEdgeFunction = async (
 
   console.log("sync program edge function invoked successfully", data);
   return true;
+};
+
+/**
+ * Function to handle the deletion of program tables.
+ * @param programId - The ID of the program to delete.
+ * @param pathname - The pathname of the current page.
+ */
+export const handleDeleteProgramTables = async (
+  programId: number,
+  pathname: string
+) => {
+const supabase = supabaseClient();
+
+  // we need to do only when it is new course
+  if (!IsEditCourse(pathname)) {
+    console.warn(
+      "program was not created because of some errors while we are posting the data"
+    );
+
+    console.error(
+      "program was not created because of some errors while we are posting the data"
+    );
+
+    // 1. delete program_organizers table record where programId matches
+    const { data, error } = await supabase
+      .from("program_organizers")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete program_organizers table record where programId matches",
+      data,
+      error
+    );
+
+    // 2. delete program_teachers table records where programId matches
+    const { data: programTeachers } = await supabase
+      .from("program_teachers")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete program_teachers table record where programId matches",
+      programTeachers,
+      error
+    );
+
+    // 3. delete program_assistant_teacher records where programId matches
+
+    const { data: programAssistantTeachers } = await supabase
+      .from("program_assistant_teachers")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete program_assistant_teachers table record where programId matches",
+      programAssistantTeachers,
+      error
+    );
+    // 4. delete program_languages records where programId matches
+    const { data: programLanguages } = await supabase
+      .from("program_languages")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete program_languages table record where programId matches",
+      programLanguages,
+      error
+    );
+
+    // 5. delete program_translation_languages records where programId matches
+    const { data: programTranslationLanguages } = await supabase
+      .from("program_translation_languages")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete program_translation_languages table record where programId matches",
+      programTranslationLanguages,
+      error
+    );
+
+    // 6. delete program_schedules records where programId matches
+    const { data: programSchedules } = await supabase
+      .from("program_schedules")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete programSchedules table record where programId matches",
+      programSchedules,
+      error
+    );
+    // 7. delete program_fee_level_settings records where programId matches
+    const { data: programFeeLevelSettings } = await supabase
+      .from("program_fee_level_settings")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete programFeeLevelSettings table record where programId matches",
+      programFeeLevelSettings,
+      error
+    );
+    // 8 delete program_contact_details records where programId matches
+    const { data: programContactDetails } = await supabase
+      .from("program_contact_details")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete programContactDetails table record where programId matches",
+      programContactDetails,
+      error
+    );
+
+    // 9. delete program_accommodation records where programId matches
+    const { data: programAccommodations } = await supabase
+      .from("program_accommodations")
+      .delete()
+      .eq("program_id", programId)
+      .select();
+
+    console.log(
+      "delete programAccommodations table record where programId matches",
+      programAccommodations,
+      error
+    );
+
+    // 10. delete finally program record from program table
+
+    const { data: programData } = await supabase
+      .from("program")
+      .delete()
+      .eq("id", programId)
+      .select();
+
+    console.log(
+      "delete programData table record where programId matches",
+      programData,
+      error
+    );
+  }
 };

@@ -1,4 +1,4 @@
-import {isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
+import { isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
 import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
 import LockIcon from "@public/assets/Lock";
@@ -46,6 +46,7 @@ import {
 } from "src/ui/select";
 import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "./EditCourseUtil";
 
 export default function NewCourseStep2() {
@@ -59,7 +60,7 @@ export default function NewCourseStep2() {
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
-
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
     <div className="pt-2 w-auto ">
       <div className="flex flex-wrap gap-x-7 gap-y-3">
@@ -119,48 +120,40 @@ export default function NewCourseStep2() {
       </div>
       <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          Course Description *
+          {t("course_description")} *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                Course Description text is managed by National Admin. If the
-                National Admin has allowed Organizers / Teachers to edit Course
-                description then only this field will be editable. If you want
-                to change the course description and this field is not editable
-                kindly contact your National Admin.
+                {t("new_strings:course_description_text")}
               </div>
             </HoverCardContent>
           </HoverCard>
         </div>
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-          Course Notes *
+          {t("course_notes")} *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                Text entered in the 'Course Notes' field will be shown only on
-                the Art of Living Website course details page.
+                {t("new_strings:text_entered_in_the_course_notes")}
               </div>
             </HoverCardContent>
           </HoverCard>
         </div>
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
-        Email Notes *
+          {t("email_notes")} *
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                Text entered in the 'Email Notes' field will be included in the
-                registration confirmation email only irrespective of the
-                transaction status (Email notes will not be shown on the Art of
-                Living Website)
+                {t("new_strings:text_entered_in_the_email_notes")}
               </div>
             </HoverCardContent>
           </HoverCard>
@@ -177,7 +170,6 @@ export const CourseTypeDropDown = () => {
    * This variable holds the path of the url
    */
   const pathname = usePathname();
-
 
   /**
    * Checking whether the url contains the edit or not
@@ -314,10 +306,11 @@ export const CourseTypeDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+  const { t } = useTranslation(["common"]);
   return (
     <div className="flex gap-1 flex-col">
-      <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Course Type <div className="text-[#7677F4]"> *</div>
+      <div className="text-xs font-normal text-[#333333]">
+        {t("course_type")} <span className="text-[#7677F4]">*</span>
       </div>
       <Select
         value={value}
@@ -331,7 +324,7 @@ export const CourseTypeDropDown = () => {
           className="w-[320px]"
           error={courseTypeError ? true : false}
         >
-          <SelectValue placeholder="Select course type" />
+          <SelectValue placeholder={t("select_course_type")} />
         </SelectTrigger>
         <SelectContent>
           <Input
@@ -370,6 +363,7 @@ export const CourseTypeDropDown = () => {
 };
 
 const RegistrationGateway = () => {
+  const { t } = useTranslation("course.new_course");
   const {
     field: { value, onChange },
   } = useController({
@@ -379,7 +373,7 @@ const RegistrationGateway = () => {
   return (
     <div className="flex flex-row items-center gap-[19px]">
       <div className="text-[14px] text-[#323232] w-[244px] font-normal text-wrap">
-        Registration is mandatory for this course
+        {t("course.new_course:course_details_tab.registration_mandatory")}
       </div>
       <Switch
         id="is_registration_required"
@@ -394,6 +388,7 @@ const RegistrationGateway = () => {
 };
 
 const CourseNameDropDown = () => {
+  const { t } = useTranslation("new_strings");
   const [pageSize, setPageSize] = useState(10);
 
   const { watch } = useFormContext();
@@ -441,8 +436,8 @@ const CourseNameDropDown = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Course Name <div className="text-[#7677F4]">*</div>
+      <div className="text-xs font-normal text-[#333333]">
+        {t("new_strings:course_name")} <span className="text-[#7677F4]">*</span>
       </div>
 
       <Select
@@ -452,7 +447,9 @@ const CourseNameDropDown = () => {
         }}
       >
         <SelectTrigger className="w-[320px]" error={error ? true : false}>
-          <SelectValue placeholder="Select course alias name" />
+          <SelectValue
+            placeholder={t("new_strings:select_course_alias_name")}
+          />
         </SelectTrigger>
         <SelectContent>
           <Input
@@ -585,11 +582,13 @@ const TeachersDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+  const { t } = useTranslation(["common", "course.new_course"]);
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333] flex flex-row">
-        Teacher <div className="text-[#7677F4]">*</div>
+      <div className="text-xs font-normal text-[#333333]">
+        {t("teacher")}
+        <span className="text-[#7677F4]"> *</span>
       </div>
       {/* 
         // Here i have to show teachers based on program created user 
@@ -598,16 +597,18 @@ const TeachersDropDown = () => {
         // and program created user is should prefilled 
         // if program created user is the organizer of that program then we don't show the program created user along with other teachers
       */}
-      {isTeacherShownInTeacherField(formData?.program_created_by)
-        ? <Input
+      {isTeacherShownInTeacherField(formData?.program_created_by) ? (
+        <Input
           value={loginUserData?.userData?.contact_id?.full_name}
           disabled={true}
           className="rounded-[12px] text-[14px] font-normal"
         />
-        :
+      ) : (
         <MultiSelect
-         value={value}
-          placeholder="Enter Teacher Name"
+          value={value}
+          placeholder={t(
+            "course.new_course:course_details_tab.teacher_placeholder"
+          )}
           data={options}
           onBottomReached={handleOnBottomReached}
           onSearch={onSearch}
@@ -631,7 +632,7 @@ const TeachersDropDown = () => {
           }}
           error={teachersErrors}
         />
-       }
+      )}
       {teachersErrors && (
         <span className="text-[#FF6D6D] text-[12px]">
           {teachersErrors?.message}
@@ -709,15 +710,17 @@ const AssistantTeachersDropDown = () => {
   } = useController({
     name: NewCourseStep2FormNames?.assistant_teacher_ids,
   });
-
+  const { t } = useTranslation("course.new_course");
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        Assistant Teacher
+        {t("course.new_course:course_details_tab.assistant_teacher")}
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Teacher Name"
+        placeholder={t(
+          "course.new_course:course_details_tab.teacher_placeholder"
+        )}
         data={teachers}
         onBottomReached={handleOnBottomReached}
         onSearch={onSearch}
@@ -750,18 +753,33 @@ const Visibility = () => {
     VISIBILITY,
     PRIVATE
   )?.id;
-
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Program Visibility <div className="text-[#7677F4]"> *</div>
+      <div className="flex flex-row gap-1">
+        <Text className="text-xs font-normal text-[#333333]">
+          {t("program_visibility")}
+        </Text>
         <HoverCard>
           <HoverCardTrigger>
             <Important />
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px]">
-            Public courses will be listed on Art of Living website, but private courses will not be listed. When changing the visibility from private to public, it can take up to 15 minutes for the webpage to be published on the Art of Living website.
+              <div className="flex flex-row gap-1 items-center">
+                <Globe />
+                {t("public")}
+              </div>
+              <div>{t("new_strings:there_are_a_lot_of_things")}</div>
+              <div className="my-2">
+                <hr></hr>
+              </div>
+              <div className="flex flex-row gap-1 items-center">
+                <LockIcon />
+                {t("private")}
+              </div>
+              <div>{t("new_strings:there_are_a_lot_of_things")}</div>
+              {t("new_strings:program_visibility_info_icon_text")}
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -777,13 +795,13 @@ const Visibility = () => {
           <RadioButtonCard
             value={JSON.stringify(publicVisibilityId)}
             selectedRadioValue={JSON.stringify(value)}
-            label="Public"
+            label={t("public")}
             className="w-[112px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
             value={JSON.stringify(privateVisibilityId)}
             selectedRadioValue={JSON.stringify(value)}
-            label="Private"
+            label={t("private")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -793,6 +811,7 @@ const Visibility = () => {
 };
 
 const DisplayLanguage = () => {
+  const { t } = useTranslation(["common", "course.new_course"]);
   const {
     field: { value, onChange },
   } = useController({
@@ -801,9 +820,9 @@ const DisplayLanguage = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">
-        Display language translation option for participants *
-      </div>
+      <Text className="text-xs font-normal text-[#333333]">
+        {t("course.new_course:course_details_tab.display_language_option")}
+      </Text>
       <RadioGroup
         value={JSON.stringify(value)}
         onValueChange={(value) => {
@@ -814,13 +833,13 @@ const DisplayLanguage = () => {
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
-            label="Yes"
+            label={t("yes")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label="No"
+            label={t("no")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -830,6 +849,7 @@ const DisplayLanguage = () => {
 };
 
 const GeoRestriction = () => {
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   const {
     field: { value, onChange },
   } = useController({
@@ -839,7 +859,7 @@ const GeoRestriction = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
-        Is geo restriction applicable for registrations
+        {t("is_geo_restriction")}
         <div className="text-[#7677F4]">*</div>
         <HoverCard>
           <HoverCardTrigger>
@@ -847,10 +867,7 @@ const GeoRestriction = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              Text entered in the 'Email Notes' field will be included in the
-              registration confirmation email only irrespective of the
-              transaction status (Email notes will not be shown on the Art of
-              Living Website)
+              {t("new_strings:text_entered_in_the_email_notes")}
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -866,13 +883,13 @@ const GeoRestriction = () => {
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
-            label="Yes"
+            label={t("yes")}
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label="No"
+            label={t("no")}
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
         </div>
@@ -933,16 +950,18 @@ const LanguageDropDown = () => {
   const handleOnSearch = (value: any) => {
     onSearch(value);
   };
+  const { t } = useTranslation(["common", "course.new_course"]);
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className=" flex flex-row text-xs font-normal text-[#333333]">
-        Language(s) course is taught in
-        <div className="text-[#7677F4]"> *</div>
-      </div>
+      <Text className="flex flex-row text-xs font-normal text-[#333333]">
+        {t("language_course_is_taught_in")}
+      </Text>
       <MultiSelect
         value={value}
-        placeholder="Select Language"
+        placeholder={t(
+          "course.new_course:course_details_tab.languages_taught_placeholder"
+        )}
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
@@ -1011,15 +1030,17 @@ const LanguageTranslationDropDown = () => {
   const handleOnSearch = (value: any) => {
     onSearch(value);
   };
-
+  const { t } = useTranslation(["common", "course.new_course"]);
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        Available language(s) for translation
+        {t("available_languages_for_translation")}
       </div>
       <MultiSelect
         value={value}
-        placeholder="Select translation languages"
+        placeholder={t(
+          "course.new_course:course_details_tab.available_languages_placeholder"
+        )}
         data={filteredOptions}
         onBottomReached={handleOnBottomReached}
         onSearch={handleOnSearch}
@@ -1031,6 +1052,7 @@ const LanguageTranslationDropDown = () => {
 };
 
 const AllowedCountriesDropDown = () => {
+  const { t } = useTranslation(["common", "course.new_course"]);
   const { watch } = useFormContext();
 
   const formData = watch();
@@ -1058,12 +1080,14 @@ const AllowedCountriesDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
-        Country(s) from where registrations are allowed
+        {t("countries_from_where_registrations_are_allowed")}
         <div className="text-[#7677F4]">*</div>
       </div>
       <MultiSelect
         value={value}
-        placeholder="Enter Countries"
+        placeholder={t(
+          "course.new_course:course_details_tab.country_registrations_allowed_placeholder"
+        )}
         data={allowedCountriesData}
         onBottomReached={() => {}}
         onSearch={() => {}}
@@ -1086,12 +1110,11 @@ const MaximumCapacity = () => {
   } = useController({
     name: NewCourseStep2FormNames?.max_capacity,
   });
-
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
-        <Text className="text-xs ">Max Capacity</Text>
-        <Text className="text-[#7677F4]">*</Text>
+        <Text className="text-xs ">{t("max_capacity")}</Text>
         {/* popover to show the note to maximum capacity */}
         <HoverCard>
           <HoverCardTrigger>
@@ -1099,13 +1122,15 @@ const MaximumCapacity = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
-              If this field is blank, then the course capacity is unlimited.
+              {t("new_strings:if_this_field_is_blank")}
             </Text>
           </HoverCardContent>
         </HoverCard>
       </div>
       <Input
-        placeholder="Enter no. of attendees"
+        placeholder={t(
+          "course.new_course:course_details_tab.max_capacity_placeholder"
+        )}
         value={value}
         onChange={(val) => {
           onChange(val);

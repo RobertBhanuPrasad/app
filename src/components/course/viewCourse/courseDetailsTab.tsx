@@ -10,6 +10,8 @@ import { PUBLIC } from "src/constants/OptionValueOrder";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { formatDateTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { useTranslation } from 'next-i18next';
+
 interface fullNameObject {
   user_id?: {
     contact_id?: {
@@ -26,7 +28,7 @@ interface LanguageItem {
 
 interface ProgramFeeItem {
   fee_level_id?: {
-    name?: object
+    name?: object;
   };
   total?: number;
 }
@@ -61,10 +63,21 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,name),program_type_id(id,name),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(name))),program_fee_level_settings(*,fee_level_id(name)),max_capacity,visibility_id(id,name)",
+        "*,online_url,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,name),program_type_id(*),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(name))),program_fee_level_settings(*,fee_level_id(name)),max_capacity,visibility_id(id,name)",
     },
   });
 
+  
+  const venue =
+  courseData?.data?.venue_id?.name + 
+  ', ' +
+  courseData?.data?.venue_id?.address + 
+  ', ' +
+  courseData?.data?.venue_id?.city_id?.name + 
+  ', ' +
+  courseData?.data?.venue_id?.state_id.name +
+   ', ' +
+  courseData?.data?.venue_id?.postal_code
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
@@ -108,23 +121,23 @@ function CourseDetailsTab() {
     VISIBILITY,
     PUBLIC
   )?.id;
-
+  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
       {/**
        * Basic details card
        */}
       <div>
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] ">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)] ">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Basic Details
+            {t('basic_details')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div>
-              <Header2>Organization</Header2>
+              <Header2>{t('new_strings:organisation')}</Header2>
               <ItemValue>
                 {courseData?.data?.organization_id?.name
                   ? courseData?.data?.organization_id?.name
@@ -132,7 +145,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Course ID</Header2>
+              <Header2>{t('course_id')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_code
                   ? courseData?.data?.program_code
@@ -140,7 +153,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Course type</Header2>
+              <Header2>{t('new_strings:course_type')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_type_id?.name
                   ? translatedText(courseData?.data?.program_type_id?.name)
@@ -148,15 +161,17 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Course Accounting Status</Header2>
+              <Header2>{t('course_accounting_status')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_accounting_status_id?.name
-                  ? translatedText(courseData?.data?.program_accounting_status_id?.name)
+                  ? translatedText(
+                      courseData?.data?.program_accounting_status_id?.name
+                    )
                   : "-"}
               </ItemValue>
             </div>
             <div>
-              <Header2>Teachers</Header2>
+              <Header2>{t('teachers')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_teachers?.length > 0
                   ? courseData?.data?.program_teachers
@@ -168,19 +183,19 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Assistant Teachers</Header2>
+              <Header2>{t('course.view_course:basic_details_tab.assistant_teachers')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_assistant_teachers?.length > 0
                   ? courseData?.data?.program_assistant_teachers
                       ?.map((item: fullNameObject) => {
                         return item?.user_id?.contact_id?.full_name;
-                      })
+                      }) 
                       .join(",")
                   : "-"}
               </ItemValue>
             </div>
             <div>
-              <Header2>Available language(s) for translation </Header2>
+              <Header2>{t('available_languages_for_translation')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_translation_languages?.length > 0
                   ? courseData?.data?.program_translation_languages
@@ -192,7 +207,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Language(s) course is taught in </Header2>
+              <Header2>{t('language_course_is_taught_in')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_languages?.length > 0
                   ? courseData?.data?.program_languages
@@ -204,7 +219,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Program Visibility</Header2>
+              <Header2>{t('program_visibility')}</Header2>
               <ItemValue>
                 {courseData?.data?.visibility_id?.name
                   ? translatedText(courseData?.data?.visibility_id?.name)
@@ -212,7 +227,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Max Capacity</Header2>
+              <Header2>{t('max_capacity')}</Header2>
               <ItemValue>
                 {courseData?.data?.max_capacity
                   ? courseData?.data?.max_capacity
@@ -220,7 +235,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>Program organizer</Header2>
+              <Header2>{t('course.view_course:basic_details_tab.program_organizer')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_organizers?.length > 0
                   ? courseData?.data?.program_organizers
@@ -239,10 +254,10 @@ function CourseDetailsTab() {
        * Fee and accommodation card
        */}
       <div>
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Fee and Accommodation
+            {t('course.view_course:basic_details_tab.fee_and_accommodation')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -251,7 +266,9 @@ function CourseDetailsTab() {
               ? programFees?.map((item: ProgramFeeItem) => {
                   return (
                     <div className="flex flex-col gap-1">
-                      <Header2>{translatedText(item?.fee_level_id?.name as object)}</Header2>
+                      <Header2>
+                        {translatedText(item?.fee_level_id?.name as object)}
+                      </Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                         {item?.total}
@@ -265,7 +282,11 @@ function CourseDetailsTab() {
                   (item: AccommodationItem) => {
                     return (
                       <div className="flex flex-col gap-1">
-                        <Header2>{translatedText(item?.accommodation_type_id?.name as any)}</Header2>
+                        <Header2>
+                          {translatedText(
+                            item?.accommodation_type_id?.name as any
+                          )}
+                        </Header2>
                         <ItemValue>
                           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                           {item?.fee_per_person}
@@ -280,30 +301,28 @@ function CourseDetailsTab() {
       </div>
 
       <div className="flex flex-col gap-[30px]">
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Time and Venue
+            {t('time_and_venue')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div>
-              <Header2>Venue Address</Header2>
-              {courseData?.data?.venue_id ? (
-                <ItemValue>
-                  {courseData?.data?.venue_id?.address},
-                  {courseData?.data?.venue_id?.center_id?.name},
-                  {courseData?.data?.venue_id?.city_id?.name},
-                  {courseData?.data?.venue_id?.state_id?.name}{" "}
-                  {courseData?.data?.venue_id?.postal_code}
-                </ItemValue>
-              ) : (
-                "-"
-              )}
+              <Header2>{t('venue_address')}</Header2>
+              {courseData?.data?.program_type_id?.is_online_program == true ?
+              (courseData?.data?.online_url ? ( <a href= {courseData?.data?.online_url} className="text-blue-600 hover:text-blue-800" target="_blank">{t("new_strings:online")}</a>
+            ) : ( "-"))
+          :
+          (courseData?.data?.venue_id ? (
+            <ItemValue>
+              {venue}
+            </ItemValue>
+          ):( "-"))}
             </div>
             <Header2>
-              Sessions
+            {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
                 {courseData?.data?.program_schedules?.length > 0
                   ? courseData?.data?.program_schedules?.map(
@@ -326,10 +345,10 @@ function CourseDetailsTab() {
         {/**
          * Registration Links card*/}
 
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Registration Links
+            {t('course.view_course:basic_details_tab.registration_links')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -337,7 +356,7 @@ function CourseDetailsTab() {
             <div className="gap-[23px] flex flex-col">
               {courseData?.data?.visibility_id?.id == publicVisibilityId && (
                 <div>
-                  <Header2>Course Details URL</Header2>
+                  <Header2>{t('course.view_course:basic_details_tab.course_details_url')}</Header2>
                   <ItemValue>
                     <div className="flex flex-row gap-4">
                       <div className="w-[90%] break-words">
@@ -355,7 +374,7 @@ function CourseDetailsTab() {
                           <CopyIcon />
                           {copiedDetailsPageLink ? (
                             <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                              copied
+                              {t('new_strings:copied')}
                             </div>
                           ) : (
                             ""
@@ -367,7 +386,7 @@ function CourseDetailsTab() {
                 </div>
               )}
               <div>
-                <Header2>Registration URL</Header2>
+                <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">
                   <div className="text-[16px] font-semibold w-[90%] break-words">
                     {courseData?.data?.registration_link
@@ -384,7 +403,7 @@ function CourseDetailsTab() {
                       <CopyIcon />
                       {copiedRegistrationLink ? (
                         <div className="absolute -left-8 bottom-12 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                          copied
+                          {t('new_strings:copied')}
                         </div>
                       ) : (
                         ""
@@ -400,10 +419,10 @@ function CourseDetailsTab() {
         {/**
          * Contact details card
          */}
-        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)]">
+        <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-              Contact Details
+            {t('course.view_course:basic_details_tab.contact_details')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -414,15 +433,15 @@ function CourseDetailsTab() {
                     return (
                       <div className="gap-[23px] flex flex-col">
                         <div>
-                          <Header2>Contact Name</Header2>
+                          <Header2>{t('contact_name')}</Header2>
                           <ItemValue>{item.contact_name}</ItemValue>
                         </div>
                         <div>
-                          <Header2>Contact Email</Header2>
+                          <Header2>{t('contact_email')}</Header2>
                           <ItemValue>{item.contact_email}</ItemValue>
                         </div>
                         <div>
-                          <Header2>Contact Phone</Header2>
+                          <Header2>{t('course.view_course:basic_details_tab.contact_phone')}</Header2>
                           <ItemValue>{item.contact_number}</ItemValue>
                         </div>
                       </div>

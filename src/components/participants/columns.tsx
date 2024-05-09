@@ -10,19 +10,24 @@ import {
   DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
 import TransactionActivity from "./TransactionActivityPopover";
+import { useTranslation } from 'next-i18next';
 import { translatedText } from "src/common/translations";
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-export const columns: ExtendedColumnDef<any>[] = [
+export const columns = () =>
+{
+  const {t} = useTranslation(['common','course.participants','new_strings', 'course.view_course'])
+  const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "participant_code",
-    column_name: "Registration ID",
+    column_name: t('course.participants:find_participant.registration_id'),
     enablePinning: true,
     enableHiding: false,
     header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Registration ID</div>;
+      return <div className="min-w-[150px] text-left">
+      {t('course.participants:find_participant.registration_id')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -47,7 +52,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "created_at",
-    column_name: "Registration Date",
+    column_name: t('course.participants:find_participant.registration_date'),
     header: ({ column }) => {
       return (
         <div>
@@ -55,7 +60,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Registration Date
+            {t('course.participants:find_participant.registration_date')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -75,7 +80,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Name",
-    column_name: "Name",
+    column_name: t('course.participants:find_participant.name'),
     enableHiding: false,
     enableSorting: true,
     header: ({ column }) => {
@@ -85,7 +90,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Name
+            {t('course.participants:find_participant.name')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -108,9 +113,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "NIF",
-    column_name: "NIF",
+    column_name: t('course.participants:find_participant.nif'),
     header: ({ column }) => {
-      return <div className="text-left">NIF</div>;
+      return <div className="text-left"> {t('course.participants:find_participant.nif')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -125,7 +130,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Date of Birth",
-    column_name: "Date of Birth",
+    column_name: t('course.participants:find_participant.date_of_birth'),
     header: ({ column }) => {
       return (
         <div>
@@ -133,7 +138,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Date of Birth
+            {t('course.participants:find_participant.date_of_birth')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -157,7 +162,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Phone",
-    column_name: "Phone",
+    column_name: t('course.participants:find_participant.phone'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -166,7 +171,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Phone
+            {t('course.participants:find_participant.phone')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -189,7 +194,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Email",
-    column_name: "Email",
+    column_name: t('course.participants:find_participant.email'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -198,7 +203,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Email
+             {t('course.participants:find_participant.email')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -221,7 +226,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Fee Level",
-    column_name: "Fee Level",
+    column_name: t('course.participants:view_participant.fee_level'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -230,7 +235,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Fee Level
+           {t('course.participants:view_participant.fee_level')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -253,7 +258,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Amount",
-    column_name: "Amount",
+    column_name: t('course.participants:edit_participant.participants_information_tab.amount'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -262,7 +267,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Amount
+             {t('course.participants:edit_participant.participants_information_tab.amount')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -285,9 +290,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Transaction Type",
-    column_name: "Transaction Type",
+    column_name: t('course.participants:view_participant.transaction_type'),
     header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Transaction Type</div>;
+      return <div className="min-w-[150px] text-left">{t('course.participants:view_participant.transaction_type')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -308,9 +313,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Transaction ID",
-    column_name: "Transaction ID",
+    column_name: t('course.participants:view_participant.transaction_id'),
     header: ({ column }) => {
-      return <div className=" min-w-[200px] text-left">Transaction ID</div>;
+      return <div className=" min-w-[200px] text-left">{t('course.participants:view_participant.transaction_id')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -330,9 +335,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Payment Method",
-    column_name: "Payment Method",
+    column_name: t('course.participants:view_participant.payment_method'),
     header: ({ column }) => {
-      return <div className="min-w-[200px] text-left">Payment Method</div>;
+      return <div className="min-w-[200px] text-left">{t('course.participants:view_participant.payment_method')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -349,9 +354,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Balance",
-    column_name: "Balance",
+    column_name: t('new_strings:balance_due'),
     header: ({ column }) => {
-      return <div className="text-left">Balance</div>;
+      return <div className="text-left">{t('new_strings:balance_due')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -368,10 +373,10 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Transaction Status",
-    column_name: "Transaction Status",
+    column_name: t('course.participants:find_participant.transaction_status'),
     enableHiding: false,
     header: ({ column }) => {
-      return <div className="min-w-[150px] text-left">Transaction Status</div>;
+      return <div className="min-w-[150px] text-left">{t('course.participants:find_participant.transaction_status')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -388,7 +393,7 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Attendance Status",
-    column_name: "Attendance Status",
+    column_name: t('course.participants:find_participant.attendance_status'),
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -397,7 +402,7 @@ export const columns: ExtendedColumnDef<any>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Attendance Status
+            {t('course.participants:find_participant.attendance_status')}
             {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
@@ -422,9 +427,9 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Program Agreement Version",
-    column_name: "Program Agreement Version",
+    column_name: t('course.participants:find_participant.program_agreement_version'),
     header: ({ column }) => {
-      return <div className="text-left">Program Agreement Version</div>;
+      return <div className="text-left">{t('course.participants:find_participant.program_agreement_version')}</div>;
     },
 
     // This any will be removed after internal dataStructure implementation
@@ -441,10 +446,10 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Program Agreement Status",
-    column_name: "Program Agreement Status",
+    column_name: t('course.participants:find_participant.program_agreement_status'),
     header: ({ column }) => {
       return (
-        <div className="min-w-[150px] text-left">Program Agreement Status</div>
+        <div className="min-w-[150px] text-left">{t('course.participants:find_participant.program_agreement_status')}</div>
       );
     },
 
@@ -462,10 +467,10 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Program Agreement Date",
-    column_name: "Program Agreement Date",
+    column_name: t('course.participants:find_participant.program_agreement_date'),
     header: ({ column }) => {
       return (
-        <div className="min-w-[150px] text-left">Program Agreement Date</div>
+        <div className="min-w-[150px] text-left">{t('course.participants:find_participant.program_agreement_date')}</div>
       );
     },
 
@@ -482,10 +487,10 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Health Declaration Status",
-    column_name: "Health Declaration Status",
+    column_name: t('course.participants:find_participant.health_declaration_status'),
     header: ({ column }) => {
       return (
-        <div className="min-w-[150px] text-left">Health Declaration Status</div>
+        <div className="min-w-[150px] text-left">{t('course.participants:find_participant.health_declaration_status')}</div>
       );
     },
 
@@ -503,11 +508,11 @@ export const columns: ExtendedColumnDef<any>[] = [
   },
   {
     accessorKey: "Health Declaration Consent Date",
-    column_name: "Health Declaration Consent Date",
+    column_name: t('course.participants:find_participant.health_declaration_consent_date'),
     header: ({ column }) => {
       return (
         <div className="min-w-[150px] text-left">
-          Health Declaration Consent Date
+          {t('course.participants:find_participant.health_declaration_consent_date')}
         </div>
       );
     },
@@ -530,8 +535,8 @@ export const columns: ExtendedColumnDef<any>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const optionsValues = [
-        "View Participant",
-        "Edit Participant",
+        t("course.view_course:participants_tab.view_participant"),
+        t("new_strings:edit_participant"),
         // TODO(Not in MVP scope): Integrate these actions later
         // "Transfer",
         // "Send Email",
@@ -569,6 +574,10 @@ export const columns: ExtendedColumnDef<any>[] = [
     },
   },
 ];
+
+return columns
+
+}
 
 export function formatDate(date: string): string {
   const options: Intl.DateTimeFormatOptions = {

@@ -6,8 +6,11 @@ import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { NewCourseStep6FormNames } from "src/constants/CourseConstants";
 import { Input } from "src/ui/input";
 import { Textarea } from "src/ui/textarea";
+import { useTranslation } from 'next-i18next';
+import { Text } from "src/ui/TextTags";
 
 function NewCourseStep6() {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   // Destructuring the necessary functions from react-hook-form
   const { append, fields, remove } = useFieldArray({
     name: NewCourseStep6FormNames.contact,
@@ -48,8 +51,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Name */}
           <div className="w-80 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Name" : `Contact Name ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
+              {index === 0 ? t("contact_name") : `${t("contact_name")} ${index + 1}`}{" "}
             </div>
             <ContactName index={index} />
           </div>
@@ -57,8 +59,8 @@ function NewCourseStep6() {
           {/* Input field for Contact Email */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Email" : `Contact Email ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
+              {index === 0 ? t("contact_email") : `${t("contact_email")} ${index + 1}`}{" "}
+              <Text className="text-[#7677F4]"> *</Text>
             </div>
             <ContactEmail index={index} />
           </div>
@@ -66,8 +68,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Number */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0 ? "Contact Number" : `Contact Number ${index + 1}`}{" "}
-              <div className="text-[#7677F4]"> *</div>
+              {index === 0 ? t("course.new_course:contact_info_tab.contact_number") : `${t("course.new_course:contact_info_tab.contact_number")} ${index + 1}`}{" "}
             </div>
             <ContactMobile index={index} />
           </div>
@@ -81,7 +82,7 @@ function NewCourseStep6() {
                 className="text-[#7677F4] flex flex-row gap-1 justify-center items-center cursor-pointer"
               >
                 <Add />
-                Add
+                {t("add")}
               </div>
             )}
             {/* Except for first row we need to show delete icon */}
@@ -91,7 +92,7 @@ function NewCourseStep6() {
                 className="text-[#7677F4]  flex flex-row gap-1 justify-center items-center cursor-pointer"
               >
                 <Delete />
-                Delete
+                {t("delete_button")}
               </div>
             )}
           </div>
@@ -101,15 +102,14 @@ function NewCourseStep6() {
       {/* Additional section for BCC registration confirmation email */}
       <div className="w-80 h-24 flex gap-1 flex-col ">
         <div className="flex flex-row text-xs font-normal text-[#333333]">
-          Send BCC registration confirmation email to{" "}
-          <div className="text-[#7677F4]"> *</div>
+        {t("course.new_course:contact_info_tab.send_bcc")}{" "}
         </div>
         <Textarea
           value={courseEmails}
           onChange={(val) => {
             courseEmailOnChange(val?.target?.value);
           }}
-          placeholder="Enter course emails"
+          placeholder={t("course.new_course:contact_info_tab.select_course")}
           className="!w-58"
           error={error ? true : false} // TODO need to change after integrating the form names
         />
@@ -117,9 +117,9 @@ function NewCourseStep6() {
           <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
         )}
         <div className="flex flex-row gap-1 text-[#666666] text-[12px] italic">
-          <span className="font-semibold">Note:</span>{" "}
+          <span className="font-semibold">{t("new_strings:note")}</span>{" "}
           <div className="font-[400]">
-            Enter comma separated list of email addresses.
+          {t("new_strings:enter_comma")}
           </div>
         </div>
       </div>
@@ -130,6 +130,7 @@ function NewCourseStep6() {
 export default NewCourseStep6;
 
 export const ContactName = ({ index }: any) => {
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -137,7 +138,7 @@ export const ContactName = ({ index }: any) => {
   return (
     <div>
       <Input
-        placeholder="Enter contact name"
+        placeholder={t("course.new_course:contact_info_tab.select_contact")}
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
@@ -151,6 +152,7 @@ export const ContactName = ({ index }: any) => {
   );
 };
 export const ContactEmail = ({ index }: any) => {
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -159,7 +161,7 @@ export const ContactEmail = ({ index }: any) => {
   return (
     <div>
       <Input
-        placeholder="Enter contact email"
+        placeholder={t("course.new_course:contact_info_tab.select_contact_email")}
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
@@ -174,6 +176,7 @@ export const ContactEmail = ({ index }: any) => {
 };
 
 export const ContactMobile = ({ index }: any) => {
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -181,7 +184,7 @@ export const ContactMobile = ({ index }: any) => {
   return (
     <div>
       <Input
-        placeholder="Enter contact mobile"
+        placeholder={t("course.new_course:contact_info_tab.select_contact_number")}
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
