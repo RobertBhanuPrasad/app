@@ -924,7 +924,7 @@ export default function NewCourseReviewPage() {
                 </div>
               )}
 
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:fees_tab.disable")}
               </p>
@@ -934,7 +934,7 @@ export default function NewCourseReviewPage() {
               >
                 {t("yes")}
               </abbr>
-            </div>
+            </div> */}
           </div>
         </section>
         {/* Accommodation Information */}
