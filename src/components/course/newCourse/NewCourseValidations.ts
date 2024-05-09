@@ -176,15 +176,17 @@ const accommodationValidationSchema = z.array(
     }),
     fee_per_person: z
       .string({
-        required_error: "Please enter a valid money value for fee per person.",
+        required_error: "Fee per person is a required field.",
       })
-      .regex(/^\d+$/, "Fee can accept only integers ")
+      .nonempty({ message: "Fee per person is a required field." })
+      .regex(/^\d+(\.\d+)?$/, "Please enter a valid money value for fee per person.")
       .or(z.number()),
     no_of_residential_spots: z
       .string({
-        required_error: "Please enter a valid no of residential spots",
+        required_error: "Number of spots is a required field.",
       })
-      .regex(/^\d+$/, "Residential spots can accept only integers ")
+      .nonempty({ message: "Number of spots is a required field." })
+      .regex(/^\d+$/, "Please enter a valid number.")
       .or(z.number()),
   })
 );
