@@ -271,12 +271,12 @@ function CourseDetailsTab() {
                       </Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                        {item?.total}
+                        {(item?.total)?.toFixed(2)}
                       </ItemValue>
                     </div>
                   );
                 })
-              : "-"}
+              : ""}
             {courseData?.data?.program_accommodations?.length > 0
               ? courseData?.data?.program_accommodations?.map(
                   (item: AccommodationItem) => {
@@ -295,7 +295,7 @@ function CourseDetailsTab() {
                     );
                   }
                 )
-              : "-"}
+              : ""}
           </CardContent>
         </Card>
       </div>
@@ -312,7 +312,7 @@ function CourseDetailsTab() {
             <div>
               <Header2>{t('venue_address')}</Header2>
               {courseData?.data?.program_type_id?.is_online_program == true ?
-              (courseData?.data?.online_url ? ( <a href= {courseData?.data?.online_url} className="text-blue-600 hover:text-blue-800" target="_blank">{t("new_strings:online")}</a>
+              (courseData?.data?.online_url ? ( <a href= {courseData?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target="_blank">{t("new_strings:online")}</a>
             ) : ( "-"))
           :
           (courseData?.data?.venue_id ? (
