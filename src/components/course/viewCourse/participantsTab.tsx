@@ -42,14 +42,14 @@ function ParticipantsTab() {
       <div className="flex justify-between">
         <div className="text-[23px] font-semibold">{t('course.view_course:participants_tab.overall_participants')}</div>
         <div className="flex gap-4">
-          <Button
+          {/* <Button
             className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]"
             // onClick={() =>
             //     // router.push('/courses/add')
             // }
           >
             {t('register_participant')}
-          </Button>
+          </Button> */}
           <Button
             className="w-[188px] h-[46px] rounded-[12px]"
             onClick={() => router.push(`/courses/${id}/participants/list`)}

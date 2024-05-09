@@ -197,13 +197,13 @@ export default function ViewDonationDetails({
                                 <Text className="text-[#999999] text-[14px]">
                                 {t('course.participants:edit_participant.participants_information_tab.address')}
                                 </Text>
-                                <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {contactData?.data?.contact_id
+                                <abbr className="font-semibold no-underline text-[16px] truncate block text-[#666666]" title={contactData?.data?.contact_id?.street_address}>
+                                {contactData?.data?.contact_id
                                         ?.street_address
                                         ? contactData?.data?.contact_id
                                               ?.street_address
                                         : "-"}
-                                </Text>
+                                </abbr>
                             </div>
 
                             <div className="w-[225px]">

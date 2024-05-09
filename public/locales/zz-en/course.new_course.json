@@ -1,0 +1,101 @@
+{
+    "basic_details_tab": {
+        "teaching_course": "I am teaching this course",
+        "co_teaching": "I am co-teaching this course",
+        "organizing_this_course": "I am organizing this course",
+        "organization_placeholder": "Select Organization",
+        "program_organizer_placeholder": "Enter Program organizer Name"
+    },
+    "course_details_tab": {
+        "teacher": "Teacher",
+        "teacher_placeholder": "Enter Teacher Name",
+        "assistant_teacher": "Assistant Teacher",
+        "languages_taught_placeholder": "Select Language",
+        "display_language_option": "Display language translation option for participants",
+        "available_languages_placeholder": "Select translation languages",
+        "registration_mandatory": "Registration is mandatory for this course",
+        "max_capacity": "Maximum Capacity",
+        "max_capacity_placeholder": "Enter no. of attendees",
+        "registrations_restriction": "I geo restrict applicable for registration",
+        "country_registrations_allowed_placeholder": "Enter Countries"
+    },
+    "time_and_venue_tab": {
+        "existing_venue": "Existing Venue",
+        "no_existing_venue_found": "No existing found",
+        "add_new_venue": "Add New Venue",
+        "event_date_and_time": "Event Date and Time",
+        "session": "Session",
+        "from": "From",
+        "to": "to",
+        "new_venue": "New Venue",
+        "venue_name": "Venue Name",
+        "venue_name_placeholder": "Enter Venue Name",
+        "street_address": "Street Address",
+        "street_address_placeholder": "Select Street Address",
+        "postal_code": "Postal Code",
+        "postal_code_placeholder": "Enter Postal Code",
+        "province": "Province",
+        "province_placeholder": "Select Province",
+        "local_center_placeholder": "Select Local Center",
+        "view_all": "View All",
+        "existing_venues": "Existing Venues",
+        "search_by_venue_name": "Search by Venue Name. City or State",
+        "course_date_and_time": "Course Date and Time",
+        "course": "Course",
+        "online_meeting_url": "Online Meeting URL",
+        "online_meeting_url_placeholder": "Enter Online Meeting URL",
+        "online_meeting_note": "Note: Participants will join online course through your virtual venue",
+        "specific_location": "Please associate your course with a specific location for reporting purposes",
+        "state": "State"
+    },
+    "fees_tab": {
+        "enable_fees": "Enable Fees",
+        "normal_fee": "Normal Fee",
+        "vat reg": "VAT Reg.",
+        "fee": "Total Fee",
+        "enable_early": "Enable early bird fees?",
+        "disable": "Disable Pay Later Label123?",
+        "early_bird": "Early bird Fees",
+        "vat_reg": "VAT REG.",
+        "total early": "Total Early bird Fees",
+        "early_bird_cutoff": "Early bird cit-off period",
+        "days_left": "Days left"
+    },
+    "accommodation_tab": {
+        "accommodation_type": "Accommodation Type",
+        "fee_per_person": "Fee per person Inc. VAT",
+        "number_of_spots": "Number of spots available",
+        "note": "Note : If the Number of spots available is blank, then it is unlimited.",
+        "accommodation_fee": "Accommodation fee payment mode",
+        "pay_online": "Pay Online",
+        "pay_offline": "Pay Offline"
+    },
+    "contact_info_tab": {
+        "contact_number": "Contact Number",
+        "select_contact": "Select contact name",
+        "select_contact_email": "Select contact email",
+        "select_contact_number": "Select contact number",
+        "send_bcc": "Send BCC registration confirmation email to",
+        "select_course": "Select course email",
+        "note_enter_comma": "Note: Enter comma separated list of email addresses.",
+        "review_details": "Review Details"
+    },
+    "review_post_details": {
+        "creator": "Creator",
+        "course_details": "Course Details",
+        "time_formate": "Time Format",
+        "time_zone": "Time Zone",
+        "fee_information": "Fee Information",
+        "there_is_no_price": "There is no price for current settings.Select course type and city/center."
+    },
+    "congratulations_page": {
+        "congratulations": "Congratulations!",
+        "you_have_successfully": "You have successfully announced a course",
+        "go_to_course_listing": "Go to Course Listing",
+        "venue": "Venue",
+        "course_date": "Course Date",
+        "share_in_social": "Share in Social Platforms",
+        "your_course_has_been_submitted": "Your Course has been submitted for approval",
+        "review_pending": "Review Pending"
+    }
+}
