@@ -24,7 +24,10 @@ const Login = () => {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
       });
-      router.push("/");
+      {
+        /* initially when the user logins then we need to show the course listing page */
+      }
+      router.replace("/courses/list");
     }
   };
   return (
