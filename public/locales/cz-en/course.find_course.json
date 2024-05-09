@@ -1,15 +1,15 @@
 {
+    
     "all_filters": "All Filters",
     "search_by_course_id": "Search by Course ID",
     "columns": "Columns",
-    "select_all": "Select all",
-    "teacher(s)": "Teacher(s)",
+    "select_all": "Select All",
     "start_date": "Start Date",
     "attendees": "Attendees",
     "center": "Center",
     "view_course_details": "View Course Details",
     "submit_course_accounting_form": "Submit Course Accounting Form",
-    "selected": "Selected:",
+    "selected": "Selected",
     "out_of": "Out of",
     "showing": "Showing",
     "export": "Export",
@@ -29,6 +29,5 @@
     "course_visibility": "Course Visibility",
     "state": "State",
     "teacher_name": "Teacher Name",
-    "course_fees": "Course Fees",
     "reconciliation_status": "Reconciliation Status"
-}
+  }
