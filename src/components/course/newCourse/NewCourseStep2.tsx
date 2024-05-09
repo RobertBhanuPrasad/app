@@ -588,9 +588,8 @@ const TeachersDropDown = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333]">
-        {t("teacher")}
-        <span className="text-[#7677F4]"> *</span>
+      <div className="text-xs font-normal text-[#333333] flex flex-row">
+      {t("new_strings:teacher")}<div className="text-[#7677F4]">*</div>
       </div>
       {/* 
         // Here i have to show teachers based on program created user 
@@ -841,7 +840,7 @@ const DisplayLanguage = () => {
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label={t("no")}
+            label={t("no_button")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -891,7 +890,7 @@ const GeoRestriction = () => {
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label={t("no")}
+            label={t("no_button")}
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
         </div>

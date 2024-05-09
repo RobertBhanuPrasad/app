@@ -235,7 +235,7 @@ function CourseDetailsTab() {
               </ItemValue>
             </div>
             <div>
-              <Header2>{t('course.view_course:basic_details_tab.program_organizer')}</Header2>
+              <Header2>{t('new_strings:program_organizer')}</Header2>
               <ItemValue>
                 {courseData?.data?.program_organizers?.length > 0
                   ? courseData?.data?.program_organizers

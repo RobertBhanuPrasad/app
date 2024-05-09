@@ -669,7 +669,7 @@ const DataPagination = ({
     }
   }
 
-const {t} = useTranslation("common")
+const {t} = useTranslation(["common", "new_strings"])
 
   return (
     <div className="flex flex-row self-center items-center space-x-2 p-2">
@@ -682,7 +682,7 @@ const {t} = useTranslation("common")
           onClick={() => setCurrent(current - 1)}
           disabled={current <= 1}
         >
-          <div>{t('prev')}</div>
+          <div>{t('new_strings:prev')}</div>
         </Button>
       )}
       {/* pages buttons */}
