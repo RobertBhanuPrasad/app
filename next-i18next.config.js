@@ -17,6 +17,7 @@ module.exports = {
       "ee-et",
       "fi-fi",
       "cz-cs",
+      "ca-fr"
     ],
   },
   localePath: path.resolve("./public/locales"),
