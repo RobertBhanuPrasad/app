@@ -859,7 +859,7 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label={t("no")}
+            label={t("no_button")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>
