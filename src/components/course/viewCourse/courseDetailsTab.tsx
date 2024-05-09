@@ -276,7 +276,7 @@ function CourseDetailsTab() {
                     </div>
                   );
                 })
-              : "-"}
+              : ""}
             {courseData?.data?.program_accommodations?.length > 0
               ? courseData?.data?.program_accommodations?.map(
                   (item: AccommodationItem) => {
@@ -295,7 +295,7 @@ function CourseDetailsTab() {
                     );
                   }
                 )
-              : "-"}
+              : ""}
           </CardContent>
         </Card>
       </div>
