@@ -190,7 +190,7 @@ useEffect(() => {
                   <Image src={linkedInIcon} alt="Linked in icon"></Image>
                 </div> */}
               {/* </div> */} 
-              <p className="mx-auto text-accent-secondary max-w-fit">{t("or")}</p>
+              {/* <p className="mx-auto text-accent-secondary max-w-fit">{t("or")}</p> */}
               {/* Hyper links section */}
               {/* We have to display the links only when the course is active */}
               <div className="flex items-center justify-center gap-4 mt-4 ">
@@ -247,21 +247,6 @@ useEffect(() => {
                         )}
                       </div>
                     </div>
-                  </div>
-                )}
-                {data?.data?.visibility_id?.id == publicVisibilityId && (
-                  <div className="pl-5">
-                    <Button
-                      onClick={() => {
-                        handleCopyDetailsPageLink(data?.data?.registration_link)
-                        handleCopyRegistrationLink(data?.data?.details_page_link)
-                        copyText(data?.data?.registration_link+ ',' + data?.data?.details_page_link)
-                      }}
-                      variant="outline"
-                      className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
-                    >
-                      {t("new_strings:copy_links")}
-                    </Button>
                   </div>
                 )}
               </div>
