@@ -664,16 +664,6 @@ export const NewCourseTabs = () => {
         {t("new_strings:course")}
       </p>
 
-{/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-      {isAllFieldsValid4 == false &&
-      <div className="flex gap-2">
-      <Error />
-      <p className="font-semibold text-[red] text-l -mt-1">
-      There is no price set for current settings. Select course type and city/center.
-      </p>
-      </div>
-      }
-
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
         {isAllFieldsValid4 == false && (
           <div className="flex gap-2">
