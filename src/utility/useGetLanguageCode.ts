@@ -13,11 +13,7 @@ const useGetLanguageCode = () => {
   if (languageCode) {
     return languageCode;
   }
-  return "en";if (languageCode) {
-    return languageCode;
-  }
-  return "en";
-
+  return "en"
 };
 
 export default useGetLanguageCode;
