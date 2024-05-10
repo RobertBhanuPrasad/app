@@ -324,7 +324,8 @@ export const column = (
           let defaultValues = await handleCourseDefaultValues(
             row.original.id,
             timeFormat12HoursId,
-            loginUserData
+            loginUserData,
+            "Copy"
           );
           // we have to delete schedules when user click on cipy course and other we need to prefill
           defaultValues = _.omit(defaultValues, ["id", "schedules"]);

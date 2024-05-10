@@ -7,7 +7,8 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 export const handleCourseDefaultValues = async (
   programId: number,
   timeFormat12HoursId: number,
-  loginUserData?:any
+  loginUserData?:any,
+  action ?: string
 ) => {
   const supabase = supabaseClient();
 
@@ -21,7 +22,7 @@ export const handleCourseDefaultValues = async (
   console.log("data was", data);
 
   if (!error) {
-    const defaultValues = await getDefaultValues(data[0], timeFormat12HoursId,loginUserData);
+    const defaultValues = await getDefaultValues(data[0], timeFormat12HoursId,loginUserData,action);
 
     return defaultValues;
   }
@@ -32,9 +33,19 @@ export const handleCourseDefaultValues = async (
 export const getDefaultValues = async (
   data: ProgramDataBaseType,
   timeFormat12HoursId: number,
-  loginUserData?: any
+  loginUserData?: any,
+  action?: string
 ) => {
   const defaultValues: NewCourseFormFieldTypes = {};
+
+  /**
+     * @constant programOrganizersUserIds
+     * @description this const is used to store the user ids of the copying program organizers ids
+     */
+  const programOrganizersUserIds = _.map(
+    data.program_organizers,
+    "user_id"
+  );
 
   if (data.id) defaultValues.id = data.id;
 
@@ -48,15 +59,7 @@ export const getDefaultValues = async (
     defaultValues.program_created_by = data.program_created_by as number;
 
   //organizer_ids
-  if (data?.program_organizers) {
-    /**
-     * @constant programOrganizersUserIds
-     * @description this const is used to store the user ids of the copying program organizers ids
-     */
-    const programOrganizersUserIds = _.map(
-      data.program_organizers,
-      "user_id"
-    );
+  if (data?.program_organizers && action == "Copy") {
   // REQUIRMENT If the logged in user id is present in the programOrganizersUserIds then we can directly assign to the default valuesw
   // Else we need to add the programOrganizersUserIds and the logged in user id to the default values
     if (_.includes(programOrganizersUserIds, loginUserData?.userData?.id)) {
@@ -64,6 +67,8 @@ export const getDefaultValues = async (
     } else {
       defaultValues.organizer_ids = [loginUserData?.userData?.id, ...programOrganizersUserIds]; 
     }
+  } else if(data?.program_organizers){
+    defaultValues.organizer_ids = programOrganizersUserIds as number[];
   }
 
   //is_registration_via_3rd_party

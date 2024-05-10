@@ -717,7 +717,9 @@ export const ActionsDropDown = ({ courseData }: any) => {
     if (courseId) {
       let defaultValues = await handleCourseDefaultValues(
         courseId,
-        timeFormat12HoursId
+        timeFormat12HoursId,
+        loginUserData,
+        "Copy"
       );
 
       // we have to delete schedules when user click on copy course and other we need to prefill
