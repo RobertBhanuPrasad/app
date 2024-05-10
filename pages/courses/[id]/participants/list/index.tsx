@@ -500,7 +500,7 @@ function index() {
     },
     {
       column_name: t('course.participants:view_participant.fee_level'),
-      path: ["price_category_id", "fee_level_id", "name",languageCode],
+      path: ["price_category_id", "fee_level_id", "name", languageCode],
     },
     {
       column_name: t('course.participants:edit_participant.participants_information_tab.amount'),
@@ -508,7 +508,7 @@ function index() {
     },
     {
       column_name: t('course.participants:view_participant.transaction_type'),
-      path: ["participant_payment_history[0]", "transaction_type_id"],
+      path: ["participant_payment_history[0]", "transaction_type_id","name",languageCode],
     },
     {
       column_name: t('course.participants:edit_participant.participants_information_tab.transaction_id'),
@@ -983,7 +983,7 @@ const handleExportExcel = async (excelColumns:any,filters: any,selectOption: str
     const params = new URLSearchParams({
       table_name: "participant_registration",
       select:
-      "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+      "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
       columns: JSON.stringify(excelColumns),
       filters: JSON.stringify(filters?.permanent),
       file_type: selectOption
