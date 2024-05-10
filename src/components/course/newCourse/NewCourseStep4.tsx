@@ -139,7 +139,10 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   //If Fee is not found based on users selection then need to show this
-  if (courseFeeSettings?.length == 0 || courseFeeSettings?.[0]?.program_fee_level_settings==0) {
+  if (
+    courseFeeSettings?.length == 0 ||
+    courseFeeSettings?.[0]?.program_fee_level_settings == 0
+  ) {
     return (
       <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
         {t(
@@ -163,7 +166,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   //If organization as tax enabled then we need consider tax else tax will be zero
   const taxRate = organizationData?.tax_enabled
-    ? organizationData?.tax_rate / 100
+    ? organizationData?.tax_rate
     : 0;
 
   const user_roles: any[] = loginUserData?.userData?.user_roles;
@@ -201,8 +204,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           ? translatedText(val?.custom_fee_label)
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
-        subTotal: (val?.total - val?.total * taxRate).toFixed(2),
-        tax: (val?.total * taxRate).toFixed(2),
+        subTotal: ((val?.total * 100) / (100 + taxRate)).toFixed(2),
+        tax: (val?.total - (val?.total * 100) / (100 + taxRate)).toFixed(2),
         total: parseFloat(val?.total).toFixed(2),
       };
 
@@ -210,9 +213,14 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       if (courseFeeSettings?.[0]?.is_early_bird_fee_enabled) {
         modifiedFeeLevels = {
           ...modifiedFeeLevels,
-          earlyBirdSubTotal:
-            (val?.early_bird_total - val?.early_bird_total * taxRate).toFixed(2),
-            earlyBirdTax: (val?.early_bird_total * taxRate).toFixed(2),
+          earlyBirdSubTotal: (
+            (val?.early_bird_total * 100) /
+            (100 + taxRate)
+          ).toFixed(2),
+          earlyBirdTax: (
+            val?.early_bird_total -
+            (val?.early_bird_total * 100) / (100 + taxRate)
+          ).toFixed(2),
           earlyBirdTotal: parseFloat(val?.early_bird_total || "").toFixed(2),
         };
       }
@@ -302,9 +310,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][total]`,
         });
 
-        const normalFee = total - total * taxRate;
+        const normalFee = (total * 100) / (100 + taxRate);
 
-        return <div className="">{normalFee}</div>;
+        return <div className="">{normalFee.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -320,8 +328,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][total]`,
         });
 
-        const tax = total * taxRate;
-        return <div className="">{tax}</div>;
+        const tax = total - (total * 100) / (100 + taxRate);
+        return <div className="">{tax.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -408,9 +416,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         });
 
         //Requirement: Early Bird Sub Total is (Early Bird Total - Tax )
-        const earlyBirdSubTotal = earlyBirdTotal - earlyBirdTotal * taxRate;
+        const earlyBirdSubTotal = (earlyBirdTotal * 100) / (100 + taxRate);
 
-        return <div className="">{earlyBirdSubTotal}</div>;
+        return <div className="">{earlyBirdSubTotal.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -427,8 +435,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
         });
 
-        const tax = earlyBirdTotal * taxRate;
-        return <div className="">{tax}</div>;
+        const tax = earlyBirdTotal - (earlyBirdTotal * 100) / (100 + taxRate);
+        return <div className="">{tax.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -540,7 +548,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
    * @returns bool. If true early bird calender is not clickable (non editable). If true early bird calender is clickable (editable)
    */
   const handleDisableEarlyBirdCutOff = () => {
-    //Requirment: If National Admin or Super admin is creating a course Then Early bird cutoff fee is editable. 
+    //Requirment: If National Admin or Super admin is creating a course Then Early bird cutoff fee is editable.
     if (isUserNationAdminOrSuperAdmin) return false;
 
     //Requirement: Early bird cutoff is editable if
