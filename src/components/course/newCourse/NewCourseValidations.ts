@@ -141,8 +141,8 @@ export const validationSchema = () => {
 const feelLevelsValidationSchema = z.array(
   z.object({
     is_enable: z.boolean(),
-    total: z.union([z.string().regex(/^\d+$/), z.number()]),
-    early_bird_total: z.union([z.string().regex(/^\d+$/), z.number()]),
+    total: z.union([z.string().regex(/^\d+(\.\d+)?$/), z.number()]),
+    early_bird_total: z.union([z.string().regex(/^\d+(\.\d+)?$/), z.number()]),
   })
 );
 

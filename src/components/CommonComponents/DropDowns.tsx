@@ -1,4 +1,4 @@
-import { BaseOption, CrudFilter, useSelect } from "@refinedev/core";
+import { BaseOption, CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -222,6 +222,11 @@ export const StateDropDown = ({ name }: { name: string }) => {
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
 
+  const {data: loginUserData}:any=useGetIdentity()
+
+  //Exacting login user country ID
+  const loginUserCountryId=loginUserData?.userData?.contact_id?.country_id
+
   const {
     field: { value: stateValue, onChange: stateValueOnchange },
     fieldState: { error: stateValueError },
@@ -246,6 +251,14 @@ export const StateDropDown = ({ name }: { name: string }) => {
       mode: "server",
       pageSize: pageSize,
     },
+    filters:[
+      //Requirment:Need to show only login user country states.
+      {
+        field:"country_id",
+        operator:"eq",
+        value:loginUserCountryId,
+      }
+    ]
   });
 
   const handleOnBottomReached = () => {

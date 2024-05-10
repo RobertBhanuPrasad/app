@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { translatedText } from "src/common/translations";
 import { supabaseClient } from "src/utility";
+import { getCountryCodeFromLocale } from "src/utility/useGetCountryCode";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -40,17 +41,29 @@ const Signup = () => {
     ],
   });
   console.log(data, options, "options");
+
+  //exacting country code from route
+  const countryCode=getCountryCodeFromLocale(router.locale as string)
+ 
   const handleSignup = async () => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
+    const {data:countryData,error:countryError}=await supabase.from('country').select("id").ilike("abbr",countryCode)
+
+    console.log("login user country id",countryData?.[0]?.id)
+
+    if(countryError){
+      console.log("Error while fetching country data",countryError)
+    }
+    
     console.log("heyy register data", data, error);
 
     const { data: contactData } = await supabase
       .from("contact")
-      .insert([{ first_name: firstName, last_name: lastName }])
+      .insert([{ first_name: firstName, last_name: lastName,country_id:countryData?.[0]?.id }])
       .select();
 
     const { data: userData } = await supabase
