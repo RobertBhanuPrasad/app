@@ -1065,7 +1065,7 @@ export default function NewCourseReviewPage() {
         <div className="flex items-center justify-center">
           {isSubmitting ? (
             <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
-              <div className="loader !w-[35px]"></div>
+              <div className="loader !w-[30px]"></div>
             </Button>
           ) : (
             <Button onClick={handClickContinue}>{t("continue_button")}</Button>
@@ -1299,7 +1299,7 @@ export const EditCourseSuccessfullyInfo = ({
               onClick={handleClick}
             >
               {onButtonLoading ? 
-              <div className="loader"></div>
+              <div className="loader !w-[30px]"></div>
                : t("go_to_course_details")}
             </Button>
           </div>
