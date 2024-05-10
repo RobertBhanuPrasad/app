@@ -29,8 +29,9 @@ const ChangePassword = () => {
         .eq("alloted_uuid", data.user.id);
 
       if (count === 1) {
-        router.push("/");
+        router.replace("/courses/list");
       } else {
+        // when /change-password is added as a functionality this check needs to be changed
         alert(
           "Something went wrong while changing password. Try again after some time"
         );
