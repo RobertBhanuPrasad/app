@@ -44,10 +44,10 @@ function Navbar() {
       title: 'Find Course',
       href: '/courses/list'
     },
-    {
-      title: 'Discount Codes',
-      href: '/Courses/DiscountCodes'
-    }
+    // {
+    //   title: 'Discount Codes',
+    //   href: '/Courses/DiscountCodes'
+    // }
   ]
 
   const supabase = supabaseClient()
@@ -76,7 +76,7 @@ function Navbar() {
       {/* Logo */}
       <Logo />
       {/* Navigation Menu */}
-      <div className="flex items-center justify-center ">
+      <div className="flex items-center justify-center mr-auto ml-[10%]" >
         <NavigationMenu className="text-[#999999]">
           <NavigationMenuList>
             {/* TODO  : for now may-13 release it has to be hidden */}
@@ -160,12 +160,12 @@ function Navbar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>{loginUserData?.userData?.contact_id?.first_name[0].concat(loginUserData?.userData?.contact_id?.last_name[0])}</AvatarFallback>
+              <AvatarImage src="https://github.png" />
+              <AvatarFallback>{loginUserData?.userData?.contact_id?.first_name[0].concat(loginUserData?.userData?.contact_id?.last_name[0]).toUpperCase()}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[312px]">
-            {loginUserData ? (
+            {loginUserData?.userData ? (
               <p className="text-primary text-base font-semibold pl-3 py-5">{loginUserData?.userData?.contact_id?.full_name}</p>
             ) : (
               <LoadingIcon></LoadingIcon>

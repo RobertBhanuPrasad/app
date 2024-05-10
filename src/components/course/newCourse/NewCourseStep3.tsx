@@ -365,7 +365,7 @@ const Sessions = () => {
     // and we need to set to 06:00PM as start time and end time as 08:00PM for all countries
     // in future if client asks we need to set date and time as per each country what ever theu want
 
-    if (formData?.hoursFormatId === timeFormat12HoursId) {
+    if (formData?.hour_format_id === timeFormat12HoursId) {
       tempSchedule["startHour"] = "06";
       tempSchedule["startMinute"] = "00";
       tempSchedule["endHour"] = "08";
@@ -502,7 +502,7 @@ const ScheduleComponent = ({
               }}
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
-              <Add /> {t("add")}
+              <Add /> {t("add_button")}
             </div>
           )}
           {index != 0 && (
@@ -760,7 +760,7 @@ const Venue = () => {
                     <DialogTrigger onClick={handleOpenEditNewVenue}>
                       <EditIcon />
                     </DialogTrigger>
-                    <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                    <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
                       <AddOrEditVenue handleSubmit={handleAddNewVenue} />
                     </DialogContent>
                   </Dialog>
@@ -796,7 +796,7 @@ const Venue = () => {
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[400px] pt-6 px-[25px] !rounded-[24px]">
+            <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] !rounded-[24px]">
               <AddOrEditVenue
                 handleSubmit={handleAddNewVenue}
                 message={warningmessage}
@@ -1303,7 +1303,7 @@ const ExistingVenueList = () => {
               handleSubmitVenueList();
             }}
           >
-            {t("submit_button")}
+            {t("save_button")}
           </Button>
         </DialogClose>
       </div>
@@ -1463,7 +1463,7 @@ export const ExistingVenueListSection = ({
                 >
                   <EditIcon />
                 </DialogTrigger>
-                <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
                   <AddOrEditVenue
                     handleSubmit={() => {
                       handleSubmitExistingVenue(index);
@@ -1588,10 +1588,10 @@ export const AddOrEditVenue = ({
         </span>
       )}
       <DialogFooter>
-        <div className="w-full flex items-center justify-center mt-5">
+        <div className="w-full flex items-center justify-center mt-8">
           <Button onClick={handleSubmit}>{t("save_button")}</Button>
         </div>
-      </DialogFooter>
+      </DialogFooter> 
     </div>
   );
 };
@@ -1915,7 +1915,7 @@ const DeleteVenueComponent = ({
       <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-            {t("no")}
+            {t("no_button")}
           </Button>
         </DialogClose>
         <DialogClose>

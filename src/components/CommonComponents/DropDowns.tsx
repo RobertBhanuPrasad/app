@@ -1,4 +1,4 @@
-import { BaseOption, CrudFilter, useSelect } from "@refinedev/core";
+import { BaseOption, CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -217,10 +217,15 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const { t } = useTranslation(["common", "course.new_course"]);
+  const { t } = useTranslation(["common", "course.new_course","course.find_course"]);
   const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
+
+  const {data: loginUserData}:any=useGetIdentity()
+
+  //Exacting login user country ID
+  const loginUserCountryId=loginUserData?.userData?.contact_id?.country_id
 
   const {
     field: { value: stateValue, onChange: stateValueOnchange },
@@ -246,6 +251,14 @@ export const StateDropDown = ({ name }: { name: string }) => {
       mode: "server",
       pageSize: pageSize,
     },
+    filters:[
+      //Requirment:Need to show only login user country states.
+      {
+        field:"country_id",
+        operator:"eq",
+        value:loginUserCountryId,
+      }
+    ]
   });
 
   const handleOnBottomReached = () => {
@@ -256,7 +269,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
     <div className="flex gap-1 flex-col h-[60px] w-full">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">
-          {t("course.new_course:time_and_venue_tab.state")}
+          {t("course.find_course:state")}
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>

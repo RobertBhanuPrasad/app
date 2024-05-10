@@ -1,0 +1,38 @@
+{
+    "login": {
+      "revert_to_harmony": "Возвратиться в  Harmony ",
+      "log_in": "Войдите в систему",
+      "username": "Имя пользователя",
+      "enter_username": "Введите имя пользователя",
+      "password": "Пароль",
+      "enter_password": "Введите пароль",
+      "remember_password": "Запомнить пароль",
+      "forgot_Password": "Забыли пароль?",
+      "copyright": "Авторское право ©",
+      "art_of_living": "Art of Living",
+      "all_rights_reserved": "Все права защищены",
+      "forgot_password": "Я не помню пароль",
+      "username_or_email_address": "Имя пользователя или адрес электронной почты",
+      "enter_username_or_email_address": "Введите имя пользователя или адрес электронной почты",
+      "email_new_password": "Отправить новый пароль по электронной почте",
+      "back_to": "Назад к",
+      "login": {
+        "": "Вход"
+      },
+      "new_password_sent_to_your_registered_email": "Новый пароль отправлен на ваш зарегистрированный адрес электронной почты",
+      "back_to_login": "Вернуться к входу в систему",
+      "change_language": "Изменить язык",
+      "go_to_harmony_classic": "Перейти к Harmony Classic",
+      "help_desk": "Служба поддержки",
+      "Role:_National_Admin": "Роль: Национальный администратор",
+      "view_profile": "Просмотр профиля",
+      "update_profile": "Обновить профиль",
+      "national_admin": "Национальный администратор",
+      "change_password": "Изменить пароль",
+      "course_history": "История курсов",
+      "event_history": "История событий",
+      "communication_preferences": "Коммуникационные предпочтения",
+      "download_account": "Загрузить учетную запись",
+      "log_out": "Выйти из системы"
+    }
+  }

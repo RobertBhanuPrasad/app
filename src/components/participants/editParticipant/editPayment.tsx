@@ -400,7 +400,7 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
                           setcancelEditPayment(false)
                         }}
                       >
-                        {t('no')}
+                        {t('no_button')}
                       </Button>
                     </div>
                     <div>
