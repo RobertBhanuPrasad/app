@@ -23,7 +23,7 @@ import {
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,
@@ -697,6 +697,7 @@ export const NewCourseTabs = () => {
     },
   ];
 
+  const {formState:{errors}}=useController({name:"program_fee_level_settings"})
   return (
     <div>
       <div className="flex gap-20 items-center">
@@ -710,8 +711,11 @@ export const NewCourseTabs = () => {
           <div className="flex gap-2">
             <Error />
             <p className="font-semibold text-[red] text-l -mt-1">
-              There is no price set for current settings. Select course type and
-              city/center.
+              {/* There are Two types of error for fee. One is No fee error and other is Need to select atleast one fee level. */}
+              {errors?.program_fee_level_settings?.message ? (<div>{errors?.program_fee_level_settings?.message as string}</div>) :// need to show error if error message exist
+             (<div> There is no price set for current settings. Select course type and
+              city/center.</div>)
+              }
             </p>
           </div>
         )}

@@ -144,6 +144,12 @@ const feelLevelsValidationSchema = z.array(
     total: z.union([z.string().regex(/^\d+(\.\d+)?$/), z.number()]),
     early_bird_total: z.union([z.string().regex(/^\d+(\.\d+)?$/), z.number()]),
   })
+).refine(
+  (items) => items.some((item) => item.is_enable === true),
+  {
+    //TODO: Need to do translation
+    message: "Please select at least one fee level",
+  }
 );
 
 const contactValidationSchema = z.array(
