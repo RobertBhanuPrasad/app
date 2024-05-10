@@ -29,6 +29,9 @@ interface DateFieldProps {
 
   // Enable or disable the date picker
   disabled?: boolean;
+
+  // disableDate is a Date after after this date calender is not clickable
+  disableDate?: Date;
 }
 export const DateField = ({
   value,
@@ -36,6 +39,7 @@ export const DateField = ({
   placeholder,
   className,
   disabled,
+  disableDate
 }: DateFieldProps) => {
   // State to manage the visibility of the popover
   const [isOpen, setIsOpen] = useState(false);
@@ -98,6 +102,8 @@ export const DateField = ({
           selected={value}
           onSelect={handleSelectDate}
           initialFocus
+          //If disableDate is enabled need to send conditions when to disable the calender
+          disabled={(date) => disableDate? date > disableDate: false}
         />
       </PopoverContent>
     </Popover>
