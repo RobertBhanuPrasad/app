@@ -1,5 +1,4 @@
 import EditIcon from "@public/assets/EditIcon";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import { useTable } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
@@ -104,7 +103,7 @@ const RevenueDetailsAccordionContent = ({ programId }: { programId: number }) =>
     return (
         <div>
             {offlineRevenueData?.isLoading ? (
-                <LoadingIcon />
+                <div className="loader"></div>
             ) : (
                 <div>
                     {/* Summary cards */}
@@ -208,7 +207,7 @@ const ExpenseDetailsAccordionContent = ({ programId }: { programId: number }) =>
     return (
         <div>
             {changeLogData?.isLoading ? (
-                <LoadingIcon />
+                <div className="loader"></div>
             ) : (
                 <div>
                     {/* Expense Details table */}

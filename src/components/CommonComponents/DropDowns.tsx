@@ -1,4 +1,10 @@
-import { BaseOption, CrudFilter, useSelect } from "@refinedev/core";
+import {
+  BaseOption,
+  CrudFilter,
+  useGetIdentity,
+  useList,
+  useSelect,
+} from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -14,6 +20,7 @@ import {
 } from "src/ui/select";
 import { supabaseClient } from "src/utility";
 import { useTranslation } from "next-i18next";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 export const VenueNameComponent = () => {
   const { t } = useTranslation(["common", "course.new_course"]);
@@ -222,12 +229,42 @@ export const StateDropDown = ({ name }: { name: string }) => {
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
 
+  /**
+   * Getting country code from route using useGetCountryCode function
+   */
+  const countryCode = useGetCountryCode();
+
+  /**
+   * Getting country data based on country code
+   */
+  const { data } = useList<any>({
+    resource: "country",
+    filters: [
+      {
+        field: "abbr",
+        operator: "contains",
+        value: countryCode,
+      },
+    ],
+  });
+
   const {
     field: { value: stateValue, onChange: stateValueOnchange },
     fieldState: { error: stateValueError },
   } = useController({
     name,
   });
+
+  let filter: Array<CrudFilter> = [];
+
+  //If the country code is public then dont make the filter for country
+  if (countryCode !== "public") {
+    filter.push({
+      field: "country_id",
+      operator: "eq",
+      value: data?.data?.[0]?.id,
+    });
+  }
 
   const { options, onSearch: stateOnsearch } = useSelect({
     resource: "state",
@@ -246,6 +283,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
       mode: "server",
       pageSize: pageSize,
     },
+    filters: filter,
   });
 
   const handleOnBottomReached = () => {

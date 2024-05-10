@@ -703,6 +703,7 @@ function index() {
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
+            noRecordsPlaceholder="There are no participants"
           />
         </div>
       </div>

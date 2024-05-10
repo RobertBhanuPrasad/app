@@ -98,6 +98,7 @@ import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 import { translatedText } from "src/common/translations";
+import { Text } from "src/ui/TextTags";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -142,7 +143,12 @@ function ViewDetails() {
   );
 
   const countryName = "India";
-  const {t} = useTranslation(["course.view_course", "new_strings", "course.particicipants","course.new_course"])
+  const { t } = useTranslation([
+    "course.view_course",
+    "new_strings",
+    "course.particicipants",
+    "course.new_course",
+  ]);
 
   const tabTriggers: any = [
     {
@@ -153,7 +159,9 @@ function ViewDetails() {
     },
     {
       value: PARTICIPANTS_TAB,
-      label:t('course.participants:edit_participant.participants_information_tab.participants'),
+      label: t(
+        "course.participants:edit_participant.participants_information_tab.participants"
+      ),
       disabled: false,
       tab_query_name: "participants",
     },
@@ -252,21 +260,20 @@ function ViewDetails() {
           <div>
             <ParticipantsIcon />
           </div>
-          <div
-            onClick={() => {
-              router.push(`/${router.asPath}/participant/list`);
-            }}
-            className="cursor-pointer"
+          <Text
+            onClick={() => router.push(`/courses/${Id}/participants/list`)}
+            className="cursor-pointer text-[#7677F4] font-semibold"
           >
             {courseData?.data?.participant_count}
-          </div>
+          </Text>
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                {courseData?.data?.participant_count} {t('new_strings:participants_header_hover_text')}
+                {courseData?.data?.participant_count}{" "}
+                {t("new_strings:participants_header_hover_text")}
                 {courseData?.data?.total_participant_count}
               </div>
             </HoverCardContent>
@@ -274,22 +281,20 @@ function ViewDetails() {
           <div>
             <CurrencyIcon />
           </div>
-          <div
-            onClick={() => {
-              router.push("/");
-            }}
-            className="cursor-pointer"
-          >
+          <Text className="text-[#7677F4] font-semibold">
             {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
-          </div>
+          </Text>
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-              {t('course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction')} {t('course.view_course:basic_details_tab.participants_revenue')}:
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                {t(
+                  "course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction"
+                )}{" "}
+                {t("course.view_course:basic_details_tab.participants_revenue")}
+                :{countryConfigData?.data?.[0]?.default_currency_code}{" "}
                 {totalRevenue}
               </div>
             </HoverCardContent>
@@ -304,14 +309,15 @@ function ViewDetails() {
         </div>
 
         <div className="flex flex-row items-center gap-2 w-full justify-end ">
-        {t('new_strings:announced_by')}: {courseData?.data?.created_by_user_id?.contact_id?.full_name}
+          {t("new_strings:announced_by")}:{" "}
+          {courseData?.data?.created_by_user_id?.contact_id?.full_name}
           <HoverCard>
             <HoverCardTrigger>
               <Important />
             </HoverCardTrigger>
             <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
               <div className="!rounded-[15px] font-normal flex flex-col">
-                <p>{t('course.view_course:basic_details_tab.approved_by')}:</p>
+                <p>{t("course.view_course:basic_details_tab.approved_by")}:</p>
                 <p>
                   {courseData?.data?.approved_by_user_id &&
                   courseData?.data?.program_approved_date
@@ -324,7 +330,9 @@ function ViewDetails() {
                     : "-"}
                 </p>
                 <Separator className="my-2" />
-                <p>{t('course.view_course:basic_details_tab.last_modified')}:</p>
+                <p>
+                  {t("course.view_course:basic_details_tab.last_modified")}:
+                </p>
                 <p>
                   {courseData?.data?.last_modified_by_user_id &&
                   courseData?.data?.modified_at
@@ -451,14 +459,14 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
     PROGRAM_STATUS,
     DECLINED
   )?.id;
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const { t } = useTranslation(["common", "course.view_course", "new_strings"]);
   const options = [
-    {     
-      label: t('course.view_course:basic_details_tab.approve_course'),
-      value: 1
+    {
+      label: t("course.view_course:basic_details_tab.approve_course"),
+      value: 1,
     },
     {
-      label: t('course.view_course:basic_details_tab.reject_course'),
+      label: t("course.view_course:basic_details_tab.reject_course"),
       value: 2,
     },
   ];
@@ -508,7 +516,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder={t('pending_approval')} />
+          <SelectValue placeholder={t("pending_approval")} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
@@ -533,7 +541,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
               <Exclamation />
             </div>
             <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-            {t('new_strings:are_you_sure_you_want_to_approve')}
+              {t("new_strings:are_you_sure_you_want_to_approve")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -547,7 +555,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     setApproveModalOpen(false);
                   }}
                 >
-                  {t('no_button')}
+                  {t("no_button")}
                 </Button>
               </div>
               <div>
@@ -574,12 +582,16 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
             </div>
             <DialogTitle className="text-gray-500 text-sm font-normal pt-2">
               {" "}
-              {t('course.view_course:basic_details_tab.describe_your_rejection_reason')}
-              <span className="text-blue-500">{t('course.view_course:basic_details_tab.(optional)')}</span>
+              {t(
+                "course.view_course:basic_details_tab.describe_your_rejection_reason"
+              )}
+              <span className="text-blue-500">
+                {t("course.view_course:basic_details_tab.(optional)")}
+              </span>
             </DialogTitle>
             <DialogDescription>
               <Textarea
-                placeholder={t('new_strings:comment')}
+                placeholder={t("new_strings:comment")}
                 className="border-[#E1E1E1]  h-[132px] w-[366px]"
                 onChange={(e: any) => {
                   setRejectionFeedback(e.target.value);
@@ -598,7 +610,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     setRejectModalOpen(false);
                   }}
                 >
-                  {t('no_button')}
+                  {t("no_button")}
                 </Button>
               </div>
               <div>
@@ -607,7 +619,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                   className="bg-[#7677F4] text-[white] w-[98px] h-[46px] rounded-[12px]"
                   onClick={rejectCourse}
                 >
-                  {t('reject_button')}
+                  {t("reject_button")}
                 </Button>
               </div>
             </div>
@@ -620,7 +632,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
 
 const RejectedModalOpen = () => {
   const { viewRejectedModal, setViewRejectedModal } = newCourseStore();
-  const {t} = useTranslation(["common","new_strings" ,"course.view_course"])
+  const { t } = useTranslation(["common", "new_strings", "course.view_course"]);
   return (
     <Dialog open={viewRejectedModal}>
       <DialogContent className="w-[414px] h-[279px]">
@@ -628,8 +640,12 @@ const RejectedModalOpen = () => {
           <div className="flex items-center w-full justify-center">
             <Cross />{" "}
           </div>
-          <DialogTitle className="font-bold text-center">{t('new_strings:course_rejected')}</DialogTitle>
-          <DialogDescription className="text-center">{t('course.view_course:basic_details_tab.the_course_got_rejected')}</DialogDescription>
+          <DialogTitle className="font-bold text-center">
+            {t("new_strings:course_rejected")}
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            {t("course.view_course:basic_details_tab.the_course_got_rejected")}
+          </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <div className="flex w-full items-center justify-center">
@@ -637,7 +653,7 @@ const RejectedModalOpen = () => {
               className=" bg-[#7677F4] w-[91px] h-[46px] rounded-[12px] text-[white]"
               onClick={() => setViewRejectedModal(false)}
             >
-             {t('close')}
+              {t("close")}
             </Button>
           </div>
         </DialogFooter>
@@ -647,8 +663,8 @@ const RejectedModalOpen = () => {
 };
 
 const SuccessModalOpen = () => {
-  const { viewSuccessModal, setViewSuccessModal } = newCourseStore()
-  const {t} = useTranslation(["common", "course.view_course"])
+  const { viewSuccessModal, setViewSuccessModal } = newCourseStore();
+  const { t } = useTranslation(["common", "course.view_course"]);
   return (
     <Dialog open={viewSuccessModal}>
       <DialogTrigger></DialogTrigger>
@@ -657,8 +673,16 @@ const SuccessModalOpen = () => {
           <div className="flex justify-center">
             <Image src={Tick} alt="tick" />
           </div>
-          <div className="font-semibold text-center mt-2">{t('course.view_course:basic_details_tab.course_approved_successfully')}</div>
-          <div className="text-center my-4">{t('course.view_course:basic_details_tab.thank_you_for_contribution')}</div>
+          <div className="font-semibold text-center mt-2">
+            {t(
+              "course.view_course:basic_details_tab.course_approved_successfully"
+            )}
+          </div>
+          <div className="text-center my-4">
+            {t(
+              "course.view_course:basic_details_tab.thank_you_for_contribution"
+            )}
+          </div>
           <Button
             onClick={() => {
               setViewSuccessModal(false);
@@ -666,7 +690,7 @@ const SuccessModalOpen = () => {
             }}
             className="w-[91px] h-[46px] rounded-[12px]"
           >
-            {t('close')}
+            {t("close")}
           </Button>
         </div>
       </DialogContent>
@@ -746,7 +770,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
     });
     setCancelSuccessModalOpen(true);
   };
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const { t } = useTranslation(["common", "course.view_course", "new_strings"]);
   return (
     <div>
       <Select
@@ -786,7 +810,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder={t('actions')} />
+          <SelectValue placeholder={t("actions")} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
@@ -815,7 +839,9 @@ export const ActionsDropDown = ({ courseData }: any) => {
               <Exclamation />
             </div>
             <DialogDescription className="font-bold text-black text-lg items-center text-center">
-            {t('course.view_course:basic_details_tab.are_you_sure_you_want_to_cancel')}
+              {t(
+                "course.view_course:basic_details_tab.are_you_sure_you_want_to_cancel"
+              )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -829,7 +855,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     setCancelCourseModalOpen(false);
                   }}
                 >
-                  {t('no_button')}
+                  {t("no_button")}
                 </Button>
               </div>
               <div>
@@ -853,7 +879,9 @@ export const ActionsDropDown = ({ courseData }: any) => {
             <div className="flex justify-center">
               <Cross />
             </div>
-            <div className="font-bold text-center my-5">{t('new_strings:course_cancel_successful')}</div>
+            <div className="font-bold text-center my-5">
+              {t("new_strings:course_cancel_successful")}
+            </div>
           </div>
 
           <div className="w-full flex items-center justify-center">
@@ -864,7 +892,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                 setCancelSuccessModalOpen(false);
               }}
             >
-              {t('close')}
+              {t("close")}
             </Button>
           </div>
         </DialogContent>
@@ -953,18 +981,20 @@ const ShareButton = () => {
   };
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
   const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
-  const {t} = useTranslation(["common", "course.view_course","new_strings"])
+  const { t } = useTranslation(["common", "course.view_course", "new_strings"]);
 
   return (
     <Dialog>
       <DialogTrigger>
         <Button className="border border-primary text-primary w-[93px] bg-[white] rounded-[12px] flex gap-2 ">
-        {t('share_button')} <ShareIcon />
+          {t("share_button")} <ShareIcon />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[414px] h-[310px] !rounded-[24px] !p-6 ">
         <div className="flex items-center gap-5 flex-col">
-          <div className="text-[24px] font-semibold items-center">{t('course.view_course:basic_details_tab.share_in_social')}</div>
+          <div className="text-[24px] font-semibold items-center">
+            {t("course.view_course:basic_details_tab.share_in_social")}
+          </div>
           <div className="flex flex-row gap-6 ">
             <WhatsappIcon />
             <FaceBookIcon />
@@ -972,9 +1002,13 @@ const ShareButton = () => {
             <Instagram />
             <LinkedInIcon />
           </div>
-          <div className="text-[14px] font-normal text-[#666666]">{t('or')}</div>
+          <div className="text-[14px] font-normal text-[#666666]">
+            {t("or")}
+          </div>
           <div className="relative w-full">
-            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">{t('registration_link')}</p>
+            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+              {t("registration_link")}
+            </p>
             <div className="flex justify-between gap-2 px-3 py-1 border rounded-2xl min-w-72">
               <div className="text-[14px] font-semibold">{RX_BASE_URL}</div>
               <div
@@ -986,7 +1020,7 @@ const ShareButton = () => {
                 <CopyIcon />
                 {copiedRegistrationLink ? (
                   <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                    {t('new_strings:copied')}
+                    {t("new_strings:copied")}
                   </div>
                 ) : (
                   ""
@@ -995,7 +1029,9 @@ const ShareButton = () => {
             </div>
           </div>
           <div className="relative w-full">
-            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">{t('details_page_link')}</p>
+            <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+              {t("details_page_link")}
+            </p>
             <div className="flex justify-between gap-2 px-3 py-1 border rounded-2xl min-w-72">
               <div className="text-[14px] font-semibold">{CX_BASE_URL}</div>
               <div
@@ -1007,7 +1043,7 @@ const ShareButton = () => {
                 <CopyIcon />
                 {copiedDetailsPageLink ? (
                   <div className="absolute -left-12 bottom-8 rounded-md bg-black px-5 py-2 text-[white] shadow-md sm:-left-8 sm:bottom-12">
-                    {t('new_strings:copied')}
+                    {t("new_strings:copied")}
                   </div>
                 ) : (
                   ""
@@ -1023,9 +1059,15 @@ const ShareButton = () => {
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
-  
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common', "course.view_course", "new_strings", "course.find_course", "course.new_course", "course.participants"])
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+    "course.view_course",
+    "new_strings",
+    "course.find_course",
+    "course.new_course",
+    "course.participants",
+  ]);
 
   if (!authenticated) {
     return {
@@ -1061,19 +1103,19 @@ const PendingCourseAccountingFormApprovalDropDown = ({
     COURSE_ACCOUNTING_STATUS,
     CLOSED
   )?.id;
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const { t } = useTranslation(["common", "course.view_course", "new_strings"]);
 
   const supabase = supabaseClient();
   const options = [
     {
-      label: t('new_strings:approve'),
-      value: 1
+      label: t("new_strings:approve"),
+      value: 1,
     },
     {
-      label: t('reject_button'),
-      value: 2
-    }
-  ]
+      label: t("reject_button"),
+      value: 2,
+    },
+  ];
 
   // Initialize state for whether the approve modal is open or not
   const [approveModalOpen, setApproveModalOpen] = useState(false);

@@ -25,7 +25,8 @@ export const handlePostProgramData = async (
    * The current url either add or edit
    */
   pathname: string,
-  countryCode: string
+  countryCode: string,
+  languageCode: string
 ) => {
 const supabase = supabaseClient();
 
@@ -290,7 +291,7 @@ const supabase = supabaseClient();
     // this url is now posted to the program api which is used to further usage in the details view or at any other place.
 
     // TODO : need to integrate with country code and language code after translations are done
-    const registrationUrl = `${RX_BASE_URL}/programs/${programId}`;
+    const registrationUrl = `${RX_BASE_URL}/${countryCode}-${languageCode}/programs/${programId}`;
 
     // TODO need to integrate with url provided by cx team -(kalyan)
     const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;

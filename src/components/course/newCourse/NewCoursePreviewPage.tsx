@@ -1,4 +1,3 @@
-import LoadingIcon from "@public/assets/LoadingIcon";
 import {
   useGetIdentity,
   useInvalidate,
@@ -54,6 +53,7 @@ import { useTranslation } from "next-i18next";
 import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -159,6 +159,9 @@ export default function NewCourseReviewPage() {
 
   //fetching the user's country code
   const countryCode = useGetCountryCode();
+
+  //fetching the user's language code
+  const languageCode = useGetLanguageCode();
 
   //Finding course start date
   const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
@@ -355,7 +358,11 @@ export default function NewCourseReviewPage() {
 
   //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
-    ? newCourseData?.program_fee_level_settings
+    ? newCourseData?.program_fee_level_settings?.map((feeLevel: { fee_level_id: any; })=>{
+      const defaultFeeLevel=defaultFeeLevels?.find((defaultFee: { fee_level_id: any; })=>defaultFee.fee_level_id==feeLevel?.fee_level_id)
+      //If is_custom_fee is true then need to show custom label. So appending is_custom_fee and custom_fee_label to existing formData
+      return {is_custom_fee:defaultFeeLevel?.is_custom_fee,custom_fee_label:defaultFeeLevel?.custom_fee_label,...feeLevel}
+    })
     : defaultFeeLevels;
 
   //Requirement: Need to show only enabled fee levels.
@@ -400,7 +407,8 @@ export default function NewCourseReviewPage() {
       setProgramId,
       accountingNotSubmittedStatusId,
       pathname,
-      countryCode
+      countryCode,
+      languageCode
     );
 
     // we are checking the course is edit or user created new course
@@ -1063,16 +1071,16 @@ export default function NewCourseReviewPage() {
             </div>
           </div>
         </section>
-        <div className="flex items-center justify-center ">
+        <div className="flex items-center justify-center">
           {isSubmitting ? (
-            <Button disabled>
-              <LoadingIcon />
+            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
+              <div className="loader !w-[30px]"></div>
             </Button>
           ) : (
             <Button onClick={handClickContinue}>{t("continue_button")}</Button>
           )}
         </div>
-      </div>
+      </div> 
     </div>
   );
 }
@@ -1141,18 +1149,6 @@ const Fees = ({
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
-  /**
-   * @constant feeLevelData
-   * REQUIRMENT we need to show the both fee level type and total of the fee level
-   * we have the fee_level_id and we need the fee level type
-   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
-   * @description this data const is used to store the fee level type data with respective to the fee level type id
-   *
-   */
-  const { data: feeLevelData } = useOne({
-    resource: "option_values",
-    id: feeLevelSettingsData?.fee_level_id as number,
-  });
 
   /**
    * @constant countryConfigData
@@ -1161,11 +1157,44 @@ const Fees = ({
    * we will get the currency code in the country config
    *
    */
-
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+  
+  //If custom fee is enabled Need to show custom label.
+  if(feeLevelSettingsData?.is_custom_fee==true){
+    return (
+      <div className="w-[291px]">
+        <abbr title={translatedText(feeLevelSettingsData?.custom_fee_label as Object)} className="no-underline">
+          <CardLabel className="truncate">{translatedText(feeLevelSettingsData?.custom_fee_label as Object)}</CardLabel>
+        </abbr>
+        <abbr
+          title={JSON.stringify(feeLevelSettingsData?.total)}
+          className="no-underline"
+        >
+          <CardValue className="truncate">
+            {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+            {feeLevelSettingsData?.total}
+          </CardValue>
+        </abbr>
+      </div>
+    ); 
+  }
 
+   /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+   const { data: feeLevelData } = useOne({
+    resource: "option_values",
+    id: feeLevelSettingsData?.fee_level_id as number,
+  });
+
+  //If custom label is false then show only fee_level label.
   return (
     <div className="w-[291px]">
       <abbr
@@ -1200,18 +1229,6 @@ const EarlyBirdFees = ({
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
-  /**
-   * @constant feeLevelData
-   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
-   * we have the fee_level_id and we need the fee level type
-   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
-   * @description this data const is used to store the fee level type data with respective to the fee level type id
-   *
-   */
-  const { data: feeLevelData } = useOne({
-    resource: "option_values",
-    id: feeLevelSettingsData?.fee_level_id as number,
-  });
 
   /**
    * @constant countryConfigData
@@ -1224,7 +1241,49 @@ const EarlyBirdFees = ({
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+
+
+  //If custom fee is enabled Need to show custom label.
+  if(feeLevelSettingsData?.is_custom_fee==true){
+    return (
+      <div className="w-[291px]">
+      {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
+      <abbr
+        title={`Early Bird ${translatedText(feeLevelSettingsData?.custom_fee_label as object)}`}
+        className="no-underline"
+      >
+        <CardLabel className="truncate">
+          Early Bird {translatedText(feeLevelSettingsData?.custom_fee_label as object)}
+        </CardLabel>
+      </abbr>
+      <abbr
+        title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
+        className="no-underline"
+      >
+        <CardValue className="truncate">
+          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+          {feeLevelSettingsData?.early_bird_total}
+        </CardValue>
+      </abbr>
+    </div>
+    ); 
+  }
+
+
+   /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+   const { data: feeLevelData } = useOne({
+    resource: "option_values",
+    id: feeLevelSettingsData?.fee_level_id as number,
+  });
   const { t } = useTranslation("new_strings");
+  //If custom fee is false show fee level label.
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
@@ -1295,12 +1354,13 @@ export const EditCourseSuccessfullyInfo = ({
         <AlertDialogFooter>
           <div className="w-full flex justify-center items-center gap-5">
             <Button
-              disabled={onButtonLoading}
               type="button"
-              className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
+              className={`${onButtonLoading ? 'bg-[#fff] border-[1px] rounded-[12px] border-solid border-[#7677F4] w-[210px] h-[46px]' : 'bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]'}`}
               onClick={handleClick}
             >
-              {onButtonLoading ? <LoadingIcon /> : t("go_to_course_details")}
+              {onButtonLoading ? 
+              <div className="loader !w-[30px]"></div>
+               : t("go_to_course_details")}
             </Button>
           </div>
         </AlertDialogFooter>
