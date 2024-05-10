@@ -10,7 +10,14 @@ const useGetLanguageCode = () => {
 
   const [_, languageCode]: string[] = locale?.split("-") || ["", "en"];
 
-  return languageCode;
+  if (languageCode) {
+    return languageCode;
+  }
+  return "en";if (languageCode) {
+    return languageCode;
+  }
+  return "en";
+
 };
 
 export default useGetLanguageCode;

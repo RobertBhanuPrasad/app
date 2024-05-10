@@ -41,7 +41,8 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { translatedText } from "src/common/translations";
+import { languageCode, translatedText } from "src/common/translations";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 function index() {
   interface ExcelColumn {
@@ -50,6 +51,8 @@ function index() {
   }
 
   const { viewPreviewPage, AllFilterData } = newCourseStore();
+
+  const languageCode = useGetLanguageCode()
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -292,6 +295,7 @@ function index() {
       },
     });
 
+
   /**
    * The variable holds whether all rows are selected or not
    */
@@ -315,7 +319,7 @@ function index() {
    * This function is to handle export excel
    */
   
-  const handleExportExcel = async () => {
+  const handleExportExcel = async (selectOption: string) => {
     try {
       /**
        * This holds the column_name and path of all columns of table
@@ -327,11 +331,11 @@ function index() {
         },
         {
           column_name: t("new_strings:course_type_name"),
-          path: ["program_types", "name"],
+          path: ["program_types", "name",languageCode],
         },
         {
           column_name: t("course.find_course:course_status"),
-          path: ["status_id", "name"],
+          path: ["status_id", "name",languageCode],
         },
         {
           column_name: t("course.find_course:start_date"),
@@ -363,11 +367,15 @@ function index() {
         },
         {
           column_name: t("new_strings:visibility"),
-          path: ["visibility_id", "name"],
+          path: ["visibility_id", "name",languageCode],
         },
+        // {
+        //   column_name: t("course_accounting_status"),
+        //   path: ["program_accounting_status_id", "name"],
+        // },
         {
-          column_name: t("course_accounting_status"),
-          path: ["program_accounting_status_id", "name"],
+          column_name: t("new_strings:revenue"),
+          path: ["revenue"],
         },
       ];
 
@@ -377,8 +385,10 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          "program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name)",
+          "program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
+        filters: JSON.stringify(filters?.permanent),
+        file_type: selectOption
       });
 
       const supabase = supabaseClient();
@@ -553,13 +563,12 @@ function index() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
               <DropdownMenuItem
-                onClick={handleExportExcel}
+                onClick={()=> {handleExportExcel("excel")}}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 {t("new_strings:excel")}
               </DropdownMenuItem>
-              {/*TODO  */}
-              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
+              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=> {handleExportExcel("CSV")}}>
                 {t("new_strings:csv")}
               </DropdownMenuItem>
             </DropdownMenuContent>
