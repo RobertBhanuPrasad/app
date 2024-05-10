@@ -165,25 +165,30 @@ function NewCourse() {
    * 2. User will click on Edit Course or Copy Course then also we need to prefill
    * When user coming from copy or Edit Course we dont need to prefill the below object because we will already set this
    */
-  const defaultValues =
-    !IsEditCourse(pathname) || !IsCopyCourse
-      ? {
-          [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
-          [NewCourseStep2FormNames?.is_language_translation_for_participants]:
-            true,
-          //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
-          [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
-            ? true
-            : undefined,
+  let defaultValues: any = {};
 
-          // is_geo_restriction_applicable is visible to super admin and default it is no
-          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
-          [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
-            payOnlineId,
-          [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
-          [NewCourseStep5FormNames?.is_residential_program]: false,
-        }
-      : newCourseData;
+  if (IsEditCourse(pathname) || IsCopyCourse) {
+    defaultValues = newCourseData;
+  } else {
+    defaultValues[NewCourseStep2FormNames?.visibility_id] = publicVisibilityId;
+    defaultValues[
+      NewCourseStep2FormNames?.is_language_translation_for_participants
+    ] = true;
+    // For registration required field will be visible to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
+    if (hasSuperAdminRole) {
+      defaultValues[NewCourseStep2FormNames?.is_registration_required] = true;
+    } else {
+      defaultValues[NewCourseStep2FormNames?.is_registration_required] =
+        undefined;
+    }
+    // is_geo_restriction_applicable is visible to super admin and default it is no
+    defaultValues[NewCourseStep2FormNames?.is_geo_restriction_applicable] =
+      false;
+    defaultValues[NewCourseStep5FormNames?.accommodation_fee_payment_mode] =
+      payOnlineId;
+    defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
+    defaultValues[NewCourseStep5FormNames?.is_residential_program] = false;
+  }
 
   // fetch data from country_config table for time format
   const {
@@ -211,8 +216,7 @@ function NewCourse() {
   // check how many records are there in time_zones table
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
   if (
-    timeZonesData?.data?.length === 1 &&
-    !IsEditCourse(pathname) ||
+    (timeZonesData?.data?.length === 1 && !IsEditCourse(pathname)) ||
     !IsCopyCourse
   ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
@@ -278,11 +282,10 @@ export const requiredValidationFields = (formData: any) => {
    * @constant programTypesData
    * @description this constant stores the data which came from the program_types table using the program type id which is there in the formData
    */
-  const {data:programTypesData} = useOne({
-    resource:"program_types",
-    id: formData?.program_type_id
-  })
-
+  const { data: programTypesData } = useOne({
+    resource: "program_types",
+    id: formData?.program_type_id,
+  });
 
   let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
     ...(programTypesData?.data?.has_alias_name
@@ -656,22 +659,22 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
-      <div className="flex gap-20 items-center">        
-      <p className="font-semibold text-2xl">
-        {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
-        {t("new_strings:course")}
-      </p>
+      <div className="flex gap-20 items-center">
+        <p className="font-semibold text-2xl">
+          {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
+          {t("new_strings:course")}
+        </p>
 
-{/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-      {isAllFieldsValid4 == false &&
-      <div className="flex gap-2">
-      <Error />
-      <p className="font-semibold text-[red] text-l -mt-1">
-      There is no price set for current settings. Select course type and city/center.
-      </p>
-      </div>
-      }
-
+        {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
+        {isAllFieldsValid4 == false && (
+          <div className="flex gap-2">
+            <Error />
+            <p className="font-semibold text-[red] text-l -mt-1">
+              There is no price set for current settings. Select course type and
+              city/center.
+            </p>
+          </div>
+        )}
       </div>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
@@ -805,7 +808,12 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common","course.new_course", "new_strings", "course.participants","course.view_course","course.find_course"
+    "common",
+    "course.new_course",
+    "new_strings",
+    "course.participants",
+    "course.view_course",
+    "course.find_course",
   ]);
 
   if (!authenticated) {
