@@ -221,7 +221,8 @@ function NewCourse() {
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
   if (
     timeZonesData?.data?.length === 1 &&
-    (!IsEditCourse(pathname) || !IsCopyCourse)
+    IsEditCourse(pathname) !== false &&
+    IsCopyCourse !== false
   ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
       timeZonesData?.data[0]?.id;
@@ -229,7 +230,7 @@ function NewCourse() {
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
   // and same we need to set only if it is not edit and copy
-  if (!IsEditCourse(pathname) || !IsCopyCourse) {
+  if (IsEditCourse(pathname) !== false && IsCopyCourse !== false) {
     if (data?.data[0]?.hour_format_id) {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
         data?.data[0]?.hour_format_id;
