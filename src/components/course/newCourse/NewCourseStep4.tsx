@@ -312,7 +312,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
         const normalFee = (total * 100) / (100 + taxRate);
 
-        return <div className="">{normalFee.toFixed(2)}</div>;
+        return <div className="">{normalFee?.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -418,7 +418,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         //Requirement: Early Bird Sub Total is (Early Bird Total - Tax )
         const earlyBirdSubTotal = (earlyBirdTotal * 100) / (100 + taxRate);
 
-        return <div className="">{earlyBirdSubTotal.toFixed(2)}</div>;
+        return <div className="">{earlyBirdSubTotal?.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
