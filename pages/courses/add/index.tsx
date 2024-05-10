@@ -79,7 +79,12 @@ function index() {
   console.log("router is ", section);
 
   if (!loginUserData?.userData) {
-    return <section className="flex justify-center align-center pt-[15%]"> <div>Loading...</div></section>;
+    return (
+      <section className="flex justify-center align-center pt-[15%]">
+        {" "}
+        <div>Loading...</div>
+      </section>
+    );
   }
 
   if (section === "thank_you") {
@@ -215,8 +220,8 @@ function NewCourse() {
   // check how many records are there in time_zones table
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
   if (
-    (timeZonesData?.data?.length === 1 && !IsEditCourse(pathname)) ||
-    !IsCopyCourse
+    timeZonesData?.data?.length === 1 &&
+    (!IsEditCourse(pathname) || !IsCopyCourse)
   ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
       timeZonesData?.data[0]?.id;
@@ -242,7 +247,12 @@ function NewCourse() {
     isLoading ||
     timeZoneLoading
   ) {
-    return <section className="flex justify-center align-center pt-[15%]"> <div className="loader"></div></section>;
+    return (
+      <section className="flex justify-center align-center pt-[15%]">
+        {" "}
+        <div className="loader"></div>
+      </section>
+    );
   }
 
   return (
@@ -658,11 +668,11 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
-      <div className="flex gap-20 items-center">        
-      <p className="font-semibold text-2xl">
-        {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
-        {t("new_strings:course")}
-      </p>
+      <div className="flex gap-20 items-center">
+        <p className="font-semibold text-2xl">
+          {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
+          {t("new_strings:course")}
+        </p>
 
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
         {isAllFieldsValid4 == false && (
