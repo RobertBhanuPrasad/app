@@ -198,9 +198,12 @@ function NewCourse() {
   if (IsEditCourse(pathname) || IsCopyCourse) {
     defaultValues = newCourseData;
     //REQUIRMENT if the course is copying then we need to prefill the organizers of that cousre and we need to add the logged in user as a primary organizer
-    if(IsCopyCourse) {
-      defaultValues.organizer_ids = _.uniq([loggedUserData,...newCourseData?.organizer_ids])
-    }  
+    if (IsCopyCourse) {
+      defaultValues.organizer_ids = _.uniq([
+        loggedUserData,
+        ...newCourseData?.organizer_ids,
+      ]);
+    }
   } else {
     defaultValues[NewCourseStep2FormNames?.visibility_id] = publicVisibilityId;
     defaultValues[
@@ -221,7 +224,6 @@ function NewCourse() {
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
     defaultValues[NewCourseStep5FormNames?.is_residential_program] = false;
   }
- 
 
   // fetch data from country_config table for time format
   const {
@@ -250,8 +252,7 @@ function NewCourse() {
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
   if (
     timeZonesData?.data?.length === 1 &&
-    IsEditCourse(pathname) !== false &&
-    IsCopyCourse !== false
+    (IsEditCourse(pathname) === false || IsCopyCourse === false)
   ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
       timeZonesData?.data[0]?.id;
@@ -259,7 +260,7 @@ function NewCourse() {
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
   // and same we need to set only if it is not edit and copy
-  if (IsEditCourse(pathname) !== false && IsCopyCourse !== false) {
+  if (IsEditCourse(pathname) === false && IsCopyCourse === false) {
     if (data?.data[0]?.hour_format_id) {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
         data?.data[0]?.hour_format_id;
