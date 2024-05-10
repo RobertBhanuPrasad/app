@@ -368,6 +368,7 @@ function index() {
   const [open, setOpen] = useState(false);
   const [disableBulkOptions, setEnableBulkOptions] = useState(true);
   const [bulkActions, setBulkAction] = useState("");
+  const [loading,setLoading] = useState(false)
   const attendanceOptions = getOptionValuesByOptionLabel(
     PARTICIPANT_ATTENDANCE_STATUS
   )?.[0]?.option_values;
@@ -744,19 +745,19 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
-                {t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
+                {loading ? <div className="loader !w-[25px]"></div> :t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
               <DropdownMenuItem
-                onClick={()=>{handleExportExcel(excelColumns,filters,excelOption)}}
+                onClick={()=>{handleExportExcel(excelColumns,filters,excelOption,setLoading)}}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 {t('new_strings:excel')}
               </DropdownMenuItem>
               {/*TODO  */}
-              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=>{handleExportExcel(excelColumns,filters,csvOption)}}>
-              {t('new_strings:csv')}
+              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=>{handleExportExcel(excelColumns,filters,csvOption,setLoading)}}>
+              {t("course.find_course:CSV")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -977,15 +978,17 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
   );
 };
 
-const handleExportExcel = async (excelColumns:any,filters: any,selectOption: string) => {
+const handleExportExcel = async (excelColumns:any,filters: any,selectOption: string,setLoading: (by:boolean) => void,) => {
+  setLoading(true)
   const supabase = supabaseClient();
   try {
     const params = new URLSearchParams({
       table_name: "participant_registration",
       select:
-      "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+      "*,payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
       columns: JSON.stringify(excelColumns),
       filters: JSON.stringify(filters?.permanent),
+      sorters: JSON.stringify([ { "field": "id", "order": { "ascending": true } } ]),
       file_type: selectOption
     });
 
@@ -1014,6 +1017,7 @@ const handleExportExcel = async (excelColumns:any,filters: any,selectOption: str
       const result = await supabase.storage
         .from("export_to_file")
         .download(fileName);
+        setLoading(false)
 
       if (result.error) {
         console.error("Error downloading file:", result.error);
