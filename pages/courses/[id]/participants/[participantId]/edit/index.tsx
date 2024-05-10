@@ -3,7 +3,6 @@ import { ParticipantsListMainHeader } from "@components/participants/Participant
 import EditParticipantTabs from "@components/participants/editParticipant/EditParticipantTabs";
 import { handleEditParticipantValues } from "@components/participants/editParticipant/EditParticipantUtil";
 import { editParticipantSchema } from "@components/participants/editParticipant/EditParticipantValidations";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
@@ -42,7 +41,7 @@ export default function Edit() {
                 <div>
                     {!defaultValues ||
                     Object.keys(defaultValues).length === 0 ? (
-                        <LoadingIcon />
+                        <div className="loader"></div>
                     ) : (
                         <Form
                             onSubmit={() => {}}

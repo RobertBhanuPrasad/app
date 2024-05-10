@@ -1,6 +1,5 @@
 'use client'
 import { getCourseStatusColorBasedOnStatusId } from '@components/courseBusinessLogic'
-import LoadingIcon from '@public/assets/LoadingIcon'
 import InstagramIcon from '@public/images/InstagramIcon.png'
 import ThankyouGif from '@public/images/ThankYou.png'
 import WhatsappIcon from '@public/images/WhatsappIcon.png'
@@ -108,7 +107,7 @@ useEffect(() => {
     <div>
       {isThankyouPageDataIsLoading ? (
         <div className="flex items-center justify-center h-16 bg-white shadow-md rounded-3xl">
-          <LoadingIcon />
+          <div className='loader'></div>
         </div>
       ) : (
         <div className="relative pb-8 m-4 bg-white shadow-md rounded-3xl">

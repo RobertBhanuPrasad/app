@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "src/ui/checkbox";
 import { supabaseClient } from "src/utility";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import { useGetIdentity, useList, useOne } from "@refinedev/core";
 import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import {
@@ -116,18 +115,24 @@ export default function CourseTable() {
     id: formData?.organization_id,
   });
 
-  if (courseFeeSettings == undefined || isLoading) {
-    return <LoadingIcon />;
-  }
-  console.log(courseFeeSettings, "courseFeeSettings");
   return (
-    <div className="flex flex-col gap-[18px]">
-      <div className="font-semibold text-base text-[#333333]">{t("fees")}</div>
-      <CourseFeeTable
-        courseFeeSettings={courseFeeSettings}
-        organizationData={organizationData?.data}
-      />
-    </div>
+    <>
+      {courseFeeSettings == undefined || isLoading ? (
+        <section className="flex flex-row w-full h-[400px] justify-center items-center">
+          <div className="loader"></div>
+        </section>
+      ) : (
+        <section>
+          <div className="font-semibold text-base text-[#333333]">
+            {t("fees")}
+          </div>
+          <CourseFeeTable
+            courseFeeSettings={courseFeeSettings}
+            organizationData={organizationData?.data}
+          />
+        </section>
+      )}
+    </>
   );
 }
 function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
