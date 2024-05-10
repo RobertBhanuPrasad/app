@@ -1,6 +1,6 @@
 import { useList, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import { useState } from "react";
 import { translatedText } from "src/common/translations";
 import { supabaseClient } from "src/utility";
 
