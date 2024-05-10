@@ -132,8 +132,9 @@ export default function CourseTable() {
 }
 function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
+
   //If Fee is not found based on users selection then need to show this
-  if (courseFeeSettings?.length == 0 || courseFeeSettings?.[0]?.program_fee_level_settings?.length == 0) {
+  if (courseFeeSettings?.length == 0 || courseFeeSettings?.[0]?.program_fee_level_settings==0) {
     return (
       <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
         {t(
@@ -375,7 +376,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat_reg")}(${
+      header: `${t("new_strings:vat_reg")}(${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },

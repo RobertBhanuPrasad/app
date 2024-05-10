@@ -1,0 +1,99 @@
+{
+    "basic_details_tab": {
+      "teaching_course": "Estou a ensinar este curso",
+      "co_teaching": "Estou a co-ensinar este curso",
+      "organizing_this_course": "Vou organizar este curso",
+      "organization_placeholder": "Selecionar Organização",
+      "program_organizer_placeholder": "Insira o nome do organizador do programa"
+    },
+    "course_details_tab": {
+      "teacher": "Professor",
+      "teacher_placeholder": "Insira o nome do Professor",
+      "assistant_teacher": "Professor Assistente",
+      "languages_taught_placeholder": "Selecione Língua",
+      "display_language_option": "Exiba opção de tradução do idioma para os participantes",
+      "available_languages_placeholder": "Selecione língua para tradução",
+      "registration_mandatory": "Registo obrigatório para este curso",
+      "max_capacity": "Capacidade Máxima",
+      "max_capacity_placeholder": "Insira número de participantes",
+      "registrations_restriction": "Restrição geográfica aplicável para registo",
+      "country_registrations_allowed_placeholder": "Insira Países"
+    },
+    "time_and_venue_tab": {
+      "existing_venue": "Locais existentes",
+      "no_existing_venue_found": "Não foi encontrado nenhum",
+      "add_new_venue": "Adicione Novo Local",
+      "event_date_and_time": "Data e Hora do Evento",
+      "session": "Sessão",
+      "from": "De",
+      "to": "Para",
+      "new_venue": "Novo Local",
+      "venue_name": "Nome do Local",
+      "venue_name_placeholder": "Insira Nome do Local",
+      "street_address": "Endereço da Rua",
+      "street_address_placeholder": "Selecionar Endereço da Rua",
+      "postal_code": "Código Postal",
+      "postal_code_placeholder": "Insira Código Postal",
+      "province": "Distrito",
+      "province_placeholder": "Selecionar Distrito",
+      "local_center_placeholder": "Selecionar Centro Local",
+      "view_all": "Ver Todos",
+      "existing_venues": "Locais Existentes",
+      "search_by_venue_name": "Pesquise por nome do local. Cidade ou Estado",
+      "course_date_and_time": "Data e Hora do Curso",
+      "course": "Curso",
+      "online_meeting_url": "URL da Reunião online",
+      "online_meeting_url_placeholder": "Insira URL da Reunião online",
+      "online_meeting_note": "Nota: Os participantes participarão no curso online através do seu espaço virtual",
+      "specific_location": "Por favor, associe seu curso a um local específico para fins de comunicação de informações"
+    },
+    "fees_tab": {
+      "enable_fees": "Ativar preços",
+      "normal_fee": "Preço normal",
+      "vat reg": "Registo do IVA",
+      "fee": "Preço Total",
+      "enable_early": "Ativar early bird - preço com desconto antecipado?",
+      "disable": "Desativar o rótulo Pagar Mais Tarde?",
+      "early_bird": "Early Bird - preço com desconto antecipado",
+      "total early": "Total do Early Bird - preço com desconto antecipado",
+      "early_bird_cutoff": "Período de desconto antecipado",
+      "days_left": "Dias restantes"
+    },
+    "accommodation_tab": {
+      "accommodation_type": "Tipo de Alojamento",
+      "fee_per_person": "Taxa por pessoa, IVA incluído",
+      "number_of_spots": "Número de vagas",
+      "note": "Nota: Se o número de lugares disponíveis estiver em branco, então é ilimitado.",
+      "accommodation_fee": "Modo de pagamento da taxa de alojamento",
+      "pay_online": "Pagamento Online",
+      "pay_offline": "Pagamento Presencial"
+    },
+    "contact_info_tab": {
+      "contact_number": "Número de Contacto",
+      "select_contact": "Selecionar nome de contacto",
+      "select_contact_email": "Selecionar e-mail de contacto",
+      "select_contact_number": "Selecionar número de contacto",
+      "send_bcc": "Envie e-mail de confirmação de inscrição BCC para",
+      "select_course": "Selecione o e-mail do curso",
+      "note_enter_comma": "Nota: Insira uma lista separada por vírgulas de endereços de e-mail.",
+      "review_details": "Dados da revisão"
+    },
+    "review_post_details": {
+      "creator": "Criador",
+      "course_details": "Dados do Curso",
+      "time_formate": "Formato de hora",
+      "time_zone": "Fuso Horário",
+      "fee_information": "Informações sobre taxas",
+      "there_is_no_price": "Não há preço para as configurações atuais. Selecione o tipo de curso e a cidade/centro."
+    },
+    "congratulations_page": {
+      "congratulations": "Parabéns!",
+      "you_have_successfully": "Anunciou um curso com sucesso ",
+      "go_to_course_listing": "Ir para a Lista de Cursos",
+      "venue": "Local",
+      "course_date": "Data do Curso",
+      "share_in_social": "Partilhe nas Plataformas Sociais",
+      "your_course_has_been_submitted": "O seu Curso foi submetido para aprovação",
+      "review_pending": "Revisão pendente"
+    }
+  }

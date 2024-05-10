@@ -1,0 +1,99 @@
+{
+    "basic_details_tab": {
+      "teaching_course": "Opetan tätä kurssia",
+      "co_teaching": "olen apu opettajana tällä kurssilla",
+      "organizing_this_course": "Järjestän tämän kurssin",
+      "organization_placeholder": "Valitse organisaatio",
+      "program_organizer_placeholder": "Anna ohjelman järjestäjän nimi"
+    },
+    "course_details_tab": {
+      "teacher": "Opettaja",
+      "teacher_placeholder": "Anna opettajan nimi",
+      "assistant_teacher": "Apuopettaja",
+      "languages_taught_placeholder": "Valitse kieli",
+      "display_language_option": "Näytä kieenkääntämisvaihtoehto osallistujalle",
+      "available_languages_placeholder": "Valitse käännöskielet",
+      "registration_mandatory": "Imouttautuminen tälle kurssille on pakollista",
+      "max_capacity": "Maksimi kapasiteetti",
+      "max_capacity_placeholder": "Syötä nro. osallistujista",
+      "registrations_restriction": "Onko Geo-rajoitus sovellettava tälle kurssille",
+      "country_registrations_allowed_placeholder": "Anna maat"
+    },
+    "time_and_venue_tab": {
+      "existing_venue": " Olemassa oleva opaikka",
+      "no_existing_venue_found": "Olemassa olevia ei löytynyt",
+      "add_new_venue": "Lisää uusi paikka",
+      "event_date_and_time": "Tapahtuman päivämäärä ja paikka",
+      "session": "Istunto",
+      "from": "alkaa",
+      "to": "loppuu",
+      "new_venue": "Uusi paikka",
+      "venue_name": "Tapahtumapaikan nimi",
+      "venue_name_placeholder": "Anna tapahtumapaikan nimi",
+      "street_address": "Katuosoite",
+      "street_address_placeholder": "Valitse katuosoite",
+      "postal_code": "Postinumero",
+      "postal_code_placeholder": "Anna postinnumero",
+      "province": "maakunta",
+      "province_placeholder": "Valitse maakunta",
+      "local_center_placeholder": "Valitse paikallinen keskus",
+      "view_all": "Näytä kaikki",
+      "existing_venues": "Olemassa olevat tapahtumapaikat",
+      "search_by_venue_name": "Hae tapahtumapaikan nimen mukaan. Kaupunki tai maakunta",
+      "course_date_and_time": "Kurssin päivämäärä ja aika",
+      "course": "Kurssi",
+      "online_meeting_url": "Online-kurssin URL-osoite",
+      "online_meeting_url_placeholder": "Anna online-kokouksen URL-osoite",
+      "online_meeting_note": "Huom:Osallistujat liittyvät verkkokurssille virtuaalipaikkasi kautta",
+      "specific_location": "Yhdistä kurssisi tiettyyn paikkaan raportointia varten"
+    },
+    "fees_tab": {
+      "enable_fees": "Ota maksut käyttöön",
+      "normal_fee": "Normaali maksu",
+      "vat reg": "ALV rek.",
+      "fee": "Kokonaismaksu",
+      "enable_early": "Otetaanko Early Bird maksut käyttöön?",
+      "disable": "Otetaanko maksa myöhemmin-tarra pois käytöstä?",
+      "early_bird": "Early Bird-maksut",
+      "total early": "Early Bird-maksut yhteensä",
+      "early_bird_cutoff": "Early Bird ajanjakso",
+      "days_left": "Montako päivää jäljellä"
+    },
+    "accommodation_tab": {
+      "accommodation_type": "Majoitustyyppi",
+      "fee_per_person": "Hinta per henkilö sisältäen ALVn",
+      "number_of_spots": "Vapaita paikkoja",
+      "note": "Huom: jos vapaiden paikkojen määrä on tyhjä, on paikkoja on rajoittamattomasti",
+      "accommodation_fee": "Majoitusmaksun maksutapa",
+      "pay_online": "Maksa verkossa",
+      "pay_offline": "Maksa offline tilassa"
+    },
+    "contact_info_tab": {
+      "contact_number": "Yhteysnumero",
+      "select_contact": "Valitse yhteyshenkilön nimi",
+      "select_contact_email": "Valitse yhteyshenkilön sähköposti",
+      "select_contact_number": "Valitse yhteyshenkilön puhelinnumero",
+      "send_bcc": "Lähetä BCC-rekisteröinnin vahvistussähköposti sähköpostiosoitteeseen",
+      "select_course": "Valitse kurssin sähköpostiosoite",
+      "note_enter_comma": "Huom:Anna pilkuilla eroteltu sähköpostiosoitteiden luettelo",
+      "review_details": "Tarkista tiedot"
+    },
+    "review_post_details": {
+      "creator": "Luonut",
+      "course_details": "Kurssin yksityiskohdat",
+      "time_formate": "Aikamuoto",
+      "time_zone": "Aikavyöhyke",
+      "fee_information": "Hintatiedot",
+      "there_is_no_price": "Nykyisillä asetuksilla ei hintaa. -Valitse kurssityyppi ja kaupunki/keskus."
+    },
+    "congratulations_page": {
+      "congratulations": "Onnittelut!",
+      "you_have_successfully": "Olet ilmoittanut kurssin onnistuneesti",
+      "go_to_course_listing": "Siirry kurssiluetteloon",
+      "venue": "Paikka",
+      "course_date": "Kurssin päivämäärä ",
+      "share_in_social": "Jaa sosiaalisessa mediassa",
+      "your_course_has_been_submitted": "Kurssisi on lähetetty hyväksyttäväksi",
+      "review_pending": "Odottaa tarkistusta"
+    }
+  }
