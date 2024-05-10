@@ -364,7 +364,7 @@ const Sessions = () => {
     // and we need to set to 06:00PM as start time and end time as 08:00PM for all countries
     // in future if client asks we need to set date and time as per each country what ever theu want
 
-    if (formData?.hoursFormatId === timeFormat12HoursId) {
+    if (formData?.hour_format_id === timeFormat12HoursId) {
       tempSchedule["startHour"] = "06";
       tempSchedule["startMinute"] = "00";
       tempSchedule["endHour"] = "08";
@@ -501,7 +501,7 @@ const ScheduleComponent = ({
               }}
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
-              <Add /> {t("add")}
+              <Add /> {t("add_button")}
             </div>
           )}
           {index != 0 && (
@@ -759,7 +759,7 @@ const Venue = () => {
                     <DialogTrigger onClick={handleOpenEditNewVenue}>
                       <EditIcon />
                     </DialogTrigger>
-                    <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                    <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
                       <AddOrEditVenue handleSubmit={handleAddNewVenue} />
                     </DialogContent>
                   </Dialog>
@@ -795,7 +795,7 @@ const Venue = () => {
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+            <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] !rounded-[24px]">
               <AddOrEditVenue
                 handleSubmit={handleAddNewVenue}
                 message={warningmessage}
@@ -1119,6 +1119,8 @@ const ExistingVenueList = () => {
 
   const [searchValue, searchOnChange] = useState<string>("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const debouncedSearchValue = useDebounce(searchValue, 500);
 
   const [otherVenueSkip, setOtherVenueSkip] = useState<number>(0);
@@ -1150,6 +1152,7 @@ const ExistingVenueList = () => {
 
   //Fetching venue data after search
   useEffect(() => {
+    setIsLoading(true);
     setVenueData([]);
     setOtherVenueSkip(0);
 
@@ -1165,6 +1168,7 @@ const ExistingVenueList = () => {
       modifiedVenueData = _.uniqBy(modifiedVenueData, "id");
     }
     setVenueData(modifiedVenueData);
+    setIsLoading(false);
   };
   /**
    * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
@@ -1201,7 +1205,6 @@ const ExistingVenueList = () => {
       )
       .eq("is_deleted", false) // this line to filter out records where is_deleted is false
       .range(otherVenueSkip, otherVenueSkip + 5);
-
     return data;
   };
 
@@ -1272,7 +1275,7 @@ const ExistingVenueList = () => {
             {/* loader for existing venue list  */}
             {filteredVenueData?.length === 0 ? (
               <div className="flex w-[100%] flex-row items-center justify-center">
-                <div className="loader"></div>
+                {isLoading ? <div className="loader"></div> : <p>No Venues</p>}
               </div>
             ) : (
               filteredVenueData?.map((item: any, index: number) => (
@@ -1297,7 +1300,7 @@ const ExistingVenueList = () => {
               handleSubmitVenueList();
             }}
           >
-            {t("submit_button")}
+            {t("save_button")}
           </Button>
         </DialogClose>
       </div>
@@ -1457,7 +1460,7 @@ export const ExistingVenueListSection = ({
                 >
                   <EditIcon />
                 </DialogTrigger>
-                <DialogContent className="!w-[636px] !h-[560px] pt-6 px-[25px] rounded-6">
+                <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
                   <AddOrEditVenue
                     handleSubmit={() => {
                       handleSubmitExistingVenue(index);
@@ -1552,7 +1555,7 @@ export const AddOrEditVenue = ({
   return (
     <div>
       {isNewVenue ? (
-        <div className="flex justify-center text-[24px] font-semibold">
+        <div className="flex justify-center text-[24px] font-semibold mb-5">
           {t("course.new_course:time_and_venue_tab.new_venue")}
         </div>
       ) : (
@@ -1562,8 +1565,8 @@ export const AddOrEditVenue = ({
       )}
       {/* TODO : Integrated after solving the error }
       {/* <MapComponent /> */}
-      <div className="w-[586px] h-[140px] border my-5"></div>
-      <div className="flex flex-row gap-[30px]">
+      {/* <div className="w-[586px] h-[140px] border my-5"></div> */}
+      <div className="flex flex-row gap-[30px] mt-10">
         <div className="flex flex-col gap-5">
           <VenueNameComponent />
           <PostalCodeComponent />
@@ -1582,10 +1585,10 @@ export const AddOrEditVenue = ({
         </span>
       )}
       <DialogFooter>
-        <div className="w-full flex items-center justify-center mt-5">
+        <div className="w-full flex items-center justify-center mt-8">
           <Button onClick={handleSubmit}>{t("save_button")}</Button>
         </div>
-      </DialogFooter>
+      </DialogFooter> 
     </div>
   );
 };
@@ -1909,7 +1912,7 @@ const DeleteVenueComponent = ({
       <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
         <DialogClose>
           <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-            {t("no")}
+            {t("no_button")}
           </Button>
         </DialogClose>
         <DialogClose>

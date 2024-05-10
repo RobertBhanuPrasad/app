@@ -21,6 +21,7 @@ import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { translatedText } from "src/common/translations";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { Text } from "src/ui/TextTags";
 
 // Define CourseTable component
 
@@ -199,19 +200,19 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           ? translatedText(val?.custom_fee_label)
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
-        subTotal: val?.total - val?.total * taxRate,
-        tax: val?.total * taxRate,
-        total: JSON.stringify(val?.total),
+        subTotal: (val?.total - val?.total * taxRate).toFixed(2),
+        tax: (val?.total * taxRate).toFixed(2),
+        total: parseFloat(val?.total).toFixed(2),
       };
-      
+
       //Need to insert early bird fee if early bird fee is enabled in settings
       if (courseFeeSettings?.[0]?.is_early_bird_fee_enabled) {
         modifiedFeeLevels = {
           ...modifiedFeeLevels,
           earlyBirdSubTotal:
-            val?.early_bird_total - val?.early_bird_total * taxRate,
-          earlyBirdTax: val?.early_bird_total * taxRate,
-          earlyBirdTotal: JSON.stringify(val?.early_bird_total || ""),
+            (val?.early_bird_total - val?.early_bird_total * taxRate).toFixed(2),
+            earlyBirdTax: (val?.early_bird_total * taxRate).toFixed(2),
+          earlyBirdTotal: parseFloat(val?.early_bird_total || "").toFixed(2),
         };
       }
       return modifiedFeeLevels;
@@ -379,7 +380,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat_reg")}(${
+      header: `${t("new_strings:vat_reg")}(${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -571,8 +572,11 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
             <div className="w-80 mt-9">
               <div className="flex justify-between">
-                <div className="font-normal text-base text-sm">
-                  {t("new_strings:Early_bird_cutoff_period")}
+                <div className="flex flex-row gap-1 items-center">
+                  <Text className="text-xs font-normal text-[#333333]">
+                    {t("new_strings:Early_bird_cutoff_period")}
+                  </Text>{" "}
+                  <Text className="text-[#7677F4]">*</Text>
                 </div>
                 <div className="font-normal italic text-base text-sm text-[#7677F4]">
                   {earlyBirdCutOff} {t("course.new_course:fees_tab.days_left")}

@@ -228,7 +228,7 @@ export function MultiSelect({
                       setOpen(true);
                     }}
                   >
-                    + {t("add")}
+                    + {t("add_button")}
                   </button>
                 </div>
               </div>
