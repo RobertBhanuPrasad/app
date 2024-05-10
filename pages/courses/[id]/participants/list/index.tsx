@@ -591,12 +591,13 @@ function index() {
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
+        {/* TODO  : for now may-13 release it has to be hidden */}
         {/* Bulk actions section */}
-        <div className="flex gap-10 justify-end w-full">
+        {/* <div className="flex gap-10 justify-end w-full"> */}
           {/* Bulk Actions Dropdown */}
-          <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+          {/* <div> */}
+            {/* <DropdownMenu> */}
+              {/* <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
@@ -607,9 +608,9 @@ function index() {
                   <CountComponent count={selectedTableRows} />
                   <DropDown />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
+              </DropdownMenuTrigger> */}
+              {/* <DropdownMenuContent align="end"> */}
+                {/* <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]"> */}
                   {/* TODO (Not in MVP Scope): Print Registration Form */}
                   {/* <DropdownMenuItem
                     onClick={() => {
@@ -618,16 +619,16 @@ function index() {
                   >
                     Print Registration Form
                   </DropdownMenuItem> */}
-                  <DropdownMenuItem
+                  {/* <DropdownMenuItem
                     onClick={() => {
                       setBulkActionSelectedValue(t('new_strings:update_attendance_status'));
                       setEnableBulkOptions(false);
                       setBulkAction("attendance");
                     }}
-                  >
-                    {t('new_strings:update_attendance_status')}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
+                  > */}
+                    {/* {t('new_strings:update_attendance_status')} */}
+                  {/* </DropdownMenuItem> */}
+                  {/* <DropdownMenuItem
                     onClick={() => {
                       setBulkActionSelectedValue(t('new_strings:update_transaction_status'));
                       setEnableBulkOptions(false);
@@ -635,13 +636,13 @@ function index() {
                     }}
                   >
                     {t('new_strings:update_transaction_status')}
-                  </DropdownMenuItem>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                  </DropdownMenuItem> */}
+                {/* </div> */}
+              {/* </DropdownMenuContent> */}
+            {/* </DropdownMenu> */}
+          {/* </div> */}
           {/* Bulk actions options dropdown */}
-          <div>
+          {/* <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -680,8 +681,8 @@ function index() {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
         <div className="w-full">
           <BaseTable
             current={current}
@@ -702,6 +703,7 @@ function index() {
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
+            noRecordsPlaceholder="There are no participants"
           />
         </div>
       </div>

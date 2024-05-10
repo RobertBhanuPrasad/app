@@ -1,4 +1,10 @@
-import { BaseOption, CrudFilter, useSelect } from "@refinedev/core";
+import {
+  BaseOption,
+  CrudFilter,
+  useGetIdentity,
+  useList,
+  useSelect,
+} from "@refinedev/core";
 import _ from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -14,6 +20,7 @@ import {
 } from "src/ui/select";
 import { supabaseClient } from "src/utility";
 import { useTranslation } from "next-i18next";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 export const VenueNameComponent = () => {
   const { t } = useTranslation(["common", "course.new_course"]);
@@ -217,10 +224,29 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const { t } = useTranslation(["common", "course.new_course"]);
+  const { t } = useTranslation(["common", "course.new_course","course.find_course"]);
   const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);
+
+  /**
+   * Getting country code from route using useGetCountryCode function
+   */
+  const countryCode = useGetCountryCode();
+
+  /**
+   * Getting country data based on country code
+   */
+  const { data } = useList<any>({
+    resource: "country",
+    filters: [
+      {
+        field: "abbr",
+        operator: "contains",
+        value: countryCode,
+      },
+    ],
+  });
 
   const {
     field: { value: stateValue, onChange: stateValueOnchange },
@@ -228,6 +254,17 @@ export const StateDropDown = ({ name }: { name: string }) => {
   } = useController({
     name,
   });
+
+  let filter: Array<CrudFilter> = [];
+
+  //If the country code is public then dont make the filter for country
+  if (countryCode !== "public") {
+    filter.push({
+      field: "country_id",
+      operator: "eq",
+      value: data?.data?.[0]?.id,
+    });
+  }
 
   const { options, onSearch: stateOnsearch } = useSelect({
     resource: "state",
@@ -246,6 +283,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
       mode: "server",
       pageSize: pageSize,
     },
+    filters: filter,
   });
 
   const handleOnBottomReached = () => {
@@ -256,7 +294,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
     <div className="flex gap-1 flex-col h-[60px] w-full">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">
-          {t("course.new_course:time_and_venue_tab.state")}
+          {t("course.find_course:state")}
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
@@ -316,13 +354,14 @@ export const CenterDropDown = ({ name }: { name: string }) => {
 
   let filter: Array<CrudFilter> = [];
 
-  if (formData?.city_id) {
-    filter.push({
-      field: "city_id",
-      operator: "eq",
-      value: formData.city_id,
-    });
-  }
+  //TODO: Right now center are state based not city based.
+  // if (formData?.city_id) {
+  //   filter.push({
+  //     field: "city_id",
+  //     operator: "eq",
+  //     value: formData.city_id,
+  //   });
+  // }
 
   if (formData?.state_id) {
     filter.push({

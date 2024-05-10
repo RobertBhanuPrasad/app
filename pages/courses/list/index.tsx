@@ -193,7 +193,7 @@ function index() {
             new Date(
               AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
             ).getTime() +
-              24 * 60 * 60 * 1000
+            24 * 60 * 60 * 1000
           )
             .toISOString()
             .replace("T", " ")
@@ -208,7 +208,7 @@ function index() {
             new Date(
               AllFilterData.course_date.to?.setUTCHours(23, 59, 0, 0)
             ).getTime() +
-              24 * 60 * 60 * 1000
+            24 * 60 * 60 * 1000
           )
             ?.toISOString()
             .replace("T", " ")
@@ -467,6 +467,7 @@ function index() {
     "course.find_course",
     "new_strings",
     "course.view_course",
+    "course.participants"
   ]);
   return (
     <div className="flex flex-col justify-between relative">
@@ -521,7 +522,7 @@ function index() {
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            {t("course.find_course:selected")}:{" "}
+            {t("course.find_course:selected")}{" "}
             {allSelected ? FilterProgramData?.data?.total : rowCount}{" "}
             {t("course.find_course:out_of")}{" "}
             <div className="font-semibold">
@@ -567,7 +568,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
+    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
@@ -738,7 +739,7 @@ export const BasicFilters: React.FC<{
     setValue("advanceFilter", "");
     setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
-  const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
+  const { t } = useTranslation(["common", "course.find_course", "new_strings", "course.participants"]);
   return (
     <div className="flex gap-x-[2%] flex-row items-center justify-between">
       <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
@@ -847,7 +848,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
         Array.isArray(formData.advanceFilter[key])
           ? formData.advanceFilter[key].length > 0
           : formData.advanceFilter[key] !== undefined &&
-            formData.advanceFilter[key] !== ""
+          formData.advanceFilter[key] !== ""
       ).length) ||
     0;
   const { t } = useTranslation("course.find_course");
@@ -890,6 +891,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "course.view_course",
     "new_strings",
     "course.find_course",
+    "course.participants",
   ]);
   if (!authenticated) {
     return {

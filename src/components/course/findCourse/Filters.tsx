@@ -96,8 +96,9 @@ const Filters = ({
             "item-14",
           ]}
         >
+          {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Course Type Accordion */}
-          {!hasAliasNameFalse && (
+          {/* {!hasAliasNameFalse && (
             <>
               <AccordionItem value="item-14" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
@@ -114,9 +115,11 @@ const Filters = ({
               </AccordionItem>
               <Separator />
             </>
-          )}
+          )} */}
+
+          {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Course Name Accordion */}
-          {!hasAliasNameFalse && (
+          {/* {!hasAliasNameFalse && (
             <>
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="text-base font-semibold pr-3">
@@ -133,7 +136,7 @@ const Filters = ({
               </AccordionItem>
               <Separator />
             </>
-          )}
+          )} */}
           {/* Course Status Accordion */}
           <AccordionItem value="item-2" className="border-none ">
             <AccordionTrigger className="text-base font-semibold pr-3">
@@ -154,30 +157,32 @@ const Filters = ({
           </AccordionItem>
           <Separator />
 
+          {/* TODO  : for now may-13 release it has to be hidden */} 
           {/* Course Accounting Status Accordion */}
-          <AccordionItem value="item-3" className=" border-none">
+          {/* <AccordionItem value="item-3" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course_accounting_status")}</div>
                 {formData?.temporaryadvancefilter.course_accounting_status
                   ?.length > 0 && (
-                  <CountComponent
-                    count={
-                      formData?.temporaryadvancefilter.course_accounting_status
-                        ?.length
-                    }
-                  />
-                )}
+                    <CountComponent
+                      count={
+                        formData?.temporaryadvancefilter.course_accounting_status
+                          ?.length
+                      }
+                    />
+                  )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <CourseAccordingStatus />
             </AccordionContent>
           </AccordionItem>
-          <Separator />
-
+          <Separator /> */}
+          
+          {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Course Accounting Closure Date  Accordion */}
-          <AccordionItem value="item-4" className=" border-none">
+          {/* <AccordionItem value="item-4" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>
@@ -185,15 +190,15 @@ const Filters = ({
                 </div>
                 {formData?.temporaryadvancefilter
                   .course_accounting_closure_date && (
-                  <CountComponent count={1} />
-                )}
+                    <CountComponent count={1} />
+                  )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
               <CourseAccountingClosureDate />
             </AccordionContent>
           </AccordionItem>
-          <Separator />
+          <Separator /> */}
 
           {/* Course Visibility Accordion */}
           <AccordionItem value="item-5" className="border-none">
@@ -282,12 +287,12 @@ const Filters = ({
                 <div>{t("program_organizer")}</div>
                 {formData?.temporaryadvancefilter.program_organiser?.length >
                   0 && (
-                  <CountComponent
-                    count={
-                      formData?.temporaryadvancefilter.program_organiser?.length
-                    }
-                  />
-                )}
+                    <CountComponent
+                      count={
+                        formData?.temporaryadvancefilter.program_organiser?.length
+                      }
+                    />
+                  )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -320,7 +325,7 @@ const Filters = ({
           <AccordionItem value="item-12" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
-                <div>{t("course.find_course:course_fees")}</div>
+                <div>{t("new_strings:course_fees")}</div>
                 {formData?.temporaryadvancefilter.is_course_fee && (
                   <CountComponent count={1} />
                 )}
@@ -332,14 +337,15 @@ const Filters = ({
           </AccordionItem>
 
           <Separator />
-
+          
+          {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Reconciliation Status Accordion */}
-          <AccordionItem value="item-13" className=" border-none">
+          {/* <AccordionItem value="item-13" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               {t("course.find_course:reconciliation_status")}
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3"></AccordionContent>
-          </AccordionItem>
+          </AccordionItem> */}
         </Accordion>
       </div>
       <div className="flex left-0 items-center  gap-4 absolute bottom-0 h-[67px] w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] justify-end pr-6">
@@ -635,7 +641,7 @@ export const Center = () => {
       }}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
-        <SelectValue placeholder={t("city_placeholder")} />
+        <SelectValue placeholder={t("select_center")} />
       </SelectTrigger>
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
@@ -689,9 +695,9 @@ export const CourseStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white  hover:bg-[#5E5FC3]"
-                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-            }`}
+              ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -727,9 +733,9 @@ export const CourseAccordingStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white hover:bg-[#5E5FC3]"
-                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-            }`}
+              ? "bg-primary text-white hover:bg-[#5E5FC3]"
+              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -853,7 +859,7 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="FALSE"
             selectedRadioValue={temporaryValue}
-            label={t("no")}
+            label={t("no_button")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
         </div>

@@ -187,10 +187,10 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('edit_course'),
           value: 3,
@@ -199,18 +199,18 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
-        {
-          label: t('course.find_course:submit_course_accounting_form'),
-          value: 6,
-        },
-        {
-          label: t('new_strings:edit_course_accounting_form'),
-          value: 8,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
+        // {
+        //   label: t('course.find_course:submit_course_accounting_form'),
+        //   value: 6,
+        // },
+        // {
+        //   label: t('new_strings:edit_course_accounting_form'),
+        //   value: 8,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
@@ -221,26 +221,26 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
-        {
-          label: t('course.find_course:submit_course_accounting_form'),
-          value: 6,
-        },
-        {
-          label: t('new_strings:edit_course_accounting_form'),
-          value: 8,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
+        // {
+        //   label: t('course.find_course:submit_course_accounting_form'),
+        //   value: 6,
+        // },
+        // {
+        //   label: t('new_strings:edit_course_accounting_form'),
+        //   value: 8,
+        // },
       ];
     } else {
       console.log("No options available for the given conditions.");
@@ -261,10 +261,10 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('edit_course'),
           value: 3,
@@ -273,18 +273,18 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
-        {
-          label: t('course.find_course:submit_course_accounting_form'),
-          value: 6,
-        },
-        {
-          label: t('new_strings:edit_course_accounting_form'),
-          value: 8,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
+        // {
+        //   label: t('course.find_course:submit_course_accounting_form'),
+        //   value: 6,
+        // },
+        // {
+        //   label: t('new_strings:edit_course_accounting_form'),
+        //   value: 8,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
@@ -297,10 +297,10 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('edit_course'),
           value: 3,
@@ -309,14 +309,14 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
-        {
-          label: t('new_strings:view_course_accounting_form'),
-          value: 7,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
+        // {
+        //   label: t('new_strings:view_course_accounting_form'),
+        //   value: 7,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
@@ -331,14 +331,14 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
-        {
-          label: t('new_strings:view_course_accounting_form'),
-          value: 7,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
+        // {
+        //   label: t('new_strings:view_course_accounting_form'),
+        //   value: 7,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
@@ -351,10 +351,10 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('edit_course'),
           value: 3,
@@ -363,14 +363,14 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
-        {
-          label: t('new_strings:edit_course_accounting_form'),
-          value: 8,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
+        // {
+        //   label: t('new_strings:edit_course_accounting_form'),
+        //   value: 8,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
@@ -381,10 +381,10 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('edit_course'),
           value: 3,
@@ -393,14 +393,14 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
-        {
-          label: t('new_strings:edit_course_accounting_form'),
-          value: 8,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
+        // {
+        //   label: t('new_strings:edit_course_accounting_form'),
+        //   value: 8,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
@@ -421,10 +421,10 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('new_strings:view_course_accounting_form'),
-          value: 7,
-        },
+        // {
+        //   label: t('new_strings:view_course_accounting_form'),
+        //   value: 7,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
@@ -439,10 +439,10 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('new_strings:view_course_accounting_form'),
-          value: 7,
-        },
+        // {
+        //   label: t('new_strings:view_course_accounting_form'),
+        //   value: 7,
+        // },
       ];
     } else {
       console.log("No options available for the given conditions.");
@@ -463,10 +463,10 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('edit_course'),
           value: 3,
@@ -479,14 +479,14 @@ export const DisplayOptions = (
           label: t('cancel_course'),
           value: 5,
         },
-        {
-          label: t('course.find_course:submit_course_accounting_form'),
-          value: 6,
-        },
-        {
-          label: t('new_strings:edit_course_accounting_form'),
-          value: 8,
-        },
+        // {
+        //   label: t('course.find_course:submit_course_accounting_form'),
+        //   value: 6,
+        // },
+        // {
+        //   label: t('new_strings:edit_course_accounting_form'),
+        //   value: 8,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
@@ -499,10 +499,10 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('edit_course'),
           value: 3,
@@ -511,14 +511,14 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
-        {
-          label: t('new_strings:view_course_accounting_form'),
-          value: 7,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
+        // {
+        //   label: t('new_strings:view_course_accounting_form'),
+        //   value: 7,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingPendingStatusId &&
@@ -537,10 +537,10 @@ export const DisplayOptions = (
           label: t('cancel_course'),
           value: 5,
         },
-        {
-          label: t('new_strings:view_course_accounting_form'),
-          value: 7,
-        },
+        // {
+        //   label: t('new_strings:view_course_accounting_form'),
+        //   value: 7,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingRejectedStatusId &&
@@ -555,10 +555,10 @@ export const DisplayOptions = (
           label: t('view_participants'),
           value: 1,
         },
-        {
-          label: t('register_participant'),
-          value: 2,
-        },
+        // {
+        //   label: t('register_participant'),
+        //   value: 2,
+        // },
         {
           label: t('copy_course'),
           value: 4,
@@ -567,10 +567,10 @@ export const DisplayOptions = (
           label: t('cancel_course'),
           value: 5,
         },
-        {
-          label: t('new_strings:edit_course_accounting_form'),
-          value: 8,
-        },
+        // {
+        //   label: t('new_strings:edit_course_accounting_form'),
+        //   value: 8,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
@@ -592,14 +592,14 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('new_strings:view_course_accounting_form'),
-          value: 7,
-        },
+        // {
+        //   label: t('new_strings:view_course_accounting_form'),
+        //   value: 7,
+        // },
         t('view_participants'),
         t('edit_course'),
         t('copy_course'),
-        t('new_strings:view_course_accounting_form'),
+        // t('new_strings:view_course_accounting_form'),
       ];
     } else if (
       courseAccountingStatusId === accountingClosedStatusId &&
@@ -614,10 +614,10 @@ export const DisplayOptions = (
           label: t('copy_course'),
           value: 4,
         },
-        {
-          label: t('new_strings:view_course_accounting_form'),
-          value: 7,
-        },
+        // {
+        //   label: t('new_strings:view_course_accounting_form'),
+        //   value: 7,
+        // },
       ];
     } else {
       console.log("No options available for the given conditions.");
@@ -657,10 +657,10 @@ export const DisplayOptions = (
           label: t('edit_course'),
           value: 3,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
       ];
     } else if (
       courseAccountingStatusId === accountingNotSubmittedStatusId &&
@@ -669,10 +669,10 @@ export const DisplayOptions = (
         roleId === programOrganizerRoleId)
     ) {
       return [
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
       ];
     } else if (
       courseAccountingStatusId == accountingPendingStatusId &&
@@ -683,10 +683,10 @@ export const DisplayOptions = (
           label: t('edit_course'),
           value: 3,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
       ];
     } else {
       console.log("No options available for the given conditions.");
@@ -707,10 +707,10 @@ export const DisplayOptions = (
           label: t('edit_course'),
           value: 3,
         },
-        {
-          label: t('cancel_course'),
-          value: 5,
-        },
+        // {
+        //   label: t('cancel_course'),
+        //   value: 5,
+        // },
       ];
     } else {
       console.log("No options available for the given conditions.");

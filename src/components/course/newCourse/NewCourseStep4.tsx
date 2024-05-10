@@ -132,8 +132,9 @@ export default function CourseTable() {
 }
 function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
+
   //If Fee is not found based on users selection then need to show this
-  if (courseFeeSettings?.length == 0) {
+  if (courseFeeSettings?.length == 0 || courseFeeSettings?.[0]?.program_fee_level_settings==0) {
     return (
       <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
         {t(
@@ -195,9 +196,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           ? translatedText(val?.custom_fee_label)
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
-        subTotal: val?.total - val?.total * taxRate,
-        tax: val?.total * taxRate,
-        total: JSON.stringify(val?.total),
+        subTotal: (val?.total - val?.total * taxRate).toFixed(2),
+        tax: (val?.total * taxRate).toFixed(2),
+        total: parseFloat(val?.total).toFixed(2),
       };
 
       //Need to insert early bird fee if early bird fee is enabled in settings
@@ -205,9 +206,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         modifiedFeeLevels = {
           ...modifiedFeeLevels,
           earlyBirdSubTotal:
-            val?.early_bird_total - val?.early_bird_total * taxRate,
-          earlyBirdTax: val?.early_bird_total * taxRate,
-          earlyBirdTotal: JSON.stringify(val?.early_bird_total || ""),
+            (val?.early_bird_total - val?.early_bird_total * taxRate).toFixed(2),
+            earlyBirdTax: (val?.early_bird_total * taxRate).toFixed(2),
+          earlyBirdTotal: parseFloat(val?.early_bird_total || "").toFixed(2),
         };
       }
       return modifiedFeeLevels;
@@ -375,7 +376,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat_reg")}(${
+      header: `${t("new_strings:vat_reg")}(${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },

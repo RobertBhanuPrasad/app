@@ -1,0 +1,38 @@
+{
+  "login": {
+    "revert_to_harmony": "Revenir à l'harmonie",
+    "log_in": "Se connecter",
+    "username": "Nom d'utilisateur",
+    "enter_username": "Entrer le nom d'utilisateur",
+    "password": "Mot de passe",
+    "enter_password": "Entrer le mot de passe",
+    "remember_password": "Se souvenir du mot de passe",
+    "forgot_Password": "Mot de passe oublié ?",
+    "copyright": "Copyright ©",
+    "art_of_living": "Art de Vivre",
+    "all_rights_reserved": "Tous droits réservés",
+    "forgot_password": "Mot de passe oublié",
+    "username_or_email_address": "Nom d'utilisateur ou adresse électronique",
+    "enter_username_or_email_address": "Saisir le nom d'utilisateur ou l'adresse électronique",
+    "email_new_password": "Envoyer le nouveau mot de passe par e-mail",
+    "back_to": "Retour à",
+    "login": {
+      "": "Connexion"
+    },
+    "new_password_sent_to_your_registered_email": "Nouveau mot de passe envoyé à l'adresse e-mail enregistrée",
+    "back_to_login": "Retour à la connexion",
+    "change_language": "Changer de langue",
+    "go_to_harmony_classic": "Aller à Harmony Classic",
+    "help_desk": "Service d'assistance",
+    "Role:_National_Admin": "Rôle : Administrateur national",
+    "view_profile": "Voir le profil",
+    "update_profile": "Mise à jour du profil",
+    "national_admin": "Administration nationale",
+    "change_password": "Modifier le mot de passe",
+    "course_history": "Historique des cours",
+    "event_history": "Historique des événements",
+    "communication_preferences": "Préférences de communition",
+    "download_account": "Télécharger le compte",
+    "log_out": "Se déconnecter"
+  }
+}

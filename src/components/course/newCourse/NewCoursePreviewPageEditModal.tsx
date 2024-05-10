@@ -72,7 +72,7 @@ export const EditModalDialog = ({
     const { getValues } = useFormContext();
     const formData = getValues();
 
-    let validationFieldsStepWise = requiredValidationFields(newCourseData);
+    let validationFieldsStepWise = requiredValidationFields(formData);
 
     let isAllFieldsFilled = false;
 

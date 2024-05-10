@@ -54,6 +54,7 @@ import { useTranslation } from "next-i18next";
 import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -159,6 +160,9 @@ export default function NewCourseReviewPage() {
 
   //fetching the user's country code
   const countryCode = useGetCountryCode();
+
+  //fetching the user's language code
+  const languageCode = useGetLanguageCode();
 
   //Finding course start date
   const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
@@ -400,7 +404,8 @@ export default function NewCourseReviewPage() {
       setProgramId,
       accountingNotSubmittedStatusId,
       pathname,
-      countryCode
+      countryCode,
+      languageCode
     );
 
     // we are checking the course is edit or user created new course
@@ -587,7 +592,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-                {t("teacher")}
+              {t("new_strings:teacher")}
               </p>
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}
@@ -831,7 +836,7 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
                   title={VenueData ? VenueData : "-"}
                 >
                   {VenueData ? VenueData : "-"}
@@ -924,7 +929,7 @@ export default function NewCourseReviewPage() {
                 </div>
               )}
 
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:fees_tab.disable")}
               </p>
@@ -934,7 +939,7 @@ export default function NewCourseReviewPage() {
               >
                 {t("yes")}
               </abbr>
-            </div>
+            </div> */}
           </div>
         </section>
         {/* Accommodation Information */}
@@ -1182,7 +1187,7 @@ const Fees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.total}
+          {(feeLevelSettingsData?.total)?.toFixed(2)}
         </CardValue>
       </abbr>
     </div>
@@ -1243,7 +1248,7 @@ const EarlyBirdFees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.early_bird_total}
+          {(feeLevelSettingsData?.early_bird_total)?.toFixed(2)}
         </CardValue>
       </abbr>
     </div>
