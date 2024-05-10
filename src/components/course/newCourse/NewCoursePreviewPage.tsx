@@ -358,7 +358,11 @@ export default function NewCourseReviewPage() {
 
   //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
-    ? newCourseData?.program_fee_level_settings
+    ? newCourseData?.program_fee_level_settings?.map((feeLevel: { fee_level_id: any; })=>{
+      const defaultFeeLevel=defaultFeeLevels?.find((defaultFee: { fee_level_id: any; })=>defaultFee.fee_level_id==feeLevel?.fee_level_id)
+      //If is_custom_fee is true then need to show custom label. So appending is_custom_fee and custom_fee_label to existing formData
+      return {is_custom_fee:defaultFeeLevel?.is_custom_fee,custom_fee_label:defaultFeeLevel?.custom_fee_label,...feeLevel}
+    })
     : defaultFeeLevels;
 
   //Requirement: Need to show only enabled fee levels.
@@ -1145,18 +1149,6 @@ const Fees = ({
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
-  /**
-   * @constant feeLevelData
-   * REQUIRMENT we need to show the both fee level type and total of the fee level
-   * we have the fee_level_id and we need the fee level type
-   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
-   * @description this data const is used to store the fee level type data with respective to the fee level type id
-   *
-   */
-  const { data: feeLevelData } = useOne({
-    resource: "option_values",
-    id: feeLevelSettingsData?.fee_level_id as number,
-  });
 
   /**
    * @constant countryConfigData
@@ -1165,11 +1157,44 @@ const Fees = ({
    * we will get the currency code in the country config
    *
    */
-
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+  
+  //If custom fee is enabled Need to show custom label.
+  if(feeLevelSettingsData?.is_custom_fee==true){
+    return (
+      <div className="w-[291px]">
+        <abbr title={translatedText(feeLevelSettingsData?.custom_fee_label as Object)} className="no-underline">
+          <CardLabel className="truncate">{translatedText(feeLevelSettingsData?.custom_fee_label as Object)}</CardLabel>
+        </abbr>
+        <abbr
+          title={JSON.stringify(feeLevelSettingsData?.total)}
+          className="no-underline"
+        >
+          <CardValue className="truncate">
+            {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+            {feeLevelSettingsData?.total}
+          </CardValue>
+        </abbr>
+      </div>
+    ); 
+  }
 
+   /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+   const { data: feeLevelData } = useOne({
+    resource: "option_values",
+    id: feeLevelSettingsData?.fee_level_id as number,
+  });
+
+  //If custom label is false then show only fee_level label.
   return (
     <div className="w-[291px]">
       <abbr
@@ -1204,18 +1229,6 @@ const EarlyBirdFees = ({
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
-  /**
-   * @constant feeLevelData
-   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
-   * we have the fee_level_id and we need the fee level type
-   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
-   * @description this data const is used to store the fee level type data with respective to the fee level type id
-   *
-   */
-  const { data: feeLevelData } = useOne({
-    resource: "option_values",
-    id: feeLevelSettingsData?.fee_level_id as number,
-  });
 
   /**
    * @constant countryConfigData
@@ -1228,7 +1241,49 @@ const EarlyBirdFees = ({
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+
+
+  //If custom fee is enabled Need to show custom label.
+  if(feeLevelSettingsData?.is_custom_fee==true){
+    return (
+      <div className="w-[291px]">
+      {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
+      <abbr
+        title={`Early Bird ${translatedText(feeLevelSettingsData?.custom_fee_label as object)}`}
+        className="no-underline"
+      >
+        <CardLabel className="truncate">
+          Early Bird {translatedText(feeLevelSettingsData?.custom_fee_label as object)}
+        </CardLabel>
+      </abbr>
+      <abbr
+        title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
+        className="no-underline"
+      >
+        <CardValue className="truncate">
+          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+          {feeLevelSettingsData?.early_bird_total}
+        </CardValue>
+      </abbr>
+    </div>
+    ); 
+  }
+
+
+   /**
+   * @constant feeLevelData
+   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
+   * we have the fee_level_id and we need the fee level type
+   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
+   * @description this data const is used to store the fee level type data with respective to the fee level type id
+   *
+   */
+   const { data: feeLevelData } = useOne({
+    resource: "option_values",
+    id: feeLevelSettingsData?.fee_level_id as number,
+  });
   const { t } = useTranslation("new_strings");
+  //If custom fee is false show fee level label.
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
