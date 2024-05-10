@@ -478,33 +478,46 @@ function index() {
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-        <div className="w-full mb-[76px]">
-          <BaseTable
-            current={current}
-            rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
-            checkboxSelection={true}
-            setCurrent={setCurrent}
-            pageCount={pageCount}
-            total={FilterProgramData?.data?.total || 0}
-            pageSize={pageSize}
-            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
-            setPageSize={(number) => {
-              setPageSize(number);
-              displayDataSetPageSize(number);
-            }}
-            pagination={true}
-            tableStyles={{
-              table: "",
-              rowStyles: "!important border-none",
-            }}
-            noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
-            columns={column(hasAliasNameFalse(data), t)}
-            data={programData?.data?.data || []}
-            columnPinning={true}
-            columnSelector={true}
-          />
-        </div>
+        {FilterProgramData?.data ? (
+          FilterProgramData.data.data.length > 0 ? (
+            <div className="w-full mb-[76px]">
+              <BaseTable
+                current={current}
+                rowSelection={rowSelection}
+                setRowSelection={setRowSelection}
+                checkboxSelection={true}
+                setCurrent={setCurrent}
+                pageCount={pageCount}
+                total={FilterProgramData.data.total || 0}
+                pageSize={pageSize}
+                //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+                setPageSize={(number) => {
+                  setPageSize(number);
+                  displayDataSetPageSize(number);
+                }}
+                pagination={true}
+                tableStyles={{
+                  table: "",
+                  rowStyles: "!important border-none",
+                }}
+                noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
+                columns={column(hasAliasNameFalse(data), t)}
+                data={programData?.data?.data || []}
+                columnPinning={true}
+                columnSelector={true}
+              />
+            </div>
+          ) : (
+            <div className="w-full mb-[76px]">
+              <p>{t("new_strings:there_are_no_courses")}</p>
+            </div>
+          )
+        ) : (
+          <section className="flex justify-center align-center pt-[10%]">
+<div className="loader"></div>
+          </section>
+          
+        )}
       </div>
       <div className="bottom-0 fixed flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">

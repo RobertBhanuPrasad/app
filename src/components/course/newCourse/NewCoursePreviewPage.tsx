@@ -1,4 +1,3 @@
-import LoadingIcon from "@public/assets/LoadingIcon";
 import {
   useGetIdentity,
   useInvalidate,
@@ -1050,16 +1049,16 @@ export default function NewCourseReviewPage() {
             </div>
           </div>
         </section>
-        <div className="flex items-center justify-center ">
+        <div className="flex items-center justify-center">
           {isSubmitting ? (
-            <Button disabled>
-              <LoadingIcon />
+            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
+              <div className="loader !w-[35px]"></div>
             </Button>
           ) : (
             <Button onClick={handClickContinue}>{t("continue_button")}</Button>
           )}
         </div>
-      </div>
+      </div> 
     </div>
   );
 }
@@ -1281,12 +1280,13 @@ export const EditCourseSuccessfullyInfo = ({
         <AlertDialogFooter>
           <div className="w-full flex justify-center items-center gap-5">
             <Button
-              disabled={onButtonLoading}
               type="button"
-              className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
+              className={`${onButtonLoading ? 'bg-[#fff] border-[1px] rounded-[12px] border-solid border-[#7677F4] w-[210px] h-[46px]' : 'bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]'}`}
               onClick={handleClick}
             >
-              {onButtonLoading ? <LoadingIcon /> : t("go_to_course_details")}
+              {onButtonLoading ? 
+              <div className="loader"></div>
+               : t("go_to_course_details")}
             </Button>
           </div>
         </AlertDialogFooter>

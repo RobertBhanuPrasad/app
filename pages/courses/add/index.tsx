@@ -55,7 +55,6 @@ import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 
 import Error from "@public/assets/Error";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import Success from "@public/assets/Success";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
@@ -65,7 +64,7 @@ import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -78,7 +77,7 @@ function index() {
   console.log("router is ", section);
 
   if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
+    return <section className="flex justify-center align-center pt-[15%]"> <div>Loading...</div></section>;
   }
 
   if (section === "thank_you") {
@@ -224,7 +223,7 @@ function NewCourse() {
     isLoading ||
     timeZoneLoading
   ) {
-    return <LoadingIcon />;
+    return <section className="flex justify-center align-center pt-[15%]"> <div className="loader"></div></section>;
   }
 
   return (
@@ -323,7 +322,7 @@ export const requiredValidationFields = (formData: any) => {
 };
 
 export const NewCourseTabs = () => {
-  const {t} = useTranslation(['common', 'course.new_course', "new_strings"])
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -443,7 +442,7 @@ export const NewCourseTabs = () => {
   const stepTitles = [
     {
       value: BASIC_DETAILS_STEP_NUMBER,
-      label: t('basic_details'),
+      label: t("basic_details"),
       // If the current step is BASIC_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === BASIC_DETAILS_STEP_NUMBER ||
@@ -632,7 +631,8 @@ export const NewCourseTabs = () => {
   return (
     <div>
       <p className="font-semibold text-2xl">
-      {router.query.action==="Copy" ? t("Copy") : t("new_strings:new")} {t("new_strings:course")}
+        {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
+        {t("new_strings:course")}
       </p>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
@@ -667,7 +667,7 @@ export const NewCourseTabs = () => {
 
             <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
               <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
-                <div>
+                <div className="flex flex-col w-full justify-between">
                   <TabsContent
                     value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
                     className={contentStylings}
@@ -766,7 +766,11 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common","course.new_course", "new_strings", "course.participants","course.view_course"
+    "common",
+    "course.new_course",
+    "new_strings",
+    "course.participants",
+    "course.view_course",
   ]);
 
   if (!authenticated) {

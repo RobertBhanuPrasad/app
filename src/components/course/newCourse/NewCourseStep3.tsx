@@ -52,7 +52,6 @@ import {
   VenueNameComponent,
 } from "@components/CommonComponents/DropDowns";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import {
@@ -98,7 +97,7 @@ function NewCourseStep3() {
   });
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <section className="flex w-full justify-center items-center h-[400px]"><div className="loader"></div></section>
   }
 
   return (
@@ -834,7 +833,7 @@ const NewVenueDetails = () => {
   console.log("new venue data is", data);
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <div className="loader !w-[30px]"></div>;
   }
 
   return (
@@ -857,7 +856,7 @@ const ExistingVenueDetails = () => {
   });
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <div className="loader !w-[30px]"></div>;
   }
 
   return (
@@ -1273,7 +1272,7 @@ const ExistingVenueList = () => {
             {/* loader for existing venue list  */}
             {filteredVenueData?.length === 0 ? (
               <div className="flex w-[100%] flex-row items-center justify-center">
-                <LoadingIcon></LoadingIcon>
+                <div className="loader"></div>
               </div>
             ) : (
               filteredVenueData?.map((item: any, index: number) => (
@@ -1285,8 +1284,6 @@ const ExistingVenueList = () => {
                 />
               ))
             )}
-
-            {/* </div> */}
           </div>
         </GetScrollTypesAlert>
       </div>
@@ -1517,7 +1514,7 @@ const VenueItem = ({ item }: { item: any }) => {
     });
 
     if (isLoading) {
-      return <LoadingIcon />;
+      return <div className="loader"></div>;
     }
 
     return (
