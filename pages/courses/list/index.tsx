@@ -296,7 +296,6 @@ function index() {
    * The variable holds whether all rows are selected or not
    */
   const [allSelected, setAllSelected] = useState();
-  console.log(programData, "programData");
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
