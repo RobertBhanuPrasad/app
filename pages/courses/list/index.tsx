@@ -386,13 +386,7 @@ function index() {
         select:
           "program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
-        filters: JSON.stringify([
-          {
-            field: "id",
-            operator: "in",
-            value: filteredIds,
-          },
-        ]),
+        filters: JSON.stringify(filters?.permanent),
         file_type: selectOption,
       });
 
