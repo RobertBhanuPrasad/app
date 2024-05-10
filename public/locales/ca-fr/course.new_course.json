@@ -1,0 +1,99 @@
+{
+  "basic_details_tab": {
+    "teaching_course": "Je donne ce cours",
+    "co_teaching": "Je co-enseigne ce cours",
+    "organizing_this_course": "J'organise ce cours",
+    "organization_placeholder": "Sélectionner l'organisation",
+    "program_organizer_placeholder": "Saisir le nom de l'organisateur du programme"
+  },
+  "course_details_tab": {
+    "teacher": "Enseignant",
+    "teacher_placeholder": "Entrer le nom du professeur",
+    "assistant_teacher": "Enseignante adjointe",
+    "languages_taught_placeholder": "Sélectionner la langue",
+    "display_language_option": "Afficher l'option de traduction linguistique pour les participants",
+    "available_languages_placeholder": "Sélectionner les langues de traduction",
+    "registration_mandatory": "L'inscription est obligatoire pour ce cours",
+    "max_capacity": "Capacité maximale",
+    "max_capacity_placeholder": "Indiquer le nombre de participants",
+    "registrations_restriction": "Je restreins géographiquement les possibilités d'enregistrement",
+    "country_registrations_allowed_placeholder": "Entrer les pays"
+  },
+  "time_and_venue_tab": {
+    "existing_venue": "Lieu existant",
+    "no_existing_venue_found": "Aucun existant n'a été trouvé",
+    "add_new_venue": "Ajouter un nouveau lieu",
+    "event_date_and_time": "Date et heure de l'événement",
+    "session": "Session",
+    "from": "De",
+    "to": "Pour",
+    "new_venue": "Nouveau lieu",
+    "venue_name": "Venue Name",
+    "venue_name_placeholder": "Saisir le nom du lieu",
+    "street_address": "Adresse de la rue",
+    "street_address_placeholder": "Sélectionnez l'adresse de la rue",
+    "postal_code": "Code postal",
+    "postal_code_placeholder": "Saisir le code postal",
+    "province": "Province",
+    "province_placeholder": "Sélectionner la province",
+    "local_center_placeholder": "Sélectionner le centre local",
+    "view_all": "Voir tout",
+    "existing_venues": "Sites existants",
+    "search_by_venue_name": "Recherche par nom de lieu. Ville ou Etat",
+    "course_date_and_time": "Date et heure du cours",
+    "course": "Cours",
+    "online_meeting_url": "URL de la réunion en ligne",
+    "online_meeting_url_placeholder": "Saisir l'URL de la réunion en ligne",
+    "online_meeting_note": "Note : Les participants rejoindront le cours en ligne par l'intermédiaire de votre site virtuel.",
+    "specific_location": "Veuillez associer votre cours à un lieu spécifique pour les besoins du rapport."
+  },
+  "fees_tab": {
+    "enable_fees": "Droits d'habilitation",
+    "normal_fee": "Taxe normale",
+    "vat reg": "Reg. TVA",
+    "fee": "Total des frais",
+    "enable_early": "Autoriser les frais de réservation anticipée ?",
+    "disable": "Désactiver l'étiquette Pay Later ?",
+    "early_bird": "Frais d'inscription anticipée",
+    "total early": "Total des frais d'inscription anticipée",
+    "early_bird_cutoff": "Période d'offre pour les oiseaux précoces",
+    "days_left": "Jours restants"
+  },
+  "accommodation_tab": {
+    "accommodation_type": "Type d'hébergement",
+    "fee_per_person": "Tarif par personne Inc. TVA",
+    "number_of_spots": "Nombre de places disponibles",
+    "note": "Note : Si le nombre de places disponibles est vide, il est illimité.",
+    "accommodation_fee": "Mode de paiement des frais d'hébergement",
+    "pay_online": "Payer en ligne",
+    "pay_offline": "Payer hors ligne"
+  },
+  "contact_info_tab": {
+    "contact_number": "Numéro de contact",
+    "select_contact": "Sélectionner le nom du contact",
+    "select_contact_email": "Sélectionner l'adresse électronique du contact",
+    "select_contact_number": "Sélectionner le numéro de contact",
+    "send_bcc": "Envoyer le courriel de confirmation de l'inscription au BCC à",
+    "select_course": "Sélectionnez l'adresse électronique du cours",
+    "note_enter_comma": "Note : Saisir une liste d'adresses électroniques séparées par des virgules.",
+    "review_details": "Détails de la révision"
+  },
+  "review_post_details": {
+    "creator": "Créateur",
+    "course_details": "Détails du cours",
+    "time_formate": "Format de l'heure",
+    "time_zone": "Fuseau horaire",
+    "fee_information": "Détails des frais",
+    "there_is_no_price": "Il n'y a pas de prix pour les paramètres actuels. Sélectionnez le type de cours et la ville/centre."
+  },
+  "congratulations_page": {
+    "congratulations": "Félicitations !",
+    "you_have_successfully": "Vous avez annoncé avec succès un cours",
+    "go_to_course_listing": "Aller à la liste des cours",
+    "venue": "Lieu",
+    "course_date": "Date du cours",
+    "share_in_social": "Partager sur les réseaux sociaux",
+    "your_course_has_been_submitted": "Votre cours a été soumis pour approbation.",
+    "review_pending": "Révision en cours"
+  }
+}

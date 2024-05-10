@@ -1,0 +1,39 @@
+{
+    
+    "login": {
+      "revert_to_harmony": "Vrátit se k Harmonii",
+      "log_in": "Přihlášení",
+      "username": "Uživatelské jméno",
+      "enter_username": "Zadejte uživatelské jméno",
+      "password": "Heslo",
+      "enter_password": "Zadejte heslo",
+      "remember_password": "Zapamatovat si heslo",
+      "forgot_Password": "Zapomněli jste heslo?",
+      "copyright": "Copyright ©",
+      "art_of_living": "Art of Living",
+      "all_rights_reserved": "Všechna práva vyhrazena",
+      "forgot_password": "Zapomenuté heslo",
+      "username_or_email_address": "Uživatelské jméno nebo e-mailová adresa",
+      "enter_username_or_email_address": "Zadejte uživatelské jméno nebo e-mailovou adresu",
+      "email_new_password": "Pošlete e-mailem nové heslo",
+      "back_to": "Zpět na",
+      "login": {
+        "": "Přihlášení"
+      },
+      "new_password_sent_to_your_registered_email": "Nové heslo odesláno na váš registrovaný e-mail",
+      "back_to_login": "Zpět na přihlášení",
+      "change_language": "Změna jazyka",
+      "go_to_harmony_classic": "Přejít na Harmony Classic",
+      "help_desk": "Nápověda",
+      "Role:_National_Admin": "Role: Národní administrátor",
+      "view_profile": "Zobrazit profil",
+      "update_profile": "Aktualizovat profil",
+      "national_admin": "Národní administrátor",
+      "change_password": "Změnit heslo",
+      "course_history": "Historie kurzů",
+      "event_history": "Historie událostí",
+      "communication_preferences": "Předvolby komunikace",
+      "download_account": "Stáhnout účet",
+      "log_out": "Odhlášení"
+    }
+  }

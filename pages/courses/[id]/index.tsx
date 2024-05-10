@@ -566,7 +566,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     approveCourse();
                   }}
                 >
-                  {t("yes_button")}
+                  {t('yes')}
                 </Button>
               </div>
             </div>
@@ -866,7 +866,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     cancelCourse();
                   }}
                 >
-                  {t("yes_button")}
+                {t('yes')}
                 </Button>
               </div>
             </div>
