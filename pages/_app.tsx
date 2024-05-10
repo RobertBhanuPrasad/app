@@ -7,20 +7,15 @@ import { Layout } from "@components/layout";
 import { dataProvider } from "@refinedev/supabase";
 import "@styles/global.css";
 import { appWithTranslation, useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { withRouter } from "next/router";
+import { useEffect } from "react";
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Login from "./login";
-import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
-import { useEffect } from "react";
-import { useRouter, withRouter } from "next/router";
-import useGetCountryCode, {
-  getCountryCodeFromLocale,
-} from "src/utility/useGetCountryCode";
-import useGetLanguageCode, {
-  getLanguageCodeFromLocale,
-} from "src/utility/useGetLanguageCode";
+import { getCountryCodeFromLocale } from "src/utility/useGetCountryCode";
+import { getLanguageCodeFromLocale } from "src/utility/useGetLanguageCode";
 import { ConfigStore } from "src/zustandStore/ConfigStore";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -38,7 +33,7 @@ function MyApp({
 }: AppPropsWithLayout): JSX.Element {
   const countryCode = getCountryCodeFromLocale(router.locale as string);
   const languageCode = getLanguageCodeFromLocale(router.locale as string);
-  const supabase:any = supabaseClient(countryCode);
+  const supabase: any = supabaseClient(countryCode);
 
   const renderComponent = () => {
     const { setOptionLabelValue } = optionLabelValueStore();
@@ -65,7 +60,7 @@ function MyApp({
 
     if (Component.requireAuth || Component.requireAuth === undefined) {
       return (
-        <Authenticated key="app" fallback={<Login />}>
+        <Authenticated key="app">
           {Component.noLayout ? (
             renderContent()
           ) : (

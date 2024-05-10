@@ -31,10 +31,9 @@ const Login = () => {
         .eq("alloted_uuid", data.user.id);
       console.log(count);
       if (count === 1) {
-        router.push("/change-password");
-        router.refresh();
+        router.replace("/change-password");
       } else {
-        router.refresh();
+        router.replace("/courses/list");
       }
     }
   };
