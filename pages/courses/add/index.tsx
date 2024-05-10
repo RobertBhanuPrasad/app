@@ -173,6 +173,9 @@ function NewCourse() {
 
   if (IsEditCourse(pathname) || IsCopyCourse) {
     defaultValues = newCourseData;
+    if(IsCopyCourse) {
+      defaultValues.organizer_ids = _.uniq([loggedUserData,...newCourseData?.organizer_ids])
+    }  
   } else {
     defaultValues[NewCourseStep2FormNames?.visibility_id] = publicVisibilityId;
     defaultValues[
@@ -193,6 +196,7 @@ function NewCourse() {
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
     defaultValues[NewCourseStep5FormNames?.is_residential_program] = false;
   }
+ 
 
   // fetch data from country_config table for time format
   const {
