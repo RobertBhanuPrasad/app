@@ -22,7 +22,7 @@ import {
   useOne,
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
@@ -155,7 +155,31 @@ function NewCourse() {
 
   const pathname = usePathname();
 
+  /**
+   * Getting the search params from useSearchParams function
+   */
+  const searchparams = useSearchParams();
+
   const router = useRouter();
+
+  /**
+   * defining the ref using use Ref function
+   */
+  const ref: any = useRef();
+
+  // Requirement: When user change router from copy to new or new to new click on again we need to reset the form to intital state.
+  // Implementation : Temporary : We will use useEffect with dependenancy array searchParams.
+  // whenever searchParams change then just do refresh .
+  // Important we dont need to run useEffect when page loads.
+  // we need to run the code only router changes for that we are taking one ref when by default it will be undefined . so our code will not run initally
+  // and then we are setting ref.current to true then whenever route change our needed code will run again.
+  // Permanent solution : we need to seperate copy course as a new page becuase it has lot of requirements.
+  useEffect(() => {
+    if (ref.current) {
+      router.reload();
+    }
+    ref.current = true;
+  }, [searchparams]);
 
   /**
    * This variable holds whether it is copy course or not
