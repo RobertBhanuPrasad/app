@@ -757,7 +757,7 @@ function index() {
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=>{handleExportExcel(excelColumns,filters,csvOption,setLoading)}}>
-              {loading ? <div className="loader !w-[25px]"></div> : t("course.find_course:export")}
+              {loading ? <div className="loader !w-[25px]"></div> : t("course.find_course:CSV")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
