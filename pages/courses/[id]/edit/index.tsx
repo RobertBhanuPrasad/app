@@ -1,7 +1,6 @@
 import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
@@ -63,10 +62,10 @@ const EditCourseReviewPage = () => {
       setIsLoading(false);
     };
     fetchDefaultValues();
-  }, []);
+  }, []); 
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <section className="flex justify-center align-center pt-[15%]"><div className="loader"></div></section>
   }
   return <NewCourseReviewPage />;
 };

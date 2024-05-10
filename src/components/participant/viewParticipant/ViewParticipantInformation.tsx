@@ -1,6 +1,5 @@
 import { isDisplayRegistrationCompletionLink } from '@components/courseBusinessLogic'
 import CopyIcon from '@public/assets/CopyIcon'
-import LoadingIcon from '@public/assets/LoadingIcon'
 import { useOne } from '@refinedev/core'
 import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
@@ -143,9 +142,9 @@ if (isDisplayRegistrationCompletionLink(participantData?.data?.is_manual_registr
       </div>
     </div>
   ) : (
-    <div>
-      <LoadingIcon />
-    </div> // Display loading indicator if data is being fetched
+    <section className="flex justify-center align-center p-[15%]">
+      <div className='loader'></div>
+    </section> // Display loading indicator if data is being fetched
   )
 }
 

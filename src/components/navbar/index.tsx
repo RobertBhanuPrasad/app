@@ -44,10 +44,10 @@ function Navbar() {
       title: 'Find Course',
       href: '/courses/list'
     },
-    {
-      title: 'Discount Codes',
-      href: '/Courses/DiscountCodes'
-    }
+    // {
+    //   title: 'Discount Codes',
+    //   href: '/Courses/DiscountCodes'
+    // }
   ]
 
   const supabase = supabaseClient()

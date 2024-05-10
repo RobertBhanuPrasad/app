@@ -19,6 +19,7 @@ import {
   UseLoadingOvertimeReturnType,
   useGetIdentity,
   useList,
+  useOne,
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -55,7 +56,6 @@ import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 
 import Error from "@public/assets/Error";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import Success from "@public/assets/Success";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
@@ -65,7 +65,7 @@ import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -78,7 +78,7 @@ function index() {
   console.log("router is ", section);
 
   if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
+    return <section className="flex justify-center align-center pt-[15%]"> <div>Loading...</div></section>;
   }
 
   if (section === "thank_you") {
@@ -224,7 +224,7 @@ function NewCourse() {
     isLoading ||
     timeZoneLoading
   ) {
-    return <LoadingIcon />;
+    return <section className="flex justify-center align-center pt-[15%]"> <div className="loader"></div></section>;
   }
 
   return (
@@ -259,13 +259,23 @@ export const requiredValidationFields = (formData: any) => {
       : ["registration_via_3rd_party_url"]
   );
 
+  /**
+   * @constant programTypesData
+   * @description this constant stores the data which came from the program_types table using the program type id which is there in the formData
+   */
+  const {data:programTypesData} = useOne({
+    resource:"program_types",
+    id: formData?.program_type_id
+  })
+
+
   let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
-    ...(formData?.program_type?.has_alias_name
+    ...(programTypesData?.data?.has_alias_name
       ? []
       : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
-    ...(formData?.program_type?.is_geo_restriction_applicable
+    ...(programTypesData?.data?.is_geo_restriction_applicable_for_registrations
       ? []
       : ["is_geo_restriction_applicable"]),
   ]);
@@ -278,7 +288,7 @@ export const requiredValidationFields = (formData: any) => {
 
   // REQUIRMENT if the program type is online then we need to validate the online url , state is present or not, city is present or not, center id is present or not
   // so if it is online type then we are keeping the online_url, state_id, city_id, center_id
-  if (formData?.program_type?.is_online_program === true) {
+  if (programTypesData?.data?.is_online_program === true) {
     RequiredNewCourseStep3FormNames.push(
       "online_url",
       "state_id",
@@ -323,7 +333,7 @@ export const requiredValidationFields = (formData: any) => {
 };
 
 export const NewCourseTabs = () => {
-  const {t} = useTranslation(['common', 'course.new_course', "new_strings"])
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -443,7 +453,7 @@ export const NewCourseTabs = () => {
   const stepTitles = [
     {
       value: BASIC_DETAILS_STEP_NUMBER,
-      label: t('basic_details'),
+      label: t("basic_details"),
       // If the current step is BASIC_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === BASIC_DETAILS_STEP_NUMBER ||
@@ -631,9 +641,23 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
+      <div className="flex gap-20 items-center">        
       <p className="font-semibold text-2xl">
-      {router.query.action==="Copy" ? t("Copy") : t("new_strings:new")} {t("new_strings:course")}
+        {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
+        {t("new_strings:course")}
       </p>
+
+{/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
+      {isAllFieldsValid4 == false &&
+      <div className="flex gap-2">
+      <Error />
+      <p className="font-semibold text-[red] text-l -mt-1">
+      There is no price set for current settings. Select course type and city/center.
+      </p>
+      </div>
+      }
+
+      </div>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row">
@@ -667,7 +691,7 @@ export const NewCourseTabs = () => {
 
             <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
               <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
-                <div>
+                <div className="flex flex-col w-full justify-between">
                   <TabsContent
                     value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
                     className={contentStylings}

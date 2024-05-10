@@ -193,7 +193,7 @@ function index() {
             new Date(
               AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             .toISOString()
             .replace("T", " ")
@@ -208,7 +208,7 @@ function index() {
             new Date(
               AllFilterData.course_date.to?.setUTCHours(23, 59, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             ?.toISOString()
             .replace("T", " ")
@@ -467,7 +467,7 @@ function index() {
     "course.find_course",
     "new_strings",
     "course.view_course",
-    "course.participants"
+    "course.participants",
   ]);
   return (
     <div className="flex flex-col justify-between relative">
@@ -479,33 +479,40 @@ function index() {
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-        <div className="w-full mb-[76px]">
-          <BaseTable
-            current={current}
-            rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
-            checkboxSelection={true}
-            setCurrent={setCurrent}
-            pageCount={pageCount}
-            total={FilterProgramData?.data?.total || 0}
-            pageSize={pageSize}
-            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
-            setPageSize={(number) => {
-              setPageSize(number);
-              displayDataSetPageSize(number);
-            }}
-            pagination={true}
-            tableStyles={{
-              table: "",
-              rowStyles: "!important border-none",
-            }}
-            noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
-            columns={column(hasAliasNameFalse(data), t)}
-            data={programData?.data?.data || []}
-            columnPinning={true}
-            columnSelector={true}
-          />
-        </div>
+
+        {programData?.isLoading ? (
+          <section className="flex justify-center align-center pt-[10%]">
+            <div className="loader"></div>
+          </section>
+        ) : (
+          <div className="w-full mb-[76px]">
+            <BaseTable
+              current={current}
+              rowSelection={rowSelection}
+              setRowSelection={setRowSelection}
+              checkboxSelection={true}
+              setCurrent={setCurrent}
+              pageCount={pageCount}
+              total={FilterProgramData?.data?.total || 0}
+              pageSize={pageSize}
+              //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+              setPageSize={(number) => {
+                setPageSize(number);
+                displayDataSetPageSize(number);
+              }}
+              pagination={true}
+              tableStyles={{
+                table: "",
+                rowStyles: "!important border-none",
+              }}
+              noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
+              columns={column(hasAliasNameFalse(data), t)}
+              data={programData?.data?.data || []}
+              columnPinning={true}
+              columnSelector={true}
+            />
+          </div>
+        )}
       </div>
       <div className="bottom-0 fixed flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
@@ -568,7 +575,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
+    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
@@ -739,7 +746,12 @@ export const BasicFilters: React.FC<{
     setValue("advanceFilter", "");
     setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
-  const { t } = useTranslation(["common", "course.find_course", "new_strings", "course.participants"]);
+  const { t } = useTranslation([
+    "common",
+    "course.find_course",
+    "new_strings",
+    "course.participants",
+  ]);
   return (
     <div className="flex gap-x-[2%] flex-row items-center justify-between">
       <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
@@ -848,7 +860,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
         Array.isArray(formData.advanceFilter[key])
           ? formData.advanceFilter[key].length > 0
           : formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== ""
+            formData.advanceFilter[key] !== ""
       ).length) ||
     0;
   const { t } = useTranslation("course.find_course");
