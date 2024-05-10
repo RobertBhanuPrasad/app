@@ -142,7 +142,7 @@ export const AccommodationField = ({
       <div className="w-[288px] p-[10px]">
         <AccommodationType index={index} />
       </div>
-      <div className="p-4 w-[288px] p-[10px]">
+      <div className="p-4 w-[300px] p-[10px]">
         <FeePerPerson index={index} />
       </div>
       <div className="p-4 w-[288px] p-[10px]">
