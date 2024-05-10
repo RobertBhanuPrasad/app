@@ -384,9 +384,10 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          "program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
+          "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
         filters: JSON.stringify(filters?.permanent),
+        sorters: JSON.stringify([ { "field": "created_at", "order": { "ascending": false } } ]),
         file_type: selectOption,
       });
 
