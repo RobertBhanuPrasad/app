@@ -426,12 +426,9 @@ const columns = () => {
                 <Button
                   variant="ghost"
                   className="h-8 w-8 p-0"
-<<<<<<< HEAD
                   onClick={() => {
                     setDropdownOpen(!dropdownOpen);
                   }}
-=======
->>>>>>> f9f243a124a2b8e98fcfe6960f47ddc88d598702
                 >
                   <span className="sr-only">Open menu</span>
                   <MoreVertical className="h-5 w-5" />
