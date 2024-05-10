@@ -50,13 +50,18 @@ import {
 import { useRouter } from "next/router";
 import Tick from "@public/assets/Tick";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 
 export default function NewCourseReviewPage() {
-  const {t} = useTranslation(['common', "course.new_course", "course.view_course", "new_strings"])
+  const { t } = useTranslation([
+    "common",
+    "course.new_course",
+    "course.view_course",
+    "new_strings",
+  ]);
   const supabase = supabaseClient();
 
   const { data: loginUserData }: any = useGetIdentity();
@@ -446,7 +451,7 @@ export default function NewCourseReviewPage() {
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
-      {t("new_strings:review_course_details")}
+        {t("new_strings:review_course_details")}
       </div>
       <section className="w-full text-base bg-white">
         <EditCourseSuccessfullyInfo
@@ -480,7 +485,7 @@ export default function NewCourseReviewPage() {
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
-              {t("course.new_course:review_post_details.creator")}
+                {t("course.new_course:review_post_details.creator")}
               </p>
 
               <abbr
@@ -545,7 +550,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-            {t("course.new_course:review_post_details.course_details")}
+              {t("course.new_course:review_post_details.course_details")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of CourseDetails page */}
             <EditModalDialog
@@ -582,7 +587,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-              {t("teacher")}
+              {t("new_strings:teacher")}
               </p>
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}
@@ -614,30 +619,38 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div>
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-              {t("course.new_course:course_details_tab.display_language_option")}
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_language_translation_for_participants}
-              >
-                {newCourseData?.is_language_translation_for_participants ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  {t(
+                    "course.new_course:course_details_tab.display_language_option"
+                  )}
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={
+                    newCourseData?.is_language_translation_for_participants
+                  }
+                >
+                  {newCourseData?.is_language_translation_for_participants
+                    ? "Yes"
+                    : "No"}
+                </abbr>
+              </div>
             )}
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-              {t("course.new_course:course_details_tab.registration_mandatory")}
-              </p>
-              <abbr
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_registration_required}
-              >
-                {newCourseData?.is_registration_required ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  {t(
+                    "course.new_course:course_details_tab.registration_mandatory"
+                  )}
+                </p>
+                <abbr
+                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_registration_required}
+                >
+                  {newCourseData?.is_registration_required ? "Yes" : "No"}
+                </abbr>
+              </div>
             )}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -679,17 +692,17 @@ export default function NewCourseReviewPage() {
                 </div>
               )}
             {hasSuperAdminRole && (
-            <div className="w-[291px]">
-              <p className="text-sm font-normal text-accent-light text-[#999999]">
-                {t("is_geo_restriction")}
-              </p>
-              <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.is_geo_restriction_applicable}
-              >
-                {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
-              </abbr>
-            </div>
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999]">
+                  {t("is_geo_restriction")}
+                </p>
+                <abbr
+                  className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                  title={newCourseData?.is_geo_restriction_applicable}
+                >
+                  {newCourseData?.is_geo_restriction_applicable ? "Yes" : "No"}
+                </abbr>
+              </div>
             )}
             {/* // TODO need to do when the form filed is clear */}
             <div className="w-[291px]">
@@ -778,7 +791,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                {t("course.new_course:time_and_venue_tab.province")}
+                  {t("course.new_course:time_and_venue_tab.province")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -789,7 +802,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                {t("city")}
+                  {t("city")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -818,7 +831,7 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
                   title={VenueData ? VenueData : "-"}
                 >
                   {VenueData ? VenueData : "-"}
@@ -842,7 +855,7 @@ export default function NewCourseReviewPage() {
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
-                {t("course.new_course:review_post_details.time_zone")}
+                  {t("course.new_course:review_post_details.time_zone")}
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
@@ -861,7 +874,7 @@ export default function NewCourseReviewPage() {
           {/* title section */}
           <div className="flex items-center  ">
             <p className="font-semibold text-accent-primary text-[#333333]">
-            {t("new_strings:fees_information")}
+              {t("new_strings:fees_information")}
             </p>
             {/* Here we are calling EditModalDialog for passing the data of FeesDetails page */}
             <EditModalDialog
@@ -911,7 +924,7 @@ export default function NewCourseReviewPage() {
                 </div>
               )}
 
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:fees_tab.disable")}
               </p>
@@ -921,7 +934,7 @@ export default function NewCourseReviewPage() {
               >
                 {t("yes")}
               </abbr>
-            </div>
+            </div> */}
           </div>
         </section>
         {/* Accommodation Information */}
@@ -1005,7 +1018,7 @@ export default function NewCourseReviewPage() {
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_email}
                   >
-                    {data?.contact_email}
+                    {data?.contact_email ? data?.contact_email : "-"}
                   </abbr>
                 </div>
                 <div className="w-[291px]">
@@ -1016,7 +1029,7 @@ export default function NewCourseReviewPage() {
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_number}
                   >
-                    {data?.contact_number}
+                    {data?.contact_number ? data?.contact_number : "-"}
                   </abbr>
                 </div>
                 <div className="w-[291px]">
@@ -1027,7 +1040,7 @@ export default function NewCourseReviewPage() {
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                     title={data?.contact_name}
                   >
-                    {data?.contact_name}
+                    {data?.contact_name ? data?.contact_name : "-"}
                   </abbr>
                 </div>
               </div>
@@ -1169,7 +1182,7 @@ const Fees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.total}
+          {(feeLevelSettingsData?.total)?.toFixed(2)}
         </CardValue>
       </abbr>
     </div>
@@ -1211,7 +1224,7 @@ const EarlyBirdFees = ({
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-  const {t} = useTranslation("new_strings")
+  const { t } = useTranslation("new_strings");
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
@@ -1220,7 +1233,8 @@ const EarlyBirdFees = ({
         className="no-underline"
       >
         <CardLabel className="truncate">
-          {t("new_strings:early_bird")} {translatedText(feeLevelData?.data?.name)}
+          {t("new_strings:early_bird")}{" "}
+          {translatedText(feeLevelData?.data?.name)}
         </CardLabel>
       </abbr>
       <abbr
@@ -1229,7 +1243,7 @@ const EarlyBirdFees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.early_bird_total}
+          {(feeLevelSettingsData?.early_bird_total)?.toFixed(2)}
         </CardValue>
       </abbr>
     </div>
@@ -1260,7 +1274,7 @@ export const EditCourseSuccessfullyInfo = ({
         console.log(e, "error while routing");
       });
   };
-  const {t} = useTranslation("new_strings")
+  const { t } = useTranslation("new_strings");
 
   return (
     <AlertDialog open={onEditSuccess}>
@@ -1272,10 +1286,10 @@ export const EditCourseSuccessfullyInfo = ({
         </AlertDialogHeader>
         <AlertDialogDescription className="flex flex-col !w-[366px] !h-[71px] !gap-4 text-[#333333] items-center text-center">
           <h2 className="pt-[16px] text-[24px] font-semibold">
-          {t("successfully_updated")}
+            {t("successfully_updated")}
           </h2>
           <p className="text-[16px] font-normal">
-          {t("your_changes_have_been_saved_successfully")}
+            {t("your_changes_have_been_saved_successfully")}
           </p>
         </AlertDialogDescription>
         <AlertDialogFooter>

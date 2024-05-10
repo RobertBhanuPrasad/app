@@ -157,12 +157,14 @@ function ViewDetails() {
       disabled: false,
       tab_query_name: "participants",
     },
-    {
-      value: REVENUE_SUMMARY_TAB,
-      label:t('course.view_course:revenue_summary_tab.revenue_summary'),
-      disabled: false,
-      tab_query_name: "revenue_summary",
-    },
+
+    // TODO : it has to hidden for may 13 release
+    // {
+    //   value: REVENUE_SUMMARY_TAB,
+    //   label:t('course.view_course:revenue_summary_tab.revenue_summary'),
+    //   disabled: false,
+    //   tab_query_name: "revenue_summary",
+    // },
   ];
 
   /**
@@ -170,27 +172,27 @@ function ViewDetails() {
    * we have to view course accounting form tab
    * based on course status and course accounting status
    */
-  const isViewCourseAccountingTabToDisplay = isViewCourseAccountingTabDisplay(
-    courseData?.data?.status_id?.id,
-    courseData?.data?.program_accounting_status_id
-  );
+  // const isViewCourseAccountingTabToDisplay = isViewCourseAccountingTabDisplay(
+  //   courseData?.data?.status_id?.id,
+  //   courseData?.data?.program_accounting_status_id
+  // );
 
   // Check if the tab should be enabled and append the object accordingly
-  if (isViewCourseAccountingTabToDisplay) {
-    tabTriggers.push({
-      value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
-      label: "View Course Accounting Form",
-      disabled: true,
-      tab_query_name: "view_course_accounting_form",
-    });
-  } else {
-    tabTriggers.push({
-      value: COURSE_ACCOUNTING_FORM_TAB,
-      label:t('course_accounting_form_tab.course_accounting_form'),
-      disabled: true,
-      tab_query_name: "course_accounting_form",
-    });
-  }
+  // if (isViewCourseAccountingTabToDisplay) {
+  //   tabTriggers.push({
+  //     value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
+  //     label: "View Course Accounting Form",
+  //     disabled: true,
+  //     tab_query_name: "view_course_accounting_form",
+  //   });
+  // } else {
+  //   tabTriggers.push({
+  //     value: COURSE_ACCOUNTING_FORM_TAB,
+  //     label:t('course_accounting_form_tab.course_accounting_form'),
+  //     disabled: true,
+  //     tab_query_name: "course_accounting_form",
+  //   });
+  // }
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -556,7 +558,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     approveCourse();
                   }}
                 >
-                  {t('yes_button')}
+                  {t('yes')}
                 </Button>
               </div>
             </div>
@@ -838,7 +840,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     cancelCourse();
                   }}
                 >
-                {t('yes_button')}
+                {t('yes')}
                 </Button>
               </div>
             </div>

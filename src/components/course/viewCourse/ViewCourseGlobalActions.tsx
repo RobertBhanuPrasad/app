@@ -18,16 +18,16 @@ export const ViewCourseGlobalActions = () => {
   
   const globalActionsOptions = [
     t("view_participants"),
-    t("register_participant"),
+    // t("register_participant"),
     // "Register with online credit card payment",
     // "View Pending/Failed Tranactions",
     t("edit_course"),
     t("copy_course"),
-    t("cancel_course"),
+    // t("cancel_course"),
     // "New Discount Code",
-    t('course.find_course:submit_course_accounting_form'),
-    t('new_strings:upload_attendance_record'),
-    t('course.participants:edit_participant.participants_information_tab.download_receipt'),
+    // t('course.find_course:submit_course_accounting_form'),
+    // t('new_strings:upload_attendance_record'),
+    // t('course.participants:edit_participant.participants_information_tab.download_receipt'),
     // "Manage Google Adwords",
   ];
 

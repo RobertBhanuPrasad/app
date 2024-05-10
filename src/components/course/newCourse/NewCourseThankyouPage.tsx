@@ -133,7 +133,7 @@ useEffect(() => {
           <div className="flex h-auto px-4 py-4 m-5 text-base border-2 border-indigo-600 border-dashed rounded-2xl bg-indigo-50">
             <div className="flex-[1] p-4 border-r border-light">
               <p className=" text-accent-secondary">{t("course_id")}</p>
-                <p className="font-bold cursor-pointer text-accent-primary" onClick={()=>{router.replace(`/courses/${programId}`)}}>{data?.data?.program_code}
+                <p className="font-bold cursor-pointer text-accent-primary text-indigo-600 underline" onClick={()=>{router.replace(`/courses/${programId}`)}}>{data?.data?.program_code}
                 </p>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
@@ -151,7 +151,7 @@ useEffect(() => {
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.venue")}</p>
               <p className="font-bold text-accent-primary">
                 {data?.data?.online_url ? (
-                  <a href={data?.data?.online_url} className="text-blue-600 hover:text-blue-800 ">{t("new_strings:online")}</a>
+                  <a href={data?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target='_blank'>{t("new_strings:online")}</a>
                   ) : ( "-")}
              </p>
               </div>) :
@@ -178,18 +178,19 @@ useEffect(() => {
           {/* Thank you page footer  */}
           {data?.data?.status_id?.id === courseActiveStatusId && (
             <section>
-              <div className="">
-                <p className="mx-auto text-accent-secondary max-w-fit">{t("course.new_course:congratulations_page.share_in_social")}</p>
+              {/* TODO  : for now may-13 release it has to be hidden */}
+              {/* <div className="">
+                {/* <p className="mx-auto text-accent-secondary max-w-fit">{t("course.new_course:congratulations_page.share_in_social")}</p> */}
                 {/* Social media icons */}
-                <div className="flex items-center justify-center gap-4 my-4">
+                {/* <div className="flex items-center justify-center gap-4 my-4">
                   <Image src={WhatsappIcon} alt="whats app icon"></Image>
                   <Image src={facebookIcon} alt="facebook icon"></Image>
                   <Image src={twitterIcon} alt="twitter icon"></Image>
                   <Image src={InstagramIcon} alt="Instagram icon"></Image>
                   <Image src={linkedInIcon} alt="Linked in icon"></Image>
-                </div>
-              </div>
-              <p className="mx-auto text-accent-secondary max-w-fit">{t("or")}</p>
+                </div> */}
+              {/* </div> */} 
+              {/* <p className="mx-auto text-accent-secondary max-w-fit">{t("or")}</p> */}
               {/* Hyper links section */}
               {/* We have to display the links only when the course is active */}
               <div className="flex items-center justify-center gap-4 mt-4 ">
@@ -246,21 +247,6 @@ useEffect(() => {
                         )}
                       </div>
                     </div>
-                  </div>
-                )}
-                {data?.data?.visibility_id?.id == publicVisibilityId && (
-                  <div className="pl-5">
-                    <Button
-                      onClick={() => {
-                        handleCopyDetailsPageLink(data?.data?.registration_link)
-                        handleCopyRegistrationLink(data?.data?.details_page_link)
-                        copyText(data?.data?.registration_link+ ',' + data?.data?.details_page_link)
-                      }}
-                      variant="outline"
-                      className="text-indigo-600 border-indigo-600 rounded-[13px] w-[150px] p-6  text-base "
-                    >
-                      {t("new_strings:copy_links")}
-                    </Button>
                   </div>
                 )}
               </div>

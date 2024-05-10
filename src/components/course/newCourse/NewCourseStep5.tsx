@@ -199,7 +199,7 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label={t("no")}
+            label={t("no_button")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -468,7 +468,7 @@ const AccomdationAction = ({
           className="flex flex-row gap-1 justify-center items-center cursor-pointer text-[#7677F4]"
         >
           <Add />
-          {t("add")}
+          {t("add_button")}
         </div>
       )}
       {/* Button to delete a row */}

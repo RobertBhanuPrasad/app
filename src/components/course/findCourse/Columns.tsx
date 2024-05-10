@@ -73,18 +73,20 @@ export const column = (
         return <div className="w-[150px]">{translatedText(row?.original?.program_types?.name)}</div>
       }
     },
-    {
-      accessorKey: "program_type_alias_names",
-      column_name: t("new_strings:course_name"),
-      //These columns are default columns and shouldnt be editable
-      enableHiding: false,
-      header: () => {
-        return <div className="min-w-[150px]">{t("new_strings:course_name")}</div>;
-      },
-      cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{translatedText(row?.original?.program_type_alias_names?.alias_name)}</div>
-      }
-    },
+
+    //TODO : for now may-13 release it has to be hidden
+    // {
+    //   accessorKey: "program_type_alias_names",
+    //   column_name: t("new_strings:course_name"),
+    //   //These columns are default columns and shouldnt be editable
+    //   enableHiding: false,
+    //   header: () => {
+    //     return <div className="min-w-[150px]">{t("new_strings:course_name")}</div>;
+    //   },
+    //   cell: ({ row }: any) => {
+    //     return <div className="min-w-[150px]">{translatedText(row?.original?.program_type_alias_names?.alias_name)}</div>
+    //   }
+    // },
     {
       accessorKey: "status",
       column_name: t("course.find_course:course_status"),
@@ -149,9 +151,9 @@ export const column = (
       accessorKey: "program_teachers",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-      column_name: t('course.find_course:teacher(s)'),
+      column_name: t('course.participants:view_participant.course_information_tab.Teachers(S)'),
       header: () => {
-        return <div className="min-w-[150px]">{t('course.find_course:teacher(s)')}</div>;
+        return <div className="min-w-[150px]">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
       },
       cell: ({ row }: any) => {
         const teachers = row?.original?.program_teachers?.map(
@@ -214,34 +216,38 @@ export const column = (
         return <div className="min-w-[150px]">{translatedText(row?.original?.visibility_id?.name)}</div>
       }
     },
-    {
-      accessorKey: "course_accounting_status",
-      column_name: t('course_accounting_status'),
-      header: () => {
-        return <div className="min-w-[200px]">{t('course_accounting_status')}</div>;
-      },
-      cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[200px]">
-            {row?.original?.program_accounting_status_id?.name
-              ? translatedText(row?.original?.program_accounting_status_id?.name)
-              : '-'}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "Course Accounting Closure Date",
-      column_name: t('course.find_course:course_accounting_closure_date'),
-      header: () => {
-        return (
-          <div className="min-w-[250px]">{t('course.find_course:course_accounting_closure_date')}</div>
-        );
-      },
-      cell: ({ row }: any) => {
-        return <div className="min-w-[250px]">-</div>;
-      },
-    },
+    
+    //TODO : for now may-13 release it has to be hidden
+    // {
+    //   accessorKey: "course_accounting_status",
+    //   column_name: t('course_accounting_status'),
+    //   header: () => {
+    //     return <div className="min-w-[200px]">{t('course_accounting_status')}</div>;
+    //   },
+    //   cell: ({ row }: any) => {
+    //     return (
+    //       <div className="min-w-[200px]">
+    //         {row?.original?.program_accounting_status_id?.name
+    //           ? translatedText(row?.original?.program_accounting_status_id?.name)
+    //           : '-'}
+    //       </div>
+    //     );
+    //   },
+    // },
+
+    //TODO : for now may-13 release it has to be hidden
+    // {
+    //   accessorKey: "Course Accounting Closure Date",
+    //   column_name: t('course.find_course:course_accounting_closure_date'),
+    //   header: () => {
+    //     return (
+    //       <div className="min-w-[250px]">{t('course.find_course:course_accounting_closure_date')}</div>
+    //     );
+    //   },
+    //   cell: ({ row }: any) => {
+    //     return <div className="min-w-[250px]">-</div>;
+    //   },
+    // },
     {
       accessorKey: "revenue",
       column_name: t('course.view_course:revenue_summary_tab.revenue'),
@@ -338,11 +344,11 @@ export const column = (
               router.push(`/courses/${row.original.id}/participants/list`);
               break;
             }
-            case 2: {
-              // TODO - Navigate to Register Participant page
-              router.push("/courses/add");
-              break;
-            }
+            // case 2: {
+            //   // TODO - Navigate to Register Participant page
+            //   router.push("/courses/add");
+            //   break;
+            // }
             case 3: {
               handleEditCourse();
               break;
@@ -355,23 +361,23 @@ export const column = (
               setIsDialogOpen(true);
               break;
             }
-            case 6: {
-              // TODO - Navigate to submit course accounting page
-              router.push(
-                `/courses/${row.original.id}?tab=course_accounting_form`
-              );
-              break;
-            }
-            case 7: {
-              // TODO - Navigate to view course accounting page
-              router.push("/");
-              break;
-            }
-            case 8: {
-              // TODO - Navigate to edit course accounting page
-              router.push("/");
-              break;
-            }
+            // case 6: {
+            //   // TODO - Navigate to submit course accounting page
+            //   router.push(
+            //     `/courses/${row.original.id}?tab=course_accounting_form`
+            //   );
+            //   break;
+            // }
+            // case 7: {
+            //   // TODO - Navigate to view course accounting page
+            //   router.push("/");
+            //   break;
+            // }
+            // case 8: {
+            //   // TODO - Navigate to edit course accounting page
+            //   router.push("/");
+            //   break;
+            // }
             case 9: {
               router.push(`/courses/${row.original.id}`);
               break;
@@ -439,7 +445,7 @@ export const column = (
                                   cancelCourse();
                                 }}
                               >
-                                {t('yes_button')}
+                                {t('yes')}
                               </Button>
                             </div>
                           </div>
