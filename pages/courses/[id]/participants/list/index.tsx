@@ -983,10 +983,10 @@ const handleExportExcel = async (excelColumns:any,filters: any,selectOption: str
     const params = new URLSearchParams({
       table_name: "participant_registration",
       select:
-      "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+      "*,payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
       columns: JSON.stringify(excelColumns),
       filters: JSON.stringify(filters?.permanent),
-      sorters: JSON.stringify([ { "field": "created_at", "order": { "ascending": false } } ]),
+      sorters: JSON.stringify([ { "field": "id", "order": { "ascending": true } } ]),
       file_type: selectOption
     });
 
