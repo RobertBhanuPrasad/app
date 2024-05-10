@@ -52,7 +52,7 @@ function index() {
 
   const { viewPreviewPage, AllFilterData } = newCourseStore();
 
-  const languageCode = useGetLanguageCode()
+  const languageCode = useGetLanguageCode();
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -196,7 +196,7 @@ function index() {
             new Date(
               AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             .toISOString()
             .replace("T", " ")
@@ -211,7 +211,7 @@ function index() {
             new Date(
               AllFilterData.course_date.to?.setUTCHours(23, 59, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             ?.toISOString()
             .replace("T", " ")
@@ -295,7 +295,6 @@ function index() {
       },
     });
 
-
   /**
    * The variable holds whether all rows are selected or not
    */
@@ -318,7 +317,7 @@ function index() {
   /**
    * This function is to handle export excel
    */
-  
+
   const handleExportExcel = async (selectOption: string) => {
     try {
       /**
@@ -331,15 +330,15 @@ function index() {
         },
         {
           column_name: t("new_strings:course_type_name"),
-          path: ["program_types", "name",languageCode],
+          path: ["program_types", "name", languageCode],
         },
         {
           column_name: t("course.find_course:course_status"),
-          path: ["status_id", "name",languageCode],
+          path: ["status_id", "name", languageCode],
         },
         {
           column_name: t("course.find_course:start_date"),
-          path: [ "start_date"],
+          path: ["start_date"],
         },
         {
           column_name: t("course.find_course:state"),
@@ -355,11 +354,11 @@ function index() {
         },
         {
           column_name: t("course.find_course:teacher(s)"),
-          path: ["program_teachers","users","contact_id","full_name"]
+          path: ["program_teachers", "users", "contact_id", "full_name"],
         },
         {
           column_name: t("program_organizer"),
-          path: ["program_organizers","users","contact_id","full_name"]
+          path: ["program_organizers", "users", "contact_id", "full_name"],
         },
         {
           column_name: t("course.find_course:attendees"),
@@ -367,7 +366,7 @@ function index() {
         },
         {
           column_name: t("new_strings:visibility"),
-          path: ["visibility_id", "name",languageCode],
+          path: ["visibility_id", "name", languageCode],
         },
         // {
         //   column_name: t("course_accounting_status"),
@@ -387,8 +386,14 @@ function index() {
         select:
           "program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
-        filters: JSON.stringify(filters?.permanent),
-        file_type: selectOption
+        filters: JSON.stringify([
+          {
+            field: "id",
+            operator: "in",
+            value: filteredIds,
+          },
+        ]),
+        file_type: selectOption,
       });
 
       const supabase = supabaseClient();
@@ -414,13 +419,13 @@ function index() {
         const fileUrl = data.fileUrl.data.publicUrl;
         const fileName = fileUrl.split("/").pop();
 
-        console.log("filename",fileName)
+        console.log("filename", fileName);
         // passing the file name to download
         const result = await supabase.storage
           .from("export_to_file")
           .download(fileName);
 
-        console.log("result is",result)
+        console.log("result is", result);
 
         if (result.error) {
           console.error("Error downloading file:", result.error);
@@ -485,7 +490,7 @@ function index() {
     "course.find_course",
     "new_strings",
     "course.view_course",
-    "course.participants"
+    "course.participants",
   ]);
   return (
     <div className="flex flex-col justify-between relative">
@@ -563,12 +568,19 @@ function index() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
               <DropdownMenuItem
-                onClick={()=> {handleExportExcel("excel")}}
+                onClick={() => {
+                  handleExportExcel("excel");
+                }}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 {t("new_strings:excel")}
               </DropdownMenuItem>
-              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=> {handleExportExcel("CSV")}}>
+              <DropdownMenuItem
+                className="p-1  focus:outline-none cursor-pointer"
+                onClick={() => {
+                  handleExportExcel("CSV");
+                }}
+              >
                 {t("new_strings:csv")}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -585,7 +597,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
+    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
@@ -756,7 +768,12 @@ export const BasicFilters: React.FC<{
     setValue("advanceFilter", "");
     setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
-  const { t } = useTranslation(["common", "course.find_course", "new_strings", "course.participants"]);
+  const { t } = useTranslation([
+    "common",
+    "course.find_course",
+    "new_strings",
+    "course.participants",
+  ]);
   return (
     <div className="flex gap-x-[2%] flex-row items-center justify-between">
       <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
@@ -865,7 +882,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
         Array.isArray(formData.advanceFilter[key])
           ? formData.advanceFilter[key].length > 0
           : formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== ""
+            formData.advanceFilter[key] !== ""
       ).length) ||
     0;
   const { t } = useTranslation("course.find_course");
