@@ -517,6 +517,10 @@ const ProgramOrganizerDropDown = () => {
     },
   });
 
+  const { watch } = useFormContext()
+
+  const { created_by_user_id } = watch()
+
   const handleOnBottomReached = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 10);
@@ -543,13 +547,13 @@ const ProgramOrganizerDropDown = () => {
         }}
         onChange={onChange}
         getOptionProps={(option: number) => {
-          if (option === loginUserData?.userData?.id) {
+          if ((option === loginUserData?.userData?.id) || (option === created_by_user_id)) {
             return {
               disable: true,
             };
           } else {
             return {
-              disable: true,
+              disable: false,
             };
           }
         }}
