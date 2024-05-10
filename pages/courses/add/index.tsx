@@ -165,7 +165,7 @@ function NewCourse() {
    * When user coming from copy or Edit Course we dont need to prefill the below object because we will already set this
    */
   const defaultValues =
-    !IsEditCourse(pathname) && !IsCopyCourse
+    !IsEditCourse(pathname) || !IsCopyCourse
       ? {
           [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
           [NewCourseStep2FormNames?.is_language_translation_for_participants]:
@@ -211,7 +211,7 @@ function NewCourse() {
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
   if (
     timeZonesData?.data?.length === 1 &&
-    !IsEditCourse(pathname) &&
+    !IsEditCourse(pathname) ||
     !IsCopyCourse
   ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
@@ -220,7 +220,7 @@ function NewCourse() {
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
   // and same we need to set only if it is not edit and copy
-  if (!IsEditCourse(pathname) && !IsCopyCourse) {
+  if (!IsEditCourse(pathname) || !IsCopyCourse) {
     if (data?.data[0]?.hour_format_id) {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
         data?.data[0]?.hour_format_id;
