@@ -32,9 +32,9 @@ const Login = () => {
       console.log(count);
       if (count === 1) {
         router.push("/change-password");
-        router.replace('courses/list');
+        router.refresh();
       } else {
-        router.replace('courses/list');
+        router.refresh();
       }
     }
   };
