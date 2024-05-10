@@ -1,6 +1,6 @@
-import nookies from "nookies";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import nookies from "nookies";
+import { useState } from "react";
 import { supabaseClient } from "src/utility";
 
 const Login = () => {
@@ -24,7 +24,17 @@ const Login = () => {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
       });
-      router.push("/");
+
+      const { count, error } = await supabase
+        .from("first_time_users")
+        .select("*", { count: "exact", head: true })
+        .eq("alloted_uuid", data.user.id);
+      console.log(count);
+      if (count === 1) {
+        router.replace("/change-password");
+      } else {
+        router.replace("/courses/list");
+      }
     }
   };
   return (
