@@ -53,6 +53,7 @@ import { useTranslation } from "next-i18next";
 import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -158,6 +159,9 @@ export default function NewCourseReviewPage() {
 
   //fetching the user's country code
   const countryCode = useGetCountryCode();
+
+  //fetching the user's language code
+  const languageCode = useGetLanguageCode();
 
   //Finding course start date
   const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
@@ -399,7 +403,8 @@ export default function NewCourseReviewPage() {
       setProgramId,
       accountingNotSubmittedStatusId,
       pathname,
-      countryCode
+      countryCode,
+      languageCode
     );
 
     // we are checking the course is edit or user created new course

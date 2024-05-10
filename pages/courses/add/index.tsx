@@ -19,6 +19,7 @@ import {
   UseLoadingOvertimeReturnType,
   useGetIdentity,
   useList,
+  useOne,
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -258,13 +259,23 @@ export const requiredValidationFields = (formData: any) => {
       : ["registration_via_3rd_party_url"]
   );
 
+  /**
+   * @constant programTypesData
+   * @description this constant stores the data which came from the program_types table using the program type id which is there in the formData
+   */
+  const {data:programTypesData} = useOne({
+    resource:"program_types",
+    id: formData?.program_type_id
+  })
+
+
   let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
-    ...(formData?.program_type?.has_alias_name
+    ...(programTypesData?.data?.has_alias_name
       ? []
       : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
-    ...(formData?.program_type?.is_geo_restriction_applicable
+    ...(programTypesData?.data?.is_geo_restriction_applicable_for_registrations
       ? []
       : ["is_geo_restriction_applicable"]),
   ]);
@@ -277,7 +288,7 @@ export const requiredValidationFields = (formData: any) => {
 
   // REQUIRMENT if the program type is online then we need to validate the online url , state is present or not, city is present or not, center id is present or not
   // so if it is online type then we are keeping the online_url, state_id, city_id, center_id
-  if (formData?.program_type?.is_online_program === true) {
+  if (programTypesData?.data?.is_online_program === true) {
     RequiredNewCourseStep3FormNames.push(
       "online_url",
       "state_id",
@@ -630,10 +641,23 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
+      <div className="flex gap-20 items-center">        
       <p className="font-semibold text-2xl">
         {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
         {t("new_strings:course")}
       </p>
+
+{/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
+      {isAllFieldsValid4 == false &&
+      <div className="flex gap-2">
+      <Error />
+      <p className="font-semibold text-[red] text-l -mt-1">
+      There is no price set for current settings. Select course type and city/center.
+      </p>
+      </div>
+      }
+
+      </div>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row">
