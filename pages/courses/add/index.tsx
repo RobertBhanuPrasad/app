@@ -56,7 +56,6 @@ import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 
 import Error from "@public/assets/Error";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import Success from "@public/assets/Success";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
@@ -80,7 +79,7 @@ function index() {
   console.log("router is ", section);
 
   if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
+    return <section className="flex justify-center align-center pt-[15%]"> <div>Loading...</div></section>;
   }
 
   if (section === "thank_you") {
@@ -243,7 +242,7 @@ function NewCourse() {
     isLoading ||
     timeZoneLoading
   ) {
-    return <LoadingIcon />;
+    return <section className="flex justify-center align-center pt-[15%]"> <div className="loader"></div></section>;
   }
 
   return (
@@ -659,11 +658,21 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
-      <div className="flex gap-20 items-center">
-        <p className="font-semibold text-2xl">
-          {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
-          {t("new_strings:course")}
-        </p>
+      <div className="flex gap-20 items-center">        
+      <p className="font-semibold text-2xl">
+        {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
+        {t("new_strings:course")}
+      </p>
+
+{/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
+      {isAllFieldsValid4 == false &&
+      <div className="flex gap-2">
+      <Error />
+      <p className="font-semibold text-[red] text-l -mt-1">
+      There is no price set for current settings. Select course type and city/center.
+      </p>
+      </div>
+      }
 
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
         {isAllFieldsValid4 == false && (
@@ -709,7 +718,7 @@ export const NewCourseTabs = () => {
 
             <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
               <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
-                <div>
+                <div className="flex flex-col w-full justify-between">
                   <TabsContent
                     value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
                     className={contentStylings}
