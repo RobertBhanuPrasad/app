@@ -745,7 +745,7 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
-                {t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
+                {loading ? <div className="loader !w-[25px]"></div> :t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
@@ -757,7 +757,7 @@ function index() {
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=>{handleExportExcel(excelColumns,filters,csvOption,setLoading)}}>
-              {loading ? <div className="loader !w-[25px]"></div> : t("course.find_course:CSV")}
+              {t("course.find_course:CSV")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
