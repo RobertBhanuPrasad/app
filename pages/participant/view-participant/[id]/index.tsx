@@ -55,7 +55,7 @@ function index() {
       label: 'Course Information ',
       content: (
         <div>
-          <ViewParticipantCourseInformation participantId={12} />
+          <ViewParticipantCourseInformation participantId={Id} />
         </div>
       )
     },
@@ -65,13 +65,13 @@ function index() {
       content: (
         <div>
           {' '}
-          <ViewParticipantTransactionDetails participantId={12} />
+          <ViewParticipantTransactionDetails participantId={Id} />
         </div>
       )
     },
-    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={12} /> },
-    { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={12} /> },
-    { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={12} /> }
+    { id: 2, label: 'Email Delivery Logs', content: <ViewParticipantEmailDeliveryLogs participantId={Id} /> },
+    { id: 3, label: 'Customer Device Details', content: <ViewParticipantCustomerDeviceDetails participantId={Id} /> },
+    { id: 4, label: 'UTM Parameters', content: <ViewParticipantUtmParameters participantId={Id} /> }
   ]
   return (
     <div className="flex p-[20px]">
@@ -90,7 +90,7 @@ export default index
 export const getServerSideProps: GetServerSideProps<{}> = async context => {
   const { authenticated, redirectTo } = await authProvider.check(context)
 
-  const translateProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', ["common"])
 
   if (!authenticated) {
     return {

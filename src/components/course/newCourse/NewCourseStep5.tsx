@@ -30,6 +30,7 @@ import _ from "lodash";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PAYMENT_MODE } from "src/constants/OptionLabels";
 import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
+import { useTranslation } from 'next-i18next';
 import { translatedText } from "src/common/translations";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
@@ -58,6 +59,7 @@ export default function CourseTable() {
 }
 
 export const AccomdationComponent = () => {
+  const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   // Hook to manage dynamically added fields in the form
   const { append, remove, fields } = useFieldArray({
     name: "accommodation",
@@ -79,14 +81,14 @@ export const AccomdationComponent = () => {
   return (
     <div className="rounded-[12px]  border border-[#D6D7D8]">
       <div className="flex h-[48px]">
-        <div className="p-4 bg-[#7677F41A] w-[288px] ">Accommodation Type</div>
+        <div className="p-4 bg-[#7677F41A] w-[288px] ">{t("course.new_course:accommodation_tab.accommodation_type")}</div>
         <div className="p-4 bg-[#7677F41A]  w-[288px]">
-          Fee per person (MYR) Inc. VAT
+          {t("new_strings:fee_per_person")} (MYR) {t("new_strings:inc_vat")}
         </div>
         <div className="p-4  bg-[#7677F41A]  w-[288px]">
-          Number of spots available
+        {t("course.new_course:accommodation_tab.number_of_spots")}
         </div>
-        <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">Actions</div>
+        <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">{t("actions")}</div>
       </div>
 
       <div className="my-[10px]">
@@ -140,7 +142,7 @@ export const AccommodationField = ({
       <div className="w-[288px] p-[10px]">
         <AccommodationType index={index} />
       </div>
-      <div className="p-4 w-[288px] p-[10px]">
+      <div className="p-4 w-[300px] p-[10px]">
         <FeePerPerson index={index} />
       </div>
       <div className="p-4 w-[288px] p-[10px]">
@@ -158,6 +160,7 @@ export const AccommodationField = ({
 };
 
 export const ResidentialCourse = () => {
+  const {t} = useTranslation('common')
   const {
     field: { value, onChange },
   } = useController({
@@ -176,7 +179,7 @@ export const ResidentialCourse = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-sm font-normal text-[#333333]">
-        Residential Course <span className="text-[#7677F4]">*</span>
+        {t("residential_course")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
         value={JSON.stringify(value)}
@@ -190,13 +193,13 @@ export const ResidentialCourse = () => {
           <RadioButtonCard
             value="true"
             selectedRadioValue={JSON.stringify(value)}
-            label="Yes"
-            className="w-[112px] h-[40px] rounded-[12px]"
+            label={t("yes")}
+            className="w-[112px] h-[40px] rounded-[12px]"            
           />
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label="No"
+            label={t("no_button")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -206,6 +209,7 @@ export const ResidentialCourse = () => {
 };
 
 export const AccommodationFeeMode = () => {
+  const {t} = useTranslation("course.new_course")
   const {
     field: { value, onChange },
     fieldState: { error },
@@ -226,7 +230,7 @@ export const AccommodationFeeMode = () => {
   return (
     <div className="flex gap-1 flex-col mt-[32px]">
       <div className="text-sm font-normal text-[#333333]">
-        Accommodation fee payment mode <span className="text-[#7677F4]">*</span>
+        {t("course.new_course:accommodation_tab.accommodation_fee")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
         value={JSON.stringify(value)}
@@ -238,13 +242,13 @@ export const AccommodationFeeMode = () => {
           <RadioButtonCard
             value={JSON.stringify(payOnlineId)}
             selectedRadioValue={JSON.stringify(value)}
-            label="Pay Online"
+            label={t("course.new_course:accommodation_tab.pay_online")}
             className="w-[131px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
             value={JSON.stringify(payOfflineId)}
             selectedRadioValue={JSON.stringify(value)}
-            label="Pay Offline"
+            label={t("course.new_course:accommodation_tab.pay_offline")}
             className="w-[131px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -289,6 +293,9 @@ export const AccommodationType = ({
    */
   index: number;
 }) => {
+
+  const {t} = useTranslation("course.participants")
+
   const { watch } = useFormContext();
 
   const formData = watch().accommodation || [];
@@ -370,7 +377,7 @@ export const AccommodationType = ({
         disabled={isDisabled}
       >
         <SelectTrigger error={error ? true : false}>
-          <SelectValue placeholder="Select Accommodation" />
+          <SelectValue placeholder={t("course.participants:assisted_registration.accommodation_placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <Input onChange={(val) => onSearch(val.target.value)} />
@@ -451,6 +458,7 @@ const AccomdationAction = ({
   const handleDeleteRow = (index: number) => {
     remove(index);
   };
+  const {t} = useTranslation('common')
   return (
     <div className="w-[150px] flex gap-4 ">
       {/* Button to add a new row */}
@@ -460,7 +468,7 @@ const AccomdationAction = ({
           className="flex flex-row gap-1 justify-center items-center cursor-pointer text-[#7677F4]"
         >
           <Add />
-          Add
+          {t("add_button")}
         </div>
       )}
       {/* Button to delete a row */}
@@ -470,7 +478,7 @@ const AccomdationAction = ({
           className="flex flex-row gap-1 justify-center items-center text-[#7677F4] cursor-pointer"
         >
           <Delete />
-          <div>Delete</div>
+          <div>{t("delete_button")}</div>
         </div>
       )}
     </div>

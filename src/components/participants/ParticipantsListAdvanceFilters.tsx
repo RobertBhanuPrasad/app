@@ -16,8 +16,11 @@ import { Separator } from 'src/ui/separator'
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTrigger } from 'src/ui/sheet'
 import { getOptionValuesByOptionLabel } from 'src/utility/GetOptionValuesByOptionLabel'
 import { ParticipantStore } from 'src/zustandStore/ParticipantStore'
+import { useTranslation } from 'next-i18next';
 
 export function ParticipantsAdvanceFilter() {
+
+  const {t} = useTranslation(["common", "new_strings" ,"course.participants", "course.find_course", "course.view_course" ])
   const { setParticpantFiltersData, advanceFilterCount, setAdvanceFilterCount } = ParticipantStore()
   const { watch, setValue, getValues } = useFormContext()
   const formData = watch()
@@ -77,7 +80,7 @@ export function ParticipantsAdvanceFilter() {
         >
           {' '}
           <FilterIcon />
-          All Filters
+          {t("course.participants:find_participant.all_filters")}
           {advanceFilterCount > 0 && <CountComponent count={advanceFilterCount} />}
         </Button>
       </SheetTrigger>
@@ -86,7 +89,7 @@ export function ParticipantsAdvanceFilter() {
           <div className="max-h-[90vh] overflow-y-auto scrollbar pr-4">
             <SheetHeader className="p-3 text-2xl font-semibold flex flex-row">
               <div className="flex justify-between items-center flex-grow">
-                <div className="text-2xl font-semibold">Filter By</div>
+                <div className="text-2xl font-semibold">{t("course.find_course:filter_by")}</div>
                 <div
                   onClick={() => {
                     setOpenAdvFilter(false)
@@ -102,7 +105,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-1">
                 <AccordionTrigger>
                   <div className="flex flex-row gap-3 items-center">
-                    <div>Contact Details</div>
+                    <div>{t("course.view_course:basic_details_tab.contact_details")}</div>
                     {getContactCount()}
                   </div>
                 </AccordionTrigger>
@@ -115,7 +118,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-4">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>Transaction Type</div>
+                    <div>{t("course.participants:find_participant.transaction_type")}</div>
                     {formData?.tempFilters?.transaction_type?.length > 0 && (
                       <CountComponent count={formData?.tempFilters?.transaction_type?.length} />
                     )}
@@ -130,7 +133,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-5">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>Payment Method</div>
+                    <div>{t("course.participants:find_participant.payment_method")}</div>
                     {formData?.tempFilters?.payment_method?.length > 0 && (
                       <CountComponent count={formData?.tempFilters?.payment_method?.length} />
                     )}
@@ -145,7 +148,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-6">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>Fee Level</div>
+                    <div>{t("course.participants:view_participant.fee_level")}</div>
                     {formData?.tempFilters?.fee_level?.length > 0 && (
                       <CountComponent count={formData?.tempFilters?.fee_level?.length} />
                     )}
@@ -161,7 +164,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-7">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>Attendance Status</div>
+                    <div>{t("course.participants:find_participant.attendance_status")}</div>
                     {formData?.tempFilters?.attendance_status?.length > 0 && (
                       <CountComponent count={formData?.tempFilters?.attendance_status?.length} />
                     )}
@@ -176,7 +179,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-8">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>Health Consent Status</div>
+                    <div>{t("new_strings:health_consent_status")}</div>
                     {formData?.tempFilters &&
                       Object.values(formData?.tempFilters?.health_consent_status || {}).filter(value => value === true)
                         ?.length > 0 && (
@@ -198,7 +201,7 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-9">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>Program Agreement Status</div>
+                    <div>{t("course.participants:find_participant.program_agreement_status")}</div>
                     {formData?.tempFilters &&
                       Object.values(formData?.tempFilters?.program_agreement_status || {}).filter(
                         value => value === true
@@ -244,7 +247,7 @@ export function ParticipantsAdvanceFilter() {
                   className="flex gap-1 items-center cursor-pointer"
                 >
                   <ClearAllIcon />
-                  <p className="text-primary font-semibold"> Clear All</p>
+                  <p className="text-primary font-semibold"> {t("clear_all")}</p>
                 </div>
                 <Button
                   className=" font-bold"
@@ -257,7 +260,7 @@ export function ParticipantsAdvanceFilter() {
                     setCount(filterCount)
                   }}
                 >
-                  Apply
+                 {t("apply_button")}
                 </Button>
               </div>
             </SheetFooter>
@@ -269,6 +272,7 @@ export function ParticipantsAdvanceFilter() {
 }
 
 export const ContactDetails = () => {
+  const {t} =  useTranslation(["common" , "course.participant"])
   const {
     field: { value: contactName, onChange: onNameChange }
   } = useController({
@@ -308,12 +312,12 @@ export const ContactDetails = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label>Name</Label>
+        <Label>{t("course.participants:find_participant.name")}</Label>
         <Input onChange={handleNameChange} value={contactName} type="text" maxLength={50}></Input>
         {contactName?.length >= 50 && <div className=" text-red-600">Reached maximum character limit: 50</div>}
       </div>
       <div className="flex flex-col gap-2">
-        <Label>Email</Label>
+        <Label>{t("course.participants:find_participant.email")}</Label>
         <Input onChange={onEmailChange} value={contactEmail} type="email"></Input>
         {contactEmail?.length >= 1 &&
           (emailRegex.test(contactEmail) ? (
@@ -323,7 +327,7 @@ export const ContactDetails = () => {
           ))}
       </div>
       <div className="flex flex-col gap-2">
-        <Label>Phone</Label>
+        <Label>{t("course.participants:find_participant.phone")}</Label>
         <Input onChange={handlePhoneChange} value={contactPhone} type="tel"></Input>
       </div>
     </div>
@@ -367,6 +371,7 @@ export const TransactionType = () => {
 }
 
 export const PaymentMethod = () => {
+  const {t}= useTranslation( "new_strings")
   const {
     field: { value: paymentMethods, onChange: onSelectChange }
   } = useController({
@@ -376,6 +381,7 @@ export const PaymentMethod = () => {
   const paymentMethodOptions = getOptionValuesByOptionLabel(PAYMENT_METHOD)?.[0]?.option_values
 
   const paymentMethodValues = paymentMethodOptions.map((record: any) => {
+
     return {
       label: translatedText(record?.name),
       value: record?.id
@@ -386,7 +392,7 @@ export const PaymentMethod = () => {
     <div>
       <MultiSelect
         value={paymentMethods}
-        placeholder="Select Payment Method"
+        placeholder={t("new_strings:select_payment_method")}
         data={paymentMethodValues}
         onBottomReached={() => {}}
         onSearch={() => {}}
@@ -399,6 +405,7 @@ export const PaymentMethod = () => {
 }
 
 export const FeeLevel = () => {
+  const {t} = useTranslation("course.participant")
   const {
     field: { value: feeLevels, onChange: onSelectChange }
   } = useController({
@@ -418,7 +425,7 @@ export const FeeLevel = () => {
     <div>
       <MultiSelect
         value={feeLevels}
-        placeholder="Select Fee Level"
+        placeholder={t("course.participants:assisted_registration.fee_level_placeholder")}
         data={feeLevelValues}
         onBottomReached={() => {}}
         onSearch={() => {}}
@@ -470,6 +477,7 @@ export const AttendanceStatus = () => {
 }
 
 export const HealthConsentStatus = () => {
+  const {t}= useTranslation(["course.find_course" , "course.participant"])
   const { getValues } = useFormContext()
   const formData = getValues()
 
@@ -500,7 +508,7 @@ export const HealthConsentStatus = () => {
           htmlFor="terms"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          {'Completed'}
+          {t("course.find_course:completed")}
         </label>
       </div>
       <div
@@ -521,7 +529,7 @@ export const HealthConsentStatus = () => {
           htmlFor="terms"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          {'Pending'}
+          {t("course.participants:find_participant.pending")}
         </label>
       </div>
     </div>
@@ -529,6 +537,7 @@ export const HealthConsentStatus = () => {
 }
 
 export const ProgramAgreementStatus = () => {
+  const {t} = useTranslation(["course.find_course","course.participants"])
   const { getValues } = useFormContext()
   const formData = getValues()
 
@@ -559,7 +568,7 @@ export const ProgramAgreementStatus = () => {
           htmlFor="terms"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          {'Completed'}
+          {t("course.find_course:completed")}
         </label>
       </div>
       <div
@@ -580,7 +589,7 @@ export const ProgramAgreementStatus = () => {
           htmlFor="terms"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          {'Pending'}
+          {t("course.participants:find_participant.pending")}
         </label>
       </div>
     </div>

@@ -37,6 +37,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
+import { useTranslation } from "next-i18next";
 
 function index() {
   const router = useRouter();
@@ -51,6 +55,7 @@ function index() {
     selectedTableRows,
     selectedRowObjects,
   } = ParticipantStore();
+  var {t}=useTranslation(["common", "course.participants", "new_strings", "course.find_course"])
   const filters: {
     /**
      * Initial filter state
@@ -348,7 +353,7 @@ function index() {
     ).length;
     setSelectedTableRows(tempCount);
     setSelectedRowObjects(rowSelection);
-    tempCount == 0 && setBulkActionSelectedValue("Bulk Actions");
+    tempCount == 0 && setBulkActionSelectedValue(t('new_strings:bulk_actions'));
   }, [rowSelection]);
 
   const handleSelectAll = (val: any) => {
@@ -458,8 +463,88 @@ function index() {
       );
     }
   };
-  const [bulkActionSelectedValue, setBulkActionSelectedValue] =
-    useState("Bulk Actions");
+
+  const bulk_actions=t('new_strings:bulk_actions')
+  const [bulkActionSelectedValue, setBulkActionSelectedValue] = useState(bulk_actions);
+  const excelColumns = [
+    {
+      column_name: t('course.participants:find_participant.registration_id'),
+      path: ["participant_code"],
+    },
+    {
+      column_name: t('course.participants:find_participant.registration_date'),
+      path: ["created_at"],
+    },
+    {
+      column_name: t('course.participants:find_participant.name'),
+      path: ["contact_id", "full_name"],
+    },
+    {
+      column_name:t('course.participants:find_participant.nif'),
+      path: ["contact_id", "nif"],
+    },
+    {
+      column_name: t('course.participants:find_participant.date_of_birth'),
+      path: ["contact_id", "date_of_birth"],
+    },
+    {
+      column_name: t('course.participants:find_participant.phone'),
+      path: ["contact_id", "mobile"],
+    },
+    {
+      column_name: t('course.participants:find_participant.email'),
+      path: ["contact_id", "email"],
+    },
+    {
+      column_name: t('course.participants:view_participant.fee_level'),
+      path: ["price_category_id", "fee_level_id", "value"],
+    },
+    {
+      column_name: t('course.participants:edit_participant.participants_information_tab.amount'),
+      path: ["price_category_id", "total"],
+    },
+    {
+      column_name: t('course.participants:view_participant.transaction_type'),
+      path: ["participant_payment_history[0]", "transaction_type_id"],
+    },
+    {
+      column_name: t('course.participants:edit_participant.participants_information_tab.transaction_id'),
+      path: ["participant_payment_history[0]", "payment_transaction_id"],
+    },
+    {
+      column_name: t('course.participants:view_participant.payment_method'),
+      path: ["participant_payment_history[0]", "payment_method_id", "value"],
+    },
+    {
+      column_name: t('course.participants:view_participant.transaction_status'),
+      path: ["payment_status_id", "value"],
+    },
+    {
+      column_name: t('course.participants:view_participant.course_information_tab.attendance_status'),
+      path: ["participant_attendence_status_id", "value"],
+    },
+    {
+      column_name: t('course.participants:find_participant.program_agreement_version'),
+      path: ["legal_agreement_version"],
+    },
+    {
+      column_name: t('course.participants:find_participant.program_agreement_status'),
+      path: ["program_agreement_status"],
+    },
+    {
+      column_name: t('course.participants:find_participant.program_agreement_date'),
+      path: ["program_agreement_date"],
+    },
+    {
+      column_name: t('course.participants:find_participant.health_declaration_status'),
+      path: ["is_health_declaration_checked"],
+    },
+    {
+      column_name: t('course.participants:find_participant.health_declaration_consent_date'),
+      path: ["health_declaration_consent_date"],
+    },
+  ];
+
 
   return (
     <div>
@@ -495,7 +580,7 @@ function index() {
                     setbulkActionsSuccessIcon(false);
                   }}
                 >
-                  Close
+                  {t('close')}
                 </Button>
               </div>
             </div>
@@ -506,12 +591,13 @@ function index() {
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
+        {/* TODO  : for now may-13 release it has to be hidden */}
         {/* Bulk actions section */}
-        <div className="flex gap-10 justify-end w-full">
+        {/* <div className="flex gap-10 justify-end w-full"> */}
           {/* Bulk Actions Dropdown */}
-          <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+          {/* <div> */}
+            {/* <DropdownMenu> */}
+              {/* <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
@@ -522,9 +608,9 @@ function index() {
                   <CountComponent count={selectedTableRows} />
                   <DropDown />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
+              </DropdownMenuTrigger> */}
+              {/* <DropdownMenuContent align="end"> */}
+                {/* <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]"> */}
                   {/* TODO (Not in MVP Scope): Print Registration Form */}
                   {/* <DropdownMenuItem
                     onClick={() => {
@@ -533,30 +619,30 @@ function index() {
                   >
                     Print Registration Form
                   </DropdownMenuItem> */}
-                  <DropdownMenuItem
+                  {/* <DropdownMenuItem
                     onClick={() => {
-                      setBulkActionSelectedValue("Update Attendance Status");
+                      setBulkActionSelectedValue(t('new_strings:update_attendance_status'));
                       setEnableBulkOptions(false);
                       setBulkAction("attendance");
                     }}
-                  >
-                    Update Attendance Status
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
+                  > */}
+                    {/* {t('new_strings:update_attendance_status')} */}
+                  {/* </DropdownMenuItem> */}
+                  {/* <DropdownMenuItem
                     onClick={() => {
-                      setBulkActionSelectedValue("Update Transaction Status");
+                      setBulkActionSelectedValue(t('new_strings:update_transaction_status'));
                       setEnableBulkOptions(false);
                       setBulkAction("transaction");
                     }}
                   >
-                    Update Transaction Status
-                  </DropdownMenuItem>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                    {t('new_strings:update_transaction_status')}
+                  </DropdownMenuItem> */}
+                {/* </div> */}
+              {/* </DropdownMenuContent> */}
+            {/* </DropdownMenu> */}
+          {/* </div> */}
           {/* Bulk actions options dropdown */}
-          <div>
+          {/* <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -565,7 +651,7 @@ function index() {
                   className="flex flex-row justify-between w-[152px] h-10"
                   disabled={selectedTableRows > 0 ? disableBulkOptions : true}
                 >
-                  Select Status
+                  {t('course.participants:find_participant.select_status')}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -595,8 +681,8 @@ function index() {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
         <div className="w-full">
           <BaseTable
             current={current}
@@ -613,10 +699,11 @@ function index() {
               table: "",
               rowStyles: "",
             }}
-            columns={columns}
+            columns={columns()}
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
+            noRecordsPlaceholder="There are no participants"
           />
         </div>
       </div>
@@ -628,15 +715,15 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>Select All</div>
+            <div>{t('course.find_course:select_all')}</div>
             <div className="font-semibold">
               {participantData?.data?.total || 0}
             </div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            Selected: {allSelected ? participantData?.data?.total : rowCount}{" "}
-            Out of{" "}
+            {t('course.find_course:selected')} {allSelected ? participantData?.data?.total : rowCount}{" "}
+            {t('course.find_course:out_of')}{" "}
             <div className="font-semibold">
               {participantData?.data?.total || 0}
             </div>{" "}
@@ -651,19 +738,19 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
-                Export <ChevronDownIcon className="w-5 h-5" />
+                {t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
               <DropdownMenuItem
-                onClick={handleExportExcel}
+                onClick={()=>{handleExportExcel(excelColumns)}}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                Excel
+                {t('new_strings:excel')}
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
-                Csv
+              {t('new_strings:csv')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -676,6 +763,7 @@ function index() {
 export default index;
 
 const HeaderSection = () => {
+  const {t}=useTranslation(["common", "course.participants", "new_strings"])
   const {
     ParticpantFiltersData,
     setParticpantFiltersData,
@@ -768,7 +856,7 @@ const HeaderSection = () => {
             onChange={handleSearchChange}
             type="text"
             className=" border-0 outline-none"
-            placeholder="Search by Registration ID"
+            placeholder={t('course.participants:find_participant.search_registration')}
           ></Input>
         </div>
       </div>
@@ -801,7 +889,7 @@ const HeaderSection = () => {
                     format(RegistrationDate.from, "MM/dd/yyyy")
                   )
                 ) : (
-                  <span className="font-thin">Search by Registration Date</span>
+                  <span className="font-thin">{t('new_strings:search_by_registration_date')}</span>
                 )}
               </div>
             </Button>
@@ -819,7 +907,7 @@ const HeaderSection = () => {
       <div>
         <MultiSelect
           value={transactionStatus}
-          placeholder="Transaction Status"
+          placeholder={t('course.participants:find_participant.transaction_status')}
           data={transactionStatusValues}
           onBottomReached={() => {}}
           onSearch={() => {}}
@@ -835,7 +923,7 @@ const HeaderSection = () => {
             className=" cursor-pointer flex gap-2 items-center text-sm font-semibold text-[#7677F4]"
           >
             <ClearAll />
-            <div>Clear All</div>
+            <div>{t('clear_all')}</div>
           </div>
         </div>
         <Button
@@ -844,7 +932,7 @@ const HeaderSection = () => {
             setParticpantFiltersData(formData);
           }}
         >
-          Apply
+          {t('apply_button')}
         </Button>
       </div>
     </div>
@@ -852,6 +940,7 @@ const HeaderSection = () => {
 };
 
 const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
+  const {t}=useTranslation(["common",  "new_strings"])
   return (
     <div className="relative">
       <DateRangePicker
@@ -869,101 +958,22 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
           onClick={() => onSelect({ from: "", to: "" })}
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
-          Reset
+          {t('new_strings:reset_button')}
         </Button>
         <Button
           onClick={() => setOpen(false)}
           className=" w-[94px] h-10 rounded-xl"
         >
-          Apply
+          {t('apply_button')}
         </Button>
       </div>
     </div>
   );
 };
 
-const handleExportExcel = async () => {
+const handleExportExcel = async (excelColumns:any) => {
   const supabase = supabaseClient();
   try {
-    const excelColumns = [
-      {
-        column_name: "Registration ID",
-        path: ["participant_code"],
-      },
-      {
-        column_name: "Registration Date",
-        path: ["created_at"],
-      },
-      {
-        column_name: "Name",
-        path: ["contact_id", "full_name"],
-      },
-      {
-        column_name: "NIF",
-        path: ["contact_id", "nif"],
-      },
-      {
-        column_name: "Date of Birth",
-        path: ["contact_id", "date_of_birth"],
-      },
-      {
-        column_name: "Phone",
-        path: ["contact_id", "mobile"],
-      },
-      {
-        column_name: "Email",
-        path: ["contact_id", "email"],
-      },
-      {
-        column_name: "Fee Level",
-        path: ["price_category_id", "fee_level_id", "value"],
-      },
-      {
-        column_name: "Amount",
-        path: ["price_category_id", "total"],
-      },
-      {
-        column_name: "Transaction Type",
-        path: ["participant_payment_history[0]", "transaction_type_id"],
-      },
-      {
-        column_name: "Transaction ID",
-        path: ["participant_payment_history[0]", "payment_transaction_id"],
-      },
-      {
-        column_name: "Payment Method",
-        path: ["participant_payment_history[0]", "payment_method_id", "value"],
-      },
-      {
-        column_name: "Transaction Status",
-        path: ["payment_status_id", "value"],
-      },
-      {
-        column_name: "Attendance Status",
-        path: ["participant_attendence_status_id", "value"],
-      },
-      {
-        column_name: "Program Agreement Version",
-        path: ["legal_agreement_version"],
-      },
-      {
-        column_name: "Program Agreement Status",
-        path: ["program_agreement_status"],
-      },
-      {
-        column_name: "Program Agreement Date",
-        path: ["program_agreement_date"],
-      },
-      {
-        column_name: "Health Declaration Status",
-        path: ["is_health_declaration_checked"],
-      },
-      {
-        column_name: "Health Declaration Consent Date",
-        path: ["health_declaration_consent_date"],
-      },
-    ];
-
     const params = new URLSearchParams({
       table_name: "participant_registration",
       select:
@@ -1029,4 +1039,42 @@ const handleExportExcel = async () => {
   } catch (error) {
     console.error("Error handling export:", error);
   }
+};
+
+
+
+/**
+ * Function to fetch server-side props.
+ * This function checks the authentication status using the auth provider and
+ * fetches translations for the current locale.
+ * If the user is not authenticated, it redirects them to the specified destination.
+ * @param context The context object containing information about the request.
+ * @returns Server-side props including translated props or redirection information.
+ */
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common","course.participants","new_strings","course.find_course", "course.view_course","course.new_course"
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
 };

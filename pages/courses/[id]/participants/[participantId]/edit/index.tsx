@@ -4,8 +4,11 @@ import EditParticipantTabs from "@components/participants/editParticipant/EditPa
 import { handleEditParticipantValues } from "@components/participants/editParticipant/EditParticipantUtil";
 import { editParticipantSchema } from "@components/participants/editParticipant/EditParticipantValidations";
 import LoadingIcon from "@public/assets/LoadingIcon";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { authProvider } from "src/authProvider";
 
 export default function Edit() {
     const { query } = useRouter();
@@ -54,3 +57,32 @@ export default function Edit() {
         </div>
     );
 }
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+    const { authenticated, redirectTo } = await authProvider.check(context);
+
+    const translateProps = await serverSideTranslations(
+        context.locale ?? "en",
+        ["common", "course.participants", "new_strings", "course.find_course","course.new_course"]
+    );
+
+    if (!authenticated) {
+        return {
+            props: {
+                ...translateProps,
+            },
+            redirect: {
+                destination: `${redirectTo}?to=${encodeURIComponent(
+                    context.req.url || "/"
+                )}`,
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: {
+            ...translateProps,
+        },
+    };
+};

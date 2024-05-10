@@ -8,8 +8,11 @@ import { Button } from "src/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { supabaseClient } from "src/utility";
 import { getColorWithDecreasedOpacity } from "src/utility/GenerateColours";
+import { useTranslation } from 'next-i18next';
 
 function ParticipantsTab() {
+  const {t} = useTranslation(["common", "course.view_course"])
+  
   const router = useRouter();
   const {
     query: { id },
@@ -27,31 +30,31 @@ function ParticipantsTab() {
         "attendance_cancelled_participant_count,attendance_completed_participant_count,attendance_dropout_participant_count,attendance_pending_participant_count,fee_level_breakup,gender_breakup,participant_count,revenue,total_participant_count",
     },
   });
-
   console.log(courseData);
-
+  
   if (isLoading) {
     return <LoadingIcon />;
   }
+ 
 
   return (
     <div className="my-[31px] mb-6 overscroll ">
       <div className="flex justify-between">
-        <div className="text-[23px] font-semibold">Overall Participants</div>
+        <div className="text-[23px] font-semibold">{t('course.view_course:participants_tab.overall_participants')}</div>
         <div className="flex gap-4">
-          <Button
+          {/* <Button
             className="text-primary bg-[white] border border-primary w-[206px] h-[46px] rounded-[12px]"
             // onClick={() =>
             //     // router.push('/courses/add')
             // }
           >
-            Register Participant
-          </Button>
+            {t('register_participant')}
+          </Button> */}
           <Button
             className="w-[188px] h-[46px] rounded-[12px]"
             onClick={() => router.push(`/courses/${id}/participants/list`)}
           >
-            View Participants
+            {t('view_participants')}
           </Button>
         </div>
       </div>
@@ -67,8 +70,8 @@ function ParticipantsTab() {
 export default ParticipantsTab;
 
 const FeeLevelPieChart = ({ participantData }: any) => {
+  const {t} = useTranslation(["course.view_course", "new_strings"])
   const baseColor = "#7677F4";
-
   const feeLevelData = Object.keys(
     participantData?.fee_level_breakup || {}
   )?.map((label: any, index: any) => {
@@ -82,11 +85,12 @@ const FeeLevelPieChart = ({ participantData }: any) => {
       ),
     };
   });
+
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Fee Level Breakup</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.fee_level_breakup')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -103,7 +107,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p className="text-[10px]">Total Participants</p>
+            <p className="text-[10px]">{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">
               {participantData?.total_participant_count}
             </p>
@@ -130,24 +134,28 @@ const FeeLevelPieChart = ({ participantData }: any) => {
 };
 
 const AttendancePieChart = ({ participantData }: any) => {
+  
+  const {t} = useTranslation(["course.view_course", "course.find_course", "course.participants"])
   const baseColor = "#7677F4";
 
   // TODO: need to translations
   const attendanceDataArray = [
+
     {
-      label: "Completed",
+      
+      label: t('course.find_course:completed'),
       value: participantData?.attendance_completed_participant_count,
     },
     {
-      label: "Pending",
+      label: t('course.participants:find_participant.pending'),
       value: participantData?.attendance_pending_participant_count,
     },
     {
-      label: "Dropout",
+      label: t('course.participants:find_participant.dropout'),
       value: participantData?.attendance_dropout_participant_count,
     },
     {
-      label: "Cancelled",
+      label: t('course.find_course:canceled'),
       value: participantData?.attendance_cancelled_participant_count,
     },
   ];
@@ -164,12 +172,13 @@ const AttendancePieChart = ({ participantData }: any) => {
     };
   });
   console.log("attendence data", attendanceData);
+  
 
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6 ">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Attendance Status</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.attendance_status')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -187,7 +196,7 @@ const AttendancePieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p className="text-[10px]">Total Participants</p>
+            <p className="text-[10px]">{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">
               {participantData?.total_participant_count}
             </p>
@@ -227,12 +236,13 @@ const GenderPieChart = ({ participantData }: any) => {
       };
     }
   );
+  const {t} = useTranslation(["course.view_course", "new_strings"])
 
   return (
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">Gender Breakdown</div>
+          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.gender_breakdown')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -250,7 +260,7 @@ const GenderPieChart = ({ participantData }: any) => {
             startAngle={0}
           />
           <div className="chart-inner-text flex flex-col">
-            <p className="text-[10px]">Total Participants</p>
+            <p className="text-[10px]">{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">
               {participantData?.total_participant_count}
             </p>
