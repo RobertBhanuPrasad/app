@@ -245,7 +245,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
     sorters: {
@@ -314,6 +314,7 @@ function index() {
   /**
    * This function is to handle export excel
    */
+  
   const handleExportExcel = async () => {
     try {
       /**
@@ -329,16 +330,12 @@ function index() {
           path: ["program_types", "name"],
         },
         {
-          column_name: t("new_strings:course_name"),
-          path: ["program_type_alias_names", "alias_name"],
-        },
-        {
           column_name: t("course.find_course:course_status"),
           path: ["status_id", "name"],
         },
         {
           column_name: t("course.find_course:start_date"),
-          path: ["program_schedules", "start_time"],
+          path: [ "start_date"],
         },
         {
           column_name: t("course.find_course:state"),
@@ -353,8 +350,16 @@ function index() {
           path: ["center", "name"],
         },
         {
+          column_name: t("course.find_course:teacher(s)"),
+          path: ["program_teachers","users","contact_id","full_name"]
+        },
+        {
+          column_name: t("program_organizer"),
+          path: ["program_organizers","users","contact_id","full_name"]
+        },
+        {
           column_name: t("course.find_course:attendees"),
-          path: ["participant_registration", "length"],
+          path: ["participant_count"],
         },
         {
           column_name: t("new_strings:visibility"),
@@ -372,7 +377,7 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+          "program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name)",
         columns: JSON.stringify(excelColumns),
       });
 
@@ -380,7 +385,7 @@ function index() {
 
       //invoking the export_to_file function
       const { data, error } = await supabase.functions.invoke(
-        ` export_to_file?${params}`,
+        `export_to_file?${params}`,
         {
           headers: {
             Authorization:
@@ -399,10 +404,13 @@ function index() {
         const fileUrl = data.fileUrl.data.publicUrl;
         const fileName = fileUrl.split("/").pop();
 
+        console.log("filename",fileName)
         // passing the file name to download
         const result = await supabase.storage
-          .from("export_to_excel")
+          .from("export_to_file")
           .download(fileName);
+
+        console.log("result is",result)
 
         if (result.error) {
           console.error("Error downloading file:", result.error);
