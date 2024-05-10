@@ -50,7 +50,7 @@ const Signup = () => {
 
     const { data: contactData } = await supabase
       .from("contact")
-      .insert([{ first_name: firstName, last_name: lastName }])
+      .insert([{ first_name: firstName, last_name: lastName, email: email }])
       .select();
 
     const { data: userData } = await supabase
