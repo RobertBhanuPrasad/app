@@ -197,6 +197,10 @@ function NewCourse() {
 
   if (IsEditCourse(pathname) || IsCopyCourse) {
     defaultValues = newCourseData;
+    //REQUIRMENT if the course is copying then we need to prefill the organizers of that cousre and we need to add the logged in user as a primary organizer
+    if(IsCopyCourse) {
+      defaultValues.organizer_ids = _.uniq([loggedUserData,...newCourseData?.organizer_ids])
+    }  
   } else {
     defaultValues[NewCourseStep2FormNames?.visibility_id] = publicVisibilityId;
     defaultValues[
@@ -217,6 +221,7 @@ function NewCourse() {
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
     defaultValues[NewCourseStep5FormNames?.is_residential_program] = false;
   }
+ 
 
   // fetch data from country_config table for time format
   const {
