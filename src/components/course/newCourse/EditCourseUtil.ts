@@ -35,6 +35,7 @@ export const getDefaultValues = async (
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
+  
 
   // Step 1
 
@@ -44,6 +45,10 @@ export const getDefaultValues = async (
 
   if (data.program_created_by)
     defaultValues.program_created_by = data.program_created_by as number;
+
+  if (data.created_by_user_id) defaultValues.created_by_user_id = data.created_by_user_id as number
+
+
 
   //organizer_ids
   if (data?.program_organizers) {
