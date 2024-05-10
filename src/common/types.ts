@@ -708,6 +708,7 @@ interface NewCourseFormFieldTypes {
   is_registration_via_3rd_party?: boolean;
   registration_via_3rd_party_url?: string;
   program_created_by?: number;
+  created_by_user_id?: number
 
   //step 2
   program_type_id?: number;
