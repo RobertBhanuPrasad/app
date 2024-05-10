@@ -1,4 +1,3 @@
-import LoadingIcon from "@public/assets/LoadingIcon";
 import { useOne } from "@refinedev/core";
 import { Circle } from "lucide-react";
 import { useRouter } from "next/router";
@@ -33,7 +32,7 @@ function ParticipantsTab() {
   console.log(courseData);
   
   if (isLoading) {
-    return <LoadingIcon />;
+    return <section className="flex justify-center align-center pt-[10%]"><div className="loader"></div></section>
   }
  
 

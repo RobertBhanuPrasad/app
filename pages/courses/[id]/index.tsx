@@ -251,7 +251,7 @@ function ViewDetails() {
             <DisplayingCourseStatus
               statusId={courseData?.data?.status_id?.value}
             />
-            <ShareButton />
+            {/* <ShareButton /> */}
           </div>
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">

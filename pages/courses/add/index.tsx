@@ -19,9 +19,10 @@ import {
   UseLoadingOvertimeReturnType,
   useGetIdentity,
   useList,
+  useOne,
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
@@ -55,7 +56,6 @@ import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 
 import Error from "@public/assets/Error";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import Success from "@public/assets/Success";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
@@ -65,7 +65,8 @@ import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
+import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -78,7 +79,12 @@ function index() {
   console.log("router is ", section);
 
   if (!loginUserData?.userData) {
-    return <div>Loading...</div>;
+    return (
+      <section className="flex justify-center align-center pt-[15%]">
+        {" "}
+        <div>Loading...</div>
+      </section>
+    );
   }
 
   if (section === "thank_you") {
@@ -147,6 +153,39 @@ function NewCourse() {
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
+  const pathname = usePathname();
+
+  /**
+   * Getting the search params from useSearchParams function
+   */
+  const searchparams = useSearchParams();
+
+  const router = useRouter();
+
+  /**
+   * defining the ref using use Ref function
+   */
+  const ref: any = useRef();
+
+  // Requirement: When user change router from copy to new or new to new click on again we need to reset the form to intital state.
+  // Implementation : Temporary : We will use useEffect with dependenancy array searchParams.
+  // whenever searchParams change then just do refresh .
+  // Important we dont need to run useEffect when page loads.
+  // we need to run the code only router changes for that we are taking one ref when by default it will be undefined . so our code will not run initally
+  // and then we are setting ref.current to true then whenever route change our needed code will run again.
+  // Permanent solution : we need to seperate copy course as a new page becuase it has lot of requirements.
+  useEffect(() => {
+    if (ref.current) {
+      router.reload();
+    }
+    ref.current = true;
+  }, [searchparams]);
+
+  /**
+   * This variable holds whether it is copy course or not
+   */
+  const IsCopyCourse = router?.query?.action == "Copy";
+
   /**
    * default values are used to prefill the course data
    * There are two different scenarios are there
@@ -154,25 +193,35 @@ function NewCourse() {
    * 2. User will click on Edit Course or Copy Course then also we need to prefill
    * When user coming from copy or Edit Course we dont need to prefill the below object because we will already set this
    */
-  const defaultValues =
-    newCourseData === null
-      ? {
-          [NewCourseStep2FormNames?.visibility_id]: publicVisibilityId,
-          [NewCourseStep2FormNames?.is_language_translation_for_participants]:
-            true,
-          //For registration required field will be visibile to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
-          [NewCourseStep2FormNames?.is_registration_required]: hasSuperAdminRole
-            ? true
-            : undefined,
+  let defaultValues: any = {};
 
-          // is_geo_restriction_applicable is visible to super admin and default it is no
-          [NewCourseStep2FormNames?.is_geo_restriction_applicable]: false,
-          [NewCourseStep5FormNames?.accommodation_fee_payment_mode]:
-            payOnlineId,
-          [NewCourseStep1FormNames?.organizer_ids]: [loggedUserData],
-          [NewCourseStep5FormNames?.is_residential_program]: false,
-        }
-      : newCourseData;
+  if (IsEditCourse(pathname) || IsCopyCourse) {
+    defaultValues = newCourseData;
+    //REQUIRMENT if the course is copying then we need to prefill the organizers of that cousre and we need to add the logged in user as a primary organizer
+    if(IsCopyCourse) {
+      defaultValues.organizer_ids = _.uniq([loggedUserData,...newCourseData?.organizer_ids])
+    }  
+  } else {
+    defaultValues[NewCourseStep2FormNames?.visibility_id] = publicVisibilityId;
+    defaultValues[
+      NewCourseStep2FormNames?.is_language_translation_for_participants
+    ] = true;
+    // For registration required field will be visible to super admin only and it should be set to true by default and it should be only true for super admin role for others it should be undefined
+    if (hasSuperAdminRole) {
+      defaultValues[NewCourseStep2FormNames?.is_registration_required] = true;
+    } else {
+      defaultValues[NewCourseStep2FormNames?.is_registration_required] =
+        undefined;
+    }
+    // is_geo_restriction_applicable is visible to super admin and default it is no
+    defaultValues[NewCourseStep2FormNames?.is_geo_restriction_applicable] =
+      false;
+    defaultValues[NewCourseStep5FormNames?.accommodation_fee_payment_mode] =
+      payOnlineId;
+    defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
+    defaultValues[NewCourseStep5FormNames?.is_residential_program] = false;
+  }
+ 
 
   // fetch data from country_config table for time format
   const {
@@ -199,14 +248,18 @@ function NewCourse() {
 
   // check how many records are there in time_zones table
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
-  if (timeZonesData?.data?.length === 1 && newCourseData === null) {
+  if (
+    timeZonesData?.data?.length === 1 &&
+    IsEditCourse(pathname) !== false &&
+    IsCopyCourse !== false
+  ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
       timeZonesData?.data[0]?.id;
   }
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
-  // and same we need to set only if newCourseData is null
-  if (newCourseData === null) {
+  // and same we need to set only if it is not edit and copy
+  if (IsEditCourse(pathname) !== false && IsCopyCourse !== false) {
     if (data?.data[0]?.hour_format_id) {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
         data?.data[0]?.hour_format_id;
@@ -224,7 +277,12 @@ function NewCourse() {
     isLoading ||
     timeZoneLoading
   ) {
-    return <LoadingIcon />;
+    return (
+      <section className="flex justify-center align-center pt-[15%]">
+        {" "}
+        <div className="loader"></div>
+      </section>
+    );
   }
 
   return (
@@ -259,13 +317,22 @@ export const requiredValidationFields = (formData: any) => {
       : ["registration_via_3rd_party_url"]
   );
 
+  /**
+   * @constant programTypesData
+   * @description this constant stores the data which came from the program_types table using the program type id which is there in the formData
+   */
+  const { data: programTypesData } = useOne({
+    resource: "program_types",
+    id: formData?.program_type_id,
+  });
+
   let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
-    ...(formData?.program_type?.has_alias_name
+    ...(programTypesData?.data?.has_alias_name
       ? []
       : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
-    ...(formData?.program_type?.is_geo_restriction_applicable
+    ...(programTypesData?.data?.is_geo_restriction_applicable_for_registrations
       ? []
       : ["is_geo_restriction_applicable"]),
   ]);
@@ -278,7 +345,7 @@ export const requiredValidationFields = (formData: any) => {
 
   // REQUIRMENT if the program type is online then we need to validate the online url , state is present or not, city is present or not, center id is present or not
   // so if it is online type then we are keeping the online_url, state_id, city_id, center_id
-  if (formData?.program_type?.is_online_program === true) {
+  if (programTypesData?.data?.is_online_program === true) {
     RequiredNewCourseStep3FormNames.push(
       "online_url",
       "state_id",
@@ -323,7 +390,7 @@ export const requiredValidationFields = (formData: any) => {
 };
 
 export const NewCourseTabs = () => {
-  const {t} = useTranslation(['common', 'course.new_course', "new_strings"])
+  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -437,13 +504,13 @@ export const NewCourseTabs = () => {
    */
   const handleClickPrevious = () => {
     setCurrentStep(currentStep - 1);
-  }; 
+  };
 
   // Array of step titles, icons, and colors
   const stepTitles = [
     {
       value: BASIC_DETAILS_STEP_NUMBER,
-      label: t('basic_details'),
+      label: t("basic_details"),
       // If the current step is BASIC_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === BASIC_DETAILS_STEP_NUMBER ||
@@ -631,9 +698,23 @@ export const NewCourseTabs = () => {
 
   return (
     <div>
-      <p className="font-semibold text-2xl">
-      {router.query.action==="Copy" ? t("Copy") : t("new_strings:new")} {t("new_strings:course")}
-      </p>
+      <div className="flex gap-20 items-center">
+        <p className="font-semibold text-2xl">
+          {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
+          {t("new_strings:course")}
+        </p>
+
+        {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
+        {isAllFieldsValid4 == false && (
+          <div className="flex gap-2">
+            <Error />
+            <p className="font-semibold text-[red] text-l -mt-1">
+              There is no price set for current settings. Select course type and
+              city/center.
+            </p>
+          </div>
+        )}
+      </div>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row">
@@ -667,7 +748,7 @@ export const NewCourseTabs = () => {
 
             <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
               <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
-                <div>
+                <div className="flex flex-col w-full justify-between">
                   <TabsContent
                     value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
                     className={contentStylings}
@@ -766,7 +847,12 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common","course.new_course", "new_strings", "course.participants","course.view_course","course.find_course"
+    "common",
+    "course.new_course",
+    "new_strings",
+    "course.participants",
+    "course.view_course",
+    "course.find_course",
   ]);
 
   if (!authenticated) {
