@@ -71,3 +71,8 @@ export const ACCOUNTING_CANCELED = 5;
 export const PAY_ONLINE = 1;
 export const PAY_OFFLINE = 2;
 
+//Fee Level
+export const REGULAR = 1
+export const REPEATER = 2
+export const STUDENT = 3
+export const SENIOR_CITIZEN = 4

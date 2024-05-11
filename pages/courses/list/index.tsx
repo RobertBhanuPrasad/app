@@ -196,7 +196,7 @@ function index() {
             new Date(
               AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             .toISOString()
             .replace("T", " ")
@@ -211,7 +211,7 @@ function index() {
             new Date(
               AllFilterData.course_date.to?.setUTCHours(23, 59, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             ?.toISOString()
             .replace("T", " ")
@@ -298,22 +298,46 @@ function index() {
   /**
    * The variable holds whether all rows are selected or not
    */
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>(false);
 
-  const [loading, setIsLoading] = useState(false)
+  const [loading, setIsLoading] = useState(false);
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!programData?.data?.data) return;
     const allRowSelection: any = {};
-    programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      programData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, programData?.data?.data]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   *Here whenever i check select all then i need to check and unchekc all row selection also
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    programData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
+   */
+  const rowSelectionOnChange = (row: any) => {
+    const selectedRow = row();
+    setRowSelection(row);
+    if (Object.values(selectedRow).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   /**
@@ -321,7 +345,7 @@ function index() {
    */
 
   const handleExportExcel = async (selectOption: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       /**
        * This holds the column_name and path of all columns of table
@@ -390,7 +414,9 @@ function index() {
           "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
         filters: JSON.stringify(filters?.permanent),
-        sorters: JSON.stringify([{ "field": "created_at", "order": { "ascending": false } }]),
+        sorters: JSON.stringify([
+          { field: "created_at", order: { ascending: false } },
+        ]),
         file_type: selectOption,
       });
 
@@ -416,7 +442,7 @@ function index() {
         //getting file name from the url
         const fileUrl = data.fileUrl.data.publicUrl;
         const fileName = fileUrl.split("/").pop();
-        setIsLoading(false)
+        setIsLoading(false);
 
         console.log("filename", fileName);
         // passing the file name to download
@@ -467,6 +493,8 @@ function index() {
     (value) => value === true
   ).length;
 
+  console.log("heyy row count", allSelected === false);
+
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
@@ -511,7 +539,7 @@ function index() {
             <BaseTable
               current={current}
               rowSelection={rowSelection}
-              setRowSelection={setRowSelection}
+              setRowSelection={rowSelectionOnChange}
               checkboxSelection={true}
               setCurrent={setCurrent}
               pageCount={pageCount}
@@ -563,16 +591,19 @@ function index() {
           {" "}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
-                  disabled={!allSelected}
-                >
-                  {loading ? <div className="loader !w-[25px]"></div> : t("course.find_course:export")}
-                  <ChevronDownIcon className="w-5 h-5" />
-                </Button>
-              
-
+              <Button
+                variant="outline"
+                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
+                //if select all is false or row count less than equal to 0 then it should be true
+                disabled={allSelected === false || rowCount <= 0}
+              >
+                {loading ? (
+                  <div className="loader !w-[25px]"></div>
+                ) : (
+                  t("course.find_course:export")
+                )}
+                <ChevronDownIcon className="w-5 h-5" />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
               <DropdownMenuItem
@@ -605,7 +636,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
+    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
@@ -890,7 +921,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
         Array.isArray(formData.advanceFilter[key])
           ? formData.advanceFilter[key].length > 0
           : formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== ""
+            formData.advanceFilter[key] !== ""
       ).length) ||
     0;
   const { t } = useTranslation("course.find_course");
