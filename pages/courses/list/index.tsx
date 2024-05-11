@@ -324,7 +324,7 @@ function index() {
   };
 
   /**
-   * here whenever the row is changed
+   * here whenever the row is changed we check whether we uncheck the row then select all should be unchecked
    */
   const rowSelectionOnChange = (row: any) => {
     const selectedRows = row();
