@@ -434,7 +434,7 @@ function CourseDetailsTab() {
                       <div className="gap-[23px] flex flex-col">
                         <div>
                           <Header2>{t('contact_name')}</Header2>
-                          <ItemValue>{item.contact_name}</ItemValue>
+                          <ItemValue>{item.contact_name ? item.contact_name : "-"}</ItemValue>
                         </div>
                         <div>
                           <Header2>{t('contact_email')}</Header2>
