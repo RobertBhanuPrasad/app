@@ -298,7 +298,7 @@ function index() {
   /**
    * The variable holds whether all rows are selected or not
    */
-  const [allSelected, setAllSelected] = useState<boolean>();
+  const [allSelected, setAllSelected] = useState<boolean>(false);
 
   const [loading, setIsLoading] = useState(false);
 
@@ -493,6 +493,8 @@ function index() {
     (value) => value === true
   ).length;
 
+  console.log("heyy row count", allSelected === false);
+
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
@@ -592,7 +594,8 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
-                disabled={!allSelected && rowCount <= 0}
+                //if select all is false or row count less than equal to 0 then it should be true
+                disabled={allSelected === false || rowCount <= 0}
               >
                 {loading ? (
                   <div className="loader !w-[25px]"></div>
