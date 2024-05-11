@@ -245,11 +245,6 @@ function ViewDetails() {
     PENDING_REVIEW
   )?.id;
 
-  console.log(
-    "hey status id",
-    courseData?.data?.status_id,
-    coursePendingReviewStatusId
-  );
 
   return (
     <div className="flex flex-col">
