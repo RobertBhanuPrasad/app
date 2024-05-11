@@ -862,8 +862,8 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {existingVenue?.name}, {existingVenue?.address},{cityData?.data?.name},{" "}
-      {cityData?.data?.state.name}, {existingVenue?.postal_code}
+      {existingVenue?.name?`${existingVenue?.name}, `:""}{existingVenue?.address?`${existingVenue?.address}, `:''}{cityData?.data?.name},{" "}
+      {cityData?.data?.state.name}{existingVenue?.postal_code?`, ${existingVenue?.postal_code}`:''}
     </div>
   );
 };
@@ -1523,16 +1523,16 @@ const VenueItem = ({ item }: { item: any }) => {
 
     return (
       <div>
-        {tempExistingVenue.name}, {tempExistingVenue.address},{" "}
-        {cityData?.data?.name}, {cityData?.data?.state_id?.name},{" "}
-        {tempExistingVenue.postal_code}
+        {tempExistingVenue.name?`${tempExistingVenue.name}, `:''}{tempExistingVenue.address?`${tempExistingVenue.address}, `:""}
+        {cityData?.data?.name}, {cityData?.data?.state_id?.name}
+        {tempExistingVenue.postal_code?`, ${tempExistingVenue.postal_code}`:''}
       </div>
     );
   } else {
     return (
       <div className="leading-tight">
-        {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
-        {item.postal_code}
+        {item.name?`${item.name}, `:''}{item.address?`${item.address}, `:''}{item.city_name}, {item.state_name}
+        {item.postal_code ?`, ${item.postal_code}`:''}
       </div>
     );
   }
