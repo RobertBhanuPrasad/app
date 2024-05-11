@@ -12,19 +12,18 @@ import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useList, useSelect, useTable } from "@refinedev/core";
 import { format } from "date-fns";
-import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
+import { authProvider } from "src/authProvider";
+import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
-import { authProvider } from "src/authProvider";
-import { translatedText } from "src/common/translations";
 import { column } from "src/components/course/findCourse/Columns";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
-import { Dialog, DialogContent } from "src/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,8 +40,8 @@ import {
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { translatedText } from "src/common/translations";
 
 function index() {
   interface ExcelColumn {
@@ -51,8 +50,6 @@ function index() {
   }
 
   const { viewPreviewPage, AllFilterData } = newCourseStore();
-
-  const languageCode = useGetLanguageCode();
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -196,7 +193,7 @@ function index() {
             new Date(
               AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             .toISOString()
             .replace("T", " ")
@@ -211,7 +208,7 @@ function index() {
             new Date(
               AllFilterData.course_date.to?.setUTCHours(23, 59, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             ?.toISOString()
             .replace("T", " ")
@@ -248,7 +245,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
     sorters: {
@@ -298,30 +295,49 @@ function index() {
   /**
    * The variable holds whether all rows are selected or not
    */
-  const [allSelected, setAllSelected] = useState();
-
-  const [loading, setIsLoading] = useState(false)
+  const [allSelected, setAllSelected] = useState<boolean>();
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!programData?.data?.data) return;
     const allRowSelection: any = {};
-    programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    if (allSelected) {
+      programData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, programData?.data?.data]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   * Here whenever we select or deselect all rows need to be selected or deselected
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    programData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   * here whenever the row is changed we check whether we uncheck the row then select all should be unchecked
+   */
+  const rowSelectionOnChange = (row: any) => {
+    const selectedRows = row();
+    setRowSelection(row);
+    if (Object.values(selectedRows).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   /**
    * This function is to handle export excel
    */
-
-  const handleExportExcel = async (selectOption: string) => {
-    setIsLoading(true)
+  const handleExportExcel = async () => {
     try {
       /**
        * This holds the column_name and path of all columns of table
@@ -333,15 +349,19 @@ function index() {
         },
         {
           column_name: t("new_strings:course_type_name"),
-          path: ["program_types", "name", languageCode],
+          path: ["program_types", "name"],
+        },
+        {
+          column_name: t("new_strings:course_name"),
+          path: ["program_type_alias_names", "alias_name"],
         },
         {
           column_name: t("course.find_course:course_status"),
-          path: ["status_id", "name", languageCode],
+          path: ["status_id", "name"],
         },
         {
           column_name: t("course.find_course:start_date"),
-          path: ["start_date"],
+          path: ["program_schedules", "start_time"],
         },
         {
           column_name: t("course.find_course:state"),
@@ -356,28 +376,16 @@ function index() {
           path: ["center", "name"],
         },
         {
-          column_name: t("course.find_course:teacher(s)"),
-          path: ["program_teachers", "users", "contact_id", "full_name"],
-        },
-        {
-          column_name: t("program_organizer"),
-          path: ["program_organizers", "users", "contact_id", "full_name"],
-        },
-        {
           column_name: t("course.find_course:attendees"),
-          path: ["participant_count"],
+          path: ["participant_registration", "length"],
         },
         {
           column_name: t("new_strings:visibility"),
-          path: ["visibility_id", "name", languageCode],
+          path: ["visibility_id", "name"],
         },
-        // {
-        //   column_name: t("course_accounting_status"),
-        //   path: ["program_accounting_status_id", "name"],
-        // },
         {
-          column_name: t("new_strings:revenue"),
-          path: ["revenue"],
+          column_name: t("course_accounting_status"),
+          path: ["program_accounting_status_id", "name"],
         },
       ];
 
@@ -387,18 +395,15 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
+          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
         columns: JSON.stringify(excelColumns),
-        filters: JSON.stringify(filters?.permanent),
-        sorters: JSON.stringify([{ "field": "created_at", "order": { "ascending": false } }]),
-        file_type: selectOption,
       });
 
       const supabase = supabaseClient();
 
       //invoking the export_to_file function
       const { data, error } = await supabase.functions.invoke(
-        `export_to_file?${params}`,
+        ` export_to_file?${params}`,
         {
           headers: {
             Authorization:
@@ -416,15 +421,11 @@ function index() {
         //getting file name from the url
         const fileUrl = data.fileUrl.data.publicUrl;
         const fileName = fileUrl.split("/").pop();
-        setIsLoading(false)
 
-        console.log("filename", fileName);
         // passing the file name to download
         const result = await supabase.storage
-          .from("export_to_file")
+          .from("export_to_excel")
           .download(fileName);
-
-        console.log("result is", result);
 
         if (result.error) {
           console.error("Error downloading file:", result.error);
@@ -467,6 +468,8 @@ function index() {
     (value) => value === true
   ).length;
 
+  console.log("heyy row count", rowCount);
+
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
@@ -489,7 +492,6 @@ function index() {
     "course.find_course",
     "new_strings",
     "course.view_course",
-    "course.participants",
   ]);
   return (
     <div className="flex flex-col justify-between relative">
@@ -501,40 +503,33 @@ function index() {
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-
-        {programData?.isLoading ? (
-          <section className="flex justify-center align-center pt-[10%]">
-            <div className="loader"></div>
-          </section>
-        ) : (
-          <div className="w-full mb-[76px]">
-            <BaseTable
-              current={current}
-              rowSelection={rowSelection}
-              setRowSelection={setRowSelection}
-              checkboxSelection={true}
-              setCurrent={setCurrent}
-              pageCount={pageCount}
-              total={FilterProgramData?.data?.total || 0}
-              pageSize={pageSize}
-              //Here we have to set the page size of the query we use to display data in table and for query we apply filters
-              setPageSize={(number) => {
-                setPageSize(number);
-                displayDataSetPageSize(number);
-              }}
-              pagination={true}
-              tableStyles={{
-                table: "",
-                rowStyles: "!important border-none",
-              }}
-              noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
-              columns={column(hasAliasNameFalse(data), t)}
-              data={programData?.data?.data || []}
-              columnPinning={true}
-              columnSelector={true}
-            />
-          </div>
-        )}
+        <div className="w-full mb-[76px]">
+          <BaseTable
+            current={current}
+            rowSelection={rowSelection}
+            setRowSelection={rowSelectionOnChange}
+            checkboxSelection={true}
+            setCurrent={setCurrent}
+            pageCount={pageCount}
+            total={FilterProgramData?.data?.total || 0}
+            pageSize={pageSize}
+            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+            setPageSize={(number) => {
+              setPageSize(number);
+              displayDataSetPageSize(number);
+            }}
+            pagination={true}
+            tableStyles={{
+              table: "",
+              rowStyles: "!important border-none",
+            }}
+            noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
+            columns={column(hasAliasNameFalse(data), t)}
+            data={programData?.data?.data || []}
+            columnPinning={true}
+            columnSelector={true}
+          />
+        </div>
       </div>
       <div className="bottom-0 fixed flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
@@ -563,32 +558,24 @@ function index() {
           {" "}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
-                  disabled={!allSelected}
-                >
-                  {loading ? <div className="loader !w-[25px]"></div> : t("course.find_course:export")}
-                  <ChevronDownIcon className="w-5 h-5" />
-                </Button>
-              
-
+              <Button
+                variant="outline"
+                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
+                disabled={!allSelected || rowCount <= 0}
+              >
+                {t("course.find_course:export")}{" "}
+                <ChevronDownIcon className="w-5 h-5" />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
               <DropdownMenuItem
-                onClick={() => {
-                  handleExportExcel("excel");
-                }}
+                onClick={handleExportExcel}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 {t("new_strings:excel")}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="p-1  focus:outline-none cursor-pointer"
-                onClick={() => {
-                  handleExportExcel("CSV");
-                }}
-              >
+              {/*TODO  */}
+              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
                 {t("new_strings:csv")}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -605,7 +592,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
+    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
@@ -776,12 +763,7 @@ export const BasicFilters: React.FC<{
     setValue("advanceFilter", "");
     setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
-  const { t } = useTranslation([
-    "common",
-    "course.find_course",
-    "new_strings",
-    "course.participants",
-  ]);
+  const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
     <div className="flex gap-x-[2%] flex-row items-center justify-between">
       <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
@@ -890,7 +872,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
         Array.isArray(formData.advanceFilter[key])
           ? formData.advanceFilter[key].length > 0
           : formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== ""
+            formData.advanceFilter[key] !== ""
       ).length) ||
     0;
   const { t } = useTranslation("course.find_course");
@@ -933,7 +915,6 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "course.view_course",
     "new_strings",
     "course.find_course",
-    "course.participants",
   ]);
   if (!authenticated) {
     return {
