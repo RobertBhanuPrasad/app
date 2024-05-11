@@ -56,7 +56,12 @@ function index() {
     selectedTableRows,
     selectedRowObjects,
   } = ParticipantStore();
-  var {t}=useTranslation(["common", "course.participants", "new_strings", "course.find_course"])
+  var { t } = useTranslation([
+    "common",
+    "course.participants",
+    "new_strings",
+    "course.find_course",
+  ]);
   const filters: {
     /**
      * Initial filter state
@@ -330,7 +335,7 @@ function index() {
   console.log("Participant table data", participantData);
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>();
   const [
     displayTransactionStatusBulkActionError,
     setDisplayTransactionStatusBulkActionError,
@@ -339,13 +344,17 @@ function index() {
   const [bulkActionsErrorTitle, setBulkActionsErrorTitle] = useState("");
   const [bulkActionsSuccessIcon, setbulkActionsSuccessIcon] = useState(false);
 
+  //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!participantData?.data?.data) return;
     const allRowSelection: any = {};
-    participantData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      participantData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, participantData?.data?.data]);
 
   useEffect(() => {
@@ -354,10 +363,20 @@ function index() {
     ).length;
     setSelectedTableRows(tempCount);
     setSelectedRowObjects(rowSelection);
-    tempCount == 0 && setBulkActionSelectedValue(t('new_strings:bulk_actions'));
+    tempCount == 0 && setBulkActionSelectedValue(t("new_strings:bulk_actions"));
   }, [rowSelection]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   *Here whenever i check select all then i need to check and unchekc all row selection also
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    participantData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
   };
 
@@ -365,10 +384,21 @@ function index() {
     (value) => value === true
   ).length;
 
+  /**
+   *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
+   */
+  const rowSelectionOnChange = (row: any) => {
+    const selectedRow = row();
+    setRowSelection(row);
+    if (Object.values(selectedRow).length === 0) {
+      setAllSelected(false);
+    }
+  };
+
   const [open, setOpen] = useState(false);
   const [disableBulkOptions, setEnableBulkOptions] = useState(true);
   const [bulkActions, setBulkAction] = useState("");
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const attendanceOptions = getOptionValuesByOptionLabel(
     PARTICIPANT_ATTENDANCE_STATUS
   )?.[0]?.option_values;
@@ -466,92 +496,118 @@ function index() {
     }
   };
 
-  const languageCode = useGetLanguageCode()
+  const languageCode = useGetLanguageCode();
 
-  const bulk_actions=t('new_strings:bulk_actions')
-  const [bulkActionSelectedValue, setBulkActionSelectedValue] = useState(bulk_actions);
+  const bulk_actions = t("new_strings:bulk_actions");
+  const [bulkActionSelectedValue, setBulkActionSelectedValue] =
+    useState(bulk_actions);
   const excelColumns = [
     {
-      column_name: t('course.participants:find_participant.registration_id'),
+      column_name: t("course.participants:find_participant.registration_id"),
       path: ["participant_code"],
     },
     {
-      column_name: t('course.participants:find_participant.registration_date'),
+      column_name: t("course.participants:find_participant.registration_date"),
       path: ["created_at"],
     },
     {
-      column_name: t('course.participants:find_participant.name'),
+      column_name: t("course.participants:find_participant.name"),
       path: ["contact_id", "full_name"],
     },
     {
-      column_name:t('course.participants:find_participant.nif'),
+      column_name: t("course.participants:find_participant.nif"),
       path: ["contact_id", "nif"],
     },
     {
-      column_name: t('course.participants:find_participant.date_of_birth'),
+      column_name: t("course.participants:find_participant.date_of_birth"),
       path: ["contact_id", "date_of_birth"],
     },
     {
-      column_name: t('course.participants:find_participant.phone'),
+      column_name: t("course.participants:find_participant.phone"),
       path: ["contact_id", "mobile"],
     },
     {
-      column_name: t('course.participants:find_participant.email'),
+      column_name: t("course.participants:find_participant.email"),
       path: ["contact_id", "email"],
     },
     {
-      column_name: t('course.participants:view_participant.fee_level'),
+      column_name: t("course.participants:view_participant.fee_level"),
       path: ["price_category_id", "fee_level_id", "name", languageCode],
     },
     {
-      column_name: t('course.participants:edit_participant.participants_information_tab.amount'),
+      column_name: t(
+        "course.participants:edit_participant.participants_information_tab.amount"
+      ),
       path: ["price_category_id", "total"],
     },
     {
-      column_name: t('course.participants:view_participant.transaction_type'),
-      path: ["participant_payment_history[0]", "transaction_type_id","name",languageCode],
+      column_name: t("course.participants:view_participant.transaction_type"),
+      path: [
+        "participant_payment_history[0]",
+        "transaction_type_id",
+        "name",
+        languageCode,
+      ],
     },
     {
-      column_name: t('course.participants:edit_participant.participants_information_tab.transaction_id'),
+      column_name: t(
+        "course.participants:edit_participant.participants_information_tab.transaction_id"
+      ),
       path: ["participant_payment_history[0]", "payment_transaction_id"],
     },
     {
-      column_name: t('course.participants:view_participant.payment_method'),
-      path: ["participant_payment_history[0]", "payment_method_id", "name",languageCode],
+      column_name: t("course.participants:view_participant.payment_method"),
+      path: [
+        "participant_payment_history[0]",
+        "payment_method_id",
+        "name",
+        languageCode,
+      ],
     },
     {
-      column_name: t('course.participants:view_participant.transaction_status'),
-      path: ["payment_status_id", "name",languageCode],
+      column_name: t("course.participants:view_participant.transaction_status"),
+      path: ["payment_status_id", "name", languageCode],
     },
     {
-      column_name: t('course.participants:view_participant.course_information_tab.attendance_status'),
-      path: ["participant_attendence_status_id", "name",languageCode],
+      column_name: t(
+        "course.participants:view_participant.course_information_tab.attendance_status"
+      ),
+      path: ["participant_attendence_status_id", "name", languageCode],
     },
     {
-      column_name: t('course.participants:find_participant.program_agreement_version'),
+      column_name: t(
+        "course.participants:find_participant.program_agreement_version"
+      ),
       path: ["legal_agreement_version"],
     },
     {
-      column_name: t('course.participants:find_participant.program_agreement_status'),
+      column_name: t(
+        "course.participants:find_participant.program_agreement_status"
+      ),
       path: ["program_agreement_status"],
     },
     {
-      column_name: t('course.participants:find_participant.program_agreement_date'),
+      column_name: t(
+        "course.participants:find_participant.program_agreement_date"
+      ),
       path: ["program_agreement_date"],
     },
     {
-      column_name: t('course.participants:find_participant.health_declaration_status'),
+      column_name: t(
+        "course.participants:find_participant.health_declaration_status"
+      ),
       path: ["is_health_declaration_checked"],
     },
     {
-      column_name: t('course.participants:find_participant.health_declaration_consent_date'),
+      column_name: t(
+        "course.participants:find_participant.health_declaration_consent_date"
+      ),
       path: ["health_declaration_consent_date"],
     },
   ];
 
-  const excelOption = "excel"
-  const csvOption = "CSV"
-
+  const excelOption = "excel";
+  const csvOption = "CSV";
 
   return (
     <div>
@@ -587,7 +643,7 @@ function index() {
                     setbulkActionsSuccessIcon(false);
                   }}
                 >
-                  {t('close')}
+                  {t("close")}
                 </Button>
               </div>
             </div>
@@ -601,10 +657,10 @@ function index() {
         {/* TODO  : for now may-13 release it has to be hidden */}
         {/* Bulk actions section */}
         {/* <div className="flex gap-10 justify-end w-full"> */}
-          {/* Bulk Actions Dropdown */}
-          {/* <div> */}
-            {/* <DropdownMenu> */}
-              {/* <DropdownMenuTrigger asChild>
+        {/* Bulk Actions Dropdown */}
+        {/* <div> */}
+        {/* <DropdownMenu> */}
+        {/* <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
@@ -616,26 +672,26 @@ function index() {
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger> */}
-              {/* <DropdownMenuContent align="end"> */}
-                {/* <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]"> */}
-                  {/* TODO (Not in MVP Scope): Print Registration Form */}
-                  {/* <DropdownMenuItem
+        {/* <DropdownMenuContent align="end"> */}
+        {/* <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]"> */}
+        {/* TODO (Not in MVP Scope): Print Registration Form */}
+        {/* <DropdownMenuItem
                     onClick={() => {
                       setEnableBulkOptions(true);
                     }}
                   >
                     Print Registration Form
                   </DropdownMenuItem> */}
-                  {/* <DropdownMenuItem
+        {/* <DropdownMenuItem
                     onClick={() => {
                       setBulkActionSelectedValue(t('new_strings:update_attendance_status'));
                       setEnableBulkOptions(false);
                       setBulkAction("attendance");
                     }}
                   > */}
-                    {/* {t('new_strings:update_attendance_status')} */}
-                  {/* </DropdownMenuItem> */}
-                  {/* <DropdownMenuItem
+        {/* {t('new_strings:update_attendance_status')} */}
+        {/* </DropdownMenuItem> */}
+        {/* <DropdownMenuItem
                     onClick={() => {
                       setBulkActionSelectedValue(t('new_strings:update_transaction_status'));
                       setEnableBulkOptions(false);
@@ -644,12 +700,12 @@ function index() {
                   >
                     {t('new_strings:update_transaction_status')}
                   </DropdownMenuItem> */}
-                {/* </div> */}
-              {/* </DropdownMenuContent> */}
-            {/* </DropdownMenu> */}
-          {/* </div> */}
-          {/* Bulk actions options dropdown */}
-          {/* <div>
+        {/* </div> */}
+        {/* </DropdownMenuContent> */}
+        {/* </DropdownMenu> */}
+        {/* </div> */}
+        {/* Bulk actions options dropdown */}
+        {/* <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -694,7 +750,7 @@ function index() {
           <BaseTable
             current={current}
             rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
+            setRowSelection={rowSelectionOnChange}
             checkboxSelection={true}
             setCurrent={setCurrent}
             pageCount={pageCount}
@@ -722,15 +778,16 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>{t('course.find_course:select_all')}</div>
+            <div>{t("course.find_course:select_all")}</div>
             <div className="font-semibold">
               {participantData?.data?.total || 0}
             </div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            {t('course.find_course:selected')} {allSelected ? participantData?.data?.total : rowCount}{" "}
-            {t('course.find_course:out_of')}{" "}
+            {t("course.find_course:selected")}{" "}
+            {allSelected ? participantData?.data?.total : rowCount}{" "}
+            {t("course.find_course:out_of")}{" "}
             <div className="font-semibold">
               {participantData?.data?.total || 0}
             </div>{" "}
@@ -743,21 +800,43 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
-                disabled={!allSelected}
+                disabled={allSelected === false || rowCount <= 0}
               >
-                {loading ? <div className="loader !w-[25px]"></div> :t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
+                {loading ? (
+                  <div className="loader !w-[25px]"></div>
+                ) : (
+                  t("course.find_course:export")
+                )}{" "}
+                <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
               <DropdownMenuItem
-                onClick={()=>{handleExportExcel(excelColumns,filters,excelOption,setLoading)}}
+                onClick={() => {
+                  handleExportExcel(
+                    excelColumns,
+                    filters,
+                    excelOption,
+                    setLoading
+                  );
+                }}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                {t('new_strings:excel')}
+                {t("new_strings:excel")}
               </DropdownMenuItem>
               {/*TODO  */}
-              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=>{handleExportExcel(excelColumns,filters,csvOption,setLoading)}}>
-              {t("course.find_course:CSV")}
+              <DropdownMenuItem
+                className="p-1  focus:outline-none cursor-pointer"
+                onClick={() => {
+                  handleExportExcel(
+                    excelColumns,
+                    filters,
+                    csvOption,
+                    setLoading
+                  );
+                }}
+              >
+                {t("course.find_course:CSV")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
