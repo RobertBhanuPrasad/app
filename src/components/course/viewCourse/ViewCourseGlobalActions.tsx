@@ -84,7 +84,6 @@ export const ViewCourseGlobalActions = () => {
   };
 
   const handleGlobalAction = (option: number) => {
-    console.log("heyy selected option", option);
     switch (option) {
       // TODO: Naviagate to register participant page
       case 1:
