@@ -190,7 +190,7 @@ export const CityDropDown = ({ name }: { name: string }) => {
       <Select value={cityValue} onValueChange={cityValueOnChange}>
         <SelectTrigger
           error={cityValueError ? true : false}
-          className="font-semibold text-sm "
+          className="font-normal text-sm text-[#999999] "
         >
           <SelectValue placeholder={t("city_placeholder")} />
         </SelectTrigger>
@@ -301,7 +301,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
 
       <Select value={stateValue} onValueChange={stateValueOnchange}>
         <SelectTrigger
-          className="w-full font-semibold text-sm"
+          className="font-normal text-sm text-[#999999]"
           error={stateValueError ? true : false}
         >
           <SelectValue placeholder={t("select_state")} />
@@ -405,7 +405,7 @@ export const CenterDropDown = ({ name }: { name: string }) => {
       </div>
       <Select value={centerValue} onValueChange={centerValueOnChange}>
         <SelectTrigger
-          className="w-full font-semibold text-sm"
+          className="font-normal text-sm text-[#999999]"
           error={centerValueError ? true : false}
         >
           <SelectValue
