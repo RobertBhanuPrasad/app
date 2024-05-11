@@ -553,6 +553,7 @@ const ProgramOrganizerDropDown = () => {
           //Here this if condition is says that 
           // "option === loginUserData?.userData?.id" this conditon is for if login user wants to creates a new course we disable the primary organizer  
           // "option === created_by_user_id" this conditon is for if any login user wants to edit course than also we are disabling the program orgnizer
+          // If the course is copying then we need to disable the organizer who is logged in only
           if ((option === loginUserData?.userData?.id) || (option === created_by_user_id && IsEditCourse(router?.pathname))) {
             return {
               disable: true,
