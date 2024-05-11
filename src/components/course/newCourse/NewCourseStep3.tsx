@@ -840,7 +840,7 @@ const NewVenueDetails = () => {
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
     {name  ? `${name}, ` : ''}
     {address  ? `${address}, ` : ''}{data?.data?.name}, {data?.data?.state_id?.name}
-    {postal_code  ? `,${" "}${postal_code} ` : ''}
+    {postal_code  ? `, ${" "}${postal_code} ` : ''}
   </div>
   );
 };
