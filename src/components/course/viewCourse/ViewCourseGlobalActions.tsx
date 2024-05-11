@@ -44,7 +44,6 @@ export const ViewCourseGlobalActions = () => {
   ];
 
   const {
-    setViewPreviewPage,
     setNewCourseData,
     setViewThankyouPage,
     setCurrentStep,
