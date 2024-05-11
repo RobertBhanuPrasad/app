@@ -22,6 +22,7 @@ import {
   CANCELED,
   CLOSED,
   DECLINED,
+  PENDING_REVIEW,
   REJECTED,
   TIME_FORMAT_12_HOURS,
 } from "src/constants/OptionValueOrder";
@@ -236,6 +237,20 @@ function ViewDetails() {
     return "1";
   };
 
+  /**
+   * Getting pending review status and ID and storing
+   */
+  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
+    PROGRAM_STATUS,
+    PENDING_REVIEW
+  )?.id;
+
+  console.log(
+    "hey status id",
+    courseData?.data?.status_id,
+    coursePendingReviewStatusId
+  );
+
   return (
     <div className="flex flex-col">
       <div className="mx-8">
@@ -257,48 +272,56 @@ function ViewDetails() {
         <div className="flex flex-row gap-2 items-center mt-3">
           <CalenderIcon color="#7677F4" />
           {startDate} to {endDate}
-          <div>
-            <ParticipantsIcon />
-          </div>
-          <Text
-            onClick={() => router.push(`/courses/${Id}/participants/list`)}
-            className="cursor-pointer text-[#7677F4] font-semibold"
-          >
-            {courseData?.data?.participant_count}
-          </Text>
-          <HoverCard>
-            <HoverCardTrigger>
-              <Important />
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                {courseData?.data?.participant_count}{" "}
-                {t("new_strings:participants_header_hover_text")}
-                {courseData?.data?.total_participant_count}
+          {/* Here we shouldnt show participants and revenue when course is in pending review status  */}
+          {courseData?.data?.status_id?.id !== coursePendingReviewStatusId && (
+            <div className="flex flex-row gap-2 items-center">
+              <div>
+                <ParticipantsIcon />
               </div>
-            </HoverCardContent>
-          </HoverCard>
-          <div>
-            <CurrencyIcon />
-          </div>
-          <Text className="text-[#7677F4] font-semibold">
-            {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
-          </Text>
-          <HoverCard>
-            <HoverCardTrigger>
-              <Important />
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
-                {t(
-                  "course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction"
-                )}{" "}
-                {t("course.view_course:basic_details_tab.participants_revenue")}
-                :{countryConfigData?.data?.[0]?.default_currency_code}{" "}
+              <Text
+                onClick={() => router.push(`/courses/${Id}/participants/list`)}
+                className="cursor-pointer text-[#7677F4] font-semibold"
+              >
+                {courseData?.data?.participant_count}
+              </Text>
+              <HoverCard>
+                <HoverCardTrigger>
+                  <Important />
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                    {courseData?.data?.participant_count}{" "}
+                    {t("new_strings:participants_header_hover_text")}
+                    {courseData?.data?.total_participant_count}
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+              <div>
+                <CurrencyIcon />
+              </div>
+              <Text className="text-[#7677F4] font-semibold">
+                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                 {totalRevenue}
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+              </Text>
+              <HoverCard>
+                <HoverCardTrigger>
+                  <Important />
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                    {t(
+                      "course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction"
+                    )}{" "}
+                    {t(
+                      "course.view_course:basic_details_tab.participants_revenue"
+                    )}
+                    :{countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                    {totalRevenue}
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            </div>
+          )}
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
           <LocationIcon />
@@ -566,7 +589,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
                     approveCourse();
                   }}
                 >
-                  {t('yes')}
+                  {t("yes")}
                 </Button>
               </div>
             </div>
@@ -866,7 +889,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
                     cancelCourse();
                   }}
                 >
-                {t('yes')}
+                  {t("yes")}
                 </Button>
               </div>
             </div>
