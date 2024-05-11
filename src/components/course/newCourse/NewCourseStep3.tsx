@@ -126,8 +126,8 @@ const OnlineProgram = () => {
   });
   return (
     <div className="">
-      <div >
-        <div className="flex flex-row gap-1 items-center text-xs font-normal">
+      <div>
+        <div className="flex flex-row gap-1 items-center">
           {t("course.new_course:time_and_venue_tab.online_meeting_url")}{" "}
           <div className="text-[#7677F4]"> *</div>
           <HoverCard>
@@ -162,7 +162,9 @@ const OnlineProgram = () => {
         </div>
       </div>
       <div className="mt-8">
-        <div className="text-base">{t("course.new_course:time_and_venue_tab.specific_location")}</div>
+        <div>
+          {t("course.new_course:time_and_venue_tab.specific_location")}
+        </div>
         <div className="flex gap-7">
           <div className="w-80">
             <StateDropDown name="state_id" />
