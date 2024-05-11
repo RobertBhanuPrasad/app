@@ -302,14 +302,17 @@ function NewCourse() {
 export default index;
 // we are writing a function here to validate the each steps in new course page and edit previewpage
 // we are calling the same function for newcoursepreviewpagepageeditcourse also to validate
-export const requiredValidationFields = (formData: any) => {
-  const { data: loginUserData }: any = useGetIdentity();
-
-  const { data: timeZoneData } = useList({ resource: "time_zones" });
+export const requiredValidationFields = (
+  formData: any,
+  programTypesData: any,
+  timeZoneData: any,
+  loginUserData: any
+) => {
+  console.log('hehehheehehehhehehehehheh')
 
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
-  );
+  )
 
   let RequiredNewCourseStep1FormNames = _.omit(
     NewCourseStep1FormNames,
@@ -322,10 +325,6 @@ export const requiredValidationFields = (formData: any) => {
    * @constant programTypesData
    * @description this constant stores the data which came from the program_types table using the program type id which is there in the formData
    */
-  const { data: programTypesData } = useOne({
-    resource: "program_types",
-    id: formData?.program_type_id,
-  });
 
   let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
     ...(programTypesData?.data?.has_alias_name
@@ -434,7 +433,14 @@ export const NewCourseTabs = () => {
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
 
-  let validationFieldsStepWise = requiredValidationFields(formData);
+  const { data: programTypesData } = useOne({
+    resource: 'program_types',
+    id: formData?.program_type_id
+  })
+  const { data: timeZoneData } = useList({ resource: 'time_zones' })
+  const { data: loginUserData }: any = useGetIdentity()
+
+  let validationFieldsStepWise = requiredValidationFields(formData, programTypesData, timeZoneData, loginUserData)
 
   let isAllFieldsFilled = false;
 

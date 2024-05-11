@@ -1,7 +1,7 @@
 import Form from "@components/Formfield";
 import EditIcon from "@public/assets/EditIcon";
 import { Dialog } from "@radix-ui/react-dialog";
-import { useGetIdentity, useList } from "@refinedev/core";
+import { useGetIdentity, useList, useOne } from "@refinedev/core";
 import { useFormContext } from "react-hook-form";
 import {
   NewCourseStep1FormNames,
@@ -69,10 +69,20 @@ export const EditModalDialog = ({
    */
 
   const ButtonsDialog = () => {
-    const { getValues } = useFormContext();
-    const formData = getValues();
+    const { getValues } = useFormContext()
+    const formData = getValues()
 
-    let validationFieldsStepWise = requiredValidationFields(formData);
+    const { data: programTypesData } = useOne({
+      resource: 'program_types',
+      id: formData?.program_type_id
+    })
+
+    const { data: timeZoneData } = useList({ resource: 'time_zones' })
+    const { data: loginUserData }: any = useGetIdentity()
+
+    console.log('edit modal dialog')
+
+    let validationFieldsStepWise = requiredValidationFields(formData, programTypesData, timeZoneData, loginUserData)
 
     let isAllFieldsFilled = false;
 
