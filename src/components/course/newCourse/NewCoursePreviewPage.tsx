@@ -358,11 +358,20 @@ export default function NewCourseReviewPage() {
 
   //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
-    ? newCourseData?.program_fee_level_settings?.map((feeLevel: { fee_level_id: any; })=>{
-      const defaultFeeLevel=defaultFeeLevels?.find((defaultFee: { fee_level_id: any; })=>defaultFee.fee_level_id==feeLevel?.fee_level_id)
-      //If is_custom_fee is true then need to show custom label. So appending is_custom_fee and custom_fee_label to existing formData
-      return {is_custom_fee:defaultFeeLevel?.is_custom_fee,custom_fee_label:defaultFeeLevel?.custom_fee_label,...feeLevel}
-    })
+    ? newCourseData?.program_fee_level_settings?.map(
+        (feeLevel: { fee_level_id: any }) => {
+          const defaultFeeLevel = defaultFeeLevels?.find(
+            (defaultFee: { fee_level_id: any }) =>
+              defaultFee.fee_level_id == feeLevel?.fee_level_id
+          );
+          //If is_custom_fee is true then need to show custom label. So appending is_custom_fee and custom_fee_label to existing formData
+          return {
+            is_custom_fee: defaultFeeLevel?.is_custom_fee,
+            custom_fee_label: defaultFeeLevel?.custom_fee_label,
+            ...feeLevel,
+          };
+        }
+      )
     : defaultFeeLevels;
 
   //Requirement: Need to show only enabled fee levels.
@@ -595,7 +604,7 @@ export default function NewCourseReviewPage() {
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-              {t("new_strings:teacher")}
+                {t("new_strings:teacher")}
               </p>
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}
@@ -861,19 +870,22 @@ export default function NewCourseReviewPage() {
                     : "-"}
                 </abbr>
               </div>
-              {(timeZone?.data?.utc_off_set || timeZone?.data?.name)&& (
-              <div className="w-[291px]">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  {t("course.new_course:review_post_details.time_zone")}
-                </p>
-                <abbr
-                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={`${timeZone?.data?.name} - ${timeZone?.data?.utc_off_set}`}
-                >
-                  {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
-                </abbr>
-              </div>
+
+              {/* we have to display only when the countries have more than one time zone   */}
+              {newCourseData?.time_zone_id && (
+                <div className="w-[291px]">
+                  <p className="text-sm font-normal text-accent-light text-[#999999]">
+                    {t("course.new_course:review_post_details.time_zone")}
+                  </p>
+                  <abbr
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                    title={`${timeZone?.data?.name} - ${timeZone?.data?.utc_off_set}`}
+                  >
+                    {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
+                  </abbr>
+                </div>
               )}
+
               <div>{venueSessions()}</div>
             </div>
           )}
@@ -1082,7 +1094,7 @@ export default function NewCourseReviewPage() {
             <Button onClick={handClickContinue}>{t("continue_button")}</Button>
           )}
         </div>
-      </div> 
+      </div>
     </div>
   );
 }
@@ -1151,7 +1163,6 @@ const Fees = ({
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
-
   /**
    * @constant countryConfigData
    * @description this constant stores the country config data based on the organization
@@ -1162,13 +1173,20 @@ const Fees = ({
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-  
+
   //If custom fee is enabled Need to show custom label.
-  if(feeLevelSettingsData?.is_custom_fee==true){
+  if (feeLevelSettingsData?.is_custom_fee == true) {
     return (
       <div className="w-[291px]">
-        <abbr title={translatedText(feeLevelSettingsData?.custom_fee_label as Object)} className="no-underline">
-          <CardLabel className="truncate">{translatedText(feeLevelSettingsData?.custom_fee_label as Object)}</CardLabel>
+        <abbr
+          title={translatedText(
+            feeLevelSettingsData?.custom_fee_label as Object
+          )}
+          className="no-underline"
+        >
+          <CardLabel className="truncate">
+            {translatedText(feeLevelSettingsData?.custom_fee_label as Object)}
+          </CardLabel>
         </abbr>
         <abbr
           title={JSON.stringify(feeLevelSettingsData?.total)}
@@ -1180,10 +1198,10 @@ const Fees = ({
           </CardValue>
         </abbr>
       </div>
-    ); 
+    );
   }
 
-   /**
+  /**
    * @constant feeLevelData
    * REQUIRMENT we need to show the both fee level type and total of the fee level
    * we have the fee_level_id and we need the fee level type
@@ -1191,7 +1209,7 @@ const Fees = ({
    * @description this data const is used to store the fee level type data with respective to the fee level type id
    *
    */
-   const { data: feeLevelData } = useOne({
+  const { data: feeLevelData } = useOne({
     resource: "option_values",
     id: feeLevelSettingsData?.fee_level_id as number,
   });
@@ -1213,7 +1231,7 @@ const Fees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {(feeLevelSettingsData?.total)}
+          {feeLevelSettingsData?.total}
         </CardValue>
       </abbr>
     </div>
@@ -1231,7 +1249,6 @@ const EarlyBirdFees = ({
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
-
   /**
    * @constant countryConfigData
    * @description this constant stores the country config data based on the organization
@@ -1244,35 +1261,36 @@ const EarlyBirdFees = ({
     resource: "country_config",
   });
 
-
   //If custom fee is enabled Need to show custom label.
-  if(feeLevelSettingsData?.is_custom_fee==true){
+  if (feeLevelSettingsData?.is_custom_fee == true) {
     return (
       <div className="w-[291px]">
-      {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
-      <abbr
-        title={`Early Bird ${translatedText(feeLevelSettingsData?.custom_fee_label as object)}`}
-        className="no-underline"
-      >
-        <CardLabel className="truncate">
-          Early Bird {translatedText(feeLevelSettingsData?.custom_fee_label as object)}
-        </CardLabel>
-      </abbr>
-      <abbr
-        title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
-        className="no-underline"
-      >
-        <CardValue className="truncate">
-          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {feeLevelSettingsData?.early_bird_total}
-        </CardValue>
-      </abbr>
-    </div>
-    ); 
+        {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
+        <abbr
+          title={`Early Bird ${translatedText(
+            feeLevelSettingsData?.custom_fee_label as object
+          )}`}
+          className="no-underline"
+        >
+          <CardLabel className="truncate">
+            Early Bird{" "}
+            {translatedText(feeLevelSettingsData?.custom_fee_label as object)}
+          </CardLabel>
+        </abbr>
+        <abbr
+          title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
+          className="no-underline"
+        >
+          <CardValue className="truncate">
+            {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+            {feeLevelSettingsData?.early_bird_total}
+          </CardValue>
+        </abbr>
+      </div>
+    );
   }
 
-
-   /**
+  /**
    * @constant feeLevelData
    * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
    * we have the fee_level_id and we need the fee level type
@@ -1280,7 +1298,7 @@ const EarlyBirdFees = ({
    * @description this data const is used to store the fee level type data with respective to the fee level type id
    *
    */
-   const { data: feeLevelData } = useOne({
+  const { data: feeLevelData } = useOne({
     resource: "option_values",
     id: feeLevelSettingsData?.fee_level_id as number,
   });
@@ -1304,7 +1322,7 @@ const EarlyBirdFees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {(feeLevelSettingsData?.early_bird_total)}
+          {feeLevelSettingsData?.early_bird_total}
         </CardValue>
       </abbr>
     </div>
@@ -1357,12 +1375,18 @@ export const EditCourseSuccessfullyInfo = ({
           <div className="w-full flex justify-center items-center gap-5">
             <Button
               type="button"
-              className={`${onButtonLoading ? 'bg-[#fff] border-[1px] rounded-[12px] border-solid border-[#7677F4] w-[210px] h-[46px]' : 'bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]'}`}
+              className={`${
+                onButtonLoading
+                  ? "bg-[#fff] border-[1px] rounded-[12px] border-solid border-[#7677F4] w-[210px] h-[46px]"
+                  : "bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
+              }`}
               onClick={handleClick}
             >
-              {onButtonLoading ? 
-              <div className="loader !w-[30px]"></div>
-               : t("go_to_course_details")}
+              {onButtonLoading ? (
+                <div className="loader !w-[30px]"></div>
+              ) : (
+                t("go_to_course_details")
+              )}
             </Button>
           </div>
         </AlertDialogFooter>
