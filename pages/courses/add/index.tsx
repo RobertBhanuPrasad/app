@@ -203,6 +203,7 @@ function NewCourse() {
         loggedUserData,
         ...newCourseData?.organizer_ids,
       ]);
+      defaultValues.program_fee_level_settings = undefined
     }
   } else {
     defaultValues[NewCourseStep2FormNames?.visibility_id] = publicVisibilityId;
