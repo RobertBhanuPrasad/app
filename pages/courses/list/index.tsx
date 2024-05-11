@@ -295,20 +295,43 @@ function index() {
   /**
    * The variable holds whether all rows are selected or not
    */
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>();
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!programData?.data?.data) return;
     const allRowSelection: any = {};
-    programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    if (allSelected) {
+      programData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, programData?.data?.data]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   * Here whenever we select or deselect all rows need to be selected or deselected
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    programData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   * here whenever the row is changed
+   */
+  const rowSelectionOnChange = (row: any) => {
+    const selectedRows = row();
+    setRowSelection(row);
+    if (Object.values(selectedRows).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   /**
@@ -484,7 +507,7 @@ function index() {
           <BaseTable
             current={current}
             rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
+            setRowSelection={rowSelectionOnChange}
             checkboxSelection={true}
             setCurrent={setCurrent}
             pageCount={pageCount}
