@@ -445,6 +445,8 @@ function index() {
     (value) => value === true
   ).length;
 
+  console.log("heyy row count", rowCount);
+
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
@@ -536,7 +538,7 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
-                disabled={!allSelected}
+                disabled={!allSelected || rowCount <= 0}
               >
                 {t("course.find_course:export")}{" "}
                 <ChevronDownIcon className="w-5 h-5" />
