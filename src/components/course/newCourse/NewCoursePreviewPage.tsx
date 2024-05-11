@@ -142,12 +142,12 @@ export default function NewCourseReviewPage() {
       : newCourseData?.newVenue?.postal_code;
 
   const VenueData = [
-    VenueName,
-    VenueAddress,
-    CityNames,
-    StateNames,
-    VenuePostalCode,
-  ].join(", ");
+    VenueName?`${VenueName},`:``,
+    VenueAddress?`${VenueAddress},`:``,
+    `${CityNames},`,
+    `${StateNames}`,
+    VenuePostalCode?`,${VenuePostalCode}`:``,
+  ]
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
