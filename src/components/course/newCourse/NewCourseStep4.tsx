@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "src/ui/checkbox";
 import { supabaseClient } from "src/utility";
 import { useGetIdentity, useList, useOne } from "@refinedev/core";
-import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { NATIONAL_ADMIN, REGULAR, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import {
   useController,
   useFieldArray,
@@ -23,6 +23,8 @@ import { translatedText } from "src/common/translations";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import { DateField } from "src/ui/DateField";
 import { Text } from "src/ui/TextTags";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { FEE_LEVEL } from "src/constants/OptionLabels";
 
 // Define CourseTable component
 
@@ -304,7 +306,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
         const normalFee = total - total * taxRate;
 
-        return <div className="">{normalFee}</div>;
+        return <div className="">{normalFee?.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -321,7 +323,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         });
 
         const tax = total * taxRate;
-        return <div className="">{tax}</div>;
+        return <div className="">{tax?.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -410,7 +412,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         //Requirement: Early Bird Sub Total is (Early Bird Total - Tax )
         const earlyBirdSubTotal = earlyBirdTotal - earlyBirdTotal * taxRate;
 
-        return <div className="">{earlyBirdSubTotal}</div>;
+        return <div className="">{earlyBirdSubTotal?.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -428,7 +430,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         });
 
         const tax = earlyBirdTotal * taxRate;
-        return <div className="">{tax}</div>;
+        return <div className="">{tax?.toFixed(2)}</div>;
       },
       enableSorting: false,
       enableHiding: false,
@@ -499,6 +501,14 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             name: `program_fee_level_settings[${row?.index}][is_enable]`,
           });
 
+          /**
+           * @constant regularFeeLevelId
+           * REQUIRMENT we need to disable the check box of regular fee type
+           * @description this constant stores the regular fee level id using the getOptionValueObjectByOptionOrder function
+           */
+          const regularFeeLevelId = getOptionValueObjectByOptionOrder(FEE_LEVEL,REGULAR)?.id
+
+
           return (
             <Checkbox
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
@@ -509,6 +519,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
                 onChange(!value);
               }}
               value={value}
+              // REQUIRMENT we need to disable the checkbox when the fee level id regular
+              disabled={row?.original.feeLevelId == regularFeeLevelId ? true : false}
             />
           );
         },
