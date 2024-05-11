@@ -318,6 +318,7 @@ function index() {
     programData?.data?.data?.forEach((row: any) => {
       allRowSelection[row?.id] = val;
     });
+
     setRowSelection(allRowSelection);
 
     setAllSelected(val);
@@ -327,8 +328,11 @@ function index() {
    * here whenever the row is changed we check whether we uncheck the row then select all should be unchecked
    */
   const rowSelectionOnChange = (row: any) => {
+
     const selectedRows = row();
+
     setRowSelection(row);
+
     if (Object.values(selectedRows).length === 0) {
       setAllSelected(false);
     }
@@ -468,7 +472,6 @@ function index() {
     (value) => value === true
   ).length;
 
-  console.log("heyy row count", rowCount);
 
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
