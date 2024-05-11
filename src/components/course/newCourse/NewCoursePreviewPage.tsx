@@ -861,6 +861,7 @@ export default function NewCourseReviewPage() {
                     : "-"}
                 </abbr>
               </div>
+              {timeZone?.data?.name && (
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   {t("course.new_course:review_post_details.time_zone")}
@@ -872,6 +873,7 @@ export default function NewCourseReviewPage() {
                   {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
                 </abbr>
               </div>
+              )}
               <div>{venueSessions()}</div>
             </div>
           )}
