@@ -713,7 +713,7 @@ export default function NewCourseReviewPage() {
               </div>
             )}
             {/* // TODO need to do when the form filed is clear */}
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("course_description")}
               </p>
@@ -726,10 +726,10 @@ export default function NewCourseReviewPage() {
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
                 aut fugit, sed quia consequuntur ma
               </abbr>
-            </div>
+            </div> */}
             {/* // TODO need to do when the form filed is clear */}
 
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("course_notes")}
               </p>
@@ -742,10 +742,10 @@ export default function NewCourseReviewPage() {
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
                 aut fugit, sed quia consequuntur ma{" "}
               </abbr>
-            </div>
+            </div> */}
             {/* // TODO need to do when the form filed is clear */}
 
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("email_notes")}
               </p>
@@ -758,7 +758,7 @@ export default function NewCourseReviewPage() {
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
                 aut fugit, sed quia consequuntur ma{" "}
               </abbr>
-            </div>
+            </div> */}
           </div>
         </section>
         {/* Time and Venue */}
