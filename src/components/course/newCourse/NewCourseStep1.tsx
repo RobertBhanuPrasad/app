@@ -40,6 +40,7 @@ import { IsEditCourse } from "./EditCourseUtil";
 
 import { useTranslation } from "next-i18next";
 import { Text } from "src/ui/TextTags";
+import { useRouter } from "next/router";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -475,6 +476,8 @@ const ProgramOrganizerDropDown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
+  const router = useRouter()
+
   const {
     field: { value, onChange },
     fieldState: { error: programOrganizerError },
@@ -550,7 +553,8 @@ const ProgramOrganizerDropDown = () => {
           //Here this if condition is says that 
           // "option === loginUserData?.userData?.id" this conditon is for if login user wants to creates a new course we disable the primary organizer  
           // "option === created_by_user_id" this conditon is for if any login user wants to edit course than also we are disabling the program orgnizer
-          if ((option === loginUserData?.userData?.id) || (option === created_by_user_id)) {
+          // If the course is copying then we need to disable the organizer who is logged in only
+          if ((option === loginUserData?.userData?.id) || (option === created_by_user_id && IsEditCourse(router?.pathname))) {
             return {
               disable: true,
             };
