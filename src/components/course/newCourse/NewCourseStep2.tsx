@@ -118,7 +118,7 @@ export default function NewCourseStep2() {
           </div>
         )}
       </div>
-
+      
       {/* TODO  : for now may-13 release it has to be hidden */}
       {/* <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
@@ -588,9 +588,9 @@ const TeachersDropDown = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-xs font-normal text-[#333333] flex flex-row">
-        {t("new_strings:teacher")}
-        <div className="text-[#7677F4]">*</div>
+      <div className="text-xs font-normal text-[#333333]">
+        {t("teacher")}
+        <span className="text-[#7677F4]"> *</span>
       </div>
       {/* 
         // Here i have to show teachers based on program created user 
@@ -745,12 +745,6 @@ const Visibility = () => {
     name: NewCourseStep2FormNames?.visibility_id,
   });
 
-  const { watch } = useFormContext();
-
-  const formData = watch();
-
-  console.log("heyy form data", formData?.visibility_id,);
-
   //Finding program Organizer role id
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
     VISIBILITY,
@@ -761,9 +755,6 @@ const Visibility = () => {
     VISIBILITY,
     PRIVATE
   )?.id;
-
-  console.log("heyy visibility", publicVisibilityId, privateVisibilityId);
-
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
     <div className="flex gap-1 flex-col">
@@ -850,7 +841,7 @@ const DisplayLanguage = () => {
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label={t("no_button")}
+            label={t("no")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
         </div>
@@ -900,7 +891,7 @@ const GeoRestriction = () => {
           <RadioButtonCard
             value="false"
             selectedRadioValue={JSON.stringify(value)}
-            label={t("no_button")}
+            label={t("no")}
             className="w-[112px] !h-[40px] rounded-[12px]"
           />
         </div>
