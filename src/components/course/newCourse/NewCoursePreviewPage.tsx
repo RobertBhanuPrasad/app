@@ -142,13 +142,6 @@ export default function NewCourseReviewPage() {
       : newCourseData?.newVenue?.postal_code;
 
   let VenueData:any =[]
-  // [
-  //   VenueName?`${VenueName}, `:``,
-  //   VenueAddress?`${VenueAddress}, `:``,
-  //   `${CityNames}, `,
-  //   `${StateNames}`,
-  //   VenuePostalCode?`, ${VenuePostalCode}`:``,
-  // ]
 
   if(VenueName){
     VenueData.push(VenueName)
