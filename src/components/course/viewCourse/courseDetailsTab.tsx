@@ -442,7 +442,7 @@ function CourseDetailsTab() {
                         </div>
                         <div>
                           <Header2>{t('course.view_course:basic_details_tab.contact_phone')}</Header2>
-                          <ItemValue>{item.contact_number ? item.contact_number : "_"}</ItemValue>
+                          <ItemValue>{item.contact_number ? item.contact_number : "-"}</ItemValue>
                         </div>
                       </div>
                     );
