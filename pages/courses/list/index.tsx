@@ -295,43 +295,20 @@ function index() {
   /**
    * The variable holds whether all rows are selected or not
    */
-  const [allSelected, setAllSelected] = useState<boolean>();
+  const [allSelected, setAllSelected] = useState();
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!programData?.data?.data) return;
     const allRowSelection: any = {};
-    if (allSelected) {
-      programData?.data?.data?.forEach((row: any) => {
-        allRowSelection[row?.id] = allSelected;
-      });
-      setRowSelection(allRowSelection);
-    }
-  }, [allSelected, programData?.data?.data]);
-
-  /**
-   * Here whenever we select or deselect all rows need to be selected or deselected
-   */
-  const handleSelectAll = (val: boolean) => {
-    const allRowSelection: any = {};
-
     programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = val;
+      allRowSelection[row?.id] = allSelected;
     });
     setRowSelection(allRowSelection);
+  }, [allSelected, programData?.data?.data]);
 
+  const handleSelectAll = (val: any) => {
     setAllSelected(val);
-  };
-
-  /**
-   * here whenever the row is changed we check whether we uncheck the row then select all should be unchecked
-   */
-  const rowSelectionOnChange = (row: any) => {
-    const selectedRows = row();
-    setRowSelection(row);
-    if (Object.values(selectedRows).length === 0) {
-      setAllSelected(false);
-    }
   };
 
   /**
@@ -468,8 +445,6 @@ function index() {
     (value) => value === true
   ).length;
 
-  console.log("heyy row count", rowCount);
-
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
@@ -492,6 +467,7 @@ function index() {
     "course.find_course",
     "new_strings",
     "course.view_course",
+    "course.participants",
   ]);
   return (
     <div className="flex flex-col justify-between relative">
@@ -503,33 +479,40 @@ function index() {
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-        <div className="w-full mb-[76px]">
-          <BaseTable
-            current={current}
-            rowSelection={rowSelection}
-            setRowSelection={rowSelectionOnChange}
-            checkboxSelection={true}
-            setCurrent={setCurrent}
-            pageCount={pageCount}
-            total={FilterProgramData?.data?.total || 0}
-            pageSize={pageSize}
-            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
-            setPageSize={(number) => {
-              setPageSize(number);
-              displayDataSetPageSize(number);
-            }}
-            pagination={true}
-            tableStyles={{
-              table: "",
-              rowStyles: "!important border-none",
-            }}
-            noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
-            columns={column(hasAliasNameFalse(data), t)}
-            data={programData?.data?.data || []}
-            columnPinning={true}
-            columnSelector={true}
-          />
-        </div>
+
+        {programData?.isLoading ? (
+          <section className="flex justify-center align-center pt-[10%]">
+            <div className="loader"></div>
+          </section>
+        ) : (
+          <div className="w-full mb-[76px]">
+            <BaseTable
+              current={current}
+              rowSelection={rowSelection}
+              setRowSelection={setRowSelection}
+              checkboxSelection={true}
+              setCurrent={setCurrent}
+              pageCount={pageCount}
+              total={FilterProgramData?.data?.total || 0}
+              pageSize={pageSize}
+              //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+              setPageSize={(number) => {
+                setPageSize(number);
+                displayDataSetPageSize(number);
+              }}
+              pagination={true}
+              tableStyles={{
+                table: "",
+                rowStyles: "!important border-none",
+              }}
+              noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
+              columns={column(hasAliasNameFalse(data), t)}
+              data={programData?.data?.data || []}
+              columnPinning={true}
+              columnSelector={true}
+            />
+          </div>
+        )}
       </div>
       <div className="bottom-0 fixed flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
@@ -561,7 +544,7 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
-                disabled={!allSelected || rowCount <= 0}
+                disabled={!allSelected}
               >
                 {t("course.find_course:export")}{" "}
                 <ChevronDownIcon className="w-5 h-5" />
@@ -763,7 +746,12 @@ export const BasicFilters: React.FC<{
     setValue("advanceFilter", "");
     setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
-  const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
+  const { t } = useTranslation([
+    "common",
+    "course.find_course",
+    "new_strings",
+    "course.participants",
+  ]);
   return (
     <div className="flex gap-x-[2%] flex-row items-center justify-between">
       <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
@@ -915,6 +903,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "course.view_course",
     "new_strings",
     "course.find_course",
+    "course.participants",
   ]);
   if (!authenticated) {
     return {
