@@ -767,19 +767,6 @@ const Visibility = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px]">
-              <div className="flex flex-row gap-1 items-center">
-                <Globe />
-                {t("public")}
-              </div>
-              <div>{t("new_strings:there_are_a_lot_of_things")}</div>
-              <div className="my-2">
-                <hr></hr>
-              </div>
-              <div className="flex flex-row gap-1 items-center">
-                <LockIcon />
-                {t("private")}
-              </div>
-              <div>{t("new_strings:there_are_a_lot_of_things")}</div>
               {t("new_strings:program_visibility_info_icon_text")}
             </div>
           </HoverCardContent>
