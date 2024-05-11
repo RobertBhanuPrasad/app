@@ -306,11 +306,16 @@ function index() {
   useEffect(() => {
     if (!programData?.data?.data) return;
     const allRowSelection: any = {};
-    programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      programData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, programData?.data?.data]);
+
+
 
   /**
    *Here whenever i check select all then i need to check and unchekc all row selection also
