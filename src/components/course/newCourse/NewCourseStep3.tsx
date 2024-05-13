@@ -127,7 +127,7 @@ const OnlineProgram = () => {
   return (
     <div className="">
       <div>
-        <div className="flex flex-row gap-1 items-center">
+        <div className="flex flex-row gap-1 items-center mt-3">
           {t("course.new_course:time_and_venue_tab.online_meeting_url")}{" "}
           <div className="text-[#7677F4]"> *</div>
           <HoverCard>
@@ -135,7 +135,7 @@ const OnlineProgram = () => {
               <Important />
             </HoverCardTrigger>
             <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px]">
+              <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                 {t("new_strings:online_course_hovered_text")}
               </div>
             </HoverCardContent>
