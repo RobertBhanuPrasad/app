@@ -220,8 +220,8 @@ function ViewDetails() {
           <div className="text-[32px] font-semibold">
             {courseData?.data?.id
               ? courseData?.data?.program_alias_name_id
-                ? translatedText(courseData?.data?.program_alias_name_id?.alias_name) + ' ' + courseData?.data?.id
-                : translatedText(courseData?.data?.program_type_id?.name) + ' ' + courseData?.data?.id
+                ? courseData?.data?.id + ' ' + translatedText(courseData?.data?.program_alias_name_id?.alias_name)
+                : courseData?.data?.id + ' ' + translatedText(courseData?.data?.program_type_id?.name)
               : ' '}
           </div>
           <div className="flex items-center gap-4">
