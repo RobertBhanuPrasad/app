@@ -110,10 +110,9 @@ function index() {
                 0,
                 0
               )
-            ).getTime() +
+            )?.getTime() +
               24 * 60 * 60 * 1000
-          )
-            .toISOString()
+          )?.toISOString()
             .replace("T", " ")
             .slice(0, -5) + "+00",
       },
@@ -130,7 +129,7 @@ function index() {
                 0,
                 0
               )
-            ).getTime() +
+            )?.getTime() +
               24 * 60 * 60 * 1000
           )
             ?.toISOString()
