@@ -12,18 +12,19 @@ import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useList, useSelect, useTable } from "@refinedev/core";
 import { format } from "date-fns";
-import { useTranslation } from "next-i18next";
-import { authProvider } from "src/authProvider";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { authProvider } from "src/authProvider";
+import { translatedText } from "src/common/translations";
 import { column } from "src/components/course/findCourse/Columns";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { Dialog, DialogContent } from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,8 +41,8 @@ import {
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { translatedText } from "src/common/translations";
 
 function index() {
   interface ExcelColumn {
@@ -50,6 +51,8 @@ function index() {
   }
 
   const { viewPreviewPage, AllFilterData } = newCourseStore();
+
+  const languageCode = useGetLanguageCode();
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -245,7 +248,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
     sorters: {
@@ -295,26 +298,54 @@ function index() {
   /**
    * The variable holds whether all rows are selected or not
    */
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>(false);
+
+  const [loading, setIsLoading] = useState(false);
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!programData?.data?.data) return;
     const allRowSelection: any = {};
-    programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      programData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, programData?.data?.data]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   *Here whenever i check select all then i need to check and unchekc all row selection also
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    programData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
+   */
+  const rowSelectionOnChange = (row: any) => {
+    const selectedRow = row();
+    setRowSelection(row);
+    if (Object.values(selectedRow).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   /**
    * This function is to handle export excel
    */
-  const handleExportExcel = async () => {
+
+  const handleExportExcel = async (selectOption: string) => {
+    setIsLoading(true);
     try {
       /**
        * This holds the column_name and path of all columns of table
@@ -326,19 +357,15 @@ function index() {
         },
         {
           column_name: t("new_strings:course_type_name"),
-          path: ["program_types", "name"],
-        },
-        {
-          column_name: t("new_strings:course_name"),
-          path: ["program_type_alias_names", "alias_name"],
+          path: ["program_types", "name", languageCode],
         },
         {
           column_name: t("course.find_course:course_status"),
-          path: ["status_id", "name"],
+          path: ["status_id", "name", languageCode],
         },
         {
           column_name: t("course.find_course:start_date"),
-          path: ["program_schedules", "start_time"],
+          path: ["start_date"],
         },
         {
           column_name: t("course.find_course:state"),
@@ -353,16 +380,28 @@ function index() {
           path: ["center", "name"],
         },
         {
+          column_name: t("course.find_course:teacher(s)"),
+          path: ["program_teachers", "users", "contact_id", "full_name"],
+        },
+        {
+          column_name: t("program_organizer"),
+          path: ["program_organizers", "users", "contact_id", "full_name"],
+        },
+        {
           column_name: t("course.find_course:attendees"),
-          path: ["participant_registration", "length"],
+          path: ["participant_count"],
         },
         {
           column_name: t("new_strings:visibility"),
-          path: ["visibility_id", "name"],
+          path: ["visibility_id", "name", languageCode],
         },
+        // {
+        //   column_name: t("course_accounting_status"),
+        //   path: ["program_accounting_status_id", "name"],
+        // },
         {
-          column_name: t("course_accounting_status"),
-          path: ["program_accounting_status_id", "name"],
+          column_name: t("new_strings:revenue"),
+          path: ["revenue"],
         },
       ];
 
@@ -372,15 +411,20 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+          "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
+        filters: JSON.stringify(filters?.permanent),
+        sorters: JSON.stringify([
+          { field: "created_at", order: { ascending: false } },
+        ]),
+        file_type: selectOption,
       });
 
       const supabase = supabaseClient();
 
       //invoking the export_to_file function
       const { data, error } = await supabase.functions.invoke(
-        ` export_to_file?${params}`,
+        `export_to_file?${params}`,
         {
           headers: {
             Authorization:
@@ -398,11 +442,15 @@ function index() {
         //getting file name from the url
         const fileUrl = data.fileUrl.data.publicUrl;
         const fileName = fileUrl.split("/").pop();
+        setIsLoading(false);
 
+        console.log("filename", fileName);
         // passing the file name to download
         const result = await supabase.storage
-          .from("export_to_excel")
+          .from("export_to_file")
           .download(fileName);
+
+        console.log("result is", result);
 
         if (result.error) {
           console.error("Error downloading file:", result.error);
@@ -444,6 +492,8 @@ function index() {
   const rowCount: number = Object.values(rowSelection).filter(
     (value) => value === true
   ).length;
+
+  console.log("heyy row count", allSelected === false);
 
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
@@ -489,7 +539,7 @@ function index() {
             <BaseTable
               current={current}
               rowSelection={rowSelection}
-              setRowSelection={setRowSelection}
+              setRowSelection={rowSelectionOnChange}
               checkboxSelection={true}
               setCurrent={setCurrent}
               pageCount={pageCount}
@@ -544,21 +594,32 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
-                disabled={!allSelected}
+                //if select all is false or row count less than equal to 0 then it should be true
+                disabled={allSelected === false || rowCount <= 0}
               >
-                {t("course.find_course:export")}{" "}
+                {loading ? (
+                  <div className="loader !w-[25px]"></div>
+                ) : (
+                  t("course.find_course:export")
+                )}
                 <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
               <DropdownMenuItem
-                onClick={handleExportExcel}
+                onClick={() => {
+                  handleExportExcel("excel");
+                }}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 {t("new_strings:excel")}
               </DropdownMenuItem>
-              {/*TODO  */}
-              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
+              <DropdownMenuItem
+                className="p-1  focus:outline-none cursor-pointer"
+                onClick={() => {
+                  handleExportExcel("CSV");
+                }}
+              >
                 {t("new_strings:csv")}
               </DropdownMenuItem>
             </DropdownMenuContent>

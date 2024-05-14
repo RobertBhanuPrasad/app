@@ -106,9 +106,7 @@ function NewCourseStep3() {
         {programTypeData?.data?.is_online_program === true ? (
           <OnlineProgram />
         ) : (
-          <div className="mb-8">
-            <Venue />
-          </div>
+          <Venue />
         )}
       </div>
       <Schedules />
@@ -127,7 +125,7 @@ const OnlineProgram = () => {
     name: NewCourseStep3FormNames?.online_url,
   });
   return (
-    <div className="h-[218px] flex flex-col gap-8">
+    <div className="">
       <div>
         <div className="flex flex-row gap-1 items-center">
           {t("course.new_course:time_and_venue_tab.online_meeting_url")}{" "}
@@ -147,7 +145,7 @@ const OnlineProgram = () => {
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}
-            className="rounded-[12px]"
+            className="rounded-[12px] placeholder:font-[600] placeholder:text-[#000000]"
             value={value}
             onChange={(event) => {
               onChange(event.target.value);
@@ -163,8 +161,10 @@ const OnlineProgram = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-2 flex-col w-[100%]">
-        <div>{t("course.new_course:time_and_venue_tab.specific_location")}</div>
+      <div className="mt-8">
+        <div>
+          {t("course.new_course:time_and_venue_tab.specific_location")}
+        </div>
         <div className="flex gap-7">
           <div className="w-[33%]">
             <StateDropDown name="state_id" />

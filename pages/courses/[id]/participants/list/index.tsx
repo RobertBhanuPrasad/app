@@ -41,6 +41,7 @@ import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
 import { useTranslation } from "next-i18next";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 function index() {
   const router = useRouter();
@@ -367,6 +368,7 @@ function index() {
   const [open, setOpen] = useState(false);
   const [disableBulkOptions, setEnableBulkOptions] = useState(true);
   const [bulkActions, setBulkAction] = useState("");
+  const [loading,setLoading] = useState(false)
   const attendanceOptions = getOptionValuesByOptionLabel(
     PARTICIPANT_ATTENDANCE_STATUS
   )?.[0]?.option_values;
@@ -464,6 +466,8 @@ function index() {
     }
   };
 
+  const languageCode = useGetLanguageCode()
+
   const bulk_actions=t('new_strings:bulk_actions')
   const [bulkActionSelectedValue, setBulkActionSelectedValue] = useState(bulk_actions);
   const excelColumns = [
@@ -497,7 +501,7 @@ function index() {
     },
     {
       column_name: t('course.participants:view_participant.fee_level'),
-      path: ["price_category_id", "fee_level_id", "value"],
+      path: ["price_category_id", "fee_level_id", "name", languageCode],
     },
     {
       column_name: t('course.participants:edit_participant.participants_information_tab.amount'),
@@ -505,7 +509,7 @@ function index() {
     },
     {
       column_name: t('course.participants:view_participant.transaction_type'),
-      path: ["participant_payment_history[0]", "transaction_type_id"],
+      path: ["participant_payment_history[0]", "transaction_type_id","name",languageCode],
     },
     {
       column_name: t('course.participants:edit_participant.participants_information_tab.transaction_id'),
@@ -513,15 +517,15 @@ function index() {
     },
     {
       column_name: t('course.participants:view_participant.payment_method'),
-      path: ["participant_payment_history[0]", "payment_method_id", "value"],
+      path: ["participant_payment_history[0]", "payment_method_id", "name",languageCode],
     },
     {
       column_name: t('course.participants:view_participant.transaction_status'),
-      path: ["payment_status_id", "value"],
+      path: ["payment_status_id", "name",languageCode],
     },
     {
       column_name: t('course.participants:view_participant.course_information_tab.attendance_status'),
-      path: ["participant_attendence_status_id", "value"],
+      path: ["participant_attendence_status_id", "name",languageCode],
     },
     {
       column_name: t('course.participants:find_participant.program_agreement_version'),
@@ -544,6 +548,9 @@ function index() {
       path: ["health_declaration_consent_date"],
     },
   ];
+
+  const excelOption = "excel"
+  const csvOption = "CSV"
 
 
   return (
@@ -738,19 +745,19 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
-                {t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
+                {loading ? <div className="loader !w-[25px]"></div> :t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
               <DropdownMenuItem
-                onClick={()=>{handleExportExcel(excelColumns)}}
+                onClick={()=>{handleExportExcel(excelColumns,filters,excelOption,setLoading)}}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 {t('new_strings:excel')}
               </DropdownMenuItem>
               {/*TODO  */}
-              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
-              {t('new_strings:csv')}
+              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=>{handleExportExcel(excelColumns,filters,csvOption,setLoading)}}>
+              {t("course.find_course:CSV")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -971,19 +978,23 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
   );
 };
 
-const handleExportExcel = async (excelColumns:any) => {
+const handleExportExcel = async (excelColumns:any,filters: any,selectOption: string,setLoading: (by:boolean) => void,) => {
+  setLoading(true)
   const supabase = supabaseClient();
   try {
     const params = new URLSearchParams({
       table_name: "participant_registration",
       select:
-        ", contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method))",
+      "*,payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
       columns: JSON.stringify(excelColumns),
+      filters: JSON.stringify(filters?.permanent),
+      sorters: JSON.stringify([ { "field": "id", "order": { "ascending": true } } ]),
+      file_type: selectOption
     });
 
     //invoking the export_to_file function
     const { data, error } = await supabase.functions.invoke(
-      ` export_to_file?${params}`,
+      `export_to_file?${params}`,
       {
         headers: {
           Authorization:
@@ -1004,8 +1015,9 @@ const handleExportExcel = async (excelColumns:any) => {
 
       // passing the file name to download
       const result = await supabase.storage
-        .from("export_to_excel")
+        .from("export_to_file")
         .download(fileName);
+        setLoading(false)
 
       if (result.error) {
         console.error("Error downloading file:", result.error);

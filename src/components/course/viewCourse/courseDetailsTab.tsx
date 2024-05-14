@@ -434,7 +434,7 @@ function CourseDetailsTab() {
                       <div className="gap-[23px] flex flex-col">
                         <div>
                           <Header2>{t('contact_name')}</Header2>
-                          <ItemValue>{item.contact_name}</ItemValue>
+                          <ItemValue>{item.contact_name ? item.contact_name : "-"}</ItemValue>
                         </div>
                         <div>
                           <Header2>{t('contact_email')}</Header2>
@@ -442,7 +442,7 @@ function CourseDetailsTab() {
                         </div>
                         <div>
                           <Header2>{t('course.view_course:basic_details_tab.contact_phone')}</Header2>
-                          <ItemValue>{item.contact_number}</ItemValue>
+                          <ItemValue>{item.contact_number ? item.contact_number : "-"}</ItemValue>
                         </div>
                       </div>
                     );

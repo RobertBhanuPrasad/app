@@ -1,4 +1,4 @@
-import Bell from '@public/assets/Bell'
+// import Bell from '@public/assets/Bell'
 import LoadingIcon from '@public/assets/LoadingIcon'
 import Logo from '@public/assets/Logo'
 import LogoutIcon from '@public/assets/LogoutIcon'
@@ -156,7 +156,7 @@ function Navbar() {
       </div>
       {/* Bell and Avatar */}
       <div className="flex flex-row items-center gap-4 ">
-        <Bell />
+        {/* <Bell /> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">

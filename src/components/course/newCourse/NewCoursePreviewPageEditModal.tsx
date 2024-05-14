@@ -44,7 +44,7 @@ interface EditModalDialogProps {
   onOpenChange: any;
   currentStep: any;
 }
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 
 export const EditModalDialog = ({
   title,
@@ -55,56 +55,7 @@ export const EditModalDialog = ({
   onOpenChange,
   currentStep,
 }: EditModalDialogProps) => {
-  const {t} = useTranslation(['common'])
-  const { newCourseData, setNewCourseData } = newCourseStore();
-
-  /**
-   * ButtonsDialog Component
-   *
-   * This component renders the buttons within the dialog, including 'Save' and 'Cancel'.
-   * 'Save' button updates the course data with the new values and closes the dialog.
-   * 'Cancel' button closes the dialog without saving changes.
-   *
-   * @returns {JSX.Element} - ButtonsDialog component
-   */
-
-  const ButtonsDialog = () => {
-    const { getValues } = useFormContext();
-    const formData = getValues();
-
-    let validationFieldsStepWise = requiredValidationFields(formData);
-
-    let isAllFieldsFilled = false;
-
-    const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
-    const onSubmit = async () => {
-      // Update newCourseData with new form data
-      setNewCourseData({ ...newCourseData, ...formData });
-
-      isAllFieldsFilled = await ValidateCurrentStepFields(
-        validationFieldsStepWise[currentStep - 1]
-      );
-
-      // Close the dialog
-      if (isAllFieldsFilled) {
-        onClose();
-      }
-    };
-
-    return (
-      <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
-        <Button
-          onClick={onClose}
-          className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
-        >
-          {t("cancel_button")}
-        </Button>
-        <Button className="w-[100px]" onClick={onSubmit}>
-          {t("save_button")}
-        </Button>
-      </DialogFooter>
-    );
-  };
+  const { newCourseData } = newCourseStore();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -115,7 +66,7 @@ export const EditModalDialog = ({
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="w-auto min-w-[800px] max-h-[500px] overflow-y-scroll">
+      <DialogContent className="min-w-[90vw] w-auto max-h-[500px] overflow-y-scroll">
         <Form
           defaultValues={newCourseData}
           onSubmit={function (data: any): void {
@@ -124,9 +75,59 @@ export const EditModalDialog = ({
           schema={validationSchema()}
         >
           {content}
-          <ButtonsDialog />
+          {/* From now we can call this a new component instead of keeping it inside the form to avoid rerendering */}
+          <ButtonsDialog onClose={onClose} currentStep={currentStep} />
         </Form>
       </DialogContent>
     </Dialog>
+  );
+};
+
+/**
+ * ButtonsDialog Component
+ *
+ * This component renders the buttons within the dialog, including 'Save' and 'Cancel'.
+ * 'Save' button updates the course data with the new values and closes the dialog.
+ * 'Cancel' button closes the dialog without saving changes.
+ *
+ * @returns {JSX.Element} - ButtonsDialog component
+ */
+const ButtonsDialog = ({ onClose, currentStep }: any) => {
+  const { getValues } = useFormContext();
+  const formData = getValues();
+  const { t } = useTranslation(["common"]);
+  const { newCourseData, setNewCourseData } = newCourseStore();
+
+  let validationFieldsStepWise = requiredValidationFields(formData);
+
+  let isAllFieldsFilled = false;
+
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+  const onSubmit = async () => {
+    // Update newCourseData with new form data
+    setNewCourseData({ ...newCourseData, ...formData });
+
+    isAllFieldsFilled = await ValidateCurrentStepFields(
+      validationFieldsStepWise[currentStep - 1]
+    );
+
+    // Close the dialog
+    if (isAllFieldsFilled) {
+      onClose();
+    }
+  };
+
+  return (
+    <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
+      <Button
+        onClick={onClose}
+        className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+      >
+        {t("cancel_button")}
+      </Button>
+      <Button className="w-[100px]" onClick={onSubmit}>
+        {t("save_button")}
+      </Button>
+    </DialogFooter>
   );
 };
