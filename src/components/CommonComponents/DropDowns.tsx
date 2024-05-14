@@ -41,7 +41,6 @@ export const VenueNameComponent = () => {
           placeholder={t(
             "course.new_course:time_and_venue_tab.venue_name_placeholder"
           )}
-          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={venueOnchange}
           error={venueError ? true : false}
         />
@@ -93,7 +92,6 @@ export const PostalCodeComponent = () => {
           placeholder={t(
             "course.new_course:time_and_venue_tab.postal_code_placeholder"
           )}
-          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={postalCodeOnchange}
           error={error ? true : false}
         />
@@ -124,7 +122,6 @@ export const StreetAddressComponent = () => {
           placeholder={t(
             "course.new_course:time_and_venue_tab.street_address_placeholder"
           )}
-          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={streetAddressOnchange}
           error={error ? true : false}
         />
@@ -224,7 +221,11 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const { t } = useTranslation(["common", "course.new_course","course.find_course"]);
+  const { t } = useTranslation([
+    "common",
+    "course.new_course",
+    "course.find_course",
+  ]);
   const [pageSize, setPageSize] = useState(10);
 
   const [selectOptions, setSelectOptions] = useState<any>([]);

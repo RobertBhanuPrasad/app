@@ -1137,7 +1137,7 @@ const MaximumCapacity = () => {
         onChange={(val) => {
           onChange(val);
         }}
-        className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
+        className="rounded-[12px] text-[14px]"
         error={error ? true : false}
       />
       {error && (
