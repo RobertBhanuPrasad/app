@@ -141,13 +141,26 @@ export default function NewCourseReviewPage() {
       ? newCourseData?.existingVenue?.postal_code
       : newCourseData?.newVenue?.postal_code;
 
-  const VenueData = [
-    VenueName,
-    VenueAddress,
-    CityNames,
-    StateNames,
-    VenuePostalCode,
-  ].join(", ");
+
+  let VenueData:any =[]
+
+  if(VenueName){
+    VenueData.push(VenueName)
+  }
+  if(VenueAddress){
+    VenueData.push(VenueAddress)
+  }
+  if(CityNames){
+    VenueData.push(CityNames)
+  }
+  if(StateNames){
+    VenueData.push(StateNames)
+  }
+  if(VenuePostalCode){
+    VenueData.push(VenuePostalCode)
+  }
+
+  VenueData= VenueData.join(", ")
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
