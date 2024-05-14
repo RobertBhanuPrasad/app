@@ -100,8 +100,6 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
-import { getCountryCodeFromLocale } from "src/utility/useGetCountryCode";
-import countryCodes from "src/data/CountryCodes";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
