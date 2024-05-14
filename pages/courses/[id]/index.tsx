@@ -129,7 +129,7 @@ function ViewDetails() {
     id: Id,
     meta: {
       select:
-        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))",
+        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name,country_id(name))),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))",
     },
   });
 
@@ -145,10 +145,7 @@ function ViewDetails() {
     ]?.end_time
   );
   const { locale }:any = useRouter(); 
-  let countryName = getCountryCodeFromLocale(locale).toUpperCase();
-  if (countryName in countryCodes) {
-    countryName = countryCodes[countryName];
-  }
+  let countryName = `${courseData?.data?.venue_id?.state_id?.country_id?.name}`;
   const { t } = useTranslation([
     "course.view_course",
     "new_strings",
