@@ -127,7 +127,7 @@ function ViewDetails() {
     id: Id,
     meta: {
       select:
-        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name,country_id(name))),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))",
+        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required,is_online_program),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name,country_id(name))),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))",
     },
   });
 
@@ -244,6 +244,7 @@ function ViewDetails() {
     PENDING_REVIEW
   )?.id;
 
+console.log(courseData,"courseData");
 
   return (
     <div className="flex flex-col">
@@ -319,7 +320,8 @@ function ViewDetails() {
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
           <LocationIcon />
-          {courseData?.data?.venue_id ? (   
+          {/* If program is offline need to show location details (address) */}
+          {courseData?.data?.program_type_id?.is_online_program==false ? (   
           <>
         {courseData.data.venue_id.address && `${courseData.data.venue_id.address}, `}
         {courseData.data.venue_id.city_id && `${courseData.data.venue_id.city_id.name}, `}
@@ -328,6 +330,7 @@ function ViewDetails() {
         {courseData.data.venue_id.postal_code && `, ${courseData.data.venue_id.postal_code}`}
         </>
         ) : (
+          //If Program is online need to show online. On clicking it navigate to respective URL
         <a href= {courseData?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target="_blank">{t("new_strings:online")}</a>
         )}
         </div>
