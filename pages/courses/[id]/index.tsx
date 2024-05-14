@@ -274,10 +274,10 @@ function ViewDetails() {
                 <ParticipantsIcon />
               </div>
               <Text
-                onClick={() => router.push(`/courses/${Id}/participants/list`)}
-                className="cursor-pointer text-[#7677F4] font-semibold"
-              >
-                {courseData?.data?.participant_count}
+                  onClick={courseData?.data?.participant_count !== 0 ? () => router.push(`/courses/${Id}/participants/list`) : undefined}
+                  className={`text-[#7677F4] font-semibold ${courseData?.data?.participant_count === 0 ? '' : 'cursor-pointer'}`}
+                >
+                  {courseData?.data?.participant_count}
               </Text>
               <HoverCard>
                 <HoverCardTrigger>
