@@ -948,7 +948,17 @@ const CalenderComponent = ({ index, setOpen }: any) => {
    */
   let cityId: number = 0;
 
-  if (formData?.is_online_program) {
+  /**
+   * Getting settings Program type databased on program type id form form 
+   */
+  const { data: programTypeData } = useOne({
+    resource: "program_types",
+    id: formData?.program_type_id,
+  });
+
+
+  //we need to check whether it is online program or not and the we need to assign state , city ids
+  if (programTypeData?.data?.is_online_program) {
     stateId = formData?.state_id;
     cityId = formData?.city_id;
   } else {
@@ -1005,7 +1015,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         value: stateId,
       });
     }
-    if (settingsData?.data[0]?.is_venue_enabled) {
+    if (settingsData?.data[0]?.Is_venue_enabled && formData?.venue_id) {
       filter.push({
         field: "program_id.venue_id",
         operator: "eq",
