@@ -115,7 +115,7 @@ export const EditModalDialog = ({
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="w-auto max-h-[500px] overflow-y-scroll">
+      <DialogContent className="w-auto min-w-[800px] max-h-[500px] overflow-y-scroll">
         <Form
           defaultValues={newCourseData}
           onSubmit={function (data: any): void {

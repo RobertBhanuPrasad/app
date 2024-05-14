@@ -260,7 +260,7 @@ const RadioCards = () => {
             }`}
           >
             <Card
-              className={` p-2 w-80 h-[106px] flex flex-row ${
+              className={` p-2 w-72 h-[106px] flex flex-row ${
                 value === iAmTeachingId
                   ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
                   : ""
@@ -295,7 +295,7 @@ const RadioCards = () => {
             } `}
           >
             <Card
-              className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
+              className={` p-2 gap-2 w-72 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
                   ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                   : ""
@@ -328,7 +328,7 @@ const RadioCards = () => {
           }`}
         >
           <Card
-            className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
+            className={`p-2 gap-2 w-72 h-[106px] flex flex-row ${
               value === iAmOrganizerId
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                 : ""

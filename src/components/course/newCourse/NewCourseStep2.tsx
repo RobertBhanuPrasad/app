@@ -62,7 +62,7 @@ export default function NewCourseStep2() {
   );
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
-    <div className="pt-2 w-auto ">
+    <div className="pt-2 w-auto overflow-y-hidden">
       <div className="flex flex-wrap gap-x-7 gap-y-3">
         <div className="w-80 h-20">
           <CourseTypeDropDown />
