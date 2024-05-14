@@ -5,6 +5,19 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "src/lib/utils";
+/**
+ * Select Context interface
+ */
+interface ISelectContext {
+  /**
+   * value of a select component
+   * undefined | null | or empty string means the user has not selected any value
+   * any other than above value means it has value
+   */
+  value?: string | undefined | null | object;
+}
+
+const SelectContext = React.createContext({});
 
 /**
  * Select is a wrapper component around the `@radix-ui/react-select` package.
@@ -47,18 +60,20 @@ const Select: React.FC<SelectProps> = ({
       : defaultValue;
 
   return (
-    <SelectPrimitive.Root
-      // Set the internal value of the select component.
-      value={value as string}
-      defaultValue={defaultValue as string}
-      // Handle the onValueChange event and convert the value back to its
-      // original type before passing it to the consumer.
-      onValueChange={(e) => onValueChange?.(JSON.parse(e))}
-      // Pass all other props to the underlying select component.
-      {...props}
-    >
-      {children}
-    </SelectPrimitive.Root>
+    <SelectContext.Provider value={{ value }}>
+      <SelectPrimitive.Root
+        // Set the internal value of the select component.
+        value={value as string}
+        defaultValue={defaultValue as string}
+        // Handle the onValueChange event and convert the value back to its
+        // original type before passing it to the consumer.
+        onValueChange={(e) => onValueChange?.(JSON.parse(e))}
+        // Pass all other props to the underlying select component.
+        {...props}
+      >
+        {children}
+      </SelectPrimitive.Root>
+    </SelectContext.Provider>
   );
 };
 
@@ -68,23 +83,34 @@ const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & { error?: boolean }
->(({ className, children, error, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "flex h-10 w-full items-center justify-between rounded-[12px] border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className,
-      `${error ? "!border-[#FF6D6D] " : ""}`
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild className="">
-      <ChevronDown className="h-5 w-5 text-black " />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-));
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
+    error?: boolean;
+  }
+>(({ className, children, error, ...props }, ref) => {
+  const { value }: ISelectContext = React.useContext(SelectContext);
+
+  return (
+    <SelectPrimitive.Trigger
+      ref={ref}
+      className={cn(
+        "flex h-10  w-full items-center justify-between rounded-[12px] border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 ",
+        className,
+        `${error ? "!border-[#FF6D6D] " : ""}`,
+        // Requirement: We have to display light color placeholder if user has not selcted the value
+        // Implementation: We have taken one context to access the value of select inside children compound components
+        // Condition: when value is null or undefined or empty string then display light color
+        (value === "" || value === undefined || value === null) &&
+          "font-normal text-[#999999]"
+      )}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild className="">
+        <ChevronDown className="h-5 w-5 text-black " />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  );
+});
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectItems = React.forwardRef<
