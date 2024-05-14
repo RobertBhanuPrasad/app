@@ -549,7 +549,26 @@ const Venue = () => {
 
   const formData = watch();
   const { errors } = useFormState();
+  const [previousStateId, setPreviousStateId] = useState(null);
+  const [previousCityId, setPreviousCityId] = useState(null);
 
+  useEffect(() => {
+    // Clear city and center fields when user changes state
+    if (formData.state_id !== previousStateId && formData.state_id !== undefined) {
+      setValue("city_id", undefined);
+      setValue("center_id", undefined);
+      setPreviousStateId(formData.state_id);
+    }
+  }, [formData.state_id]);
+
+  useEffect(() => {
+    // Clear center field when user changes city
+    if (formData.city_id !== previousCityId && formData.city_id !== undefined)  {
+      setValue("center_id", undefined);
+      setPreviousCityId(formData.city_id);
+    }
+  }, [formData.city_id]);
+  
   const {
     field: { onChange: isNewVenueOnchange },
     fieldState: { error: isVenueSelectedError },
