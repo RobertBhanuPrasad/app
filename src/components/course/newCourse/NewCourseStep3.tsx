@@ -101,7 +101,7 @@ function NewCourseStep3() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 w-[75vw]">
       <div>
         {programTypeData?.data?.is_online_program === true ? (
           <OnlineProgram />
@@ -166,13 +166,13 @@ const OnlineProgram = () => {
           {t("course.new_course:time_and_venue_tab.specific_location")}
         </div>
         <div className="flex gap-7">
-          <div className="w-80">
+          <div className="w-[33%]">
             <StateDropDown name="state_id" />
           </div>
-          <div className="w-80">
+          <div className="w-[33%]">
             <CityDropDown name="city_id" />
           </div>
-          <div className="w-80">
+          <div className="w-[33%]">
             <CenterDropDown name="center_id" />
           </div>
         </div>
@@ -185,7 +185,7 @@ const Schedules = () => {
   const { errors } = useFormState();
 
   return (
-    <div className="flex flex-col gap-4 w-[1016px]">
+    <div className="flex flex-col gap-4">
       <SchedulesHeader />
 
       <Sessions />
@@ -237,8 +237,8 @@ const SchedulesHeader = () => {
   });
 
   return (
-    <div className="h-9 flex justify-between">
-      <div className="font-semibold text-[#333333] flex items-center">
+    <div className="h-9 flex">
+      <div className="font-semibold text-[#333333] mr-[375px] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
       <div className="flex gap-4">
@@ -663,7 +663,7 @@ const Venue = () => {
       >
         <Label htmlFor="existing-venue">
           <div
-            className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
+            className={`rounded-[16px] min-w-[450px] w-[80%] h-[118px]  relative flex py-[24px] px-4 flex-col ${
               value === "existing-venue"
                 ? "border border-[#7677F4]"
                 : "border border-[#D6D7D8]"
@@ -728,7 +728,7 @@ const Venue = () => {
         {formData?.newVenue ? (
           <Label htmlFor="new-venue">
             <div
-              className={`w-[494px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
+              className={`min-w-[450px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
                 value === "new-venue"
                   ? "border border-[#7677F4]"
                   : "border border-[#D6D7D8]"
@@ -791,7 +791,7 @@ const Venue = () => {
         ) : (
           <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue}>
-              <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
+              <div className="min-w-[460px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
