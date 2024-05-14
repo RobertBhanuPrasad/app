@@ -476,7 +476,7 @@ const ProgramOrganizerDropDown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const {
     field: { value, onChange },
@@ -520,9 +520,9 @@ const ProgramOrganizerDropDown = () => {
     },
   });
 
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const { created_by_user_id } = watch()
+  const { created_by_user_id } = watch();
 
   const handleOnBottomReached = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
@@ -550,11 +550,14 @@ const ProgramOrganizerDropDown = () => {
         }}
         onChange={onChange}
         getOptionProps={(option: number) => {
-          //Here this if condition is says that 
-          // "option === loginUserData?.userData?.id" this conditon is for if login user wants to creates a new course we disable the primary organizer  
+          //Here this if condition is says that
+          // "option === loginUserData?.userData?.id" this conditon is for if login user wants to creates a new course we disable the primary organizer
           // "option === created_by_user_id" this conditon is for if any login user wants to edit course than also we are disabling the program orgnizer
           // If the course is copying then we need to disable the organizer who is logged in only
-          if ((option === loginUserData?.userData?.id) || (option === created_by_user_id && IsEditCourse(router?.pathname))) {
+          if (
+            option === loginUserData?.userData?.id ||
+            (option === created_by_user_id && IsEditCourse(router?.pathname))
+          ) {
             return {
               disable: true,
             };
