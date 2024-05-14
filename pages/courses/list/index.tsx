@@ -244,6 +244,7 @@ function index() {
     setPageSize,
     current,
     setCurrent,
+    setFilters,
   } = useTable({
     resource: "program",
     meta: {
@@ -528,6 +529,7 @@ function index() {
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
+          setFilters={setFilters}
         />
 
         {programData?.isLoading ? (
@@ -632,7 +634,7 @@ function index() {
 
 export default index;
 
-const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
+const HeaderSection = ({ hasAliasNameFalse, setCurrent, setFilters }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
@@ -645,7 +647,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
           />
         </div>
         <div className="flex-[1.75]">
-          <BasicFilters setCurrent={setCurrent} />
+          <BasicFilters setCurrent={setCurrent} setFilters={setFilters} />
         </div>
       </div>
     </Form>
@@ -772,9 +774,7 @@ export const CourseTypeComponent = ({ name }: any) => {
   );
 };
 
-export const BasicFilters: React.FC<{
-  setCurrent: (number: number) => void;
-}> = ({ setCurrent }) => {
+export const BasicFilters = ({ setCurrent, setFilters }: any) => {
   const { watch, setValue } = useFormContext();
   const formData = watch();
 
@@ -799,6 +799,7 @@ export const BasicFilters: React.FC<{
   const [open, setOpen] = useState(false);
 
   const handleClearAll = () => {
+    setFilters([], "replace");
     setValue("course_id", "");
     setValue("course_date", "");
     setValue("course_type", "");
