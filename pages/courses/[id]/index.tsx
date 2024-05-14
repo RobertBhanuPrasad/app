@@ -100,6 +100,8 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 import { translatedText } from "src/common/translations";
 import { Text } from "src/ui/TextTags";
+import { getCountryCodeFromLocale } from "src/utility/useGetCountryCode";
+import countryCodes from "src/data/CountryCodes";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -142,8 +144,11 @@ function ViewDetails() {
       courseData?.data?.program_schedules?.length - 1
     ]?.end_time
   );
-
-  const countryName = "India";
+  const { locale }:any = useRouter(); 
+  let countryName = getCountryCodeFromLocale(locale).toUpperCase();
+  if (countryName in countryCodes) {
+    countryName = countryCodes[countryName];
+  }
   const { t } = useTranslation([
     "course.view_course",
     "new_strings",
@@ -320,10 +325,17 @@ function ViewDetails() {
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
           <LocationIcon />
-          {courseData?.data?.venue_id?.address},
-          {courseData?.data?.venue_id?.city_id?.name},
-          {courseData?.data?.venue_id?.state_id?.name}, {countryName},
-          {courseData?.data?.venue_id?.postal_code}
+          {courseData?.data?.venue_id ? (   
+          <>
+        {courseData.data.venue_id.address && `${courseData.data.venue_id.address}, `}
+        {courseData.data.venue_id.city_id && `${courseData.data.venue_id.city_id.name}, `}
+        {courseData.data.venue_id.state_id && `${courseData.data.venue_id.state_id.name}, `}
+        {countryName}
+        {courseData.data.venue_id.postal_code && `, ${courseData.data.venue_id.postal_code}`}
+        </>
+        ) : (
+        <a href= {courseData?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target="_blank">{t("new_strings:online")}</a>
+        )}
         </div>
 
         <div className="flex flex-row items-center gap-2 w-full justify-end ">
