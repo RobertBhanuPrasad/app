@@ -68,16 +68,28 @@ function CourseDetailsTab() {
   });
 
   
-  const venue =
-  courseData?.data?.venue_id?.name + 
-  ', ' +
-  courseData?.data?.venue_id?.address + 
-  ', ' +
-  courseData?.data?.venue_id?.city_id?.name + 
-  ', ' +
-  courseData?.data?.venue_id?.state_id.name +
-   ', ' +
-  courseData?.data?.venue_id?.postal_code
+  let venue=""
+
+  if(courseData?.data?.venue_id?.name){
+    venue=courseData?.data?.venue_id?.name+", "
+  }
+
+  if(courseData?.data?.venue_id?.address){
+    venue=venue+courseData?.data?.venue_id?.address+", "
+
+  }
+  if(courseData?.data?.venue_id?.city_id?.name){
+    venue=venue+courseData?.data?.venue_id?.city_id?.name+", "
+
+  }
+  if(courseData?.data?.venue_id?.state_id.name){
+    venue=venue+courseData?.data?.venue_id?.state_id.name
+
+  }
+  if(courseData?.data?.venue_id?.postal_code){
+    venue=venue+", "+courseData?.data?.venue_id?.postal_code
+
+  }
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
