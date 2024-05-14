@@ -142,7 +142,7 @@ function ViewDetails() {
       courseData?.data?.program_schedules?.length - 1
     ]?.end_time
   );
-  let countryName = `${courseData?.data?.venue_id?.state_id?.country_id?.name}`;
+  const countryName = `${courseData?.data?.venue_id?.state_id?.country_id?.name}`;
   const { t } = useTranslation([
     "course.view_course",
     "new_strings",
