@@ -76,6 +76,12 @@ export const ViewCourseGlobalActions = () => {
     );
     // we have to delete schedules when user click on cipy course and other we need to prefill
     defaultValues = _.omit(defaultValues, ["id", "schedules"]);
+    //remove the id, program_id from each object in program_fee_level_settings array
+    if (defaultValues?.program_fee_level_settings) {
+      defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
+        _.omit(setting, ['id', 'program_id'])
+      );
+    }
     setNewCourseData(defaultValues);
     // when we do copy course we have to set the current step to first step
     setCurrentStep(1);
