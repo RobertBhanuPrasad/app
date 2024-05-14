@@ -27,6 +27,8 @@ interface LanguageItem {
 }
 
 interface ProgramFeeItem {
+  custom_fee_label: object;
+  is_custom_fee: boolean;
   fee_level_id?: {
     name?: object;
   };
@@ -279,7 +281,7 @@ function CourseDetailsTab() {
                   return (
                     <div className="flex flex-col gap-1">
                       <Header2>
-                        {translatedText(item?.fee_level_id?.name as object)}
+                        {translatedText(item?.is_custom_fee ?item?.custom_fee_label: item?.fee_level_id?.name   as object)}
                       </Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
