@@ -94,7 +94,11 @@ function index() {
   }
 
   //If we select date range for registration date then we have to write filter to fetch the participants based on the range 
-  if (ParticpantFiltersData?.registration_date) {
+  if (
+    ParticpantFiltersData?.registration_date &&
+    ParticpantFiltersData?.registration_date?.from != "" &&
+    ParticpantFiltersData?.registration_date?.to != ""
+  ) {
     //Here the date picker uses the GMT time so , iam adding  1 day that is next day for from and to of registration date
     filters.permanent.push(
       {
@@ -112,9 +116,10 @@ function index() {
               )
             )?.getTime() +
               24 * 60 * 60 * 1000
-          )?.toISOString()
-            .replace("T", " ")
-            .slice(0, -5) + "+00",
+          )
+            ?.toISOString()
+            ?.replace("T", " ")
+            ?.slice(0, -5) + "+00",
       },
       {
         field: "created_at",
@@ -133,8 +138,8 @@ function index() {
               24 * 60 * 60 * 1000
           )
             ?.toISOString()
-            .replace("T", " ")
-            .slice(0, -5) + "+00",
+            ?.replace("T", " ")
+            ?.slice(0, -5) + "+00",
       }
     );
   }
