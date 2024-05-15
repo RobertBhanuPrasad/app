@@ -69,7 +69,7 @@ function ScrollableTabs({ tabs }: { tabs: Tab[] }) {
               className="mb-[20px]"
               key={tab.id}
               id={`tab-${tab.id}`}
-              ref={(el) => {tabRefs.current[index] = el as HTMLDivElement}}
+              ref={(el) => {tabRefs.current[index] = el as any}}
               data-tab-index={index}
             >
               {tab.content}

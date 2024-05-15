@@ -4,7 +4,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
 
 export default function CatchAll() {
-  return <ErrorComponent />;
+  return  <div>Page was not found</div>;
 }
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
