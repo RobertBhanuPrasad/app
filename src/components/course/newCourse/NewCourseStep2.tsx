@@ -276,6 +276,12 @@ export const CourseTypeDropDown = () => {
   } = useController({
     name: NewCourseStep2FormNames?.max_capacity,
   });
+  
+  const clearCourseTypeDependentValues=()=>{
+    setValue('teacher_ids',[])
+    setValue('program_alias_name_id',undefined)
+    setValue('assistant_teacher_ids',undefined)
+  }
 
   /**
    * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
@@ -319,6 +325,7 @@ export const CourseTypeDropDown = () => {
         onValueChange={(val: any) => {
           onChange(val);
           getCourseTypeSettings(val);
+          clearCourseTypeDependentValues()
         }}
         disabled={isEditCourse}
       >
@@ -599,6 +606,7 @@ const TeachersDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+  const {setValue} = useFormContext();
   const { t } = useTranslation(["common", "course.new_course"]);
 
   return (
