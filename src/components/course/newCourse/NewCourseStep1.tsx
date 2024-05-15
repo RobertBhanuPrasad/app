@@ -409,6 +409,8 @@ const OrganizationDropDown = () => {
     setValue("language_ids", []);
     setValue("translation_language_ids", []);
     setValue("max_capacity", "");
+    setValue("online_url", "");
+    setValue("existingVenue", undefined);
   }
 
   const handleSearch = (val: { target: { value: string } }) => {
