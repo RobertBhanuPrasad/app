@@ -296,7 +296,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                   );
                 })
               : ""}
-              {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee */}
+              {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
              {IsEarlyBirdFeeEnable
                && programFees?.map((item: ProgramFeeItem) => {
               return (
