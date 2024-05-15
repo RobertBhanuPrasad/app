@@ -376,20 +376,7 @@ export default function NewCourseReviewPage() {
 
   //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
-    ? newCourseData?.program_fee_level_settings?.map(
-        (feeLevel: { fee_level_id: any }) => {
-          const defaultFeeLevel = defaultFeeLevels?.find(
-            (defaultFee: { fee_level_id: any }) =>
-              defaultFee.fee_level_id == feeLevel?.fee_level_id
-          );
-          //If is_custom_fee is true then need to show custom label. So appending is_custom_fee and custom_fee_label to existing formData
-          return {
-            is_custom_fee: defaultFeeLevel?.is_custom_fee,
-            custom_fee_label: defaultFeeLevel?.custom_fee_label,
-            ...feeLevel,
-          };
-        }
-      )
+    ? newCourseData?.program_fee_level_settings
     : defaultFeeLevels;
 
   //Requirement: Need to show only enabled fee levels.

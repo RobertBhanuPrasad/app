@@ -218,6 +218,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         subTotal: (val?.total - val?.total * taxRate).toFixed(2),
         tax: (val?.total * taxRate).toFixed(2),
         total: parseFloat(val?.total).toFixed(2),
+        is_custom_fee:val?.is_custom_fee,
+        custom_fee_label:val?.custom_fee_label
       };
 
       //Need to insert early bird fee if early bird fee is enabled in settings
@@ -247,8 +249,11 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           total: fee?.total,
           early_bird_total: fee?.earlyBirdTotal || 0,
           fee_level_id: fee?.feeLevelId,
+          is_custom_fee: fee?.is_custom_fee,
+          custom_fee_label: fee?.custom_fee_label
         };
       });
+      console.log(feeData,'feeData')
       append(feeData);
     }
   }, []);
@@ -666,4 +671,6 @@ type FeeLevelType = {
   subTotal: number;
   tax: number;
   total: number;
+  is_custom_fee: boolean,
+  custom_fee_label: object
 };
