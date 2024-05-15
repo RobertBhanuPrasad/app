@@ -594,10 +594,6 @@ const TeachersDropDown = () => {
   const {setValue} = useFormContext();
   const { t } = useTranslation(["common", "course.new_course"]);
 
-  const clearTeacherDependentValues=()=>{
-    setValue('program_type_id',undefined)
-   }
-
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row">
@@ -628,7 +624,6 @@ const TeachersDropDown = () => {
           onSearch={onSearch}
           onChange={(val: any) => {
             onChange(val);
-            clearTeacherDependentValues()
           }}
           getOptionProps={(option: { value: { id: number } }) => {
             //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
