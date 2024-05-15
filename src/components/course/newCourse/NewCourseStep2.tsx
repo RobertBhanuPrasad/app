@@ -592,7 +592,6 @@ const TeachersDropDown = () => {
 
   const { options, queryResult, onSearch } = useSelect(selectQuery);
 
-  console.log(options,'options')
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
