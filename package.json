@@ -1,6 +1,6 @@
 {
   "name": "test",
-  "version": "1.1.14",
+  "version": "1.1.17",
   "private": true,
   "engines": {
     "node": ">=18.0.0"
@@ -9,6 +9,7 @@
     "dev": "refine dev --port 2000",
     "build": "refine build",
     "build:qa": "env-cmd -f .env.qa refine build",
+    "build:uat": "env-cmd -f .env.uat refine build",
     "start": "refine start --port 2000",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "refine": "refine"
