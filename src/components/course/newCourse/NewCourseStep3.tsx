@@ -1105,7 +1105,6 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 
   //After sorting if first schedule is different for both original and temporary schedule then user as changed start date of course (start date is first schedule)
   if(sortedOriginalSchedules?.[0]?.date.getTime()!=sortedTempSchedules?.[0]?.date.getTime()){
-    console.log("Removed fee levels")
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever start date of schedule is changed need to remove existing fee levels.
     setValue("program_fee_level_settings",undefined)
     setValue("is_early_bird_enabled",undefined)
