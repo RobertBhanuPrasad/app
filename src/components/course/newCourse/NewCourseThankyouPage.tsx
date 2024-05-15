@@ -231,9 +231,10 @@ useEffect(() => {
                     </div>
                   </div>
                 </div>
+                {/* TODO  for now scope this cx url is to be hidden */}
                 {/* we are writing this conditions beacuse if the course is public then only we have to show the details page link */}
                 {/* for the MVP-904 */}
-                {data?.data?.visibility_id?.id == publicVisibilityId && (
+                {/* {data?.data?.visibility_id?.id == publicVisibilityId && (
                   <div className="relative ">
                     <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
                       {t("details_page_link")}
@@ -260,7 +261,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </section>
           )}
