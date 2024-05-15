@@ -253,8 +253,8 @@ function ViewDetails() {
           <div className="text-[32px] font-semibold">
             {courseData?.data?.program_alias_name_id
               ? translatedText(
-                  courseData?.data?.program_alias_name_id?.alias_name
-                )
+                courseData?.data?.program_alias_name_id?.alias_name
+              )
               : translatedText(courseData?.data?.program_type_id?.name)}
           </div>
           <div className="flex items-center gap-4">
@@ -338,13 +338,12 @@ function ViewDetails() {
                 <p>{t("course.view_course:basic_details_tab.approved_by")}:</p>
                 <p>
                   {courseData?.data?.approved_by_user_id &&
-                  courseData?.data?.program_approved_date
-                    ? `${
-                        courseData?.data?.approved_by_user_id?.contact_id
-                          ?.full_name
-                      } (${formatDateString(
-                        new Date(courseData?.data?.program_approved_date)
-                      )})`
+                    courseData?.data?.program_approved_date
+                    ? `${courseData?.data?.approved_by_user_id?.contact_id
+                      ?.full_name
+                    } (${formatDateString(
+                      new Date(courseData?.data?.program_approved_date)
+                    )})`
                     : "-"}
                 </p>
                 <Separator className="my-2" />
@@ -353,13 +352,12 @@ function ViewDetails() {
                 </p>
                 <p>
                   {courseData?.data?.last_modified_by_user_id &&
-                  courseData?.data?.modified_at
-                    ? `${
-                        courseData?.data?.last_modified_by_user_id?.contact_id
-                          ?.full_name
-                      } (${formatDateString(
-                        new Date(courseData?.data?.modified_at)
-                      )})`
+                    courseData?.data?.modified_at
+                    ? `${courseData?.data?.last_modified_by_user_id?.contact_id
+                      ?.full_name
+                    } (${formatDateString(
+                      new Date(courseData?.data?.modified_at)
+                    )})`
                     : "-"}
                 </p>
               </div>
@@ -415,10 +413,10 @@ function ViewDetails() {
                 courseData?.data?.program_accounting_status_id,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && (
-                <PendingCourseAccountingFormApprovalDropDown
-                  courseId={Id as number}
-                />
-              )}
+                  <PendingCourseAccountingFormApprovalDropDown
+                    courseId={Id as number}
+                  />
+                )}
 
               <ViewCourseAccountingSuccessModalOpen />
               <ViewCourseAccountingRejectedModalOpen courseId={Id as number} />
@@ -765,6 +763,14 @@ export const ActionsDropDown = ({ courseData }: any) => {
       // we have to delete schedules when user click on copy course and other we need to prefill
 
       defaultValues = _.omit(defaultValues, ["id", "schedules"]);
+
+      //remove the id, program_id from each object in program_fee_level_settings array
+      if (defaultValues?.program_fee_level_settings) {
+        defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
+          _.omit(setting, ['id', 'program_id'])
+        );
+      }
+
       setNewCourseData(defaultValues);
       router.push({ pathname: "/courses/add", query: { action: "Copy" } });
     }
