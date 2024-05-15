@@ -378,6 +378,8 @@ const OrganizationDropDown = () => {
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
+  
+  const {setValue} = useFormContext();
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
@@ -398,6 +400,16 @@ const OrganizationDropDown = () => {
   } = useController({
     name: NewCourseStep1FormNames?.organization_id,
   });
+  const handleClearDependencyValues=()=>{
+    setValue("program_type_id", undefined);
+    setValue("program_type", undefined);
+    setValue("program_alias_name_id", undefined);
+    setValue("teacher_ids", []);
+    setValue("assistant_teacher_ids", []);
+    setValue("language_ids", []);
+    setValue("translation_language_ids", []);
+    setValue("max_capacity", undefined);
+  }
 
   const handleSearch = (val: { target: { value: string } }) => {
     onSearch(val.target.value);
@@ -423,6 +435,7 @@ const OrganizationDropDown = () => {
         <Select
           value={value}
           onValueChange={(value: any) => {
+            handleClearDependencyValues()
             onChange(value);
           }}
           //disabling the organization dropdown when it is edit
