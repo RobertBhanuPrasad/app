@@ -103,7 +103,11 @@ export const validationSchema = () => {
       .string({
         required_error: "Postal Code is a required field.",
       })
-      .regex(/^\d*$/, { message: "Please provide a valid Postal Code" })
+      //here we need validate the postal code of different countries 
+      //for example in India we have only 6 digit postal code
+      //but in canada they have combination of alphabets and digits (M5A 1A1)
+      //for this we need to allow both alphabets and digits in the postal code for general validation.
+      .regex(/^[0-9a-zA-Z\s-]{3,10}$/, { message: "Please provide a valid Postal Code" })
       .optional(),
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),

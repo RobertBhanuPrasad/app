@@ -101,7 +101,7 @@ function NewCourseStep3() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 w-[75vw]">
       <div>
         {programTypeData?.data?.is_online_program === true ? (
           <OnlineProgram />
@@ -166,13 +166,13 @@ const OnlineProgram = () => {
           {t("course.new_course:time_and_venue_tab.specific_location")}
         </div>
         <div className="flex gap-7">
-          <div className="w-80">
+          <div className="w-[33%]">
             <StateDropDown name="state_id" />
           </div>
-          <div className="w-80">
+          <div className="w-[33%]">
             <CityDropDown name="city_id" />
           </div>
-          <div className="w-80">
+          <div className="w-[33%]">
             <CenterDropDown name="center_id" />
           </div>
         </div>
@@ -185,7 +185,7 @@ const Schedules = () => {
   const { errors } = useFormState();
 
   return (
-    <div className="flex flex-col gap-4 w-[1016px]">
+    <div className="flex flex-col gap-4">
       <SchedulesHeader />
 
       <Sessions />
@@ -237,8 +237,8 @@ const SchedulesHeader = () => {
   });
 
   return (
-    <div className="h-9 flex justify-between">
-      <div className="font-semibold text-[#333333] flex items-center">
+    <div className="h-9 flex">
+      <div className="font-semibold text-[#333333] mr-[375px] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
       <div className="flex gap-4">
@@ -663,7 +663,7 @@ const Venue = () => {
       >
         <Label htmlFor="existing-venue">
           <div
-            className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
+            className={`rounded-[16px] min-w-[450px] w-[80%] h-[118px]  relative flex py-[24px] px-4 flex-col ${
               value === "existing-venue"
                 ? "border border-[#7677F4]"
                 : "border border-[#D6D7D8]"
@@ -728,7 +728,7 @@ const Venue = () => {
         {formData?.newVenue ? (
           <Label htmlFor="new-venue">
             <div
-              className={`w-[494px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
+              className={`min-w-[450px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
                 value === "new-venue"
                   ? "border border-[#7677F4]"
                   : "border border-[#D6D7D8]"
@@ -791,7 +791,7 @@ const Venue = () => {
         ) : (
           <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue}>
-              <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
+              <div className="min-w-[460px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
@@ -838,9 +838,10 @@ const NewVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address},{data?.data?.name}, {data?.data?.state_id?.name},{" "}
-      {postal_code}
-    </div>
+    {name  ? `${name}, ` : ''}
+    {address  ? `${address}, ` : ''}{data?.data?.name}, {data?.data?.state_id?.name}
+    {postal_code  ? `, ${" "}${postal_code} ` : ''}
+  </div>
   );
 };
 
@@ -861,8 +862,8 @@ const ExistingVenueDetails = () => {
 
   return (
     <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {existingVenue?.name}, {existingVenue?.address},{cityData?.data?.name},{" "}
-      {cityData?.data?.state.name}, {existingVenue?.postal_code}
+      {existingVenue?.name?`${existingVenue?.name}, `:""}{existingVenue?.address?`${existingVenue?.address}, `:''}{cityData?.data?.name},{" "}
+      {cityData?.data?.state.name}{existingVenue?.postal_code?`, ${existingVenue?.postal_code}`:''}
     </div>
   );
 };
@@ -947,7 +948,17 @@ const CalenderComponent = ({ index, setOpen }: any) => {
    */
   let cityId: number = 0;
 
-  if (formData?.is_online_program) {
+  /**
+   * Getting settings Program type databased on program type id form form 
+   */
+  const { data: programTypeData } = useOne({
+    resource: "program_types",
+    id: formData?.program_type_id,
+  });
+
+
+  //we need to check whether it is online program or not and the we need to assign state , city ids
+  if (programTypeData?.data?.is_online_program) {
     stateId = formData?.state_id;
     cityId = formData?.city_id;
   } else {
@@ -990,7 +1001,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   // Add additional filters based on organization calendar settings
   const filter = [...dateFilters];
   if (settingsData) {
-    if (settingsData?.data[0]?.is_city_enabled && cityId) {
+    if (settingsData?.data[0]?.is_city_enabled) {
       filter.push({
         field: "program_id.city_id.id",
         operator: "eq",
@@ -1004,7 +1015,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         value: stateId,
       });
     }
-    if (settingsData?.data[0]?.is_venue_enabled) {
+    if (settingsData?.data[0]?.Is_venue_enabled && formData?.venue_id) {
       filter.push({
         field: "program_id.venue_id",
         operator: "eq",
@@ -1522,16 +1533,16 @@ const VenueItem = ({ item }: { item: any }) => {
 
     return (
       <div>
-        {tempExistingVenue.name}, {tempExistingVenue.address},{" "}
-        {cityData?.data?.name}, {cityData?.data?.state_id?.name},{" "}
-        {tempExistingVenue.postal_code}
+        {tempExistingVenue.name?`${tempExistingVenue.name}, `:''}{tempExistingVenue.address?`${tempExistingVenue.address}, `:""}
+        {cityData?.data?.name}, {cityData?.data?.state_id?.name}
+        {tempExistingVenue.postal_code?`, ${tempExistingVenue.postal_code}`:''}
       </div>
     );
   } else {
     return (
       <div className="leading-tight">
-        {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
-        {item.postal_code}
+        {item.name?`${item.name}, `:''}{item.address?`${item.address}, `:''}{item.city_name}, {item.state_name}
+        {item.postal_code ?`, ${item.postal_code}`:''}
       </div>
     );
   }

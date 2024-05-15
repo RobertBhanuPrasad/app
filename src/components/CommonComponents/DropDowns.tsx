@@ -41,7 +41,6 @@ export const VenueNameComponent = () => {
           placeholder={t(
             "course.new_course:time_and_venue_tab.venue_name_placeholder"
           )}
-          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={venueOnchange}
           error={venueError ? true : false}
         />
@@ -93,7 +92,6 @@ export const PostalCodeComponent = () => {
           placeholder={t(
             "course.new_course:time_and_venue_tab.postal_code_placeholder"
           )}
-          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={postalCodeOnchange}
           error={error ? true : false}
         />
@@ -124,7 +122,6 @@ export const StreetAddressComponent = () => {
           placeholder={t(
             "course.new_course:time_and_venue_tab.street_address_placeholder"
           )}
-          className="placeholder:text-[#333333] placeholder:font-semibold placeholder:text-sm"
           onChange={streetAddressOnchange}
           error={error ? true : false}
         />
@@ -180,6 +177,35 @@ export const CityDropDown = ({ name }: { name: string }) => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
 
+  // Function to handle city value change
+  const handleCityValueChange = async (newValue: any) => {
+
+    // If the selected city is different from the current value, reset center value
+    // if (newValue !== cityValue) {
+    //   setValue("center_id", "")
+    // }
+
+     // Update the city value in the form data
+     cityValueOnChange(newValue)
+
+    // If state_id is not already set, fetch the state_id corresponding to the selected city
+    if (!formData?.state_id) {
+
+    const supabase = supabaseClient()
+
+    // Fetch state_id from the database based on the selected city's id
+    const {data:state_obj, error} = await supabase
+    .from("city")
+    .select("state_id")
+    .eq("id", newValue)
+    
+    if(!error){
+    // Set the state_id value in the form data
+    setValue("state_id",state_obj?.[0]?.state_id)
+    }
+    }
+  };
+
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="flex flex-row items-center gap-1">
@@ -187,7 +213,7 @@ export const CityDropDown = ({ name }: { name: string }) => {
         <Text className="text-[#7677F4]">*</Text>
       </div>
 
-      <Select value={cityValue} onValueChange={cityValueOnChange}>
+      <Select value={cityValue} onValueChange={handleCityValueChange}>
         <SelectTrigger
           error={cityValueError ? true : false}
           className="font-semibold text-sm "
@@ -224,9 +250,13 @@ export const CityDropDown = ({ name }: { name: string }) => {
 };
 
 export const StateDropDown = ({ name }: { name: string }) => {
-  const { t } = useTranslation(["common", "course.new_course","course.find_course"]);
+  const { t } = useTranslation([
+    "common",
+    "course.new_course",
+    "course.find_course",
+  ]);
   const [pageSize, setPageSize] = useState(10);
-
+  const { setValue } = useFormContext();
   const [selectOptions, setSelectOptions] = useState<any>([]);
 
   /**
@@ -290,6 +320,19 @@ export const StateDropDown = ({ name }: { name: string }) => {
     setPageSize((pageSize) => pageSize + 10);
   };
 
+  // Function to handle state value change
+  const handleStateValueChange = (newValue: any) => {
+
+    // Reset city value and center value if state value changes
+    if (newValue !== stateValue) {
+      setValue("city_id", "")
+      setValue("center_id", "")
+    }
+
+    // Update state value in form data
+    stateValueOnchange(newValue)
+  }
+
   return (
     <div className="flex gap-1 flex-col h-[60px] w-full">
       <div className="flex flex-row items-center gap-1">
@@ -299,7 +342,7 @@ export const StateDropDown = ({ name }: { name: string }) => {
         <Text className="text-[#7677F4]">*</Text>
       </div>
 
-      <Select value={stateValue} onValueChange={stateValueOnchange}>
+      <Select value={stateValue} onValueChange={handleStateValueChange}>
         <SelectTrigger
           className="w-full font-semibold text-sm"
           error={stateValueError ? true : false}
@@ -394,6 +437,31 @@ export const CenterDropDown = ({ name }: { name: string }) => {
     setPageSize((prevPageSize) => prevPageSize + 10);
   };
 
+  // Function to handle center value change
+  const handleCenterValueChange = async (newValue: any) => {
+
+    // Update center value in form data
+    centerValueOnChange(newValue)
+
+    // If state value or city value is undefined, fetch the state_id and city_id corresponding to selected center
+    if (!formData?.state_id) {
+    
+    const supabase = supabaseClient()
+
+    // Fetch state_id and city_id corresponding to the selected center
+    const {data:state_city_obj, error} = await supabase
+    .from("center")
+    .select("state_id,city_id")
+    .eq("id", newValue)
+
+    if(!error){
+    // Set the state_id and city_id values in the form data
+    setValue("state_id",state_city_obj?.[0]?.state_id)
+    // setValue("city_id",state_city_obj?.[0]?.city_id)
+    }
+  }
+  }
+
   return (
     <div className="flex gap-1 flex-col h-[60px]">
       <div className="flex flex-row gap-1 items-center">
@@ -403,7 +471,7 @@ export const CenterDropDown = ({ name }: { name: string }) => {
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
-      <Select value={centerValue} onValueChange={centerValueOnChange}>
+      <Select value={centerValue} onValueChange={handleCenterValueChange}>
         <SelectTrigger
           className="w-full font-semibold text-sm"
           error={centerValueError ? true : false}
