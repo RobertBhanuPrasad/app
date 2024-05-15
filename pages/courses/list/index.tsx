@@ -271,7 +271,7 @@ function index() {
   const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
     useTable({
       resource: "program",
-      //restrcting the hook to get the params from URL
+      //restricting the hook to get the params from URL
       syncWithLocation: false,
       meta: {
         select:
