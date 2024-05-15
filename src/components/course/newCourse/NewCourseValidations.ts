@@ -1,6 +1,7 @@
 import { start } from "repl";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { z } from "zod";
-export const validationSchema = () => {
+export const validationSchema = (iAmCoTeachingId:number) => {
   return z.object({
     // Step 1 Schema
     organization_id: z.number({
@@ -38,12 +39,20 @@ export const validationSchema = () => {
     program_alias_name_id: z.number({
       required_error: "Course Name is a required field",
     }),
-    teacher_ids: z
-      .array(z.number())
-      .nonempty({ message: "Please enter at least one teacher" })
-      .refine((val) => val.length >= 2, {
-        message: "Atleast 2 teachers are required for co-teaching",
-      }),
+    teacher_ids: z.array(z.number({ required_error: "Please enter at least one teacher" }))
+    .min(1, "Please enter at least one teacher")
+    .refine((teacher_ids) => {
+
+      const { programCreatedById } = newCourseStore.getState();
+
+      // REQUIRMENT if the programCreatedById is I am co-teching id then we need to validate the teachers field for min 2
+      if (parseInt(programCreatedById) === iAmCoTeachingId && teacher_ids.length < 2) {
+        return false;
+      }
+      return true;
+    }, {
+      message: 'At least 2 teachers are required for co-teaching',
+    }),
     assistant_teacher_ids: z
       .array(z.number(), {
         required_error: "Please enter at least one associate teacher",

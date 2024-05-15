@@ -41,6 +41,7 @@ import { IsEditCourse } from "./EditCourseUtil";
 import { useTranslation } from "next-i18next";
 import { Text } from "src/ui/TextTags";
 import { useRouter } from "next/router";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -135,6 +136,8 @@ const RadioCards = () => {
   const { clearErrors, watch } = useFormContext();
 
   const { t } = useTranslation(["course.new_course", "new_strings"]);
+
+  const {setProgramCreatedById} = newCourseStore()
   const {
     field: { value, onChange },
     fieldState: { error: radioError },
@@ -193,6 +196,8 @@ const RadioCards = () => {
         }, 10);
       }
     }
+    // we are storing the program created by in the zustand variable to use it in the validatios
+    setProgramCreatedById(val)
   };
 
   /**
