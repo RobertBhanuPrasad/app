@@ -1,10 +1,9 @@
-import { ErrorComponent } from "@refinedev/core";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
 
 export default function CatchAll() {
-  return  <div>Page was not found</div>;
+  return <div>Page was not found</div>;
 }
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
