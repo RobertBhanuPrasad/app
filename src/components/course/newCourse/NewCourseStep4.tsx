@@ -141,7 +141,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   //If Fee is not found based on users selection then need to show this
-  if (courseFeeSettings?.length == 0 || courseFeeSettings?.[0]?.program_fee_level_settings==0) {
+  if (courseFeeSettings?.length == 0 || courseFeeSettings?.[0]?.program_fee_level_settings?.length == 0) {
     return (
       <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
         {t(
@@ -570,7 +570,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   };
 
   return (
-    <div className="flex flex-col justify-center">
+    <div className="flex flex-col justify-center w-[70vw]">
       {/* Enable Early Bird fee if it is enabled in settings */}
       {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && (
         <div className="flex justify-end items-center gap-2 py-4">
@@ -585,7 +585,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         </div>
       )}
       {/* Rendering DataTable component */}
-      <div className="w-[1200px] h-auto">
+      <div className="h-auto overflow-x-scroll rounded-md border">
         {isFeeEditable ? (
           feeLevels?.length > 0 && (
             <DataTable columns={feeColumns} data={courseFeeData} />
