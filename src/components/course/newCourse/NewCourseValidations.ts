@@ -40,7 +40,10 @@ export const validationSchema = () => {
     }),
     teacher_ids: z
       .array(z.number())
-      .nonempty({ message: "Please enter at least one teacher" }),
+      .nonempty({ message: "Please enter at least one teacher" })
+      .refine((val) => val.length >= 2, {
+        message: "Atleast 2 teachers are required for co-teaching",
+      }),
     assistant_teacher_ids: z
       .array(z.number(), {
         required_error: "Please enter at least one associate teacher",
