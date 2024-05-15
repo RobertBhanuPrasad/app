@@ -1156,6 +1156,15 @@ const ExistingVenueList = () => {
     name: "deletedVenueID",
   });
 
+    /**
+   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
+   */
+    const {
+      field: { onChange: isExistingVenueOnchange },
+    } = useController({
+      name: "is_existing_venue",
+    });
+
   //Fetching initial Data of venues
   useEffect(() => {
     if (venueData?.length == 0) fetchVenueData();
@@ -1299,6 +1308,7 @@ const ExistingVenueList = () => {
             type="submit"
             onClick={() => {
               isNewVenueSelectedOnchange("existing-venue");
+              formData[NewCourseStep3FormNames.venue_id] && isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList();
             }}
           >
@@ -1351,18 +1361,9 @@ export const ExistingVenueListSection = ({
     name: "tempExistingVenue",
   });
 
-    /**
-   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
-   */
-    const {
-      field: { onChange: isExistingVenueOnchange },
-    } = useController({
-      name: "is_existing_venue",
-    });
 
   const handleCheckboxChange = (item: any) => {
     setValue(NewCourseStep3FormNames.venue_id, item.id);
-    isExistingVenueOnchange("existing-venue");
   };
 
   const handleOpenExistingVenue = (item: any) => {
