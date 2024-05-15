@@ -1156,15 +1156,6 @@ const ExistingVenueList = () => {
     name: "deletedVenueID",
   });
 
-    /**
-   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
-   */
-    const {
-      field: { onChange: isExistingVenueOnchange },
-    } = useController({
-      name: "is_existing_venue",
-    });
-
   //Fetching initial Data of venues
   useEffect(() => {
     if (venueData?.length == 0) fetchVenueData();
@@ -1190,6 +1181,15 @@ const ExistingVenueList = () => {
     setVenueData(modifiedVenueData);
     setIsLoading(false);
   };
+/**
+   * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
+   */
+const {
+  field: { onChange: isExistingVenueOnchange },
+} = useController({
+  name: "is_existing_venue",
+});
+
 
   const fetchLoginUserVenue = async () => {
     const supabase = supabaseClient();
