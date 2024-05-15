@@ -185,23 +185,25 @@ export const CityDropDown = ({ name }: { name: string }) => {
     //   setValue("center_id", "")
     // }
 
+     // Update the city value in the form data
+     cityValueOnChange(newValue)
+
     // If state_id is not already set, fetch the state_id corresponding to the selected city
     if (!formData?.state_id) {
 
     const supabase = supabaseClient()
 
     // Fetch state_id from the database based on the selected city's id
-    const {data:state_obj} = await supabase
+    const {data:state_obj, error} = await supabase
     .from("city")
     .select("state_id")
     .eq("id", newValue)
     
+    if(!error){
     // Set the state_id value in the form data
     setValue("state_id",state_obj?.[0]?.state_id)
     }
-
-    // Update the city value in the form data
-    cityValueOnChange(newValue)
+    }
   };
 
   return (
@@ -438,24 +440,26 @@ export const CenterDropDown = ({ name }: { name: string }) => {
   // Function to handle center value change
   const handleCenterValueChange = async (newValue: any) => {
 
+    // Update center value in form data
+    centerValueOnChange(newValue)
+
     // If state value or city value is undefined, fetch the state_id and city_id corresponding to selected center
     if (!formData?.state_id) {
     
     const supabase = supabaseClient()
 
     // Fetch state_id and city_id corresponding to the selected center
-    const {data:state_city_obj} = await supabase
+    const {data:state_city_obj, error} = await supabase
     .from("center")
     .select("state_id,city_id")
     .eq("id", newValue)
 
+    if(!error){
     // Set the state_id and city_id values in the form data
     setValue("state_id",state_city_obj?.[0]?.state_id)
     // setValue("city_id",state_city_obj?.[0]?.city_id)
+    }
   }
-
-    // Update center value in form data
-    centerValueOnChange(newValue)
   }
 
   return (
