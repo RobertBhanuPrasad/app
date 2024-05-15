@@ -63,7 +63,7 @@ export default function CourseTable() {
   }
 
   //sorting the schedules
-  let schedules = formData.schedules.sort(
+  let sortedSchedules = formData.schedules.sort(
     (a: any, b: any) => {
       let aDate = new Date(a.date);
       aDate.setHours(a?.startHour, a?.startMinute);
@@ -74,8 +74,14 @@ export default function CourseTable() {
       return aDate.getTime() - bDate.getTime();
     }
   );
-  //Finding course start date
-  const courseStartDate = schedules?.[0]?.date?.toISOString();
+
+  //Finding course start date from new Date object
+  let utcYear = sortedSchedules?.[0]?.date['getFullYear']();
+  let utcMonth = (sortedSchedules?.[0]?.date['getMonth']() + 1).toString().padStart(2, '0');
+  let utcDay = sortedSchedules?.[0]?.date['getDate']().toString().padStart(2, '0');
+
+  //Construct the course start date time stamp
+  const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
 
   //Form variable to store the early_bird_cut_off_period
   const {

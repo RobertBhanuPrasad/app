@@ -950,7 +950,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { trigger, watch,getValues } = useFormContext();
+  const { trigger, watch,getValues,setValue } = useFormContext();
 
   const formData = watch();
   const {schedules}=getValues()
@@ -1066,13 +1066,18 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     }`;
   };
 
+  //Need to check weather start date of course is changed or not.
   const handleRemoveFeeLevel=(date:any)=>{
-  let originalSchedule=schedules
-  let tempSchedule=schedules
+  const {schedules}=getValues()
+  //In order to check weather changed date is course start date or not.
+  //Taking two variables sort them and compare first object.if first object is changed then start date is changed. 
+  let originalSchedule=_.cloneDeep(schedules)
+  let tempSchedule=_.cloneDeep(schedules)
+  
+  //Updating temporary variable
+  tempSchedule[index].date=date
 
-  console.log("Before tempSchedule",originalSchedule)
-  tempSchedule[index].data=date
-    console.log("After Temp",originalSchedule)
+  //sorting original schedule
   let sortedOriginalSchedules = originalSchedule?.sort(
     (a: any, b: any) => {
       let aDate = new Date(a.date);
@@ -1085,6 +1090,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     }
   );
 
+  //sorting temporary schedule
   let sortedTempSchedules = tempSchedule?.sort(
     (a: any, b: any) => {
       let aDate = new Date(a.date);
@@ -1097,10 +1103,13 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     }
   );
 
-
-  console.log(sortedOriginalSchedules,'sortedOriginalSchedules',sortedTempSchedules,'sortedTempSchedules')
-  if(sortedOriginalSchedules?.[0]?.date!=sortedTempSchedules?.[0]?.date){
-    console.log("Remove Fee Level")
+  //After sorting if first schedule is different for both original and temporary schedule then user as changed start date of course (start date is first schedule)
+  if(sortedOriginalSchedules?.[0]?.date.getTime()!=sortedTempSchedules?.[0]?.date.getTime()){
+    console.log("Removed fee levels")
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever start date of schedule is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings",undefined)
+    setValue("is_early_bird_enabled",undefined)
+    setValue("early_bird_cut_off_period",undefined)
   }
 
   }
