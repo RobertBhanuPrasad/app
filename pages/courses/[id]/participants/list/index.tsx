@@ -928,11 +928,6 @@ const HeaderSection = () => {
                       {format(RegistrationDate.from, "MM/dd/yyyy")} -{" "}
                       {format(RegistrationDate.to, "MM/dd/yyyy")}
                       <div
-                        onClick={() => {
-                          RegistrationDateChange(undefined);
-                        }}
-                      ></div>
-                      <div
                         onClick={(e) => {
                           e.stopPropagation();
                           //when we click on cross icon we need to clear the date
