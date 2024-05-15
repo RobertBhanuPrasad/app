@@ -42,6 +42,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
 import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 
 function index() {
   const router = useRouter();
@@ -93,7 +94,7 @@ function index() {
     });
   }
 
-  //If we select date range for registration date then we have to write filter to fetch the participants based on the range 
+  //If we select date range for registration date then we have to write filter to fetch the participants based on the range
   if (
     ParticpantFiltersData?.registration_date &&
     ParticpantFiltersData?.registration_date?.from != "" &&
@@ -909,8 +910,8 @@ const HeaderSection = () => {
       {/* Registration Date Filter Section */}
       <div>
         {" "}
-        <Popover open={open}>
-          <PopoverTrigger asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
             <Button
               onClick={() => setOpen(true)}
               className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 border-2 px-3 py-5 rounded-lg"
@@ -919,7 +920,8 @@ const HeaderSection = () => {
               <div>
                 <CalenderIcon color="#666666" />
               </div>
-              <div>
+
+              <div className="flex justify-between items-center w-full">
                 {RegistrationDate?.from ? (
                   RegistrationDate.to ? (
                     <>
@@ -930,9 +932,33 @@ const HeaderSection = () => {
                           RegistrationDateChange(undefined);
                         }}
                       ></div>
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          //when we click on cross icon we need to clear the date
+                          RegistrationDateChange(undefined);
+                        }}
+                        id="cross-icon"
+                        className="ml-auto"
+                      >
+                        <CrossIcon fill="#7677F4" height={10} width={10} />
+                      </div>
                     </>
                   ) : (
-                    format(RegistrationDate.from, "MM/dd/yyyy")
+                    <div className="flex justify-between items-center w-full">
+                      {format(RegistrationDate.from, "MM/dd/yyyy")}
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          //when we click on cross icon we need to clear the date
+                          RegistrationDateChange(undefined);
+                        }}
+                        id="cross-icon"
+                        className="ml-auto"
+                      >
+                        <CrossIcon fill="#7677F4" height={10} width={10} />
+                      </div>
+                    </div>
                   )
                 ) : (
                   <span className="font-thin">
@@ -941,15 +967,18 @@ const HeaderSection = () => {
                 )}
               </div>
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center p-8">
+          </DialogTrigger>
+          <DialogContent
+            closeIcon={false}
+            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center !p-8"
+          >
             <DateRangePickerComponent
               setOpen={setOpen}
               value={RegistrationDate}
               onSelect={RegistrationDateChange}
             />
-          </PopoverContent>
-        </Popover>
+          </DialogContent>
+        </Dialog>
       </div>
       {/* Transaction Status Section */}
       <div>
