@@ -401,14 +401,14 @@ const OrganizationDropDown = () => {
     name: NewCourseStep1FormNames?.organization_id,
   });
   const handleClearDependencyValues=()=>{
-    setValue("program_type_id", undefined);
-    setValue("program_type", undefined);
-    setValue("program_alias_name_id", undefined);
+    setValue("program_type_id", "");
+    setValue("program_type", "");
+    setValue("program_alias_name_id", "");
     setValue("teacher_ids", []);
     setValue("assistant_teacher_ids", []);
     setValue("language_ids", []);
     setValue("translation_language_ids", []);
-    setValue("max_capacity", undefined);
+    setValue("max_capacity", "");
   }
 
   const handleSearch = (val: { target: { value: string } }) => {
