@@ -62,8 +62,20 @@ export default function CourseTable() {
     }
   }
 
+  //sorting the schedules
+  let schedules = formData.schedules.sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }
+  );
   //Finding course start date
-  const courseStartDate = formData?.schedules?.[0]?.date?.toISOString();
+  const courseStartDate = schedules?.[0]?.date?.toISOString();
 
   //Form variable to store the early_bird_cut_off_period
   const {
@@ -101,7 +113,7 @@ export default function CourseTable() {
 
     if (
       showEarlyBirdColumns == undefined &&
-      data?.[0]?.is_early_bird_fee_enabled
+      data?.[0]?.is_early_bird_fee_enabled !=null
     ) {
       setShowEarlyBirdColumns(data?.[0]?.is_early_bird_fee_enabled);
     }
@@ -110,7 +122,7 @@ export default function CourseTable() {
 
   useEffect(() => {
     fetchFeeData();
-  }, [formData?.organization]);
+  }, []);
 
   const { data: organizationData, isLoading } = useOne({
     resource: "organizations",
@@ -571,8 +583,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   return (
     <div className="flex flex-col justify-center w-[70vw]">
-      {/* Enable Early Bird fee if it is enabled in settings */}
-      {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && (
+      {/* Enable Early Bird fee if it is enabled in settings and Fee should be editable */}
+      {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && isFeeEditable && (
         <div className="flex justify-end items-center gap-2 py-4">
           <Checkbox
             checked={showEarlyBirdColumns}

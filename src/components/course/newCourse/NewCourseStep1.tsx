@@ -411,6 +411,14 @@ const OrganizationDropDown = () => {
   };
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
+  const {setValue}=useFormContext()
+
+  //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
+  const handleRemoveFeeLevelSettings=()=>{
+    setValue("program_fee_level_settings",undefined)
+    setValue("is_early_bird_enabled",undefined)
+    setValue("early_bird_cut_off_period",undefined)
+  }
   return (
     <div className="w-80 h-20">
       <div className="flex gap-1 flex-col">
@@ -422,8 +430,10 @@ const OrganizationDropDown = () => {
         </div>
         <Select
           value={value}
-          onValueChange={(value: any) => {
-            onChange(value);
+          onValueChange={(val: any) => {
+            onChange(val);
+            if(val!=value)
+            handleRemoveFeeLevelSettings()
           }}
           //disabling the organization dropdown when it is edit
           disabled={isEditCourse}

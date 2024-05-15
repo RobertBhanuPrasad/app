@@ -133,7 +133,13 @@ export const StreetAddressComponent = () => {
   );
 };
 
-export const CityDropDown = ({ name }: { name: string }) => {
+export const CityDropDown = ({
+  name,
+  onChange = () => {},
+}: {
+  name: string;
+  onChange?: any;
+}) => {
   const { t } = useTranslation("common");
   const [pageSize, setPageSize] = useState(10);
 
@@ -184,7 +190,14 @@ export const CityDropDown = ({ name }: { name: string }) => {
         <Text className="text-[#7677F4]">*</Text>
       </div>
 
-      <Select value={cityValue} onValueChange={cityValueOnChange}>
+      <Select
+        value={cityValue}
+        onValueChange={(val) => {
+          cityValueOnChange(val);
+          //Call callback function when new value is selected 
+          if (val == cityValue) onChange();
+        }}
+      >
         <SelectTrigger
           error={cityValueError ? true : false}
           className="font-semibold text-sm "
@@ -220,7 +233,13 @@ export const CityDropDown = ({ name }: { name: string }) => {
   );
 };
 
-export const StateDropDown = ({ name }: { name: string }) => {
+export const StateDropDown = ({
+  name,
+  onChange = () => {},
+}: {
+  name: string;
+  onChange?: any;
+}) => {
   const { t } = useTranslation([
     "common",
     "course.new_course",
@@ -300,7 +319,14 @@ export const StateDropDown = ({ name }: { name: string }) => {
         <Text className="text-[#7677F4]">*</Text>
       </div>
 
-      <Select value={stateValue} onValueChange={stateValueOnchange}>
+      <Select
+        value={stateValue}
+        onValueChange={(val) => {
+          stateValueOnchange(val);
+          //Calling callback function when new value is selected in drop down
+          if (val != stateValue) onChange();
+        }}
+      >
         <SelectTrigger
           className="w-full font-semibold text-sm"
           error={stateValueError ? true : false}
@@ -341,7 +367,13 @@ export const StateDropDown = ({ name }: { name: string }) => {
   );
 };
 
-export const CenterDropDown = ({ name }: { name: string }) => {
+export const CenterDropDown = ({
+  name,
+  onChange = () => {},
+}: {
+  name: string;
+  onChange?: any;
+}) => {
   const { t } = useTranslation(["common", "course.new_course"]);
   const [pageSize, setPageSize] = useState(10);
 
@@ -404,7 +436,14 @@ export const CenterDropDown = ({ name }: { name: string }) => {
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
-      <Select value={centerValue} onValueChange={centerValueOnChange}>
+      <Select
+        value={centerValue}
+        onValueChange={(val) => {
+          centerValueOnChange(val);
+          //Call callback function when new value is selected 
+          if (val != centerValue) onChange();
+        }}
+      >
         <SelectTrigger
           className="w-full font-semibold text-sm"
           error={centerValueError ? true : false}
