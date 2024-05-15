@@ -137,7 +137,7 @@ const RadioCards = () => {
 
   const { t } = useTranslation(["course.new_course", "new_strings"]);
 
-  const {setProgramCreatedById} = newCourseStore()
+  const { setProgramCreatedById } = newCourseStore();
   const {
     field: { value, onChange },
     fieldState: { error: radioError },
@@ -176,12 +176,18 @@ const RadioCards = () => {
       //If teachers does not exist prefill with login user
       if (!teachers) {
         teachersOnChange([loginInTeacherData]);
+        setTimeout(() => {
+          clearErrors("teacher_ids");
+        }, 10);
       }
       //If already teacher are exist then check weather login user is present in teacher drop down or not. If not prefill with login user
       else if (
         !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
       ) {
         teachersOnChange([loginInTeacherData, ...teachers]);
+        setTimeout(() => {
+          clearErrors("teacher_ids");
+        }, 10);
       }
     }
     // Check if the selected value is equal to the organizer's ID
@@ -197,7 +203,7 @@ const RadioCards = () => {
       }
     }
     // we are storing the program created by in the zustand variable to use it in the validatios
-    setProgramCreatedById(val)
+    setProgramCreatedById(val);
   };
 
   /**
