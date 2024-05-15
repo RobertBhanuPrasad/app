@@ -272,6 +272,8 @@ function index() {
   const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
     useTable({
       resource: "program",
+      //restricting the hook to get the params from URL
+      syncWithLocation: false,
       meta: {
         select:
           "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
@@ -295,6 +297,11 @@ function index() {
         ],
       },
     });
+
+  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook
+  useEffect(() => {
+    setFilters(filters.permanent, "replace");
+  }, [AllFilterData]);
 
   /**
    * The variable holds whether all rows are selected or not
@@ -529,7 +536,6 @@ function index() {
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
-          setFilters={setFilters}
         />
 
         {programData?.isLoading ? (
@@ -634,7 +640,7 @@ function index() {
 
 export default index;
 
-const HeaderSection = ({ hasAliasNameFalse, setCurrent, setFilters }: any) => {
+const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
@@ -647,7 +653,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent, setFilters }: any) => {
           />
         </div>
         <div className="flex-[1.75]">
-          <BasicFilters setCurrent={setCurrent} setFilters={setFilters} />
+          <BasicFilters setCurrent={setCurrent} />
         </div>
       </div>
     </Form>
@@ -774,7 +780,9 @@ export const CourseTypeComponent = ({ name }: any) => {
   );
 };
 
-export const BasicFilters = ({ setCurrent, setFilters }: any) => {
+export const BasicFilters: React.FC<{
+  setCurrent: (number: number) => void;
+}> = ({ setCurrent }) => {
   const { watch, setValue } = useFormContext();
   const formData = watch();
 
@@ -794,12 +802,13 @@ export const BasicFilters = ({ setCurrent, setFilters }: any) => {
     name: "course_date",
   });
 
+  console.log("heyy course date", courseDate);
+
   const { setAllFilterData }: any = newCourseStore();
 
   const [open, setOpen] = useState(false);
 
   const handleClearAll = () => {
-    setFilters([], "replace");
     setValue("course_id", "");
     setValue("course_date", "");
     setValue("course_type", "");
@@ -840,7 +849,8 @@ export const BasicFilters = ({ setCurrent, setFilters }: any) => {
             <div>
               <CalenderIcon color="#666666" />
             </div>
-            {courseDate ? (
+            {/* here if there is courseDate.from then only we need to format other wise we can show placeholder */}
+            {courseDate && courseDate.from ? (
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-row gap-2 text-[14px]">
                   {/* If the course from date and to date is present then only format and show the from date and to date */}
