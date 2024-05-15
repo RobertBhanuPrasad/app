@@ -1429,6 +1429,7 @@ export const ExistingVenueListSection = ({
   );
   return (
     <div className="flex flex-row !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
+      <div className="relative group">
       <Checkbox
         id={item.id}
         value={item.id}
@@ -1437,6 +1438,10 @@ export const ExistingVenueListSection = ({
           formData[NewCourseStep3FormNames.venue_id] == item.id ? true : false
         }
       />
+      <div className="absolute hidden group-hover:flex bottom-1 left-6 mt-8 w-max p-2 text-sm text-white bg-gray-800 rounded shadow-lg">
+      Select this checkbox to edit your venue
+    </div>
+      </div>
       <div className="space-y-1 leading-none w-full">
         <div className="flex justify-between">
           <div className="font-semibold">{item.name}</div>
@@ -1447,11 +1452,14 @@ export const ExistingVenueListSection = ({
                 open={openExistingVenue}
                 onOpenChange={setOpenExistingVenue}
               >
+                <div className="relative group">
                 <DialogTrigger
                   className={
                     !isVenueSelected
-                      ? "cursor-not-allowed  opacity-50"
+              
+                      ? "cursor-not-allowed  opacity-50 relative group"
                       : "opacity-none"
+                      
                   }
                   disabled={!isVenueSelected}
                   onClick={() => {
@@ -1459,7 +1467,12 @@ export const ExistingVenueListSection = ({
                   }}
                 >
                   <EditIcon />
+                  
                 </DialogTrigger>
+                <div className="absolute hidden group-hover:flex bottom-1 left-6 mt-8 w-max p-2 text-sm text-white bg-gray-800 rounded shadow-lg">
+      Select this checkbox to edit your venue
+    </div>
+                </div>
                 <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
                   <AddOrEditVenue
                     handleSubmit={() => {
