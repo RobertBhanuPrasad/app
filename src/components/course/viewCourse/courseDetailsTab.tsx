@@ -130,7 +130,7 @@ function CourseDetailsTab() {
       setCopiedRegistrationLink(false);
     }, 1000);
   };
-
+const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? courseData?.data?.is_early_bird_enabled : courseData?.data?.program_fee_settings_id?.is_early_bird_fee_enabled
   // getting public visibility id to check whether the particular course is public or private.
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
     VISIBILITY,
@@ -296,8 +296,8 @@ function CourseDetailsTab() {
                   );
                 })
               : ""}
-              {/* if only program_fee_settings_id is not null than we have to show early bird fee */}
-             {courseData?.data?.program_fee_settings_id==null? courseData?.data?.is_early_bird_enabled : courseData?.data?.program_fee_settings_id?.is_early_bird_fee_enabled
+              {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee */}
+             {IsEarlyBirdFeeEnable
                && programFees?.map((item: ProgramFeeItem) => {
               return (
               <div className="flex flex-col gap-1">
