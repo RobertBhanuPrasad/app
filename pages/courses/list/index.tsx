@@ -800,8 +800,6 @@ export const BasicFilters: React.FC<{
     name: "course_date",
   });
 
-  console.log("heyy course date", courseDate);
-
   const { setAllFilterData }: any = newCourseStore();
 
   const [open, setOpen] = useState(false);
