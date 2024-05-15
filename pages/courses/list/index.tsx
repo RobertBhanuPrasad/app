@@ -296,7 +296,8 @@ function index() {
       },
     });
 
-  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook
+  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook 
+  //Because when we move to another route and comeback Filters are not setting properly that why we have written this
   useEffect(() => {
     setFilters(filters.permanent, "replace");
   }, [AllFilterData]);
