@@ -80,14 +80,21 @@ export const validationSchema = () => {
       required_error: "Time format is a required field",
     }),
     state_id: z.number({
-      required_error: "State is is a required fields",
+      required_error: "State is a required field",
     }),
-    city_id: z.number({
-      required_error: "City is is a required fields",
-    }),
-    center_id: z.number({
-      required_error: "Center is is a required fields",
-    }),
+    city_id: 
+    z.union([
+      z.number({
+        required_error: "City is a required field",
+      }).int(), 
+      z.string().nonempty({ message: "City is a required field" })
+    ]),
+    center_id: z.union([
+      z.number({
+        required_error: "Center is a required field",
+      }).int(), 
+      z.string().nonempty({ message: "Center is a required field" })
+    ]),
     time_zone_id: z.number({
       required_error: "Time zone is a required field",
     }),
