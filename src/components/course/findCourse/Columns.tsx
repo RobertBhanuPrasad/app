@@ -198,11 +198,13 @@ export const column = (
         const router = useRouter()
 
         return (
-          //when click on this navigate to participant listing page
-          <div className="min-w-[150px] text-primary cursor-pointer font-semibold" onClick={() => router.push(`/courses/${row.original.id}/participants/list`)}>
+          <div 
+            className={`min-w-[150px] text-primary font-semibold ${row?.original?.participant_count === 0 ? '' : 'cursor-pointer'}`} 
+            onClick={row?.original?.participant_count !== 0 ? () => router.push(`/courses/${row.original.id}/participants/list`) : undefined}
+          >
             {row?.original?.participant_count}
           </div>
-        );
+        );           
       },
     },
     {

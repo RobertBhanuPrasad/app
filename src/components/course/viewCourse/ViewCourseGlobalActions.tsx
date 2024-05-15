@@ -29,7 +29,7 @@ export const ViewCourseGlobalActions = () => {
     : undefined;
 
   const globalActionsOptions = [
-    { label: t("view_participants"), value: 1 },
+    // { label: t("view_participants"), value: 1 },
     // t("register_participant"),
     // "Register with online credit card payment",
     // "View Pending/Failed Tranactions",
