@@ -54,6 +54,7 @@ import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -470,6 +471,8 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
+
+  console.log(newCourseData,CourseTeachersNames,'CourseTeachersNames')
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
@@ -611,12 +614,23 @@ export default function NewCourseReviewPage() {
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("new_strings:teacher")}
               </p>
+              {/* If the user clicked on the i am teaching the course then we need to display only the loggined user name in the teacher field */}
+              {isTeacherShownInTeacherField(newCourseData?.program_created_by) ? (
+                <abbr
+                title={loginUserData?.userData?.contact_id?.full_name ? loginUserData?.userData?.contact_id?.full_name : "-"}
+                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+              >
+                {loginUserData?.userData?.contact_id?.full_name ? loginUserData?.userData?.contact_id?.full_name : "-"}
+              </abbr>
+      ) : (
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
               >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
+      )}
+              
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
