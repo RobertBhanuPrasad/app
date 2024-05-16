@@ -1534,8 +1534,16 @@ export const ExistingVenueListSection = ({
         }
       />
       <div className="space-y-1 leading-none w-full">
-        <div className="font-semibold">{item.name}</div>  
-        <VenueItem item={item} />
+
+      {item.name ? (
+  <>
+    <div className="font-semibold">{item.name}</div>
+    <VenueItem item={item} />
+  </>
+) : (
+  <div><VenueItem item={item} /></div>
+)}
+
       </div>
       <div className="flex flex-row gap-3">
             {(item?.created_by_user_id == loginUserData?.userData?.id ||
