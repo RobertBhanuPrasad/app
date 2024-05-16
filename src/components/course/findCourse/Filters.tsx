@@ -367,8 +367,6 @@ const Filters = ({
             setValue("temporaryadvancefilter.is_course_fee", "");
             setValue("temporaryadvancefilter.course_teacher", "");
             setValue("temporaryadvancefilter.program_organiser", []);
-            //we need to empty the course type in basic filters also because the filter applies when we clear all in advance filter
-            setValue("course_type", "");
             //Here we need to clear only the advance filter data
             setAllFilterData({
               ...AllFilterData,
