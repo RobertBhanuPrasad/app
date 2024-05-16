@@ -86,7 +86,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData } = newCourseStore();
+  const { newCourseData, setNewCourseData } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -182,8 +182,30 @@ export default function NewCourseReviewPage() {
   //fetching the user's language code
   const languageCode = useGetLanguageCode();
 
+  //sorting the schedules
+  let sortedSchedules = newCourseData.schedules.sort((a: any, b: any) => {
+    let aDate = new Date(a.date);
+    aDate.setHours(a?.startHour, a?.startMinute);
+
+    let bDate = new Date(b.date);
+    bDate.setHours(b?.startHour, b?.startMinute);
+
+    return aDate.getTime() - bDate.getTime();
+  });
+
+  //Finding course start date from new Date object
+  let utcYear = sortedSchedules?.[0]?.date["getFullYear"]();
+  let utcMonth = (sortedSchedules?.[0]?.date["getMonth"]() + 1)
+    .toString()
+    .padStart(2, "0");
+  let utcDay = sortedSchedules?.[0]?.date["getDate"]()
+    .toString()
+    .padStart(2, "0");
+
+  //Construct the course start date time stamp
+  const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
   //Finding course start date
-  const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
+  // const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
 
   const fetchFeeData = async () => {
     //Sending all required params
@@ -200,17 +222,64 @@ export default function NewCourseReviewPage() {
         "country-code": countryCode,
       },
     });
-
+    
     if (error)
       console.log("error while fetching course fee level settings data", error);
     setCourseFeeSettings(data);
+
+    //Fetching login user roles
+    const user_roles: any[] = loginUserData?.userData?.user_roles || [];
+
+    //Checking Weather login user is Super Admin or Not
+    let isUserNationAdminOrSuperAdmin = false;
+
+    if (
+      user_roles.some(
+        (role) =>
+          role.role_id.order === NATIONAL_ADMIN ||
+          role.role_id.order === SUPER_ADMIN
+      )
+    ) {
+      isUserNationAdminOrSuperAdmin = true;
+    }
+
+    //Checking Weather a fee is editable or not
+    const isFeeEditable =
+      isUserNationAdminOrSuperAdmin || data?.[0]?.is_program_fee_editable
+        ? true
+        : false;
+
+    //Inserting data into program_fee_level_settings variable. If it is undefined
+    //This code will execute when user changes program_type or location details or course start date.
+    //when above felids are changes then we are clearing program_fee_level_settings variable.
+    //So we are manually inserting data in program_fee_level_settings variable.
+    if (
+      isFeeEditable &&
+      newCourseData?.program_fee_level_settings == undefined
+    ) {
+      setNewCourseData({
+        ...newCourseData,
+        program_fee_level_settings: data?.[0]?.program_fee_level_settings?.map(
+          (feeLevel: any) => {
+            //Removing Id
+            const { id, ...rest } = feeLevel;
+            return {
+              ...rest,
+              fee_level_id: feeLevel?.fee_level_id?.id,
+            };
+          }
+        ),
+        is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
+        early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
+      });
+    }
   };
 
   useEffect(() => {
     //To fetch fee we need the location details. Initially this three variables are set to zero.Based on user actions we will assign values to this variables.
     //Fetching the fee when these values are assigned.
     if (stateId != 0 && cityId != 0 && centerId != 0) fetchFeeData();
-  }, [stateId, cityId, centerId]);
+  }, [stateId, cityId, centerId,newCourseData]);
 
   const creator =
     newCourseData?.program_created_by &&
@@ -546,6 +615,7 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
+
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
@@ -1090,7 +1160,8 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div> */}
           </div>
-          {errors?.program_fee_level_settings && (
+          {(enabledFeeLevelData?.length == 0 ||
+            enabledFeeLevelData == undefined) && (
             <span className="text-[#FF6D6D] text-[12px]">
               There is no price set for current settings. Select course type and
               city/center.
