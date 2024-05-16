@@ -125,13 +125,16 @@ const OnlineProgram = () => {
     name: NewCourseStep3FormNames?.online_url,
   });
 
-  const {setValue}=useFormContext()
+  const {setValue,clearErrors}=useFormContext()
 
   //Requirement: Fee is fetch based on program_type,location and course start date.So when ever state_id,city_id and center_id is changed need to remove existing fee levels.
   const handleRemoveFeeLevels=()=>{
     setValue("program_fee_level_settings",undefined)
     setValue("is_early_bird_enabled",undefined)
     setValue("early_bird_cut_off_period",undefined)
+    setTimeout(() => {
+      clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+    }, 10);
   }
   return (
     <div className="">
@@ -541,7 +544,7 @@ const ScheduleComponent = ({
 const Venue = () => {
   const { t } = useTranslation(["course.new_course", "new_strings"]);
 
-  const { watch, setValue, resetField } = useFormContext();
+  const { watch, setValue, resetField,clearErrors } = useFormContext();
 
   const removeVenue = () => {
     setValue("newVenue", undefined);
@@ -632,6 +635,9 @@ const Venue = () => {
           setValue("program_fee_level_settings",undefined)
           setValue("is_early_bird_enabled",undefined)
           setValue("early_bird_cut_off_period",undefined)
+          setTimeout(() => {
+            clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+          }, 10);
         }
         setValue("newVenue", newVenueData);
         onChange("new-venue");
@@ -950,7 +956,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { trigger, watch,getValues,setValue } = useFormContext();
+  const { trigger, watch,getValues,setValue,clearErrors } = useFormContext();
 
   const formData = watch();
   const {schedules}=getValues()
@@ -1109,6 +1115,9 @@ const CalenderComponent = ({ index, setOpen }: any) => {
     setValue("program_fee_level_settings",undefined)
     setValue("is_early_bird_enabled",undefined)
     setValue("early_bird_cut_off_period",undefined)
+    setTimeout(() => {
+      clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+    }, 10);
   }
 
   }
@@ -1314,9 +1323,11 @@ const {
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
     if(existingVenue?.id!=existingVenueObject?.[0]){
       setValue("program_fee_level_settings",undefined)
-      clearErrors("program_fee_level_settings")
       setValue("is_early_bird_enabled",undefined)
       setValue("early_bird_cut_off_period",undefined)
+      setTimeout(() => {
+        clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+      }, 10);
     }
 
     existingVenueOnChange(existingVenueObject?.[0]);
