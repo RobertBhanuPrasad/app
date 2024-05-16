@@ -214,11 +214,11 @@ export const column = (
         return <div>{t('new_strings:visibility')}</div>;
       },
       cell: ({ row }: any) => {
-        
+
         return <div className="min-w-[150px]">{translatedText(row?.original?.visibility_id?.name)}</div>
       }
     },
-    
+
     //TODO : for now may-13 release it has to be hidden
     // {
     //   accessorKey: "course_accounting_status",
@@ -330,6 +330,12 @@ export const column = (
           );
           // we have to delete schedules when user click on cipy course and other we need to prefill
           defaultValues = _.omit(defaultValues, ["id", "schedules"]);
+          //remove the id, program_id from each object in program_fee_level_settings array
+          if (defaultValues?.program_fee_level_settings) {
+            defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
+              _.omit(setting, ['id', 'program_id'])
+            );
+          }
           setNewCourseData(defaultValues);
           // we are storing the program created by in the zustand variable to use it in the validatios
           setProgramCreatedById(defaultValues?.program_created_by)

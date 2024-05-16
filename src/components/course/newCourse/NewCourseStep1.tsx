@@ -172,17 +172,23 @@ const RadioCards = () => {
   const handleOnChange = (val: string) => {
     onChange(parseInt(val));
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
-    if (parseInt(val) != iAmOrganizerId) {
-      //If teachers does not exist prefill with login user
-      if (!teachers) {
+    if (parseInt(val) == iAmTeachingId) {
+      //Requirement: Need to show only one teacher(login user) in teacher drop-down if I am teaching is selected.
+      teachersOnChange([loginInTeacherData]);
+      setTimeout(() => {
+        clearErrors("teacher_ids");
+      }, 10);
+    }
+
+    //Requirement: Need to prefill teacher drop-down if user select I am co-teaching.
+    if (parseInt(val) == iAmCoTeachingId) {
+      //If teachers are not present just prefill with login user
+      if (teachers == undefined) {
         teachersOnChange([loginInTeacherData]);
-        setTimeout(() => {
-          clearErrors("teacher_ids");
-        }, 10);
       }
       //If already teacher are exist then check weather login user is present in teacher drop down or not. If not prefill with login user
       else if (
-        !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
+        !teachers?.some((obj: any) => _.isEqual(obj, loginInTeacherData))
       ) {
         teachersOnChange([loginInTeacherData, ...teachers]);
         setTimeout(() => {
@@ -381,6 +387,9 @@ const OrganizationDropDown = () => {
    */
   const pathname = usePathname();
 
+  const { clearErrors, watch } = useFormContext();
+
+  const formData = watch();
   /**
    * Checking whether the url contains the edit or not
    */
@@ -389,6 +398,8 @@ const OrganizationDropDown = () => {
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
+
+  const { setValue } = useFormContext();
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
@@ -409,6 +420,79 @@ const OrganizationDropDown = () => {
   } = useController({
     name: NewCourseStep1FormNames?.organization_id,
   });
+
+  const {
+    field: { onChange: teachersOnChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.teacher_ids,
+  });
+
+  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_ORGANIZER
+  )?.id;
+
+  const { data: loginUserData }: any = useGetIdentity();
+
+  const loginInTeacherData = loginUserData?.userData?.id;
+
+  const handleClearDependencyValues = () => {
+    setValue("program_type_id", "");
+    setValue("program_type", "");
+    setValue("program_alias_name_id", "");
+    setValue("teachers", []);
+
+    //Handling teachers drop down
+    if (formData?.program_created_by != iAmOrganizerId) {
+      //Requirement: If teacher or co-teacher is selected Need to prefill login user in teacher dropdown
+      teachersOnChange([loginInTeacherData]);
+      setTimeout(() => {
+        clearErrors("teacher_ids");
+      }, 10);
+    }
+    setValue("assistant_teacher_ids", []);
+    setValue("language_ids", []);
+    setValue("translation_language_ids", []);
+    setValue("max_capacity", "");
+    setValue("online_url", "");
+    setValue("existingVenue", undefined);
+    setValue("newVenue", undefined);
+    setValue("is_existing_venue", "");
+    setValue("state_id", "");
+    setValue("city_id", "");
+    setValue("center_id", "");
+    setValue("is_resedential_program", false);
+
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings", undefined);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
+
+    // we have to clear errors after we modify the values
+    setTimeout(() => {
+      clearErrors([
+        "program_type_id",
+        "program_alias_name_id",
+        "teacher_ids",
+        "assistant_teacher_ids",
+        "language_ids",
+        "translation_language_ids",
+        "max_capacity",
+        "online_url",
+        "existingVenue",
+        "isExistingVenue",
+        "is_existing_venue",
+        "newVenue",
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period",
+        "state_id",
+        "city_id",
+        "center_id",
+        "is_residential_program",
+      ]);
+    }, 10);
+  };
 
   const handleSearch = (val: { target: { value: string } }) => {
     onSearch(val.target.value);
@@ -435,6 +519,7 @@ const OrganizationDropDown = () => {
           value={value}
           onValueChange={(value: any) => {
             onChange(value);
+            handleClearDependencyValues();
           }}
           //disabling the organization dropdown when it is edit
           disabled={isEditCourse}

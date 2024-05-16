@@ -124,6 +124,18 @@ const OnlineProgram = () => {
   } = useController({
     name: NewCourseStep3FormNames?.online_url,
   });
+
+  const {setValue,clearErrors}=useFormContext()
+
+  //Requirement: Fee is fetch based on program_type,location and course start date.So when ever state_id,city_id and center_id is changed need to remove existing fee levels.
+  const handleRemoveFeeLevels=()=>{
+    setValue("program_fee_level_settings",undefined)
+    setValue("is_early_bird_enabled",undefined)
+    setValue("early_bird_cut_off_period",undefined)
+    setTimeout(() => {
+      clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+    }, 10);
+  }
   return (
     <div className="">
       <div>
@@ -166,13 +178,13 @@ const OnlineProgram = () => {
         </div>
         <div className="flex gap-7">
           <div className="w-[33%]">
-            <StateDropDown name="state_id" />
+            <StateDropDown name="state_id" onChange={handleRemoveFeeLevels} />
           </div>
           <div className="w-[33%]">
-            <CityDropDown name="city_id" />
+            <CityDropDown name="city_id" onChange={handleRemoveFeeLevels}/>
           </div>
           <div className="w-[33%]">
-            <CenterDropDown name="center_id" />
+            <CenterDropDown name="center_id" onChange={handleRemoveFeeLevels}/>
           </div>
         </div>
       </div>
@@ -531,7 +543,7 @@ const ScheduleComponent = ({
 const Venue = () => {
   const { t } = useTranslation(["course.new_course", "new_strings"]);
 
-  const { watch, setValue, resetField } = useFormContext();
+  const { watch, setValue, resetField,clearErrors } = useFormContext();
 
   const removeVenue = () => {
     setValue("newVenue", undefined);
@@ -606,7 +618,7 @@ const Venue = () => {
         // here we are updating state to true to show the warning message
         setwarningmessage(true);
       } else {
-        setValue("newVenue", {
+        const newVenueData={
           city_id: formData?.city_id,
           city: formData?.city,
           state_id: formData?.state_id,
@@ -616,7 +628,17 @@ const Venue = () => {
           postal_code: formData?.postal_code,
           address: formData?.address,
           name: formData?.name,
-        });
+        }
+        //Requirement: Fee is fetch based on program_type,location and course start date.So when ever New Venue's state_id,city_id and center_id is changed need to remove existing fee levels.
+        if(!(formData?.newVenue?.state_id==newVenueData?.state_id && formData?.newVenue?.city_id==newVenueData?.city_id && formData?.newVenue?.center_id==newVenueData?.center_id)){
+          setValue("program_fee_level_settings",undefined)
+          setValue("is_early_bird_enabled",undefined)
+          setValue("early_bird_cut_off_period",undefined)
+          setTimeout(() => {
+            clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+          }, 10);
+        }
+        setValue("newVenue", newVenueData);
         onChange("new-venue");
         setOpenAddNewVenue(false);
       }
@@ -933,10 +955,10 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { trigger, watch } = useFormContext();
+  const { trigger, watch,getValues,setValue,clearErrors } = useFormContext();
 
   const formData = watch();
-
+  const {schedules}=getValues()
   /**
    * This variable holds the state id
    */
@@ -1048,6 +1070,56 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       minutes < 10 ? "0" + minutes : minutes
     }`;
   };
+
+  //Need to check weather start date of course is changed or not.
+  const handleRemoveFeeLevel=(date:any)=>{
+  const {schedules}=getValues()
+  //In order to check weather changed date is course start date or not.
+  //Taking two variables sort them and compare first object.if first object is changed then start date is changed. 
+  let originalSchedule=_.cloneDeep(schedules)
+  let tempSchedule=_.cloneDeep(schedules)
+  
+  //Updating temporary variable
+  tempSchedule[index].date=date
+
+  //sorting original schedule
+  let sortedOriginalSchedules = originalSchedule?.sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }
+  );
+
+  //sorting temporary schedule
+  let sortedTempSchedules = tempSchedule?.sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }
+  );
+
+  //After sorting if first schedule is different for both original and temporary schedule then user as changed start date of course (start date is first schedule)
+  if(sortedOriginalSchedules?.[0]?.date.getTime()!=sortedTempSchedules?.[0]?.date.getTime()){
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever start date of schedule is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings",undefined)
+    setValue("is_early_bird_enabled",undefined)
+    setValue("early_bird_cut_off_period",undefined)
+    setTimeout(() => {
+      clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+    }, 10);
+  }
+
+  }
   return (
     <div className="flex flex-col gap-4">
       <div className="h-[401px] flex flex-row gap-4">
@@ -1104,6 +1176,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       <div className="flex self-center">
         <Button
           onClick={() => {
+            handleRemoveFeeLevel(date)
             onChange(date);
             setOpen(false);
 
@@ -1123,7 +1196,7 @@ const ExistingVenueList = () => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { watch } = useFormContext();
+  const { watch ,setValue,clearErrors} = useFormContext();
 
   const formData = watch();
 
@@ -1245,6 +1318,17 @@ const {
     const existingVenueObject = venueData.filter(
       (venue) => venue.id == formData[NewCourseStep3FormNames.venue_id]
     );
+
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
+    if(existingVenue?.id!=existingVenueObject?.[0]){
+      setValue("program_fee_level_settings",undefined)
+      setValue("is_early_bird_enabled",undefined)
+      setValue("early_bird_cut_off_period",undefined)
+      setTimeout(() => {
+        clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+      }, 10);
+    }
+
     existingVenueOnChange(existingVenueObject?.[0]);
   };
 
