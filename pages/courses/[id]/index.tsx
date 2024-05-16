@@ -859,8 +859,8 @@ export const ActionsDropDown = ({ courseData }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder={t("actions")} />
+        <SelectTrigger className="w-[192px] border !text-[#333333] !font-semibold !border-[#999999]">
+          <SelectValue placeholder={t('actions')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
