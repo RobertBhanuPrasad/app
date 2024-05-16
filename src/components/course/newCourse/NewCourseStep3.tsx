@@ -1524,7 +1524,7 @@ export const ExistingVenueListSection = ({
       role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
   );
   return (
-    <div className="flex flex-row !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
+    <div className="flex flex-row justify-between !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
       <Checkbox
         id={item.id}
         value={item.id}
@@ -1534,9 +1534,10 @@ export const ExistingVenueListSection = ({
         }
       />
       <div className="space-y-1 leading-none w-full">
-        <div className="flex justify-between">
-          <div className="font-semibold">{item.name}</div>  
-          <div className="flex flex-row gap-3">
+        <div className="font-semibold">{item.name}</div>  
+        <VenueItem item={item} />
+      </div>
+      <div className="flex flex-row gap-3">
             {(item?.created_by_user_id == loginUserData?.userData?.id ||
               isUserNationAdminOrSuperAdmin) && (
               <Dialog
@@ -1581,9 +1582,6 @@ export const ExistingVenueListSection = ({
               </Dialog>
             )}
           </div>
-        </div>
-        <VenueItem item={item} />
-      </div>
     </div>
   );
 };
