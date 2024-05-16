@@ -222,7 +222,7 @@ export default function NewCourseReviewPage() {
         "country-code": countryCode,
       },
     });
-    
+
     if (error)
       console.log("error while fetching course fee level settings data", error);
     setCourseFeeSettings(data);
@@ -279,7 +279,7 @@ export default function NewCourseReviewPage() {
     //To fetch fee we need the location details. Initially this three variables are set to zero.Based on user actions we will assign values to this variables.
     //Fetching the fee when these values are assigned.
     if (stateId != 0 && cityId != 0 && centerId != 0) fetchFeeData();
-  }, [stateId, cityId, centerId,newCourseData]);
+  }, [stateId, cityId, centerId, newCourseData]);
 
   const creator =
     newCourseData?.program_created_by &&
@@ -514,9 +514,7 @@ export default function NewCourseReviewPage() {
 
     let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 
-    let requiredFieldsObject: {
-      [key: string]: boolean;
-    } = {};
+    let requiredFieldsObject: any = {};
 
     requiredFeilds?.map((field: string) => {
       requiredFieldsObject[field] = true;
@@ -639,8 +637,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("basic_details")}
               content={<NewCourseStep1 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenBasicDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenBasicDetails(false);
               }}
               open={openBasicDetails}
@@ -727,8 +728,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("course.new_course:review_post_details.course_details")}
               content={<NewCourseStep2 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenCourseDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenCourseDetails(false);
               }}
               open={openCourseDetails}
@@ -749,14 +753,15 @@ export default function NewCourseReviewPage() {
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={
-                  courseType?.data?.name && newCourseData?.program_type_id !== ''
+                  courseType?.data?.name &&
+                  newCourseData?.program_type_id !== ""
                     ? translatedText(courseType?.data?.name)
-                    : '-'
+                    : "-"
                 }
               >
-                {courseType?.data?.name && newCourseData?.program_type_id !== ''
+                {courseType?.data?.name && newCourseData?.program_type_id !== ""
                   ? translatedText(courseType?.data?.name)
-                  : '-'}
+                  : "-"}
               </abbr>
               {errors?.program_type_id && (
                 <span className="text-[#FF6D6D] text-[12px]">
@@ -948,8 +953,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Venue Details"
               content={<NewCourseStep3 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenVenueDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenVenueDetails(false);
               }}
               open={openVenueDetails}
@@ -973,7 +981,7 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.online_url}
                 >
-                  {newCourseData?.online_url ? newCourseData?.online_url : '-'}
+                  {newCourseData?.online_url ? newCourseData?.online_url : "-"}
                 </abbr>
 
                 {errors?.online_url && (
@@ -1101,8 +1109,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Fees Details"
               content={<NewCourseStep4 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenFeesDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenFeesDetails(false);
               }}
               open={openFeesDetails}
@@ -1179,8 +1190,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Accomidation Details"
               content={<NewCourseStep5 />}
-              onClose={(formData: any) => {
+              handleSaveClick={(formData: any) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenAccomidationDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenAccomidationDetails(false);
               }}
               open={openAccomidationDetails}
@@ -1230,8 +1244,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Contact Details"
               content={<NewCourseStep6 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenContactDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenContactDetails(false);
               }}
               open={openContactDetails}
