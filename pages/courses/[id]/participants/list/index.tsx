@@ -964,8 +964,8 @@ const HeaderSection = () => {
             </Button>
           </DialogTrigger>
           <DialogContent
-            closeIcon={false}
-            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center !p-8"
+            closeIcon={true}
+            className="!w-[850px] !h-[470px] bg-[#FFFFFF] !rounded-3xl justify-center !p-8"
           >
             <DateRangePickerComponent
               setOpen={setOpen}
@@ -1016,7 +1016,7 @@ const HeaderSection = () => {
 const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
   const { t } = useTranslation(["common", "new_strings"]);
   return (
-    <div className="relative">
+    <div className="relative mr-[8px] mt-[2px]">
       <DateRangePicker
         mode="range"
         defaultMonth={value?.from}

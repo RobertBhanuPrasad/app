@@ -102,9 +102,14 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     hour_format_id: z.number({
       required_error: "Time format is a required field",
     }),
-    state_id: z.number({
-      required_error: "State is a required field",
-    }),
+    state_id: z.union([
+      z
+        .number({
+          required_error: "State is a required field",
+        })
+        .int(),
+      z.string().nonempty({ message: "State is a required field" }),
+    ]),
     city_id: z.union([
       z
         .number({
