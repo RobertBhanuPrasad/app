@@ -241,7 +241,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       return modifiedFeeLevels;
     });
 
-  const { fields: feeLevels, append } = useFieldArray({
+  const { fields: feeLevels, replace } = useFieldArray({
     name: "program_fee_level_settings",
   });
   console.log(courseFeeData, "courseFeeData");
@@ -260,7 +260,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         };
       });
       console.log(feeData,'feeData')
-      append(feeData);
+      replace(feeData);
     }
   }, []);
 
