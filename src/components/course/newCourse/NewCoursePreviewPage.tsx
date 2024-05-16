@@ -261,8 +261,8 @@ export default function NewCourseReviewPage() {
         ...newCourseData,
         program_fee_level_settings: data?.[0]?.program_fee_level_settings?.map(
           (feeLevel: any) => {
-            //Removing Id
-            const { id, ...rest } = feeLevel;
+            //Removing Id and program_fee_setting_id
+            const { id,program_fee_setting_id,program_id, ...rest } = feeLevel;
             return {
               ...rest,
               fee_level_id: feeLevel?.fee_level_id?.id,
@@ -272,12 +272,6 @@ export default function NewCourseReviewPage() {
         is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
         early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
       });
-    }else{
-      //If program_fee_settings is not found then inserting empty array
-      setNewCourseData({
-        ...newCourseData,
-        program_fee_level_settings:[]
-      })
     }
   };
 
@@ -457,7 +451,7 @@ export default function NewCourseReviewPage() {
       };
     });
 
-  //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
+    //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
     ? newCourseData?.program_fee_level_settings
     : defaultFeeLevels;

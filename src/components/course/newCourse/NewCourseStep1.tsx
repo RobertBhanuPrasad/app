@@ -480,7 +480,7 @@ const OrganizationDropDown = () => {
     setValue("is_residential_program", false);
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings", undefined);
+    setValue("program_fee_level_settings", []);
     setValue("is_early_bird_enabled", undefined);
     setValue("early_bird_cut_off_period", undefined);
 
