@@ -248,17 +248,11 @@ function ViewDetails() {
       <div className="mx-8">
         <div className="flex flex-row justify-between">
           <div className="text-[32px] font-semibold">
-            {courseData?.data?.id
-              ? courseData?.data?.program_alias_name_id
-                ? courseData?.data?.program_code +
+            {courseData?.data?.program_code +
                   " " +
-                  translatedText(
-                    courseData?.data?.program_alias_name_id?.alias_name
-                  )
-                : courseData?.data?.program_code +
-                  " " +
+
                   translatedText(courseData?.data?.program_type_id?.name)
-              : " "}
+            }
           </div>
           <div className="flex items-center gap-4">
             <DisplayingCourseStatus

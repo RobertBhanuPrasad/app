@@ -664,7 +664,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
   const { t } = useTranslation(["common", "new_strings"]);
   return (
-    <div className="relative ml-[-12px] mt-[-12px]">
+    <div className="relative ml-[-12px] mt-[-8px]">
       <DateRangePicker
         mode="range"
         defaultMonth={value?.from}
@@ -880,8 +880,8 @@ export const BasicFilters: React.FC<{
             )}
           </Button>
           <DialogContent
-            closeIcon={false}
-            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"
+            closeIcon={true}
+            className="!w-[850px] !h-[470px] bg-[#FFFFFF] !rounded-3xl"
           >
             <DateRangePickerComponent
               setOpen={setOpen}
