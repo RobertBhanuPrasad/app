@@ -145,7 +145,7 @@ const OnlineProgram = () => {
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}
-            className="rounded-[12px] placeholder:font-[600] placeholder:text-[#000000]"
+            className="rounded-[12px] placeholder:font-[600] placeholder:text-[#999999]"
             value={value}
             onChange={(event) => {
               onChange(event.target.value);
