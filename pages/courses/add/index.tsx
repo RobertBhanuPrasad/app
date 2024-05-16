@@ -472,7 +472,7 @@ export const NewCourseTabs = () => {
     handelIsAllFieldsFilled(isAllFieldsFilled);
   };
   
-    /**
+  /**
    * @function handleClickReviewDetailsButton
    * @description This function is used to send to the review page if all the fields are field
    * @param currentStepFormNames
