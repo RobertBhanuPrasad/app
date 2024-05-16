@@ -43,7 +43,7 @@ const EditCourseReviewPage = () => {
     TIME_FORMAT_12_HOURS
   )?.id as number;
 
-  const { setNewCourseData } = newCourseStore();
+  const { setNewCourseData,setProgramCreatedById } = newCourseStore();
 
   useEffect(() => {
     const fetchDefaultValues = async () => {
@@ -59,6 +59,8 @@ const EditCourseReviewPage = () => {
       console.log("default values are", defaultValues);
 
       setNewCourseData(defaultValues);
+      // we are storing the program created by in the zustand variable to use it in the validatios
+      setProgramCreatedById(defaultValues?.program_created_by)
       setIsLoading(false);
     };
     fetchDefaultValues();

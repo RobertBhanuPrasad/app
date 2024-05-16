@@ -42,6 +42,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
 import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 
 function index() {
   const router = useRouter();
@@ -56,7 +57,12 @@ function index() {
     selectedTableRows,
     selectedRowObjects,
   } = ParticipantStore();
-  var {t}=useTranslation(["common", "course.participants", "new_strings", "course.find_course"])
+  var { t } = useTranslation([
+    "common",
+    "course.participants",
+    "new_strings",
+    "course.find_course",
+  ]);
   const filters: {
     /**
      * Initial filter state
@@ -88,33 +94,53 @@ function index() {
     });
   }
 
+  //If we select date range for registration date then we have to write filter to fetch the participants based on the range
   if (
     ParticpantFiltersData?.registration_date &&
     ParticpantFiltersData?.registration_date?.from != "" &&
     ParticpantFiltersData?.registration_date?.to != ""
   ) {
+    //Here the date picker uses the GMT time so , iam adding  1 day that is next day for from and to of registration date
     filters.permanent.push(
       {
         field: "created_at",
         operator: "gte",
         value:
+          ParticpantFiltersData?.registration_date?.from &&
           new Date(
-            ParticpantFiltersData?.registration_date.from?.setHours(0, 0, 0, 0)
+            new Date(
+              ParticpantFiltersData?.registration_date?.from?.setUTCHours(
+                0,
+                0,
+                0,
+                0
+              )
+            )?.getTime() +
+              24 * 60 * 60 * 1000
           )
             ?.toISOString()
-            .replace("T", " ")
-            .slice(0, -5) + "+00",
+            ?.replace("T", " ")
+            ?.slice(0, -5) + "+00",
       },
       {
         field: "created_at",
         operator: "lte",
         value:
+          ParticpantFiltersData?.registration_date?.to &&
           new Date(
-            ParticpantFiltersData?.registration_date.to?.setHours(23, 59, 0, 0)
+            new Date(
+              ParticpantFiltersData?.registration_date?.to?.setUTCHours(
+                23,
+                59,
+                0,
+                0
+              )
+            )?.getTime() +
+              24 * 60 * 60 * 1000
           )
             ?.toISOString()
-            .replace("T", " ")
-            .slice(0, -5) + "+00",
+            ?.replace("T", " ")
+            ?.slice(0, -5) + "+00",
       }
     );
   }
@@ -149,47 +175,6 @@ function index() {
       operator: "contains",
       value: ParticpantFiltersData?.advanceFilter?.mobile,
     });
-  }
-
-  if (
-    ParticpantFiltersData?.advanceFilter?.registration_date_range &&
-    ParticpantFiltersData?.advanceFilter?.registration_date_range?.from != "" &&
-    ParticpantFiltersData?.advanceFilter?.registration_date_range?.to != ""
-  ) {
-    filters.permanent.push(
-      {
-        field: "created_at",
-        operator: "gte",
-        value:
-          new Date(
-            ParticpantFiltersData?.advanceFilter?.registration_date_range?.from?.setHours(
-              0,
-              0,
-              0,
-              0
-            )
-          )
-            ?.toISOString()
-            .replace("T", " ")
-            .slice(0, -5) + "+00",
-      },
-      {
-        field: "created_at",
-        operator: "lte",
-        value:
-          new Date(
-            ParticpantFiltersData?.advanceFilter?.registration_date_range?.to?.setHours(
-              23,
-              59,
-              0,
-              0
-            )
-          )
-            ?.toISOString()
-            .replace("T", " ")
-            .slice(0, -5) + "+00",
-      }
-    );
   }
 
   if (ParticpantFiltersData?.advanceFilter?.transaction_status?.length) {
@@ -354,7 +339,7 @@ function index() {
     ).length;
     setSelectedTableRows(tempCount);
     setSelectedRowObjects(rowSelection);
-    tempCount == 0 && setBulkActionSelectedValue(t('new_strings:bulk_actions'));
+    tempCount == 0 && setBulkActionSelectedValue(t("new_strings:bulk_actions"));
   }, [rowSelection]);
 
   const handleSelectAll = (val: any) => {
@@ -368,6 +353,7 @@ function index() {
   const [open, setOpen] = useState(false);
   const [disableBulkOptions, setEnableBulkOptions] = useState(true);
   const [bulkActions, setBulkAction] = useState("");
+  const [loading, setLoading] = useState(false);
   const attendanceOptions = getOptionValuesByOptionLabel(
     PARTICIPANT_ATTENDANCE_STATUS
   )?.[0]?.option_values;
@@ -465,92 +451,118 @@ function index() {
     }
   };
 
-  const languageCode = useGetLanguageCode()
+  const languageCode = useGetLanguageCode();
 
-  const bulk_actions=t('new_strings:bulk_actions')
-  const [bulkActionSelectedValue, setBulkActionSelectedValue] = useState(bulk_actions);
+  const bulk_actions = t("new_strings:bulk_actions");
+  const [bulkActionSelectedValue, setBulkActionSelectedValue] =
+    useState(bulk_actions);
   const excelColumns = [
     {
-      column_name: t('course.participants:find_participant.registration_id'),
+      column_name: t("course.participants:find_participant.registration_id"),
       path: ["participant_code"],
     },
     {
-      column_name: t('course.participants:find_participant.registration_date'),
+      column_name: t("course.participants:find_participant.registration_date"),
       path: ["created_at"],
     },
     {
-      column_name: t('course.participants:find_participant.name'),
+      column_name: t("course.participants:find_participant.name"),
       path: ["contact_id", "full_name"],
     },
     {
-      column_name:t('course.participants:find_participant.nif'),
+      column_name: t("course.participants:find_participant.nif"),
       path: ["contact_id", "nif"],
     },
     {
-      column_name: t('course.participants:find_participant.date_of_birth'),
+      column_name: t("course.participants:find_participant.date_of_birth"),
       path: ["contact_id", "date_of_birth"],
     },
     {
-      column_name: t('course.participants:find_participant.phone'),
+      column_name: t("course.participants:find_participant.phone"),
       path: ["contact_id", "mobile"],
     },
     {
-      column_name: t('course.participants:find_participant.email'),
+      column_name: t("course.participants:find_participant.email"),
       path: ["contact_id", "email"],
     },
     {
-      column_name: t('course.participants:view_participant.fee_level'),
+      column_name: t("course.participants:view_participant.fee_level"),
       path: ["price_category_id", "fee_level_id", "name", languageCode],
     },
     {
-      column_name: t('course.participants:edit_participant.participants_information_tab.amount'),
+      column_name: t(
+        "course.participants:edit_participant.participants_information_tab.amount"
+      ),
       path: ["price_category_id", "total"],
     },
     {
-      column_name: t('course.participants:view_participant.transaction_type'),
-      path: ["participant_payment_history[0]", "transaction_type_id","name",languageCode],
+      column_name: t("course.participants:view_participant.transaction_type"),
+      path: [
+        "participant_payment_history[0]",
+        "transaction_type_id",
+        "name",
+        languageCode,
+      ],
     },
     {
-      column_name: t('course.participants:edit_participant.participants_information_tab.transaction_id'),
+      column_name: t(
+        "course.participants:edit_participant.participants_information_tab.transaction_id"
+      ),
       path: ["participant_payment_history[0]", "payment_transaction_id"],
     },
     {
-      column_name: t('course.participants:view_participant.payment_method'),
-      path: ["participant_payment_history[0]", "payment_method_id", "name",languageCode],
+      column_name: t("course.participants:view_participant.payment_method"),
+      path: [
+        "participant_payment_history[0]",
+        "payment_method_id",
+        "name",
+        languageCode,
+      ],
     },
     {
-      column_name: t('course.participants:view_participant.transaction_status'),
-      path: ["payment_status_id", "name",languageCode],
+      column_name: t("course.participants:view_participant.transaction_status"),
+      path: ["payment_status_id", "name", languageCode],
     },
     {
-      column_name: t('course.participants:view_participant.course_information_tab.attendance_status'),
-      path: ["participant_attendence_status_id", "name",languageCode],
+      column_name: t(
+        "course.participants:view_participant.course_information_tab.attendance_status"
+      ),
+      path: ["participant_attendence_status_id", "name", languageCode],
     },
     {
-      column_name: t('course.participants:find_participant.program_agreement_version'),
+      column_name: t(
+        "course.participants:find_participant.program_agreement_version"
+      ),
       path: ["legal_agreement_version"],
     },
     {
-      column_name: t('course.participants:find_participant.program_agreement_status'),
+      column_name: t(
+        "course.participants:find_participant.program_agreement_status"
+      ),
       path: ["program_agreement_status"],
     },
     {
-      column_name: t('course.participants:find_participant.program_agreement_date'),
+      column_name: t(
+        "course.participants:find_participant.program_agreement_date"
+      ),
       path: ["program_agreement_date"],
     },
     {
-      column_name: t('course.participants:find_participant.health_declaration_status'),
+      column_name: t(
+        "course.participants:find_participant.health_declaration_status"
+      ),
       path: ["is_health_declaration_checked"],
     },
     {
-      column_name: t('course.participants:find_participant.health_declaration_consent_date'),
+      column_name: t(
+        "course.participants:find_participant.health_declaration_consent_date"
+      ),
       path: ["health_declaration_consent_date"],
     },
   ];
 
-  const excelOption = "excel"
-  const csvOption = "CSV"
-
+  const excelOption = "excel";
+  const csvOption = "CSV";
 
   return (
     <div>
@@ -586,7 +598,7 @@ function index() {
                     setbulkActionsSuccessIcon(false);
                   }}
                 >
-                  {t('close')}
+                  {t("close")}
                 </Button>
               </div>
             </div>
@@ -600,10 +612,10 @@ function index() {
         {/* TODO  : for now may-13 release it has to be hidden */}
         {/* Bulk actions section */}
         {/* <div className="flex gap-10 justify-end w-full"> */}
-          {/* Bulk Actions Dropdown */}
-          {/* <div> */}
-            {/* <DropdownMenu> */}
-              {/* <DropdownMenuTrigger asChild>
+        {/* Bulk Actions Dropdown */}
+        {/* <div> */}
+        {/* <DropdownMenu> */}
+        {/* <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
@@ -615,26 +627,26 @@ function index() {
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger> */}
-              {/* <DropdownMenuContent align="end"> */}
-                {/* <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]"> */}
-                  {/* TODO (Not in MVP Scope): Print Registration Form */}
-                  {/* <DropdownMenuItem
+        {/* <DropdownMenuContent align="end"> */}
+        {/* <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]"> */}
+        {/* TODO (Not in MVP Scope): Print Registration Form */}
+        {/* <DropdownMenuItem
                     onClick={() => {
                       setEnableBulkOptions(true);
                     }}
                   >
                     Print Registration Form
                   </DropdownMenuItem> */}
-                  {/* <DropdownMenuItem
+        {/* <DropdownMenuItem
                     onClick={() => {
                       setBulkActionSelectedValue(t('new_strings:update_attendance_status'));
                       setEnableBulkOptions(false);
                       setBulkAction("attendance");
                     }}
                   > */}
-                    {/* {t('new_strings:update_attendance_status')} */}
-                  {/* </DropdownMenuItem> */}
-                  {/* <DropdownMenuItem
+        {/* {t('new_strings:update_attendance_status')} */}
+        {/* </DropdownMenuItem> */}
+        {/* <DropdownMenuItem
                     onClick={() => {
                       setBulkActionSelectedValue(t('new_strings:update_transaction_status'));
                       setEnableBulkOptions(false);
@@ -643,12 +655,12 @@ function index() {
                   >
                     {t('new_strings:update_transaction_status')}
                   </DropdownMenuItem> */}
-                {/* </div> */}
-              {/* </DropdownMenuContent> */}
-            {/* </DropdownMenu> */}
-          {/* </div> */}
-          {/* Bulk actions options dropdown */}
-          {/* <div>
+        {/* </div> */}
+        {/* </DropdownMenuContent> */}
+        {/* </DropdownMenu> */}
+        {/* </div> */}
+        {/* Bulk actions options dropdown */}
+        {/* <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -721,15 +733,16 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>{t('course.find_course:select_all')}</div>
+            <div>{t("course.find_course:select_all")}</div>
             <div className="font-semibold">
               {participantData?.data?.total || 0}
             </div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            {t('course.find_course:selected')} {allSelected ? participantData?.data?.total : rowCount}{" "}
-            {t('course.find_course:out_of')}{" "}
+            {t("course.find_course:selected")}{" "}
+            {allSelected ? participantData?.data?.total : rowCount}{" "}
+            {t("course.find_course:out_of")}{" "}
             <div className="font-semibold">
               {participantData?.data?.total || 0}
             </div>{" "}
@@ -744,19 +757,41 @@ function index() {
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
-                {t('course.find_course:export')} <ChevronDownIcon className="w-5 h-5" />
+                {loading ? (
+                  <div className="loader !w-[25px]"></div>
+                ) : (
+                  t("course.find_course:export")
+                )}{" "}
+                <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
               <DropdownMenuItem
-                onClick={()=>{handleExportExcel(excelColumns,filters,excelOption)}}
+                onClick={() => {
+                  handleExportExcel(
+                    excelColumns,
+                    filters,
+                    excelOption,
+                    setLoading
+                  );
+                }}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                {t('new_strings:excel')}
+                {t("new_strings:excel")}
               </DropdownMenuItem>
               {/*TODO  */}
-              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer"   onClick={()=>{handleExportExcel(excelColumns,filters,csvOption)}}>
-              {t('new_strings:csv')}
+              <DropdownMenuItem
+                className="p-1  focus:outline-none cursor-pointer"
+                onClick={() => {
+                  handleExportExcel(
+                    excelColumns,
+                    filters,
+                    csvOption,
+                    setLoading
+                  );
+                }}
+              >
+                {t("course.find_course:CSV")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -769,7 +804,11 @@ function index() {
 export default index;
 
 const HeaderSection = () => {
-  const {t}=useTranslation(["common", "course.participants", "new_strings"])
+  const { t } = useTranslation([
+    "common",
+    "course.participants",
+    "new_strings",
+  ]);
   const {
     ParticpantFiltersData,
     setParticpantFiltersData,
@@ -862,15 +901,17 @@ const HeaderSection = () => {
             onChange={handleSearchChange}
             type="text"
             className=" border-0 outline-none"
-            placeholder={t('course.participants:find_participant.search_registration')}
+            placeholder={t(
+              "course.participants:find_participant.search_registration"
+            )}
           ></Input>
         </div>
       </div>
       {/* Registration Date Filter Section */}
       <div>
         {" "}
-        <Popover open={open}>
-          <PopoverTrigger asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
             <Button
               onClick={() => setOpen(true)}
               className="w-[233px] h-[40px] flex flex-row items-center justify-start gap-2 border-2 px-3 py-5 rounded-lg"
@@ -879,41 +920,68 @@ const HeaderSection = () => {
               <div>
                 <CalenderIcon color="#666666" />
               </div>
-              <div>
+
+              <div className="flex justify-between items-center w-full">
                 {RegistrationDate?.from ? (
                   RegistrationDate.to ? (
                     <>
                       {format(RegistrationDate.from, "MM/dd/yyyy")} -{" "}
                       {format(RegistrationDate.to, "MM/dd/yyyy")}
                       <div
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          //when we click on cross icon we need to clear the date
                           RegistrationDateChange(undefined);
                         }}
-                      ></div>
+                        id="cross-icon"
+                        className="ml-auto"
+                      >
+                        <CrossIcon fill="#7677F4" height={10} width={10} />
+                      </div>
                     </>
                   ) : (
-                    format(RegistrationDate.from, "MM/dd/yyyy")
+                    <div className="flex justify-between items-center w-full">
+                      {format(RegistrationDate.from, "MM/dd/yyyy")}
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          //when we click on cross icon we need to clear the date
+                          RegistrationDateChange(undefined);
+                        }}
+                        id="cross-icon"
+                        className="ml-auto"
+                      >
+                        <CrossIcon fill="#7677F4" height={10} width={10} />
+                      </div>
+                    </div>
                   )
                 ) : (
-                  <span className="font-thin">{t('new_strings:search_by_registration_date')}</span>
+                  <span className="font-thin">
+                    {t("new_strings:search_by_registration_date")}
+                  </span>
                 )}
               </div>
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center p-8">
+          </DialogTrigger>
+          <DialogContent
+            closeIcon={false}
+            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl justify-center !p-8"
+          >
             <DateRangePickerComponent
               setOpen={setOpen}
               value={RegistrationDate}
               onSelect={RegistrationDateChange}
             />
-          </PopoverContent>
-        </Popover>
+          </DialogContent>
+        </Dialog>
       </div>
       {/* Transaction Status Section */}
       <div>
         <MultiSelect
           value={transactionStatus}
-          placeholder={t('course.participants:find_participant.transaction_status')}
+          placeholder={t(
+            "course.participants:find_participant.transaction_status"
+          )}
           data={transactionStatusValues}
           onBottomReached={() => {}}
           onSearch={() => {}}
@@ -929,7 +997,7 @@ const HeaderSection = () => {
             className=" cursor-pointer flex gap-2 items-center text-sm font-semibold text-[#7677F4]"
           >
             <ClearAll />
-            <div>{t('clear_all')}</div>
+            <div>{t("clear_all")}</div>
           </div>
         </div>
         <Button
@@ -938,7 +1006,7 @@ const HeaderSection = () => {
             setParticpantFiltersData(formData);
           }}
         >
-          {t('apply_button')}
+          {t("apply_button")}
         </Button>
       </div>
     </div>
@@ -946,7 +1014,7 @@ const HeaderSection = () => {
 };
 
 const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
-  const {t}=useTranslation(["common",  "new_strings"])
+  const { t } = useTranslation(["common", "new_strings"]);
   return (
     <div className="relative">
       <DateRangePicker
@@ -964,29 +1032,36 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
           onClick={() => onSelect({ from: "", to: "" })}
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
-          {t('new_strings:reset_button')}
+          {t("new_strings:reset_button")}
         </Button>
         <Button
           onClick={() => setOpen(false)}
           className=" w-[94px] h-10 rounded-xl"
         >
-          {t('apply_button')}
+          {t("apply_button")}
         </Button>
       </div>
     </div>
   );
 };
 
-const handleExportExcel = async (excelColumns:any,filters: any,selectOption: string) => {
+const handleExportExcel = async (
+  excelColumns: any,
+  filters: any,
+  selectOption: string,
+  setLoading: (by: boolean) => void
+) => {
+  setLoading(true);
   const supabase = supabaseClient();
   try {
     const params = new URLSearchParams({
       table_name: "participant_registration",
       select:
-      "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+        "*,payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
       columns: JSON.stringify(excelColumns),
       filters: JSON.stringify(filters?.permanent),
-      file_type: selectOption
+      sorters: JSON.stringify([{ field: "id", order: { ascending: true } }]),
+      file_type: selectOption,
     });
 
     //invoking the export_to_file function
@@ -1014,6 +1089,7 @@ const handleExportExcel = async (excelColumns:any,filters: any,selectOption: str
       const result = await supabase.storage
         .from("export_to_file")
         .download(fileName);
+      setLoading(false);
 
       if (result.error) {
         console.error("Error downloading file:", result.error);
@@ -1049,8 +1125,6 @@ const handleExportExcel = async (excelColumns:any,filters: any,selectOption: str
   }
 };
 
-
-
 /**
  * Function to fetch server-side props.
  * This function checks the authentication status using the auth provider and
@@ -1063,7 +1137,12 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common","course.participants","new_strings","course.find_course", "course.view_course","course.new_course"
+    "common",
+    "course.participants",
+    "new_strings",
+    "course.find_course",
+    "course.view_course",
+    "course.new_course",
   ]);
 
   if (!authenticated) {

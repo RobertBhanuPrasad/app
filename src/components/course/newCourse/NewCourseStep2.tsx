@@ -62,7 +62,7 @@ export default function NewCourseStep2() {
   );
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
-    <div className="pt-2 w-auto ">
+    <div className="pt-2 w-auto overflow-y-hidden">
       <div className="flex flex-wrap gap-x-7 gap-y-3">
         <div className="w-80 h-20">
           <CourseTypeDropDown />
@@ -118,7 +118,7 @@ export default function NewCourseStep2() {
           </div>
         )}
       </div>
-      
+
       {/* TODO  : for now may-13 release it has to be hidden */}
       {/* <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
@@ -548,6 +548,20 @@ const TeachersDropDown = () => {
     });
   }
 
+  /* This condition checks if the program was created by the currently logged-in user as only the iam the organizer for another teacher */
+  /* If the program was created by the organizer, it proceeds to add a filter */
+  /* The filter excludes the currently logged-in user from the list of teachers */
+  /* This ensures that the organizer is not included in the list of teachers */
+  /* The filter is applied to the 'program_type_teachers.user_id' field */
+  if(formData?.program_created_by == iAmOrganizerId) {
+    filter.push({
+      field: "program_type_teachers.user_id",
+      operator: "ne",
+      value: loginUserData?.userData?.id
+    })
+  }
+
+
   const [pageSize, setPageSize] = useState(10);
 
   const selectQuery: any = {
@@ -578,6 +592,7 @@ const TeachersDropDown = () => {
 
   const { options, queryResult, onSearch } = useSelect(selectQuery);
 
+
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
     if (queryResult && (queryResult?.data?.total as number) >= pageSize) {
@@ -589,7 +604,8 @@ const TeachersDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row">
-      {t("new_strings:teacher")}<div className="text-[#7677F4]">*</div>
+        {t("new_strings:teacher")}
+        <div className="text-[#7677F4]">*</div>
       </div>
       {/* 
         // Here i have to show teachers based on program created user 
@@ -767,7 +783,7 @@ const Visibility = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px]">
-              <div className="flex flex-row gap-1 items-center">
+              {/* <div className="flex flex-row gap-1 items-center">
                 <Globe />
                 {t("public")}
               </div>
@@ -779,7 +795,7 @@ const Visibility = () => {
                 <LockIcon />
                 {t("private")}
               </div>
-              <div>{t("new_strings:there_are_a_lot_of_things")}</div>
+              <div>{t("new_strings:there_are_a_lot_of_things")}</div> */}
               {t("new_strings:program_visibility_info_icon_text")}
             </div>
           </HoverCardContent>
@@ -1136,7 +1152,7 @@ const MaximumCapacity = () => {
         onChange={(val) => {
           onChange(val);
         }}
-        className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
+        className="rounded-[12px] text-[14px]"
         error={error ? true : false}
       />
       {error && (

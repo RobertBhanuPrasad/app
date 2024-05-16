@@ -12,18 +12,19 @@ import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useList, useSelect, useTable } from "@refinedev/core";
 import { format } from "date-fns";
-import { useTranslation } from "next-i18next";
-import { authProvider } from "src/authProvider";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { authProvider } from "src/authProvider";
+import { translatedText } from "src/common/translations";
 import { column } from "src/components/course/findCourse/Columns";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { Dialog, DialogContent } from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,9 +41,8 @@ import {
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { languageCode, translatedText } from "src/common/translations";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
   interface ExcelColumn {
@@ -244,6 +244,7 @@ function index() {
     setPageSize,
     current,
     setCurrent,
+    setFilters,
   } = useTable({
     resource: "program",
     meta: {
@@ -271,6 +272,8 @@ function index() {
   const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
     useTable({
       resource: "program",
+      //restricting the hook to get the params from URL
+      syncWithLocation: false,
       meta: {
         select:
           "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
@@ -295,23 +298,55 @@ function index() {
       },
     });
 
+  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook 
+  //Because when we move to another route and comeback Filters are not setting properly that why we have written this
+  useEffect(() => {
+    setFilters(filters.permanent, "replace");
+  }, [AllFilterData]);
+
   /**
    * The variable holds whether all rows are selected or not
    */
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>(false);
+
+  const [loading, setIsLoading] = useState(false);
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!programData?.data?.data) return;
     const allRowSelection: any = {};
-    programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      programData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, programData?.data?.data]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   *Here whenever i check select all then i need to check and unchekc all row selection also
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    programData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
+   */
+  const rowSelectionOnChange = (row: any) => {
+    const selectedRow = row();
+    setRowSelection(row);
+    if (Object.values(selectedRow).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   /**
@@ -319,6 +354,7 @@ function index() {
    */
 
   const handleExportExcel = async (selectOption: string) => {
+    setIsLoading(true);
     try {
       /**
        * This holds the column_name and path of all columns of table
@@ -384,9 +420,12 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          "program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
+          "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
         filters: JSON.stringify(filters?.permanent),
+        sorters: JSON.stringify([
+          { field: "created_at", order: { ascending: false } },
+        ]),
         file_type: selectOption,
       });
 
@@ -412,6 +451,7 @@ function index() {
         //getting file name from the url
         const fileUrl = data.fileUrl.data.publicUrl;
         const fileName = fileUrl.split("/").pop();
+        setIsLoading(false);
 
         console.log("filename", fileName);
         // passing the file name to download
@@ -462,6 +502,8 @@ function index() {
     (value) => value === true
   ).length;
 
+  console.log("heyy row count", allSelected === false);
+
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
@@ -506,7 +548,7 @@ function index() {
             <BaseTable
               current={current}
               rowSelection={rowSelection}
-              setRowSelection={setRowSelection}
+              setRowSelection={rowSelectionOnChange}
               checkboxSelection={true}
               setCurrent={setCurrent}
               pageCount={pageCount}
@@ -561,9 +603,14 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
-                disabled={!allSelected}
+                //if select all is false or row count less than equal to 0 then it should be true
+                disabled={allSelected === false || rowCount <= 0}
               >
-                {t("course.find_course:export")}{" "}
+                {loading ? (
+                  <div className="loader !w-[25px]"></div>
+                ) : (
+                  t("course.find_course:export")
+                )}
                 <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
@@ -801,7 +848,8 @@ export const BasicFilters: React.FC<{
             <div>
               <CalenderIcon color="#666666" />
             </div>
-            {courseDate ? (
+            {/* here if there is courseDate.from then only we need to format other wise we can show placeholder */}
+            {courseDate && courseDate.from ? (
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-row gap-2 text-[14px]">
                   {/* If the course from date and to date is present then only format and show the from date and to date */}

@@ -40,10 +40,12 @@ import {
 } from "src/constants/CourseConstants";
 import {
   PAYMENT_MODE,
+  PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
   VISIBILITY,
 } from "src/constants/OptionLabels";
 import {
+  I_AM_CO_TEACHING,
   PAY_ONLINE,
   PUBLIC,
   SUPER_ADMIN,
@@ -141,6 +143,16 @@ function NewCourse() {
     TIME_FORMAT,
     TIME_FORMAT_24_HOURS
   )?.id;
+
+    /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching 
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
+
 
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
@@ -291,7 +303,7 @@ function NewCourse() {
       <Form
         onSubmit={onSubmit}
         defaultValues={defaultValues}
-        schema={validationSchema()}
+        schema={validationSchema(iAmCoTeachingId as number)}
       >
         <NewCourseTabs />
       </Form>
@@ -718,7 +730,7 @@ export const NewCourseTabs = () => {
       </div>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
-          <div className="flex flex-row">
+          <div className="flex flex-row overflow-x-hidden">
             <TabsList className="h-[513px] bg-[#7677F41B]  w-[238px] rounded-l-[24px] shadow-md py-10">
               <div className="flex flex-col  h-full gap-4 ">
                 {stepTitles.map((tab, index) => (
@@ -748,7 +760,7 @@ export const NewCourseTabs = () => {
             </TabsList>
 
             <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
-              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
+              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar overflow-x-hidden">
                 <div className="flex flex-col w-full justify-between">
                   <TabsContent
                     value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}

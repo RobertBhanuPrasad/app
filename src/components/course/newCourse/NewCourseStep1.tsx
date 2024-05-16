@@ -40,6 +40,8 @@ import { IsEditCourse } from "./EditCourseUtil";
 
 import { useTranslation } from "next-i18next";
 import { Text } from "src/ui/TextTags";
+import { useRouter } from "next/router";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -134,6 +136,8 @@ const RadioCards = () => {
   const { clearErrors, watch } = useFormContext();
 
   const { t } = useTranslation(["course.new_course", "new_strings"]);
+
+  const { setProgramCreatedById } = newCourseStore();
   const {
     field: { value, onChange },
     fieldState: { error: radioError },
@@ -172,12 +176,18 @@ const RadioCards = () => {
       //If teachers does not exist prefill with login user
       if (!teachers) {
         teachersOnChange([loginInTeacherData]);
+        setTimeout(() => {
+          clearErrors("teacher_ids");
+        }, 10);
       }
       //If already teacher are exist then check weather login user is present in teacher drop down or not. If not prefill with login user
       else if (
         !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
       ) {
         teachersOnChange([loginInTeacherData, ...teachers]);
+        setTimeout(() => {
+          clearErrors("teacher_ids");
+        }, 10);
       }
     }
     // Check if the selected value is equal to the organizer's ID
@@ -192,6 +202,8 @@ const RadioCards = () => {
         }, 10);
       }
     }
+    // we are storing the program created by in the zustand variable to use it in the validatios
+    setProgramCreatedById(val);
   };
 
   /**
@@ -260,7 +272,7 @@ const RadioCards = () => {
             }`}
           >
             <Card
-              className={` p-2 w-80 h-[106px] flex flex-row ${
+              className={` p-2 w-72 h-[106px] flex flex-row ${
                 value === iAmTeachingId
                   ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
                   : ""
@@ -295,7 +307,7 @@ const RadioCards = () => {
             } `}
           >
             <Card
-              className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
+              className={` p-2 gap-2 w-72 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
                   ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                   : ""
@@ -328,7 +340,7 @@ const RadioCards = () => {
           }`}
         >
           <Card
-            className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
+            className={`p-2 gap-2 w-72 h-[106px] flex flex-row ${
               value === iAmOrganizerId
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                 : ""
@@ -475,6 +487,8 @@ const ProgramOrganizerDropDown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
+  const router = useRouter();
+
   const {
     field: { value, onChange },
     fieldState: { error: programOrganizerError },
@@ -517,9 +531,9 @@ const ProgramOrganizerDropDown = () => {
     },
   });
 
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const { created_by_user_id } = watch()
+  const { created_by_user_id } = watch();
 
   const handleOnBottomReached = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
@@ -547,10 +561,14 @@ const ProgramOrganizerDropDown = () => {
         }}
         onChange={onChange}
         getOptionProps={(option: number) => {
-          //Here this if condition is says that 
-          // "option === loginUserData?.userData?.id" this conditon is for if login user wants to creates a new course we disable the primary organizer  
+          //Here this if condition is says that
+          // "option === loginUserData?.userData?.id" this conditon is for if login user wants to creates a new course we disable the primary organizer
           // "option === created_by_user_id" this conditon is for if any login user wants to edit course than also we are disabling the program orgnizer
-          if ((option === loginUserData?.userData?.id) || (option === created_by_user_id)) {
+          // If the course is copying then we need to disable the organizer who is logged in only
+          if (
+            option === loginUserData?.userData?.id ||
+            (option === created_by_user_id && IsEditCourse(router?.pathname))
+          ) {
             return {
               disable: true,
             };
