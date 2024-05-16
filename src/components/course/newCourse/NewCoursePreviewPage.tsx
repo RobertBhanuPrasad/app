@@ -484,7 +484,6 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
-
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
@@ -631,8 +630,7 @@ export default function NewCourseReviewPage() {
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
               >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
-              </abbr>
-              
+              </abbr>              
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">

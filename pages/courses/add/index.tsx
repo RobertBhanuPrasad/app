@@ -69,7 +69,6 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
-import { isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -408,9 +407,6 @@ export const NewCourseTabs = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const { data: loginUserData }: any = useGetIdentity();
-
-
   const router = useRouter();
   const { watch, getValues } = useFormContext();
   const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
@@ -476,8 +472,7 @@ export const NewCourseTabs = () => {
     handelIsAllFieldsFilled(isAllFieldsFilled);
   };
   
-  const iAmTeachingCourseId = isTeacherShownInTeacherField(formData?.program_created_by)
-  /**
+    /**
    * @function handleClickReviewDetailsButton
    * @description This function is used to send to the review page if all the fields are field
    * @param currentStepFormNames
@@ -490,10 +485,6 @@ export const NewCourseTabs = () => {
     isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     if (isAllFieldsFilled) {
       // setViewPreviewPage(true);
-      //REQUIRMENT if the progrma_created_id is the i am teaching course id then we need to keep only the logged in user as the teacher
-      if (iAmTeachingCourseId) {
-        formData.teacher_ids = [loginUserData?.userData?.id]
-      }
       setNewCourseData(formData);
 
       // i need to set params with section=preview_page
