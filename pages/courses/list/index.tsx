@@ -942,10 +942,6 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           onClick={() => {
             setAdvanceFilterOpen(true);
             setValue("temporaryadvancefilter", formData.advanceFilter);
-            setValue(
-              "temporaryadvancefilter.course_type",
-              formData?.course_type
-            );
           }}
           className="flex flex-row gap-2 !rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
