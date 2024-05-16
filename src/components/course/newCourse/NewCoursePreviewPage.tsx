@@ -614,22 +614,12 @@ export default function NewCourseReviewPage() {
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("new_strings:teacher")}
               </p>
-              {/* If the user clicked on the i am teaching the course then we need to display only the loggined user name in the teacher field */}
-              {isTeacherShownInTeacherField(newCourseData?.program_created_by) ? (
-                <abbr
-                title={loginUserData?.userData?.contact_id?.full_name ? loginUserData?.userData?.contact_id?.full_name : "-"}
-                className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-              >
-                {loginUserData?.userData?.contact_id?.full_name ? loginUserData?.userData?.contact_id?.full_name : "-"}
-              </abbr>
-      ) : (
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
               >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
-      )}
               
             </div>
             <div className="w-[291px]">
