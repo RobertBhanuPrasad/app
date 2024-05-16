@@ -859,7 +859,7 @@ export default function NewCourseReviewPage() {
                   {VenueData ? VenueData : "-"}
                 </abbr>
               </div>
-              <div className="w-[291px]">
+              <div className="`w-[${timeZonesData && timeZonesData?.data?.length > 1 ? '291px' : 'auto'}]`">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
                   {t("course.new_course:review_post_details.time_formate")}
                 </p>
