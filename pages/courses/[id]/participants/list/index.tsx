@@ -804,6 +804,8 @@ function index() {
 
 export default index;
 
+const countryCode = useGetCountryCode();
+
 const HeaderSection = () => {
   const { t } = useTranslation([
     "common",
@@ -821,7 +823,7 @@ const HeaderSection = () => {
   const { watch, setValue } = useFormContext();
   const formData = watch();
   const router = useRouter();
-
+  
   const {
     field: { value: Searchvalue, onChange: onSearch },
   } = useController({
@@ -1065,7 +1067,6 @@ const handleExportExcel = async (
       file_type: selectOption,
     });
 
-    const countryCode = useGetCountryCode();
 
     //invoking the export_to_file function
     const { data, error } = await supabase.functions.invoke(

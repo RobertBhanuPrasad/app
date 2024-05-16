@@ -54,6 +54,7 @@ function index() {
   const { viewPreviewPage, AllFilterData } = newCourseStore();
 
   const languageCode = useGetLanguageCode();
+  const countryCode = useGetCountryCode();
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -431,7 +432,6 @@ function index() {
       });
 
       const supabase = supabaseClient();
-      const countryCode = useGetCountryCode();
 
       //invoking the export_to_file function
       const { data, error } = await supabase.functions.invoke(
