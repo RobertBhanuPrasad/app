@@ -643,7 +643,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false)
   const [cancelSuccessModalOpen, setCancelSuccessModalOpen] = useState(false)
 
-  const { setNewCourseData, setViewPreviewPage } = newCourseStore()
+  const { setNewCourseData, setViewPreviewPage,setProgramCreatedById } = newCourseStore()
   const options = DisplayOptions(
     courseData?.status_id?.id,
     courseData?.program_accounting_status_id,
@@ -676,17 +676,17 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       // we have to delete schedules when user click on copy course and other we need to prefill
 
-      defaultValues = _.omit(defaultValues, ["id", "schedules"]);
-
+      defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       //remove the id, program_id from each object in program_fee_level_settings array
       if (defaultValues?.program_fee_level_settings) {
         defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
           _.omit(setting, ['id', 'program_id'])
         );
       }
-
-      setNewCourseData(defaultValues);
-      router.push({ pathname: "/courses/add", query: { action: "Copy" } });
+      setNewCourseData(defaultValues)
+      // we are storing the program created by in the zustand variable to use it in the validation of the co-teaching
+      setProgramCreatedById(defaultValues?.program_created_by)
+      router.push({ pathname: '/courses/add', query: { action: 'Copy' } })
     }
   }
 

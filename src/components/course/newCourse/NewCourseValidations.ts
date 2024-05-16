@@ -1,6 +1,7 @@
 import { start } from "repl";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { z } from "zod";
-export const validationSchema = () => {
+export const validationSchema = (iAmCoTeachingId:number) => {
   return z.object({
     // Step 1 Schema
     organization_id: z.number({
@@ -38,9 +39,20 @@ export const validationSchema = () => {
     program_alias_name_id: z.number({
       required_error: "Course Name is a required field",
     }),
-    teacher_ids: z
-      .array(z.number())
-      .nonempty({ message: "Please enter at least one teacher" }),
+    teacher_ids: z.array(z.number({ required_error: "Please enter at least one teacher" }))
+    .min(1, "Please enter at least one teacher")
+    .refine((teacher_ids) => {
+
+      const { programCreatedById } = newCourseStore.getState();
+
+      // REQUIRMENT if the programCreatedById is I am co-teching id then we need to validate the teachers field for min 2
+      if (parseInt(programCreatedById) === iAmCoTeachingId && teacher_ids.length < 2) {
+        return false;
+      }
+      return true;
+    }, {
+      message: 'At least 2 teachers are required for co-teaching',
+    }),
     assistant_teacher_ids: z
       .array(z.number(), {
         required_error: "Please enter at least one associate teacher",
@@ -80,14 +92,21 @@ export const validationSchema = () => {
       required_error: "Time format is a required field",
     }),
     state_id: z.number({
-      required_error: "State is is a required fields",
+      required_error: "State is a required field",
     }),
-    city_id: z.number({
-      required_error: "City is is a required fields",
-    }),
-    center_id: z.number({
-      required_error: "Center is is a required fields",
-    }),
+    city_id: 
+    z.union([
+      z.number({
+        required_error: "City is a required field",
+      }).int(), 
+      z.string().nonempty({ message: "City is a required field" })
+    ]),
+    center_id: z.union([
+      z.number({
+        required_error: "Center is a required field",
+      }).int(), 
+      z.string().nonempty({ message: "Center is a required field" })
+    ]),
     time_zone_id: z.number({
       required_error: "Time zone is a required field",
     }),
