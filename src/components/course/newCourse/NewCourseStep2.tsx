@@ -279,9 +279,12 @@ export const CourseTypeDropDown = () => {
 
   const clearCourseTypeDependentValues = () => {
     setValue("program_alias_name_id", "");
-
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever program_type is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings",undefined)
+    setValue("is_early_bird_enabled",undefined)
+    setValue("early_bird_cut_off_period",undefined)
     setTimeout(() => {
-      clearErrors(["program_alias_name_id"]);
+      clearErrors(["program_alias_name_id","program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
     }, 10);
   };
 
@@ -317,6 +320,7 @@ export const CourseTypeDropDown = () => {
     }
   };
   const { t } = useTranslation(["common"]);
+
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
