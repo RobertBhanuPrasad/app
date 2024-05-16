@@ -472,7 +472,6 @@ export default function NewCourseReviewPage() {
     ],
   });
 
-  console.log(newCourseData,CourseTeachersNames,'CourseTeachersNames')
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
