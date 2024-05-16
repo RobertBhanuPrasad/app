@@ -210,7 +210,7 @@ function NewCourse() {
   if (IsEditCourse(pathname) || IsCopyCourse) {
     defaultValues = newCourseData;
     //REQUIRMENT if the course is copying then we need to prefill the organizers of that cousre and we need to add the logged in user as a primary organizer
-    if (IsCopyCourse) {
+    if (IsCopyCourse && newCourseData) {
       defaultValues.organizer_ids = _.uniq([
         loggedUserData,
         ...newCourseData?.organizer_ids,
