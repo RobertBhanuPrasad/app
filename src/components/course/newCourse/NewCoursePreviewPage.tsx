@@ -201,8 +201,9 @@ export default function NewCourseReviewPage() {
   };
 
   useEffect(() => {
+    if(stateId!=0 && cityId!=0 && centerId!=0)
     fetchFeeData();
-  }, []);
+  }, [stateId,cityId,centerId]);
 
   const creator =
     newCourseData?.program_created_by &&
