@@ -248,8 +248,8 @@ const SchedulesHeader = () => {
   });
 
   return (
-    <div className="h-9 flex ">
-      <div className="font-semibold text-[#333333] mr-[375px] flex items-center">
+    <div className="h-9 flex justify-between">
+      <div className="font-semibold text-[#333333] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
       <div className="flex gap-4 w-[434px]">
