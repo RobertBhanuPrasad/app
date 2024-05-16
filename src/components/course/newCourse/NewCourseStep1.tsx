@@ -489,7 +489,7 @@ const OrganizationDropDown = () => {
         "state_id",
         "city_id",
         "center_id",
-        "is_resedential_program",
+        "is_residential_program",
       ]);
     }, 10);
   };
