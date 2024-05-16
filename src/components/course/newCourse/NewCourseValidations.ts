@@ -37,7 +37,6 @@ export const validationSchema = (iAmCoTeachingId: number) => {
         required_error: "Course type is a required field",
       })
       .or(z.string().nonempty({ message: "Course type is a required field" })),
-    program_type: z.object({}).optional(),
     program_alias_name_id: z
       .number({
         required_error: "Course Name is a required field",

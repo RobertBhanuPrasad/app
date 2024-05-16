@@ -426,6 +426,10 @@ const OrganizationDropDown = () => {
     setValue("existingVenue", undefined);
     setValue("newVenue", undefined);
     setValue("is_existing_venue", "");
+    setValue("state_id", "");
+    setValue("city_id", "");
+    setValue("center_id", "");
+    setValue("is_resedential_program", false);
 
     // we have to clear errors after we modify the values
     setTimeout(() => {
@@ -442,6 +446,10 @@ const OrganizationDropDown = () => {
         "isExistingVenue",
         "is_existing_venue",
         "newVenue",
+        "state_id",
+        "city_id",
+        "center_id",
+        "is_resedential_program",
       ]);
     }, 10);
   };

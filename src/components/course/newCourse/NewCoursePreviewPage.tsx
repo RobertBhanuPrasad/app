@@ -14,6 +14,7 @@ import {
   VISIBILITY,
 } from "src/constants/OptionLabels";
 import {
+  I_AM_CO_TEACHING,
   NATIONAL_ADMIN,
   NOT_SUBMITTED,
   SUPER_ADMIN,
@@ -54,6 +55,11 @@ import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { validationSchema } from "./NewCourseValidations";
+import { requiredValidationFields } from "pages/courses/add";
+import _ from "lodash";
+import { z } from "zod";
+import { useFormState } from "react-hook-form";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -141,26 +147,25 @@ export default function NewCourseReviewPage() {
       ? newCourseData?.existingVenue?.postal_code
       : newCourseData?.newVenue?.postal_code;
 
+  let VenueData: any = [];
 
-  let VenueData:any =[]
-
-  if(VenueName){
-    VenueData.push(VenueName)
+  if (VenueName) {
+    VenueData.push(VenueName);
   }
-  if(VenueAddress){
-    VenueData.push(VenueAddress)
+  if (VenueAddress) {
+    VenueData.push(VenueAddress);
   }
-  if(CityNames){
-    VenueData.push(CityNames)
+  if (CityNames) {
+    VenueData.push(CityNames);
   }
-  if(StateNames){
-    VenueData.push(StateNames)
+  if (StateNames) {
+    VenueData.push(StateNames);
   }
-  if(VenuePostalCode){
-    VenueData.push(VenuePostalCode)
+  if (VenuePostalCode) {
+    VenueData.push(VenuePostalCode);
   }
 
-  VenueData= VenueData.join(", ")
+  VenueData = VenueData.join(", ");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -422,48 +427,112 @@ export default function NewCourseReviewPage() {
     getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
       ?.id ?? 0;
 
-  const handClickContinue = async () => {
-    setIsSubmitting(true);
+  /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
 
-    /**
-     * This variable will retur true if all api calls has been successfully it will return false if any api call fails
-     */
-    const isPosted = await handlePostProgramData(
-      newCourseData,
-      data?.userData?.id,
-      setProgramId,
-      accountingNotSubmittedStatusId,
-      pathname,
-      countryCode,
-      languageCode
-    );
+  const [errors, setErrors] = useState<any>({});
 
-    // we are checking the course is edit or user created new course
-    const isEdited = IsEditCourse(pathname);
+  const requiredFieldsForValidation = requiredValidationFields(newCourseData);
 
-    // we have to display thank you page or success modal pop up only when the posting done successfully without any error
-    if (isPosted) {
-      if (isEdited) {
-        setOnEditSuccess(true);
-      } else {
-        // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
-        await invalidate({
-          resource: "program",
-          invalidates: ["list"],
-        });
-        // i need to set params with section=thank_you
-        const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
-        current.set("section", "thank_you");
+  /**
+   * This is a function where we are calling to display error messages in preview page also
+   * current state : in preview page there is no Form declaration so we have to validate the current data with zod safe parse
+   * and then display error messages
+   * @param formData form Data is independent data
+   * @returns
+   */
+  const handleErrorMessagesInPreviewPageScreen = (formData: any) => {
+    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
 
-        const params = current.toString();
+    let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 
-        router.replace(`${pathname}?${params}`);
+    let requiredFieldsObject: {
+      [key: string]: boolean;
+    } = {};
 
-        setViewPreviewPage(false);
-        setViewThankyouPage(true);
-      }
+    requiredFeilds?.map((field: string) => {
+      requiredFieldsObject[field] = true;
+    });
+
+    const errors: any = newCourseZodSchema
+      .pick(requiredFieldsObject)
+      .safeParse(formData);
+
+    console.log("form data is", formData, errors);
+
+    if (errors.success === false) {
+      let issues = errors.error.issues;
+      let finalIssues: any = {};
+
+      console.log("issues", issues);
+
+      issues = issues.map((issue: any) => {
+        finalIssues[issue?.path[0]] = issue?.message;
+      });
+
+      setErrors(finalIssues);
+    } else {
+      setErrors({});
     }
-    setIsSubmitting(false);
+    return errors;
+  };
+
+  const handClickContinue = async () => {
+    const errors = handleErrorMessagesInPreviewPageScreen(newCourseData);
+
+    if (errors.success === false) {
+      console.log(errors.error.issues, "issuessss");
+    } else {
+      setIsSubmitting(true);
+
+      /**
+       * This variable will retur true if all api calls has been successfully it will return false if any api call fails
+       */
+      const isPosted = await handlePostProgramData(
+        newCourseData,
+        data?.userData?.id,
+        setProgramId,
+        accountingNotSubmittedStatusId,
+        pathname,
+        countryCode,
+        languageCode
+      );
+
+      // we are checking the course is edit or user created new course
+      const isEdited = IsEditCourse(pathname);
+
+      // we have to display thank you page or success modal pop up only when the posting done successfully without any error
+      if (isPosted) {
+        if (isEdited) {
+          setOnEditSuccess(true);
+        } else {
+          // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+          await invalidate({
+            resource: "program",
+            invalidates: ["list"],
+          });
+          // i need to set params with section=thank_you
+          const current = new URLSearchParams(
+            Array.from(searchParams.entries())
+          ); // -> has to use this form
+          current.set("section", "thank_you");
+
+          const params = current.toString();
+
+          router.replace(`${pathname}?${params}`);
+
+          setViewPreviewPage(false);
+          setViewThankyouPage(true);
+        }
+      }
+      setIsSubmitting(false);
+    }
   };
 
   /**
@@ -506,7 +575,10 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("basic_details")}
               content={<NewCourseStep1 />}
-              onClose={() => setOpenBasicDetails(false)}
+              onClose={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenBasicDetails(false);
+              }}
               open={openBasicDetails}
               openEdit={() => {
                 setOpenBasicDetails(true);
@@ -591,7 +663,10 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("course.new_course:review_post_details.course_details")}
               content={<NewCourseStep2 />}
-              onClose={() => setOpenCourseDetails(false)}
+              onClose={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenCourseDetails(false);
+              }}
               open={openCourseDetails}
               openEdit={() => {
                 setOpenCourseDetails(true);
@@ -619,6 +694,11 @@ export default function NewCourseReviewPage() {
                   ? translatedText(courseType?.data?.name)
                   : "-"}
               </abbr>
+              {errors?.program_type_id && (
+                <span className="text-[#FF6D6D] text-[12px]">
+                  {errors?.program_type_id}
+                </span>
+              )}
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -630,6 +710,11 @@ export default function NewCourseReviewPage() {
               >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
+              {errors?.teacher_ids && (
+                <span className="text-[#FF6D6D] text-[12px]">
+                  {errors?.teacher_ids}
+                </span>
+              )}
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -799,7 +884,10 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Venue Details"
               content={<NewCourseStep3 />}
-              onClose={() => setOpenVenueDetails(false)}
+              onClose={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenVenueDetails(false);
+              }}
               open={openVenueDetails}
               openEdit={() => {
                 setOpenVenueDetails(true);
@@ -823,6 +911,12 @@ export default function NewCourseReviewPage() {
                 >
                   {newCourseData?.online_url}
                 </abbr>
+
+                {errors?.online_url && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.online_url}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -834,6 +928,12 @@ export default function NewCourseReviewPage() {
                 >
                   {StateNames ? StateNames : "-"}
                 </abbr>
+
+                {errors?.state_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.state_id}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -845,6 +945,12 @@ export default function NewCourseReviewPage() {
                 >
                   {CityNames ? CityNames : "-"}
                 </abbr>
+
+                {errors?.city_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.city_id}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -856,6 +962,12 @@ export default function NewCourseReviewPage() {
                 >
                   {CenterNames ? CenterNames : "-"}
                 </abbr>
+
+                {errors?.center_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.center_id}
+                  </span>
+                )}
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -871,6 +983,12 @@ export default function NewCourseReviewPage() {
                 >
                   {VenueData ? VenueData : "-"}
                 </abbr>
+
+                {errors.is_existing_venue && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors.is_existing_venue}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -919,7 +1037,10 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Fees Details"
               content={<NewCourseStep4 />}
-              onClose={() => setOpenFeesDetails(false)}
+              onClose={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenFeesDetails(false);
+              }}
               open={openFeesDetails}
               openEdit={() => {
                 setOpenFeesDetails(true);
@@ -975,6 +1096,12 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div> */}
           </div>
+          {errors?.program_fee_level_settings && (
+            <span className="text-[#FF6D6D] text-[12px]">
+              There is no price set for current settings. Select course type and
+              city/center.
+            </span>
+          )}
         </section>
         {/* Accommodation Information */}
         <section className="w-full py-8 text-base border-b">
@@ -987,7 +1114,10 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Accomidation Details"
               content={<NewCourseStep5 />}
-              onClose={() => setOpenAccomidationDetails(false)}
+              onClose={(formData: any) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenAccomidationDetails(false);
+              }}
               open={openAccomidationDetails}
               openEdit={() => {
                 setOpenAccomidationDetails(true);
@@ -1035,7 +1165,10 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Contact Details"
               content={<NewCourseStep6 />}
-              onClose={() => setOpenContactDetails(false)}
+              onClose={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenContactDetails(false);
+              }}
               open={openContactDetails}
               openEdit={() => {
                 setOpenContactDetails(true);
