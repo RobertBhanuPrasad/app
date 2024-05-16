@@ -255,14 +255,14 @@ export default function NewCourseReviewPage() {
     //So we are manually inserting data in program_fee_level_settings variable.
     if (
       isFeeEditable &&
-      newCourseData?.program_fee_level_settings == undefined
+     ( newCourseData?.program_fee_level_settings == undefined || newCourseData?.program_fee_level_settings?.length==0)
     ) {
       setNewCourseData({
         ...newCourseData,
         program_fee_level_settings: data?.[0]?.program_fee_level_settings?.map(
           (feeLevel: any) => {
-            //Removing Id
-            const { id, ...rest } = feeLevel;
+            //Removing Id and program_fee_setting_id
+            const { id,program_fee_setting_id,program_id, ...rest } = feeLevel;
             return {
               ...rest,
               fee_level_id: feeLevel?.fee_level_id?.id,
@@ -279,7 +279,7 @@ export default function NewCourseReviewPage() {
     //To fetch fee we need the location details. Initially this three variables are set to zero.Based on user actions we will assign values to this variables.
     //Fetching the fee when these values are assigned.
     if (stateId != 0 && cityId != 0 && centerId != 0) fetchFeeData();
-  }, [stateId, cityId, centerId, newCourseData]);
+  }, [stateId, cityId, centerId,newCourseData?.program_type_id,newCourseData?.schedules,newCourseData?.is_existing_venue,newCourseData?.newVenue,newCourseData?.existingVenue,newCourseData?.organization_id]);
 
   const creator =
     newCourseData?.program_created_by &&
@@ -451,7 +451,7 @@ export default function NewCourseReviewPage() {
       };
     });
 
-  //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
+    //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
     ? newCourseData?.program_fee_level_settings
     : defaultFeeLevels;
@@ -979,9 +979,9 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={newCourseData?.online_url}
+                  title={newCourseData?.online_url&& newCourseData?.program_type_id !== ''?newCourseData?.online_url:'-'}
                 >
-                  {newCourseData?.online_url ? newCourseData?.online_url : "-"}
+                  {newCourseData?.online_url&& newCourseData?.program_type_id !== ''?newCourseData?.online_url:'-'}
                 </abbr>
 
                 {errors?.online_url && (
@@ -1051,9 +1051,9 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
-                  title={VenueData ? VenueData : "-"}
+                  title={(VenueData && newCourseData?.program_type_id!="") ? VenueData : "-"}
                 >
-                  {VenueData ? VenueData : "-"}
+                  {(VenueData && newCourseData?.program_type_id!="") ? VenueData : "-"}
                 </abbr>
 
                 {errors.is_existing_venue && (
