@@ -38,7 +38,7 @@ import { requiredValidationFields } from "pages/courses/add";
 interface EditModalDialogProps {
   title: string;
   content: any;
-  onClose: () => void;
+  onClose: (formData: any) => void;
   open: boolean;
   openEdit: () => void;
   onOpenChange: any;
@@ -60,13 +60,12 @@ export const EditModalDialog = ({
   const { newCourseData } = newCourseStore();
   /**
    * @constant iAmCoTeachingId
-   * @description thid const stores the id of the i am co teaching 
+   * @description thid const stores the id of the i am co teaching
    */
   const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_CO_TEACHING
   )?.id;
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -124,7 +123,7 @@ const ButtonsDialog = ({ onClose, currentStep }: any) => {
 
     // Close the dialog
     if (isAllFieldsFilled) {
-      onClose();
+      onClose({ ...newCourseData, ...formData });
     }
   };
 

@@ -387,9 +387,9 @@ const OrganizationDropDown = () => {
    */
   const pathname = usePathname();
 
-  const { clearErrors,watch } = useFormContext();
+  const { clearErrors, watch } = useFormContext();
 
-  const formData=watch()
+  const formData = watch();
   /**
    * Checking whether the url contains the edit or not
    */
@@ -422,7 +422,7 @@ const OrganizationDropDown = () => {
   });
 
   const {
-    field: { onChange:teachersOnChange },
+    field: { onChange: teachersOnChange },
   } = useController({
     name: NewCourseStep2FormNames?.teacher_ids,
   });
@@ -440,7 +440,7 @@ const OrganizationDropDown = () => {
     setValue("program_type_id", "");
     setValue("program_type", "");
     setValue("program_alias_name_id", "");
-    setValue("teachers",[])
+    setValue("teachers", []);
 
     //Handling teachers drop down
     if (formData?.program_created_by != iAmOrganizerId) {
@@ -458,11 +458,15 @@ const OrganizationDropDown = () => {
     setValue("existingVenue", undefined);
     setValue("newVenue", undefined);
     setValue("is_existing_venue", "");
+    setValue("state_id", "");
+    setValue("city_id", "");
+    setValue("center_id", "");
+    setValue("is_resedential_program", false);
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings",undefined)
-    setValue("is_early_bird_enabled",undefined)
-    setValue("early_bird_cut_off_period",undefined)
+    setValue("program_fee_level_settings", undefined);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
 
     // we have to clear errors after we modify the values
     setTimeout(() => {
@@ -481,7 +485,11 @@ const OrganizationDropDown = () => {
         "newVenue",
         "program_fee_level_settings",
         "is_early_bird_enabled",
-        "early_bird_cut_off_period"
+        "early_bird_cut_off_period",
+        "state_id",
+        "city_id",
+        "center_id",
+        "is_resedential_program",
       ]);
     }, 10);
   };
