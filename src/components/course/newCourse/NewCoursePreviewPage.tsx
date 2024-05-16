@@ -637,8 +637,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("basic_details")}
               content={<NewCourseStep1 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenBasicDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenBasicDetails(false);
               }}
               open={openBasicDetails}
@@ -725,8 +728,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("course.new_course:review_post_details.course_details")}
               content={<NewCourseStep2 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenCourseDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenCourseDetails(false);
               }}
               open={openCourseDetails}
@@ -947,8 +953,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Venue Details"
               content={<NewCourseStep3 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenVenueDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenVenueDetails(false);
               }}
               open={openVenueDetails}
@@ -1100,8 +1109,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Fees Details"
               content={<NewCourseStep4 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenFeesDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenFeesDetails(false);
               }}
               open={openFeesDetails}
@@ -1178,8 +1190,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Accomidation Details"
               content={<NewCourseStep5 />}
-              onClose={(formData: any) => {
+              handleSaveClick={(formData: any) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenAccomidationDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenAccomidationDetails(false);
               }}
               open={openAccomidationDetails}
@@ -1229,8 +1244,11 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Contact Details"
               content={<NewCourseStep6 />}
-              onClose={(formData) => {
+              handleSaveClick={(formData) => {
                 handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenContactDetails(false);
+              }}
+              handleCancelClick={() => {
                 setOpenContactDetails(false);
               }}
               open={openContactDetails}
