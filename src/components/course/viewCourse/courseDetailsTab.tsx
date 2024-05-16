@@ -98,10 +98,12 @@ function CourseDetailsTab() {
   });
 
   // If the course fee is editable then we can use custom fees otherwise we can use default fees
-  const programFees = courseData?.data?.program_fee_settings_id
+  const programFeeLevels = courseData?.data?.program_fee_settings_id
     ? courseData?.data?.program_fee_settings_id?.program_fee_level_settings
     : courseData?.data?.program_fee_level_settings;
 
+  //Need to show only the fee level enabled by the user at the time of course creation.
+  const programFees=programFeeLevels?.filter((feeLevel: { is_enable: boolean; })=>feeLevel.is_enable)
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
 
