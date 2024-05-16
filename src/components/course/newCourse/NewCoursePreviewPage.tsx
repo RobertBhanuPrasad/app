@@ -755,12 +755,12 @@ export default function NewCourseReviewPage() {
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={
-                  courseType?.data?.name
+                  courseType?.data?.name && newCourseData?.program_type_id !== ''
                     ? translatedText(courseType?.data?.name)
                     : "-"
                 }
               >
-                {courseType?.data?.name
+                {courseType?.data?.name && newCourseData?.program_type_id !== ''
                   ? translatedText(courseType?.data?.name)
                   : "-"}
               </abbr>
@@ -977,9 +977,9 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={newCourseData?.online_url}
+                  title={newCourseData?.online_url&& newCourseData?.program_type_id !== ''?newCourseData?.online_url:'-'}
                 >
-                  {newCourseData?.online_url}
+                  {newCourseData?.online_url&& newCourseData?.program_type_id !== ''?newCourseData?.online_url:'-'}
                 </abbr>
 
                 {errors?.online_url && (
@@ -1049,9 +1049,9 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
-                  title={VenueData ? VenueData : "-"}
+                  title={(VenueData && newCourseData?.program_type_id!="") ? VenueData : "-"}
                 >
-                  {VenueData ? VenueData : "-"}
+                  {(VenueData && newCourseData?.program_type_id!="") ? VenueData : "-"}
                 </abbr>
 
                 {errors.is_existing_venue && (
