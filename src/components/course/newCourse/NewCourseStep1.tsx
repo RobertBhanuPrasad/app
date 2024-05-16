@@ -172,17 +172,23 @@ const RadioCards = () => {
   const handleOnChange = (val: string) => {
     onChange(parseInt(val));
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
-    if (parseInt(val) != iAmOrganizerId) {
-      //If teachers does not exist prefill with login user
-      if (!teachers) {
+    if (parseInt(val) == iAmTeachingId) {
+      //Requirement: Need to show only one teacher(login user) in teacher drop-down if I am teaching is selected.
+      teachersOnChange([loginInTeacherData]);
+      setTimeout(() => {
+        clearErrors("teacher_ids");
+      }, 10);
+    }
+
+    //Requirement: Need to prefill teacher drop-down if user select I am co-teaching.
+    if (parseInt(val) == iAmCoTeachingId) {
+      //If teachers are not present just prefill with login user
+      if (teachers == undefined) {
         teachersOnChange([loginInTeacherData]);
-        setTimeout(() => {
-          clearErrors("teacher_ids");
-        }, 10);
       }
       //If already teacher are exist then check weather login user is present in teacher drop down or not. If not prefill with login user
       else if (
-        !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
+        !teachers?.some((obj: any) => _.isEqual(obj, loginInTeacherData))
       ) {
         teachersOnChange([loginInTeacherData, ...teachers]);
         setTimeout(() => {
@@ -381,8 +387,9 @@ const OrganizationDropDown = () => {
    */
   const pathname = usePathname();
 
-  const { clearErrors } = useFormContext();
+  const { clearErrors,watch } = useFormContext();
 
+  const formData=watch()
   /**
    * Checking whether the url contains the edit or not
    */
@@ -413,11 +420,36 @@ const OrganizationDropDown = () => {
   } = useController({
     name: NewCourseStep1FormNames?.organization_id,
   });
+
+  const {
+    field: { onChange:teachersOnChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.teacher_ids,
+  });
+
+  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_ORGANIZER
+  )?.id;
+
+  const { data: loginUserData }: any = useGetIdentity();
+
+  const loginInTeacherData = loginUserData?.userData?.id;
+
   const handleClearDependencyValues = () => {
     setValue("program_type_id", "");
     setValue("program_type", "");
     setValue("program_alias_name_id", "");
-    setValue("teacher_ids", []);
+    setValue("teachers",[])
+
+    //Handling teachers drop down
+    if (formData?.program_created_by != iAmOrganizerId) {
+      //Requirement: If teacher or co-teacher is selected Need to prefill login user in teacher dropdown
+      teachersOnChange([loginInTeacherData]);
+      setTimeout(() => {
+        clearErrors("teacher_ids");
+      }, 10);
+    }
     setValue("assistant_teacher_ids", []);
     setValue("language_ids", []);
     setValue("translation_language_ids", []);
