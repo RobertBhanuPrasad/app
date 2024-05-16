@@ -679,14 +679,14 @@ export default function NewCourseReviewPage() {
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={
-                  courseType?.data?.name
+                  courseType?.data?.name && newCourseData?.program_type_id !== ''
                     ? translatedText(courseType?.data?.name)
-                    : "-"
+                    : '-'
                 }
               >
-                {courseType?.data?.name
+                {courseType?.data?.name && newCourseData?.program_type_id !== ''
                   ? translatedText(courseType?.data?.name)
-                  : "-"}
+                  : '-'}
               </abbr>
               {errors?.program_type_id && (
                 <span className="text-[#FF6D6D] text-[12px]">
@@ -903,7 +903,7 @@ export default function NewCourseReviewPage() {
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={newCourseData?.online_url}
                 >
-                  {newCourseData?.online_url}
+                  {newCourseData?.online_url ? newCourseData?.online_url : '-'}
                 </abbr>
 
                 {errors?.online_url && (
