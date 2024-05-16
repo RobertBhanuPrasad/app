@@ -248,12 +248,12 @@ const SchedulesHeader = () => {
   });
 
   return (
-    <div className="h-9 flex">
+    <div className="h-9 flex ">
       <div className="font-semibold text-[#333333] mr-[375px] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
-      <div className={`w-[161px] ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
-        <div className="w-[161px]">
+      <div className="flex gap-4 w-[434px]">
+        <div className={`w-[161px]   ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
           <Select
             value={hoursFormat}
             onValueChange={(val: any) => {
