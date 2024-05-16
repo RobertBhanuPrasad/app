@@ -10,7 +10,7 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
-import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { I_AM_CO_TEACHING, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { Button } from "src/ui/button";
 import { DialogContent, DialogFooter, DialogTrigger } from "src/ui/dialog";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
@@ -45,6 +45,8 @@ interface EditModalDialogProps {
   currentStep: any;
 }
 import { useTranslation } from "next-i18next";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 
 export const EditModalDialog = ({
   title,
@@ -56,6 +58,15 @@ export const EditModalDialog = ({
   currentStep,
 }: EditModalDialogProps) => {
   const { newCourseData } = newCourseStore();
+  /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching 
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -72,7 +83,7 @@ export const EditModalDialog = ({
           onSubmit={function (data: any): void {
             throw new Error("Function not implemented.");
           }}
-          schema={validationSchema()}
+          schema={validationSchema(iAmCoTeachingId as number)}
         >
           {content}
           {/* From now we can call this a new component instead of keeping it inside the form to avoid rerendering */}

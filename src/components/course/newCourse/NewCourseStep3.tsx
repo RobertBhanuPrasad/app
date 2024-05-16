@@ -1245,14 +1245,15 @@ const ExistingVenueList = () => {
     setVenueData(modifiedVenueData);
     setIsLoading(false);
   };
-  /**
+/**
    * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
    */
-  const {
-    field: { onChange: isExistingVenueOnchange },
-  } = useController({
-    name: "is_existing_venue",
-  });
+const {
+  field: { onChange: isExistingVenueOnchange },
+} = useController({
+  name: "is_existing_venue",
+});
+
 
   const fetchLoginUserVenue = async () => {
     const supabase = supabaseClient();
@@ -1380,7 +1381,7 @@ const ExistingVenueList = () => {
             type="submit"
             onClick={() => {
               isNewVenueSelectedOnchange("existing-venue");
-              isExistingVenueOnchange("existing-venue");
+              formData[NewCourseStep3FormNames.venue_id] && isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList();
             }}
           >
@@ -1432,6 +1433,7 @@ export const ExistingVenueListSection = ({
   } = useController({
     name: "tempExistingVenue",
   });
+
 
   const handleCheckboxChange = (item: any) => {
     setValue(NewCourseStep3FormNames.venue_id, item.id);

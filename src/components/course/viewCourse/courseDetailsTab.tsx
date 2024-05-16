@@ -366,7 +366,8 @@ function CourseDetailsTab() {
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div className="gap-[23px] flex flex-col">
-              {courseData?.data?.visibility_id?.id == publicVisibilityId && (
+              {/* TODO  for now scope this cx url is to be hidden */}
+              {/* {courseData?.data?.visibility_id?.id == publicVisibilityId && (
                 <div>
                   <Header2>{t('course.view_course:basic_details_tab.course_details_url')}</Header2>
                   <ItemValue>
@@ -396,7 +397,7 @@ function CourseDetailsTab() {
                     </div>
                   </ItemValue>
                 </div>
-              )}
+              )} */}
               <div>
                 <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">

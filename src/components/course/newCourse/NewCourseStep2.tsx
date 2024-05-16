@@ -277,6 +277,17 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.max_capacity,
   });
 
+  const clearCourseTypeDependentValues = () => {
+    setValue("program_alias_name_id", "");
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever program_type is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings",undefined)
+    setValue("is_early_bird_enabled",undefined)
+    setValue("early_bird_cut_off_period",undefined)
+    setTimeout(() => {
+      clearErrors(["program_alias_name_id","program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+    }, 10);
+  };
+
   /**
    * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
    * @function getCourseTypeSettings
@@ -326,9 +337,7 @@ export const CourseTypeDropDown = () => {
         onValueChange={(val: any) => {
           onChange(val);
           getCourseTypeSettings(val);
-          //When new course type is selected need to remove fee levels
-          if(val!=value)
-          handleRemoveFeeLevelSettings()
+          clearCourseTypeDependentValues();
         }}
         disabled={isEditCourse}
       >
@@ -558,6 +567,19 @@ const TeachersDropDown = () => {
     });
   }
 
+  /* This condition checks if the program was created by the currently logged-in user as only the iam the organizer for another teacher */
+  /* If the program was created by the organizer, it proceeds to add a filter */
+  /* The filter excludes the currently logged-in user from the list of teachers */
+  /* This ensures that the organizer is not included in the list of teachers */
+  /* The filter is applied to the 'program_type_teachers.user_id' field */
+  if (formData?.program_created_by == iAmOrganizerId) {
+    filter.push({
+      field: "program_type_teachers.user_id",
+      operator: "ne",
+      value: loginUserData?.userData?.id,
+    });
+  }
+
   const [pageSize, setPageSize] = useState(10);
 
   const selectQuery: any = {
@@ -594,6 +616,7 @@ const TeachersDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+  const { setValue } = useFormContext();
   const { t } = useTranslation(["common", "course.new_course"]);
 
   return (

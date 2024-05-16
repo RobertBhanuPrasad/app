@@ -83,7 +83,7 @@ import { Separator } from 'src/ui/separator'
 import { Textarea } from 'src/ui/textarea'
 import { supabaseClient } from 'src/utility/supabaseClient'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
-import CourseAccountingFormTab from '../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab'
+import CourseAccountingFormTab from '@components/course/viewCourse/SubmitCourseAccountingFormTab'
 
 function index() {
   const { viewPreviewPage } = newCourseStore()
@@ -643,7 +643,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false)
   const [cancelSuccessModalOpen, setCancelSuccessModalOpen] = useState(false)
 
-  const { setNewCourseData, setViewPreviewPage } = newCourseStore()
+  const { setNewCourseData, setViewPreviewPage,setProgramCreatedById } = newCourseStore()
   const options = DisplayOptions(
     courseData?.status_id?.id,
     courseData?.program_accounting_status_id,
@@ -678,6 +678,8 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       defaultValues = _.omit(defaultValues, ['id', 'schedules'])
       setNewCourseData(defaultValues)
+      // we are storing the program created by in the zustand variable to use it in the validation of the co-teaching
+      setProgramCreatedById(defaultValues?.program_created_by)
       router.push({ pathname: '/courses/add', query: { action: 'Copy' } })
     }
   }
