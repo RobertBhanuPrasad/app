@@ -47,6 +47,7 @@ export const ViewCourseGlobalActions = () => {
     setNewCourseData,
     setViewThankyouPage,
     setCurrentStep,
+    setProgramCreatedById
   } = newCourseStore();
 
   /**
@@ -77,6 +78,8 @@ export const ViewCourseGlobalActions = () => {
     // we have to delete schedules when user click on cipy course and other we need to prefill
     defaultValues = _.omit(defaultValues, ["id", "schedules"]);
     setNewCourseData(defaultValues);
+    // we are storing the program created by in the zustand variable to use it in the validatios
+    setProgramCreatedById(defaultValues?.program_created_by)
     // when we do copy course we have to set the current step to first step
     setCurrentStep(1);
     router.push({ pathname: "/courses/add", query: { action: "Copy" } });

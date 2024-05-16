@@ -40,10 +40,12 @@ import {
 } from "src/constants/CourseConstants";
 import {
   PAYMENT_MODE,
+  PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
   VISIBILITY,
 } from "src/constants/OptionLabels";
 import {
+  I_AM_CO_TEACHING,
   PAY_ONLINE,
   PUBLIC,
   SUPER_ADMIN,
@@ -141,6 +143,16 @@ function NewCourse() {
     TIME_FORMAT,
     TIME_FORMAT_24_HOURS
   )?.id;
+
+    /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching 
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
+
 
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
@@ -291,7 +303,7 @@ function NewCourse() {
       <Form
         onSubmit={onSubmit}
         defaultValues={defaultValues}
-        schema={validationSchema()}
+        schema={validationSchema(iAmCoTeachingId as number)}
       >
         <NewCourseTabs />
       </Form>
