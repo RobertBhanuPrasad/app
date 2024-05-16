@@ -43,13 +43,14 @@ import { authProvider } from "src/authProvider";
 import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 function index() {
   const router = useRouter();
   const programID: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
-
+  
   const {
     ParticpantFiltersData,
     setSelectedTableRows,
@@ -1064,6 +1065,8 @@ const handleExportExcel = async (
       file_type: selectOption,
     });
 
+    const countryCode = useGetCountryCode();
+
     //invoking the export_to_file function
     const { data, error } = await supabase.functions.invoke(
       `export_to_file?${params}`,
@@ -1071,6 +1074,7 @@ const handleExportExcel = async (
         headers: {
           Authorization:
             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+            "country-code": countryCode,
         },
       }
     );

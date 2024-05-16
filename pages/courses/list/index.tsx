@@ -41,6 +41,7 @@ import {
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { supabaseClient } from "src/utility/supabaseClient";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
@@ -430,6 +431,7 @@ function index() {
       });
 
       const supabase = supabaseClient();
+      const countryCode = useGetCountryCode();
 
       //invoking the export_to_file function
       const { data, error } = await supabase.functions.invoke(
@@ -438,6 +440,7 @@ function index() {
           headers: {
             Authorization:
               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+              "country-code": countryCode,
           },
         }
       );
