@@ -27,6 +27,9 @@ interface LanguageItem {
 }
 
 interface ProgramFeeItem {
+  early_bird_total: object;
+  custom_fee_label: object;
+  is_custom_fee: boolean;
   fee_level_id?: {
     name?: object;
   };
@@ -63,21 +66,33 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,online_url,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,name),program_type_id(*),organization_id(id,name),program_fee_settings_id(program_fee_level_settings(*,fee_level_id(name))),program_fee_level_settings(*,fee_level_id(name)),max_capacity,visibility_id(id,name)",
+        "*,online_url,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,name),program_type_id(*),organization_id(id,name),program_fee_settings_id(is_early_bird_fee_enabled,program_fee_level_settings(*,fee_level_id(name))),program_fee_level_settings(*,fee_level_id(name)),max_capacity,visibility_id(id,name)",
     },
   });
 
   
-  const venue =
-  courseData?.data?.venue_id?.name + 
-  ', ' +
-  courseData?.data?.venue_id?.address + 
-  ', ' +
-  courseData?.data?.venue_id?.city_id?.name + 
-  ', ' +
-  courseData?.data?.venue_id?.state_id.name +
-   ', ' +
-  courseData?.data?.venue_id?.postal_code
+  let venue=""
+
+  if(courseData?.data?.venue_id?.name){
+    venue=courseData?.data?.venue_id?.name+", "
+  }
+
+  if(courseData?.data?.venue_id?.address){
+    venue=venue+courseData?.data?.venue_id?.address+", "
+
+  }
+  if(courseData?.data?.venue_id?.city_id?.name){
+    venue=venue+courseData?.data?.venue_id?.city_id?.name+", "
+
+  }
+  if(courseData?.data?.venue_id?.state_id.name){
+    venue=venue+courseData?.data?.venue_id?.state_id.name
+
+  }
+  if(courseData?.data?.venue_id?.postal_code){
+    venue=venue+", "+courseData?.data?.venue_id?.postal_code
+
+  }
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
@@ -115,7 +130,7 @@ function CourseDetailsTab() {
       setCopiedRegistrationLink(false);
     }, 1000);
   };
-
+const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? courseData?.data?.is_early_bird_enabled : courseData?.data?.program_fee_settings_id?.is_early_bird_fee_enabled
   // getting public visibility id to check whether the particular course is public or private.
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
     VISIBILITY,
@@ -267,7 +282,11 @@ function CourseDetailsTab() {
                   return (
                     <div className="flex flex-col gap-1">
                       <Header2>
-                        {translatedText(item?.fee_level_id?.name as object)}
+                        {translatedText(
+                  item?.is_custom_fee
+                   ? item?.custom_fee_label
+                    : item?.fee_level_id?.name as object
+                )}
                       </Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
@@ -277,6 +296,27 @@ function CourseDetailsTab() {
                   );
                 })
               : ""}
+              {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
+             {IsEarlyBirdFeeEnable
+               && programFees?.map((item: ProgramFeeItem) => {
+              return (
+              <div className="flex flex-col gap-1">
+              <Header2>
+                {t("new_strings:early_bird")}{" "}
+                {translatedText(
+                item?.is_custom_fee
+                 ? item?.custom_fee_label
+                  : item?.fee_level_id?.name as object
+                )}
+              </Header2>
+              <ItemValue>
+              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+              {(item?.early_bird_total as unknown as number)?.toFixed(2)}
+              </ItemValue>
+              </div>
+            );
+            })
+            }
             {courseData?.data?.program_accommodations?.length > 0
               ? courseData?.data?.program_accommodations?.map(
                   (item: AccommodationItem) => {
@@ -354,7 +394,8 @@ function CourseDetailsTab() {
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             <div className="gap-[23px] flex flex-col">
-              {courseData?.data?.visibility_id?.id == publicVisibilityId && (
+              {/* TODO  for now scope this cx url is to be hidden */}
+              {/* {courseData?.data?.visibility_id?.id == publicVisibilityId && (
                 <div>
                   <Header2>{t('course.view_course:basic_details_tab.course_details_url')}</Header2>
                   <ItemValue>
@@ -384,7 +425,7 @@ function CourseDetailsTab() {
                     </div>
                   </ItemValue>
                 </div>
-              )}
+              )} */}
               <div>
                 <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">

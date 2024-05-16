@@ -54,7 +54,6 @@ import { translatedText } from "src/common/translations";
 import { IsEditCourse } from "./EditCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
-import { isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -142,13 +141,26 @@ export default function NewCourseReviewPage() {
       ? newCourseData?.existingVenue?.postal_code
       : newCourseData?.newVenue?.postal_code;
 
-  const VenueData = [
-    VenueName,
-    VenueAddress,
-    CityNames,
-    StateNames,
-    VenuePostalCode,
-  ].join(", ");
+
+  let VenueData:any =[]
+
+  if(VenueName){
+    VenueData.push(VenueName)
+  }
+  if(VenueAddress){
+    VenueData.push(VenueAddress)
+  }
+  if(CityNames){
+    VenueData.push(CityNames)
+  }
+  if(StateNames){
+    VenueData.push(StateNames)
+  }
+  if(VenuePostalCode){
+    VenueData.push(VenuePostalCode)
+  }
+
+  VenueData= VenueData.join(", ")
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -189,8 +201,9 @@ export default function NewCourseReviewPage() {
   };
 
   useEffect(() => {
+    if(stateId!=0 && cityId!=0 && centerId!=0)
     fetchFeeData();
-  }, []);
+  }, [stateId,cityId,centerId]);
 
   const creator =
     newCourseData?.program_created_by &&

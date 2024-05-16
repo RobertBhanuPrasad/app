@@ -21,7 +21,7 @@ import {
 } from "../../src/ui/table";
 
 import React, { useState } from "react";
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 
 import { Checkbox } from "src/ui/checkbox";
 
@@ -44,7 +44,7 @@ export function DataTable<TData, TValue>({
   pageCount,
   current,
 }: DataTableProps<TData, TValue>) {
-  const {t} = useTranslation(["new_strings"])
+  const { t } = useTranslation(["new_strings"]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -67,64 +67,59 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
-  }); 
+  });
 
   return (
     <div>
-      <div className="rounded-md border">
-        <Table className={tableStyles}>
-          <TableHeader className="bg-[#7677F41B]">
-            {table &&
-              table?.getHeaderGroups()?.map((headerGroup) => (
-                <TableRow
-                  className="border-none text-[16px] font-bold"
-                  key={headerGroup?.id}
-                >
-                  {headerGroup?.headers?.map((header) => {
-                    return (
-                      <TableHead className="text-[#333333]" key={header?.id}>
-                        {header?.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header?.column?.columnDef?.header,
-                              header?.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-          </TableHeader>
-          <TableBody>
-            {table && table?.getRowModel()?.rows?.length ? (
-              table?.getRowModel()?.rows?.map((row) => (
-                <TableRow
-                  key={row?.id}
-                  data-state={row?.getIsSelected() && "selected"}
-                >
-                  {row?.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell?.column?.columnDef?.cell,
-                        cell?.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns?.length}
-                  className="h-24 text-center"
-                >
-                  {t("new_strings:no_results")}
-                </TableCell>
+      <Table className={tableStyles}>
+        <TableHeader className="bg-[#7677F41B]">
+          {table &&
+            table?.getHeaderGroups()?.map((headerGroup) => (
+              <TableRow
+                className="border-none text-[16px] font-bold"
+                key={headerGroup?.id}
+              >
+                {headerGroup?.headers?.map((header) => {
+                  return (
+                    <TableHead className="text-[#333333]" key={header?.id}>
+                      {header?.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header?.column?.columnDef?.header,
+                            header?.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))}
+        </TableHeader>
+        <TableBody>
+          {table && table?.getRowModel()?.rows?.length ? (
+            table?.getRowModel()?.rows?.map((row) => (
+              <TableRow
+                key={row?.id}
+                data-state={row?.getIsSelected() && "selected"}
+              >
+                {row?.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(
+                      cell?.column?.columnDef?.cell,
+                      cell?.getContext()
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns?.length} className="h-24 text-center">
+                {t("new_strings:no_results")}
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }
