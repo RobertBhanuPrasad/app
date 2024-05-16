@@ -757,12 +757,12 @@ export default function NewCourseReviewPage() {
                 title={
                   courseType?.data?.name && newCourseData?.program_type_id !== ''
                     ? translatedText(courseType?.data?.name)
-                    : "-"
+                    : '-'
                 }
               >
                 {courseType?.data?.name && newCourseData?.program_type_id !== ''
                   ? translatedText(courseType?.data?.name)
-                  : "-"}
+                  : '-'}
               </abbr>
               {errors?.program_type_id && (
                 <span className="text-[#FF6D6D] text-[12px]">
