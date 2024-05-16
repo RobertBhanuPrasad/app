@@ -255,7 +255,7 @@ export default function NewCourseReviewPage() {
     //So we are manually inserting data in program_fee_level_settings variable.
     if (
       isFeeEditable &&
-      newCourseData?.program_fee_level_settings == undefined
+     ( newCourseData?.program_fee_level_settings == undefined || newCourseData?.program_fee_level_settings?.length==0)
     ) {
       setNewCourseData({
         ...newCourseData,
@@ -272,6 +272,12 @@ export default function NewCourseReviewPage() {
         is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
         early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
       });
+    }else{
+      //If program_fee_settings is not found then inserting empty array
+      setNewCourseData({
+        ...newCourseData,
+        program_fee_level_settings:[]
+      })
     }
   };
 
@@ -279,7 +285,7 @@ export default function NewCourseReviewPage() {
     //To fetch fee we need the location details. Initially this three variables are set to zero.Based on user actions we will assign values to this variables.
     //Fetching the fee when these values are assigned.
     if (stateId != 0 && cityId != 0 && centerId != 0) fetchFeeData();
-  }, [stateId, cityId, centerId,newCourseData]);
+  }, [stateId, cityId, centerId,newCourseData?.program_type_id,newCourseData?.schedules,newCourseData?.is_existing_venue,newCourseData?.newVenue,newCourseData?.existingVenue,newCourseData?.organization_id]);
 
   const creator =
     newCourseData?.program_created_by &&

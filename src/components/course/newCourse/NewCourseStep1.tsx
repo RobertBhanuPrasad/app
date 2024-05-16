@@ -456,7 +456,7 @@ const OrganizationDropDown = () => {
     setValue("program_type_id", "");
     setValue("program_type", "");
     setValue("program_alias_name_id", "");
-    setValue("teachers", []);
+    setValue("teacher_ids", []);
 
     //Handling teachers drop down
     if (formData?.program_created_by != iAmOrganizerId) {
@@ -477,7 +477,7 @@ const OrganizationDropDown = () => {
     setValue("state_id", "");
     setValue("city_id", "");
     setValue("center_id", "");
-    setValue("is_resedential_program", false);
+    setValue("is_residential_program", false);
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
     setValue("program_fee_level_settings", undefined);
