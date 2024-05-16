@@ -450,7 +450,7 @@ export default function NewCourseReviewPage() {
    */
   const handleErrorMessagesInPreviewPageScreen = async (formData: any) => {
     const requiredFieldsForValidation = await getRequiredFieldsForValidation(
-      newCourseData,
+      formData,
       loginUserData
     );
 
