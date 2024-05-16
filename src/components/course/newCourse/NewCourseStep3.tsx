@@ -248,12 +248,12 @@ const SchedulesHeader = () => {
   });
 
   return (
-    <div className="h-9 flex">
+    <div className="h-9 flex ">
       <div className="font-semibold text-[#333333] mr-[375px] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
-      <div className={`w-[161px] ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
-        <div className="w-[161px]">
+      <div className="flex gap-4 w-[434px]">
+        <div className={`w-[161px]   ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
           <Select
             value={hoursFormat}
             onValueChange={(val: any) => {
@@ -675,12 +675,26 @@ const Venue = () => {
     setOpenAddNewVenue(true);
   };
 
+  const handleRemoveFeeLevel=()=>{
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings", undefined);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
+    setTimeout(() => {
+      clearErrors([
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period"
+      ]);
+    }, 10);
+  }
+
   return (
     <div>
       <RadioGroup
         className="flex flex-row gap-7"
         value={value}
-        onValueChange={onChange}
+        onValueChange={(val)=>{onChange(val);handleRemoveFeeLevel();}}
       >
         <Label htmlFor="existing-venue">
           <div
