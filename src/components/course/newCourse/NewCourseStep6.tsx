@@ -110,7 +110,7 @@ function NewCourseStep6() {
             courseEmailOnChange(val?.target?.value);
           }}
           placeholder={t("course.new_course:contact_info_tab.select_course")}
-          className="!w-58"
+          className="!w-58 placeholder:text-[#999999] font-normal"
           error={error ? true : false} // TODO need to change after integrating the form names
         />
         {error && (
