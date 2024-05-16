@@ -56,7 +56,7 @@ const Filters = ({
 
   const formData = watch();
 
-  const { setAllFilterData, AllFilterData } = newCourseStore();
+  const { setAllFilterData } = newCourseStore();
   const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
     <div className="flex flex-col gap-5">
@@ -157,7 +157,7 @@ const Filters = ({
           </AccordionItem>
           <Separator />
 
-          {/* TODO  : for now may-13 release it has to be hidden */}
+          {/* TODO  : for now may-13 release it has to be hidden */} 
           {/* Course Accounting Status Accordion */}
           {/* <AccordionItem value="item-3" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
@@ -179,7 +179,7 @@ const Filters = ({
             </AccordionContent>
           </AccordionItem>
           <Separator /> */}
-
+          
           {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Course Accounting Closure Date  Accordion */}
           {/* <AccordionItem value="item-4" className=" border-none">
@@ -287,12 +287,12 @@ const Filters = ({
                 <div>{t("program_organizer")}</div>
                 {formData?.temporaryadvancefilter.program_organiser?.length >
                   0 && (
-                  <CountComponent
-                    count={
-                      formData?.temporaryadvancefilter.program_organiser?.length
-                    }
-                  />
-                )}
+                    <CountComponent
+                      count={
+                        formData?.temporaryadvancefilter.program_organiser?.length
+                      }
+                    />
+                  )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -337,7 +337,7 @@ const Filters = ({
           </AccordionItem>
 
           <Separator />
-
+          
           {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Reconciliation Status Accordion */}
           {/* <AccordionItem value="item-13" className=" border-none">
@@ -367,11 +367,9 @@ const Filters = ({
             setValue("temporaryadvancefilter.is_course_fee", "");
             setValue("temporaryadvancefilter.course_teacher", "");
             setValue("temporaryadvancefilter.program_organiser", []);
-            //Here we need to clear only advance filter values
-            setAllFilterData({
-              ...AllFilterData,
-              advanceFilter: {},
-            });
+            //we need to empty the course type in basic filters also because the filter applies when we clear all in advance filter
+            setValue("course_type", "");
+            setAllFilterData({ advanceFilter: {} });
             setValue("advanceFilter", {}); //clearing all the advancefilter form Data
           }}
           className="flex gap-1 items-center cursor-pointer"
@@ -697,9 +695,9 @@ export const CourseStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white  hover:bg-[#5E5FC3]"
-                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-            }`}
+              ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -735,9 +733,9 @@ export const CourseAccordingStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-                ? "bg-primary text-white hover:bg-[#5E5FC3]"
-                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-            }`}
+              ? "bg-primary text-white hover:bg-[#5E5FC3]"
+              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+              }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
