@@ -133,7 +133,7 @@ const RegistrationGateway = () => {
   );
 };
 const RadioCards = () => {
-  const { clearErrors, watch } = useFormContext();
+  const { clearErrors, watch,setValue } = useFormContext();
 
   const { t } = useTranslation(["course.new_course", "new_strings"]);
 
@@ -168,6 +168,10 @@ const RadioCards = () => {
   } = useController({
     name: NewCourseStep2FormNames?.teacher_ids,
   });
+
+  const router = useRouter();
+
+
 
   const handleOnChange = (val: string) => {
     onChange(parseInt(val));
@@ -207,6 +211,18 @@ const RadioCards = () => {
           clearErrors("teacher_ids");
         }, 10);
       }
+    }
+
+    // If I am changing the program created by then we are removing the course type course type id and the course alias name 
+    // Because if we chanage the created by and then the course type is not present for that created type then 
+    if(!IsEditCourse(router?.pathname)){
+      setValue("program_type_id", "");
+    setValue("program_type", "");
+    setValue("program_alias_name_id", "");
+
+    setTimeout(()=>{
+      clearErrors(['program_type_id','program_type','program_alias_name_id'])
+    },10)
     }
     // we are storing the program created by in the zustand variable to use it in the validatios
     setProgramCreatedById(val);
