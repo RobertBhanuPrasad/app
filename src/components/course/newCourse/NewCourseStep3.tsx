@@ -1001,7 +1001,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   // Add additional filters based on organization calendar settings
   const filter = [...dateFilters];
   if (settingsData) {
-    if (settingsData?.data[0]?.is_city_enabled && cityId) {
+    if (settingsData?.data[0]?.is_city_enabled) {
       filter.push({
         field: "program_id.city_id.id",
         operator: "eq",
@@ -1181,14 +1181,15 @@ const ExistingVenueList = () => {
     setVenueData(modifiedVenueData);
     setIsLoading(false);
   };
-  /**
+/**
    * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
    */
-  const {
-    field: { onChange: isExistingVenueOnchange },
-  } = useController({
-    name: "is_existing_venue",
-  });
+const {
+  field: { onChange: isExistingVenueOnchange },
+} = useController({
+  name: "is_existing_venue",
+});
+
 
   const fetchLoginUserVenue = async () => {
     const supabase = supabaseClient();
@@ -1307,7 +1308,7 @@ const ExistingVenueList = () => {
             type="submit"
             onClick={() => {
               isNewVenueSelectedOnchange("existing-venue");
-              isExistingVenueOnchange("existing-venue");
+              formData[NewCourseStep3FormNames.venue_id] && isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList();
             }}
           >
@@ -1359,6 +1360,7 @@ export const ExistingVenueListSection = ({
   } = useController({
     name: "tempExistingVenue",
   });
+
 
   const handleCheckboxChange = (item: any) => {
     setValue(NewCourseStep3FormNames.venue_id, item.id);
@@ -1450,7 +1452,7 @@ export const ExistingVenueListSection = ({
       />
       <div className="space-y-1 leading-none w-full">
         <div className="flex justify-between">
-          <div className="font-semibold">{item.name}</div>
+          <div className="font-semibold">{item.name}</div>  
           <div className="flex flex-row gap-3">
             {(item?.created_by_user_id == loginUserData?.userData?.id ||
               isUserNationAdminOrSuperAdmin) && (
@@ -1497,7 +1499,6 @@ export const ExistingVenueListSection = ({
             )}
           </div>
         </div>
-
         <VenueItem item={item} />
       </div>
     </div>

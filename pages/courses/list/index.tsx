@@ -244,6 +244,7 @@ function index() {
     setPageSize,
     current,
     setCurrent,
+    setFilters,
   } = useTable({
     resource: "program",
     meta: {
@@ -271,6 +272,8 @@ function index() {
   const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
     useTable({
       resource: "program",
+      //restricting the hook to get the params from URL
+      syncWithLocation: false,
       meta: {
         select:
           "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
@@ -294,6 +297,12 @@ function index() {
         ],
       },
     });
+
+  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook 
+  //Because when we move to another route and comeback Filters are not setting properly that why we have written this
+  useEffect(() => {
+    setFilters(filters.permanent, "replace");
+  }, [AllFilterData]);
 
   /**
    * The variable holds whether all rows are selected or not
@@ -839,7 +848,8 @@ export const BasicFilters: React.FC<{
             <div>
               <CalenderIcon color="#666666" />
             </div>
-            {courseDate ? (
+            {/* here if there is courseDate.from then only we need to format other wise we can show placeholder */}
+            {courseDate && courseDate.from ? (
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-row gap-2 text-[14px]">
                   {/* If the course from date and to date is present then only format and show the from date and to date */}

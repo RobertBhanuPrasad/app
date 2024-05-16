@@ -548,6 +548,20 @@ const TeachersDropDown = () => {
     });
   }
 
+  /* This condition checks if the program was created by the currently logged-in user as only the iam the organizer for another teacher */
+  /* If the program was created by the organizer, it proceeds to add a filter */
+  /* The filter excludes the currently logged-in user from the list of teachers */
+  /* This ensures that the organizer is not included in the list of teachers */
+  /* The filter is applied to the 'program_type_teachers.user_id' field */
+  if(formData?.program_created_by == iAmOrganizerId) {
+    filter.push({
+      field: "program_type_teachers.user_id",
+      operator: "ne",
+      value: loginUserData?.userData?.id
+    })
+  }
+
+
   const [pageSize, setPageSize] = useState(10);
 
   const selectQuery: any = {
@@ -577,6 +591,7 @@ const TeachersDropDown = () => {
   }
 
   const { options, queryResult, onSearch } = useSelect(selectQuery);
+
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
