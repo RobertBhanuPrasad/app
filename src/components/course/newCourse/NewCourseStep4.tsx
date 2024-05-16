@@ -536,8 +536,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
                 onChange(!value);
               }}
               value={value}
-              // REQUIRMENT we need to disable the checkbox when the fee level id regular
-              disabled={row?.original.feeLevelId == regularFeeLevelId ? true : false}
+              // REQUIRMENT we need to disable the checkbox when the fee level id regular and not for custom fee
+              disabled={row?.original.feeLevelId == regularFeeLevelId && row?.original?.is_custom_fee==false ? true : false}
             />
           );
         },
