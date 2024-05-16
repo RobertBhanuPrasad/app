@@ -157,7 +157,6 @@ const OnlineProgram = () => {
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}
-            className="rounded-[12px] placeholder:font-[600] placeholder:text-[#000000]"
             value={value}
             onChange={(event) => {
               onChange(event.target.value);
@@ -253,7 +252,7 @@ const SchedulesHeader = () => {
       <div className="font-semibold text-[#333333] mr-[375px] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
-      <div className="flex gap-4">
+      <div className={`w-[161px] ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
         <div className="w-[161px]">
           <Select
             value={hoursFormat}
