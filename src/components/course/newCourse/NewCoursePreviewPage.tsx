@@ -60,6 +60,7 @@ import { requiredValidationFields } from "pages/courses/add";
 import _ from "lodash";
 import { z } from "zod";
 import { useFormState } from "react-hook-form";
+import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -208,9 +209,8 @@ export default function NewCourseReviewPage() {
   useEffect(() => {
     //To fetch fee we need the location details. Initially this three variables are set to zero.Based on user actions we will assign values to this variables.
     //Fetching the fee when these values are assigned.
-    if(stateId!=0 && cityId!=0 && centerId!=0)
-    fetchFeeData();
-  }, [stateId,cityId,centerId]);
+    if (stateId != 0 && cityId != 0 && centerId != 0) fetchFeeData();
+  }, [stateId, cityId, centerId]);
 
   const creator =
     newCourseData?.program_created_by &&
@@ -441,8 +441,6 @@ export default function NewCourseReviewPage() {
 
   const [errors, setErrors] = useState<any>({});
 
-  const requiredFieldsForValidation = requiredValidationFields(newCourseData);
-
   /**
    * This is a function where we are calling to display error messages in preview page also
    * current state : in preview page there is no Form declaration so we have to validate the current data with zod safe parse
@@ -450,7 +448,12 @@ export default function NewCourseReviewPage() {
    * @param formData form Data is independent data
    * @returns
    */
-  const handleErrorMessagesInPreviewPageScreen = (formData: any) => {
+  const handleErrorMessagesInPreviewPageScreen = async (formData: any) => {
+    const requiredFieldsForValidation = await getRequiredFieldsForValidation(
+      newCourseData,
+      loginUserData
+    );
+
     const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
 
     let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
@@ -487,7 +490,8 @@ export default function NewCourseReviewPage() {
   };
 
   const handClickContinue = async () => {
-    const errors = handleErrorMessagesInPreviewPageScreen(newCourseData);
+    const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData);
+    console.log("errors", errors);
 
     if (errors.success === false) {
       console.log(errors.error.issues, "issuessss");
