@@ -321,12 +321,6 @@ export const CourseTypeDropDown = () => {
   };
   const { t } = useTranslation(["common"]);
 
-  //Requirement: Fee is fetch based on program_type,location and course start date.So when ever program_type is changed need to remove existing fee levels.
-  const handleRemoveFeeLevelSettings=()=>{
-    setValue("program_fee_level_settings",undefined)
-    setValue("is_early_bird_enabled",undefined)
-    setValue("early_bird_cut_off_period",undefined)
-  }
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
