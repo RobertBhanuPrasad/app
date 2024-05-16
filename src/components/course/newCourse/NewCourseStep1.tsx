@@ -381,6 +381,8 @@ const OrganizationDropDown = () => {
    */
   const pathname = usePathname();
 
+  const { clearErrors } = useFormContext();
+
   /**
    * Checking whether the url contains the edit or not
    */
@@ -389,8 +391,8 @@ const OrganizationDropDown = () => {
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
-  
-  const {setValue} = useFormContext();
+
+  const { setValue } = useFormContext();
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
@@ -411,7 +413,7 @@ const OrganizationDropDown = () => {
   } = useController({
     name: NewCourseStep1FormNames?.organization_id,
   });
-  const handleClearDependencyValues=()=>{
+  const handleClearDependencyValues = () => {
     setValue("program_type_id", "");
     setValue("program_type", "");
     setValue("program_alias_name_id", "");
@@ -422,7 +424,27 @@ const OrganizationDropDown = () => {
     setValue("max_capacity", "");
     setValue("online_url", "");
     setValue("existingVenue", undefined);
-  }
+    setValue("newVenue", undefined);
+    setValue("is_existing_venue", "");
+
+    // we have to clear errors after we modify the values
+    setTimeout(() => {
+      clearErrors([
+        "program_type_id",
+        "program_alias_name_id",
+        "teacher_ids",
+        "assistant_teacher_ids",
+        "language_ids",
+        "translation_language_ids",
+        "max_capacity",
+        "online_url",
+        "existingVenue",
+        "isExistingVenue",
+        "is_existing_venue",
+        "newVenue",
+      ]);
+    }, 10);
+  };
 
   const handleSearch = (val: { target: { value: string } }) => {
     onSearch(val.target.value);
@@ -448,8 +470,8 @@ const OrganizationDropDown = () => {
         <Select
           value={value}
           onValueChange={(value: any) => {
-            handleClearDependencyValues()
             onChange(value);
+            handleClearDependencyValues();
           }}
           //disabling the organization dropdown when it is edit
           disabled={isEditCourse}

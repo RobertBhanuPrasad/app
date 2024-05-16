@@ -276,12 +276,14 @@ export const CourseTypeDropDown = () => {
   } = useController({
     name: NewCourseStep2FormNames?.max_capacity,
   });
-  
-  const clearCourseTypeDependentValues=()=>{
-    setValue('teacher_ids',[])
-    setValue('program_alias_name_id',undefined)
-    setValue('assistant_teacher_ids',undefined)
-  }
+
+  const clearCourseTypeDependentValues = () => {
+    setValue("program_alias_name_id", "");
+
+    setTimeout(() => {
+      clearErrors(["program_alias_name_id"]);
+    }, 10);
+  };
 
   /**
    * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
@@ -325,7 +327,7 @@ export const CourseTypeDropDown = () => {
         onValueChange={(val: any) => {
           onChange(val);
           getCourseTypeSettings(val);
-          clearCourseTypeDependentValues()
+          clearCourseTypeDependentValues();
         }}
         disabled={isEditCourse}
       >
@@ -560,14 +562,13 @@ const TeachersDropDown = () => {
   /* The filter excludes the currently logged-in user from the list of teachers */
   /* This ensures that the organizer is not included in the list of teachers */
   /* The filter is applied to the 'program_type_teachers.user_id' field */
-  if(formData?.program_created_by == iAmOrganizerId) {
+  if (formData?.program_created_by == iAmOrganizerId) {
     filter.push({
       field: "program_type_teachers.user_id",
       operator: "ne",
-      value: loginUserData?.userData?.id
-    })
+      value: loginUserData?.userData?.id,
+    });
   }
-
 
   const [pageSize, setPageSize] = useState(10);
 
@@ -599,14 +600,13 @@ const TeachersDropDown = () => {
 
   const { options, queryResult, onSearch } = useSelect(selectQuery);
 
-
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
     if (queryResult && (queryResult?.data?.total as number) >= pageSize) {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
-  const {setValue} = useFormContext();
+  const { setValue } = useFormContext();
   const { t } = useTranslation(["common", "course.new_course"]);
 
   return (
