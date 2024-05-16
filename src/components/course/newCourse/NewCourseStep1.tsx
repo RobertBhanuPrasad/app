@@ -193,6 +193,11 @@ const RadioCards = () => {
         }, 10);
       }
     }
+
+    // REQUIRMENT if the user selected the I am Teaching the course then we need to set the loggined user as the teacher
+    if(parseInt(val) === iAmTeachingId){
+      teachersOnChange([loginInTeacherData])
+    }
   };
 
   /**
