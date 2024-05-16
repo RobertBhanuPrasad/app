@@ -56,7 +56,7 @@ const Filters = ({
 
   const formData = watch();
 
-  const { setAllFilterData } = newCourseStore();
+  const { setAllFilterData, AllFilterData } = newCourseStore();
   const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
     <div className="flex flex-col gap-5">
@@ -369,7 +369,11 @@ const Filters = ({
             setValue("temporaryadvancefilter.program_organiser", []);
             //we need to empty the course type in basic filters also because the filter applies when we clear all in advance filter
             setValue("course_type", "");
-            setAllFilterData({ advanceFilter: {} });
+            //Here we need to clear only the advance filter data
+            setAllFilterData({
+              ...AllFilterData,
+              advanceFilter: {},
+            });
             setValue("advanceFilter", {}); //clearing all the advancefilter form Data
           }}
           className="flex gap-1 items-center cursor-pointer"
