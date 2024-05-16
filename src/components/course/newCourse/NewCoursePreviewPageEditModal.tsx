@@ -113,16 +113,15 @@ const ButtonsDialog = ({ onClose, currentStep }: any) => {
   let isAllFieldsFilled = false;
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
-  const onSubmit = async () => {
-    // Update newCourseData with new form data
-    setNewCourseData({ ...newCourseData, ...formData });
-
+  const onSubmit = async () => {  
     isAllFieldsFilled = await ValidateCurrentStepFields(
       validationFieldsStepWise[currentStep - 1]
     );
-
+    
     // Close the dialog
     if (isAllFieldsFilled) {
+      // Update newCourseData with new form data
+      setNewCourseData({ ...newCourseData, ...formData });
       onClose({ ...newCourseData, ...formData });
     }
   };

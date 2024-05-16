@@ -874,7 +874,7 @@ export const BasicFilters: React.FC<{
                 </div>
               </div>
             ) : (
-              <div className="flex gap-2 font-normal">
+              <div className="flex gap-2 font-normal text-[#999999]">
                 {t("new_strings:select_the_date_range")}
               </div>
             )}

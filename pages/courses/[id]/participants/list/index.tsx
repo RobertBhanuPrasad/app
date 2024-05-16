@@ -956,7 +956,7 @@ const HeaderSection = () => {
                     </div>
                   )
                 ) : (
-                  <span className="font-thin">
+                  <span className="font-thin text-[#999999]">
                     {t("new_strings:search_by_registration_date")}
                   </span>
                 )}

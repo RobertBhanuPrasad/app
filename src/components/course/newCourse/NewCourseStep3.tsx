@@ -157,7 +157,6 @@ const OnlineProgram = () => {
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}
-            className="rounded-[12px] placeholder:font-[600] placeholder:text-[#000000]"
             value={value}
             onChange={(event) => {
               onChange(event.target.value);
@@ -253,7 +252,7 @@ const SchedulesHeader = () => {
       <div className="font-semibold text-[#333333] mr-[375px] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
-      <div className="flex gap-4">
+      <div className={`w-[161px] ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
         <div className="w-[161px]">
           <Select
             value={hoursFormat}
@@ -676,12 +675,26 @@ const Venue = () => {
     setOpenAddNewVenue(true);
   };
 
+  const handleRemoveFeeLevel=()=>{
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings", undefined);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
+    setTimeout(() => {
+      clearErrors([
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period"
+      ]);
+    }, 10);
+  }
+
   return (
     <div>
       <RadioGroup
         className="flex flex-row gap-7"
         value={value}
-        onValueChange={onChange}
+        onValueChange={(val)=>{onChange(val);handleRemoveFeeLevel();}}
       >
         <Label htmlFor="existing-venue">
           <div
@@ -1525,7 +1538,7 @@ export const ExistingVenueListSection = ({
       role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
   );
   return (
-    <div className="flex flex-row !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
+    <div className="flex flex-row justify-between !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
       <Checkbox
         id={item.id}
         value={item.id}
@@ -1535,9 +1548,10 @@ export const ExistingVenueListSection = ({
         }
       />
       <div className="space-y-1 leading-none w-full">
-        <div className="flex justify-between">
-          <div className="font-semibold">{item.name}</div>  
-          <div className="flex flex-row gap-3">
+        <div className="font-semibold">{item.name}</div>  
+        <VenueItem item={item} />
+      </div>
+      <div className="flex flex-row gap-3">
             {(item?.created_by_user_id == loginUserData?.userData?.id ||
               isUserNationAdminOrSuperAdmin) && (
               <Dialog
@@ -1582,9 +1596,6 @@ export const ExistingVenueListSection = ({
               </Dialog>
             )}
           </div>
-        </div>
-        <VenueItem item={item} />
-      </div>
     </div>
   );
 };

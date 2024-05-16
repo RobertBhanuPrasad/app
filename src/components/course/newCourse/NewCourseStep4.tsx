@@ -221,9 +221,11 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           ? translatedText(val?.custom_fee_label)
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
-        subTotal: (val?.total - val?.total * taxRate).toFixed(2),
-        tax: (val?.total * taxRate).toFixed(2),
-        total: parseFloat(val?.total).toFixed(2),
+        subTotal: (val?.total - val?.total * taxRate)?.toFixed(2),
+        tax: (val?.total * taxRate)?.toFixed(2),
+        total: parseFloat(val?.total)?.toFixed(2),
+        is_custom_fee:val?.is_custom_fee,
+        custom_fee_label:val?.custom_fee_label
       };
 
       //Need to insert early bird fee if early bird fee is enabled in settings
@@ -231,9 +233,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         modifiedFeeLevels = {
           ...modifiedFeeLevels,
           earlyBirdSubTotal:
-            (val?.early_bird_total - val?.early_bird_total * taxRate).toFixed(2),
-            earlyBirdTax: (val?.early_bird_total * taxRate).toFixed(2),
-          earlyBirdTotal: parseFloat(val?.early_bird_total || "").toFixed(2),
+            (val?.early_bird_total - val?.early_bird_total * taxRate)?.toFixed(2),
+            earlyBirdTax: (val?.early_bird_total * taxRate)?.toFixed(2),
+          earlyBirdTotal: parseFloat(val?.early_bird_total || "")?.toFixed(2),
         };
       }
       return modifiedFeeLevels;
@@ -253,8 +255,11 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           total: fee?.total,
           early_bird_total: fee?.earlyBirdTotal || 0,
           fee_level_id: fee?.feeLevelId,
+          is_custom_fee: fee?.is_custom_fee,
+          custom_fee_label: fee?.custom_fee_label
         };
       });
+      console.log(feeData,'feeData')
       append(feeData);
     }
   }, []);
@@ -537,8 +542,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
                 onChange(!value);
               }}
               value={value}
-              // REQUIRMENT we need to disable the checkbox when the fee level id regular
-              disabled={row?.original.feeLevelId == regularFeeLevelId ? true : false}
+              // REQUIRMENT we need to disable the checkbox when the fee level id regular and not for custom fee
+              disabled={row?.original.feeLevelId == regularFeeLevelId && row?.original?.is_custom_fee==false ? true : false}
             />
           );
         },
@@ -672,4 +677,6 @@ type FeeLevelType = {
   subTotal: number;
   tax: number;
   total: number;
+  is_custom_fee: boolean,
+  custom_fee_label: object
 };
