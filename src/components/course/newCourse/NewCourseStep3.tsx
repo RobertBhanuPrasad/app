@@ -1449,8 +1449,9 @@ export const ExistingVenueListSection = ({
           formData[NewCourseStep3FormNames.venue_id] == item.id ? true : false
         }
       />
-      <div className="absolute hidden group-hover:flex bottom-1 left-6 mt-8 w-max p-2 text-sm text-white bg-gray-800 rounded shadow-lg">
+      <div className="absolute hidden group-hover:flex bottom-[3px] left-6  w-max p-1  text-white pl-4 bg-gray-800 rounded-lg font-sans text-[14px] font-semibold">
       Select this checkbox to edit your venue
+      <div id="arrow" className="invisible absolute left-[-4px] top-3 h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit" data-popper-arrow></div>
     </div>
       </div>
       <div className="space-y-1 leading-none w-full">
@@ -1467,9 +1468,8 @@ export const ExistingVenueListSection = ({
                 <DialogTrigger
                   className={
                     !isVenueSelected
-              
-                      ? "cursor-not-allowed  opacity-50 relative group"
-                      : "opacity-none"
+                      ? "cursor-not-allowed  opacity-50"
+                     : "opacity-none"
                       
                   }
                   disabled={!isVenueSelected}
@@ -1480,8 +1480,10 @@ export const ExistingVenueListSection = ({
                   <EditIcon />
                   
                 </DialogTrigger>
-                <div className="absolute hidden group-hover:flex bottom-1 left-6 mt-8 w-max p-2 text-sm text-white bg-gray-800 rounded shadow-lg">
+                <div className="absolute hidden group-hover:flex bottom-[-2px] right-10  w-max p-2 text-white bg-gray-800 rounded-lg font-sans text-[14px] font-semibold">
       Select this checkbox to edit your venue
+      <div id="arrow" className="invisible absolute left-[260px] top-3 h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit" data-popper-arrow></div>
+
     </div>
                 </div>
                 <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
