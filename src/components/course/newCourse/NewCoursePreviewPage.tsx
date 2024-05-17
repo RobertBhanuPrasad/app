@@ -227,17 +227,6 @@ export default function NewCourseReviewPage() {
       console.log("error while fetching course fee level settings data", error);
     setCourseFeeSettings(data);
 
-    //If program_fee_level_settings is empty then storing undefined
-    if (
-      data?.length == 0 ||
-      data?.[0]?.program_fee_level_settings?.length == 0
-    ) {
-      setNewCourseData({
-        ...newCourseData,
-        program_fee_level_settings: undefined,
-      });
-    }
-
     //Fetching login user roles
     const user_roles: any[] = loginUserData?.userData?.user_roles || [];
 
@@ -287,10 +276,22 @@ export default function NewCourseReviewPage() {
       });
     }
     //If none editable fee then need to empty the program_fee_level_settings to stop validation.
-    if(isFeeEditable==false){
+    if (isFeeEditable == false) {
       setNewCourseData({
-        ...newCourseData,program_fee_level_settings:[]
-      })
+        ...newCourseData,
+        program_fee_level_settings: [],
+      });
+    }
+
+    //If program_fee_level_settings is empty then storing undefined
+    if (
+      data?.length == 0 ||
+      data?.[0]?.program_fee_level_settings?.length == 0
+    ) {
+      setNewCourseData({
+        ...newCourseData,
+        program_fee_level_settings: undefined,
+      });
     }
   };
 
