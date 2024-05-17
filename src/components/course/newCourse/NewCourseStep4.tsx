@@ -88,6 +88,11 @@ export default function CourseTable() {
     field: { value: earlyBirdCutOff, onChange: setEarlyBirdCutOff },
   } = useController({ name: "early_bird_cut_off_period" });
 
+  //program_fee_level_settings variable
+  const {
+    field: { onChange: setProgramFeeLevelSettings },
+  } = useController({ name: "program_fee_level_settings" });
+
   //Form variable to store the is_early_bird_enabled
   const {
     field: { value: showEarlyBirdColumns, onChange: setShowEarlyBirdColumns },
@@ -123,6 +128,12 @@ export default function CourseTable() {
     ) {
       setShowEarlyBirdColumns(data?.[0]?.is_early_bird_fee_enabled);
     }
+    
+    //If program_fee_level_settings is empty then storing undefined
+    if (data?.length == 0 || data?.[0]?.program_fee_level_settings?.length == 0) {
+      setProgramFeeLevelSettings(undefined)
+    }
+
     setCourseFeeSettings(data);
   };
 
