@@ -41,25 +41,31 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
+// Entity implies City,Center,State,...
 export type Entity = {
   name: string;
   id: number;
 };
 
+// Preferences are a collection of different entities which need to be saved in db
 export type Preferences = {
   state: Entity[];
   city: Entity[];
   center: Entity[];
 };
 
+// emptyPreferences to use where needed
 export const emptyPreferences: Preferences = {
   state: [],
   city: [],
   center: [],
 };
 
+// All Entity-Specific Components like <State>, <Center>, <City> need these props
 interface EntityProps {
+  // setSelectedEntity is to set the selected entity in suggested-chips
   setSelectedEntity: React.Dispatch<React.SetStateAction<number>>;
+  // setNewPreferences is for updating the parent newPreferences state variable which will be used to update DB on Filter Sheet close
   setNewPreferences: React.Dispatch<React.SetStateAction<Preferences>>;
 }
 
@@ -67,9 +73,14 @@ interface FiltersProps {
   setAdvanceFilterOpen: React.Dispatch<React.SetStateAction<boolean>>;
   hasAliasNameFalse: boolean;
   setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  // preferences is to show the loaded preferences from DB
   preferences: Preferences;
+  // setNewPreferences is for updating the chosen preferences
   setNewPreferences: React.Dispatch<React.SetStateAction<Preferences>>;
 }
+
+const ITEM_CHOSEN_FROM_DROPDOWN = -2,
+  NOTHING_CHOSEN_YET = -1;
 
 const Filters = ({
   setAdvanceFilterOpen,
@@ -83,14 +94,21 @@ const Filters = ({
   const { watch, setValue } = useFormContext();
   const formData = watch();
 
+  // selectedEntities are present to decide if any suggested-chip is chosen
   const [selectedState, setSelectedState] = useState(
-    formData?.temporaryadvancefilter?.state ? -2 : -1
+    formData?.temporaryadvancefilter?.state
+      ? ITEM_CHOSEN_FROM_DROPDOWN
+      : NOTHING_CHOSEN_YET
   );
   const [selectedCenter, setSelectedCenter] = useState(
-    formData?.temporaryadvancefilter?.center ? -2 : -1
+    formData?.temporaryadvancefilter?.center
+      ? ITEM_CHOSEN_FROM_DROPDOWN
+      : NOTHING_CHOSEN_YET
   );
   const [selectedCity, setSelectedCity] = useState(
-    formData?.temporaryadvancefilter?.city ? -2 : -1
+    formData?.temporaryadvancefilter?.city
+      ? ITEM_CHOSEN_FROM_DROPDOWN
+      : NOTHING_CHOSEN_YET
   );
 
   const { setAllFilterData, AllFilterData } = newCourseStore();
@@ -269,7 +287,9 @@ const Filters = ({
                 setSelectedEntity={setSelectedState}
                 setNewPreferences={setNewPreferences}
               />
-              {selectedState !== -2 &&
+              {/* suggestion chips fetched from DB are displayed here */}
+              {/* if item is already chosen from dropdown, don't display suggestions */}
+              {selectedState !== ITEM_CHOSEN_FROM_DROPDOWN &&
                 preferences.state.map(({ id, name }) => (
                   <Button
                     className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
@@ -280,7 +300,9 @@ const Filters = ({
                     variant="outline"
                     onClick={() => {
                       setSelectedState(id);
+                      // update the form field to choose the same item in dropdown
                       setValue("temporaryadvancefilter.state", id);
+                      // update the newPreferences to send to db later
                       setNewPreferences((oldPreferences) => ({
                         ...oldPreferences,
                         state: [{ id, name }],
@@ -309,7 +331,9 @@ const Filters = ({
                 setSelectedEntity={setSelectedCity}
                 setNewPreferences={setNewPreferences}
               />
-              {selectedCity !== -2 &&
+              {/* suggestion chips fetched from DB are displayed here */}
+              {/* if item is already chosen from dropdown, don't display suggestions */}
+              {selectedCity !== ITEM_CHOSEN_FROM_DROPDOWN &&
                 preferences.city.map(({ id, name }) => (
                   <Button
                     className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
@@ -320,7 +344,9 @@ const Filters = ({
                     variant="outline"
                     onClick={() => {
                       setSelectedCity(id);
+                      // update the form field to choose the same item in dropdown
                       setValue("temporaryadvancefilter.city", id);
+                      // update the newPreferences to send to db later
                       setNewPreferences((oldPreferences) => ({
                         ...oldPreferences,
                         city: [{ id, name }],
@@ -349,7 +375,9 @@ const Filters = ({
                 setSelectedEntity={setSelectedCenter}
                 setNewPreferences={setNewPreferences}
               />
-              {selectedCenter !== -2 &&
+              {/* suggestion chips fetched from DB are displayed here */}
+              {/* if item is already chosen from dropdown, don't display suggestions */}
+              {selectedCenter !== ITEM_CHOSEN_FROM_DROPDOWN &&
                 preferences.center.map(({ id, name }) => (
                   <Button
                     className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
@@ -360,7 +388,9 @@ const Filters = ({
                     variant="outline"
                     onClick={() => {
                       setSelectedCenter(id);
+                      // update the form field to choose the same item in dropdown
                       setValue("temporaryadvancefilter.center", id);
+                      // update the newPreferences to send to db later
                       setNewPreferences((oldPreferences) => ({
                         ...oldPreferences,
                         center: [{ id, name }],
@@ -628,7 +658,9 @@ export const State = ({
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
-        setSelectedEntity(-2);
+        // updated to make corresponding suggestion-chips disappear
+        setSelectedEntity(ITEM_CHOSEN_FROM_DROPDOWN);
+        // update newPreferences to send to db later
         setNewPreferences((oldPreferences) => ({
           ...oldPreferences,
           state: [{ id: val, name: "dummyname" }],
@@ -695,7 +727,9 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
-        setSelectedEntity(-2);
+        // updated to make corresponding suggestion-chips disappear
+        setSelectedEntity(ITEM_CHOSEN_FROM_DROPDOWN);
+        // update newPreferences to send to db later
         setNewPreferences((oldPreferences) => ({
           ...oldPreferences,
           city: [{ id: val, name: "dummyname" }],
@@ -765,7 +799,9 @@ export const Center = ({
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
-        setSelectedEntity(-2);
+        // updated to make corresponding suggestion-chips disappear
+        setSelectedEntity(ITEM_CHOSEN_FROM_DROPDOWN);
+        // update newPreferences to send to db later
         setNewPreferences((oldPreferences) => ({
           ...oldPreferences,
           center: [{ id: val, name: "dummyname" }],

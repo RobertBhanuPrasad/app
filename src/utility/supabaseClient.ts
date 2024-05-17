@@ -38,5 +38,7 @@ export const supabaseClient = (schema?: string) => {
     },
   });
 };
+
+// Generic SupabaseClient Type for allowing non-public schemas as well
 type SupabaseClientType = SupabaseClient<any, string, any>;
 export { type SupabaseClientType as SupabaseClient };
