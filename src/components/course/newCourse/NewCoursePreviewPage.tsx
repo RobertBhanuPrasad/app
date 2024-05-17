@@ -286,6 +286,12 @@ export default function NewCourseReviewPage() {
         early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
       });
     }
+    //If none editable fee then need to empty the program_fee_level_settings to stop validation.
+    if(isFeeEditable==false){
+      setNewCourseData({
+        ...newCourseData,program_fee_level_settings:[]
+      })
+    }
   };
 
   useEffect(() => {
