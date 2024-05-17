@@ -10,7 +10,8 @@ import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { useList, useSelect, useTable } from "@refinedev/core";
+import { useList, useSelect, useTable,  useGetIdentity} from "@refinedev/core";
+
 import { format } from "date-fns";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
@@ -45,14 +46,28 @@ import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
+  const { data: loginUserData }: any = useGetIdentity()
+  const userId = loginUserData?.userData?.id;
+
+  if(userId){
+    return <CourseHomePage data={userId}></CourseHomePage>;
+  }
+
+}
+  function CourseHomePage(userId: any) {
+
   interface ExcelColumn {
     column_name: string;
     path: string[];
   }
 
+
   const { viewPreviewPage, AllFilterData } = newCourseStore();
 
   const languageCode = useGetLanguageCode();
+
+  let teacherIds = [];
+  let organizerIds = [];
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -112,20 +127,24 @@ function index() {
 
   //If we select teacher then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.course_teacher) {
-    filters.permanent.push({
-      field: "program_teachers.user_id",
-      operator: "eq",
-      value: AllFilterData?.advanceFilter?.course_teacher,
-    });
+    teacherIds.push(...AllFilterData?.advanceFilter?.course_teacher);
+    // filters.permanent.push({
+    //   field: "program_teachers.user_id",
+    //   operator: "eq",
+    //   value: AllFilterData?.advanceFilter?.course_teacher,
+    // });
   }
 
   //If we select program_organiser then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
-    filters.permanent.push({
-      field: "program_organizers.user_id",
-      operator: "in",
-      value: AllFilterData?.advanceFilter?.program_organiser,
-    });
+    organizerIds.push(...AllFilterData?.advanceFilter?.program_organiser);
+    // filters.permanent.push({
+    //   field: "program_organizers.user_id",
+    //   operator: "in",
+    //   value: AllFilterData?.advanceFilter?.program_organiser,
+    // });
+  } else {
+    organizerIds = [userId];
   }
 
   //If we select visibility then we need to write a filter to the data query , here if it presents we will push to filters array
@@ -229,6 +248,73 @@ function index() {
     });
   }
 
+
+  let selectQuery = "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)";
+
+  if(teacherIds.length>1 && organizerIds.length>1){
+
+        filters.permanent.push({
+          field: "program_teachers.user_id",
+          operator: "in",
+          value: teacherIds,
+        });
+    filters.permanent.push({
+          field: "program_organizers.user_id",
+          operator: "in",
+          value: organizerIds,
+        });
+  } else if(teacherIds.length>1) {
+            filters.permanent.push({
+      field: "program_teachers.user_id",
+      operator: "in",
+      value: teacherIds,
+    });
+    filters.permanent.push({
+      field: "program_organizers.user_id",
+      operator: "in",
+      value: userId,
+    });
+  } else if(organizerIds.length>1) {
+    filters.permanent.push({
+      field: "program_teachers.user_id",
+      operator: "eq",
+      value: userId,
+    });
+    filters.permanent.push({
+      field: "program_organizers.user_id",
+      operator: "in",
+      value: organizerIds,
+    });
+  } else {
+    selectQuery = "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers(users(contact_id(full_name))) , program_organizers(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)";
+    filters.permanent.push({
+      field: "program_teachers.user_id",
+      operator: "eq",
+      value: userId,
+    });
+    filters.permanent.push({
+      field: "program_organizers.user_id",
+      operator: "eq",
+      value: userId,
+    });
+    filters.permanent.push({
+      field: "test",
+      operator: "or",
+      value: [
+        {
+          field: "program_organizers",
+          operator: "nnull",
+          value: null,
+        },
+        {
+          field: "program_teachers",
+          operator: "nnull",
+          value: null,
+        },
+      ],
+    });
+  }
+
   /**
    * This holds the records of which rows are selected
    */
@@ -237,6 +323,7 @@ function index() {
   /**
    * Here we are maintaining 2 querys one is for filtering and one is for showing the data in the table and this is the filter query
    */
+
   const {
     tableQueryResult: FilterProgramData,
     pageCount,
@@ -247,9 +334,7 @@ function index() {
   } = useTable({
     resource: "program",
     meta: {
-      select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
-    },
+      select: selectQuery},
     filters: filters,
     sorters: {
       permanent: [
@@ -273,7 +358,7 @@ function index() {
       resource: "program",
       meta: {
         select:
-          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+         selectQuery,
       },
       pagination: {
         pageSize: pageSize,
