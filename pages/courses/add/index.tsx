@@ -40,10 +40,12 @@ import {
 } from "src/constants/CourseConstants";
 import {
   PAYMENT_MODE,
+  PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
   VISIBILITY,
 } from "src/constants/OptionLabels";
 import {
+  I_AM_CO_TEACHING,
   PAY_ONLINE,
   PUBLIC,
   SUPER_ADMIN,
@@ -142,6 +144,16 @@ function NewCourse() {
     TIME_FORMAT_24_HOURS
   )?.id;
 
+    /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching 
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
+
+
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
   const { newCourseData } = newCourseStore();
@@ -198,7 +210,7 @@ function NewCourse() {
   if (IsEditCourse(pathname) || IsCopyCourse) {
     defaultValues = newCourseData;
     //REQUIRMENT if the course is copying then we need to prefill the organizers of that cousre and we need to add the logged in user as a primary organizer
-    if (IsCopyCourse) {
+    if (IsCopyCourse && newCourseData) {
       defaultValues.organizer_ids = _.uniq([
         loggedUserData,
         ...newCourseData?.organizer_ids,
@@ -291,7 +303,7 @@ function NewCourse() {
       <Form
         onSubmit={onSubmit}
         defaultValues={defaultValues}
-        schema={validationSchema()}
+        schema={validationSchema(iAmCoTeachingId as number)}
       >
         <NewCourseTabs />
       </Form>
@@ -706,7 +718,7 @@ export const NewCourseTabs = () => {
         </p>
 
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-        {isAllFieldsValid4 == false && (
+        {isAllFieldsValid4 == false && (formData?.program_fee_level_settings==undefined || formData?.program_fee_level_settings?.length==0) && (
           <div className="flex gap-2">
             <Error />
             <p className="font-semibold text-[red] text-l -mt-1">

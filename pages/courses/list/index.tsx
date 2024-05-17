@@ -44,6 +44,7 @@ import {
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { SupabaseClient, supabaseClient } from "src/utility/supabaseClient";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
@@ -56,6 +57,7 @@ function index() {
   const { viewPreviewPage, AllFilterData } = newCourseStore();
 
   const languageCode = useGetLanguageCode();
+  const countryCode = useGetCountryCode();
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -247,6 +249,7 @@ function index() {
     setPageSize,
     current,
     setCurrent,
+    setFilters,
   } = useTable({
     resource: "program",
     meta: {
@@ -274,6 +277,8 @@ function index() {
   const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
     useTable({
       resource: "program",
+      //restricting the hook to get the params from URL
+      syncWithLocation: false,
       meta: {
         select:
           "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
@@ -297,6 +302,12 @@ function index() {
         ],
       },
     });
+
+  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook
+  //Because when we move to another route and comeback Filters are not setting properly that why we have written this
+  useEffect(() => {
+    setFilters(filters.permanent, "replace");
+  }, [AllFilterData]);
 
   /**
    * The variable holds whether all rows are selected or not
@@ -432,10 +443,10 @@ function index() {
           headers: {
             Authorization:
               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+            "country-code": countryCode,
           },
         }
       );
-
       if (error) {
         console.error("Error invoking export_to_file function:", error);
         return;
@@ -658,7 +669,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
   const { t } = useTranslation(["common", "new_strings"]);
   return (
-    <div className="relative ml-[-12px] mt-[-12px]">
+    <div className="relative ml-[-12px] mt-[-8px]">
       <DateRangePicker
         mode="range"
         defaultMonth={value?.from}
@@ -842,7 +853,8 @@ export const BasicFilters: React.FC<{
             <div>
               <CalenderIcon color="#666666" />
             </div>
-            {courseDate ? (
+            {/* here if there is courseDate.from then only we need to format other wise we can show placeholder */}
+            {courseDate && courseDate.from ? (
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-row gap-2 text-[14px]">
                   {/* If the course from date and to date is present then only format and show the from date and to date */}
@@ -867,14 +879,14 @@ export const BasicFilters: React.FC<{
                 </div>
               </div>
             ) : (
-              <div className="flex gap-2 font-normal">
+              <div className="flex gap-2 font-normal text-[#999999]">
                 {t("new_strings:select_the_date_range")}
               </div>
             )}
           </Button>
           <DialogContent
-            closeIcon={false}
-            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"
+            closeIcon={true}
+            className="!w-[850px] !h-[470px] bg-[#FFFFFF] !rounded-3xl"
           >
             <DateRangePickerComponent
               setOpen={setOpen}
@@ -949,10 +961,6 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           onClick={() => {
             setAdvanceFilterOpen(true);
             setValue("temporaryadvancefilter", formData.advanceFilter);
-            setValue(
-              "temporaryadvancefilter.course_type",
-              formData?.course_type
-            );
           }}
           className="flex flex-row gap-2 !rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"

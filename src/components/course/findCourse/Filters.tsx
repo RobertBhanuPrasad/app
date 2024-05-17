@@ -93,7 +93,7 @@ const Filters = ({
     formData?.temporaryadvancefilter?.city ? -2 : -1
   );
 
-  const { setAllFilterData } = newCourseStore();
+  const { setAllFilterData, AllFilterData } = newCourseStore();
   const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
     <div className="flex flex-col gap-5">
@@ -179,10 +179,11 @@ const Filters = ({
             <AccordionTrigger className="text-base font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:course_status")}</div>
-                {formData?.temporaryadvancefilter.course_status?.length > 0 && (
+                {formData?.temporaryadvancefilter?.course_status?.length >
+                  0 && (
                   <CountComponent
                     count={
-                      formData?.temporaryadvancefilter.course_status?.length
+                      formData?.temporaryadvancefilter?.course_status?.length
                     }
                   />
                 )}
@@ -194,7 +195,7 @@ const Filters = ({
           </AccordionItem>
           <Separator />
 
-          {/* TODO  : for now may-13 release it has to be hidden */} 
+          {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Course Accounting Status Accordion */}
           {/* <AccordionItem value="item-3" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
@@ -216,7 +217,7 @@ const Filters = ({
             </AccordionContent>
           </AccordionItem>
           <Separator /> */}
-          
+
           {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Course Accounting Closure Date  Accordion */}
           {/* <AccordionItem value="item-4" className=" border-none">
@@ -242,7 +243,7 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div> {t("course.find_course:course_visibility")}</div>
-                {formData?.temporaryadvancefilter.visibility && (
+                {formData?.temporaryadvancefilter?.visibility && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -258,7 +259,7 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:state")}</div>
-                {formData?.temporaryadvancefilter.state && (
+                {formData?.temporaryadvancefilter?.state && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -298,7 +299,7 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("city")}</div>
-                {formData?.temporaryadvancefilter.city && (
+                {formData?.temporaryadvancefilter?.city && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -338,7 +339,7 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:center")}</div>
-                {formData?.temporaryadvancefilter.center && (
+                {formData?.temporaryadvancefilter?.center && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -378,7 +379,7 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("residential_course")}</div>
-                {formData?.temporaryadvancefilter.is_residential_course && (
+                {formData?.temporaryadvancefilter?.is_residential_course && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -394,14 +395,15 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("program_organizer")}</div>
-                {formData?.temporaryadvancefilter.program_organiser?.length >
+                {formData?.temporaryadvancefilter?.program_organiser?.length >
                   0 && (
-                    <CountComponent
-                      count={
-                        formData?.temporaryadvancefilter.program_organiser?.length
-                      }
-                    />
-                  )}
+                  <CountComponent
+                    count={
+                      formData?.temporaryadvancefilter?.program_organiser
+                        ?.length
+                    }
+                  />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -417,7 +419,7 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:teacher_name")}</div>
-                {formData?.temporaryadvancefilter.course_teacher && (
+                {formData?.temporaryadvancefilter?.course_teacher && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -435,7 +437,7 @@ const Filters = ({
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("new_strings:course_fees")}</div>
-                {formData?.temporaryadvancefilter.is_course_fee && (
+                {formData?.temporaryadvancefilter?.is_course_fee && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -446,7 +448,7 @@ const Filters = ({
           </AccordionItem>
 
           <Separator />
-          
+
           {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Reconciliation Status Accordion */}
           {/* <AccordionItem value="item-13" className=" border-none">
@@ -479,9 +481,11 @@ const Filters = ({
             setValue("temporaryadvancefilter.is_course_fee", "");
             setValue("temporaryadvancefilter.course_teacher", "");
             setValue("temporaryadvancefilter.program_organiser", []);
-            //we need to empty the course type in basic filters also because the filter applies when we clear all in advance filter
-            setValue("course_type", "");
-            setAllFilterData({ advanceFilter: {} });
+            //Here we need to clear only the advance filter data
+            setAllFilterData({
+              ...AllFilterData,
+              advanceFilter: {},
+            });
             setValue("advanceFilter", {}); //clearing all the advancefilter form Data
           }}
           className="flex gap-1 items-center cursor-pointer"
@@ -495,10 +499,6 @@ const Filters = ({
             const temporaryData = { ...formData };
 
             setValue("advanceFilter", temporaryData?.temporaryadvancefilter);
-            setValue(
-              "course_type",
-              temporaryData?.temporaryadvancefilter.course_type
-            );
             setAllFilterData({
               ...formData,
               advanceFilter: temporaryData?.temporaryadvancefilter,
@@ -828,9 +828,9 @@ export const CourseStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-              ? "bg-primary text-white  hover:bg-[#5E5FC3]"
-              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-              }`}
+                ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+            }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -866,9 +866,9 @@ export const CourseAccordingStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-              ? "bg-primary text-white hover:bg-[#5E5FC3]"
-              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-              }`}
+                ? "bg-primary text-white hover:bg-[#5E5FC3]"
+                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+            }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
