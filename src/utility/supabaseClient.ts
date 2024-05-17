@@ -1,4 +1,5 @@
 import { createClient } from "@refinedev/supabase";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -30,5 +31,12 @@ export const supabaseClient = (schema?: string) => {
     auth: {
       persistSession: true,
     },
+    global: {
+      headers: {
+        "country-code": schema,
+      },
+    },
   });
 };
+type SupabaseClientType = SupabaseClient<any, string, any>;
+export { type SupabaseClientType as SupabaseClient };

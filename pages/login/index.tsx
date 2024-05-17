@@ -60,6 +60,7 @@ const Login = () => {
               name="email"
               placeholder="Enter email"
               className="border-[1px] border-black ml-[10px] p-1"
+              onKeyUp={(e) => (e.key === "Enter" ? handleLogin() : null)}
             />
           </div>
 
@@ -74,6 +75,7 @@ const Login = () => {
               name="password"
               placeholder="Enter password"
               className="border-[1px] border-black ml-[10px] p-1"
+              onKeyUp={(e) => (e.key === "Enter" ? handleLogin() : null)}
             />
           </div>
           {/* <div className="form-control mt-6">

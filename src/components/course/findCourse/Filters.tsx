@@ -4,11 +4,7 @@ import CrossIcon from "@public/assets/CrossIcon";
 import { useSelect } from "@refinedev/core";
 import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
-import {
-  CountComponent,
-  CourseTypeComponent,
-  DateRangePickerComponent,
-} from "pages/courses/list";
+import { CountComponent, DateRangePickerComponent } from "pages/courses/list";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";
@@ -45,16 +41,57 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
+export type Entity = {
+  name: string;
+  id: number;
+};
+
+export type Preferences = {
+  state: Entity[];
+  city: Entity[];
+  center: Entity[];
+};
+
+export const emptyPreferences: Preferences = {
+  state: [],
+  city: [],
+  center: [],
+};
+
+interface EntityProps {
+  setSelectedEntity: React.Dispatch<React.SetStateAction<number>>;
+  setNewPreferences: React.Dispatch<React.SetStateAction<Preferences>>;
+}
+
+interface FiltersProps {
+  setAdvanceFilterOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  hasAliasNameFalse: boolean;
+  setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  preferences: Preferences;
+  setNewPreferences: React.Dispatch<React.SetStateAction<Preferences>>;
+}
+
 const Filters = ({
   setAdvanceFilterOpen,
   hasAliasNameFalse,
   setCurrent,
-}: any) => {
+  preferences,
+  setNewPreferences,
+}: FiltersProps) => {
   console.log(hasAliasNameFalse, "FalseAliasNamefilter");
 
   const { watch, setValue } = useFormContext();
-
   const formData = watch();
+
+  const [selectedState, setSelectedState] = useState(
+    formData?.temporaryadvancefilter?.state ? -2 : -1
+  );
+  const [selectedCenter, setSelectedCenter] = useState(
+    formData?.temporaryadvancefilter?.center ? -2 : -1
+  );
+  const [selectedCity, setSelectedCity] = useState(
+    formData?.temporaryadvancefilter?.city ? -2 : -1
+  );
 
   const { setAllFilterData } = newCourseStore();
   const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
@@ -227,7 +264,31 @@ const Filters = ({
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <State />
+              <State
+                setSelectedEntity={setSelectedState}
+                setNewPreferences={setNewPreferences}
+              />
+              {selectedState !== -2 &&
+                preferences.state.map(({ id, name }) => (
+                  <Button
+                    className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
+                      selectedState === id
+                        ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                        : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+                    }`}
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedState(id);
+                      setValue("temporaryadvancefilter.state", id);
+                      setNewPreferences((oldPreferences) => ({
+                        ...oldPreferences,
+                        state: [{ id, name }],
+                      }));
+                    }}
+                  >
+                    {name}
+                  </Button>
+                ))}
             </AccordionContent>
           </AccordionItem>
           <Separator />
@@ -243,7 +304,31 @@ const Filters = ({
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <City />
+              <City
+                setSelectedEntity={setSelectedCity}
+                setNewPreferences={setNewPreferences}
+              />
+              {selectedCity !== -2 &&
+                preferences.city.map(({ id, name }) => (
+                  <Button
+                    className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
+                      selectedCity === id
+                        ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                        : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+                    }`}
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedCity(id);
+                      setValue("temporaryadvancefilter.city", id);
+                      setNewPreferences((oldPreferences) => ({
+                        ...oldPreferences,
+                        city: [{ id, name }],
+                      }));
+                    }}
+                  >
+                    {name}
+                  </Button>
+                ))}
             </AccordionContent>
           </AccordionItem>
           <Separator />
@@ -259,7 +344,31 @@ const Filters = ({
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
-              <Center />
+              <Center
+                setSelectedEntity={setSelectedCenter}
+                setNewPreferences={setNewPreferences}
+              />
+              {selectedCenter !== -2 &&
+                preferences.center.map(({ id, name }) => (
+                  <Button
+                    className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
+                      selectedCenter === id
+                        ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                        : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+                    }`}
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedCenter(id);
+                      setValue("temporaryadvancefilter.center", id);
+                      setNewPreferences((oldPreferences) => ({
+                        ...oldPreferences,
+                        center: [{ id, name }],
+                      }));
+                    }}
+                  >
+                    {name}
+                  </Button>
+                ))}
             </AccordionContent>
           </AccordionItem>
           <Separator />
@@ -360,8 +469,11 @@ const Filters = ({
               ""
             );
             setValue("temporaryadvancefilter.state", "");
+            setSelectedState(-1);
             setValue("temporaryadvancefilter.city", "");
+            setSelectedCity(-1);
             setValue("temporaryadvancefilter.center", "");
+            setSelectedCenter(-1);
             setValue("temporaryadvancefilter.visibility", "");
             setValue("temporaryadvancefilter.is_residential_course", "");
             setValue("temporaryadvancefilter.is_course_fee", "");
@@ -479,7 +591,10 @@ export const CourseName = () => {
   );
 };
 
-export const State = () => {
+export const State = ({
+  setSelectedEntity,
+  setNewPreferences,
+}: EntityProps) => {
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
@@ -513,6 +628,11 @@ export const State = () => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
+        setSelectedEntity(-2);
+        setNewPreferences((oldPreferences) => ({
+          ...oldPreferences,
+          state: [{ id: val, name: "dummyname" }],
+        }));
         temporaryOnChange(val);
       }}
     >
@@ -542,7 +662,7 @@ export const State = () => {
   );
 };
 
-export const City = () => {
+export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
@@ -575,6 +695,11 @@ export const City = () => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
+        setSelectedEntity(-2);
+        setNewPreferences((oldPreferences) => ({
+          ...oldPreferences,
+          city: [{ id: val, name: "dummyname" }],
+        }));
         temporaryOnChange(val);
       }}
     >
@@ -604,7 +729,10 @@ export const City = () => {
   );
 };
 
-export const Center = () => {
+export const Center = ({
+  setSelectedEntity,
+  setNewPreferences,
+}: EntityProps) => {
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
@@ -637,6 +765,11 @@ export const Center = () => {
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
+        setSelectedEntity(-2);
+        setNewPreferences((oldPreferences) => ({
+          ...oldPreferences,
+          center: [{ id: val, name: "dummyname" }],
+        }));
         temporaryOnChange(val);
       }}
     >

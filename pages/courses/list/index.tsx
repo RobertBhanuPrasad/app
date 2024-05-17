@@ -1,6 +1,9 @@
 import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable";
-import Filters from "@components/course/findCourse/Filters";
+import Filters, {
+  Preferences,
+  emptyPreferences,
+} from "@components/course/findCourse/Filters";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import { hasAliasNameFalse } from "@components/courseBusinessLogic";
 import CalenderIcon from "@public/assets/CalenderIcon";
@@ -40,7 +43,7 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
-import { supabaseClient } from "src/utility/supabaseClient";
+import { SupabaseClient, supabaseClient } from "src/utility/supabaseClient";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
@@ -911,7 +914,21 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { setValue, watch } = useFormContext();
   const formData = watch();
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+  const [preferences, setPreferences] = useState<Preferences>(emptyPreferences);
+  const [newPreferences, setNewPreferences] =
+    useState<Preferences>(emptyPreferences);
+  const supabase = supabaseClient();
 
+  useEffect(() => {
+    if (advanceFilterOpen) {
+      setNewPreferences(emptyPreferences);
+      loadPreferences(supabase).then((loadedPreferences) =>
+        setPreferences(loadedPreferences)
+      );
+    } else {
+      savePreferences(supabase, newPreferences);
+    }
+  }, [advanceFilterOpen]);
   /**
    *This holds the applied filters count in advance filter
    */
@@ -950,10 +967,92 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           setAdvanceFilterOpen={setAdvanceFilterOpen}
           hasAliasNameFalse={hasAliasNameFalse}
           setCurrent={setCurrent}
+          preferences={preferences}
+          setNewPreferences={setNewPreferences}
         />
       </SheetContent>
     </Sheet>
   );
+};
+
+const loadPreferences = async (
+  supabase: SupabaseClient
+): Promise<Preferences> => {
+  const accessToken = (await supabase.auth.getSession()).data.session
+    ?.access_token;
+
+  const { data, error } = await supabase.functions.invoke("preferences", {
+    method: "POST",
+    body: {
+      operation: "get",
+      items: [
+        { key: "state", maxCount: 3 },
+        { key: "city", maxCount: 3 },
+        { key: "center", maxCount: 3 },
+      ],
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (error) {
+    console.log("Could not fetch preferences for this user");
+  }
+
+  const getEntities = async (key: string) => {
+    if (error) {
+      return [];
+    }
+
+    return (
+      (
+        await supabase
+          .from(key)
+          .select("id,name")
+          .in("id", data[key] || [])
+      ).data?.sort(
+        (a, b) => data[key].indexOf(a.id) - data[key].indexOf(b.id)
+      ) || []
+    );
+  };
+
+  return {
+    state: await getEntities("state"),
+    city: await getEntities("city"),
+    center: await getEntities("center"),
+  };
+};
+
+const savePreferences = async (
+  supabase: SupabaseClient,
+  preferences: Preferences
+) => {
+  const items = [];
+  let key: keyof Preferences;
+  for (key in preferences) {
+    if (preferences[key].length > 0) {
+      items.push({ key, value: preferences[key][0].id });
+    }
+  }
+  if (items.length === 0) return;
+
+  const accessToken = (await supabase.auth.getSession()).data.session
+    ?.access_token;
+  const { data, error } = await supabase.functions.invoke("preferences", {
+    method: "POST",
+    body: {
+      operation: "set",
+      items,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (error) {
+    console.log("Could not save preferences for this user");
+  }
 };
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
