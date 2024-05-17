@@ -43,13 +43,14 @@ import { authProvider } from "src/authProvider";
 import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 function index() {
   const router = useRouter();
   const programID: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
-
+  
   const {
     ParticpantFiltersData,
     setSelectedTableRows,
@@ -564,6 +565,8 @@ function index() {
   const excelOption = "excel";
   const csvOption = "CSV";
 
+  const countryCode = useGetCountryCode();
+
   return (
     <div>
       <div className="top-[96px] z-10 sticky bg-[white] h-[83px] shadow-md w-full">
@@ -772,7 +775,8 @@ function index() {
                     excelColumns,
                     filters,
                     excelOption,
-                    setLoading
+                    setLoading,
+                    countryCode
                   );
                 }}
                 className="p-1 focus:outline-none cursor-pointer"
@@ -787,7 +791,8 @@ function index() {
                     excelColumns,
                     filters,
                     csvOption,
-                    setLoading
+                    setLoading,
+                    countryCode
                   );
                 }}
               >
@@ -802,6 +807,7 @@ function index() {
 }
 
 export default index;
+
 
 const HeaderSection = () => {
   const { t } = useTranslation([
@@ -820,7 +826,7 @@ const HeaderSection = () => {
   const { watch, setValue } = useFormContext();
   const formData = watch();
   const router = useRouter();
-
+  
   const {
     field: { value: Searchvalue, onChange: onSearch },
   } = useController({
@@ -1049,7 +1055,8 @@ const handleExportExcel = async (
   excelColumns: any,
   filters: any,
   selectOption: string,
-  setLoading: (by: boolean) => void
+  setLoading: (by: boolean) => void,
+  countryCode:string
 ) => {
   setLoading(true);
   const supabase = supabaseClient();
@@ -1064,6 +1071,7 @@ const handleExportExcel = async (
       file_type: selectOption,
     });
 
+
     //invoking the export_to_file function
     const { data, error } = await supabase.functions.invoke(
       `export_to_file?${params}`,
@@ -1071,6 +1079,7 @@ const handleExportExcel = async (
         headers: {
           Authorization:
             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+            "country-code": countryCode,
         },
       }
     );
