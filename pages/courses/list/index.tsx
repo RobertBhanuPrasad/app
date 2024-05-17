@@ -444,7 +444,6 @@ function index() {
           },
         }
       );
-
       if (error) {
         console.error("Error invoking export_to_file function:", error);
         return;

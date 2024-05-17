@@ -565,6 +565,8 @@ function index() {
   const excelOption = "excel";
   const csvOption = "CSV";
 
+  const countryCode = useGetCountryCode();
+
   return (
     <div>
       <div className="top-[96px] z-10 sticky bg-[white] h-[83px] shadow-md w-full">
@@ -773,7 +775,8 @@ function index() {
                     excelColumns,
                     filters,
                     excelOption,
-                    setLoading
+                    setLoading,
+                    countryCode
                   );
                 }}
                 className="p-1 focus:outline-none cursor-pointer"
@@ -788,7 +791,8 @@ function index() {
                     excelColumns,
                     filters,
                     csvOption,
-                    setLoading
+                    setLoading,
+                    countryCode
                   );
                 }}
               >
@@ -804,7 +808,6 @@ function index() {
 
 export default index;
 
-const countryCode = useGetCountryCode();
 
 const HeaderSection = () => {
   const { t } = useTranslation([
@@ -1052,7 +1055,8 @@ const handleExportExcel = async (
   excelColumns: any,
   filters: any,
   selectOption: string,
-  setLoading: (by: boolean) => void
+  setLoading: (by: boolean) => void,
+  countryCode:string
 ) => {
   setLoading(true);
   const supabase = supabaseClient();
