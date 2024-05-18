@@ -39,7 +39,8 @@ const Login = () => {
   };
   return (
     <div className="login flex min-h-screen bg-neutral justify-center items-center ">
-      <div className="card w-[300px] bg-base-100 px-4 py-8 shadow-xl">
+      <div className="absolute top-6 right-6 font-medium">Beta 1.0</div>
+      <div className="card w-[350px] bg-base-100 px-4 py-8 shadow-xl">
         <div className="px-4">
           <h1 className="text-[32px] font-bold text-center my-5">LOGIN</h1>
         </div>
@@ -49,8 +50,8 @@ const Login = () => {
             ev.preventDefault();
           }}
         >
-          <div className="form-control flex justify-between items-center">
-            <label htmlFor="email" className="label">
+          <div className="form-control flex items-center">
+            <label htmlFor="email" className="label w-1/4">
               <span className="label-text">Email</span>
             </label>
             <input
@@ -59,12 +60,13 @@ const Login = () => {
               onChange={(ev) => setEmail(ev.target.value)}
               name="email"
               placeholder="Enter email"
-              className="border-[1px] border-black ml-[10px] p-1"
+              className="border-[1px] border-black ml-[5px] p-1 w-3/4"
+              onKeyUp={(e) => (e.key === "Enter" ? handleLogin() : null)}
             />
           </div>
 
-          <div className="form-control mt-0  flex justify-between items-center">
-            <label htmlFor="password" className="label">
+          <div className="form-control mt-0 pb-3 flex items-center">
+            <label htmlFor="password" className="label w-1/4">
               <span className="label-text">Password</span>
             </label>
             <input
@@ -73,7 +75,8 @@ const Login = () => {
               onChange={(ev) => setPassword(ev.target.value)}
               name="password"
               placeholder="Enter password"
-              className="border-[1px] border-black ml-[10px] p-1"
+              className="border-[1px] border-black ml-[5px] p-1 w-3/4"
+              onKeyUp={(e) => (e.key === "Enter" ? handleLogin() : null)}
             />
           </div>
           {/* <div className="form-control mt-6">
@@ -93,7 +96,7 @@ const Login = () => {
           </div>
         </form>
 
-        <div>
+        {/* <div>
           If not registered then?{" "}
           <span
             onClick={() => {
@@ -103,7 +106,7 @@ const Login = () => {
           >
             Register
           </span>
-        </div>
+        </div> */}
       </div>
     </div>
   );
