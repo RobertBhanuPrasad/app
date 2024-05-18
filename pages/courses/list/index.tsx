@@ -1,6 +1,9 @@
 import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable";
-import Filters from "@components/course/findCourse/Filters";
+import Filters, {
+  Preferences,
+  emptyPreferences,
+} from "@components/course/findCourse/Filters";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import { hasAliasNameFalse } from "@components/courseBusinessLogic";
 import CalenderIcon from "@public/assets/CalenderIcon";
@@ -40,7 +43,7 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
-import { supabaseClient } from "src/utility/supabaseClient";
+import { SupabaseClient, supabaseClient } from "src/utility/supabaseClient";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
@@ -300,7 +303,7 @@ function index() {
       },
     });
 
-  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook 
+  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook
   //Because when we move to another route and comeback Filters are not setting properly that why we have written this
   useEffect(() => {
     setFilters(filters.permanent, "replace");
@@ -440,7 +443,7 @@ function index() {
           headers: {
             Authorization:
               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-              "country-code": countryCode,
+            "country-code": countryCode,
           },
         }
       );
@@ -923,7 +926,27 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { setValue, watch } = useFormContext();
   const formData = watch();
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+  // preferences : fetched user preferences from db
+  // newPreferences : latest user preferences to send to db
+  const [preferences, setPreferences] = useState<Preferences>(emptyPreferences);
+  const [newPreferences, setNewPreferences] =
+    useState<Preferences>(emptyPreferences);
+  const supabase = supabaseClient();
 
+  useEffect(() => {
+    // whenever the filter sheet is opened, need to do following:
+    if (advanceFilterOpen) {
+      //  1) set newPreferences as empty [from opened session]
+      setNewPreferences(emptyPreferences);
+      //  2) load and set the preferences from db
+      loadPreferences(supabase).then((loadedPreferences) =>
+        setPreferences(loadedPreferences)
+      );
+    } else {
+      // whenever the filter is closed, need to send the newPreferences to db
+      savePreferences(supabase, newPreferences);
+    }
+  }, [advanceFilterOpen]);
   /**
    *This holds the applied filters count in advance filter
    */
@@ -958,10 +981,111 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           setAdvanceFilterOpen={setAdvanceFilterOpen}
           hasAliasNameFalse={hasAliasNameFalse}
           setCurrent={setCurrent}
+          preferences={preferences}
+          setNewPreferences={setNewPreferences}
         />
+        {/* loaded preferences are sent for displaying and setNewPreferences is sent as a callback to update the latest choices */}
       </SheetContent>
     </Sheet>
   );
+};
+
+/*
+  loadPreferences
+  ================
+  fetch the latest user preferences from db
+  at present, only fetching at max. top 3 states, cities and centers
+*/
+const loadPreferences = async (
+  supabase: SupabaseClient
+): Promise<Preferences> => {
+  // accessToken is needed because the /preferences edge function only allows reading our own preferences
+  const accessToken = (await supabase.auth.getSession()).data.session
+    ?.access_token;
+
+  const { data, error } = await supabase.functions.invoke("preferences", {
+    method: "POST",
+    body: {
+      operation: "get",
+      items: [
+        { key: "state", maxCount: 3 },
+        { key: "city", maxCount: 3 },
+        { key: "center", maxCount: 3 },
+      ],
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (error) {
+    console.log("Could not fetch preferences for this user");
+  }
+
+  // fetches entity-names for ids (state,city,center...) from db
+  const getEntities = async (key: string) => {
+    // if something went wrong or data was not available, return []
+    if (error || !data[key] || data[key].length === 0) {
+      return [];
+    }
+
+    // sorting is important to ensure the order because supabase returns in ascending order of ids
+    return (
+      (
+        await supabase.from(key).select("id,name").in("id", data[key])
+      ).data?.sort(
+        (a, b) => data[key].indexOf(a.id) - data[key].indexOf(b.id)
+      ) || []
+    );
+  };
+
+  return {
+    state: await getEntities("state"),
+    city: await getEntities("city"),
+    center: await getEntities("center"),
+  };
+};
+
+/*
+  savePreferences
+  ===============
+  - updates the db with latest preferences
+  - called whenever the filter sheet is closed
+*/
+const savePreferences = async (
+  supabase: SupabaseClient,
+  preferences: Preferences
+) => {
+  const items = [];
+  let key: keyof Preferences;
+
+  // load items to update if there has been any selection
+  for (key in preferences) {
+    if (preferences[key].length > 0) {
+      items.push({ key, value: preferences[key][0].id });
+    }
+  }
+
+  // if there is nothing to update, return
+  if (items.length === 0) return;
+
+  // accessToken is needed because the /preferences edge function only allows updating our own preferences
+  const accessToken = (await supabase.auth.getSession()).data.session
+    ?.access_token;
+  const { error } = await supabase.functions.invoke("preferences", {
+    method: "POST",
+    body: {
+      operation: "set",
+      items,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (error) {
+    console.log("Could not save preferences for this user");
+  }
 };
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
