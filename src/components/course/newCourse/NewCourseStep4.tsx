@@ -143,9 +143,6 @@ export default function CourseTable() {
         </section>
       ) : (
         <section>
-          <div className="font-semibold text-base text-[#333333]">
-            {t("fees")}
-          </div>
           <CourseFeeTable
             courseFeeSettings={courseFeeSettings}
             organizationData={organizationData?.data}
@@ -282,9 +279,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.normal_fee")}(${
-        countryConfigData?.data?.[0]?.default_currency_code
-      })`,
+      header: `${t("course.new_course:fees_tab.normal_fee")} (${countryConfigData?.data?.[0]?.default_currency_code})`
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
@@ -293,7 +288,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${
+      header: `${t("course.new_course:fees_tab.vat reg")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -303,7 +298,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.fee")}(${
+      header: `${t("course.new_course:fees_tab.fee")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -333,7 +328,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.normal_fee")}(${
+      header: `${t("course.new_course:fees_tab.normal_fee")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -350,7 +345,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${
+      header: `${t("course.new_course:fees_tab.vat reg")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -382,7 +377,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.fee")}(${
+      header: `${t("course.new_course:fees_tab.fee")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -396,7 +391,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.early_bird")}(${
+      header: `${t("course.new_course:fees_tab.early_bird")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -406,7 +401,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:vat_reg")}(${
+      header: `${t("new_strings:vat_reg")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -416,7 +411,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.total early")}(${
+      header: `${t("course.new_course:fees_tab.total early")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -439,7 +434,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.early_bird")}(${
+      header: `${t("course.new_course:fees_tab.early_bird")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -457,7 +452,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${
+      header: `${t("course.new_course:fees_tab.vat reg")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -489,7 +484,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.total early")}(${
+      header: `${t("course.new_course:fees_tab.total early")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -595,8 +590,14 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   return (
     <div className="flex flex-col justify-center w-[70vw]">
       {/* Enable Early Bird fee if it is enabled in settings and Fee should be editable */}
-      {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && isFeeEditable && (
-        <div className="flex justify-end items-center gap-2 py-4">
+      {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && (
+  <div className="flex justify-between items-center gap-2 pb-4">
+    <div className="font-semibold text-base text-[#333333]">
+      {t("fees")}
+    </div>
+    {isFeeEditable && (
+      <div>
+        <div className="flex justify-between items-center gap-[8px] py-4">
           <Checkbox
             checked={showEarlyBirdColumns}
             onCheckedChange={(val) => {
@@ -604,9 +605,12 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             }}
             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
           />
-          <div>{t("course.new_course:fees_tab.enable_early")}</div>
+          {t("course.new_course:fees_tab.enable_early")}
         </div>
-      )}
+      </div>
+    )}
+  </div>
+)}
       {/* Rendering DataTable component */}
       <div className="h-auto overflow-x-scroll rounded-md border">
         {isFeeEditable ? (

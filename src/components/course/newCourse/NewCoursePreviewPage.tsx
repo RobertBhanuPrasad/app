@@ -1376,7 +1376,7 @@ const Accommodation = ({
       >
         <CardValue className="truncate">
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
-          {currencyCode ? currencyCode : ""}
+          {currencyCode ? currencyCode : ""}{" "}
           {accomdationData?.fee_per_person}
         </CardValue>
       </abbr>
