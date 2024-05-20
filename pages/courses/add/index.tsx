@@ -210,7 +210,7 @@ function NewCourse() {
   if (IsEditCourse(pathname) || IsCopyCourse) {
     defaultValues = newCourseData;
     //REQUIRMENT if the course is copying then we need to prefill the organizers of that cousre and we need to add the logged in user as a primary organizer
-    if (IsCopyCourse) {
+    if (IsCopyCourse && newCourseData) {
       defaultValues.organizer_ids = _.uniq([
         loggedUserData,
         ...newCourseData?.organizer_ids,
@@ -718,7 +718,7 @@ export const NewCourseTabs = () => {
         </p>
 
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-        {isAllFieldsValid4 == false && (
+        {isAllFieldsValid4 == false && (formData?.program_fee_level_settings==undefined || formData?.program_fee_level_settings?.length==0) && (
           <div className="flex gap-2">
             <Error />
             <p className="font-semibold text-[red] text-l -mt-1">

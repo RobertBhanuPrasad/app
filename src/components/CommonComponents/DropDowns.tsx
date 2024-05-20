@@ -133,7 +133,13 @@ export const StreetAddressComponent = () => {
   );
 };
 
-export const CityDropDown = ({ name }: { name: string }) => {
+export const CityDropDown = ({
+  name,
+  onChange = () => {},
+}: {
+  name: string;
+  onChange?: any;
+}) => {
   const { t } = useTranslation("common");
   const [pageSize, setPageSize] = useState(10);
 
@@ -180,6 +186,9 @@ export const CityDropDown = ({ name }: { name: string }) => {
   // Function to handle city value change
   const handleCityValueChange = async (newValue: any) => {
 
+    //Call callback function when new value is selected 
+    if (newValue != cityValue) onChange();
+
     // If the selected city is different from the current value, reset center value
     // if (newValue !== cityValue) {
     //   setValue("center_id", "")
@@ -204,6 +213,7 @@ export const CityDropDown = ({ name }: { name: string }) => {
     setValue("state_id",state_obj?.[0]?.state_id)
     }
     }
+
   };
 
   return (
@@ -249,7 +259,13 @@ export const CityDropDown = ({ name }: { name: string }) => {
   );
 };
 
-export const StateDropDown = ({ name }: { name: string }) => {
+export const StateDropDown = ({
+  name,
+  onChange = () => {},
+}: {
+  name: string;
+  onChange?: any;
+}) => {
   const { t } = useTranslation([
     "common",
     "course.new_course",
@@ -329,6 +345,9 @@ export const StateDropDown = ({ name }: { name: string }) => {
       setValue("center_id", "")
     }
 
+    //Calling callback function when new value is selected in drop down
+    if (newValue != stateValue) onChange();
+
     // Update state value in form data
     stateValueOnchange(newValue)
   }
@@ -383,7 +402,13 @@ export const StateDropDown = ({ name }: { name: string }) => {
   );
 };
 
-export const CenterDropDown = ({ name }: { name: string }) => {
+export const CenterDropDown = ({
+  name,
+  onChange = () => {},
+}: {
+  name: string;
+  onChange?: any;
+}) => {
   const { t } = useTranslation(["common", "course.new_course"]);
   const [pageSize, setPageSize] = useState(10);
 
@@ -439,6 +464,9 @@ export const CenterDropDown = ({ name }: { name: string }) => {
 
   // Function to handle center value change
   const handleCenterValueChange = async (newValue: any) => {
+
+    //Call callback function when new value is selected 
+    if (newValue != centerValue) onChange();
 
     // Update center value in form data
     centerValueOnChange(newValue)

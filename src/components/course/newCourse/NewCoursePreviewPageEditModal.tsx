@@ -38,7 +38,8 @@ import { requiredValidationFields } from "pages/courses/add";
 interface EditModalDialogProps {
   title: string;
   content: any;
-  onClose: () => void;
+  handleSaveClick: (formData: any) => void;
+  handleCancelClick: () => void;
   open: boolean;
   openEdit: () => void;
   onOpenChange: any;
@@ -51,7 +52,8 @@ import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 export const EditModalDialog = ({
   title,
   content,
-  onClose,
+  handleSaveClick,
+  handleCancelClick,
   open,
   openEdit,
   onOpenChange,
@@ -60,13 +62,12 @@ export const EditModalDialog = ({
   const { newCourseData } = newCourseStore();
   /**
    * @constant iAmCoTeachingId
-   * @description thid const stores the id of the i am co teaching 
+   * @description thid const stores the id of the i am co teaching
    */
   const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_CO_TEACHING
   )?.id;
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -87,7 +88,11 @@ export const EditModalDialog = ({
         >
           {content}
           {/* From now we can call this a new component instead of keeping it inside the form to avoid rerendering */}
-          <ButtonsDialog onClose={onClose} currentStep={currentStep} />
+          <ButtonsDialog
+            handleSaveClick={handleSaveClick}
+            handleCancelClick={handleCancelClick}
+            currentStep={currentStep}
+          />
         </Form>
       </DialogContent>
     </Dialog>
@@ -103,7 +108,11 @@ export const EditModalDialog = ({
  *
  * @returns {JSX.Element} - ButtonsDialog component
  */
-const ButtonsDialog = ({ onClose, currentStep }: any) => {
+const ButtonsDialog = ({
+  currentStep,
+  handleCancelClick,
+  handleSaveClick,
+}: any) => {
   const { getValues } = useFormContext();
   const formData = getValues();
   const { t } = useTranslation(["common"]);
@@ -115,23 +124,22 @@ const ButtonsDialog = ({ onClose, currentStep }: any) => {
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
   const onSubmit = async () => {
-    // Update newCourseData with new form data
-    setNewCourseData({ ...newCourseData, ...formData });
-
     isAllFieldsFilled = await ValidateCurrentStepFields(
       validationFieldsStepWise[currentStep - 1]
     );
 
     // Close the dialog
     if (isAllFieldsFilled) {
-      onClose();
+      // Update newCourseData with new form data
+      setNewCourseData({ ...newCourseData, ...formData });
+      handleSaveClick({ ...newCourseData, ...formData });
     }
   };
 
   return (
     <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
       <Button
-        onClick={onClose}
+        onClick={handleCancelClick}
         className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
       >
         {t("cancel_button")}
