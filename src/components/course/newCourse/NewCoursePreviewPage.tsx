@@ -1352,10 +1352,12 @@ export default function NewCourseReviewPage() {
             <div className="truncate">
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.bcc_registration_confirmation_email}
+                title={newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(/(\s*,\s*)*$/, '')
+                  : "-"}
               >
                 {newCourseData?.bcc_registration_confirmation_email
-                  ? newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(/(\s*,\s*)*$/, '')
                   : "-"}
               </abbr>
             </div>

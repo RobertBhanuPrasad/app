@@ -162,7 +162,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     bcc_registration_confirmation_email: z
       .string()
       .regex(
-        /^(?:[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?:,[ ]*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
+        /^(?:\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)?(?:,\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)*,?\s*?$/,
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
