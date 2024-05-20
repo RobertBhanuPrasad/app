@@ -588,6 +588,17 @@ export const NewCourseTabs = () => {
     );
 
     if (isAllFieldsFilled) {
+      // if all fields are not filled and if user click on next button we need to make in valid
+      setTabsValidationStatus((tabsValidationStatus) => {
+        return tabsValidationStatus.map((status, index) => {
+          if (index === currentStep - 1) {
+            return VALID;
+          } else {
+            return status;
+          }
+        });
+      });
+
       // setViewPreviewPage(true);
       setNewCourseData(formData);
 
