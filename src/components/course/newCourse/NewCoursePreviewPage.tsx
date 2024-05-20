@@ -685,6 +685,23 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
+            {/* REQUIRMENT in the course edit page we need to display the course code in the course details section */}
+            {
+              IsEditCourse(pathname) && 
+
+            <div className="w-[291px]">
+              <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                {t("course_id")}
+              </p>
+
+              <abbr
+                className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
+                title={newCourseData?.program_code ? newCourseData?.program_code : "-"}
+              >
+                {newCourseData?.program_code ? newCourseData?.program_code : "-"}
+              </abbr>
+            </div>
+            }
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:review_post_details.creator")}
