@@ -518,14 +518,16 @@ export const NewCourseTabs = () => {
               }
             });
           });
-          setCurrentStep(tab.value);
         }
 
         // if user clicks on next tab and if all the tabsNextButtonClickStatus is next_button_clicked then only move to clicked tab
         if (
           tabsNextButtonClickStatus
             .slice(0, tab.value)
-            .every((status) => status === NEXT_BUTTON_CLICKED)
+            .every((status) => status === NEXT_BUTTON_CLICKED) &&
+          tabsValidationStatus
+            .slice(0, tab.value)
+            .every((status) => status === VALID)
         ) {
           setCurrentStep(tab.value);
         }
