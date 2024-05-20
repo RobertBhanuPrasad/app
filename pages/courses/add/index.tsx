@@ -23,7 +23,7 @@ import {
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useFormState } from "react-hook-form";
 import {
   ACCOMMODATION_STEP_NUMBER,
   BASIC_DETAILS_STEP_NUMBER,
@@ -703,6 +703,12 @@ export const NewCourseTabs = () => {
     },
   ];
 
+  /**
+   * @constant errors 
+   * @description this constant stores the error messages of the form data
+   */
+  const {errors} = useFormState()
+
   return (
     <div>
       <div className="flex gap-20 items-center">
@@ -711,10 +717,8 @@ export const NewCourseTabs = () => {
           {t("new_strings:course")}
         </p>
 
-        {/* TODO: I have removed some code here related isAllFieldsFilled */}
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-        {(formData?.program_fee_level_settings == undefined ||
-          formData?.program_fee_level_settings?.length == 0) && (
+        {errors?.program_fee_level_settings && (
           <div className="flex gap-2">
             <Error />
             <p className="font-semibold text-[red] text-l -mt-1">
