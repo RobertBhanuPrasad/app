@@ -498,6 +498,12 @@ export default function NewCourseReviewPage() {
   const [openContactDetails, setOpenContactDetails] = useState(false);
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
+  const LoadingOverlay: React.FC = () => (
+    <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+      <div className="loader"></div>
+    </div>
+  )
+
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
 
@@ -574,13 +580,14 @@ export default function NewCourseReviewPage() {
   };
 
   const handClickContinue = async () => {
-    const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData);
-    console.log("errors", errors);
+    setIsSubmitting(true)
+    const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData)
+    console.log('errors', errors)
 
     if (errors.success === false) {
-      console.log(errors.error.issues, "issuessss");
+      console.log(errors.error.issues, 'issuessss')
+      setIsSubmitting(false)
     } else {
-      setIsSubmitting(true);
 
       /**
        * This variable will retur true if all api calls has been successfully it will return false if any api call fails
@@ -593,38 +600,35 @@ export default function NewCourseReviewPage() {
         pathname,
         countryCode,
         languageCode
-      );
+      )
 
       // we are checking the course is edit or user created new course
-      const isEdited = IsEditCourse(pathname);
+      const isEdited = IsEditCourse(pathname)
 
       // we have to display thank you page or success modal pop up only when the posting done successfully without any error
       if (isPosted) {
         if (isEdited) {
-          setOnEditSuccess(true);
+          setOnEditSuccess(true)
         } else {
           // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
           await invalidate({
-            resource: "program",
-            invalidates: ["list"],
-          });
+            resource: 'program',
+            invalidates: ['list']
+          })
           // i need to set params with section=thank_you
-          const current = new URLSearchParams(
-            Array.from(searchParams.entries())
-          ); // -> has to use this form
-          current.set("section", "thank_you");
+          const current = new URLSearchParams(Array.from(searchParams.entries())) // -> has to use this form
+          current.set('section', 'thank_you')
 
-          const params = current.toString();
+          const params = current.toString()
 
-          router.replace(`${pathname}?${params}`);
+          router.replace(`${pathname}?${params}`)
 
-          setViewPreviewPage(false);
-          setViewThankyouPage(true);
+          setViewPreviewPage(false)
+          setViewThankyouPage(true)
         }
       }
-      setIsSubmitting(false);
     }
-  };
+  }
 
   /**
    * @constant countryConfigData
@@ -1362,14 +1366,10 @@ export default function NewCourseReviewPage() {
           </div>
         </section>
         <div className="flex items-center justify-center">
-          {isSubmitting ? (
-            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
-              <div className="loader !w-[30px]"></div>
-            </Button>
-          ) : (
-            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
-          )}
+          {isSubmitting && <LoadingOverlay />}
+          <Button onClick={handClickContinue}>{t('continue_button')}</Button>
         </div>
+
       </div>
     </div>
   );
