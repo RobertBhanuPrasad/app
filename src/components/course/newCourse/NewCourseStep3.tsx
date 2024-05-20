@@ -1035,7 +1035,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   ];
   // Add additional filters based on organization calendar settings
   const filter = [...dateFilters];
-  if (settingsData) {
+  if (settingsData?.data && settingsData?.data?.length > 0) {
     if (settingsData?.data[0]?.is_city_enabled) {
       filter.push({
         field: "program_id.city_id.id",
