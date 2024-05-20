@@ -646,6 +646,7 @@ export const NewCourseTabs = () => {
           }
         });
       });
+
       setCurrentStep(currentStep + 1);
     } else {
       // if all fields are not filled and if user click on next button we need to make in valid
@@ -737,29 +738,27 @@ export const NewCourseTabs = () => {
     // iterate each step and validate it with zod and set VALID or INVALID for each step
     //!important right now we will do this for only where tabs next button clicked
     validationFieldsStepWise.forEach((fields, index) => {
-      if (tabsNextButtonClickStatus[index] === NEXT_BUTTON_CLICKED) {
-        const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+      const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
 
-        let modifiedFields: any = {};
-        fields.forEach((field) => {
-          modifiedFields[field] = true;
+      let modifiedFields: any = {};
+      fields.forEach((field) => {
+        modifiedFields[field] = true;
+      });
+
+      const results = newCourseZodSchema
+        .pick(modifiedFields)
+        .safeParse(formData);
+
+      // now do VALID for current step because it was not throwing any error
+      if (results.success === true) {
+        tempTabsValidationStatus = tempTabsValidationStatus.map((status, i) => {
+          if (i === index) {
+            return VALID;
+          }
+          return status;
         });
-
-        const results = newCourseZodSchema
-          .pick(modifiedFields)
-          .safeParse(formData);
-
-        // now do VALID for current step because it was not throwing any error
-        if (results.success === true) {
-          tempTabsValidationStatus = tempTabsValidationStatus.map(
-            (status, i) => {
-              if (i === index) {
-                return VALID;
-              }
-              return status;
-            }
-          );
-        } else {
+      } else {
+        if (tabsNextButtonClickStatus[index] === NEXT_BUTTON_CLICKED) {
           tempTabsValidationStatus = tempTabsValidationStatus.map(
             (status, i) => {
               if (i === index) {
