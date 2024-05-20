@@ -1,7 +1,7 @@
 'use client'
 import { getCourseStatusColorBasedOnStatusId } from '@components/courseBusinessLogic'
 import InstagramIcon from '@public/images/InstagramIcon.png'
-import ThankyouGif from '@public/images/ThankYou.png'
+import congrat from '@public/gif/congrat.gif'
 import WhatsappIcon from '@public/images/WhatsappIcon.png'
 import facebookIcon from '@public/images/facebookIcon.png'
 import linkedInIcon from '@public/images/linkedInIcon.png'
@@ -136,7 +136,7 @@ useEffect(() => {
               </Button>
           
           </div>
-          <Image src={ThankyouGif} alt="My Image" width={148} height={148} className="mx-auto" />
+          <Image src={congrat} alt="My Image" width={148} height={148} className="mx-auto" />
           <div className="mx-auto text-center max-w-fit ">
             <p className="text-2xl font-semibold text-accent-primary">{t("course.new_course:congratulations_page.congratulations")}</p>
             <p className="text-accent-secondary">{t("course.new_course:congratulations_page.you_have_successfully")}</p>
