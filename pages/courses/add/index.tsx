@@ -830,17 +830,16 @@ export const NewCourseTabs = () => {
                       <div
                         className={`flex flex-row gap-[10px] ml-[14px] items-center `}
                       >
-                        {tabsNextButtonClickStatus[index] ===
-                        NEXT_BUTTON_NOT_CLICKED ? (
+                        {tabsValidationStatus[index] === VALID ? (
+                          <Success />
+                        ) : tabsNextButtonClickStatus[index] ===
+                          NEXT_BUTTON_NOT_CLICKED ? (
                           tab.icon(
                             currentStep - 1 === index ? "#7677F4" : "#999999"
                           )
-                        ) : tabsValidationStatus[index] === VALID ? (
-                          <Success />
                         ) : (
                           <Error />
                         )}
-
                         <span
                           className={cn(
                             currentStep - 1 === index
