@@ -580,14 +580,13 @@ export default function NewCourseReviewPage() {
   };
 
   const handClickContinue = async () => {
-    setIsSubmitting(true)
-    const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData)
-    console.log('errors', errors)
+    const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData);
+    console.log("errors", errors);
 
     if (errors.success === false) {
-      console.log(errors.error.issues, 'issuessss')
-      setIsSubmitting(false)
+      console.log(errors.error.issues, "issuessss");
     } else {
+      setIsSubmitting(true);
 
       /**
        * This variable will retur true if all api calls has been successfully it will return false if any api call fails
@@ -600,35 +599,38 @@ export default function NewCourseReviewPage() {
         pathname,
         countryCode,
         languageCode
-      )
+      );
 
       // we are checking the course is edit or user created new course
-      const isEdited = IsEditCourse(pathname)
+      const isEdited = IsEditCourse(pathname);
 
       // we have to display thank you page or success modal pop up only when the posting done successfully without any error
       if (isPosted) {
         if (isEdited) {
-          setOnEditSuccess(true)
+          setOnEditSuccess(true);
         } else {
           // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
           await invalidate({
-            resource: 'program',
-            invalidates: ['list']
-          })
+            resource: "program",
+            invalidates: ["list"],
+          });
           // i need to set params with section=thank_you
-          const current = new URLSearchParams(Array.from(searchParams.entries())) // -> has to use this form
-          current.set('section', 'thank_you')
+          const current = new URLSearchParams(
+            Array.from(searchParams.entries())
+          ); // -> has to use this form
+          current.set("section", "thank_you");
 
-          const params = current.toString()
+          const params = current.toString();
 
-          router.replace(`${pathname}?${params}`)
+          router.replace(`${pathname}?${params}`);
 
-          setViewPreviewPage(false)
-          setViewThankyouPage(true)
+          setViewPreviewPage(false);
+          setViewThankyouPage(true);
         }
       }
+      setIsSubmitting(false);
     }
-  }
+  };
 
   /**
    * @constant countryConfigData
