@@ -738,27 +738,29 @@ export const NewCourseTabs = () => {
     // iterate each step and validate it with zod and set VALID or INVALID for each step
     //!important right now we will do this for only where tabs next button clicked
     validationFieldsStepWise.forEach((fields, index) => {
-      const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+      if (tabsNextButtonClickStatus[index] === NEXT_BUTTON_CLICKED) {
+        const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
 
-      let modifiedFields: any = {};
-      fields.forEach((field) => {
-        modifiedFields[field] = true;
-      });
-
-      const results = newCourseZodSchema
-        .pick(modifiedFields)
-        .safeParse(formData);
-
-      // now do VALID for current step because it was not throwing any error
-      if (results.success === true) {
-        tempTabsValidationStatus = tempTabsValidationStatus.map((status, i) => {
-          if (i === index) {
-            return VALID;
-          }
-          return status;
+        let modifiedFields: any = {};
+        fields.forEach((field) => {
+          modifiedFields[field] = true;
         });
-      } else {
-        if (tabsNextButtonClickStatus[index] === NEXT_BUTTON_CLICKED) {
+
+        const results = newCourseZodSchema
+          .pick(modifiedFields)
+          .safeParse(formData);
+
+        // now do VALID for current step because it was not throwing any error
+        if (results.success === true) {
+          tempTabsValidationStatus = tempTabsValidationStatus.map(
+            (status, i) => {
+              if (i === index) {
+                return VALID;
+              }
+              return status;
+            }
+          );
+        } else {
           tempTabsValidationStatus = tempTabsValidationStatus.map(
             (status, i) => {
               if (i === index) {
@@ -830,16 +832,17 @@ export const NewCourseTabs = () => {
                       <div
                         className={`flex flex-row gap-[10px] ml-[14px] items-center `}
                       >
-                        {tabsValidationStatus[index] === VALID ? (
-                          <Success />
-                        ) : tabsNextButtonClickStatus[index] ===
-                          NEXT_BUTTON_NOT_CLICKED ? (
+                        {tabsNextButtonClickStatus[index] ===
+                        NEXT_BUTTON_NOT_CLICKED ? (
                           tab.icon(
                             currentStep - 1 === index ? "#7677F4" : "#999999"
                           )
+                        ) : tabsValidationStatus[index] === VALID ? (
+                          <Success />
                         ) : (
                           <Error />
                         )}
+
                         <span
                           className={cn(
                             currentStep - 1 === index
