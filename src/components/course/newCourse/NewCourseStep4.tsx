@@ -63,7 +63,7 @@ export default function CourseTable() {
   }
 
   //sorting the schedules
-  let sortedSchedules = formData.schedules.sort(
+  let sortedSchedules = formData?.schedules?.sort(
     (a: any, b: any) => {
       let aDate = new Date(a.date);
       aDate.setHours(a?.startHour, a?.startMinute);
@@ -87,6 +87,11 @@ export default function CourseTable() {
   const {
     field: { value: earlyBirdCutOff, onChange: setEarlyBirdCutOff },
   } = useController({ name: "early_bird_cut_off_period" });
+
+  //program_fee_level_settings variable
+  const {
+    field: { onChange: setProgramFeeLevelSettings },
+  } = useController({ name: "program_fee_level_settings" });
 
   //Form variable to store the is_early_bird_enabled
   const {
@@ -123,6 +128,12 @@ export default function CourseTable() {
     ) {
       setShowEarlyBirdColumns(data?.[0]?.is_early_bird_fee_enabled);
     }
+    
+    //If program_fee_level_settings is empty then storing undefined
+    if (data?.length == 0 || data?.[0]?.program_fee_level_settings?.length == 0) {
+      setProgramFeeLevelSettings(undefined)
+    }
+
     setCourseFeeSettings(data);
   };
 
@@ -279,7 +290,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.normal_fee")} (${countryConfigData?.data?.[0]?.default_currency_code})`
+      header: `${t("course.new_course:fees_tab.normal_fee")} (${
+        countryConfigData?.data?.[0]?.default_currency_code
+      })`,
     },
     //No need to show tax column if tax is not enabled for selected organization
     organizationData?.tax_enabled && {
