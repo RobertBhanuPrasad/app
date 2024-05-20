@@ -1057,7 +1057,15 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         value: formData?.venue_id,
       });
     }
+  } else {
+    //If there is no settings data then it default to should show courses based on city and selected date
+    filter.push({
+      field: "program_id.city_id.id",
+      operator: "eq",
+      value: cityId,
+    });
   }
+
   // Fetch program schedules based on the filters
   const { data } = useList<any>({
     resource: "program_schedules",
