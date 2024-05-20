@@ -293,7 +293,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.normal_fee")}(${
+      header: `${t("course.new_course:fees_tab.normal_fee")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -304,7 +304,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${
+      header: `${t("course.new_course:fees_tab.vat reg")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -314,7 +314,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.fee")}(${
+      header: `${t("course.new_course:fees_tab.fee")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -344,7 +344,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.normal_fee")}(${
+      header: `${t("course.new_course:fees_tab.normal_fee")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -361,7 +361,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${
+      header: `${t("course.new_course:fees_tab.vat reg")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -393,7 +393,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.fee")}(${
+      header: `${t("course.new_course:fees_tab.fee")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -407,7 +407,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.early_bird")}(${
+      header: `${t("course.new_course:fees_tab.early_bird")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -417,7 +417,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("new_strings:vat_reg")}(${
+      header: `${t("new_strings:vat_reg")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -427,7 +427,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.total early")}(${
+      header: `${t("course.new_course:fees_tab.total early")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -450,7 +450,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.early_bird")}(${
+      header: `${t("course.new_course:fees_tab.early_bird")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -468,7 +468,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.vat reg")}(${
+      header: `${t("course.new_course:fees_tab.vat reg")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
@@ -500,7 +500,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       },
       enableSorting: false,
       enableHiding: false,
-      header: `${t("course.new_course:fees_tab.total early")}(${
+      header: `${t("course.new_course:fees_tab.total early")} (${
         countryConfigData?.data?.[0]?.default_currency_code
       })`,
     },
