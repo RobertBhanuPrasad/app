@@ -6,6 +6,16 @@ export const ACCOMMODATION_STEP_NUMBER = 5;
 export const CONTACT_INFO_STEP_NUMBER = 6;
 export const REVIEW_PAGE_STEP_NUMBER = 7;
 
+// new course constants
+/**
+ * Based on this variable we will figure out wether we will show tab icon or success icon or error icon
+ */
+export const NEXT_BUTTON_CLICKED = "next_button_clicked";
+export const NEXT_BUTTON_NOT_CLICKED = "next_button_not_clicked";
+
+export const VALID = "valid";
+export const INVALID = "invalid";
+
 //Course details page tabs constant
 export const COURSE_DETAILS_TAB = 1;
 export const PARTICIPANTS_TAB = 2;
@@ -78,10 +88,10 @@ export const NewCourseStep6FormNames = {
 };
 
 // Form names to validate
-export const EditParticipantFormNames={
-  memo:"memo",
-  accommodation_snore:"accommodation_snore",
-  roommate_snore:"roommate_snore",
-  participant_attendence_status_id:"participant_attendence_status_id",
-  participant_code:"participant_code"
-}
+export const EditParticipantFormNames = {
+  memo: "memo",
+  accommodation_snore: "accommodation_snore",
+  roommate_snore: "roommate_snore",
+  participant_attendence_status_id: "participant_attendence_status_id",
+  participant_code: "participant_code",
+};

@@ -30,6 +30,9 @@ import {
   CONTACT_INFO_STEP_NUMBER,
   COURSE_DETAILS_STEP_NUMBER,
   FEE_STEP_NUMBER,
+  INVALID,
+  NEXT_BUTTON_CLICKED,
+  NEXT_BUTTON_NOT_CLICKED,
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
   NewCourseStep3FormNames,
@@ -37,6 +40,7 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
+  VALID,
 } from "src/constants/CourseConstants";
 import {
   PAYMENT_MODE,
@@ -69,6 +73,7 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import { supabaseClient } from "src/utility";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -144,15 +149,14 @@ function NewCourse() {
     TIME_FORMAT_24_HOURS
   )?.id;
 
-    /**
+  /**
    * @constant iAmCoTeachingId
-   * @description thid const stores the id of the i am co teaching 
+   * @description thid const stores the id of the i am co teaching
    */
   const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_CO_TEACHING
   )?.id;
-
 
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
@@ -314,11 +318,12 @@ function NewCourse() {
 export default index;
 // we are writing a function here to validate the each steps in new course page and edit previewpage
 // we are calling the same function for newcoursepreviewpagepageeditcourse also to validate
-export const requiredValidationFields = (formData: any) => {
-  const { data: loginUserData }: any = useGetIdentity();
-
-  const { data: timeZoneData } = useList({ resource: "time_zones" });
-
+export const requiredValidationFields = (
+  formData: NewCourseFormFieldTypes,
+  loginUserData: any,
+  timeZoneData: any = [],
+  programTypeData: ProgramTypesDataBaseType
+) => {
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
@@ -330,22 +335,11 @@ export const requiredValidationFields = (formData: any) => {
       : ["registration_via_3rd_party_url"]
   );
 
-  /**
-   * @constant programTypesData
-   * @description this constant stores the data which came from the program_types table using the program type id which is there in the formData
-   */
-  const { data: programTypesData } = useOne({
-    resource: "program_types",
-    id: formData?.program_type_id,
-  });
-
   let RequiredNewCourseStep2FormNames = _.omit(NewCourseStep2FormNames, [
-    ...(programTypesData?.data?.has_alias_name
-      ? []
-      : ["program_alias_name_id"]),
+    ...(programTypeData?.has_alias_name ? [] : ["program_alias_name_id"]),
     ...(formData?.is_geo_restriction_applicable ? [] : ["allowed_countries"]),
     ...(hasSuperAdminRole ? [] : ["is_language_translation_for_participants"]),
-    ...(programTypesData?.data?.is_geo_restriction_applicable_for_registrations
+    ...(programTypeData?.is_geo_restriction_applicable_for_registrations
       ? []
       : ["is_geo_restriction_applicable"]),
   ]);
@@ -358,7 +352,7 @@ export const requiredValidationFields = (formData: any) => {
 
   // REQUIRMENT if the program type is online then we need to validate the online url , state is present or not, city is present or not, center id is present or not
   // so if it is online type then we are keeping the online_url, state_id, city_id, center_id
-  if (programTypesData?.data?.is_online_program === true) {
+  if (programTypeData?.is_online_program === true) {
     RequiredNewCourseStep3FormNames.push(
       "online_url",
       "state_id",
@@ -374,7 +368,7 @@ export const requiredValidationFields = (formData: any) => {
   // If there is one time zone then it will be the default time zone
   // If there are more than one time zones then we need to select the time zone
   // So we are sending the time_zone_id if there are more than 0ne time zone
-  if ((timeZoneData?.total as number) > 1) {
+  if ((timeZoneData?.length as number) > 1) {
     RequiredNewCourseStep3FormNames.push("time_zone_id");
   }
 
@@ -402,53 +396,77 @@ export const requiredValidationFields = (formData: any) => {
   return validationFieldsStepWise;
 };
 
+type nextButtonClicks = "next_button_clicked" | "next_button_not_clicked";
+
+export type ItabsNextButtonClickStatus = nextButtonClicks[];
+
+export type ItabsValidationStatus = ("valid" | "invalid" | "neutral")[];
+
 export const NewCourseTabs = () => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
   const router = useRouter();
-  const { watch, getValues } = useFormContext();
   const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
 
-  const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined);
-  const [isAllFieldsValid2, setIsAllFieldsValid2] = useState(undefined);
-  const [isAllFieldsValid3, setIsAllFieldsValid3] = useState(undefined);
-  const [isAllFieldsValid4, setIsAllFieldsValid4] = useState(undefined);
-  const [isAllFieldsValid5, setIsAllFieldsValid5] = useState(undefined);
-  const [isAllFieldsValid6, setIsAllFieldsValid6] = useState(undefined);
+  const supabase = supabaseClient();
+
+  const { watch } = useFormContext();
+  const formData: NewCourseFormFieldTypes = watch();
+
+  const { data: loginUserData }: any = useGetIdentity();
+  const { data: timeZoneData } = useList({ resource: "time_zones" });
+
+  const [tabsNextButtonClickStatus, setTabsNextButtonClickStatus] =
+    useState<ItabsNextButtonClickStatus>(
+      new Array(6).fill(NEXT_BUTTON_NOT_CLICKED)
+    );
+
+  const [tabsValidationStatus, setTabsValidationStatus] =
+    useState<ItabsValidationStatus>(new Array(6).fill(null));
 
   /**
-   * @function handelIsAllFieldsFilled
-   * @description this function is used to set that is all fields are filled or not in particular step
-   * @param isAllFieldsFilled
+   * In new course setp 2 we have program type dropdown select component
+   * this variable is used to store latest program type data from selected program type id form form.
    */
-  const handelIsAllFieldsFilled = (isAllFieldsFilled: any) => {
-    if (currentStep == 1) {
-      setIsAllFieldsValid1(isAllFieldsFilled);
-    } else if (currentStep == 2) {
-      setIsAllFieldsValid2(isAllFieldsFilled);
-    } else if (currentStep == 3) {
-      setIsAllFieldsValid3(isAllFieldsFilled);
-    } else if (currentStep == 4) {
-      setIsAllFieldsValid4(isAllFieldsFilled);
-    } else if (currentStep == 5) {
-      setIsAllFieldsValid5(isAllFieldsFilled);
-    } else if (currentStep == 6) {
-      setIsAllFieldsValid6(isAllFieldsFilled);
+  const [selectedProgramTypeData, setSelectedProgramTypeData] = useState({});
+
+  /**
+   * @description this function is used to get the latest program type data
+   * @param programTypeId - program type id
+   * @returns latest program type data
+   */
+  const getProgramTypeData = async (
+    programTypeId: number | string | undefined
+  ) => {
+    if (
+      programTypeId === "" ||
+      programTypeId === undefined ||
+      programTypeId === null
+    ) {
+      setSelectedProgramTypeData({});
+      return;
+    }
+
+    const { data: programTypeData, error } = await supabase
+      .from("program_types")
+      .select("*")
+      .eq("id", programTypeId);
+
+    if (!error && programTypeData) {
+      setSelectedProgramTypeData(programTypeData[0]);
     }
   };
 
-  const formData = getValues();
+  // in use Effect we will call the function to get the latest program type data
+  useEffect(() => {
+    getProgramTypeData(formData?.program_type_id);
+  }, [formData?.program_type_id]);
 
   const contentStylings =
     "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
-
-  let validationFieldsStepWise = requiredValidationFields(formData);
-
-  let isAllFieldsFilled = false;
 
   /**
    * @function handleClickTab
@@ -460,16 +478,70 @@ export const NewCourseTabs = () => {
     currentStepFormNames: any[],
     tab: { value: any }
   ) => {
-    isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
     //if the clicked tab is lessthan current step then we can navigate to the clicked tab
     if (tab.value < currentStep) {
       setCurrentStep(tab.value);
-    } else if (isAllFieldsFilled && tab.value == currentStep + 1) {
+    } else {
+      // there are so many cases here
+      // we need to check tabsNextButtonClickStatus of steps upto tab.value - 1
+      // if any one of the tabsNextButtonClickStatus is next_button_not_clicked then dont navigate to that clicked tab
+      // if all the tabsNextButtonClickStatus is next_button_clicked then we can navigate to that clicked tab only if
+      // tabsValidationStatus is valid
+
+      let isAllFieldsFilled = await ValidateCurrentStepFields(
+        currentStepFormNames
+      );
+
+      if (isAllFieldsFilled) {
+        // if all fields filled set tabsValidationStatus of current step to valid
+        setTabsValidationStatus((tabsValidationStatus) => {
+          return tabsValidationStatus.map((status, index) => {
+            if (index === currentStep - 1) {
+              return VALID;
+            } else {
+              return status;
+            }
+          });
+        });
+
+        // if user clicks on next tab of current tab then and if tabsNextButtonClickStatus is next_button_not_clicked then change status and move to clicked tab
+        if (
+          tabsNextButtonClickStatus[currentStep - 1] === NEXT_BUTTON_NOT_CLICKED
+        ) {
+          setTabsNextButtonClickStatus((tabsNextButtonClickStatus) => {
+            return tabsNextButtonClickStatus.map((status, index) => {
+              if (index === currentStep - 1) {
+                return NEXT_BUTTON_CLICKED;
+              } else {
+                return status;
+              }
+            });
+          });
+          setCurrentStep(tab.value);
+        }
+
+        // if user clicks on next tab and if all the tabsNextButtonClickStatus is next_button_clicked then only move to clicked tab
+        if (
+          tabsNextButtonClickStatus
+            .slice(0, tab.value)
+            .every((status) => status === NEXT_BUTTON_CLICKED)
+        ) {
+          setCurrentStep(tab.value);
+        }
+      } else {
+        // if all fields are not filled and if user click on next button we need to make in valid
+        setTabsValidationStatus((tabsValidationStatus) => {
+          return tabsValidationStatus.map((status, index) => {
+            if (index === currentStep - 1) {
+              return INVALID;
+            } else {
+              return status;
+            }
+          });
+        });
+      }
       // if all the fields filled in the current step then we can only able to go to next step
-      setCurrentStep(tab.value);
     }
-    // This function is used to handle to update that all the fields in particular step is filled or not
-    handelIsAllFieldsFilled(isAllFieldsFilled);
   };
 
   /**
@@ -480,9 +552,25 @@ export const NewCourseTabs = () => {
   const handleClickReviewDetailsButton = async (
     currentStepFormNames: any[]
   ) => {
+    // set tabsNextButtonClickStatus to next_button_clicked for the current step
+    if (tabsNextButtonClickStatus[currentStep - 1] !== NEXT_BUTTON_CLICKED) {
+      setTabsNextButtonClickStatus((tabsNextButtonClickStatus) => {
+        return tabsNextButtonClickStatus.map((status, index) => {
+          if (index === currentStep - 1) {
+            return NEXT_BUTTON_CLICKED;
+          } else {
+            return status;
+          }
+        });
+      });
+    }
+
     const formData = watch();
 
-    isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
+    let isAllFieldsFilled = await ValidateCurrentStepFields(
+      currentStepFormNames
+    );
+
     if (isAllFieldsFilled) {
       // setViewPreviewPage(true);
       setNewCourseData(formData);
@@ -494,8 +582,18 @@ export const NewCourseTabs = () => {
       const params = current.toString();
 
       router.replace(`${pathname}?${params}`);
+    } else {
+      // if all fields are not filled and if user click on next button we need to make in valid
+      setTabsValidationStatus((tabsValidationStatus) => {
+        return tabsValidationStatus.map((status, index) => {
+          if (index === currentStep - 1) {
+            return INVALID;
+          } else {
+            return status;
+          }
+        });
+      });
     }
-    handelIsAllFieldsFilled(isAllFieldsFilled);
   };
 
   /**
@@ -504,11 +602,47 @@ export const NewCourseTabs = () => {
    * @param currentStepFormNames
    */
   const handleClickNext = async (currentStepFormNames: any[]) => {
-    isAllFieldsFilled = await ValidateCurrentStepFields(currentStepFormNames);
-    if (isAllFieldsFilled) {
-      setCurrentStep(currentStep + 1);
+    // set tabsNextButtonClickStatus to next_button_clicked for the current step
+    if (tabsNextButtonClickStatus[currentStep - 1] !== NEXT_BUTTON_CLICKED) {
+      setTabsNextButtonClickStatus((tabsNextButtonClickStatus) => {
+        return tabsNextButtonClickStatus.map((status, index) => {
+          if (index === currentStep - 1) {
+            return NEXT_BUTTON_CLICKED;
+          } else {
+            return status;
+          }
+        });
+      });
     }
-    handelIsAllFieldsFilled(isAllFieldsFilled);
+
+    let isAllFieldsFilled = await ValidateCurrentStepFields(
+      currentStepFormNames
+    );
+
+    if (isAllFieldsFilled) {
+      // if all fields filled set tabsValidationStatus of current step to valid
+      setTabsValidationStatus((tabsValidationStatus) => {
+        return tabsValidationStatus.map((status, index) => {
+          if (index === currentStep - 1) {
+            return VALID;
+          } else {
+            return status;
+          }
+        });
+      });
+      setCurrentStep(currentStep + 1);
+    } else {
+      // if all fields are not filled and if user click on next button we need to make in valid
+      setTabsValidationStatus((tabsValidationStatus) => {
+        return tabsValidationStatus.map((status, index) => {
+          if (index === currentStep - 1) {
+            return INVALID;
+          } else {
+            return status;
+          }
+        });
+      });
+    }
   };
 
   /**
@@ -524,188 +658,68 @@ export const NewCourseTabs = () => {
     {
       value: BASIC_DETAILS_STEP_NUMBER,
       label: t("basic_details"),
-      // If the current step is BASIC_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
-      textColor:
-        currentStep === BASIC_DETAILS_STEP_NUMBER ||
-        isAllFieldsValid1 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
-      icon:
-        // If the current step is in BASIC_DETAILS_STEP then we show the Profile icon with the #7677F4 color
-        // else if the current step is not in the BASIC_DETAILS_STEP and we did not visited the step then we we need to show the Profile icon with #999999 color
-        // else if filled all the fields in that step then we will be showing the sucess icon
-        // else Error icon
-        currentStep == BASIC_DETAILS_STEP_NUMBER &&
-        isAllFieldsValid1 == undefined ? (
-          <Profile
-            color={` ${
-              currentStep == BASIC_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid1 ? (
-          <Success />
-        ) : (
-          <Error />
-        ),
+      icon: (
+        <Profile
+          color={` ${
+            currentStep == BASIC_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
       value: COURSE_DETAILS_STEP_NUMBER,
       label: t("course.new_course:review_post_details.course_details"),
-      // If the current step is COURSE_DETAILS_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
-      textColor:
-        currentStep === COURSE_DETAILS_STEP_NUMBER ||
-        isAllFieldsValid2 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
-      icon:
-        // If the current step is in COURSE_DETAILS_STEP then we show the Group icon with the #7677F4 color
-        // else if the current step is not in the COURSE_DETAILS_STEP and we did not visited the step then we we need to show the Group icon with #999999 color
-        // else if filled all the fields in that step then we will be showing the sucess icon
-        // else Error icon
-        currentStep === COURSE_DETAILS_STEP_NUMBER &&
-        isAllFieldsValid2 === undefined ? (
-          <Group
-            color={` ${
-              currentStep == COURSE_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid2 == undefined ? (
-          <Group
-            color={` ${
-              currentStep == COURSE_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid2 ? (
-          <Success />
-        ) : (
-          <Error />
-        ),
+      icon: (
+        <Group
+          color={` ${
+            currentStep == COURSE_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
       label: t("time_and_venue"),
-      // If the current step is TIME_AND_VENUE_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
-      textColor:
-        currentStep === TIME_AND_VENUE_STEP_NUMBER ||
-        isAllFieldsValid3 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
-      icon:
-        // If the current step is in TIME_AND_VENUE_STEP then we show the Venue icon with the #7677F4 color
-        // else if the current step is not in the TIME_AND_VENUE_STEP and we did not visited the step then we we need to show the Venue icon with #999999 color
-        // else if filled all the fields in that step then we will be showing the sucess icon
-        // else Error icon
-        currentStep == TIME_AND_VENUE_STEP_NUMBER &&
-        isAllFieldsValid3 == undefined ? (
-          <Venue
-            color={` ${
-              currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid3 == undefined ? (
-          <Venue
-            color={` ${
-              currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid3 ? (
-          <Success />
-        ) : (
-          <Error />
-        ),
+      icon: (
+        <Venue
+          color={` ${
+            currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
       value: FEE_STEP_NUMBER,
       label: t("fees"),
-      // If the current step is FEE_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
-      textColor:
-        currentStep === FEE_STEP_NUMBER || isAllFieldsValid4 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
-      icon:
-        // If the current step is in FEE_STEP then we show the Fees icon with the #7677F4 color
-        // else if the current step is not in the FEE_STEP and we did not visited the step then we we need to show the Fees icon with #999999 color
-        // else if filled all the fields in that step then we will be showing the sucess icon
-        // else Error icon
-        currentStep == FEE_STEP_NUMBER && isAllFieldsValid4 == undefined ? (
-          <Fees
-            color={` ${currentStep == FEE_STEP_NUMBER ? "#7677F4" : "#999999"}`}
-          />
-        ) : isAllFieldsValid4 == undefined ? (
-          <Fees
-            color={` ${currentStep == FEE_STEP_NUMBER ? "#7677F4" : "#999999"}`}
-          />
-        ) : isAllFieldsValid4 ? (
-          <Success />
-        ) : (
-          <Error />
-        ),
+      icon: (
+        <Venue
+          color={` ${
+            currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
       value: ACCOMMODATION_STEP_NUMBER,
       label: t("new_strings:accommodation"),
-      // If the current step is ACCOMMODATION_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
-      textColor:
-        currentStep === ACCOMMODATION_STEP_NUMBER ||
-        isAllFieldsValid5 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
-      icon:
-        // If the current step is in ACCOMMODATION_STEP then we show the Car icon with the #7677F4 color
-        // else if the current step is not in the ACCOMMODATION_STEP and we did not visited the step then we we need to show the Car icon with #999999 color
-        // else if filled all the fields in that step then we will be showing the sucess icon
-        // else Error icon
-        currentStep == ACCOMMODATION_STEP_NUMBER &&
-        isAllFieldsValid5 == undefined ? (
-          <Car
-            color={` ${
-              currentStep == ACCOMMODATION_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid5 == undefined ? (
-          <Car
-            color={` ${
-              currentStep == ACCOMMODATION_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid5 ? (
-          <Success />
-        ) : (
-          <Error />
-        ),
+      icon: (
+        <Car
+          color={` ${
+            currentStep == ACCOMMODATION_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: t("new_strings:contact_info"),
-      // If the current step is CONTACT_INFO_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
-      textColor:
-        currentStep === CONTACT_INFO_STEP_NUMBER ||
-        isAllFieldsValid6 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
-      icon:
-        // If the current step is in CONTACT_INFO_STEP then we show the Info icon with the #7677F4 color
-        // else if the current step is not in the CONTACT_INFO_STEP and we did not visited the step then we we need to show the Info icon with #999999 color
-        // else if filled all the fields in that step then we will be showing the sucess icon
-        // else Error icon
-        currentStep == CONTACT_INFO_STEP_NUMBER &&
-        isAllFieldsValid6 == undefined ? (
-          <Info
-            color={` ${
-              currentStep == CONTACT_INFO_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid6 == undefined ? (
-          <Info
-            color={` ${
-              currentStep == CONTACT_INFO_STEP_NUMBER ? "#7677F4" : "#999999"
-            }`}
-          />
-        ) : isAllFieldsValid6 ? (
-          <Success />
-        ) : (
-          <Error />
-        ),
+      icon: (
+        <Info
+          color={` ${
+            currentStep == CONTACT_INFO_STEP_NUMBER ? "#7677F4" : "#999999"
+          }`}
+        />
+      ),
     },
   ];
 
@@ -717,8 +731,10 @@ export const NewCourseTabs = () => {
           {t("new_strings:course")}
         </p>
 
+        {/* TODO: I have removed some code here related isAllFieldsFilled */}
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-        {isAllFieldsValid4 == false && (formData?.program_fee_level_settings==undefined || formData?.program_fee_level_settings?.length==0) && (
+        {(formData?.program_fee_level_settings == undefined ||
+          formData?.program_fee_level_settings?.length == 0) && (
           <div className="flex gap-2">
             <Error />
             <p className="font-semibold text-[red] text-l -mt-1">
@@ -738,18 +754,25 @@ export const NewCourseTabs = () => {
                     key={index}
                     value={JSON.stringify(tab.value)}
                     className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                    onClick={async () =>
+                    onClick={async () => {
+                      let validationFieldsStepWise = requiredValidationFields(
+                        formData,
+                        loginUserData,
+                        timeZoneData,
+                        selectedProgramTypeData
+                      );
+
                       await handleClickTab(
                         validationFieldsStepWise[currentStep - 1],
                         tab
-                      )
-                    }
+                      );
+                    }}
                   >
                     {currentStep === tab.value && (
                       <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
                     )}
                     <div
-                      className={`flex flex-row gap-[10px] ml-[14px] items-center ${tab?.textColor}`}
+                      className={`flex flex-row gap-[10px] ml-[14px] items-center `}
                     >
                       {tab.icon}
                       {tab.label}
@@ -817,6 +840,14 @@ export const NewCourseTabs = () => {
                       className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
                       onClick={async (e) => {
                         e.preventDefault();
+
+                        let validationFieldsStepWise = requiredValidationFields(
+                          formData,
+                          loginUserData,
+                          timeZoneData,
+                          selectedProgramTypeData
+                        );
+
                         await handleClickNext(
                           validationFieldsStepWise[currentStep - 1]
                         );
@@ -830,6 +861,13 @@ export const NewCourseTabs = () => {
                     <Button
                       className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
                       onClick={async () => {
+                        let validationFieldsStepWise = requiredValidationFields(
+                          formData,
+                          loginUserData,
+                          timeZoneData,
+                          selectedProgramTypeData
+                        );
+
                         await handleClickReviewDetailsButton(
                           validationFieldsStepWise[currentStep - 1]
                         );

@@ -565,7 +565,6 @@ interface ParticipantReassignmentHistoryDataBaseType {
 }
 
 interface ParticipantEmailDeliveryLogsDataBaseType {
-
   type?: string;
   delivery_status?: string;
   delivery_time_stamp?: string;
@@ -708,10 +707,10 @@ interface NewCourseFormFieldTypes {
   is_registration_via_3rd_party?: boolean;
   registration_via_3rd_party_url?: string;
   program_created_by?: number;
-  created_by_user_id?: number
+  created_by_user_id?: number;
 
   //step 2
-  program_type_id?: number;
+  program_type_id?: number | string;
   teacher_ids?: number[];
   assistant_teacher_ids?: number[];
   visibility_id?: number;
@@ -766,6 +765,7 @@ interface NewCourseFormFieldTypes {
   }[];
   bcc_registration_confirmation_email?: string;
 }
+
 interface EditParticipantDataBaseTypes {
   id: number;
   participant_id: {
