@@ -658,68 +658,32 @@ export const NewCourseTabs = () => {
     {
       value: BASIC_DETAILS_STEP_NUMBER,
       label: t("basic_details"),
-      icon: (
-        <Profile
-          color={` ${
-            currentStep == BASIC_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
+      icon: (color: string) => <Profile color={color} />,
     },
     {
       value: COURSE_DETAILS_STEP_NUMBER,
       label: t("course.new_course:review_post_details.course_details"),
-      icon: (
-        <Group
-          color={` ${
-            currentStep == COURSE_DETAILS_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
+      icon: (color: string) => <Group color={color} />,
     },
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
       label: t("time_and_venue"),
-      icon: (
-        <Venue
-          color={` ${
-            currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
+      icon: (color: string) => <Venue color={color} />,
     },
     {
       value: FEE_STEP_NUMBER,
       label: t("fees"),
-      icon: (
-        <Venue
-          color={` ${
-            currentStep == TIME_AND_VENUE_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
+      icon: (color: string) => <Venue color={color} />,
     },
     {
       value: ACCOMMODATION_STEP_NUMBER,
       label: t("new_strings:accommodation"),
-      icon: (
-        <Car
-          color={` ${
-            currentStep == ACCOMMODATION_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
+      icon: (color: string) => <Car color={color} />,
     },
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: t("new_strings:contact_info"),
-      icon: (
-        <Info
-          color={` ${
-            currentStep == CONTACT_INFO_STEP_NUMBER ? "#7677F4" : "#999999"
-          }`}
-        />
-      ),
+      icon: (color: string) => <Info color={color} />,
     },
   ];
 
@@ -749,36 +713,48 @@ export const NewCourseTabs = () => {
           <div className="flex flex-row overflow-x-hidden">
             <TabsList className="h-[513px] bg-[#7677F41B]  w-[238px] rounded-l-[24px] shadow-md py-10">
               <div className="flex flex-col  h-full gap-4 ">
-                {stepTitles.map((tab, index) => (
-                  <TabsTrigger
-                    key={index}
-                    value={JSON.stringify(tab.value)}
-                    className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                    onClick={async () => {
-                      let validationFieldsStepWise = requiredValidationFields(
-                        formData,
-                        loginUserData,
-                        timeZoneData,
-                        selectedProgramTypeData
-                      );
+                {stepTitles.map((tab, index) => {
+                  return (
+                    <TabsTrigger
+                      key={index}
+                      value={JSON.stringify(tab.value)}
+                      className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      onClick={async () => {
+                        let validationFieldsStepWise = requiredValidationFields(
+                          formData,
+                          loginUserData,
+                          timeZoneData,
+                          selectedProgramTypeData
+                        );
 
-                      await handleClickTab(
-                        validationFieldsStepWise[currentStep - 1],
-                        tab
-                      );
-                    }}
-                  >
-                    {currentStep === tab.value && (
-                      <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
-                    )}
-                    <div
-                      className={`flex flex-row gap-[10px] ml-[14px] items-center `}
+                        await handleClickTab(
+                          validationFieldsStepWise[currentStep - 1],
+                          tab
+                        );
+                      }}
                     >
-                      {tab.icon}
-                      {tab.label}
-                    </div>
-                  </TabsTrigger>
-                ))}
+                      {currentStep === tab.value && (
+                        <div className="rounded bg-[#7677F4] w-1 !h-12 -ml-3"></div>
+                      )}
+                      <div
+                        className={`flex flex-row gap-[10px] ml-[14px] items-center `}
+                      >
+                        {tabsNextButtonClickStatus[index] ===
+                        NEXT_BUTTON_NOT_CLICKED ? (
+                          tab.icon(
+                            currentStep - 1 === index ? "#7677F4" : "#999999"
+                          )
+                        ) : tabsValidationStatus[index] === VALID ? (
+                          <Success />
+                        ) : (
+                          <Error />
+                        )}
+
+                        {tab.label}
+                      </div>
+                    </TabsTrigger>
+                  );
+                })}
               </div>
             </TabsList>
 
