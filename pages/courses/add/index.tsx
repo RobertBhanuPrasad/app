@@ -703,6 +703,78 @@ export const NewCourseTabs = () => {
     },
   ];
 
+  /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
+
+  /**
+   * Validate every time with the form data to display tabs success or error messages
+   * we will write one function and in that we use zod to validate so that error messages will not populate in the form
+   */
+  useEffect(() => {
+    handleValidateTabs(formData);
+  }, [JSON.stringify(formData)]);
+
+  /**
+   * This function is used to display success or error messages for each tab instantly when user change the form data
+   * @param formData the form data
+   */
+  const handleValidateTabs = (formData: NewCourseFormFieldTypes) => {
+    let validationFieldsStepWise = requiredValidationFields(
+      formData,
+      loginUserData,
+      timeZoneData,
+      selectedProgramTypeData
+    );
+
+    let tempTabsValidationStatus = tabsValidationStatus;
+
+    // iterate each step and validate it with zod and set VALID or INVALID for each step
+    //!important right now we will do this for only where tabs next button clicked
+    validationFieldsStepWise.forEach((fields, index) => {
+      if (tabsNextButtonClickStatus[index] === NEXT_BUTTON_CLICKED) {
+        const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+
+        let modifiedFields: any = {};
+        fields.forEach((field) => {
+          modifiedFields[field] = true;
+        });
+
+        const results = newCourseZodSchema
+          .pick(modifiedFields)
+          .safeParse(formData);
+
+        // now do VALID for current step because it was not throwing any error
+        if (results.success === true) {
+          tempTabsValidationStatus = tempTabsValidationStatus.map(
+            (status, i) => {
+              if (i === index) {
+                return VALID;
+              }
+              return status;
+            }
+          );
+        } else {
+          tempTabsValidationStatus = tempTabsValidationStatus.map(
+            (status, i) => {
+              if (i === index) {
+                return INVALID;
+              }
+              return status;
+            }
+          );
+        }
+      }
+    });
+
+    setTabsValidationStatus(tempTabsValidationStatus);
+  };
+
   return (
     <div>
       <div className="flex gap-20 items-center">
