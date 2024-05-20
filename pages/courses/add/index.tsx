@@ -743,7 +743,7 @@ export const NewCourseTabs = () => {
                         let validationFieldsStepWise = requiredValidationFields(
                           formData,
                           loginUserData,
-                          timeZoneData,
+                          timeZoneData?.data,
                           selectedProgramTypeData
                         );
 
@@ -848,7 +848,7 @@ export const NewCourseTabs = () => {
                         let validationFieldsStepWise = requiredValidationFields(
                           formData,
                           loginUserData,
-                          timeZoneData,
+                          timeZoneData?.data,
                           selectedProgramTypeData
                         );
 
@@ -868,7 +868,7 @@ export const NewCourseTabs = () => {
                         let validationFieldsStepWise = requiredValidationFields(
                           formData,
                           loginUserData,
-                          timeZoneData,
+                          timeZoneData?.data,
                           selectedProgramTypeData
                         );
 
