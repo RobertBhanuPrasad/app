@@ -169,7 +169,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   //If Fee is not found based on users selection then need to show this
   if (courseFeeSettings?.length == 0 || courseFeeSettings?.[0]?.program_fee_level_settings?.length == 0) {
     return (
-      <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
+      <div className="h-[280px] flex items-center justify-center border border-1 rounded-xl">
         {t(
           "there_is_no_price_set_for_current_settings_select_course_type_and_city_center"
         )}
@@ -601,7 +601,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   };
 
   return (
-    <div className="flex flex-col justify-center w-[70vw]">
+    <div className="flex flex-col justify-center">
       {/* Enable Early Bird fee if it is enabled in settings and Fee should be editable */}
       {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && (
   <div className="flex justify-between items-center gap-2 pb-4">

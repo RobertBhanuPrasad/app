@@ -67,8 +67,8 @@ import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
-import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import { useTranslation } from "next-i18next";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -298,14 +298,16 @@ function NewCourse() {
   }
 
   return (
-    <div className="mx-8">
-      <Form
-        onSubmit={onSubmit}
-        defaultValues={defaultValues}
-        schema={validationSchema(iAmCoTeachingId as number)}
-      >
-        <NewCourseTabs />
-      </Form>
+    <div className="mx-auto min-w-[1200px] w-full max-w-[1640px] h-screen px-8">
+      <div>
+        <Form
+          onSubmit={onSubmit}
+          defaultValues={defaultValues}
+          schema={validationSchema(iAmCoTeachingId as number)}
+        >
+          <NewCourseTabs />
+        </Form>
+      </div>
     </div>
   );
 }
@@ -729,10 +731,10 @@ export const NewCourseTabs = () => {
             </div>
           )}
       </div>
-      <div className="mt-4 bg-[white]">
+      <div className="mt-4 shadow-2xl rounded-[24px]">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row overflow-x-hidden">
-            <TabsList className="h-[513px] bg-[#7677F41B]  w-[238px] rounded-l-[24px] shadow-md py-10">
+            <TabsList className="h-[513px] bg-[#7677F41B] min-w-[238px] rounded-l-[24px] shadow-md py-10">
               <div className="flex flex-col  h-full gap-4 ">
                 {stepTitles.map((tab, index) => (
                   <TabsTrigger
@@ -760,8 +762,8 @@ export const NewCourseTabs = () => {
               </div>
             </TabsList>
 
-            <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
-              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar overflow-x-hidden">
+            <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 h-[517px]">
+              <div className="flex flex-col justify-between h-[460px] overflow-y-auto scrollbar overflow-x-hidden">
                 <div className="flex flex-col w-full justify-between">
                   <TabsContent
                     value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
