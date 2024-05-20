@@ -498,11 +498,7 @@ export default function NewCourseReviewPage() {
   const [openContactDetails, setOpenContactDetails] = useState(false);
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
-  const LoadingOverlay: React.FC = () => (
-    <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
-      <div className="loader"></div>
-    </div>
-  )
+ 
 
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
@@ -1368,7 +1364,10 @@ export default function NewCourseReviewPage() {
           </div>
         </section>
         <div className="flex items-center justify-center">
-          {isSubmitting && <LoadingOverlay />}
+          {isSubmitting && 
+          <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+            <div className="loader"></div>
+          </div>}
           <Button onClick={handClickContinue}>{t('continue_button')}</Button>
         </div>
 
