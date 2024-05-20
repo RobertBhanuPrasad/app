@@ -493,60 +493,72 @@ export const NewCourseTabs = () => {
         currentStepFormNames
       );
 
+      /**
+       * because of state variable updataion we will not get updated data so taking temp variables
+       */
+      let tempTabsNextButtonClickStatus = tabsNextButtonClickStatus;
+      let tempTabsValidationStatus = tabsValidationStatus;
+
       // if user clicks on next tab of current tab then and if tabsNextButtonClickStatus is next_button_not_clicked then change status and move to clicked tab
       if (
-        tabsNextButtonClickStatus[currentStep - 1] === NEXT_BUTTON_NOT_CLICKED
+        tempTabsNextButtonClickStatus[currentStep - 1] ===
+        NEXT_BUTTON_NOT_CLICKED
       ) {
-        setTabsNextButtonClickStatus((tabsNextButtonClickStatus) => {
-          return tabsNextButtonClickStatus.map((status, index) => {
+        tempTabsNextButtonClickStatus = tempTabsNextButtonClickStatus.map(
+          (status, index) => {
             if (index === currentStep - 1) {
               return NEXT_BUTTON_CLICKED;
             } else {
               return status;
             }
-          });
-        });
+          }
+        );
+
+        setTabsNextButtonClickStatus(tempTabsNextButtonClickStatus);
       }
 
       if (isAllFieldsFilled) {
         // if all fields filled set tabsValidationStatus of current step to valid
-        setTabsValidationStatus((tabsValidationStatus) => {
-          return tabsValidationStatus.map((status, index) => {
+        tempTabsValidationStatus = tempTabsValidationStatus.map(
+          (status, index) => {
             if (index === currentStep - 1) {
               return VALID;
             } else {
               return status;
             }
-          });
-        });
+          }
+        );
+
+        setTabsValidationStatus(tempTabsValidationStatus);
 
         // if user clicks on next tab and if all the tabsNextButtonClickStatus is next_button_clicked then only move to clicked tab
         if (
-          tabsNextButtonClickStatus
-            .slice(0, tab.value-1)
+          tempTabsNextButtonClickStatus
+            .slice(0, tab.value - 1)
             .every((status) => status === NEXT_BUTTON_CLICKED) &&
-          tabsValidationStatus
-            .slice(0, tab.value-1)
+          tempTabsValidationStatus
+            .slice(0, tab.value - 1)
             .every((status) => status === VALID)
         ) {
           setCurrentStep(tab.value);
         }
       } else {
         // if all fields are not filled and if user click on next button we need to make in valid
-        setTabsValidationStatus((tabsValidationStatus) => {
-          return tabsValidationStatus.map((status, index) => {
+        tempTabsValidationStatus = tempTabsValidationStatus.map(
+          (status, index) => {
             if (index === currentStep - 1) {
               return INVALID;
             } else {
               return status;
             }
-          });
-        });
+          }
+        );
+
+        setTabsValidationStatus(tempTabsValidationStatus);
       }
       // if all the fields filled in the current step then we can only able to go to next step
     }
   };
-
 
   /**
    * @function handleClickReviewDetailsButton
