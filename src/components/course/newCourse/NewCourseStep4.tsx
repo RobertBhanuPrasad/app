@@ -382,7 +382,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
               }}
               error={error ? true : false}
               onBlur={() => {
-                onChange(total);
+                const formattedValue = parseFloat(total).toFixed(2)
+                setTotal(formattedValue)
+                onChange(formattedValue) 
               }}
             />
           </div>
@@ -489,7 +491,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
               }}
               error={error ? true : false}
               onBlur={() => {
-                onChange(earlyBirdTotal);
+                const formattedValue = parseFloat(earlyBirdTotal).toFixed(2)
+                setEarlyBirdTotal(formattedValue)
+                onChange(formattedValue)
               }}
             />
           </div>
