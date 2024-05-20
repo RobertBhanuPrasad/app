@@ -493,6 +493,21 @@ export const NewCourseTabs = () => {
         currentStepFormNames
       );
 
+      // if user clicks on next tab of current tab then and if tabsNextButtonClickStatus is next_button_not_clicked then change status and move to clicked tab
+      if (
+        tabsNextButtonClickStatus[currentStep - 1] === NEXT_BUTTON_NOT_CLICKED
+      ) {
+        setTabsNextButtonClickStatus((tabsNextButtonClickStatus) => {
+          return tabsNextButtonClickStatus.map((status, index) => {
+            if (index === currentStep - 1) {
+              return NEXT_BUTTON_CLICKED;
+            } else {
+              return status;
+            }
+          });
+        });
+      }
+
       if (isAllFieldsFilled) {
         // if all fields filled set tabsValidationStatus of current step to valid
         setTabsValidationStatus((tabsValidationStatus) => {
@@ -505,28 +520,13 @@ export const NewCourseTabs = () => {
           });
         });
 
-        // if user clicks on next tab of current tab then and if tabsNextButtonClickStatus is next_button_not_clicked then change status and move to clicked tab
-        if (
-          tabsNextButtonClickStatus[currentStep - 1] === NEXT_BUTTON_NOT_CLICKED
-        ) {
-          setTabsNextButtonClickStatus((tabsNextButtonClickStatus) => {
-            return tabsNextButtonClickStatus.map((status, index) => {
-              if (index === currentStep - 1) {
-                return NEXT_BUTTON_CLICKED;
-              } else {
-                return status;
-              }
-            });
-          });
-        }
-
         // if user clicks on next tab and if all the tabsNextButtonClickStatus is next_button_clicked then only move to clicked tab
         if (
           tabsNextButtonClickStatus
-            .slice(0, tab.value)
+            .slice(0, tab.value-1)
             .every((status) => status === NEXT_BUTTON_CLICKED) &&
           tabsValidationStatus
-            .slice(0, tab.value)
+            .slice(0, tab.value-1)
             .every((status) => status === VALID)
         ) {
           setCurrentStep(tab.value);
@@ -546,6 +546,7 @@ export const NewCourseTabs = () => {
       // if all the fields filled in the current step then we can only able to go to next step
     }
   };
+
 
   /**
    * @function handleClickReviewDetailsButton
