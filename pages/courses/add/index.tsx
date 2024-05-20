@@ -74,6 +74,7 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
 import { supabaseClient } from "src/utility";
+import { cn } from "src/lib/utils";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -750,7 +751,15 @@ export const NewCourseTabs = () => {
                           <Error />
                         )}
 
-                        {tab.label}
+                        <span
+                          className={cn(
+                            currentStep - 1 === index
+                              ? "text-[#7677F4] font-semibold"
+                              : "text-[#999999]"
+                          )}
+                        >
+                          {tab.label}
+                        </span>
                       </div>
                     </TabsTrigger>
                   );
