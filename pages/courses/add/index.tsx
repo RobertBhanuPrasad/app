@@ -719,7 +719,7 @@ export const NewCourseTabs = () => {
    */
   useEffect(() => {
     handleValidateTabs(formData);
-  }, [JSON.stringify(formData)]);
+  }, [JSON.stringify(formData), selectedProgramTypeData]);
 
   /**
    * This function is used to display success or error messages for each tab instantly when user change the form data
@@ -844,11 +844,13 @@ export const NewCourseTabs = () => {
                         )}
 
                         <span
-                          className={cn(
-                            currentStep - 1 === index
+                          className={
+                            currentStep - 1 === index ||
+                            tabsNextButtonClickStatus[index] ===
+                              NEXT_BUTTON_CLICKED
                               ? "text-[#7677F4] font-semibold"
                               : "text-[#999999]"
-                          )}
+                          }
                         >
                           {tab.label}
                         </span>
