@@ -35,7 +35,9 @@ export const getDefaultValues = async (
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
-  
+
+  if(data?.program_code) defaultValues.program_code = data?.program_code
+
 
   // Step 1
 

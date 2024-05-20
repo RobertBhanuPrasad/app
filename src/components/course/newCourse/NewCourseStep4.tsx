@@ -63,7 +63,7 @@ export default function CourseTable() {
   }
 
   //sorting the schedules
-  let sortedSchedules = formData.schedules.sort(
+  let sortedSchedules = formData?.schedules?.sort(
     (a: any, b: any) => {
       let aDate = new Date(a.date);
       aDate.setHours(a?.startHour, a?.startMinute);
