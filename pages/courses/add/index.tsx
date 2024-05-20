@@ -144,15 +144,14 @@ function NewCourse() {
     TIME_FORMAT_24_HOURS
   )?.id;
 
-    /**
+  /**
    * @constant iAmCoTeachingId
-   * @description thid const stores the id of the i am co teaching 
+   * @description thid const stores the id of the i am co teaching
    */
   const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_CO_TEACHING
   )?.id;
-
 
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
@@ -718,15 +717,17 @@ export const NewCourseTabs = () => {
         </p>
 
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-        {isAllFieldsValid4 == false && (formData?.program_fee_level_settings==undefined || formData?.program_fee_level_settings?.length==0) && (
-          <div className="flex gap-2">
-            <Error />
-            <p className="font-semibold text-[red] text-l -mt-1">
-              There is no price set for current settings. Select course type and
-              city/center.
-            </p>
-          </div>
-        )}
+        {isAllFieldsValid4 == false &&
+          (formData?.program_fee_level_settings == undefined ||
+            formData?.program_fee_level_settings?.length == 0) && (
+            <div className="flex gap-2">
+              <Error />
+              <p className="font-semibold text-[red] text-l -mt-1">
+                There is no price set for current settings. Select course type
+                and city/center.
+              </p>
+            </div>
+          )}
       </div>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
@@ -799,7 +800,7 @@ export const NewCourseTabs = () => {
                     <NewCourseStep6 />
                   </TabsContent>
                 </div>
-                <div className="flex self-end justify-center gap-4 w-full mt-10">
+                <div className="flex self-end justify-center gap-4 w-full my-10">
                   {currentStep > 1 && (
                     <Button
                       onClick={(e) => {
