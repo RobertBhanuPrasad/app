@@ -425,7 +425,7 @@ export function BaseTable<TData, TValue>({
 
         {/* If pagination set true then we have to show pagination  */}
         <div>
-          {total >= pageSize && (
+          {pagination &&total > pageSize  &&(
             <DataPagination
               setCurrent={setCurrent}
               current={current}
@@ -689,7 +689,7 @@ const {t} = useTranslation(["common", "new_strings"])
         </Button>
       )}
       {/* pages buttons */}
-      {total >= pageSize &&
+      {total > pageSize &&
         PagesArray.map((page: any, index: any) => (
           <div key={index}>
             {/* Check if the current page is a placeholder for ellipsis.If yes, display the ellipsis.Otherwise, display a button for the page. */}
