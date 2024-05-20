@@ -1588,9 +1588,9 @@ export const ExistingVenueListSection = ({
                   <EditIcon />
                   
                 </DialogTrigger>
-                <div className="absolute hidden group-hover:flex bottom-[-2px] right-10  w-max p-2 text-white bg-gray-800 rounded-lg font-sans text-[14px] font-semibold">
-      Select this checkbox to edit your venue
-      <div id="arrow" className="invisible absolute left-[260px] top-3 h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit" data-popper-arrow></div>
+                <div className="absolute hidden group-hover:flex bottom-[3px] right-[25px] w-max p-1 text-white bg-gray-800 rounded-lg font-sans text-[14px] font-semibold">
+      Select checkbox to edit your venue
+      <div id="arrow" className="invisible absolute left-[226px] top-3 h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit" data-popper-arrow></div>
 
     </div>
                 </div>
