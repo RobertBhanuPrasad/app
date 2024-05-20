@@ -871,6 +871,11 @@ export const BasicFilters: React.FC<{
                     e.stopPropagation();
                     //when we click on cross icon we need to clear the date
                     courseDateOnChange(undefined);
+                    //Here remove the selected course dates and update the form data
+                    setAllFilterData({
+                      ...formData,
+                      "course_date":""
+                    });
                   }}
                   id="cross-icon"
                   className="ml-auto"
