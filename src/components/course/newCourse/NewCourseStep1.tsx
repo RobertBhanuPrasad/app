@@ -57,7 +57,7 @@ function NewCourseStep1() {
       val.role_id?.order == NATIONAL_ADMIN
   );
   return (
-    <div>
+    <div className="w-full" >
       <RadioCards />
       <div className="mt-8 flex flex-row gap-7 ">
         <div className="flex gap-1 flex-col">
@@ -283,20 +283,22 @@ const RadioCards = () => {
   );
 
   return (
-    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
-      <div className="flex items-center flex-row gap-7">
+    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange} className="w-full" >
+      <div className="flex items-center flex-row gap-7 w-full">
         {hasTeacherRole && (
           //Added cursor not allowed to all cards if this is disabled
           <Label
             htmlFor={JSON.stringify(iAmTeachingId)}
-            className={`text-[#999999] font-normal ${
+            className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+            
+            ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
             }`}
           >
             <Card
-              className={` p-2 w-72 h-[106px] flex flex-row ${
+              className={` p-2  h-[106px] flex flex-row ${
                 value === iAmTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4] "
                   : ""
               }`}
             >
@@ -324,14 +326,16 @@ const RadioCards = () => {
         {hasTeacherRole && (
           <Label
             htmlFor={JSON.stringify(iAmCoTeachingId)}
-            className={`text-[#999999] font-normal ${
+            className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+            
+            ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
             } `}
           >
             <Card
-              className={` p-2 gap-2 w-72 h-[106px] flex flex-row ${
+              className={` p-2 gap-2 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                   : ""
               }`}
             >
@@ -357,14 +361,16 @@ const RadioCards = () => {
         )}
         <Label
           htmlFor={JSON.stringify(iAmOrganizerId)}
-          className={`text-[#999999] font-normal ${
+          className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+          
+          ${
             value === iAmOrganizerId ? "text-[#7677F4]" : ""
           }`}
         >
           <Card
-            className={`p-2 gap-2 w-72 h-[106px] flex flex-row ${
+            className={`p-2 gap-2 h-[106px] flex flex-row  ${
               value === iAmOrganizerId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                 : ""
             }`}
           >
