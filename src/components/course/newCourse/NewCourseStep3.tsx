@@ -467,11 +467,8 @@ const ScheduleComponent = ({
     TIME_FORMAT,
     TIME_FORMAT_12_HOURS
   )?.id;
-  const { t } = useTranslation(["common", "course.new_course"]);
+  const { t } = useTranslation(["common", "course.new_course","new_strings"]);
 
-  const handleDeleteSession = () => {
-    setDeleteSession(true)
-  }
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
       <div className="h-4 font-[#333333] font-normal flex text-xs">
@@ -522,21 +519,41 @@ const ScheduleComponent = ({
           )}
           {formData?.schedules?.length > 1 && (
            <Dialog open={deleteSession} onOpenChange={setDeleteSession}>
-           <DialogTrigger
-             onClick={handleDeleteSession}
+             <DialogTrigger
+             onClick={() => {
+              setDeleteSession(true)
+             }}
              className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
-           >
+             >
              <Delete />
              {t('delete_button')}
-           </DialogTrigger>
-           <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-             <DeleteVenueComponent
-               handleDeleteVenue={() => {
-                 handleRemoveSession(index)
-               }}
-             />
-           </DialogContent>
-         </Dialog>
+             </DialogTrigger>
+             <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+             <DialogHeader>
+             <DialogTitle className="flex justify-center">{t('delete_button')}</DialogTitle>
+             <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
+               {t('new_strings:are_you_sure_you_want_to_delete_the_session')}
+             </DialogDescription>
+             </DialogHeader>
+             <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
+             <DialogClose>
+             <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+                {t('no_button')}
+             </Button>
+             </DialogClose>
+             <DialogClose>
+             <Button
+              className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+              onClick={() => {
+              handleRemoveSession(index)
+              }}
+             >
+             {t('yes')}
+             </Button>
+             </DialogClose>
+             </DialogFooter>
+             </DialogContent>
+           </Dialog>
           )}
         </div>
       </div>
