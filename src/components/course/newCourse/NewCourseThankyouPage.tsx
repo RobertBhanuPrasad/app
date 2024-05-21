@@ -211,9 +211,9 @@ useEffect(() => {
                     {t("registration_link")}
                   </p>
                   <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
-                    <h4 id="textToCopy" className="">
-                      {data?.data?.registration_link}
-                    </h4>
+                    <a id="textToCopy" className="" href={data?.data?.registration_link} target="_blank">
+                     {data?.data?.registration_link}
+                    </a>
                     <div
                       onClick={() => {
                         handleCopyDetailsPageLink(data?.data?.registration_link)
