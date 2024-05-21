@@ -523,7 +523,7 @@ const OrganizationDropDown = () => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   return (
-    <div className="w-80 h-20">
+    <div className="h-20">
       <div className="flex gap-1 flex-col">
         <div className="flex flex-row gap-1 items-center">
           <Text className="text-xs font-normal text-[#333333]">
