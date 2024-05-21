@@ -456,6 +456,7 @@ const ScheduleComponent = ({
 }) => {
   const { errors }: any = useFormState();
   const [open, setOpen] = useState(false);
+  const [deleteSession, setDeleteSession] = useState(false);
 
   const { watch } = useFormContext();
   const formData = watch();
@@ -467,6 +468,10 @@ const ScheduleComponent = ({
     TIME_FORMAT_12_HOURS
   )?.id;
   const { t } = useTranslation(["common", "course.new_course"]);
+
+  const handleDeleteSession = () => {
+    setDeleteSession(true)
+  }
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
       <div className="h-4 font-[#333333] font-normal flex text-xs">
@@ -516,15 +521,22 @@ const ScheduleComponent = ({
             </div>
           )}
           {index != 0 && (
-            <div
-              onClick={() => {
-                handleRemoveSession(index);
-              }}
-              className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
-            >
-              <Delete />
-              {t("delete_button")}
-            </div>
+           <Dialog open={deleteSession} onOpenChange={setDeleteSession}>
+           <DialogTrigger
+             onClick={handleDeleteSession}
+             className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
+           >
+             <Delete />
+             {t('delete_button')}
+           </DialogTrigger>
+           <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+             <DeleteVenueComponent
+               handleDeleteVenue={() => {
+                 handleRemoveSession(index)
+               }}
+             />
+           </DialogContent>
+         </Dialog>
           )}
         </div>
       </div>
