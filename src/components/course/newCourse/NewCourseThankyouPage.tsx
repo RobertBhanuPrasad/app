@@ -207,10 +207,10 @@ useEffect(() => {
               {/* We have to display the links only when the course is active */}
               <div className="flex items-center justify-center gap-4 mt-4 ">
                 <div className="relative">
-                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 px-1">
                     {t("registration_link")}
                   </p>
-                  <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
+                  <div className="flex justify-between items-center gap-2 p-3 border rounded-2xl min-w-72 h-[36px]">
                     <h4 id="textToCopy" className="">
                       {data?.data?.registration_link}
                     </h4>

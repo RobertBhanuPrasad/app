@@ -540,7 +540,7 @@ const ScheduleComponent = ({
           )}
         </div>
       </div>
-
+  
       {errors?.schedules &&
         errors?.schedules?.length > 0 &&
         errors?.schedules?.[index] && (
