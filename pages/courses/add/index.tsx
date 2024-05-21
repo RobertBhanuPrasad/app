@@ -67,8 +67,8 @@ import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
-import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import { useTranslation } from "next-i18next";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -144,15 +144,14 @@ function NewCourse() {
     TIME_FORMAT_24_HOURS
   )?.id;
 
-    /**
+  /**
    * @constant iAmCoTeachingId
-   * @description thid const stores the id of the i am co teaching 
+   * @description thid const stores the id of the i am co teaching
    */
   const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
     PROGRAM_ORGANIZER_TYPE,
     I_AM_CO_TEACHING
   )?.id;
-
 
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
@@ -299,14 +298,16 @@ function NewCourse() {
   }
 
   return (
-    <div className="mx-8">
-      <Form
-        onSubmit={onSubmit}
-        defaultValues={defaultValues}
-        schema={validationSchema(iAmCoTeachingId as number)}
-      >
-        <NewCourseTabs />
-      </Form>
+    <div className="mx-auto min-w-[1000px] w-full max-w-[1640px] px-8 pb-8">
+      <div>
+        <Form
+          onSubmit={onSubmit}
+          defaultValues={defaultValues}
+          schema={validationSchema(iAmCoTeachingId as number)}
+        >
+          <NewCourseTabs />
+        </Form>
+      </div>
     </div>
   );
 }
@@ -442,7 +443,7 @@ export const NewCourseTabs = () => {
   const formData = getValues();
 
   const contentStylings =
-    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
+    "inline-flex w-full !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background";
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
 
@@ -547,6 +548,7 @@ export const NewCourseTabs = () => {
         ) : (
           <Error />
         ),
+      component: <NewCourseStep1 />,
     },
     {
       value: COURSE_DETAILS_STEP_NUMBER,
@@ -580,6 +582,7 @@ export const NewCourseTabs = () => {
         ) : (
           <Error />
         ),
+      component: <NewCourseStep2 />,
     },
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
@@ -613,6 +616,7 @@ export const NewCourseTabs = () => {
         ) : (
           <Error />
         ),
+      component: <NewCourseStep3 />,
     },
     {
       value: FEE_STEP_NUMBER,
@@ -640,6 +644,7 @@ export const NewCourseTabs = () => {
         ) : (
           <Error />
         ),
+      component: <NewCourseStep4 />,
     },
     {
       value: ACCOMMODATION_STEP_NUMBER,
@@ -673,6 +678,7 @@ export const NewCourseTabs = () => {
         ) : (
           <Error />
         ),
+      component: <NewCourseStep5 />,
     },
     {
       value: CONTACT_INFO_STEP_NUMBER,
@@ -706,6 +712,7 @@ export const NewCourseTabs = () => {
         ) : (
           <Error />
         ),
+      component: <NewCourseStep6 />,
     },
   ];
 
@@ -718,20 +725,22 @@ export const NewCourseTabs = () => {
         </p>
 
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-        {isAllFieldsValid4 == false && (formData?.program_fee_level_settings==undefined || formData?.program_fee_level_settings?.length==0) && (
-          <div className="flex gap-2">
-            <Error />
-            <p className="font-semibold text-[red] text-l -mt-1">
-              There is no price set for current settings. Select course type and
-              city/center.
-            </p>
-          </div>
-        )}
+        {isAllFieldsValid4 == false &&
+          (formData?.program_fee_level_settings == undefined ||
+            formData?.program_fee_level_settings?.length == 0) && (
+            <div className="flex gap-2">
+              <Error />
+              <p className="font-semibold text-[red] text-l -mt-1">
+                There is no price set for current settings. Select course type
+                and city/center.
+              </p>
+            </div>
+          )}
       </div>
-      <div className="mt-4 bg-[white]">
+      <div className="bg-[white] mt-4 shadow-2xl rounded-[24px]">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row overflow-x-hidden">
-            <TabsList className="h-[513px] bg-[#7677F41B]  w-[238px] rounded-l-[24px] shadow-md py-10">
+            <TabsList className="h-[517px] bg-[#7677F41B] min-w-[238px] rounded-l-[24px] shadow-md py-10">
               <div className="flex flex-col  h-full gap-4 ">
                 {stepTitles.map((tab, index) => (
                   <TabsTrigger
@@ -759,86 +768,62 @@ export const NewCourseTabs = () => {
               </div>
             </TabsList>
 
-            <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
-              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar overflow-x-hidden">
-                <div className="flex flex-col w-full justify-between">
-                  <TabsContent
-                    value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
-                    className={contentStylings}
+            <div className="bg-[white] w-full rounded-[24px] p-6 overflow-auto h-[517px] flex flex-col justify-between">
+              <div>
+                {stepTitles?.map((step, index) => {
+                  if (index + 1 === currentStep)
+                    return (
+                      <TabsContent
+                        value={JSON.stringify(index + 1)}
+                        className={contentStylings}
+                      >
+                        {step.component}
+                      </TabsContent>
+                    );
+                  else {
+                    return <></>;
+                  }
+                })}
+              </div>
+              <div className="flex justify-center gap-4 w-full mb-2 mt-6">
+                {currentStep > 1 && (
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleClickPrevious();
+                    }}
+                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
                   >
-                    <NewCourseStep1 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(COURSE_DETAILS_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep2 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(TIME_AND_VENUE_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep3 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(FEE_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep4 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(ACCOMMODATION_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep5 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(CONTACT_INFO_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep6 />
-                  </TabsContent>
-                </div>
-                <div className="flex self-end justify-center gap-4 w-full mt-2">
-                  {currentStep > 1 && (
-                    <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleClickPrevious();
-                      }}
-                      className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
-                    >
-                      {t("previous_button")}
-                    </Button>
-                  )}
+                    {t("previous_button")}
+                  </Button>
+                )}
 
-                  {currentStep < stepTitles.length && (
-                    <Button
-                      className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        await handleClickNext(
-                          validationFieldsStepWise[currentStep - 1]
-                        );
-                      }}
-                    >
-                      {t("next")}
-                    </Button>
-                  )}
+                {currentStep < stepTitles.length && (
+                  <Button
+                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      await handleClickNext(
+                        validationFieldsStepWise[currentStep - 1]
+                      );
+                    }}
+                  >
+                    {t("next")}
+                  </Button>
+                )}
 
-                  {currentStep == CONTACT_INFO_STEP_NUMBER && (
-                    <Button
-                      className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-                      onClick={async () => {
-                        await handleClickReviewDetailsButton(
-                          validationFieldsStepWise[currentStep - 1]
-                        );
-                      }}
-                    >
-                      {t("course.new_course:contact_info_tab.review_details")}
-                    </Button>
-                  )}
-                </div>
+                {currentStep == CONTACT_INFO_STEP_NUMBER && (
+                  <Button
+                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
+                    onClick={async () => {
+                      await handleClickReviewDetailsButton(
+                        validationFieldsStepWise[currentStep - 1]
+                      );
+                    }}
+                  >
+                    {t("course.new_course:contact_info_tab.review_details")}
+                  </Button>
+                )}
               </div>
             </div>
           </div>

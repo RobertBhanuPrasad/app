@@ -45,7 +45,7 @@ export default function CourseTable() {
   const formData = watch();
 
   return (
-    <div className="flex flex-col gap-8 w-[70vw]">
+    <div className="flex flex-col gap-8 w-full">
       <ResidentialCourse />
       {formData?.is_residential_program == true && (
         <div>
