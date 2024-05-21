@@ -717,7 +717,7 @@ export const NewCourseTabs = () => {
   ];
 
   return (
-    <div className="">
+    <div>
       <div className="flex gap-20 items-center">
         <p className="font-semibold text-2xl">
           {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
@@ -740,7 +740,7 @@ export const NewCourseTabs = () => {
       <div className="bg-[white] mt-4 shadow-2xl rounded-[24px]">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row overflow-x-hidden">
-            <TabsList className="h-[513px] bg-[#7677F41B] min-w-[238px] rounded-l-[24px] shadow-md py-10">
+            <TabsList className="h-[517px] bg-[#7677F41B] min-w-[238px] rounded-l-[24px] shadow-md py-10">
               <div className="flex flex-col  h-full gap-4 ">
                 {stepTitles.map((tab, index) => (
                   <TabsTrigger
