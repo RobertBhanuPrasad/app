@@ -6,6 +6,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 ::-webkit-scrollbar {
   width: 4px;
   height: 6px;
@@ -156,9 +158,11 @@
 @layer base {
   * {
     @apply border-border;
+    font-family: "Open Sans", sans-serif;
   }
   body {
     @apply bg-background text-foreground;
+
   }
 }
 
