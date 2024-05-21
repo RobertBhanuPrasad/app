@@ -298,7 +298,7 @@ function NewCourse() {
   }
 
   return (
-    <div className="mx-auto min-w-[1000px] w-full max-w-[1640px] h-screen px-8">
+    <div className="mx-auto min-w-[1000px] w-full max-w-[1640px] px-8 pb-8">
       <div>
         <Form
           onSubmit={onSubmit}
