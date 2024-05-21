@@ -45,7 +45,7 @@ export default function CourseTable() {
   const formData = watch();
 
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <div className="flex flex-col gap-8 w-[70vw]">
       <ResidentialCourse />
       {formData?.is_residential_program == true && (
         <div>
@@ -79,16 +79,16 @@ export const AccomdationComponent = () => {
   const accommodations = formData.accommodation || [];
 
   return (
-    <div className="rounded-[12px]  border border-[#D6D7D8]">
+    <div className="rounded-[12px] overflow-x-scroll border border-[#D6D7D8]">
       <div className="flex h-[48px]">
-        <div className="p-4 bg-[#7677F41A] w-[288px] ">{t("course.new_course:accommodation_tab.accommodation_type")}</div>
-        <div className="p-4 bg-[#7677F41A]  w-[288px]">
+        <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">{t("course.new_course:accommodation_tab.accommodation_type")}</div>
+        <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">
           {t("new_strings:fee_per_person")} (MYR) {t("new_strings:inc_vat")}
         </div>
-        <div className="p-4  bg-[#7677F41A]  w-[288px]">
+        <div className="p-4  bg-[#7677F41A] min-w-[288px] w-full">
         {t("course.new_course:accommodation_tab.number_of_spots")}
         </div>
-        <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">{t("actions")}</div>
+        <div className="p-4 w-24 min-w-[200px] w-full bg-[#7677F41A] ">{t("actions")}</div>
       </div>
 
       <div className="my-[10px]">
@@ -139,16 +139,16 @@ export const AccommodationField = ({
 
   return (
     <div className="flex items-center w-full h-auto">
-      <div className="w-[288px] p-[10px]">
+      <div className="min-w-[288px] w-full p-[10px]">
         <AccommodationType index={index} />
       </div>
-      <div className="p-4 w-[300px] p-[10px]">
+      <div className="p-4 min-w-[288px] w-full p-[10px]">
         <FeePerPerson index={index} />
       </div>
-      <div className="p-4 w-[288px] p-[10px]">
+      <div className="p-4 min-w-[288px] w-full p-[10px]">
         <AccomdationSpot index={index} />
       </div>
-      <div className="w-[151px] p-[10px] flex">
+      <div className="min-w-[130spx] w-full p-[10px] flex">
         <AccomdationAction index={index} remove={remove} append={append} />
       </div>
 
@@ -269,7 +269,7 @@ const FeePerPerson = ({ index }: any) => {
   });
 
   return (
-    <div className="w-full">
+    <div className='h-[40px] w-full'>
       {/* Input field for fees */}
       <Input
         value={value}
@@ -278,9 +278,11 @@ const FeePerPerson = ({ index }: any) => {
         }}
         error={error ? true : false}
       />
+      <div>
       {error && (
         <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
       )}
+      </div>
     </div>
   );
 };
@@ -368,7 +370,7 @@ export const AccommodationType = ({
   }, []);
 
   return (
-    <div className="w-full ">
+    <div className='h-[40px] w-full'>
       <Select
         value={value}
         onValueChange={(value: any) => {
@@ -417,7 +419,7 @@ export const AccomdationSpot = ({ index }: { index: number }) => {
   });
 
   return (
-    <div className="w-full">
+    <div className='h-[40px] w-full'>
       {/* Input field for number of spots available */}
       <Input
         value={value}

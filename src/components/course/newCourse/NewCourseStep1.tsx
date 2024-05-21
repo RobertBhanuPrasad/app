@@ -41,6 +41,7 @@ import { IsEditCourse } from "./EditCourseUtil";
 import { useTranslation } from "next-i18next";
 import { Text } from "src/ui/TextTags";
 import { useRouter } from "next/router";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -132,9 +133,11 @@ const RegistrationGateway = () => {
   );
 };
 const RadioCards = () => {
-  const { clearErrors, watch } = useFormContext();
+  const { clearErrors, watch,setValue } = useFormContext();
 
   const { t } = useTranslation(["course.new_course", "new_strings"]);
+
+  const { setProgramCreatedById } = newCourseStore();
   const {
     field: { value, onChange },
     fieldState: { error: radioError },
@@ -166,19 +169,35 @@ const RadioCards = () => {
     name: NewCourseStep2FormNames?.teacher_ids,
   });
 
+  const router = useRouter();
+
+
+
   const handleOnChange = (val: string) => {
     onChange(parseInt(val));
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
-    if (parseInt(val) != iAmOrganizerId) {
-      //If teachers does not exist prefill with login user
-      if (!teachers) {
+    if (parseInt(val) == iAmTeachingId) {
+      //Requirement: Need to show only one teacher(login user) in teacher drop-down if I am teaching is selected.
+      teachersOnChange([loginInTeacherData]);
+      setTimeout(() => {
+        clearErrors("teacher_ids");
+      }, 10);
+    }
+
+    //Requirement: Need to prefill teacher drop-down if user select I am co-teaching.
+    if (parseInt(val) == iAmCoTeachingId) {
+      //If teachers are not present just prefill with login user
+      if (teachers == undefined) {
         teachersOnChange([loginInTeacherData]);
       }
       //If already teacher are exist then check weather login user is present in teacher drop down or not. If not prefill with login user
       else if (
-        !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
+        !teachers?.some((obj: any) => _.isEqual(obj, loginInTeacherData))
       ) {
         teachersOnChange([loginInTeacherData, ...teachers]);
+        setTimeout(() => {
+          clearErrors("teacher_ids");
+        }, 10);
       }
     }
     // Check if the selected value is equal to the organizer's ID
@@ -193,6 +212,20 @@ const RadioCards = () => {
         }, 10);
       }
     }
+
+    // If I am changing the program created by then we are removing the course type course type id and the course alias name 
+    // Because if we chanage the created by and then the course type is not present for that created type then 
+    if(!IsEditCourse(router?.pathname)){
+      setValue("program_type_id", "");
+    setValue("program_type", "");
+    setValue("program_alias_name_id", "");
+
+    setTimeout(()=>{
+      clearErrors(['program_type_id','program_type','program_alias_name_id'])
+    },10)
+    }
+    // we are storing the program created by in the zustand variable to use it in the validatios
+    setProgramCreatedById(val);
   };
 
   /**
@@ -261,7 +294,7 @@ const RadioCards = () => {
             }`}
           >
             <Card
-              className={` p-2 w-80 h-[106px] flex flex-row ${
+              className={` p-2 w-72 h-[106px] flex flex-row ${
                 value === iAmTeachingId
                   ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
                   : ""
@@ -296,7 +329,7 @@ const RadioCards = () => {
             } `}
           >
             <Card
-              className={` p-2 gap-2 w-80 h-[106px] flex flex-row ${
+              className={` p-2 gap-2 w-72 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
                   ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                   : ""
@@ -329,7 +362,7 @@ const RadioCards = () => {
           }`}
         >
           <Card
-            className={`p-2 gap-2 w-80 h-[106px] flex flex-row ${
+            className={`p-2 gap-2 w-72 h-[106px] flex flex-row ${
               value === iAmOrganizerId
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
                 : ""
@@ -370,6 +403,9 @@ const OrganizationDropDown = () => {
    */
   const pathname = usePathname();
 
+  const { clearErrors, watch } = useFormContext();
+
+  const formData = watch();
   /**
    * Checking whether the url contains the edit or not
    */
@@ -378,6 +414,8 @@ const OrganizationDropDown = () => {
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
+
+  const { setValue } = useFormContext();
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
@@ -398,6 +436,79 @@ const OrganizationDropDown = () => {
   } = useController({
     name: NewCourseStep1FormNames?.organization_id,
   });
+
+  const {
+    field: { onChange: teachersOnChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.teacher_ids,
+  });
+
+  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_ORGANIZER
+  )?.id;
+
+  const { data: loginUserData }: any = useGetIdentity();
+
+  const loginInTeacherData = loginUserData?.userData?.id;
+
+  const handleClearDependencyValues = () => {
+    setValue("program_type_id", "");
+    setValue("program_type", "");
+    setValue("program_alias_name_id", "");
+    setValue("teacher_ids", []);
+
+    //Handling teachers drop down
+    if (formData?.program_created_by != iAmOrganizerId) {
+      //Requirement: If teacher or co-teacher is selected Need to prefill login user in teacher dropdown
+      teachersOnChange([loginInTeacherData]);
+      setTimeout(() => {
+        clearErrors("teacher_ids");
+      }, 10);
+    }
+    setValue("assistant_teacher_ids", []);
+    setValue("language_ids", []);
+    setValue("translation_language_ids", []);
+    setValue("max_capacity", "");
+    setValue("online_url", "");
+    setValue("existingVenue", undefined);
+    setValue("newVenue", undefined);
+    setValue("is_existing_venue", "");
+    setValue("state_id", "");
+    setValue("city_id", "");
+    setValue("center_id", "");
+    setValue("is_residential_program", false);
+
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings", []);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
+
+    // we have to clear errors after we modify the values
+    setTimeout(() => {
+      clearErrors([
+        "program_type_id",
+        "program_alias_name_id",
+        "teacher_ids",
+        "assistant_teacher_ids",
+        "language_ids",
+        "translation_language_ids",
+        "max_capacity",
+        "online_url",
+        "existingVenue",
+        "isExistingVenue",
+        "is_existing_venue",
+        "newVenue",
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period",
+        "state_id",
+        "city_id",
+        "center_id",
+        "is_residential_program",
+      ]);
+    }, 10);
+  };
 
   const handleSearch = (val: { target: { value: string } }) => {
     onSearch(val.target.value);
@@ -424,6 +535,7 @@ const OrganizationDropDown = () => {
           value={value}
           onValueChange={(value: any) => {
             onChange(value);
+            handleClearDependencyValues();
           }}
           //disabling the organization dropdown when it is edit
           disabled={isEditCourse}
@@ -476,7 +588,7 @@ const ProgramOrganizerDropDown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const {
     field: { value, onChange },
@@ -520,9 +632,9 @@ const ProgramOrganizerDropDown = () => {
     },
   });
 
-  const { watch } = useFormContext()
+  const { watch } = useFormContext();
 
-  const { created_by_user_id } = watch()
+  const { created_by_user_id } = watch();
 
   const handleOnBottomReached = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
@@ -550,11 +662,14 @@ const ProgramOrganizerDropDown = () => {
         }}
         onChange={onChange}
         getOptionProps={(option: number) => {
-          //Here this if condition is says that 
-          // "option === loginUserData?.userData?.id" this conditon is for if login user wants to creates a new course we disable the primary organizer  
+          //Here this if condition is says that
+          // "option === loginUserData?.userData?.id" this conditon is for if login user wants to creates a new course we disable the primary organizer
           // "option === created_by_user_id" this conditon is for if any login user wants to edit course than also we are disabling the program orgnizer
           // If the course is copying then we need to disable the organizer who is logged in only
-          if ((option === loginUserData?.userData?.id) || (option === created_by_user_id && IsEditCourse(router?.pathname))) {
+          if (
+            option === loginUserData?.userData?.id ||
+            (option === created_by_user_id && IsEditCourse(router?.pathname))
+          ) {
             return {
               disable: true,
             };

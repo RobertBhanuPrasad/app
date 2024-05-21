@@ -40,10 +40,12 @@ import {
 } from "src/constants/CourseConstants";
 import {
   PAYMENT_MODE,
+  PROGRAM_ORGANIZER_TYPE,
   TIME_FORMAT,
   VISIBILITY,
 } from "src/constants/OptionLabels";
 import {
+  I_AM_CO_TEACHING,
   PAY_ONLINE,
   PUBLIC,
   SUPER_ADMIN,
@@ -142,6 +144,15 @@ function NewCourse() {
     TIME_FORMAT_24_HOURS
   )?.id;
 
+  /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
+
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
   const { newCourseData } = newCourseStore();
@@ -198,7 +209,7 @@ function NewCourse() {
   if (IsEditCourse(pathname) || IsCopyCourse) {
     defaultValues = newCourseData;
     //REQUIRMENT if the course is copying then we need to prefill the organizers of that cousre and we need to add the logged in user as a primary organizer
-    if (IsCopyCourse) {
+    if (IsCopyCourse && newCourseData) {
       defaultValues.organizer_ids = _.uniq([
         loggedUserData,
         ...newCourseData?.organizer_ids,
@@ -291,7 +302,7 @@ function NewCourse() {
       <Form
         onSubmit={onSubmit}
         defaultValues={defaultValues}
-        schema={validationSchema()}
+        schema={validationSchema(iAmCoTeachingId as number)}
       >
         <NewCourseTabs />
       </Form>
@@ -706,19 +717,21 @@ export const NewCourseTabs = () => {
         </p>
 
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-        {isAllFieldsValid4 == false && (
-          <div className="flex gap-2">
-            <Error />
-            <p className="font-semibold text-[red] text-l -mt-1">
-              There is no price set for current settings. Select course type and
-              city/center.
-            </p>
-          </div>
-        )}
+        {isAllFieldsValid4 == false &&
+          (formData?.program_fee_level_settings == undefined ||
+            formData?.program_fee_level_settings?.length == 0) && (
+            <div className="flex gap-2">
+              <Error />
+              <p className="font-semibold text-[red] text-l -mt-1">
+                There is no price set for current settings. Select course type
+                and city/center.
+              </p>
+            </div>
+          )}
       </div>
       <div className="mt-4 bg-[white]">
         <Tabs value={JSON.stringify(currentStep)}>
-          <div className="flex flex-row">
+          <div className="flex flex-row overflow-x-hidden">
             <TabsList className="h-[513px] bg-[#7677F41B]  w-[238px] rounded-l-[24px] shadow-md py-10">
               <div className="flex flex-col  h-full gap-4 ">
                 {stepTitles.map((tab, index) => (
@@ -748,7 +761,7 @@ export const NewCourseTabs = () => {
             </TabsList>
 
             <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
-              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar">
+              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar overflow-x-hidden">
                 <div className="flex flex-col w-full justify-between">
                   <TabsContent
                     value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
@@ -787,7 +800,7 @@ export const NewCourseTabs = () => {
                     <NewCourseStep6 />
                   </TabsContent>
                 </div>
-                <div className="flex self-end justify-center gap-4 w-full mt-2">
+                <div className="flex self-end justify-center gap-4 w-full my-10">
                   {currentStep > 1 && (
                     <Button
                       onClick={(e) => {

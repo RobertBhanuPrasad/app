@@ -26,6 +26,12 @@ interface NewCourseStore {
   setAllFilterData: (by: any) => void;
   programId: number;
   setProgramId: (by: number) => void;
+  setProgramCreatedById : (by: any) => void;
+  /**
+   * This variable is used to store the id of the program created by id
+   * which is i am organizing or i am teaching or i am co-teaching
+   */
+  programCreatedById :any
 
   /**
    * We have to use this variable to store the default values of the course accounting form
@@ -57,6 +63,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   viewCourseAccountingRejectedModal: false,
 
   courseAccountingFormDefaultValues: {},
+  programCreatedById:null,
   setViewRejectedModal: (data: boolean) => {
     set(() => ({
       viewRejectedModal: data,
@@ -128,4 +135,9 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       viewCourseAccountingRejectedModal: data,
     }));
   },
+  setProgramCreatedById : (data: any) => {
+    set(() => ({
+      programCreatedById:data,
+    }))
+  }
 }));

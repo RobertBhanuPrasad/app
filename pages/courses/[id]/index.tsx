@@ -10,7 +10,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { authProvider } from "src/authProvider";
 import {
   COURSE_ACCOUNTING_STATUS,
@@ -46,7 +46,6 @@ import {
   handleTabsBasedOnStatus,
   isApproved,
   isCourseAccountingFormApprovalNeeded,
-  isViewCourseAccountingTabDisplay,
 } from "@components/courseBusinessLogic";
 import CopyIcon from "@public/assets/CopyIcon";
 import Cross from "@public/assets/Cross";
@@ -60,6 +59,7 @@ import Tick from "@public/assets/Tick.png";
 import TwitterIcon from "@public/assets/TwitterIcon";
 import WhatsappIcon from "@public/assets/WhatsappIcon";
 import { useSearchParams } from "next/navigation";
+import { translatedText } from "src/common/translations";
 import {
   COURSE_ACCOUNTING_FORM_TAB,
   COURSE_DETAILS_TAB,
@@ -67,6 +67,7 @@ import {
   REVENUE_SUMMARY_TAB,
   VIEW_COURSE_ACCOUNTING_FORM_TAB,
 } from "src/constants/CourseConstants";
+import { Text } from "src/ui/TextTags";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -98,8 +99,6 @@ import { Textarea } from "src/ui/textarea";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
-import { translatedText } from "src/common/translations";
-import { Text } from "src/ui/TextTags";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -127,7 +126,7 @@ function ViewDetails() {
     id: Id,
     meta: {
       select:
-        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))",
+        "*,program_code,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required,is_online_program),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name,country_id(name))),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))",
     },
   });
 
@@ -142,8 +141,7 @@ function ViewDetails() {
       courseData?.data?.program_schedules?.length - 1
     ]?.end_time
   );
-
-  const countryName = "India";
+  const countryName = `${courseData?.data?.venue_id?.state_id?.country_id?.name}`;
   const { t } = useTranslation([
     "course.view_course",
     "new_strings",
@@ -245,17 +243,16 @@ function ViewDetails() {
     PENDING_REVIEW
   )?.id;
 
-
   return (
     <div className="flex flex-col">
       <div className="mx-8">
         <div className="flex flex-row justify-between">
           <div className="text-[32px] font-semibold">
-            {courseData?.data?.program_alias_name_id
-              ? translatedText(
-                  courseData?.data?.program_alias_name_id?.alias_name
-                )
-              : translatedText(courseData?.data?.program_type_id?.name)}
+            {courseData?.data?.program_code +
+                  " " +
+
+                  translatedText(courseData?.data?.program_type_id?.name)
+            }
           </div>
           <div className="flex items-center gap-4">
             <DisplayingCourseStatus
@@ -274,8 +271,16 @@ function ViewDetails() {
                 <ParticipantsIcon />
               </div>
               <Text
-                onClick={() => router.push(`/courses/${Id}/participants/list`)}
-                className="cursor-pointer text-[#7677F4] font-semibold"
+                onClick={
+                  courseData?.data?.participant_count !== 0
+                    ? () => router.push(`/courses/${Id}/participants/list`)
+                    : undefined
+                }
+                className={`text-[#7677F4] font-semibold ${
+                  courseData?.data?.participant_count === 0
+                    ? ""
+                    : "cursor-pointer"
+                }`}
               >
                 {courseData?.data?.participant_count}
               </Text>
@@ -320,10 +325,29 @@ function ViewDetails() {
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
           <LocationIcon />
-          {courseData?.data?.venue_id?.address},
-          {courseData?.data?.venue_id?.city_id?.name},
-          {courseData?.data?.venue_id?.state_id?.name}, {countryName},
-          {courseData?.data?.venue_id?.postal_code}
+          {/* If program is offline need to show location details (address) */}
+          {courseData?.data?.program_type_id?.is_online_program == false ? (
+            <>
+              {courseData.data.venue_id.address &&
+                `${courseData.data.venue_id.address}, `}
+              {courseData.data.venue_id.city_id &&
+                `${courseData.data.venue_id.city_id.name}, `}
+              {courseData.data.venue_id.state_id &&
+                `${courseData.data.venue_id.state_id.name}, `}
+              {countryName}
+              {courseData.data.venue_id.postal_code &&
+                `, ${courseData.data.venue_id.postal_code}`}
+            </>
+          ) : (
+            //If Program is online need to show online. On clicking it navigate to respective URL
+            <a
+              href={courseData?.data?.online_url}
+              className="text-indigo-600 hover:text-indigo-800"
+              target="_blank"
+            >
+              {t("new_strings:online")}
+            </a>
+          )}
         </div>
 
         <div className="flex flex-row items-center gap-2 w-full justify-end ">
@@ -728,7 +752,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false);
   const [cancelSuccessModalOpen, setCancelSuccessModalOpen] = useState(false);
 
-  const { setNewCourseData, setViewPreviewPage } = newCourseStore();
+  const { setNewCourseData, setViewPreviewPage,setProgramCreatedById } = newCourseStore()
   const options = DisplayOptions(
     courseData?.status_id?.id,
     courseData?.program_accounting_status_id,
@@ -764,9 +788,17 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
       // we have to delete schedules when user click on copy course and other we need to prefill
 
-      defaultValues = _.omit(defaultValues, ["id", "schedules"]);
-      setNewCourseData(defaultValues);
-      router.push({ pathname: "/courses/add", query: { action: "Copy" } });
+      defaultValues = _.omit(defaultValues, ['id', 'schedules'])
+      //remove the id, program_id from each object in program_fee_level_settings array
+      if (defaultValues?.program_fee_level_settings) {
+        defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
+          _.omit(setting, ['id', 'program_id'])
+        );
+      }
+      setNewCourseData(defaultValues)
+      // we are storing the program created by in the zustand variable to use it in the validation of the co-teaching
+      setProgramCreatedById(defaultValues?.program_created_by)
+      router.push({ pathname: '/courses/add', query: { action: 'Copy' } })
     }
   };
 
@@ -827,8 +859,8 @@ export const ActionsDropDown = ({ courseData }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
-          <SelectValue placeholder={t("actions")} />
+        <SelectTrigger className="w-[192px] border !text-[#333333] !font-semibold !border-[#999999]">
+          <SelectValue placeholder={t('actions')} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
