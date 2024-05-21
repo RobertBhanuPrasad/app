@@ -792,7 +792,7 @@ export const NewCourseTabs = () => {
                       e.preventDefault();
                       handleClickPrevious();
                     }}
-                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
+                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold rounded-xl"
                   >
                     {t("previous_button")}
                   </Button>
