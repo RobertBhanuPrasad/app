@@ -101,7 +101,7 @@ function NewCourseStep3() {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-[75vw]">
+    <div className="space-y-8 w-full">
       <div>
         {programTypeData?.data?.is_online_program === true ? (
           <OnlineProgram />
@@ -177,13 +177,13 @@ const OnlineProgram = () => {
           {t("course.new_course:time_and_venue_tab.specific_location")}
         </div>
         <div className="flex gap-7">
-          <div className="w-[33%]">
+          <div className="flex-1">
             <StateDropDown name="state_id" onChange={handleRemoveFeeLevels} />
           </div>
-          <div className="w-[33%]">
+          <div className="flex-1">
             <CityDropDown name="city_id" onChange={handleRemoveFeeLevels}/>
           </div>
-          <div className="w-[33%]">
+          <div className="flex-1">
             <CenterDropDown name="center_id" onChange={handleRemoveFeeLevels}/>
           </div>
         </div>
@@ -248,11 +248,11 @@ const SchedulesHeader = () => {
   });
 
   return (
-    <div className="h-9 flex ">
-      <div className="font-semibold text-[#333333] mr-[375px] flex items-center">
+    <div className="h-9 flex">
+      <div className="font-semibold text-[#333333] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
-      <div className="flex gap-4 w-[434px]">
+      <div className="flex gap-4 w-[434px] ml-auto">
         <div className={`w-[161px]   ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
           <Select
             value={hoursFormat}
@@ -696,9 +696,9 @@ const Venue = () => {
         value={value}
         onValueChange={(val)=>{onChange(val);handleRemoveFeeLevel();}}
       >
-        <Label htmlFor="existing-venue">
+        <Label htmlFor="existing-venue" className="flex-[1]">
           <div
-            className={`rounded-[16px] min-w-[450px] w-[80%] h-[118px]  relative flex py-[24px] px-4 flex-col ${
+            className={`rounded-[16px] h-[118px] relative flex py-[24px] px-4 flex-col ${
               value === "existing-venue"
                 ? "border border-[#7677F4]"
                 : "border border-[#D6D7D8]"
@@ -733,7 +733,7 @@ const Venue = () => {
                 {existingVenue ? (
                   <ExistingVenueDetails />
                 ) : (
-                  <div className="pl-[30px] leading-6 font-normal">
+                  <div className="leading-6 font-normal">
                     {t("new_strings:select_a_venue_by_clicking_viewall_button")}
                   </div>
                 )}
@@ -742,7 +742,7 @@ const Venue = () => {
                   <DialogTrigger>
                     <Badge
                       variant="outline"
-                      className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
+                      className="absolute right-[43%] -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
                     >
                       {t("course.new_course:time_and_venue_tab.view_all")}
                     </Badge>
@@ -761,9 +761,9 @@ const Venue = () => {
           </div>
         </Label>
         {formData?.newVenue ? (
-          <Label htmlFor="new-venue">
+          <Label htmlFor="new-venue" className="flex-[1]">
             <div
-              className={`min-w-[450px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
+              className={`h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
                 value === "new-venue"
                   ? "border border-[#7677F4]"
                   : "border border-[#D6D7D8]"
@@ -825,8 +825,8 @@ const Venue = () => {
           </Label>
         ) : (
           <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
-            <DialogTrigger onClick={handleOpenAddNewVenue}>
-              <div className="min-w-[460px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
+            <DialogTrigger onClick={handleOpenAddNewVenue} className="flex-[1]">
+              <div className="h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
