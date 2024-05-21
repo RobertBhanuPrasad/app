@@ -177,13 +177,13 @@ const OnlineProgram = () => {
           {t("course.new_course:time_and_venue_tab.specific_location")}
         </div>
         <div className="flex gap-7">
-          <div className="w-[33%]">
+          <div className="flex-1">
             <StateDropDown name="state_id" onChange={handleRemoveFeeLevels} />
           </div>
-          <div className="w-[33%]">
+          <div className="flex-1">
             <CityDropDown name="city_id" onChange={handleRemoveFeeLevels}/>
           </div>
-          <div className="w-[33%]">
+          <div className="flex-1">
             <CenterDropDown name="center_id" onChange={handleRemoveFeeLevels}/>
           </div>
         </div>

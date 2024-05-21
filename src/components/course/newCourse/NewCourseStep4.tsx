@@ -153,7 +153,7 @@ export default function CourseTable() {
           <div className="loader"></div>
         </section>
       ) : (
-        <section>
+        <section className="w-full">
           <CourseFeeTable
             courseFeeSettings={courseFeeSettings}
             organizationData={organizationData?.data}
