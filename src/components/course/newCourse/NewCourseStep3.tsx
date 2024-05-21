@@ -515,7 +515,7 @@ const ScheduleComponent = ({
               <Add /> {t("add_button")}
             </div>
           )}
-          {index != 0 && (
+          {formData?.schedules?.length > 1 && (
             <div
               onClick={() => {
                 handleRemoveSession(index);
@@ -528,7 +528,7 @@ const ScheduleComponent = ({
           )}
         </div>
       </div>
-
+  
       {errors?.schedules &&
         errors?.schedules?.length > 0 &&
         errors?.schedules?.[index] && (
