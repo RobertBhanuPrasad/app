@@ -535,7 +535,7 @@ const ScheduleComponent = ({
                {t('new_strings:are_you_sure_you_want_to_delete_the_session')}
              </DialogDescription>
              </DialogHeader>
-             <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
+             <DialogFooter className="w-full flex !justify-center gap-6">
              <DialogClose>
              <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
                 {t('no_button')}
