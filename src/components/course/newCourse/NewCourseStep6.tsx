@@ -57,7 +57,7 @@ function NewCourseStep6() {
           </div>
 
           {/* Input field for Contact Email */}
-          <div className="w-58 h-20 flex gap-1 flex-col">
+          <div className="w-70 h-20 flex flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
               {index === 0 ? t("contact_email") : `${t("contact_email")} ${index + 1}`}{" "}
               <Text className="text-[#7677F4]"> *</Text>
@@ -100,7 +100,7 @@ function NewCourseStep6() {
       ))}
 
       {/* Additional section for BCC registration confirmation email */}
-      <div className="w-80 h-24 flex gap-1 flex-col ">
+      <div className="w-80 h-14 flex gap-1 flex-col ">
         <div className="flex flex-row text-xs font-normal text-[#333333]">
         {t("course.new_course:contact_info_tab.send_bcc")}{" "}
         </div>
@@ -110,7 +110,7 @@ function NewCourseStep6() {
             courseEmailOnChange(val?.target?.value);
           }}
           placeholder={t("course.new_course:contact_info_tab.select_course")}
-          className="!w-58 placeholder:text-[#999999] font-normal"
+          className="!w-58 placeholder:text-[#999999] font-normal !min-h-[40px]"
           error={error ? true : false} // TODO need to change after integrating the form names
         />
         {error && (
@@ -162,6 +162,7 @@ export const ContactEmail = ({ index }: any) => {
     <div>
       <Input
         placeholder={t("course.new_course:contact_info_tab.select_contact_email")}
+        className="w-60"
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
