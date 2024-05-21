@@ -36,6 +36,8 @@ import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import { IsEditCourse } from "./EditCourseUtil";
 import { supabaseClient } from "src/utility";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
+import { Button } from "src/ui/button";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -450,6 +452,7 @@ const AccomdationAction = ({
   const formData = watch().accommodation || [];
   const isLastRow = index === formData?.length - 1;
   const isFirstRow = index === 0;
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Function to add a new row
   const handleAddRow = () => {
@@ -457,9 +460,41 @@ const AccomdationAction = ({
   };
 
   // Function to delete a row
-  const handleDeleteRow = (index: number) => {
+  const handleDelete= (index: number) => {
     remove(index);
   };
+  const DeleteAccomodation = ({handleDeleteRow}:{handleDeleteRow: () => void}) => {
+    const { t } = useTranslation(["common", "new_strings"]);
+  
+    return (
+      <div>
+        <DialogHeader>
+          <DialogTitle className="flex justify-center">
+            {t("delete_button")}
+          </DialogTitle>
+          <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333] whitespace-nowrap">
+            {t("new_strings:are_you_sure_you_want_to_delete_this_accomodation")}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="w-full mt-[20px] flex !justify-center gap-6">
+          <DialogClose>
+            <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+              {t("no_button")}
+            </Button>
+          </DialogClose>
+          <DialogClose>
+            <Button
+              className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+              onClick={handleDeleteRow}
+            >
+              {t("yes")}
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </div>
+    );
+  };
+  
   const {t} = useTranslation('common')
   return (
     <div className="w-[150px] flex gap-4 ">
@@ -475,12 +510,23 @@ const AccomdationAction = ({
       )}
       {/* Button to delete a row */}
       {!isFirstRow && (
-        <div
-          onClick={() => handleDeleteRow(index)}
-          className="flex flex-row gap-1 justify-center items-center text-[#7677F4] cursor-pointer"
-        >
-          <Delete />
-          <div>{t("delete_button")}</div>
+        <div className="flex flex-row gap-1 justify-center items-center text-[#7677F4] cursor-pointer">
+          <div className="flex flex-row items-center gap-1" onClick={() => setDeleteDialogOpen(true)}>
+            <Delete />
+            <div>{t("delete_button")}</div>
+          </div>
+          {isDeleteDialogOpen && (
+            <Dialog open={isDeleteDialogOpen} onOpenChange={() => setDeleteDialogOpen(false)}>
+              <DialogContent className="w-[450px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+                <DeleteAccomodation
+                  handleDeleteRow={() => {
+                    handleDelete(index);
+                    setDeleteDialogOpen(false);
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       )}
     </div>
