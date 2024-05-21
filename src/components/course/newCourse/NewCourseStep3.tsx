@@ -249,7 +249,7 @@ const SchedulesHeader = () => {
 
   return (
     <div className="h-9 flex">
-      <div className="font-semibold text-[#333333] flex items-center">
+      <div className="text-base text-[#333333] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
       <div className="flex gap-4 w-[434px] ml-auto">
@@ -495,7 +495,7 @@ const ScheduleComponent = ({
             </Button>
           </DialogTrigger>
           <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
-            <CalenderComponent index={index} setOpen={setOpen} />
+            <CalenderComponent index={index} setOpen={setOpen}/>
           </DialogContent>
         </Dialog>
         <TimePicker
