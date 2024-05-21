@@ -785,7 +785,7 @@ export const NewCourseTabs = () => {
                   }
                 })}
               </div>
-              <div className="flex justify-center gap-4 w-full mb-2">
+              <div className="flex justify-center gap-4 w-full mb-2 mt-6">
                 {currentStep > 1 && (
                   <Button
                     onClick={(e) => {
