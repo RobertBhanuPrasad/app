@@ -498,6 +498,8 @@ export default function NewCourseReviewPage() {
   const [openContactDetails, setOpenContactDetails] = useState(false);
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
+ 
+
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
 
@@ -685,6 +687,23 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
+            {/* REQUIRMENT in the course edit page we need to display the course code in the course details section */}
+            {
+              IsEditCourse(pathname) && 
+
+            <div className="w-[291px]">
+              <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                {t("course_id")}
+              </p>
+
+              <abbr
+                className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
+                title={newCourseData?.program_code ? newCourseData?.program_code : "-"}
+              >
+                {newCourseData?.program_code ? newCourseData?.program_code : "-"}
+              </abbr>
+            </div>
+            }
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:review_post_details.creator")}
@@ -1362,14 +1381,13 @@ export default function NewCourseReviewPage() {
           </div>
         </section>
         <div className="flex items-center justify-center">
-          {isSubmitting ? (
-            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
-              <div className="loader !w-[30px]"></div>
-            </Button>
-          ) : (
-            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
-          )}
+          {isSubmitting && 
+          <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+            <div className="loader"></div>
+          </div>}
+          <Button onClick={handClickContinue}>{t('continue_button')}</Button>
         </div>
+
       </div>
     </div>
   );
@@ -1420,7 +1438,7 @@ const Accommodation = ({
       >
         <CardValue className="truncate">
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
-          {currencyCode ? currencyCode : ""}
+          {currencyCode ? currencyCode : ""}{" "}
           {accomdationData?.fee_per_person}
         </CardValue>
       </abbr>

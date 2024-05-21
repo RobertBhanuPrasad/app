@@ -165,7 +165,8 @@ function index() {
     filters.permanent.push({
       field: "program_code",
       operator: "contains",
-      value: AllFilterData?.course_id,
+      //If white spaces are there trim them and then apply search
+      value: AllFilterData?.course_id && AllFilterData?.course_id.trim(),
     });
   }
 

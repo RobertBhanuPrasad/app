@@ -154,7 +154,7 @@ export function BaseTable<TData, TValue>({
   pageCount,
   total = 0,
   setPageSize = () => {},
-  pageSize,
+  pageSize=0,
   pagination = false,
   checkboxSelection,
   columnPinning = false,
@@ -425,7 +425,7 @@ export function BaseTable<TData, TValue>({
 
         {/* If pagination set true then we have to show pagination  */}
         <div>
-          {pagination && (
+          {pagination &&total > pageSize  &&(
             <DataPagination
               setCurrent={setCurrent}
               current={current}
@@ -584,9 +584,10 @@ export function BaseTable<TData, TValue>({
               current={current}
               pageCount={pageCount}
               total={total}
+              pageSize={pageSize}
             />
             {total>=10 &&  
-            <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto">
+            <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto  flex-row self-center">
               <Select
                 value={pageSize}
                 onValueChange={(value) => {
@@ -626,6 +627,7 @@ interface DataPaginationProps {
   current?: number;
   pageCount?: number;
   total?: number;
+  pageSize?:number
 }
 
 const DataPagination = ({
@@ -633,6 +635,7 @@ const DataPagination = ({
   total = 0,
   current = 1,
   pageCount = 1,
+  pageSize=0
 }: DataPaginationProps) => {
   const PagesArray = [];
   const DOTS = ". . .";
@@ -686,7 +689,7 @@ const {t} = useTranslation(["common", "new_strings"])
         </Button>
       )}
       {/* pages buttons */}
-      {total >= 10 &&
+      {total > pageSize &&
         PagesArray.map((page: any, index: any) => (
           <div key={index}>
             {/* Check if the current page is a placeholder for ellipsis.If yes, display the ellipsis.Otherwise, display a button for the page. */}
