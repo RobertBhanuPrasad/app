@@ -743,7 +743,7 @@ const AssistantTeachersDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
-        {t("course.new_course:course_details_tab.assistant_teacher")}
+        {t("course.new_course:course_details_tab.assistant_teacher")}<span className="text-[#7677F4]">*</span>
       </div>
       <MultiSelect
         value={value}
@@ -787,7 +787,7 @@ const Visibility = () => {
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row gap-1">
         <Text className="text-xs font-normal text-[#333333]">
-          {t("program_visibility")}
+          {t("program_visibility")}<span className="text-[#7677F4]">*</span>
         </Text>
         <HoverCard>
           <HoverCardTrigger>
@@ -850,7 +850,7 @@ const DisplayLanguage = () => {
   return (
     <div className="flex gap-1 flex-col">
       <Text className="text-xs font-normal text-[#333333]">
-        {t("course.new_course:course_details_tab.display_language_option")}
+        {t("course.new_course:course_details_tab.display_language_option")}<span className="text-[#7677F4]">*</span>
       </Text>
       <RadioGroup
         value={JSON.stringify(value)}
@@ -984,7 +984,7 @@ const LanguageDropDown = () => {
   return (
     <div className="flex gap-1 flex-col">
       <Text className="flex flex-row text-xs font-normal text-[#333333]">
-        {t("language_course_is_taught_in")}
+        {t("language_course_is_taught_in")}<span className="text-[#7677F4]">*</span>
       </Text>
       <MultiSelect
         value={value}
@@ -1110,7 +1110,7 @@ const AllowedCountriesDropDown = () => {
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row text-xs font-normal text-[#333333]">
         {t("countries_from_where_registrations_are_allowed")}
-        <div className="text-[#7677F4]">*</div>
+        <span className="text-[#7677F4]">*</span>
       </div>
       <MultiSelect
         value={value}
@@ -1143,7 +1143,7 @@ const MaximumCapacity = () => {
   return (
     <div className="flex gap-1 flex-col">
       <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
-        <Text className="text-xs ">{t("max_capacity")}</Text>
+        <Text className="text-xs ">{t("max_capacity")}<span className="text-[#7677F4]">*</span></Text>
         {/* popover to show the note to maximum capacity */}
         <HoverCard>
           <HoverCardTrigger>
