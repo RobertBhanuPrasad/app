@@ -520,7 +520,7 @@ const ScheduleComponent = ({
               <Add /> {t("add_button")}
             </div>
           )}
-          {index != 0 && (
+          {formData?.schedules?.length > 1 && (
            <Dialog open={deleteSession} onOpenChange={setDeleteSession}>
            <DialogTrigger
              onClick={handleDeleteSession}
