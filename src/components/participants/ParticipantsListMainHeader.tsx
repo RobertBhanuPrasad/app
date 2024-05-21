@@ -89,7 +89,7 @@ export const ParticipantsListMainHeader = () => {
             {/* Participant Count */}
             <div className="flex gap-2 items-center">
               <ParticipantsIcon />
-              <div className="cursor-pointer text-[#7677F4] font-medium">
+              <div className="text-[#7677F4] font-medium">
                 {courseData?.data?.participant_count}
               </div>
               <HoverCard>

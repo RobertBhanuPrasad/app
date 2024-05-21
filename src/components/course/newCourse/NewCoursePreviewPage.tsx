@@ -498,6 +498,8 @@ export default function NewCourseReviewPage() {
   const [openContactDetails, setOpenContactDetails] = useState(false);
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
+ 
+
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
 
@@ -1379,14 +1381,13 @@ export default function NewCourseReviewPage() {
           </div>
         </section>
         <div className="flex items-center justify-center">
-          {isSubmitting ? (
-            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
-              <div className="loader !w-[30px]"></div>
-            </Button>
-          ) : (
-            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
-          )}
+          {isSubmitting && 
+          <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+            <div className="loader"></div>
+          </div>}
+          <Button onClick={handClickContinue}>{t('continue_button')}</Button>
         </div>
+
       </div>
     </div>
   );
