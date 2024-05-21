@@ -161,6 +161,13 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     contact: contactValidationSchema,
     bcc_registration_confirmation_email: z
       .string()
+      /**
+       * In the regression expression we are allowing the spaces and the commas after the email for that tailing spaces we are adding the \s
+       * As i am allowing 0, one or many spaces so i am giving \s*
+       * as they are can be or cannot be present so we are adding the ?
+       * as per the bug 1505 we have added ,? after the email expression, then this was solved 
+       *  */ 
+
       .regex(
         /^(?:\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)?(?:,\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)*,?\s*?$/,
         {
