@@ -298,7 +298,7 @@ function NewCourse() {
   }
 
   return (
-    <div className="mx-auto min-w-[1000px] w-full max-w-[1640px] h-screen px-8">
+    <div className="mx-auto min-w-[1000px] w-full max-w-[1640px] px-8 pb-8">
       <div>
         <Form
           onSubmit={onSubmit}
@@ -785,7 +785,7 @@ export const NewCourseTabs = () => {
                   }
                 })}
               </div>
-              <div className="flex justify-center gap-4 w-full mb-2">
+              <div className="flex justify-center gap-4 w-full mb-2 mt-6">
                 {currentStep > 1 && (
                   <Button
                     onClick={(e) => {
