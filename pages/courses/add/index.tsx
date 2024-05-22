@@ -413,7 +413,7 @@ export const NewCourseTabs = () => {
 
   const router = useRouter();
   const { watch, getValues } = useFormContext();
-  const { setNewCourseData, currentStep, setCurrentStep,setNewCourseCreateSuccessOrNot } = newCourseStore();
+  const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
 
   const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined);
   const [isAllFieldsValid2, setIsAllFieldsValid2] = useState(undefined);
