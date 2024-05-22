@@ -103,7 +103,7 @@ function index() {
     return <NewCourse />;
   }
 }
-function NewCourse() {
+export function NewCourse() {
   const { setCurrentStep ,setNewCourseCreateSuccessOrNot} = newCourseStore();
   const { data: loginUserData }: any = useGetIdentity();
 
