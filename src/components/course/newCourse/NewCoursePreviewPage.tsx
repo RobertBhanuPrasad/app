@@ -259,12 +259,10 @@ export default function NewCourseReviewPage() {
     //Updating newCourseData
     setNewCourseData(tempCourseData);
   };
+
   useEffect(() => {
-    //To fetch fee we need the location details. Initially this three variables are set to zero.Based on user actions we will assign values to this variables.
-    //Fetching the fee when these values are assigned.
-    if (stateId !== 0 && cityId !== 0 && centerId !== 0) {
+   //Fetching Course Fee Data
       fetchFeeData();
-    }
   }, [
     stateId,
     cityId,

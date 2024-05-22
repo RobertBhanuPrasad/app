@@ -1202,6 +1202,8 @@ export const fetchCourseFee = async ({
     if (error)
       console.log("error while fetching course fee level settings", error);
 
+    console.log("Data returned from Edge Function",data)
+    
     return data;
   }
 };
