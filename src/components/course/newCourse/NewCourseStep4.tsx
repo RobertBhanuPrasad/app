@@ -57,9 +57,6 @@ export default function CourseTable() {
         </section>
       ) : (
         <section>
-          <div className="font-semibold text-base text-[#333333]">
-            {t("fees")}
-          </div>
           {
             //If Fee is not found based on users selection then need to show this
             formData?.feeLevels?.length == 0 ||

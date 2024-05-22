@@ -75,7 +75,10 @@ import { useTranslation } from "next-i18next";
 import { supabaseClient } from "src/utility";
 import { cn } from "src/lib/utils";
 import useGetCountryCode from "src/utility/useGetCountryCode";
-import { IsCopyCourse, IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import {
+  IsCopyCourse,
+  IsEditCourse,
+} from "@components/course/newCourse/EditCourseUtil";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -198,7 +201,6 @@ export function NewCourse() {
     }
     ref.current = true;
   }, [searchparams]);
-
 
   /**
    * default values are used to prefill the course data
@@ -399,7 +401,11 @@ export const requiredValidationFields = (
 
   //If it is a Editable fee need to validate
   if (isFeeEditable) {
-    RequiredNewCourseStep4FormNames = [...RequiredNewCourseStep4FormNames,"is_early_bird_enabled","program_fee_level_settings"];
+    RequiredNewCourseStep4FormNames = [
+      ...RequiredNewCourseStep4FormNames,
+      "is_early_bird_enabled",
+      "program_fee_level_settings",
+    ];
   }
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
@@ -983,48 +989,47 @@ export const NewCourseTabs = () => {
                   </Button>
                 )}
 
-                  {currentStep < stepTitles.length && (
-                    <Button
-                      className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
-                      onClick={async (e) => {
-                        e.preventDefault();
+                {currentStep < stepTitles.length && (
+                  <Button
+                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                    onClick={async (e) => {
+                      e.preventDefault();
 
-                        let validationFieldsStepWise = requiredValidationFields(
-                          formData,
-                          loginUserData,
-                          timeZoneData?.data,
-                          selectedProgramTypeData
-                        );
+                      let validationFieldsStepWise = requiredValidationFields(
+                        formData,
+                        loginUserData,
+                        timeZoneData?.data,
+                        selectedProgramTypeData
+                      );
 
-                        await handleClickNext(
-                          validationFieldsStepWise[currentStep - 1]
-                        );
-                      }}
-                    >
-                      {t("next")}
-                    </Button>
-                  )}
+                      await handleClickNext(
+                        validationFieldsStepWise[currentStep - 1]
+                      );
+                    }}
+                  >
+                    {t("next")}
+                  </Button>
+                )}
 
-                  {currentStep == CONTACT_INFO_STEP_NUMBER && (
-                    <Button
-                      className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
-                      onClick={async () => {
-                        let validationFieldsStepWise = requiredValidationFields(
-                          formData,
-                          loginUserData,
-                          timeZoneData?.data,
-                          selectedProgramTypeData
-                        );
+                {currentStep == CONTACT_INFO_STEP_NUMBER && (
+                  <Button
+                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
+                    onClick={async () => {
+                      let validationFieldsStepWise = requiredValidationFields(
+                        formData,
+                        loginUserData,
+                        timeZoneData?.data,
+                        selectedProgramTypeData
+                      );
 
-                        await handleClickReviewDetailsButton(
-                          validationFieldsStepWise[currentStep - 1]
-                        );
-                      }}
-                    >
-                      {t("course.new_course:contact_info_tab.review_details")}
-                    </Button>
-                  )}
-                </div>
+                      await handleClickReviewDetailsButton(
+                        validationFieldsStepWise[currentStep - 1]
+                      );
+                    }}
+                  >
+                    {t("course.new_course:contact_info_tab.review_details")}
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -1143,33 +1148,33 @@ export const fetchCourseFee = async ({
     //Construct the course start date time stamp
     const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
 
-    const courseFeeBody:CourseFeeBody={
+    const courseFeeBody: CourseFeeBody = {
       program_type_id: formData?.program_type_id as number,
+    };
+
+    if (stateId) {
+      courseFeeBody.state_id = stateId;
+    } else {
+      courseFeeBody.state_id = -1;
     }
 
-    if(stateId){
-      courseFeeBody.state_id=stateId
-    }else{
-      courseFeeBody.state_id=-1
+    if (cityId) {
+      courseFeeBody.city_id = cityId;
+    } else {
+      courseFeeBody.city_id = -1;
     }
 
-    if(cityId){
-      courseFeeBody.city_id=cityId
-    }else{
-      courseFeeBody.city_id=-1
+    if (centerId) {
+      courseFeeBody.center_id = centerId;
+    } else {
+      courseFeeBody.center_id = -1;
     }
 
-    if(centerId){
-      courseFeeBody.center_id=centerId
-    }else{
-      courseFeeBody.center_id=-1
+    if (courseStartDate) {
+      courseFeeBody.start_date = courseStartDate;
     }
 
-    if(courseStartDate){
-      courseFeeBody.start_date=courseStartDate
-    }
-
-    console.log(courseFeeBody,"Body Send to course-fee Edge function")
+    console.log(courseFeeBody, "Body Send to course-fee Edge function");
     //Sending all required params
     const { data, error } = await supabase.functions.invoke("course-fee", {
       method: "POST",
@@ -1183,16 +1188,16 @@ export const fetchCourseFee = async ({
     if (error)
       console.log("error while fetching course fee level settings", error);
 
-    console.log("Data returned from Edge Function",data)
-    
+    console.log("Data returned from Edge Function", data);
+
     return data;
   }
 };
 
-interface CourseFeeBody{
+interface CourseFeeBody {
   program_type_id: number;
-  state_id?:number;
-  city_id?:number;
-  center_id?:number;
+  state_id?: number;
+  city_id?: number;
+  center_id?: number;
   start_date?: string;
 }
