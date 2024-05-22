@@ -183,7 +183,10 @@ export default function NewCourseReviewPage() {
   //This function is used to fetch fee data
   const fetchFeeData = async () => {
     //Fetching the course fee based on new course data
-    const data=await fetchCourseFee({formData:newCourseData,countryCode:countryCode})
+    const data = await fetchCourseFee({
+      formData: newCourseData,
+      countryCode: countryCode,
+    });
 
     console.log("Fee Data from API is", data);
 
@@ -261,8 +264,8 @@ export default function NewCourseReviewPage() {
   };
 
   useEffect(() => {
-   //Fetching Course Fee Data
-      fetchFeeData();
+    //Fetching Course Fee Data
+    fetchFeeData();
   }, [
     stateId,
     cityId,
@@ -546,14 +549,13 @@ export default function NewCourseReviewPage() {
   };
 
   const handClickContinue = async () => {
+    setIsSubmitting(true);
     const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData);
     console.log("errors", errors);
 
     if (errors.success === false) {
       console.log(errors.error.issues, "issuessss");
     } else {
-      setIsSubmitting(true);
-
       /**
        * This variable will retur true if all api calls has been successfully it will return false if any api call fails
        */
@@ -594,8 +596,8 @@ export default function NewCourseReviewPage() {
           setViewThankyouPage(true);
         }
       }
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   };
 
   /**
