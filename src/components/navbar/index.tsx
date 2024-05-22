@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'; // Import useEffect and useState
 import LoadingIcon from '@public/assets/LoadingIcon';
 import Logo from '@public/assets/Logo';
 import LogoutIcon from '@public/assets/LogoutIcon';
@@ -24,26 +23,13 @@ import {
   navigationMenuTriggerStyle
 } from 'src/ui/navigation-menu';
 import { supabaseClient } from 'src/utility';
-import { newCourseStore } from 'src/zustandStore/NewCourseStore';
-import { AlertDialog, AlertDialogContent } from 'src/ui/alert-dialog';
-import { Button } from 'src/ui/button';
-import useGetCountryCode from 'src/utility/useGetCountryCode';
-import useGetLanguageCode from 'src/utility/useGetLanguageCode';
+
+
 
 function Navbar() {
   const { data: loginUserData }: any = useGetIdentity();
   const router = useRouter();
-  const { setNewCourseAlertMessageModal,setNewCourseCreateSuccessOrNot,newCourseCreateSuccessOrNot } = newCourseStore();
-
-  const [pendingUrl, setPendingUrl] = useState<string | null>(null); // State to keep track of the URL the user intends to navigate to
-  const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
-
-    //fetching the user's country code
-    const countryCode = useGetCountryCode();
-
-    //fetching the user's language code
-    const languageCode = useGetLanguageCode();
-
+ 
   // Define navigation components and their respective routes
   const components = [
     {
@@ -80,59 +66,6 @@ function Navbar() {
     }
     console.log('error is', error)
   }
-
-  /**
-   * useEffect hook to handle route changes.
-   * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
-   * - Emits a routeChangeError event to cancel the navigation when necessary.
-   * - Sets a pending URL and opens an alert dialog for user confirmation.
-   * - Resets the navigation confirmation flag once the route change completes.
-   */
-   useEffect(() => {
-    const handleRouteChangeStart = (url: string) => {
-      const basePath = url.split('?')[0];
-      if (!navigationConfirmed && pathname === '/courses/add' && basePath !==`/${countryCode}-${languageCode}/courses/add`) {
-        if(!newCourseCreateSuccessOrNot) {
-        setNewCourseAlertMessageModal(true);
-        setPendingUrl(url); // Store the URL the user intends to navigate to
-        router.events.emit('routeChangeError'); // Emit route change error to stop the navigation
-        throw 'Abort route change. Please ignore this error.';
-      }
-    }
-    };
-
-    const handleRouteChangeComplete = () => {
-      setNavigationConfirmed(false);
-    };
-
-    router.events.on('routeChangeStart', handleRouteChangeStart);
-    router.events.on('routeChangeComplete', handleRouteChangeComplete);
-    router.events.on('routeChangeError', handleRouteChangeComplete);
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChangeStart);
-      router.events.off('routeChangeComplete', handleRouteChangeComplete);
-      router.events.off('routeChangeError', handleRouteChangeComplete);
-    };
-  }, [pathname, navigationConfirmed, router.events,newCourseCreateSuccessOrNot]);
-
- 
-  /**
-   * Function to handle the closure of the alert dialog.
-   * - If the user confirms (proceed is true), navigation continues to the pending URL.
-   * - Resets the new course creation success flag and clears the pending URL.
-   * - If the user cancels (proceed is false), the navigation is aborted and the alert dialog is closed.
-  */
-  const handleAlertClose = (proceed: boolean) => {
-    setNewCourseAlertMessageModal(false);
-    if (proceed && pendingUrl) {
-      setNavigationConfirmed(true);
-      router.push(pendingUrl); // Navigate to the stored URL
-      setNewCourseCreateSuccessOrNot(false)
-    }
-    setPendingUrl(null); // Clear the pending URL
-  };
-
 
   return (
     <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
@@ -241,8 +174,6 @@ function Navbar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {/* New Course Alert Message */}
-      <ViewNewCourseAlertMessage onClose={handleAlertClose} />
     </div>
   );
 }
@@ -262,46 +193,4 @@ const MenuList = ({ Name, route }: any) => {
   );
 };
 
-// ViewNewCourseAlertMessage Component
-export const ViewNewCourseAlertMessage = ({ onClose }: { onClose: (proceed: boolean) => void }) => {
-  const {
-    newCourseAlertMessageModal,
-    setNewCourseAlertMessageModal,
-  } = newCourseStore();
 
-  return (
-    <AlertDialog open={newCourseAlertMessageModal}>
-      <AlertDialogContent className="w-[414px] h-[301px]">
-        <div className="flex flex-col items-center">
-          <div className="font-semibold text-center mt-2">
-            Error Message
-          </div>
-          <div className="text-center my-4">
-            Are you sure you want to leave this page?
-          </div>
-          <div className="w-full flex justify-center items-center gap-5">
-            <div>
-              <Button
-                type="button"
-                variant="outline"
-                className="text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px]"
-                onClick={() => onClose(false)} // User stays on the same page
-              >
-                No
-              </Button>
-            </div>
-            <div>
-              <Button
-                type="button"
-                className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
-                onClick={() => onClose(true)} // User navigates to the new page
-              >
-                Yes
-              </Button>
-            </div>
-          </div>
-        </div>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-};

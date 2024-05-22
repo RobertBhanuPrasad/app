@@ -69,6 +69,9 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 import { useTranslation } from "next-i18next";
 import { IsCopyCourse, IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { AlertDialog, AlertDialogContent } from "src/ui/alert-dialog";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -104,12 +107,25 @@ function index() {
   }
 }
 export function NewCourse() {
-  const { setCurrentStep ,setNewCourseCreateSuccessOrNot} = newCourseStore();
+  const { setCurrentStep ,setNewCourseCreateSuccessOrNot,setNewCourseAlertMessageModal,newCourseCreateSuccessOrNot} = newCourseStore();
   const { data: loginUserData }: any = useGetIdentity();
+  const router = useRouter();
 
   const loggedUserData = loginUserData?.userData?.id;
 
   console.log("heyy logged user data", loggedUserData);
+
+   // Get the current pathname using the useRouter hook
+   const pathname = usePathname();
+
+    //fetching the user's country code
+    const countryCode = useGetCountryCode();
+
+    //fetching the user's language code
+    const languageCode = useGetLanguageCode();
+
+   const [pendingUrl, setPendingUrl] = useState<string | null>(null); // State to keep track of the URL the user intends to navigate to
+  const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
 
   const onSubmit = (formData: any) => {
     // console.log(formData);
@@ -130,6 +146,61 @@ export function NewCourse() {
     setNewCourseCreateSuccessOrNot(false)
 
   }, []);
+
+
+  /**
+   * useEffect hook to handle route changes.
+   * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
+   * - Emits a routeChangeError event to cancel the navigation when necessary.
+   * - Sets a pending URL and opens an alert dialog for user confirmation.
+   * - Resets the navigation confirmation flag once the route change completes.
+   */
+  useEffect(() => {
+    const handleRouteChangeStart = (url: string) => {
+      const basePath = url.split('?')[0];
+      if (!navigationConfirmed && pathname === '/courses/add' && basePath !==`/${countryCode}-${languageCode}/courses/add`) {
+        if(!newCourseCreateSuccessOrNot) {
+        setNewCourseAlertMessageModal(true)
+        setPendingUrl(url); // Store the URL the user intends to navigate to
+        router.events.emit('routeChangeError'); // Emit route change error to stop the navigation
+        throw 'Abort route change. Please ignore this error.';
+      }
+    }
+    };
+
+    const handleRouteChangeComplete = () => {
+      setNavigationConfirmed(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+    router.events.on('routeChangeError', handleRouteChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+      router.events.off('routeChangeError', handleRouteChangeComplete);
+    };
+  }, [pathname, navigationConfirmed, router.events,newCourseCreateSuccessOrNot]);
+
+
+   /**
+   * Function to handle the closure of the alert dialog.
+   * - If the user confirms (proceed is true), navigation continues to the pending URL.
+   * - Resets the new course creation success flag and clears the pending URL.
+   * - If the user cancels (proceed is false), the navigation is aborted and the alert dialog is closed.
+  */
+   const handleAlertClose = (proceed: boolean) => {
+    setNewCourseAlertMessageModal(false);
+    if (proceed && pendingUrl) {
+      setNavigationConfirmed(true);
+      router.replace(pendingUrl); // Navigate to the stored URL
+      setNewCourseCreateSuccessOrNot(false)
+    }
+    setPendingUrl(null); // Clear the pending URL
+  };
+
+ 
 
   //Finding program Organizer role id
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
@@ -167,14 +238,15 @@ export function NewCourse() {
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
-  const pathname = usePathname();
+ 
+
+ 
 
   /**
    * Getting the search params from useSearchParams function
    */
   const searchparams = useSearchParams();
 
-  const router = useRouter();
 
   /**
    * defining the ref using use Ref function
@@ -305,6 +377,8 @@ export function NewCourse() {
           schema={validationSchema(iAmCoTeachingId as number)}
         >
           <NewCourseTabs />
+           {/* New Course Alert Message */}
+          <ViewNewCourseAlertMessage onClose={handleAlertClose} />
         </Form>
       </div>
     </div>
@@ -871,4 +945,49 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
       ...translateProps,
     },
   };
+};
+
+
+
+// ViewNewCourseAlertMessage Component
+export const ViewNewCourseAlertMessage = ({ onClose }: { onClose: (proceed: boolean) => void }) => {
+  const {
+    newCourseAlertMessageModal
+  } = newCourseStore();
+
+  return (
+    <AlertDialog open={newCourseAlertMessageModal}>
+      <AlertDialogContent className="w-[414px] h-[301px]">
+        <div className="flex flex-col items-center">
+          <div className="font-semibold text-center mt-2">
+            Error Message
+          </div>
+          <div className="text-center my-4">
+            Are you sure you want to leave this page?
+          </div>
+          <div className="w-full flex justify-center items-center gap-5">
+            <div>
+              <Button
+                type="button"
+                variant="outline"
+                className="text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px]"
+                onClick={() => onClose(false)} // User stays on the same page
+              >
+                No
+              </Button>
+            </div>
+            <div>
+              <Button
+                type="button"
+                className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                onClick={() => onClose(true)} // User navigates to the new page
+              >
+                Yes
+              </Button>
+            </div>
+          </div>
+        </div>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 };
