@@ -503,7 +503,7 @@ export default function NewCourseReviewPage() {
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
 
-  const { setProgramId, setViewPreviewPage, setViewThankyouPage } =
+  const { setProgramId, setViewPreviewPage, setViewThankyouPage, setNewCourseCreateSuccessOrNot } =
     newCourseStore();
 
   /**
@@ -622,6 +622,7 @@ export default function NewCourseReviewPage() {
 
           setViewPreviewPage(false);
           setViewThankyouPage(true);
+          setNewCourseCreateSuccessOrNot(true)
         }
       }
       setIsSubmitting(false);

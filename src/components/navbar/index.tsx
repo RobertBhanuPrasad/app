@@ -27,14 +27,22 @@ import { supabaseClient } from 'src/utility';
 import { newCourseStore } from 'src/zustandStore/NewCourseStore';
 import { AlertDialog, AlertDialogContent } from 'src/ui/alert-dialog';
 import { Button } from 'src/ui/button';
+import useGetCountryCode from 'src/utility/useGetCountryCode';
+import useGetLanguageCode from 'src/utility/useGetLanguageCode';
 
 function Navbar() {
   const { data: loginUserData }: any = useGetIdentity();
   const router = useRouter();
-  const { currentStep, setNewCourseAlertMessageModal, newCourseAlertMessageModal } = newCourseStore();
+  const { setNewCourseAlertMessageModal,setNewCourseCreateSuccessOrNot,newCourseCreateSuccessOrNot } = newCourseStore();
 
   const [pendingUrl, setPendingUrl] = useState<string | null>(null); // State to keep track of the URL the user intends to navigate to
   const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
+
+    //fetching the user's country code
+    const countryCode = useGetCountryCode();
+
+    //fetching the user's language code
+    const languageCode = useGetLanguageCode();
 
   // Define navigation components and their respective routes
   const components = [
@@ -73,16 +81,24 @@ function Navbar() {
     console.log('error is', error)
   }
 
-  // Alert user when navigating away from /courses/add 
-  useEffect(() => {
+  /**
+   * useEffect hook to handle route changes.
+   * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
+   * - Emits a routeChangeError event to cancel the navigation when necessary.
+   * - Sets a pending URL and opens an alert dialog for user confirmation.
+   * - Resets the navigation confirmation flag once the route change completes.
+   */
+   useEffect(() => {
     const handleRouteChangeStart = (url: string) => {
       const basePath = url.split('?')[0];
-      if (!navigationConfirmed && pathname === '/courses/add' && basePath !== '/courses/add') {
+      if (!navigationConfirmed && pathname === '/courses/add' && basePath !==`/${countryCode}-${languageCode}/courses/add`) {
+        if(!newCourseCreateSuccessOrNot) {
         setNewCourseAlertMessageModal(true);
         setPendingUrl(url); // Store the URL the user intends to navigate to
         router.events.emit('routeChangeError'); // Emit route change error to stop the navigation
         throw 'Abort route change. Please ignore this error.';
       }
+    }
     };
 
     const handleRouteChangeComplete = () => {
@@ -98,14 +114,21 @@ function Navbar() {
       router.events.off('routeChangeComplete', handleRouteChangeComplete);
       router.events.off('routeChangeError', handleRouteChangeComplete);
     };
-  }, [pathname, navigationConfirmed, router.events]);
+  }, [pathname, navigationConfirmed, router.events,newCourseCreateSuccessOrNot]);
 
-
+ 
+  /**
+   * Function to handle the closure of the alert dialog.
+   * - If the user confirms (proceed is true), navigation continues to the pending URL.
+   * - Resets the new course creation success flag and clears the pending URL.
+   * - If the user cancels (proceed is false), the navigation is aborted and the alert dialog is closed.
+  */
   const handleAlertClose = (proceed: boolean) => {
     setNewCourseAlertMessageModal(false);
     if (proceed && pendingUrl) {
       setNavigationConfirmed(true);
       router.push(pendingUrl); // Navigate to the stored URL
+      setNewCourseCreateSuccessOrNot(false)
     }
     setPendingUrl(null); // Clear the pending URL
   };

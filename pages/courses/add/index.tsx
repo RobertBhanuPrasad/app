@@ -104,7 +104,7 @@ function index() {
   }
 }
 function NewCourse() {
-  const { setCurrentStep } = newCourseStore();
+  const { setCurrentStep ,setNewCourseCreateSuccessOrNot} = newCourseStore();
   const { data: loginUserData }: any = useGetIdentity();
 
   const loggedUserData = loginUserData?.userData?.id;
@@ -118,6 +118,7 @@ function NewCourse() {
   /**
    * useEffect to run once when the component mounts.
    * It sets the current step to 1.
+   * It sets the courseCreation is not yet done that false
    * This effect has an empty dependency array to ensure it runs only once.
    */
   useEffect(() => {
@@ -126,6 +127,8 @@ function NewCourse() {
      * This initializes the component state for the first step.
      */
     setCurrentStep(1);
+    setNewCourseCreateSuccessOrNot(false)
+
   }, []);
 
   //Finding program Organizer role id
@@ -410,7 +413,7 @@ export const NewCourseTabs = () => {
 
   const router = useRouter();
   const { watch, getValues } = useFormContext();
-  const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
+  const { setNewCourseData, currentStep, setCurrentStep,setNewCourseCreateSuccessOrNot } = newCourseStore();
 
   const [isAllFieldsValid1, setIsAllFieldsValid1] = useState(undefined);
   const [isAllFieldsValid2, setIsAllFieldsValid2] = useState(undefined);

@@ -9,6 +9,7 @@ interface NewCourseStore {
   viewCourseAccountingRejectedDescriptionModal: boolean;
   viewCourseAccountingRejectedModal: boolean;
   newCourseAlertMessageModal: boolean;
+  newCourseCreateSuccessOrNot: boolean;
 
   setViewRejectedModal: (by: boolean) => void;
   setViewPreviewPage: (by: boolean) => void;
@@ -29,6 +30,7 @@ interface NewCourseStore {
   setProgramId: (by: number) => void;
   setProgramCreatedById : (by: any) => void;
   setNewCourseAlertMessageModal: (by: boolean) => void;
+  setNewCourseCreateSuccessOrNot: (by: boolean) => void;
   /**
    * This variable is used to store the id of the program created by id
    * which is i am organizing or i am teaching or i am co-teaching
@@ -63,6 +65,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   viewCourseAccountingSuccessModal: false,
   viewCourseAccountingRejectedDescriptionModal: false,
   viewCourseAccountingRejectedModal: false,
+  newCourseCreateSuccessOrNot: false,
 
   courseAccountingFormDefaultValues: {},
   programCreatedById:null,
@@ -145,6 +148,11 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   setNewCourseAlertMessageModal : (data: boolean) => {
     set(() => ({
       newCourseAlertMessageModal:data,
+    }))
+  },
+  setNewCourseCreateSuccessOrNot : (data: boolean) => {
+    set(() => ({
+      newCourseCreateSuccessOrNot:data,
     }))
   }
 }));
