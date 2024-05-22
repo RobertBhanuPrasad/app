@@ -70,7 +70,7 @@ function CourseDetailsTab() {
     },
   });
 
-  
+
   let venue=""
 
   if(courseData?.data?.venue_id?.name){
@@ -96,7 +96,7 @@ function CourseDetailsTab() {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
-
+  
   // If the course fee is editable then we can use custom fees otherwise we can use default fees
   const programFeeLevels = courseData?.data?.program_fee_settings_id
     ? courseData?.data?.program_fee_settings_id?.program_fee_level_settings
@@ -148,7 +148,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)] ">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-            {t('basic_details')}
+              {t('basic_details')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -182,8 +182,8 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <ItemValue>
                 {courseData?.data?.program_accounting_status_id?.name
                   ? translatedText(
-                      courseData?.data?.program_accounting_status_id?.name
-                    )
+                    courseData?.data?.program_accounting_status_id?.name
+                  )
                   : "-"}
               </ItemValue>
             </div>
@@ -192,10 +192,10 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <ItemValue>
                 {courseData?.data?.program_teachers?.length > 0
                   ? courseData?.data?.program_teachers
-                      .map((item: fullNameObject) => {
-                        return item?.user_id?.contact_id?.full_name;
-                      })
-                      .join(", ")
+                    .map((item: fullNameObject) => {
+                      return item?.user_id?.contact_id?.full_name;
+                    })
+                    .join(", ")
                   : "-"}
               </ItemValue>
             </div>
@@ -204,10 +204,10 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <ItemValue>
                 {courseData?.data?.program_assistant_teachers?.length > 0
                   ? courseData?.data?.program_assistant_teachers
-                      ?.map((item: fullNameObject) => {
-                        return item?.user_id?.contact_id?.full_name;
-                      }) 
-                      .join(",")
+                    ?.map((item: fullNameObject) => {
+                      return item?.user_id?.contact_id?.full_name;
+                    })
+                    .join(",")
                   : "-"}
               </ItemValue>
             </div>
@@ -216,10 +216,10 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <ItemValue>
                 {courseData?.data?.program_translation_languages?.length > 0
                   ? courseData?.data?.program_translation_languages
-                      ?.map((item: LanguageItem) => {
-                        return item?.language_id?.language_name;
-                      })
-                      .join(", ")
+                    ?.map((item: LanguageItem) => {
+                      return item?.language_id?.language_name;
+                    })
+                    .join(", ")
                   : "-"}
               </ItemValue>
             </div>
@@ -228,10 +228,10 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <ItemValue>
                 {courseData?.data?.program_languages?.length > 0
                   ? courseData?.data?.program_languages
-                      ?.map((item: LanguageItem) => {
-                        return item?.language_id?.language_name;
-                      })
-                      .join(", ")
+                    ?.map((item: LanguageItem) => {
+                      return item?.language_id?.language_name;
+                    })
+                    .join(", ")
                   : "-"}
               </ItemValue>
             </div>
@@ -256,10 +256,10 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <ItemValue>
                 {courseData?.data?.program_organizers?.length > 0
                   ? courseData?.data?.program_organizers
-                      ?.map((item: fullNameObject) => {
-                        return item?.user_id?.contact_id?.full_name;
-                      })
-                      .join(", ")
+                    ?.map((item: fullNameObject) => {
+                      return item?.user_id?.contact_id?.full_name;
+                    })
+                    .join(", ")
                   : "-"}
               </ItemValue>
             </div>
@@ -274,69 +274,69 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-            {t('course.view_course:basic_details_tab.fee_and_accommodation')}
+              {t('course.view_course:basic_details_tab.fee_and_accommodation')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             {programFees?.length > 0
               ? programFees?.map((item: ProgramFeeItem) => {
+                return (
+                  <div className="flex flex-col gap-1">
+                    <Header2>
+                      {translatedText(
+                        item?.is_custom_fee
+                          ? item?.custom_fee_label
+                          : item?.fee_level_id?.name as object
+                      )}
+                    </Header2>
+                    <ItemValue>
+                      {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                      {(item?.total)?.toFixed(2)}
+                    </ItemValue>
+                  </div>
+                );
+              })
+              : ""}
+            {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
+            {IsEarlyBirdFeeEnable
+              && programFees?.map((item: ProgramFeeItem) => {
+                return (
+                  <div className="flex flex-col gap-1">
+                    <Header2>
+                      {t("new_strings:early_bird")}{" "}
+                      {translatedText(
+                        item?.is_custom_fee
+                          ? item?.custom_fee_label
+                          : item?.fee_level_id?.name as object
+                      )}
+                    </Header2>
+                    <ItemValue>
+                      {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                      {(item?.early_bird_total as unknown as number)?.toFixed(2)}
+                    </ItemValue>
+                  </div>
+                );
+              })
+            }
+            {courseData?.data?.program_accommodations?.length > 0
+              ? courseData?.data?.program_accommodations?.map(
+                (item: AccommodationItem) => {
                   return (
                     <div className="flex flex-col gap-1">
                       <Header2>
                         {translatedText(
-                  item?.is_custom_fee
-                   ? item?.custom_fee_label
-                    : item?.fee_level_id?.name as object
-                )}
+                          item?.accommodation_type_id?.name as any
+                        )}
                       </Header2>
                       <ItemValue>
                         {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                        {(item?.total)?.toFixed(2)}
+                        {item?.fee_per_person}
                       </ItemValue>
                     </div>
                   );
-                })
-              : ""}
-              {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
-             {IsEarlyBirdFeeEnable
-               && programFees?.map((item: ProgramFeeItem) => {
-              return (
-              <div className="flex flex-col gap-1">
-              <Header2>
-                {t("new_strings:early_bird")}{" "}
-                {translatedText(
-                item?.is_custom_fee
-                 ? item?.custom_fee_label
-                  : item?.fee_level_id?.name as object
-                )}
-              </Header2>
-              <ItemValue>
-              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-              {(item?.early_bird_total as unknown as number)?.toFixed(2)}
-              </ItemValue>
-              </div>
-            );
-            })
-            }
-            {courseData?.data?.program_accommodations?.length > 0
-              ? courseData?.data?.program_accommodations?.map(
-                  (item: AccommodationItem) => {
-                    return (
-                      <div className="flex flex-col gap-1">
-                        <Header2>
-                          {translatedText(
-                            item?.accommodation_type_id?.name as any
-                          )}
-                        </Header2>
-                        <ItemValue>
-                          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                          {item?.fee_per_person}
-                        </ItemValue>
-                      </div>
-                    );
-                  }
-                )
+                }
+              )
               : ""}
           </CardContent>
         </Card>
@@ -346,7 +346,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-            {t('time_and_venue')}
+              {t('time_and_venue')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -356,28 +356,39 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               {courseData?.data?.program_type_id?.is_online_program == true ?
               (courseData?.data?.online_url ? ( <a href= {courseData?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target="_blank">{t("new_strings:online")}</a>
             ) : ( "-"))
-          :
-          (courseData?.data?.venue_id ? (
-            <ItemValue>
-              {venue}
-            </ItemValue>
-          ):( "-"))}
+                :
+                (courseData?.data?.venue_id ? (
+                  <ItemValue>
+                    {venue}
+                  </ItemValue>
+                ):("-"))}
+            </div>
+            <div>
+              <Header2>{t('local_center')}</Header2>
+              {courseData?.data?.program_type_id?.is_online_program == true ?
+                "-"
+                :
+                (courseData?.data?.venue_id ? (
+                  <ItemValue>
+                    {courseData?.data?.venue_id?.center_id?.name}
+                  </ItemValue>
+                ) : ("-"))}
             </div>
             <Header2>
-            {t('sessions')}
+              {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
                 {courseData?.data?.program_schedules?.length > 0
                   ? courseData?.data?.program_schedules?.map(
-                      (item: ProgramScheduleItem, index: number) => (
-                        <div key={index}>
-                          <div className="flex flex-col">
-                            <div>
-                              {formatDateTime(item?.start_time, item?.end_time)}
-                            </div>
+                    (item: ProgramScheduleItem, index: number) => (
+                      <div key={index}>
+                        <div className="flex flex-col">
+                          <div>
+                            {formatDateTime(item?.start_time, item?.end_time)}
                           </div>
                         </div>
-                      )
+                      </div>
                     )
+                  )
                   : "-"}
               </div>
             </Header2>
@@ -390,7 +401,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-            {t('course.view_course:basic_details_tab.registration_links')}
+              {t('course.view_course:basic_details_tab.registration_links')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
@@ -465,32 +476,32 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
         <Card className="w-[406px] rounded-[15px] border border-[#D9D9D9] shadow-[0px_4px_23.7px_rgba(139,139,139,0.25)]">
           <CardHeader>
             <CardTitle className="text-[18px] font-semibold">
-            {t('course.view_course:basic_details_tab.contact_details')}
+              {t('course.view_course:basic_details_tab.contact_details')}
             </CardTitle>
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             {courseData?.data?.program_contact_details?.length > 0
               ? courseData?.data?.program_contact_details?.map(
-                  (item: ContactDetailsItem) => {
-                    return (
-                      <div className="gap-[23px] flex flex-col">
-                        <div>
-                          <Header2>{t('contact_name')}</Header2>
-                          <ItemValue>{item.contact_name ? item.contact_name : "-"}</ItemValue>
-                        </div>
-                        <div>
-                          <Header2>{t('contact_email')}</Header2>
-                          <ItemValue>{item.contact_email}</ItemValue>
-                        </div>
-                        <div>
-                          <Header2>{t('course.view_course:basic_details_tab.contact_phone')}</Header2>
-                          <ItemValue>{item.contact_number ? item.contact_number : "-"}</ItemValue>
-                        </div>
+                (item: ContactDetailsItem) => {
+                  return (
+                    <div className="gap-[23px] flex flex-col">
+                      <div>
+                        <Header2>{t('contact_name')}</Header2>
+                        <ItemValue>{item.contact_name ? item.contact_name : "-"}</ItemValue>
                       </div>
-                    );
-                  }
-                )
+                      <div>
+                        <Header2>{t('contact_email')}</Header2>
+                        <ItemValue>{item.contact_email}</ItemValue>
+                      </div>
+                      <div>
+                        <Header2>{t('course.view_course:basic_details_tab.contact_phone')}</Header2>
+                        <ItemValue>{item.contact_number ? item.contact_number : "-"}</ItemValue>
+                      </div>
+                    </div>
+                  );
+                }
+              )
               : "-"}
           </CardContent>
         </Card>
