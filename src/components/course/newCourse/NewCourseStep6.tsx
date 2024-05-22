@@ -106,7 +106,7 @@ function NewCourseStep6() {
              <DialogHeader>
              <DialogTitle className="flex justify-center">{t('delete_button')}</DialogTitle>
              <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-               {t('new_strings:are_you_sure_you_want_to_delete_this_contact')}
+               {t('new_strings:are_you_sure_you_want_to_delete_the_contact')}
              </DialogDescription>
              </DialogHeader>
              <DialogFooter className="w-full flex !justify-center gap-6">
