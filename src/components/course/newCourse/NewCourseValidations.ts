@@ -177,7 +177,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
       .refine(
         (value) => {
           //Requirement: Duplicate emails are not allowed
-          const emails = value.split(",").map((email) => email.trim());
+          const emails = value.split(",").map((email) => email.trim()).filter(email => email !== "");
           const uniqueEmails = new Set(emails);
           return emails.length === uniqueEmails.size;
         },
