@@ -310,3 +310,13 @@ export const getDefaultValues = async (
 export const IsEditCourse = (url: string) => {
   return url.includes("/edit");
 };
+
+/**
+ * This function is used to determine whether the particular url contains copy or not
+ * @param url
+ * @returns a boolean
+ */
+export const IsCopyCourse = (url: string) => {
+  return url.includes("/copy");
+};
+
