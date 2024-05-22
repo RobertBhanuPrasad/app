@@ -746,14 +746,7 @@ const Venue = () => {
                 />
               )}
               {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
-              <div
-                className={`${
-                  (formData?.is_existing_venue == "" ||
-                    formData?.is_existing_venue == "new-venue") &&
-                  formData?.existingVenue == undefined &&
-                  "ml-7"
-                }`}
-              >
+              <div>
                 {t("course.new_course:time_and_venue_tab.existing_venue")}
               </div>
             </div>
