@@ -727,7 +727,7 @@ const Venue = () => {
       >
         <Label htmlFor="existing-venue" className="flex-[1]">
           <div
-            className={`rounded-[16px] h-[118px] relative flex py-[24px] px-4 flex-col ${
+            className={`rounded-[16px] h-[118px] relative flex py-[24px] px-6 flex-col ${
               value === "existing-venue"
                 ? "border border-[#7677F4]"
                 : "border border-[#D6D7D8]"
@@ -746,14 +746,7 @@ const Venue = () => {
                 />
               )}
               {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
-              <div
-                className={`${
-                  (formData?.is_existing_venue == "" ||
-                    formData?.is_existing_venue == "new-venue") &&
-                  formData?.existingVenue == undefined &&
-                  "ml-7"
-                }`}
-              >
+              <div>
                 {t("course.new_course:time_and_venue_tab.existing_venue")}
               </div>
             </div>
