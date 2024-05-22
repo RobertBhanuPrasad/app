@@ -734,6 +734,7 @@ interface NewCourseFormFieldTypes {
   venue_id?: number | VenueDataBaseType;
   is_existing_venue?: string;
   existingVenue?: VenueDataBaseType;
+  newVenue?: VenueDataBaseType
 
   // Step 4
   is_early_bird_enabled?: boolean;
@@ -746,6 +747,7 @@ interface NewCourseFormFieldTypes {
     is_enable?: boolean;
     fee_level_id?: number;
   }[];
+  feeLevels?:any[] 
 
   // Step 5
   accommodation?: any[];
