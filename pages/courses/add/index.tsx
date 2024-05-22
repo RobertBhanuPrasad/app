@@ -36,7 +36,6 @@ import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
   NewCourseStep3FormNames,
-  NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
   TIME_AND_VENUE_STEP_NUMBER,
@@ -50,6 +49,7 @@ import {
 } from "src/constants/OptionLabels";
 import {
   I_AM_CO_TEACHING,
+  NATIONAL_ADMIN,
   PAY_ONLINE,
   PUBLIC,
   SUPER_ADMIN,
@@ -75,6 +75,7 @@ import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
 import { supabaseClient } from "src/utility";
 import { cn } from "src/lib/utils";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -373,6 +374,36 @@ export const requiredValidationFields = (
     RequiredNewCourseStep3FormNames.push("time_zone_id");
   }
 
+  //fetching user_roles of login user data
+  const user_roles: any[] = loginUserData?.userData?.user_roles;
+
+  //Checking Weather a user is Super Admin or Not
+  let isUserNationAdminOrSuperAdmin = false;
+
+  if (
+    user_roles.some(
+      (role) =>
+        role.role_id.order === NATIONAL_ADMIN ||
+        role.role_id.order === SUPER_ADMIN
+    )
+  ) {
+    isUserNationAdminOrSuperAdmin = true;
+  }
+
+  //Checking Weather a fee is editable or not
+  const isFeeEditable =
+    isUserNationAdminOrSuperAdmin ||
+    formData?.feeLevels?.[0]?.is_program_fee_editable
+      ? true
+      : false;
+
+  let RequiredNewCourseStep4FormNames: string[] = ["feeLevels"];
+
+  //If it is a Editable fee need to validate
+  if (isFeeEditable) {
+    RequiredNewCourseStep4FormNames = [...RequiredNewCourseStep4FormNames,"is_early_bird_enabled","program_fee_level_settings"];
+  }
+
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false
       ? [
@@ -389,7 +420,7 @@ export const requiredValidationFields = (
     Object.values(RequiredNewCourseStep1FormNames),
     Object.values(RequiredNewCourseStep2FormNames),
     RequiredNewCourseStep3FormNames,
-    Object.values(NewCourseStep4FormNames),
+    RequiredNewCourseStep4FormNames,
     Object.values(RequiredNewCourseStep5FormNames),
     Object.values(NewCourseStep6FormNames),
   ];
@@ -412,7 +443,7 @@ export const NewCourseTabs = () => {
 
   const supabase = supabaseClient();
 
-  const { watch } = useFormContext();
+  const { watch, setValue } = useFormContext();
   const formData: NewCourseFormFieldTypes = watch();
 
   const { data: loginUserData }: any = useGetIdentity();
@@ -732,6 +763,52 @@ export const NewCourseTabs = () => {
     handleValidateTabs(formData);
   }, [JSON.stringify(formData), selectedProgramTypeData]);
 
+  //fetching the user's country code
+  const countryCode = useGetCountryCode();
+
+  //Fetching the course fee
+  //Need to update the course-fee when organization or program type or location data is edited.
+  useEffect(() => {
+    // This function handleCourseFeeData is used to fetch course-fee
+    const handleCourseFeeData = async () => {
+      const courseFees = await fetchCourseFee({ formData, countryCode });
+
+      //Updating course fee
+      setValue("feeLevels", courseFees);
+
+      //Updating early_bird_cut_off_period
+      if (formData?.early_bird_cut_off_period == undefined) {
+        setValue(
+          "early_bird_cut_off_period",
+          courseFees?.[0]?.early_bird_cut_off_period
+        );
+      }
+
+      //Updating is_early_bird_enabled
+      if (
+        formData?.is_early_bird_enabled == undefined &&
+        courseFees?.[0]?.is_early_bird_fee_enabled != null
+      ) {
+        setValue(
+          "is_early_bird_enabled",
+          courseFees?.[0]?.is_early_bird_fee_enabled
+        );
+      }
+    };
+
+    handleCourseFeeData();
+  }, [
+    formData?.program_type_id,
+    formData?.schedules,
+    formData?.is_existing_venue,
+    formData?.newVenue,
+    formData?.existingVenue,
+    formData?.organization_id,
+    formData?.state_id,
+    formData?.city_id,
+    formData?.center_id,
+  ]);
+
   /**
    * This function is used to display success or error messages for each tab instantly when user change the form data
    * @param formData the form data
@@ -1016,3 +1093,125 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     },
   };
 };
+
+/**
+ * @function fetchCourseFee is used to fetch course-fee based on user input
+ * @param formData is parameter where entire object is stored
+ * @param countryCode countryCode of logged in user
+ * @returns program fee setting record
+ */
+export const fetchCourseFee = async ({
+  formData,
+  countryCode,
+}: {
+  formData: NewCourseFormFieldTypes;
+  countryCode: string;
+}) => {
+  const supabase = supabaseClient();
+  //Need to fetch program_types data when program_type_id is present
+  if (formData?.program_type_id) {
+    const programTypeData = await supabase
+      .from("program_types")
+      .select("*")
+      .eq("id", formData?.program_type_id)
+      .single();
+
+    let stateId: number = -1,
+      cityId: number = -1,
+      centerId: number = -1;
+
+    //Finding the state_id ,city_id and center_id where course is going on
+    if (programTypeData?.data?.is_online_program) {
+      stateId = formData?.state_id as number;
+      cityId = formData?.city_id as number;
+      centerId = formData?.center_id as number;
+    } else {
+      if (formData.is_existing_venue == "new-venue") {
+        stateId = formData?.newVenue?.state_id as number;
+        cityId = formData?.newVenue?.city_id as number;
+        centerId = formData?.newVenue?.center_id as number;
+      } else if (formData?.is_existing_venue == "existing-venue") {
+        stateId = formData?.existingVenue?.state_id as number;
+        cityId = formData?.existingVenue?.city_id as number;
+        centerId = formData?.existingVenue?.center_id as number;
+      }
+    }
+
+    let sortedSchedules;
+    if (formData?.schedules) {
+      //sorting the schedules
+      sortedSchedules = formData?.schedules.sort((a: any, b: any) => {
+        let aDate = new Date(a.date);
+        aDate.setHours(a?.startHour, a?.startMinute);
+
+        let bDate = new Date(b.date);
+        bDate.setHours(b?.startHour, b?.startMinute);
+
+        return aDate.getTime() - bDate.getTime();
+      }) as any[];
+    }
+    //Finding course start date from new Date object
+    let utcYear = sortedSchedules?.[0]?.date["getFullYear"]();
+    let utcMonth = (sortedSchedules?.[0]?.date["getMonth"]() + 1)
+      .toString()
+      .padStart(2, "0");
+    let utcDay = sortedSchedules?.[0]?.date["getDate"]()
+      .toString()
+      .padStart(2, "0");
+
+    //Construct the course start date time stamp
+    const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
+
+    const courseFeeBody:CourseFeeBody={
+      program_type_id: formData?.program_type_id as number,
+    }
+
+    if(stateId){
+      courseFeeBody.state_id=stateId
+    }else{
+      courseFeeBody.state_id=-1
+    }
+
+    if(cityId){
+      courseFeeBody.city_id=cityId
+    }else{
+      courseFeeBody.city_id=-1
+    }
+
+    if(centerId){
+      courseFeeBody.center_id=centerId
+    }else{
+      courseFeeBody.center_id=-1
+    }
+
+    if(courseStartDate){
+      courseFeeBody.start_date=courseStartDate
+    }
+
+    console.log(courseFeeBody,"Body Send to course-fee Edge function")
+    //Sending all required params
+    const { data, error } = await supabase.functions.invoke("course-fee", {
+      method: "POST",
+      body: courseFeeBody,
+      headers: {
+        //Sending the country code for schema switching
+        "country-code": countryCode,
+      },
+    });
+
+    if (error)
+      console.log("error while fetching course fee level settings", error);
+
+    console.log("Data returned from Edge Function",data)
+    
+    return data;
+  }
+};
+
+interface CourseFeeBody{
+  program_type_id: number;
+  state_id?:number;
+  city_id?:number;
+  center_id?:number;
+  start_date?: string;
+}

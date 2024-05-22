@@ -147,6 +147,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     //   })
     //   .optional(),
     // Step 4 Schema
+    feeLevels:z.array(z.any()).min(1),
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
 
