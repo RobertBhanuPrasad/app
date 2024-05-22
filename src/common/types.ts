@@ -700,6 +700,7 @@ interface ProgramDataBaseType {
 
 interface NewCourseFormFieldTypes {
   id?: number;
+  program_code ?: string;
 
   //step 1
   organization_id?: number;

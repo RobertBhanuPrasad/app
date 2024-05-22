@@ -781,24 +781,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
    */
   const handleCopyCourse = async () => {
     if (courseId) {
-      let defaultValues = await handleCourseDefaultValues(
-        courseId,
-        timeFormat12HoursId
-      );
-
-      // we have to delete schedules when user click on copy course and other we need to prefill
-
-      defaultValues = _.omit(defaultValues, ['id', 'schedules'])
-      //remove the id, program_id from each object in program_fee_level_settings array
-      if (defaultValues?.program_fee_level_settings) {
-        defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
-          _.omit(setting, ['id', 'program_id'])
-        );
-      }
-      setNewCourseData(defaultValues)
-      // we are storing the program created by in the zustand variable to use it in the validation of the co-teaching
-      setProgramCreatedById(defaultValues?.program_created_by)
-      router.push({ pathname: '/courses/add', query: { action: 'Copy' } })
+      router.push(`/courses/${courseId}/copy`);
     }
   };
 

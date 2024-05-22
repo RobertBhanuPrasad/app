@@ -72,10 +72,10 @@ import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 import { useTranslation } from "next-i18next";
-import { IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
 import { supabaseClient } from "src/utility";
 import { cn } from "src/lib/utils";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { IsCopyCourse, IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -110,7 +110,7 @@ function index() {
     return <NewCourse />;
   }
 }
-function NewCourse() {
+export function NewCourse() {
   const { setCurrentStep } = newCourseStore();
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -199,10 +199,6 @@ function NewCourse() {
     ref.current = true;
   }, [searchparams]);
 
-  /**
-   * This variable holds whether it is copy course or not
-   */
-  const IsCopyCourse = router?.query?.action == "Copy";
 
   /**
    * default values are used to prefill the course data
@@ -213,10 +209,10 @@ function NewCourse() {
    */
   let defaultValues: any = {};
 
-  if (IsEditCourse(pathname) || IsCopyCourse) {
+  if (IsEditCourse(pathname) || IsCopyCourse(pathname)) {
     defaultValues = newCourseData;
     //REQUIRMENT if the course is copying then we need to prefill the organizers of that cousre and we need to add the logged in user as a primary organizer
-    if (IsCopyCourse && newCourseData) {
+    if (IsCopyCourse(pathname) && newCourseData) {
       defaultValues.organizer_ids = _.uniq([
         loggedUserData,
         ...newCourseData?.organizer_ids,
@@ -270,7 +266,7 @@ function NewCourse() {
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
   if (
     timeZonesData?.data?.length === 1 &&
-    (IsEditCourse(pathname) === false || IsCopyCourse === false)
+    (IsEditCourse(pathname) === false || IsCopyCourse(pathname) === false)
   ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
       timeZonesData?.data[0]?.id;
@@ -278,7 +274,7 @@ function NewCourse() {
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
   // and same we need to set only if it is not edit and copy
-  if (IsEditCourse(pathname) === false && IsCopyCourse === false) {
+  if (IsEditCourse(pathname) === false && IsCopyCourse(pathname) === false) {
     if (data?.data[0]?.hour_format_id) {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
         data?.data[0]?.hour_format_id;
@@ -305,14 +301,16 @@ function NewCourse() {
   }
 
   return (
-    <div className="mx-8">
-      <Form
-        onSubmit={onSubmit}
-        defaultValues={defaultValues}
-        schema={validationSchema(iAmCoTeachingId as number)}
-      >
-        <NewCourseTabs />
-      </Form>
+    <div className="mx-auto min-w-[1000px] w-full max-w-[1640px] px-8 pb-8">
+      <div>
+        <Form
+          onSubmit={onSubmit}
+          defaultValues={defaultValues}
+          schema={validationSchema(iAmCoTeachingId as number)}
+        >
+          <NewCourseTabs />
+        </Form>
+      </div>
     </div>
   );
 }
@@ -496,7 +494,7 @@ export const NewCourseTabs = () => {
   }, [formData?.program_type_id]);
 
   const contentStylings =
-    "inline-flex !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background ";
+    "inline-flex w-full !mt-0 whitespace-nowrap rounded-s-sm text-sm font-medium  data-[state=active]:bg-background";
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
 
@@ -718,31 +716,37 @@ export const NewCourseTabs = () => {
       value: BASIC_DETAILS_STEP_NUMBER,
       label: t("basic_details"),
       icon: (color: string) => <Profile color={color} />,
+      component: <NewCourseStep1 />,
     },
     {
       value: COURSE_DETAILS_STEP_NUMBER,
       label: t("course.new_course:review_post_details.course_details"),
       icon: (color: string) => <Group color={color} />,
+      component: <NewCourseStep2 />,
     },
     {
       value: TIME_AND_VENUE_STEP_NUMBER,
       label: t("time_and_venue"),
       icon: (color: string) => <Venue color={color} />,
+      component: <NewCourseStep3 />,
     },
     {
       value: FEE_STEP_NUMBER,
       label: t("fees"),
       icon: (color: string) => <Venue color={color} />,
+      component: <NewCourseStep4 />,
     },
     {
       value: ACCOMMODATION_STEP_NUMBER,
       label: t("new_strings:accommodation"),
       icon: (color: string) => <Car color={color} />,
+      component: <NewCourseStep5 />,
     },
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: t("new_strings:contact_info"),
       icon: (color: string) => <Info color={color} />,
+      component: <NewCourseStep6 />,
     },
   ];
 
@@ -874,7 +878,7 @@ export const NewCourseTabs = () => {
     <div>
       <div className="flex gap-20 items-center">
         <p className="font-semibold text-2xl">
-          {router.query.action === "Copy" ? t("Copy") : t("new_strings:new")}{" "}
+          {IsCopyCourse(pathname) ? t("Copy") : t("new_strings:new")}{" "}
           {t("new_strings:course")}
         </p>
 
@@ -889,10 +893,10 @@ export const NewCourseTabs = () => {
           </div>
         )}
       </div>
-      <div className="mt-4 bg-[white]">
+      <div className="bg-[white] mt-4 shadow-2xl rounded-[24px]">
         <Tabs value={JSON.stringify(currentStep)}>
           <div className="flex flex-row overflow-x-hidden">
-            <TabsList className="h-[513px] bg-[#7677F41B]  w-[238px] rounded-l-[24px] shadow-md py-10">
+            <TabsList className="h-[517px] bg-[#7677F41B] min-w-[238px] rounded-l-[24px] shadow-md py-10">
               <div className="flex flex-col  h-full gap-4 ">
                 {stepTitles.map((tab, index) => {
                   return (
@@ -949,58 +953,35 @@ export const NewCourseTabs = () => {
               </div>
             </TabsList>
 
-            <div className="bg-[white] w-full rounded-[24px] -ml-4 -mt-1 p-6 shadow-md h-[517px]">
-              <div className="flex flex-col justify-between max-h-[460px] h-[460px] overflow-y-auto scrollbar overflow-x-hidden">
-                <div className="flex flex-col w-full justify-between">
-                  <TabsContent
-                    value={JSON.stringify(BASIC_DETAILS_STEP_NUMBER)}
-                    className={contentStylings}
+            <div className="bg-[white] w-full rounded-[24px] p-6 overflow-auto h-[517px] flex flex-col justify-between">
+              <div>
+                {stepTitles?.map((step, index) => {
+                  if (index + 1 === currentStep)
+                    return (
+                      <TabsContent
+                        value={JSON.stringify(index + 1)}
+                        className={contentStylings}
+                      >
+                        {step.component}
+                      </TabsContent>
+                    );
+                  else {
+                    return <></>;
+                  }
+                })}
+              </div>
+              <div className="flex justify-center gap-4 w-full mb-2 mt-6">
+                {currentStep > 1 && (
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleClickPrevious();
+                    }}
+                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]"
                   >
-                    <NewCourseStep1 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(COURSE_DETAILS_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep2 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(TIME_AND_VENUE_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep3 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(FEE_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep4 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(ACCOMMODATION_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep5 />
-                  </TabsContent>
-                  <TabsContent
-                    value={JSON.stringify(CONTACT_INFO_STEP_NUMBER)}
-                    className={contentStylings}
-                  >
-                    <NewCourseStep6 />
-                  </TabsContent>
-                </div>
-                <div className="flex self-end justify-center gap-4 w-full mt-2">
-                  {currentStep > 1 && (
-                    <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleClickPrevious();
-                      }}
-                      className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
-                    >
-                      {t("previous_button")}
-                    </Button>
-                  )}
+                    {t("previous_button")}
+                  </Button>
+                )}
 
                   {currentStep < stepTitles.length && (
                     <Button

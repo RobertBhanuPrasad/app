@@ -854,7 +854,9 @@ const Visibility = () => {
                 {t("private")}
               </div>
               <div>{t("new_strings:there_are_a_lot_of_things")}</div> */}
+                          <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
               {t("new_strings:program_visibility_info_icon_text")}
+              </Text>
             </div>
           </HoverCardContent>
         </HoverCard>

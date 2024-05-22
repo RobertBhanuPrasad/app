@@ -1,3 +1,4 @@
+import Tick from "@public/assets/Tick";
 import {
   useGetIdentity,
   useInvalidate,
@@ -5,7 +6,11 @@ import {
   useMany,
   useOne,
 } from "@refinedev/core";
+import { useTranslation } from "next-i18next";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { translatedText } from "src/common/translations";
 import {
   COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
@@ -21,6 +26,13 @@ import {
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import { CardLabel, CardValue } from "src/ui/TextTags";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
 import {
@@ -31,7 +43,10 @@ import {
   getOptionValueObjectById,
   getOptionValueObjectByOptionOrder,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { IsEditCourse } from "./EditCourseUtil";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
@@ -40,26 +55,9 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "src/ui/alert-dialog";
-import { useRouter } from "next/router";
-import Tick from "@public/assets/Tick";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useTranslation } from "next-i18next";
-import { translatedText } from "src/common/translations";
-import { IsEditCourse } from "./EditCourseUtil";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { validationSchema } from "./NewCourseValidations";
-import { fetchCourseFee, requiredValidationFields } from "pages/courses/add";
+import { fetchCourseFee } from "pages/courses/add";
 import _ from "lodash";
-import { z } from "zod";
-import { useFormState } from "react-hook-form";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 
 export default function NewCourseReviewPage() {
@@ -659,6 +657,27 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
+            {/* REQUIRMENT in the course edit page we need to display the course code in the course details section */}
+            {IsEditCourse(pathname) && (
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                  {t("course_id")}
+                </p>
+
+                <abbr
+                  className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
+                  title={
+                    newCourseData?.program_code
+                      ? newCourseData?.program_code
+                      : "-"
+                  }
+                >
+                  {newCourseData?.program_code
+                    ? newCourseData?.program_code
+                    : "-"}
+                </abbr>
+              </div>
+            )}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:review_post_details.creator")}
@@ -1062,7 +1081,7 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666] h-[118px] overflow-y-auto"
                   title={
                     VenueData && newCourseData?.program_type_id != ""
                       ? VenueData
@@ -1329,23 +1348,34 @@ export default function NewCourseReviewPage() {
             <div className="truncate">
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.bcc_registration_confirmation_email}
+                // If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying
+                title={
+                  newCourseData?.bcc_registration_confirmation_email
+                    ? newCourseData?.bcc_registration_confirmation_email?.replace(
+                        /(\s*,\s*)*$/,
+                        ""
+                      )
+                    : "-"
+                }
               >
+                {/* If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying */}
                 {newCourseData?.bcc_registration_confirmation_email
-                  ? newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(
+                      /(\s*,\s*)*$/,
+                      ""
+                    )
                   : "-"}
               </abbr>
             </div>
           </div>
         </section>
         <div className="flex items-center justify-center">
-          {isSubmitting ? (
-            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
-              <div className="loader !w-[30px]"></div>
-            </Button>
-          ) : (
-            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
+          {isSubmitting && (
+            <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+              <div className="loader"></div>
+            </div>
           )}
+          <Button onClick={handClickContinue}>{t("continue_button")}</Button>
         </div>
       </div>
     </div>
@@ -1397,8 +1427,7 @@ const Accommodation = ({
       >
         <CardValue className="truncate">
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
-          {currencyCode ? currencyCode : ""}
-          {accomdationData?.fee_per_person}
+          {currencyCode ? currencyCode : ""} {accomdationData?.fee_per_person}
         </CardValue>
       </abbr>
     </div>
