@@ -287,10 +287,12 @@ export const CourseTypeDropDown = () => {
     newCourseTypeId: number
   ) => {
 
+    //TODO: When the new Select is implemented need to changed the code.
     const previousCourseSettings = queryResult?.data?.data.filter(
       (data) => data.id == previousCourseTypeId
     );
 
+    //TODO: When the new Select is implemented need to changed the code.
     const newCourseTypeSettings = queryResult?.data?.data.filter(
       (data) => data.id == newCourseTypeId
     );
@@ -306,6 +308,7 @@ export const CourseTypeDropDown = () => {
       setValue("city_id", "");
       setValue("center_id", "");
       setValue("is_existing_venue","")
+      setValue("online_url","")
     }
 
     setValue("program_alias_name_id", "");
@@ -325,7 +328,8 @@ export const CourseTypeDropDown = () => {
         "state_id",
         "city_id",
         "center_id",
-        "is_existing_venue"
+        "is_existing_venue",
+        "online_url"
       ]);
     }, 10);
   };
