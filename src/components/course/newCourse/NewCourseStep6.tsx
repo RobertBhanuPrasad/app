@@ -71,9 +71,7 @@ function NewCourseStep6() {
           {/* Input field for Contact Number */}
           <div className="w-58 h-20 flex gap-1 flex-col">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
-              {index === 0
-                ? t('course.new_course:contact_info_tab.contact_number')
-                : `${t('course.new_course:contact_info_tab.contact_number')} ${index + 1}`}
+            {index === 0 ? t("course.new_course:contact_info_tab.contact_number") : `${t("course.new_course:contact_info_tab.contact_number")} ${index + 1}`}{" "}
             </div>
             <ContactMobile index={index} />
           </div>
