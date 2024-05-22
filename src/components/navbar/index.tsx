@@ -1,21 +1,19 @@
-// import Bell from '@public/assets/Bell'
-import LoadingIcon from '@public/assets/LoadingIcon'
-import Logo from '@public/assets/Logo'
-import LogoutIcon from '@public/assets/LogoutIcon'
-import TableMenu from '@public/assets/TableMenu'
-import { useGetIdentity, useOne } from '@refinedev/core'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { destroyCookie } from 'nookies'
-import { useState } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar'
+import { useEffect, useState } from 'react'; // Import useEffect and useState
+import LoadingIcon from '@public/assets/LoadingIcon';
+import Logo from '@public/assets/Logo';
+import LogoutIcon from '@public/assets/LogoutIcon';
+import { useGetIdentity } from '@refinedev/core';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { destroyCookie } from 'nookies';
+import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from 'src/ui/dropdown-menu'
+} from 'src/ui/dropdown-menu';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -24,15 +22,19 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
-} from 'src/ui/navigation-menu'
-import { supabaseClient } from 'src/utility'
-
+} from 'src/ui/navigation-menu';
+import { supabaseClient } from 'src/utility';
+import { newCourseStore } from 'src/zustandStore/NewCourseStore';
+import { AlertDialog, AlertDialogContent } from 'src/ui/alert-dialog';
+import { Button } from 'src/ui/button';
 
 function Navbar() {
+  const { data: loginUserData }: any = useGetIdentity();
+  const router = useRouter();
+  const { currentStep, setNewCourseAlertMessageModal, newCourseAlertMessageModal } = newCourseStore();
 
-  const { data: loginUserData }: any = useGetIdentity()
-
-  const router = useRouter()
+  const [pendingUrl, setPendingUrl] = useState<string | null>(null); // State to keep track of the URL the user intends to navigate to
+  const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
 
   // Define navigation components and their respective routes
   const components = [
@@ -70,6 +72,44 @@ function Navbar() {
     }
     console.log('error is', error)
   }
+
+  // Alert user when navigating away from /courses/add 
+  useEffect(() => {
+    const handleRouteChangeStart = (url: string) => {
+      const basePath = url.split('?')[0];
+      if (!navigationConfirmed && pathname === '/courses/add' && basePath !== '/courses/add') {
+        setNewCourseAlertMessageModal(true);
+        setPendingUrl(url); // Store the URL the user intends to navigate to
+        router.events.emit('routeChangeError'); // Emit route change error to stop the navigation
+        throw 'Abort route change. Please ignore this error.';
+      }
+    };
+
+    const handleRouteChangeComplete = () => {
+      setNavigationConfirmed(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+    router.events.on('routeChangeError', handleRouteChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+      router.events.off('routeChangeError', handleRouteChangeComplete);
+    };
+  }, [pathname, navigationConfirmed, router.events]);
+
+
+  const handleAlertClose = (proceed: boolean) => {
+    setNewCourseAlertMessageModal(false);
+    if (proceed && pendingUrl) {
+      setNavigationConfirmed(true);
+      router.push(pendingUrl); // Navigate to the stored URL
+    }
+    setPendingUrl(null); // Clear the pending URL
+  };
+
 
   return (
     <div className="w-full flex flex-row px-4 h-16 justify-between items-center  ">
@@ -178,8 +218,10 @@ function Navbar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      {/* New Course Alert Message */}
+      <ViewNewCourseAlertMessage onClose={handleAlertClose} />
     </div>
-  )
+  );
 }
 
 export default Navbar
@@ -194,5 +236,49 @@ const MenuList = ({ Name, route }: any) => {
         </NavigationMenuLink>
       </Link>
     </div>
-  )
-}
+  );
+};
+
+// ViewNewCourseAlertMessage Component
+export const ViewNewCourseAlertMessage = ({ onClose }: { onClose: (proceed: boolean) => void }) => {
+  const {
+    newCourseAlertMessageModal,
+    setNewCourseAlertMessageModal,
+  } = newCourseStore();
+
+  return (
+    <AlertDialog open={newCourseAlertMessageModal}>
+      <AlertDialogContent className="w-[414px] h-[301px]">
+        <div className="flex flex-col items-center">
+          <div className="font-semibold text-center mt-2">
+            Error Message
+          </div>
+          <div className="text-center my-4">
+            Are you sure you want to leave this page?
+          </div>
+          <div className="w-full flex justify-center items-center gap-5">
+            <div>
+              <Button
+                type="button"
+                variant="outline"
+                className="text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px]"
+                onClick={() => onClose(false)} // User stays on the same page
+              >
+                No
+              </Button>
+            </div>
+            <div>
+              <Button
+                type="button"
+                className="bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px]"
+                onClick={() => onClose(true)} // User navigates to the new page
+              >
+                Yes
+              </Button>
+            </div>
+          </div>
+        </div>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
