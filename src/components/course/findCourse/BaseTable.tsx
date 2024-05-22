@@ -41,8 +41,6 @@ import {
 
 import DropDown from "@public/assets/DropDown";
 import { useTranslation } from "next-i18next";
-import sortStore from "src/zustandStore/ParticipantSort";
-
 interface IBaseTable<TData, TValue> {
   /**
    * Columns defined for the table
@@ -144,6 +142,10 @@ interface IBaseTable<TData, TValue> {
    * Flag to indicate whether the column selector need to be displayed or not
    */
   columnSelector?: boolean;
+
+  setSorting?: any;
+
+  sorting?: any;
 }
 
 export function BaseTable<TData, TValue>({
@@ -163,6 +165,8 @@ export function BaseTable<TData, TValue>({
   rowSelection,
   setRowSelection,
   columnSelector,
+  sorting,
+  setSorting,
   noRecordsPlaceholder = "No results",
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
@@ -195,7 +199,6 @@ export function BaseTable<TData, TValue>({
     Object.values(columnVisibilityChanges).every(Boolean);
 
   const [selectAll, setSelectAll] = useState(initialSelectAll);
-  const [sorting, setSorting] = useState<SortingState>([]);
 
   /**
    * @function getRowId
@@ -231,23 +234,6 @@ export function BaseTable<TData, TValue>({
     onSortingChange: setSorting,
   });
 
-  const { setfield, setOrder } = sortStore();
-
-  useEffect(() =>{
-    if(sorting.length > 0){
-    setfield(sorting?.[0]?.id)
-    setOrder(sorting?.[0]?.desc ? "desc" : "asc")
-    }
-    },[sorting?.[0]?.desc])
-
-  console.log("sorting",sorting)
-  // const {order} = sortStore.getState();
-  // console.log("seorf", order)
-  // const {field} = sortStore.getState();
-  // console.log("dad", field)
-
-
-  // console.log("")
   /**
    * Function to handle the select all checkbox changes
    */

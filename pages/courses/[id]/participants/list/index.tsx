@@ -44,7 +44,6 @@ import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import useGetCountryCode from "src/utility/useGetCountryCode";
-import sortStore from "src/zustandStore/ParticipantSort";
 
 function index() {
   const router = useRouter();
@@ -284,12 +283,18 @@ function index() {
       });
     }
   }
+  const [sorting, setSorting] = useState([
+    {
+      id: "id",
+      desc: true
+    }
+  ]);
 
-var{field: attr} = sortStore.getState();
-if(attr === 'Name') attr = "contact_id(full_name)"
-if(attr === "Date of Birth") attr = "contact_id(date_of_birth)"
-if(attr === "Phone") attr = "contact_id(mobile)"
-const {order} = sortStore.getState() 
+let field = sorting?.[0]?.id
+if(field === 'Name') field = "contact_id(full_name)"
+if(field === "Date of Birth") field = "contact_id(date_of_birth)"
+if(field === "Phone") field = "contact_id(mobile)"
+
   const {
     tableQueryResult: participantData,
     pageCount,
@@ -310,11 +315,11 @@ const {order} = sortStore.getState()
     sorters:{
       permanent: [
         {
-          field: attr,
-          order: order
+          field: field,
+          order: sorting?.[0]?.desc ? "desc" : "asc"
         },
       ],
-    }
+    },
   });
 
   const supabase = supabaseClient();
@@ -465,6 +470,7 @@ const {order} = sortStore.getState()
   const bulk_actions = t("new_strings:bulk_actions");
   const [bulkActionSelectedValue, setBulkActionSelectedValue] =
     useState(bulk_actions);
+
   const excelColumns = [
     {
       column_name: t("course.participants:find_participant.registration_id"),
@@ -575,6 +581,7 @@ const {order} = sortStore.getState()
 
   const countryCode = useGetCountryCode();
 
+ 
 
   return (
     <div>
@@ -724,6 +731,8 @@ const {order} = sortStore.getState()
             total={participantData?.data?.total || 0}
             pageSize={pageSize}
             setPageSize={setPageSize}
+            sorting={sorting}
+            setSorting={setSorting}
             pagination={true}
             tableStyles={{
               table: "",
