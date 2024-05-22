@@ -382,7 +382,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
               }}
               error={error ? true : false}
               onBlur={() => {
-                onChange(total);
+                const formattedValue = parseFloat(total).toFixed(2)
+                setTotal(formattedValue)
+                onChange(formattedValue) 
               }}
             />
           </div>
@@ -489,7 +491,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
               }}
               error={error ? true : false}
               onBlur={() => {
-                onChange(earlyBirdTotal);
+                const formattedValue = parseFloat(earlyBirdTotal).toFixed(2)
+                setEarlyBirdTotal(formattedValue)
+                onChange(formattedValue)
               }}
             />
           </div>
@@ -618,14 +622,14 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             }}
             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
           />
-          {t("course.new_course:fees_tab.enable_early")}
+          <div className="font-normal">{t("course.new_course:fees_tab.enable_early")}</div>
         </div>
       </div>
     )}
   </div>
 )}
       {/* Rendering DataTable component */}
-      <div className="h-auto overflow-x-scroll rounded-md border">
+      <div className="h-auto overflow-x-scroll rounded-2xl border">
         {isFeeEditable ? (
           feeLevels?.length > 0 && (
             <DataTable columns={feeColumns} data={courseFeeData} />

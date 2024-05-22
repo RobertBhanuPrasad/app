@@ -498,6 +498,8 @@ export default function NewCourseReviewPage() {
   const [openContactDetails, setOpenContactDetails] = useState(false);
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
+ 
+
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
 
@@ -1369,24 +1371,27 @@ export default function NewCourseReviewPage() {
             <div className="truncate">
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.bcc_registration_confirmation_email}
+                // If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying
+                title={newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(/(\s*,\s*)*$/, '')
+                  : "-"}
               >
+                {/* If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying */}                
                 {newCourseData?.bcc_registration_confirmation_email
-                  ? newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(/(\s*,\s*)*$/, '')
                   : "-"}
               </abbr>
             </div>
           </div>
         </section>
         <div className="flex items-center justify-center">
-          {isSubmitting ? (
-            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
-              <div className="loader !w-[30px]"></div>
-            </Button>
-          ) : (
-            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
-          )}
+          {isSubmitting && 
+          <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+            <div className="loader"></div>
+          </div>}
+          <Button onClick={handClickContinue}>{t('continue_button')}</Button>
         </div>
+
       </div>
     </div>
   );
