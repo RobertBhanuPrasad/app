@@ -12,6 +12,7 @@ import {
 import TransactionActivity from "./TransactionActivityPopover";
 import { useTranslation } from 'next-i18next';
 import { translatedText } from "src/common/translations";
+import sortStore from "src/zustandStore/ParticipantSort";
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -19,6 +20,7 @@ type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 export const columns = () =>
 {
   const {t} = useTranslation(['common','course.participants','new_strings', 'course.view_course'])
+  const { setfield, setOrder } = sortStore();
   const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "participant_code",
@@ -52,12 +54,18 @@ export const columns = () =>
   {
     accessorKey: "created_at",
     column_name: t('course.participants:find_participant.registration_date'),
+    // enableHiding: false,
+    // enableSorting: true,
     header: ({ column }) => {
+      // console.log("cods",column.getIsSorted() === false ? "asc" : "desc")
+      console.log("adada",column.getIsSorted())
       return (
         <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => {
+              column.toggleSorting(column.getIsSorted() === "asc")
+            }}
           >
             {t('course.participants:find_participant.registration_date')}
             {column.getIsSorted() === "desc" ? (

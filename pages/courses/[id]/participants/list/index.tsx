@@ -44,6 +44,7 @@ import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import sortStore from "src/zustandStore/ParticipantSort";
 
 function index() {
   const router = useRouter();
@@ -284,6 +285,11 @@ function index() {
     }
   }
 
+var{field: attr} = sortStore.getState();
+if(attr === 'Name') attr = "contact_id(full_name)"
+if(attr === "Date of Birth") attr = "contact_id(date_of_birth)"
+if(attr === "Phone") attr = "contact_id(mobile)"
+const {order} = sortStore.getState() 
   const {
     tableQueryResult: participantData,
     pageCount,
@@ -301,17 +307,19 @@ function index() {
         "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
-    sorters: {
+    sorters:{
       permanent: [
         {
-          field: "id",
-          order: "asc",
+          field: attr,
+          order: order
         },
       ],
-    },
+    }
   });
 
   const supabase = supabaseClient();
+ 
+
 
   console.log("Participant table data", participantData);
 
@@ -566,6 +574,7 @@ function index() {
   const csvOption = "CSV";
 
   const countryCode = useGetCountryCode();
+
 
   return (
     <div>
