@@ -727,7 +727,7 @@ const Venue = () => {
       >
         <Label htmlFor="existing-venue" className="flex-[1]">
           <div
-            className={`rounded-[16px] h-[118px] relative flex py-[24px] px-4 flex-col ${
+            className={`rounded-[16px] h-[118px] relative flex py-[24px] px-6 flex-col ${
               value === "existing-venue"
                 ? "border border-[#7677F4]"
                 : "border border-[#D6D7D8]"
