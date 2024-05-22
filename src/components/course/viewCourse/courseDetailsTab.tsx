@@ -442,17 +442,17 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <div>
                 <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">
-                  <div className="text-[16px] font-semibold w-[90%] break-words">
-                    {courseData?.data?.registration_link
-                      ? courseData?.data?.registration_link
-                      : "-"}
-                  </div>
+                  {courseData?.data?.registration_link
+                    ? <a className="text-[16px] font-semibold w-[90%] break-words" href={courseData?.data?.registration_link} target="_blank"> 
+                      {courseData?.data?.registration_link}
+                    </a>
+                    : "-"}
                   {courseData?.data?.registration_link && (
                     <div
                       onClick={() => {
                         handleCopyRegistrationLink();
                       }}
-                      className="relative mt-1"
+                      className="relative mt-1 cursor-pointer"
                     >
                       <CopyIcon />
                       {copiedRegistrationLink ? (

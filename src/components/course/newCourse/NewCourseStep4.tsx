@@ -153,7 +153,7 @@ export default function CourseTable() {
           <div className="loader"></div>
         </section>
       ) : (
-        <section>
+        <section className="w-full">
           <CourseFeeTable
             courseFeeSettings={courseFeeSettings}
             organizationData={organizationData?.data}
@@ -169,7 +169,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   //If Fee is not found based on users selection then need to show this
   if (courseFeeSettings?.length == 0 || courseFeeSettings?.[0]?.program_fee_level_settings?.length == 0) {
     return (
-      <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
+      <div className="h-[280px] flex items-center justify-center border border-1 rounded-xl">
         {t(
           "there_is_no_price_set_for_current_settings_select_course_type_and_city_center"
         )}
@@ -382,7 +382,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
               }}
               error={error ? true : false}
               onBlur={() => {
-                onChange(total);
+                const formattedValue = parseFloat(total).toFixed(2)
+                setTotal(formattedValue)
+                onChange(formattedValue) 
               }}
             />
           </div>
@@ -489,7 +491,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
               }}
               error={error ? true : false}
               onBlur={() => {
-                onChange(earlyBirdTotal);
+                const formattedValue = parseFloat(earlyBirdTotal).toFixed(2)
+                setEarlyBirdTotal(formattedValue)
+                onChange(formattedValue)
               }}
             />
           </div>
@@ -601,7 +605,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   };
 
   return (
-    <div className="flex flex-col justify-center w-[70vw]">
+    <div className="flex flex-col justify-center">
       {/* Enable Early Bird fee if it is enabled in settings and Fee should be editable */}
       {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && (
   <div className="flex justify-between items-center gap-2 pb-4">
@@ -618,14 +622,14 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
             }}
             className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
           />
-          {t("course.new_course:fees_tab.enable_early")}
+          <div className="font-normal">{t("course.new_course:fees_tab.enable_early")}</div>
         </div>
       </div>
     )}
   </div>
 )}
       {/* Rendering DataTable component */}
-      <div className="h-auto overflow-x-scroll rounded-md border">
+      <div className="h-auto overflow-x-scroll rounded-2xl border">
         {isFeeEditable ? (
           feeLevels?.length > 0 && (
             <DataTable columns={feeColumns} data={courseFeeData} />

@@ -57,7 +57,7 @@ function NewCourseStep6() {
           </div>
 
           {/* Input field for Contact Email */}
-          <div className="w-58 h-20 flex gap-1 flex-col">
+          <div className="w-70 h-20 ">
             <div className="flex flex-row text-xs font-normal text-[#333333] gap-1">
               {index === 0 ? t("contact_email") : `${t("contact_email")} ${index + 1}`}{" "}
               <Text className="text-[#7677F4]"> *</Text>
@@ -162,6 +162,7 @@ export const ContactEmail = ({ index }: any) => {
     <div>
       <Input
         placeholder={t("course.new_course:contact_info_tab.select_contact_email")}
+        className="w-60"
         value={value}
         onChange={(val) => {
           onChange(val?.target?.value);
