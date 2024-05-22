@@ -1,3 +1,4 @@
+import Tick from "@public/assets/Tick";
 import {
   useGetIdentity,
   useInvalidate,
@@ -5,7 +6,12 @@ import {
   useMany,
   useOne,
 } from "@refinedev/core";
+import _ from "lodash";
+import { useTranslation } from "next-i18next";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { translatedText } from "src/common/translations";
 import {
   COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
@@ -21,6 +27,13 @@ import {
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import { CardLabel, CardValue } from "src/ui/TextTags";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
 import {
@@ -31,8 +44,12 @@ import {
   getOptionValueObjectById,
   getOptionValueObjectByOptionOrder,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { IsEditCourse } from "./EditCourseUtil";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
+import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
 import NewCourseStep3 from "./NewCourseStep3";
@@ -40,27 +57,7 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "src/ui/alert-dialog";
-import { useRouter } from "next/router";
-import Tick from "@public/assets/Tick";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useTranslation } from "next-i18next";
-import { translatedText } from "src/common/translations";
-import { IsEditCourse } from "./EditCourseUtil";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { validationSchema } from "./NewCourseValidations";
-import { requiredValidationFields } from "pages/courses/add";
-import _ from "lodash";
-import { z } from "zod";
-import { useFormState } from "react-hook-form";
-import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -1107,7 +1104,7 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666] h-[118px] overflow-y-auto"
                   title={
                     VenueData && newCourseData?.program_type_id != ""
                       ? VenueData
