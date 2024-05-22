@@ -605,15 +605,14 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   };
 
   return (
-    <div className="flex flex-col justify-center">
+    <div className="flex flex-col justify-center gap-2.5">
       {/* Enable Early Bird fee if it is enabled in settings and Fee should be editable */}
-      {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && (
-  <div className="flex justify-between items-center gap-2 pb-4">
-    <div className="font-semibold text-base text-[#333333]">
-      {t("fees")}
-    </div>
-    {isFeeEditable && (
-      <div>
+        <div className="flex items-center gap-2 py-2">
+      <div className="flex items-center w-full justify-between">
+      <div className="font-semibold text-base text-[#333333]">
+            {t("fees")}
+        </div>
+      {courseFeeSettings?.[0]?.is_early_bird_fee_enabled && isFeeEditable && (
         <div className="flex justify-between items-center gap-[8px] py-4">
           <Checkbox
             checked={showEarlyBirdColumns}
@@ -624,10 +623,9 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           />
           <div className="font-normal">{t("course.new_course:fees_tab.enable_early")}</div>
         </div>
-      </div>
     )}
+      </div>
   </div>
-)}
       {/* Rendering DataTable component */}
       <div className="h-auto overflow-x-scroll rounded-2xl border">
         {isFeeEditable ? (
