@@ -147,6 +147,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     //   })
     //   .optional(),
     // Step 4 Schema
+    feeLevels:z.array(z.any()).min(1),
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
 
@@ -177,7 +178,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
       .refine(
         (value) => {
           //Requirement: Duplicate emails are not allowed
-          const emails = value.split(",").map((email) => email.trim());
+          const emails = value.split(",").map((email) => email.trim()).filter(email => email !== "");
           const uniqueEmails = new Set(emails);
           return emails.length === uniqueEmails.size;
         },

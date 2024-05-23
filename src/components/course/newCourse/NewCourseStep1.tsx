@@ -229,31 +229,17 @@ const RadioCards = () => {
   };
 
   /**
-   * @constant data is the data from the option_labels table of Program Organizer Type name
-   * @description this const is used store the data from the option_labels table giving the name as Program Organizer Type
-   */
-  const { data } = useList({
-    resource: "option_labels",
-    filters: [
-      {
-        field: "name",
-        operator: "eq",
-        value: "Program Organizer Type",
-      },
-    ],
-  });
-
-  /**
    * @constant programOrganizerTypeData is the data from the option_values
    * @description this const is used to store the data from the option_values which option_label_id is Program Organizer Type
    */
   const { data: programOrganizerTypeData } = useList({
     resource: "option_values",
+    meta:{select:"*,option_label_id!inner(*)"},
     filters: [
       {
-        field: "option_label_id",
+        field: "option_label_id.key",
         operator: "eq",
-        value: data?.data?.[0]?.id,
+        value: PROGRAM_ORGANIZER_TYPE,
       },
     ],
   });
@@ -486,7 +472,8 @@ const OrganizationDropDown = () => {
     setValue("is_residential_program", false);
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings", []);
+    setValue("program_fee_level_settings",undefined );
+    setValue("feeLevels",undefined );
     setValue("is_early_bird_enabled", undefined);
     setValue("early_bird_cut_off_period", undefined);
 
