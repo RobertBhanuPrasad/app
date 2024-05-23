@@ -4,7 +4,7 @@ import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import {
