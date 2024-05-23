@@ -134,25 +134,22 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           ? translatedText(val?.custom_fee_label)
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
-        subTotal: ((val?.total * 100) / (100 + taxRate)).toFixed(2),
-        tax: (val?.total - (val?.total * 100) / (100 + taxRate)).toFixed(2),
+        subTotal: calculateTotal(val?.total, taxRate).toFixed(2),
+        tax: calculateTax(val?.total, taxRate).toFixed(2),
         total: parseFloat(val?.total).toFixed(2),
-        is_custom_fee:val?.is_custom_fee,
-        custom_fee_label:val?.custom_fee_label
+        is_custom_fee: val?.is_custom_fee,
+        custom_fee_label: val?.custom_fee_label,
       };
 
       //Need to insert early bird fee if early bird fee is enabled in settings
       if (courseFeeSettings?.[0]?.is_early_bird_fee_enabled) {
         modifiedFeeLevels = {
           ...modifiedFeeLevels,
-          earlyBirdSubTotal: (
-            (val?.early_bird_total * 100) /
-            (100 + taxRate)
+          earlyBirdSubTotal: calculateTotal(
+            val?.early_bird_total,
+            taxRate
           ).toFixed(2),
-          earlyBirdTax: (
-            val?.early_bird_total -
-            (val?.early_bird_total * 100) / (100 + taxRate)
-          ).toFixed(2),
+          earlyBirdTax: calculateTax(val?.early_bird_total, taxRate).toFixed(2),
           earlyBirdTotal: parseFloat(val?.early_bird_total || "").toFixed(2),
         };
       }
@@ -245,7 +242,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][total]`,
         });
 
-        const normalFee = (total * 100) / (100 + taxRate);
+        const normalFee = calculateTotal(total, taxRate);
 
         return <div className="">{normalFee?.toFixed(2)}</div>;
       },
@@ -263,7 +260,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][total]`,
         });
 
-        const tax = total - (total * 100) / (100 + taxRate);
+        const tax = calculateTax(total, taxRate);
         return <div className="">{tax.toFixed(2)}</div>;
       },
       enableSorting: false,
@@ -353,7 +350,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         });
 
         //Requirement: Early Bird Sub Total is (Early Bird Total - Tax )
-        const earlyBirdSubTotal = (earlyBirdTotal * 100) / (100 + taxRate);
+        const earlyBirdSubTotal = calculateTotal(earlyBirdTotal, taxRate);
 
         return <div className="">{earlyBirdSubTotal?.toFixed(2)}</div>;
       },
@@ -372,7 +369,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           name: `program_fee_level_settings[${row?.index}][early_bird_total]`,
         });
 
-        const tax = earlyBirdTotal - (earlyBirdTotal * 100) / (100 + taxRate);
+        const tax = calculateTax(earlyBirdTotal, taxRate);
         return <div className="">{tax.toFixed(2)}</div>;
       },
       enableSorting: false,
@@ -612,6 +609,13 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   );
 }
 
+const calculateTotal = (total: number, taxRate: number) => {
+  return (total * 100) / (100 + taxRate);
+};
+
+const calculateTax = (total: number, taxRate: number) => {
+  return total - (total * 100) / (100 + taxRate);
+};
 // Property to prevent layout being removed during page transitions
 CourseTable.noLayout = false;
 
