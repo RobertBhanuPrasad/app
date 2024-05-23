@@ -164,8 +164,8 @@ export function NewCourse() {
     const handleRouteChangeStart = (url: string) => {
         const basePath = url.split('?')[0];
         const addCoursePath = `/${countryCode}-${languageCode}/courses/add`;
-        const copyCoursePath =`/${countryCode}-${languageCode}/courses/${params?.id}/copy`
-        if (!navigationConfirmed && ((pathname === '/courses/add' && basePath !== addCoursePath) ||  basePath !== copyCoursePath)) {
+        const copyCoursePath =`/courses/${params?.id}/copy`
+        if (!navigationConfirmed && ((pathname === '/courses/add' || pathname === copyCoursePath) && basePath !== addCoursePath)) {
             if (!newCourseCreateSuccessOrNot) {
                 if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
                     setNavigationConfirmed(true);
