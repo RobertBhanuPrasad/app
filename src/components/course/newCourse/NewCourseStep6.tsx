@@ -29,7 +29,7 @@ function NewCourseStep6() {
   // useEffect to add an initial contact field if none exists
   useEffect(() => {
     if (fields.length === 0) {
-      append(null);
+      append(undefined);
     }
   }, []);
 
@@ -136,7 +136,7 @@ export const ContactName = ({ index }: any) => {
     fieldState: { error },
   } = useController({ name: `contact[${index}].contact_name` });
   return (
-    <div>
+    <div >
       <Input
         placeholder={t("course.new_course:contact_info_tab.select_contact")}
         value={value}

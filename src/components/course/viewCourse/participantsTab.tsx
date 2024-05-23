@@ -116,7 +116,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
           <div className="">
             {feeLevelData?.map((item: any, index: number) => {
               return (
-                <div className="flex flex-row items-center justify-center justify-between">
+                <div className="flex flex-row items-center justify-center justify-between" key={index}>
                   <div className="flex items-center gap-2 py-[2px]">
                     <Circle size={6} fill={item?.color} color={item?.color} />
                     <div className="text-[#999999]">{item?.title}</div>

@@ -301,7 +301,7 @@ export function MultiSelect({
                   className="max-h-[250px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
                 >
                   {selectables?.map((option, index) => (
-                    <div>
+                    <div key={index}>
                       <CommandItem
                         key={option?.value}
                         onSelect={() => handleOnSelect(option.value)}

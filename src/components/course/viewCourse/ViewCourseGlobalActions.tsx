@@ -133,7 +133,8 @@ export const ViewCourseGlobalActions = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[190px]">
         <div className="flex flex-col gap-1 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
-          {globalActionsOptions.map((data: any) => (
+          {globalActionsOptions.map((data: any,index:any) => (
+            <div key={index}>
             <DropdownMenuItem
               onClick={() => {
                 handleGlobalAction(data?.value);
@@ -142,6 +143,7 @@ export const ViewCourseGlobalActions = () => {
             >
               {data?.label}
             </DropdownMenuItem>
+            </div>
           ))}
         </div>
       </DropdownMenuContent>

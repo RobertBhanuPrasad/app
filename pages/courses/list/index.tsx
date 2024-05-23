@@ -768,7 +768,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options.map((option: any, index: number) => (
-            <>
+            <div key={index}>
               <SelectItem
                 key={option.value}
                 value={option.value}
@@ -779,7 +779,7 @@ export const CourseTypeComponent = ({ name }: any) => {
               {index < options?.length - 1 && (
                 <hr className="border-[#D6D7D8]" />
               )}
-            </>
+            </div>
           ))}
         </SelectItems>
       </SelectContent>

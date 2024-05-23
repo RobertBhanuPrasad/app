@@ -351,7 +351,7 @@ export const CourseTypeDropDown = () => {
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
             {options?.map((option: any, index: number) => (
-              <>
+              <div key={index}>
                 <SelectItem
                   key={option.value}
                   value={option.value}
@@ -362,7 +362,7 @@ export const CourseTypeDropDown = () => {
                 {index < options?.length - 1 && (
                   <hr className="border-[#D6D7D8]" />
                 )}
-              </>
+              </div>
             ))}
           </SelectItems>
         </SelectContent>

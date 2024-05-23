@@ -410,8 +410,9 @@ export const column = (
                   <DropdownMenuContent align="end">
                     <p>
                       {dropDownMenuData &&
-                        dropDownMenuData.map((data: any) => (
+                        dropDownMenuData.map((data: any,index:any) => (
                           <DropdownMenuItem
+                          key={index}
                             onClick={() => {
                               handleSelected(data.value);
                             }}
