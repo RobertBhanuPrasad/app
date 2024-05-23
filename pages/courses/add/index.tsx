@@ -963,14 +963,13 @@ export const NewCourseTabs = () => {
                 {stepTitles?.map((step, index) => {
                   if (index + 1 === currentStep)
                     return (
-                  <div key={index}>
                       <TabsContent
                         value={JSON.stringify(index + 1)}
                         className={contentStylings}
+                        key={index}
                       >
                         {step.component}
                       </TabsContent>
-                    </div>
                     );
                   else {
                     return <></>;
