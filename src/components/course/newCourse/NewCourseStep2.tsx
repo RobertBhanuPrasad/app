@@ -8,7 +8,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
-import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
+import { NewCourseStep2FormNames, NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
   PROGRAM_CATEGORY,
@@ -62,7 +62,7 @@ export default function NewCourseStep2() {
   );
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
-    <div className="pt-2 w-auto ">
+    <div className="pt-2 w-auto h-auto ">
       <div className="flex flex-wrap gap-x-7 gap-y-3">
         <div className="w-80 h-20">
           <CourseTypeDropDown />
@@ -118,7 +118,7 @@ export default function NewCourseStep2() {
           </div>
         )}
       </div>
-      
+
       {/* TODO  : for now may-13 release it has to be hidden */}
       {/* <div className="flex gap-x-7 text-[14px] font-normal text-[#323232]">
         <div className="w-80 h-10 flex flex-row gap-1 items-center">
@@ -232,6 +232,12 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.program_type_id,
   });
 
+  const {
+    field: { onChange: isResidentialProgramOchange },
+  } = useController({
+    name: NewCourseStep5FormNames?.is_residential_program,
+  });
+
   const selectQuery: any = {
     resource: "program_types",
     meta: {
@@ -278,6 +284,63 @@ export const CourseTypeDropDown = () => {
   });
 
   /**
+   * @function clearCourseTypeDependentValues will clear the all dependent variables
+   * @param previousCourseTypeId is the previous course type id
+   * @param newCourseTypeId is the new course type id
+   */
+  const clearCourseTypeDependentValues = (
+    previousCourseTypeId: number,
+    newCourseTypeId: number
+  ) => {
+
+    //TODO: When the new Select is implemented need to changed the code.
+    const previousCourseSettings = queryResult?.data?.data.filter(
+      (data) => data.id == previousCourseTypeId
+    );
+
+    //TODO: When the new Select is implemented need to changed the code.
+    const newCourseTypeSettings = queryResult?.data?.data.filter(
+      (data) => data.id == newCourseTypeId
+    );
+
+    //If course type is changed form offline to online or online to office need to clear venue details.
+    if (
+      previousCourseSettings?.[0]?.is_online_program !==
+      newCourseTypeSettings?.[0]?.is_online_program
+    ) {
+      setValue("existingVenue", undefined);
+      setValue("newVenue", undefined);
+      setValue("state_id", "");
+      setValue("city_id", "");
+      setValue("center_id", "");
+      setValue("is_existing_venue","")
+      setValue("online_url","")
+    }
+
+    setValue("program_alias_name_id", "");
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever program_type is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings", undefined);
+    setValue("feeLevels", undefined);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
+    setTimeout(() => {
+      clearErrors([
+        "program_alias_name_id",
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period",
+        "existingVenue",
+        "newVenue",
+        "state_id",
+        "city_id",
+        "center_id",
+        "is_existing_venue",
+        "online_url"
+      ]);
+    }, 10);
+  };
+
+  /**
    * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
    * @function getCourseTypeSettings
    * @param val
@@ -291,6 +354,13 @@ export const CourseTypeDropDown = () => {
     const maxAttendes = courseSettings?.[0].maximum_capacity
       ? courseSettings?.[0].maximum_capacity.toString()
       : undefined;
+
+    const isOnlineProgram = courseSettings?.[0]?.is_online_program
+
+    // If the course type is online then isOnlineProgram is true then the is residential program is false
+    // so because of that we are assigning residential variable with negotiation of isOnlineProgram
+    isResidentialProgramOchange(!isOnlineProgram)
+
 
     // when we change the course type and we get new settings we need to set the max capacity from the course type settings otherwise it should be empty
     if (maxAttendes) {
@@ -309,6 +379,7 @@ export const CourseTypeDropDown = () => {
     }
   };
   const { t } = useTranslation(["common"]);
+
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
@@ -317,6 +388,7 @@ export const CourseTypeDropDown = () => {
       <Select
         value={value}
         onValueChange={(val: any) => {
+          clearCourseTypeDependentValues(value, val);
           onChange(val);
           getCourseTypeSettings(val);
         }}
@@ -548,6 +620,19 @@ const TeachersDropDown = () => {
     });
   }
 
+  /* This condition checks if the program was created by the currently logged-in user as only the iam the organizer for another teacher */
+  /* If the program was created by the organizer, it proceeds to add a filter */
+  /* The filter excludes the currently logged-in user from the list of teachers */
+  /* This ensures that the organizer is not included in the list of teachers */
+  /* The filter is applied to the 'program_type_teachers.user_id' field */
+  if (formData?.program_created_by == iAmOrganizerId) {
+    filter.push({
+      field: "program_type_teachers.user_id",
+      operator: "ne",
+      value: loginUserData?.userData?.id,
+    });
+  }
+
   const [pageSize, setPageSize] = useState(10);
 
   const selectQuery: any = {
@@ -584,12 +669,14 @@ const TeachersDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+  const { setValue } = useFormContext();
   const { t } = useTranslation(["common", "course.new_course"]);
 
   return (
     <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row">
-      {t("new_strings:teacher")}<div className="text-[#7677F4]">*</div>
+        {t("new_strings:teacher")}
+        <div className="text-[#7677F4]">*</div>
       </div>
       {/* 
         // Here i have to show teachers based on program created user 
@@ -767,7 +854,7 @@ const Visibility = () => {
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px]">
-              <div className="flex flex-row gap-1 items-center">
+              {/* <div className="flex flex-row gap-1 items-center">
                 <Globe />
                 {t("public")}
               </div>
@@ -779,8 +866,10 @@ const Visibility = () => {
                 <LockIcon />
                 {t("private")}
               </div>
-              <div>{t("new_strings:there_are_a_lot_of_things")}</div>
+              <div>{t("new_strings:there_are_a_lot_of_things")}</div> */}
+                          <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
               {t("new_strings:program_visibility_info_icon_text")}
+              </Text>
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -1136,7 +1225,7 @@ const MaximumCapacity = () => {
         onChange={(val) => {
           onChange(val);
         }}
-        className="rounded-[12px] text-[14px] font-normal placeholder:text-[#999999]"
+        className="rounded-[12px] text-[14px]"
         error={error ? true : false}
       />
       {error && (

@@ -36,6 +36,9 @@ export const getDefaultValues = async (
 
   if (data.id) defaultValues.id = data.id;
 
+  if(data?.program_code) defaultValues.program_code = data?.program_code
+
+
   // Step 1
 
   //organization_id
@@ -44,6 +47,10 @@ export const getDefaultValues = async (
 
   if (data.program_created_by)
     defaultValues.program_created_by = data.program_created_by as number;
+
+  if (data.created_by_user_id) defaultValues.created_by_user_id = data.created_by_user_id as number
+
+
 
   //organizer_ids
   if (data?.program_organizers) {
@@ -303,3 +310,13 @@ export const getDefaultValues = async (
 export const IsEditCourse = (url: string) => {
   return url.includes("/edit");
 };
+
+/**
+ * This function is used to determine whether the particular url contains copy or not
+ * @param url
+ * @returns a boolean
+ */
+export const IsCopyCourse = (url: string) => {
+  return url.includes("/copy");
+};
+

@@ -1,7 +1,6 @@
 import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
@@ -44,7 +43,7 @@ const EditCourseReviewPage = () => {
     TIME_FORMAT_12_HOURS
   )?.id as number;
 
-  const { setNewCourseData } = newCourseStore();
+  const { setNewCourseData,setProgramCreatedById } = newCourseStore();
 
   useEffect(() => {
     const fetchDefaultValues = async () => {
@@ -60,13 +59,15 @@ const EditCourseReviewPage = () => {
       console.log("default values are", defaultValues);
 
       setNewCourseData(defaultValues);
+      // we are storing the program created by in the zustand variable to use it in the validatios
+      setProgramCreatedById(defaultValues?.program_created_by)
       setIsLoading(false);
     };
     fetchDefaultValues();
-  }, []);
+  }, []); 
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <section className="flex justify-center align-center pt-[15%]"><div className="loader"></div></section>
   }
   return <NewCourseReviewPage />;
 };

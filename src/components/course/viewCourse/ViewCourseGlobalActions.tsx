@@ -9,20 +9,32 @@ import {
 } from "src/ui/dropdown-menu";
 import { handleCourseDefaultValues } from "../newCourse/EditCourseUtil";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { useTranslation } from 'next-i18next';
-
+import { useTranslation } from "next-i18next";
+import _ from "lodash";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { TIME_FORMAT } from "src/constants/OptionLabels";
+import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 
 export const ViewCourseGlobalActions = () => {
   const router = useRouter();
-  const {t} = useTranslation(["common","course.find_course","course.participants","new_strings"])
-  
+  const { t } = useTranslation([
+    "common",
+    "course.find_course",
+    "course.participants",
+    "new_strings",
+  ]);
+
+  const ID: any = router?.query?.id
+    ? parseInt(router.query.id as string)
+    : undefined;
+
   const globalActionsOptions = [
-    t("view_participants"),
+    // { label: t("view_participants"), value: 1 },
     // t("register_participant"),
     // "Register with online credit card payment",
     // "View Pending/Failed Tranactions",
-    t("edit_course"),
-    t("copy_course"),
+    { label: t("edit_course"), value: 2 },
+    { label: t("copy_course"), value: 3 },
     // t("cancel_course"),
     // "New Discount Code",
     // t('course.find_course:submit_course_accounting_form'),
@@ -31,20 +43,45 @@ export const ViewCourseGlobalActions = () => {
     // "Manage Google Adwords",
   ];
 
-  const handleGlobalAction = (option: number) => {
-    const ID: number | undefined = router?.query?.id
-      ? parseInt(router.query.id as string)
-      : undefined;
+  const {
+    setNewCourseData,
+    setViewThankyouPage,
+    setCurrentStep,
+    setProgramCreatedById
+  } = newCourseStore();
 
+  /**
+   * when we click on edit course we change the route with particular course id
+   */
+  const handleEditCourse = async () => {
+    router.push(`/courses/${ID}/edit`);
+  };
+
+  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id as number;
+
+  /**
+   * when we click on copy course we change the route with particular course id and with copy in the route link
+   */
+  const handleCopyCourse = async () => {
+    router.push(`/courses/${ID}/copy`);
+  };
+
+  const handleGlobalAction = (option: number) => {
     switch (option) {
       // TODO: Naviagate to register participant page
       case 1:
+        router.push(`/courses/${ID}/participants/list`);
         break;
       // TODO: Handle edit course
       case 2:
+        handleEditCourse();
         break;
       // TODO: Handle copy course
       case 3:
+        handleCopyCourse();
         break;
       // TODO: Handle Cancel course
       case 4:
@@ -60,7 +97,6 @@ export const ViewCourseGlobalActions = () => {
         break;
     }
   };
-  
 
   return (
     <DropdownMenu>
@@ -69,20 +105,20 @@ export const ViewCourseGlobalActions = () => {
           variant="outline"
           className="flex flex-row justify-between w-[192px] h-10"
         >
-          {t('actions')}
+          {t("actions")}
           <DropDown />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[190px]">
         <div className="flex flex-col gap-1 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
-          {globalActionsOptions.map((option: string, index: number) => (
+          {globalActionsOptions.map((data: any) => (
             <DropdownMenuItem
               onClick={() => {
-                handleGlobalAction(index);
+                handleGlobalAction(data?.value);
               }}
               className=" cursor-pointer"
             >
-              {option}
+              {data?.label}
             </DropdownMenuItem>
           ))}
         </div>

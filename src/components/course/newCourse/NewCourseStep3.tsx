@@ -15,15 +15,13 @@ import {
 } from "@refinedev/core";
 import { format } from "date-fns";
 import _ from "lodash";
-import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
   useController,
   useFieldArray,
-  useForm,
   useFormContext,
   useFormState,
-  useWatch,
+  useWatch
 } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { DateCalendar } from "src/ui/DateCalendar";
@@ -52,14 +50,19 @@ import {
   VenueNameComponent,
 } from "@components/CommonComponents/DropDowns";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
-import LoadingIcon from "@public/assets/LoadingIcon";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import Important from "@public/assets/Important";
+import { translatedText } from "src/common/translations";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import {
   NATIONAL_ADMIN,
   SUPER_ADMIN,
   TIME_FORMAT_12_HOURS,
 } from "src/constants/OptionValueOrder";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "src/ui/hover-card";
 import { Label } from "src/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
@@ -77,13 +80,6 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
-import { translatedText } from "src/common/translations";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "src/ui/hover-card";
-import Important from "@public/assets/Important";
 
 import { useTranslation } from "next-i18next";
 
@@ -98,18 +94,16 @@ function NewCourseStep3() {
   });
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <section className="flex w-full justify-center items-center h-[400px]"><div className="loader"></div></section>
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="space-y-8 w-full">
       <div>
         {programTypeData?.data?.is_online_program === true ? (
           <OnlineProgram />
         ) : (
-          <div className="mb-8">
-            <Venue />
-          </div>
+          <Venue />
         )}
       </div>
       <Schedules />
@@ -127,8 +121,21 @@ const OnlineProgram = () => {
   } = useController({
     name: NewCourseStep3FormNames?.online_url,
   });
+
+  const {setValue,clearErrors}=useFormContext()
+
+  //Requirement: Fee is fetch based on program_type,location and course start date.So when ever state_id,city_id and center_id is changed need to remove existing fee levels.
+  const handleRemoveFeeLevels=()=>{
+    setValue("program_fee_level_settings",undefined)
+    setValue("feeLevels",undefined );
+    setValue("is_early_bird_enabled",undefined)
+    setValue("early_bird_cut_off_period",undefined)
+    setTimeout(() => {
+      clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+    }, 10);
+  }
   return (
-    <div className="h-[218px] flex flex-col gap-8">
+    <div className="">
       <div>
         <div className="flex flex-row gap-1 items-center">
           {t("course.new_course:time_and_venue_tab.online_meeting_url")}{" "}
@@ -148,7 +155,6 @@ const OnlineProgram = () => {
         <div className="w-80">
           <Input
             placeholder={t("new_strings:url")}
-            className="rounded-[12px]"
             value={value}
             onChange={(event) => {
               onChange(event.target.value);
@@ -164,17 +170,19 @@ const OnlineProgram = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-2 flex-col">
-        <div>{t("course.new_course:time_and_venue_tab.specific_location")}</div>
+      <div className="mt-8">
+        <div>
+          {t("course.new_course:time_and_venue_tab.specific_location")}
+        </div>
         <div className="flex gap-7">
-          <div className="w-80">
-            <StateDropDown name="state_id" />
+          <div className="flex-1">
+            <StateDropDown name="state_id" onChange={handleRemoveFeeLevels} />
           </div>
-          <div className="w-80">
-            <CityDropDown name="city_id" />
+          <div className="flex-1">
+            <CityDropDown name="city_id" onChange={handleRemoveFeeLevels}/>
           </div>
-          <div className="w-80">
-            <CenterDropDown name="center_id" />
+          <div className="flex-1">
+            <CenterDropDown name="center_id" onChange={handleRemoveFeeLevels}/>
           </div>
         </div>
       </div>
@@ -186,7 +194,7 @@ const Schedules = () => {
   const { errors } = useFormState();
 
   return (
-    <div className="flex flex-col gap-4 w-[1016px]">
+    <div className="flex flex-col gap-4">
       <SchedulesHeader />
 
       <Sessions />
@@ -238,12 +246,12 @@ const SchedulesHeader = () => {
   });
 
   return (
-    <div className="h-9 flex justify-between">
-      <div className="font-semibold text-[#333333] flex items-center">
+    <div className="h-9 flex">
+      <div className="text-base text-[#333333] flex items-center">
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
-      <div className="flex gap-4">
-        <div className="w-[161px]">
+      <div className="flex gap-4 w-[434px] ml-auto">
+        <div className={`w-[161px]   ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
           <Select
             value={hoursFormat}
             onValueChange={(val: any) => {
@@ -446,6 +454,7 @@ const ScheduleComponent = ({
 }) => {
   const { errors }: any = useFormState();
   const [open, setOpen] = useState(false);
+  const [deleteSession, setDeleteSession] = useState(false);
 
   const { watch } = useFormContext();
   const formData = watch();
@@ -456,7 +465,8 @@ const ScheduleComponent = ({
     TIME_FORMAT,
     TIME_FORMAT_12_HOURS
   )?.id;
-  const { t } = useTranslation(["common", "course.new_course"]);
+  const { t } = useTranslation(["common", "course.new_course","new_strings"]);
+
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
       <div className="h-4 font-[#333333] font-normal flex text-xs">
@@ -485,7 +495,7 @@ const ScheduleComponent = ({
             </Button>
           </DialogTrigger>
           <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
-            <CalenderComponent index={index} setOpen={setOpen} />
+            <CalenderComponent index={index} setOpen={setOpen}/>
           </DialogContent>
         </Dialog>
         <TimePicker
@@ -505,20 +515,47 @@ const ScheduleComponent = ({
               <Add /> {t("add_button")}
             </div>
           )}
-          {index != 0 && (
-            <div
+          {formData?.schedules?.length > 1 && (
+           <Dialog open={deleteSession} onOpenChange={setDeleteSession}>
+             <DialogTrigger
+             onClick={() => {
+              setDeleteSession(true)
+             }}
+             className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
+             >
+             <Delete />
+             {t('delete_button')}
+             </DialogTrigger>
+             <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+             <DialogHeader>
+             <DialogTitle className="flex justify-center">{t('delete_button')}</DialogTitle>
+             <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
+               {t('new_strings:are_you_sure_you_want_to_delete_the_session')}
+             </DialogDescription>
+             </DialogHeader>
+             <DialogFooter className="w-full flex !justify-center gap-6">
+             <DialogClose>
+             <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+                {t('no_button')}
+             </Button>
+             </DialogClose>
+             <DialogClose>
+             <Button
+              className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
               onClick={() => {
-                handleRemoveSession(index);
+              handleRemoveSession(index)
               }}
-              className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
-            >
-              <Delete />
-              {t("delete_button")}
-            </div>
+             >
+             {t('yes')}
+             </Button>
+             </DialogClose>
+             </DialogFooter>
+             </DialogContent>
+           </Dialog>
           )}
         </div>
       </div>
-
+  
       {errors?.schedules &&
         errors?.schedules?.length > 0 &&
         errors?.schedules?.[index] && (
@@ -533,7 +570,7 @@ const ScheduleComponent = ({
 const Venue = () => {
   const { t } = useTranslation(["course.new_course", "new_strings"]);
 
-  const { watch, setValue, resetField } = useFormContext();
+  const { watch, setValue, resetField,clearErrors } = useFormContext();
 
   const removeVenue = () => {
     setValue("newVenue", undefined);
@@ -608,7 +645,7 @@ const Venue = () => {
         // here we are updating state to true to show the warning message
         setwarningmessage(true);
       } else {
-        setValue("newVenue", {
+        const newVenueData={
           city_id: formData?.city_id,
           city: formData?.city,
           state_id: formData?.state_id,
@@ -618,7 +655,18 @@ const Venue = () => {
           postal_code: formData?.postal_code,
           address: formData?.address,
           name: formData?.name,
-        });
+        }
+        //Requirement: Fee is fetch based on program_type,location and course start date.So when ever New Venue's state_id,city_id and center_id is changed need to remove existing fee levels.
+        if(!(formData?.newVenue?.state_id==newVenueData?.state_id && formData?.newVenue?.city_id==newVenueData?.city_id && formData?.newVenue?.center_id==newVenueData?.center_id)){
+          setValue("program_fee_level_settings",undefined)
+          setValue("feeLevels",undefined );
+          setValue("is_early_bird_enabled",undefined)
+          setValue("early_bird_cut_off_period",undefined)
+          setTimeout(() => {
+            clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+          }, 10);
+        }
+        setValue("newVenue", newVenueData);
         onChange("new-venue");
         setOpenAddNewVenue(false);
       }
@@ -655,16 +703,31 @@ const Venue = () => {
     setOpenAddNewVenue(true);
   };
 
+  const handleRemoveFeeLevel=()=>{
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings", undefined);
+    setValue("feeLevels",undefined );
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
+    setTimeout(() => {
+      clearErrors([
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period"
+      ]);
+    }, 10);
+  }
+
   return (
     <div>
       <RadioGroup
         className="flex flex-row gap-7"
         value={value}
-        onValueChange={onChange}
+        onValueChange={(val)=>{onChange(val);handleRemoveFeeLevel();}}
       >
-        <Label htmlFor="existing-venue">
+        <Label htmlFor="existing-venue" className="flex-[1]">
           <div
-            className={`rounded-[16px] w-[494px] h-[118px]  relative flex py-[24px] px-4 flex-col ${
+            className={`rounded-[16px] h-[118px] relative flex py-[24px] px-6 flex-col ${
               value === "existing-venue"
                 ? "border border-[#7677F4]"
                 : "border border-[#D6D7D8]"
@@ -683,23 +746,16 @@ const Venue = () => {
                 />
               )}
               {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
-              <div
-                className={`${
-                  (formData?.is_existing_venue == undefined ||
-                    formData?.is_existing_venue == "new-venue") &&
-                  formData?.existingVenue == undefined &&
-                  "ml-7"
-                }`}
-              >
+              <div>
                 {t("course.new_course:time_and_venue_tab.existing_venue")}
               </div>
             </div>
             {data ? (
-              <div>
+              <div className="h-full">
                 {existingVenue ? (
                   <ExistingVenueDetails />
                 ) : (
-                  <div className="pl-[30px] leading-6 font-normal">
+                  <div className="leading-6 font-normal">
                     {t("new_strings:select_a_venue_by_clicking_viewall_button")}
                   </div>
                 )}
@@ -708,7 +764,7 @@ const Venue = () => {
                   <DialogTrigger>
                     <Badge
                       variant="outline"
-                      className="absolute left-48 -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
+                      className="absolute right-[43%] -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
                     >
                       {t("course.new_course:time_and_venue_tab.view_all")}
                     </Badge>
@@ -727,9 +783,9 @@ const Venue = () => {
           </div>
         </Label>
         {formData?.newVenue ? (
-          <Label htmlFor="new-venue">
+          <Label htmlFor="new-venue" className="flex-[1]">
             <div
-              className={`w-[494px] h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
+              className={`h-[118px]  rounded-[16px] border break-all border-[#7677F4] px-4 py-6 ${
                 value === "new-venue"
                   ? "border border-[#7677F4]"
                   : "border border-[#D6D7D8]"
@@ -791,8 +847,8 @@ const Venue = () => {
           </Label>
         ) : (
           <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
-            <DialogTrigger onClick={handleOpenAddNewVenue}>
-              <div className="w-[494px] h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
+            <DialogTrigger onClick={handleOpenAddNewVenue} className="flex-[1]">
+              <div className="h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
@@ -834,14 +890,15 @@ const NewVenueDetails = () => {
   console.log("new venue data is", data);
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <div className="loader !w-[30px]"></div>;
   }
 
   return (
-    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {name}, {address},{data?.data?.name}, {data?.data?.state_id?.name},{" "}
-      {postal_code}
-    </div>
+    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666] h-full overflow-y-scroll">
+    {name  ? `${name}, ` : ''}
+    {address  ? `${address}, ` : ''}{data?.data?.name}, {data?.data?.state_id?.name}
+    {postal_code  ? `, ${" "}${postal_code} ` : ''}
+  </div>
   );
 };
 
@@ -857,13 +914,13 @@ const ExistingVenueDetails = () => {
   });
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <div className="loader !w-[30px]"></div>;
   }
 
   return (
-    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
-      {existingVenue?.name}, {existingVenue?.address},{cityData?.data?.name},{" "}
-      {cityData?.data?.state.name}, {existingVenue?.postal_code}
+    <div className="ml-7 text-wrap text-[16px] h-full font-normal leading-6 text-[#666666] break-all overflow-y-auto ">
+      {existingVenue?.name?`${existingVenue?.name}, `:""}{existingVenue?.address?`${existingVenue?.address}, `:''}{cityData?.data?.name},{" "}
+      {cityData?.data?.state.name}{existingVenue?.postal_code?`, ${existingVenue?.postal_code}`:''}
     </div>
   );
 };
@@ -934,10 +991,10 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { trigger, watch } = useFormContext();
+  const { trigger, watch,getValues,setValue,clearErrors } = useFormContext();
 
   const formData = watch();
-
+  const {schedules}=getValues()
   /**
    * This variable holds the state id
    */
@@ -948,7 +1005,17 @@ const CalenderComponent = ({ index, setOpen }: any) => {
    */
   let cityId: number = 0;
 
-  if (formData?.is_online_program) {
+  /**
+   * Getting settings Program type databased on program type id form form 
+   */
+  const { data: programTypeData } = useOne({
+    resource: "program_types",
+    id: formData?.program_type_id,
+  });
+
+
+  //we need to check whether it is online program or not and the we need to assign state , city ids
+  if (programTypeData?.data?.is_online_program) {
     stateId = formData?.state_id;
     cityId = formData?.city_id;
   } else {
@@ -990,8 +1057,8 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   ];
   // Add additional filters based on organization calendar settings
   const filter = [...dateFilters];
-  if (settingsData) {
-    if (settingsData?.data[0]?.is_city_enabled && cityId) {
+  if (settingsData?.data && settingsData?.data?.length > 0) {
+    if (settingsData?.data[0]?.is_city_enabled) {
       filter.push({
         field: "program_id.city_id.id",
         operator: "eq",
@@ -1005,14 +1072,22 @@ const CalenderComponent = ({ index, setOpen }: any) => {
         value: stateId,
       });
     }
-    if (settingsData?.data[0]?.is_venue_enabled) {
+    if (settingsData?.data[0]?.Is_venue_enabled && formData?.venue_id) {
       filter.push({
         field: "program_id.venue_id",
         operator: "eq",
         value: formData?.venue_id,
       });
     }
+  } else {
+    //If there is no settings data then it default to should show courses based on city and selected date
+    filter.push({
+      field: "program_id.city_id.id",
+      operator: "eq",
+      value: cityId,
+    });
   }
+
   // Fetch program schedules based on the filters
   const { data } = useList<any>({
     resource: "program_schedules",
@@ -1039,6 +1114,57 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       minutes < 10 ? "0" + minutes : minutes
     }`;
   };
+
+  //Need to check weather start date of course is changed or not.
+  const handleRemoveFeeLevel=(date:any)=>{
+  const {schedules}=getValues()
+  //In order to check weather changed date is course start date or not.
+  //Taking two variables sort them and compare first object.if first object is changed then start date is changed. 
+  let originalSchedule=_.cloneDeep(schedules)
+  let tempSchedule=_.cloneDeep(schedules)
+  
+  //Updating temporary variable
+  tempSchedule[index].date=date
+
+  //sorting original schedule
+  let sortedOriginalSchedules = originalSchedule?.sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }
+  );
+
+  //sorting temporary schedule
+  let sortedTempSchedules = tempSchedule?.sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }
+  );
+
+  //After sorting if first schedule is different for both original and temporary schedule then user as changed start date of course (start date is first schedule)
+  if(sortedOriginalSchedules?.[0]?.date.getTime()!=sortedTempSchedules?.[0]?.date.getTime()){
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever start date of schedule is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings",undefined)
+    setValue("feeLevels",undefined );
+    setValue("is_early_bird_enabled",undefined)
+    setValue("early_bird_cut_off_period",undefined)
+    setTimeout(() => {
+      clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+    }, 10);
+  }
+
+  }
   return (
     <div className="flex flex-col gap-4">
       <div className="h-[401px] flex flex-row gap-4">
@@ -1095,6 +1221,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
       <div className="flex self-center">
         <Button
           onClick={() => {
+            handleRemoveFeeLevel(date)
             onChange(date);
             setOpen(false);
 
@@ -1114,7 +1241,7 @@ const ExistingVenueList = () => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { watch } = useFormContext();
+  const { watch ,setValue,clearErrors} = useFormContext();
 
   const formData = watch();
 
@@ -1171,14 +1298,15 @@ const ExistingVenueList = () => {
     setVenueData(modifiedVenueData);
     setIsLoading(false);
   };
-  /**
+/**
    * we are writing the is_existing_venue controller here because we need to update the is_existing_venue when we click on the submit of the existing venue
    */
-  const {
-    field: { onChange: isExistingVenueOnchange },
-  } = useController({
-    name: "is_existing_venue",
-  });
+const {
+  field: { onChange: isExistingVenueOnchange },
+} = useController({
+  name: "is_existing_venue",
+});
+
 
   const fetchLoginUserVenue = async () => {
     const supabase = supabaseClient();
@@ -1235,6 +1363,18 @@ const ExistingVenueList = () => {
     const existingVenueObject = venueData.filter(
       (venue) => venue.id == formData[NewCourseStep3FormNames.venue_id]
     );
+
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
+    if(existingVenue?.id!=existingVenueObject?.[0]){
+      setValue("program_fee_level_settings",undefined)
+      setValue("feeLevels",undefined );
+      setValue("is_early_bird_enabled",undefined)
+      setValue("early_bird_cut_off_period",undefined)
+      setTimeout(() => {
+        clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+      }, 10);
+    }
+
     existingVenueOnChange(existingVenueObject?.[0]);
   };
 
@@ -1276,7 +1416,7 @@ const ExistingVenueList = () => {
             {/* loader for existing venue list  */}
             {filteredVenueData?.length === 0 ? (
               <div className="flex w-[100%] flex-row items-center justify-center">
-                {isLoading ? <LoadingIcon></LoadingIcon> : <p>No Venues</p>}
+                {isLoading ? <div className="loader"></div> : <p>No Venues</p>}
               </div>
             ) : (
               filteredVenueData?.map((item: any, index: number) => (
@@ -1288,8 +1428,6 @@ const ExistingVenueList = () => {
                 />
               ))
             )}
-
-            {/* </div> */}
           </div>
         </GetScrollTypesAlert>
       </div>
@@ -1299,7 +1437,7 @@ const ExistingVenueList = () => {
             type="submit"
             onClick={() => {
               isNewVenueSelectedOnchange("existing-venue");
-              isExistingVenueOnchange("existing-venue");
+              formData[NewCourseStep3FormNames.venue_id] && isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList();
             }}
           >
@@ -1351,6 +1489,7 @@ export const ExistingVenueListSection = ({
   } = useController({
     name: "tempExistingVenue",
   });
+
 
   const handleCheckboxChange = (item: any) => {
     setValue(NewCourseStep3FormNames.venue_id, item.id);
@@ -1431,7 +1570,7 @@ export const ExistingVenueListSection = ({
       role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
   );
   return (
-    <div className="flex flex-row !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
+    <div className="flex flex-row justify-between !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4 overflow-y-scroll break-all">
       <Checkbox
         id={item.id}
         value={item.id}
@@ -1441,9 +1580,18 @@ export const ExistingVenueListSection = ({
         }
       />
       <div className="space-y-1 leading-none w-full">
-        <div className="flex justify-between">
-          <div className="font-semibold">{item.name}</div>
-          <div className="flex flex-row gap-3">
+
+      {item.name ? (
+  <>
+    <div className="font-semibold">{item.name}</div>
+    <VenueItem item={item} />
+  </>
+) : (
+  <div><VenueItem item={item} /></div>
+)}
+
+      </div>
+      <div className="flex flex-row gap-3">
             {(item?.created_by_user_id == loginUserData?.userData?.id ||
               isUserNationAdminOrSuperAdmin) && (
               <Dialog
@@ -1488,10 +1636,6 @@ export const ExistingVenueListSection = ({
               </Dialog>
             )}
           </div>
-        </div>
-
-        <VenueItem item={item} />
-      </div>
     </div>
   );
 };
@@ -1520,21 +1664,21 @@ const VenueItem = ({ item }: { item: any }) => {
     });
 
     if (isLoading) {
-      return <LoadingIcon />;
+      return <div className="loader"></div>;
     }
 
     return (
       <div>
-        {tempExistingVenue.name}, {tempExistingVenue.address},{" "}
-        {cityData?.data?.name}, {cityData?.data?.state_id?.name},{" "}
-        {tempExistingVenue.postal_code}
+        {tempExistingVenue.name?`${tempExistingVenue.name}, `:''}{tempExistingVenue.address?`${tempExistingVenue.address}, `:""}
+        {cityData?.data?.name}, {cityData?.data?.state_id?.name}
+        {tempExistingVenue.postal_code?`, ${tempExistingVenue.postal_code}`:''}
       </div>
     );
   } else {
     return (
       <div className="leading-tight">
-        {item.name}, {item.address}, {item.city_name}, {item.state_name},{" "}
-        {item.postal_code}
+        {item.name?`${item.name}, `:''}{item.address?`${item.address}, `:''}{item.city_name}, {item.state_name}
+        {item.postal_code ?`, ${item.postal_code}`:''}
       </div>
     );
   }

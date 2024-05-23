@@ -1,6 +1,9 @@
 import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable";
-import Filters from "@components/course/findCourse/Filters";
+import Filters, {
+  Preferences,
+  emptyPreferences,
+} from "@components/course/findCourse/Filters";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import { hasAliasNameFalse } from "@components/courseBusinessLogic";
 import CalenderIcon from "@public/assets/CalenderIcon";
@@ -12,18 +15,19 @@ import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useList, useSelect, useTable } from "@refinedev/core";
 import { format } from "date-fns";
-import { useTranslation } from "next-i18next";
-import { authProvider } from "src/authProvider";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
+import { authProvider } from "src/authProvider";
+import { translatedText } from "src/common/translations";
 import { column } from "src/components/course/findCourse/Columns";
 import { DateRangePicker } from "src/ui/DateRangePicker";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import { Dialog, DialogContent } from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,9 +43,10 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
-import { supabaseClient } from "src/utility/supabaseClient";
+import { SupabaseClient, supabaseClient } from "src/utility/supabaseClient";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { translatedText } from "src/common/translations";
 
 function index() {
   interface ExcelColumn {
@@ -50,6 +55,9 @@ function index() {
   }
 
   const { viewPreviewPage, AllFilterData } = newCourseStore();
+
+  const languageCode = useGetLanguageCode();
+  const countryCode = useGetCountryCode();
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -157,7 +165,8 @@ function index() {
     filters.permanent.push({
       field: "program_code",
       operator: "contains",
-      value: AllFilterData?.course_id,
+      //If white spaces are there trim them and then apply search
+      value: AllFilterData?.course_id && AllFilterData?.course_id.trim(),
     });
   }
 
@@ -193,7 +202,7 @@ function index() {
             new Date(
               AllFilterData.course_date.from?.setUTCHours(0, 0, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             .toISOString()
             .replace("T", " ")
@@ -208,7 +217,7 @@ function index() {
             new Date(
               AllFilterData.course_date.to?.setUTCHours(23, 59, 0, 0)
             ).getTime() +
-            24 * 60 * 60 * 1000
+              24 * 60 * 60 * 1000
           )
             ?.toISOString()
             .replace("T", " ")
@@ -241,11 +250,12 @@ function index() {
     setPageSize,
     current,
     setCurrent,
+    setFilters,
   } = useTable({
     resource: "program",
     meta: {
       select:
-        "*,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
     sorters: {
@@ -268,6 +278,8 @@ function index() {
   const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
     useTable({
       resource: "program",
+      //restricting the hook to get the params from URL
+      syncWithLocation: false,
       meta: {
         select:
           "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
@@ -292,29 +304,63 @@ function index() {
       },
     });
 
+  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook
+  //Because when we move to another route and comeback Filters are not setting properly that why we have written this
+  useEffect(() => {
+    setFilters(filters.permanent, "replace");
+  }, [AllFilterData]);
+
   /**
    * The variable holds whether all rows are selected or not
    */
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>(false);
+
+  const [loading, setIsLoading] = useState(false);
 
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
     if (!programData?.data?.data) return;
     const allRowSelection: any = {};
-    programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      programData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, programData?.data?.data]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   *Here whenever i check select all then i need to check and unchekc all row selection also
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    programData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
+   */
+  const rowSelectionOnChange = (row: any) => {
+    const selectedRow = row();
+    setRowSelection(row);
+    if (Object.values(selectedRow).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   /**
    * This function is to handle export excel
    */
-  const handleExportExcel = async () => {
+
+  const handleExportExcel = async (selectOption: string) => {
+    setIsLoading(true);
     try {
       /**
        * This holds the column_name and path of all columns of table
@@ -326,19 +372,15 @@ function index() {
         },
         {
           column_name: t("new_strings:course_type_name"),
-          path: ["program_types", "name"],
-        },
-        {
-          column_name: t("new_strings:course_name"),
-          path: ["program_type_alias_names", "alias_name"],
+          path: ["program_types", "name", languageCode],
         },
         {
           column_name: t("course.find_course:course_status"),
-          path: ["status_id", "name"],
+          path: ["status_id", "name", languageCode],
         },
         {
           column_name: t("course.find_course:start_date"),
-          path: ["program_schedules", "start_time"],
+          path: ["start_date"],
         },
         {
           column_name: t("course.find_course:state"),
@@ -353,16 +395,28 @@ function index() {
           path: ["center", "name"],
         },
         {
+          column_name: t("course.find_course:teacher(s)"),
+          path: ["program_teachers", "users", "contact_id", "full_name"],
+        },
+        {
+          column_name: t("program_organizer"),
+          path: ["program_organizers", "users", "contact_id", "full_name"],
+        },
+        {
           column_name: t("course.find_course:attendees"),
-          path: ["participant_registration", "length"],
+          path: ["participant_count"],
         },
         {
           column_name: t("new_strings:visibility"),
-          path: ["visibility_id", "name"],
+          path: ["visibility_id", "name", languageCode],
         },
+        // {
+        //   column_name: t("course_accounting_status"),
+        //   path: ["program_accounting_status_id", "name"],
+        // },
         {
-          column_name: t("course_accounting_status"),
-          path: ["program_accounting_status_id", "name"],
+          column_name: t("new_strings:revenue"),
+          path: ["revenue"],
         },
       ];
 
@@ -372,23 +426,28 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          ",program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users!inner(user_name)) , program_organizers!inner(users!inner(user_name)) , program_type_alias_names(alias_name) , visibility_id(id,name), participant_registration() , program_schedules!inner(*) , program_fee_level_settings!inner(is_custom_fee)",
+          "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
+        filters: JSON.stringify(filters?.permanent),
+        sorters: JSON.stringify([
+          { field: "created_at", order: { ascending: false } },
+        ]),
+        file_type: selectOption,
       });
 
       const supabase = supabaseClient();
 
       //invoking the export_to_file function
       const { data, error } = await supabase.functions.invoke(
-        ` export_to_file?${params}`,
+        `export_to_file?${params}`,
         {
           headers: {
             Authorization:
               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+            "country-code": countryCode,
           },
         }
       );
-
       if (error) {
         console.error("Error invoking export_to_file function:", error);
         return;
@@ -398,11 +457,15 @@ function index() {
         //getting file name from the url
         const fileUrl = data.fileUrl.data.publicUrl;
         const fileName = fileUrl.split("/").pop();
+        setIsLoading(false);
 
+        console.log("filename", fileName);
         // passing the file name to download
         const result = await supabase.storage
-          .from("export_to_excel")
+          .from("export_to_file")
           .download(fileName);
+
+        console.log("result is", result);
 
         if (result.error) {
           console.error("Error downloading file:", result.error);
@@ -445,6 +508,8 @@ function index() {
     (value) => value === true
   ).length;
 
+  console.log("heyy row count", allSelected === false);
+
   if (viewPreviewPage) {
     return <NewCourseReviewPage />;
   }
@@ -467,7 +532,7 @@ function index() {
     "course.find_course",
     "new_strings",
     "course.view_course",
-    "course.participants"
+    "course.participants",
   ]);
   return (
     <div className="flex flex-col justify-between relative">
@@ -479,33 +544,40 @@ function index() {
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-        <div className="w-full mb-[76px]">
-          <BaseTable
-            current={current}
-            rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
-            checkboxSelection={true}
-            setCurrent={setCurrent}
-            pageCount={pageCount}
-            total={FilterProgramData?.data?.total || 0}
-            pageSize={pageSize}
-            //Here we have to set the page size of the query we use to display data in table and for query we apply filters
-            setPageSize={(number) => {
-              setPageSize(number);
-              displayDataSetPageSize(number);
-            }}
-            pagination={true}
-            tableStyles={{
-              table: "",
-              rowStyles: "!important border-none",
-            }}
-            noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
-            columns={column(hasAliasNameFalse(data), t)}
-            data={programData?.data?.data || []}
-            columnPinning={true}
-            columnSelector={true}
-          />
-        </div>
+
+        {programData?.isLoading ? (
+          <section className="flex justify-center align-center pt-[10%]">
+            <div className="loader"></div>
+          </section>
+        ) : (
+          <div className="w-full mb-[76px]">
+            <BaseTable
+              current={current}
+              rowSelection={rowSelection}
+              setRowSelection={rowSelectionOnChange}
+              checkboxSelection={true}
+              setCurrent={setCurrent}
+              pageCount={pageCount}
+              total={FilterProgramData?.data?.total || 0}
+              pageSize={pageSize}
+              //Here we have to set the page size of the query we use to display data in table and for query we apply filters
+              setPageSize={(number) => {
+                setPageSize(number);
+                displayDataSetPageSize(number);
+              }}
+              pagination={true}
+              tableStyles={{
+                table: "",
+                rowStyles: "!important border-none",
+              }}
+              noRecordsPlaceholder={t("new_strings:there_are_no_courses")}
+              columns={column(hasAliasNameFalse(data), t)}
+              data={programData?.data?.data || []}
+              columnPinning={true}
+              columnSelector={true}
+            />
+          </div>
+        )}
       </div>
       <div className="bottom-0 fixed flex flex-row px-8 py-1 h-[52px] justify-between m-0 bg-[white] left-0 items-center w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
         <div className="flex flex-row items-center gap-2">
@@ -537,21 +609,32 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
-                disabled={!allSelected}
+                //if select all is false or row count less than equal to 0 then it should be true
+                disabled={allSelected === false || rowCount <= 0}
               >
-                {t("course.find_course:export")}{" "}
+                {loading ? (
+                  <div className="loader !w-[25px]"></div>
+                ) : (
+                  t("course.find_course:export")
+                )}
                 <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="!w-[106px] focus:outline-none">
               <DropdownMenuItem
-                onClick={handleExportExcel}
+                onClick={() => {
+                  handleExportExcel("excel");
+                }}
                 className="p-1 focus:outline-none cursor-pointer"
               >
                 {t("new_strings:excel")}
               </DropdownMenuItem>
-              {/*TODO  */}
-              <DropdownMenuItem className="p-1  focus:outline-none cursor-pointer">
+              <DropdownMenuItem
+                className="p-1  focus:outline-none cursor-pointer"
+                onClick={() => {
+                  handleExportExcel("CSV");
+                }}
+              >
                 {t("new_strings:csv")}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -568,7 +651,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { AllFilterData, newAdvanceFilterData } = newCourseStore();
 
   return (
-    <Form onSubmit={() => { }} defaultValues={AllFilterData}>
+    <Form onSubmit={() => {}} defaultValues={AllFilterData}>
       <div className="w-full flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md mb-[24px] px-8 py-4 gap-x-[2%]">
         <div className="flex-[0.25]">
           <AdvanceFilter
@@ -587,7 +670,7 @@ const HeaderSection = ({ hasAliasNameFalse, setCurrent }: any) => {
 export const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
   const { t } = useTranslation(["common", "new_strings"]);
   return (
-    <div className="relative ml-[-12px] mt-[-12px]">
+    <div className="relative ml-[-12px] mt-[-8px]">
       <DateRangePicker
         mode="range"
         defaultMonth={value?.from}
@@ -739,7 +822,12 @@ export const BasicFilters: React.FC<{
     setValue("advanceFilter", "");
     setAllFilterData({}); //when clicked on clear button all the data will be reset
   };
-  const { t } = useTranslation(["common", "course.find_course", "new_strings", "course.participants"]);
+  const { t } = useTranslation([
+    "common",
+    "course.find_course",
+    "new_strings",
+    "course.participants",
+  ]);
   return (
     <div className="flex gap-x-[2%] flex-row items-center justify-between">
       <div className="flex min-w-48 w-[50%] flex-row justify-center items-center border border-[1px] px-2 rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
@@ -766,7 +854,8 @@ export const BasicFilters: React.FC<{
             <div>
               <CalenderIcon color="#666666" />
             </div>
-            {courseDate ? (
+            {/* here if there is courseDate.from then only we need to format other wise we can show placeholder */}
+            {courseDate && courseDate.from ? (
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-row gap-2 text-[14px]">
                   {/* If the course from date and to date is present then only format and show the from date and to date */}
@@ -791,14 +880,14 @@ export const BasicFilters: React.FC<{
                 </div>
               </div>
             ) : (
-              <div className="flex gap-2 font-normal">
+              <div className="flex gap-2 font-normal text-[#999999]">
                 {t("new_strings:select_the_date_range")}
               </div>
             )}
           </Button>
           <DialogContent
-            closeIcon={false}
-            className="!w-[810px] !h-[446px] bg-[#FFFFFF] !rounded-3xl"
+            closeIcon={true}
+            className="!w-[850px] !h-[470px] bg-[#FFFFFF] !rounded-3xl"
           >
             <DateRangePickerComponent
               setOpen={setOpen}
@@ -838,7 +927,27 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { setValue, watch } = useFormContext();
   const formData = watch();
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+  // preferences : fetched user preferences from db
+  // newPreferences : latest user preferences to send to db
+  const [preferences, setPreferences] = useState<Preferences>(emptyPreferences);
+  const [newPreferences, setNewPreferences] =
+    useState<Preferences>(emptyPreferences);
+  const supabase = supabaseClient();
 
+  useEffect(() => {
+    // whenever the filter sheet is opened, need to do following:
+    if (advanceFilterOpen) {
+      //  1) set newPreferences as empty [from opened session]
+      setNewPreferences(emptyPreferences);
+      //  2) load and set the preferences from db
+      loadPreferences(supabase).then((loadedPreferences) =>
+        setPreferences(loadedPreferences)
+      );
+    } else {
+      // whenever the filter is closed, need to send the newPreferences to db
+      savePreferences(supabase, newPreferences);
+    }
+  }, [advanceFilterOpen]);
   /**
    *This holds the applied filters count in advance filter
    */
@@ -848,7 +957,7 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
         Array.isArray(formData.advanceFilter[key])
           ? formData.advanceFilter[key].length > 0
           : formData.advanceFilter[key] !== undefined &&
-          formData.advanceFilter[key] !== ""
+            formData.advanceFilter[key] !== ""
       ).length) ||
     0;
   const { t } = useTranslation("course.find_course");
@@ -859,10 +968,6 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           onClick={() => {
             setAdvanceFilterOpen(true);
             setValue("temporaryadvancefilter", formData.advanceFilter);
-            setValue(
-              "temporaryadvancefilter.course_type",
-              formData?.course_type
-            );
           }}
           className="flex flex-row gap-2 !rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
@@ -877,10 +982,111 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           setAdvanceFilterOpen={setAdvanceFilterOpen}
           hasAliasNameFalse={hasAliasNameFalse}
           setCurrent={setCurrent}
+          preferences={preferences}
+          setNewPreferences={setNewPreferences}
         />
+        {/* loaded preferences are sent for displaying and setNewPreferences is sent as a callback to update the latest choices */}
       </SheetContent>
     </Sheet>
   );
+};
+
+/*
+  loadPreferences
+  ================
+  fetch the latest user preferences from db
+  at present, only fetching at max. top 3 states, cities and centers
+*/
+const loadPreferences = async (
+  supabase: SupabaseClient
+): Promise<Preferences> => {
+  // accessToken is needed because the /preferences edge function only allows reading our own preferences
+  const accessToken = (await supabase.auth.getSession()).data.session
+    ?.access_token;
+
+  const { data, error } = await supabase.functions.invoke("preferences", {
+    method: "POST",
+    body: {
+      operation: "get",
+      items: [
+        { key: "state", maxCount: 3 },
+        { key: "city", maxCount: 3 },
+        { key: "center", maxCount: 3 },
+      ],
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (error) {
+    console.log("Could not fetch preferences for this user");
+  }
+
+  // fetches entity-names for ids (state,city,center...) from db
+  const getEntities = async (key: string) => {
+    // if something went wrong or data was not available, return []
+    if (error || !data[key] || data[key].length === 0) {
+      return [];
+    }
+
+    // sorting is important to ensure the order because supabase returns in ascending order of ids
+    return (
+      (
+        await supabase.from(key).select("id,name").in("id", data[key])
+      ).data?.sort(
+        (a, b) => data[key].indexOf(a.id) - data[key].indexOf(b.id)
+      ) || []
+    );
+  };
+
+  return {
+    state: await getEntities("state"),
+    city: await getEntities("city"),
+    center: await getEntities("center"),
+  };
+};
+
+/*
+  savePreferences
+  ===============
+  - updates the db with latest preferences
+  - called whenever the filter sheet is closed
+*/
+const savePreferences = async (
+  supabase: SupabaseClient,
+  preferences: Preferences
+) => {
+  const items = [];
+  let key: keyof Preferences;
+
+  // load items to update if there has been any selection
+  for (key in preferences) {
+    if (preferences[key].length > 0) {
+      items.push({ key, value: preferences[key][0].id });
+    }
+  }
+
+  // if there is nothing to update, return
+  if (items.length === 0) return;
+
+  // accessToken is needed because the /preferences edge function only allows updating our own preferences
+  const accessToken = (await supabase.auth.getSession()).data.session
+    ?.access_token;
+  const { error } = await supabase.functions.invoke("preferences", {
+    method: "POST",
+    body: {
+      operation: "set",
+      items,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (error) {
+    console.log("Could not save preferences for this user");
+  }
 };
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {

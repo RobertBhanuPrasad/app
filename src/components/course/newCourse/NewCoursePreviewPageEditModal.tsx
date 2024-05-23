@@ -10,7 +10,7 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
-import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { I_AM_CO_TEACHING, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { Button } from "src/ui/button";
 import { DialogContent, DialogFooter, DialogTrigger } from "src/ui/dialog";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
@@ -38,73 +38,38 @@ import { requiredValidationFields } from "pages/courses/add";
 interface EditModalDialogProps {
   title: string;
   content: any;
-  onClose: () => void;
+  handleSaveClick: (formData: any) => void;
+  handleCancelClick: () => void;
   open: boolean;
   openEdit: () => void;
   onOpenChange: any;
   currentStep: any;
 }
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
+import { useEffect, useState } from "react";
+import { supabaseClient } from "src/utility";
 
 export const EditModalDialog = ({
   title,
   content,
-  onClose,
+  handleSaveClick,
+  handleCancelClick,
   open,
   openEdit,
   onOpenChange,
   currentStep,
 }: EditModalDialogProps) => {
-  const {t} = useTranslation(['common'])
-  const { newCourseData, setNewCourseData } = newCourseStore();
-
+  const { newCourseData } = newCourseStore();
   /**
-   * ButtonsDialog Component
-   *
-   * This component renders the buttons within the dialog, including 'Save' and 'Cancel'.
-   * 'Save' button updates the course data with the new values and closes the dialog.
-   * 'Cancel' button closes the dialog without saving changes.
-   *
-   * @returns {JSX.Element} - ButtonsDialog component
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching
    */
-
-  const ButtonsDialog = () => {
-    const { getValues } = useFormContext();
-    const formData = getValues();
-
-    let validationFieldsStepWise = requiredValidationFields(newCourseData);
-
-    let isAllFieldsFilled = false;
-
-    const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
-    const onSubmit = async () => {
-      // Update newCourseData with new form data
-      setNewCourseData({ ...newCourseData, ...formData });
-
-      isAllFieldsFilled = await ValidateCurrentStepFields(
-        validationFieldsStepWise[currentStep - 1]
-      );
-
-      // Close the dialog
-      if (isAllFieldsFilled) {
-        onClose();
-      }
-    };
-
-    return (
-      <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
-        <Button
-          onClick={onClose}
-          className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
-        >
-          {t("cancel_button")}
-        </Button>
-        <Button className="w-[100px]" onClick={onSubmit}>
-          {t("save_button")}
-        </Button>
-      </DialogFooter>
-    );
-  };
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -115,18 +80,126 @@ export const EditModalDialog = ({
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="w-auto max-h-[500px] overflow-y-scroll">
+      <DialogContent className="min-w-[90vw] w-auto max-h-[500px] overflow-y-scroll">
         <Form
           defaultValues={newCourseData}
           onSubmit={function (data: any): void {
             throw new Error("Function not implemented.");
           }}
-          schema={validationSchema()}
+          schema={validationSchema(iAmCoTeachingId as number)}
         >
           {content}
-          <ButtonsDialog />
+          {/* From now we can call this a new component instead of keeping it inside the form to avoid rerendering */}
+          <ButtonsDialog
+            handleSaveClick={handleSaveClick}
+            handleCancelClick={handleCancelClick}
+            currentStep={currentStep}
+          />
         </Form>
       </DialogContent>
     </Dialog>
+  );
+};
+
+/**
+ * ButtonsDialog Component
+ *
+ * This component renders the buttons within the dialog, including 'Save' and 'Cancel'.
+ * 'Save' button updates the course data with the new values and closes the dialog.
+ * 'Cancel' button closes the dialog without saving changes.
+ *
+ * @returns {JSX.Element} - ButtonsDialog component
+ */
+const ButtonsDialog = ({
+  currentStep,
+  handleCancelClick,
+  handleSaveClick,
+}: any) => {
+  const { getValues } = useFormContext();
+  const formData = getValues();
+  const { t } = useTranslation(["common"]);
+  const { newCourseData, setNewCourseData } = newCourseStore();
+  const supabase = supabaseClient();
+
+
+  const { data: loginUserData }: any = useGetIdentity();  
+  const { data: timeZoneData } = useList({ resource: "time_zones" });
+
+    /**
+   * In new course setp 2 we have program type dropdown select component
+   * this variable is used to store latest program type data from selected program type id form form.
+   */
+    const [selectedProgramTypeData, setSelectedProgramTypeData] = useState({});
+
+      /**
+   * @description this function is used to get the latest program type data
+   * @param programTypeId - program type id
+   * @returns latest program type data
+   */
+  const getProgramTypeData = async (
+    programTypeId: number | string | undefined
+  ) => {
+    if (
+      programTypeId === "" ||
+      programTypeId === undefined ||
+      programTypeId === null
+    ) {
+      setSelectedProgramTypeData({});
+      return;
+    }
+
+    const { data: programTypeData, error } = await supabase
+      .from("program_types")
+      .select("*")
+      .eq("id", programTypeId);
+
+    if (!error && programTypeData) {
+      setSelectedProgramTypeData(programTypeData[0]);
+    }
+  };
+
+  // in use Effect we will call the function to get the latest program type data
+  useEffect(() => {
+    getProgramTypeData(formData?.program_type_id);
+  }, [formData?.program_type_id]);
+
+ 
+  let isAllFieldsFilled = false;
+  
+  const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+
+  const onSubmit = async () => {
+    
+  let validationFieldsStepWise = requiredValidationFields(
+    formData,
+    loginUserData,
+    timeZoneData?.data,
+    selectedProgramTypeData
+  );
+
+    isAllFieldsFilled = await ValidateCurrentStepFields(
+      validationFieldsStepWise[currentStep - 1]
+    );
+
+    // Close the dialog
+    if (isAllFieldsFilled) {
+      // Update newCourseData with new form data
+      setNewCourseData({ ...newCourseData, ...formData });
+      handleSaveClick({ ...newCourseData, ...formData });
+    }
+  };
+
+  return (
+    <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
+      <Button
+        onClick={handleCancelClick}
+        className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"
+      >
+        {t("cancel_button")}
+      </Button>
+      <Button className="w-[100px]" onClick={onSubmit}>
+        {t("save_button")}
+      </Button>
+    </DialogFooter>
   );
 };

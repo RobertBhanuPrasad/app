@@ -1,6 +1,6 @@
 import { useList, useSelect } from "@refinedev/core";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import { useState } from "react";
 import { translatedText } from "src/common/translations";
 import { supabaseClient } from "src/utility";
 
@@ -50,7 +50,7 @@ const Signup = () => {
 
     const { data: contactData } = await supabase
       .from("contact")
-      .insert([{ first_name: firstName, last_name: lastName }])
+      .insert([{ first_name: firstName, last_name: lastName, email: email }])
       .select();
 
     const { data: userData } = await supabase

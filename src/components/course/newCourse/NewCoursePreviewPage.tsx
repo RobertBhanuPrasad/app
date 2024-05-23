@@ -1,4 +1,4 @@
-import LoadingIcon from "@public/assets/LoadingIcon";
+import Tick from "@public/assets/Tick";
 import {
   useGetIdentity,
   useInvalidate,
@@ -6,7 +6,11 @@ import {
   useMany,
   useOne,
 } from "@refinedev/core";
+import { useTranslation } from "next-i18next";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { translatedText } from "src/common/translations";
 import {
   COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
@@ -15,12 +19,20 @@ import {
   VISIBILITY,
 } from "src/constants/OptionLabels";
 import {
+  I_AM_CO_TEACHING,
   NATIONAL_ADMIN,
   NOT_SUBMITTED,
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import { CardLabel, CardValue } from "src/ui/TextTags";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
 import {
@@ -31,7 +43,10 @@ import {
   getOptionValueObjectById,
   getOptionValueObjectByOptionOrder,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { IsEditCourse } from "./EditCourseUtil";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
@@ -40,20 +55,10 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "src/ui/alert-dialog";
-import { useRouter } from "next/router";
-import Tick from "@public/assets/Tick";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useTranslation } from "next-i18next";
-import { translatedText } from "src/common/translations";
-import { IsEditCourse } from "./EditCourseUtil";
-import useGetCountryCode from "src/utility/useGetCountryCode";
+import { validationSchema } from "./NewCourseValidations";
+import { fetchCourseFee } from "pages/courses/add";
+import _ from "lodash";
+import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -79,7 +84,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData } = newCourseStore();
+  const { newCourseData, setNewCourseData } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -141,13 +146,25 @@ export default function NewCourseReviewPage() {
       ? newCourseData?.existingVenue?.postal_code
       : newCourseData?.newVenue?.postal_code;
 
-  const VenueData = [
-    VenueName,
-    VenueAddress,
-    CityNames,
-    StateNames,
-    VenuePostalCode,
-  ].join(", ");
+  let VenueData: any = [];
+
+  if (VenueName) {
+    VenueData.push(VenueName);
+  }
+  if (VenueAddress) {
+    VenueData.push(VenueAddress);
+  }
+  if (CityNames) {
+    VenueData.push(CityNames);
+  }
+  if (StateNames) {
+    VenueData.push(StateNames);
+  }
+  if (VenuePostalCode) {
+    VenueData.push(VenuePostalCode);
+  }
+
+  VenueData = VenueData.join(", ");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -155,38 +172,112 @@ export default function NewCourseReviewPage() {
 
   const pathname = usePathname();
 
-  const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
-
   //fetching the user's country code
   const countryCode = useGetCountryCode();
 
-  //Finding course start date
-  const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
+  //fetching the user's language code
+  const languageCode = useGetLanguageCode();
 
+  //This function is used to fetch fee data
   const fetchFeeData = async () => {
-    //Sending all required params
-    const { data, error } = await supabase.functions.invoke("course-fee", {
-      method: "POST",
-      body: {
-        state_id: stateId,
-        city_id: cityId,
-        center_id: centerId,
-        start_date: courseStartDate,
-        program_type_id: newCourseData?.program_type_id,
-      },
-      headers: {
-        "country-code": countryCode,
-      },
+    //Fetching the course fee based on new course data
+    const data = await fetchCourseFee({
+      formData: newCourseData,
+      countryCode: countryCode,
     });
 
-    if (error)
-      console.log("error while fetching course fee level settings data", error);
-    setCourseFeeSettings(data);
+    console.log("Fee Data from API is", data);
+
+    /**@variable tempCourseData is used to store the updated course fee data (feeLevels,early_bird_cut_off_period,is_early_bird_enabled and program_fee_level_settings) */
+    let tempCourseData = { ...newCourseData, feeLevels: data };
+
+    //Updating early_bird_cut_off_period
+    if (newCourseData?.early_bird_cut_off_period == undefined) {
+      tempCourseData = {
+        ...tempCourseData,
+        early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
+      };
+    }
+
+    //Updating is_early_bird_enabled
+    if (
+      newCourseData?.is_early_bird_enabled == undefined &&
+      data?.[0]?.is_early_bird_fee_enabled != null
+    ) {
+      tempCourseData = {
+        ...tempCourseData,
+        is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
+      };
+    }
+    //Fetching login user roles
+    const user_roles: any[] = loginUserData?.userData?.user_roles || [];
+
+    //Checking Weather login user is Super Admin or Not
+    let isUserNationAdminOrSuperAdmin = false;
+
+    if (
+      user_roles.some(
+        (role) =>
+          role.role_id.order === NATIONAL_ADMIN ||
+          role.role_id.order === SUPER_ADMIN
+      )
+    ) {
+      isUserNationAdminOrSuperAdmin = true;
+    }
+
+    //Checking Weather a fee is editable or not
+    const isFeeEditable =
+      isUserNationAdminOrSuperAdmin || data?.[0]?.is_program_fee_editable
+        ? true
+        : false;
+
+    //Inserting data into program_fee_level_settings variable. If it is undefined
+    //This code will execute when user changes program_type or location details or course start date.
+    //when above felids are changes then we are clearing program_fee_level_settings variable.
+    //So we are manually inserting data in program_fee_level_settings variable.
+    if (
+      isFeeEditable &&
+      newCourseData?.program_fee_level_settings == undefined
+    ) {
+      tempCourseData = {
+        ...tempCourseData,
+        program_fee_level_settings: data?.[0]?.program_fee_level_settings?.map(
+          (feeLevel: any) => {
+            //Removing Id and program_fee_setting_id
+            const { id, program_fee_setting_id, program_id, ...rest } =
+              feeLevel;
+            return {
+              ...rest,
+              fee_level_id: feeLevel?.fee_level_id?.id,
+            };
+          }
+        ),
+        is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
+        early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
+      };
+    }
+    console.log("Temporary New Course Data", tempCourseData);
+    //Updating newCourseData
+    setNewCourseData(tempCourseData);
   };
 
   useEffect(() => {
+    //Fetching Course Fee Data
     fetchFeeData();
-  }, []);
+  }, [
+    stateId,
+    cityId,
+    centerId,
+    newCourseData?.program_type_id,
+    newCourseData?.schedules,
+    newCourseData?.is_existing_venue,
+    newCourseData?.newVenue,
+    newCourseData?.existingVenue,
+    newCourseData?.organization_id,
+    newCourseData?.state_id,
+    newCourseData?.city_id,
+    newCourseData?.center_id,
+  ]);
 
   const creator =
     newCourseData?.program_created_by &&
@@ -322,6 +413,11 @@ export default function NewCourseReviewPage() {
     id: newCourseData?.time_zone_id,
   });
 
+  // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
+  const { data: timeZonesData }: any = useList({
+    resource: "time_zones",
+  });
+
   const user_roles: any[] = data?.userData?.user_roles || [];
 
   //Checking Weather a user is Super Admin or Not
@@ -340,20 +436,24 @@ export default function NewCourseReviewPage() {
   //Checking Weather a fee is editable or not
   const isFeeEditable =
     isUserNationAdminOrSuperAdmin ||
-    courseFeeSettings?.[0]?.is_program_fee_editable
+    newCourseData?.feeLevels?.[0]?.is_program_fee_editable
       ? true
       : false;
-
+  // console.log(isFeeEditable, "isFeeEditable isFeeEditable");
   //Exacting default Fee Levels from settings.In this Data we will have entire object in fee_level_id but we need only fee_level_id.
   const defaultFeeLevels =
-    courseFeeSettings?.[0]?.program_fee_level_settings?.map((feeLevel: any) => {
-      return {
-        ...feeLevel,
-        fee_level_id: feeLevel?.fee_level_id?.id,
-      };
-    });
+    newCourseData?.feeLevels?.length == 0
+      ? []
+      : newCourseData?.feeLevels?.[0]?.program_fee_level_settings?.map(
+          (feeLevel: any) => {
+            return {
+              ...feeLevel,
+              fee_level_id: feeLevel?.fee_level_id?.id,
+            };
+          }
+        );
 
-  //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
+  // If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
     ? newCourseData?.program_fee_level_settings
     : defaultFeeLevels;
@@ -388,44 +488,111 @@ export default function NewCourseReviewPage() {
     getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
       ?.id ?? 0;
 
-  const handClickContinue = async () => {
-    setIsSubmitting(true);
+  /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
 
-    /**
-     * This variable will retur true if all api calls has been successfully it will return false if any api call fails
-     */
-    const isPosted = await handlePostProgramData(
-      newCourseData,
-      data?.userData?.id,
-      setProgramId,
-      accountingNotSubmittedStatusId,
-      pathname,
+  const [errors, setErrors] = useState<any>({});
+
+  /**
+   * This is a function where we are calling to display error messages in preview page also
+   * current state : in preview page there is no Form declaration so we have to validate the current data with zod safe parse
+   * and then display error messages
+   * @param formData form Data is independent data
+   * @returns
+   */
+  const handleErrorMessagesInPreviewPageScreen = async (formData: any) => {
+    const requiredFieldsForValidation = await getRequiredFieldsForValidation(
+      formData,
+      loginUserData,
       countryCode
     );
 
-    // we are checking the course is edit or user created new course
-    const isEdited = IsEditCourse(pathname);
+    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
 
-    // we have to display thank you page or success modal pop up only when the posting done successfully without any error
-    if (isPosted) {
-      if (isEdited) {
-        setOnEditSuccess(true);
-      } else {
-        // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
-        await invalidate({
-          resource: "program",
-          invalidates: ["list"],
-        });
-        // i need to set params with section=thank_you
-        const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
-        current.set("section", "thank_you");
+    let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 
-        const params = current.toString();
+    let requiredFieldsObject: any = {};
 
-        router.replace(`${pathname}?${params}`);
+    requiredFeilds?.map((field: string) => {
+      requiredFieldsObject[field] = true;
+    });
 
-        setViewPreviewPage(false);
-        setViewThankyouPage(true);
+    const errors: any = newCourseZodSchema
+      .pick(requiredFieldsObject)
+      .safeParse(formData);
+
+    console.log("form data is", formData, errors);
+
+    if (errors.success === false) {
+      let issues = errors.error.issues;
+      let finalIssues: any = {};
+
+      console.log("issues", issues);
+
+      issues = issues.map((issue: any) => {
+        finalIssues[issue?.path[0]] = issue?.message;
+      });
+
+      setErrors(finalIssues);
+    } else {
+      setErrors({});
+    }
+    return errors;
+  };
+
+  const handClickContinue = async () => {
+    setIsSubmitting(true);
+    const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData);
+    console.log("errors", errors);
+
+    if (errors.success === false) {
+      console.log(errors.error.issues, "issuessss");
+    } else {
+      /**
+       * This variable will retur true if all api calls has been successfully it will return false if any api call fails
+       */
+      const isPosted = await handlePostProgramData(
+        newCourseData,
+        data?.userData?.id,
+        setProgramId,
+        accountingNotSubmittedStatusId,
+        pathname,
+        countryCode,
+        languageCode
+      );
+
+      // we are checking the course is edit or user created new course
+      const isEdited = IsEditCourse(pathname);
+
+      // we have to display thank you page or success modal pop up only when the posting done successfully without any error
+      if (isPosted) {
+        if (isEdited) {
+          setOnEditSuccess(true);
+        } else {
+          // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+          await invalidate({
+            resource: "program",
+            invalidates: ["list"],
+          });
+          // i need to set params with section=thank_you
+          const current = new URLSearchParams(
+            Array.from(searchParams.entries())
+          ); // -> has to use this form
+          current.set("section", "thank_you");
+
+          const params = current.toString();
+
+          router.replace(`${pathname}?${params}`);
+
+          setViewPreviewPage(false);
+          setViewThankyouPage(true);
+        }
       }
     }
     setIsSubmitting(false);
@@ -448,6 +615,7 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
+
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
@@ -471,7 +639,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("basic_details")}
               content={<NewCourseStep1 />}
-              onClose={() => setOpenBasicDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenBasicDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenBasicDetails(false);
+              }}
               open={openBasicDetails}
               openEdit={() => {
                 setOpenBasicDetails(true);
@@ -483,6 +657,27 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
+            {/* REQUIRMENT in the course edit page we need to display the course code in the course details section */}
+            {IsEditCourse(pathname) && (
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                  {t("course_id")}
+                </p>
+
+                <abbr
+                  className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
+                  title={
+                    newCourseData?.program_code
+                      ? newCourseData?.program_code
+                      : "-"
+                  }
+                >
+                  {newCourseData?.program_code
+                    ? newCourseData?.program_code
+                    : "-"}
+                </abbr>
+              </div>
+            )}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:review_post_details.creator")}
@@ -556,7 +751,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("course.new_course:review_post_details.course_details")}
               content={<NewCourseStep2 />}
-              onClose={() => setOpenCourseDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenCourseDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenCourseDetails(false);
+              }}
               open={openCourseDetails}
               openEdit={() => {
                 setOpenCourseDetails(true);
@@ -575,19 +776,25 @@ export default function NewCourseReviewPage() {
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={
-                  courseType?.data?.name
+                  courseType?.data?.name &&
+                  newCourseData?.program_type_id !== ""
                     ? translatedText(courseType?.data?.name)
                     : "-"
                 }
               >
-                {courseType?.data?.name
+                {courseType?.data?.name && newCourseData?.program_type_id !== ""
                   ? translatedText(courseType?.data?.name)
                   : "-"}
               </abbr>
+              {errors?.program_type_id && (
+                <span className="text-[#FF6D6D] text-[12px]">
+                  {errors?.program_type_id}
+                </span>
+              )}
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
-              {t("new_strings:teacher")}
+                {t("new_strings:teacher")}
               </p>
               <abbr
                 title={CourseTeachersNames ? CourseTeachersNames : "-"}
@@ -595,6 +802,11 @@ export default function NewCourseReviewPage() {
               >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
+              {errors?.teacher_ids && (
+                <span className="text-[#FF6D6D] text-[12px]">
+                  {errors?.teacher_ids}
+                </span>
+              )}
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -705,7 +917,7 @@ export default function NewCourseReviewPage() {
               </div>
             )}
             {/* // TODO need to do when the form filed is clear */}
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("course_description")}
               </p>
@@ -718,10 +930,10 @@ export default function NewCourseReviewPage() {
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
                 aut fugit, sed quia consequuntur ma
               </abbr>
-            </div>
+            </div> */}
             {/* // TODO need to do when the form filed is clear */}
 
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("course_notes")}
               </p>
@@ -734,10 +946,10 @@ export default function NewCourseReviewPage() {
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
                 aut fugit, sed quia consequuntur ma{" "}
               </abbr>
-            </div>
+            </div> */}
             {/* // TODO need to do when the form filed is clear */}
 
-            <div className="w-[291px]">
+            {/* <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
                 {t("email_notes")}
               </p>
@@ -750,7 +962,7 @@ export default function NewCourseReviewPage() {
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
                 aut fugit, sed quia consequuntur ma{" "}
               </abbr>
-            </div>
+            </div> */}
           </div>
         </section>
         {/* Time and Venue */}
@@ -764,7 +976,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Venue Details"
               content={<NewCourseStep3 />}
-              onClose={() => setOpenVenueDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenVenueDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenVenueDetails(false);
+              }}
               open={openVenueDetails}
               openEdit={() => {
                 setOpenVenueDetails(true);
@@ -784,10 +1002,24 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={newCourseData?.online_url}
+                  title={
+                    newCourseData?.online_url &&
+                    newCourseData?.program_type_id !== ""
+                      ? newCourseData?.online_url
+                      : "-"
+                  }
                 >
-                  {newCourseData?.online_url}
+                  {newCourseData?.online_url &&
+                  newCourseData?.program_type_id !== ""
+                    ? newCourseData?.online_url
+                    : "-"}
                 </abbr>
+
+                {errors?.online_url && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.online_url}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -799,6 +1031,12 @@ export default function NewCourseReviewPage() {
                 >
                   {StateNames ? StateNames : "-"}
                 </abbr>
+
+                {errors?.state_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.state_id}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -810,6 +1048,12 @@ export default function NewCourseReviewPage() {
                 >
                   {CityNames ? CityNames : "-"}
                 </abbr>
+
+                {errors?.city_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.city_id}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -821,6 +1065,12 @@ export default function NewCourseReviewPage() {
                 >
                   {CenterNames ? CenterNames : "-"}
                 </abbr>
+
+                {errors?.center_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.center_id}
+                  </span>
+                )}
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -831,11 +1081,23 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
-                  title={VenueData ? VenueData : "-"}
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666] h-[118px] overflow-y-auto"
+                  title={
+                    VenueData && newCourseData?.program_type_id != ""
+                      ? VenueData
+                      : "-"
+                  }
                 >
-                  {VenueData ? VenueData : "-"}
+                  {VenueData && newCourseData?.program_type_id != ""
+                    ? VenueData
+                    : "-"}
                 </abbr>
+
+                {errors.is_existing_venue && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors.is_existing_venue}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -853,17 +1115,21 @@ export default function NewCourseReviewPage() {
                     : "-"}
                 </abbr>
               </div>
-              <div className="w-[291px]">
-                <p className="text-sm font-normal text-accent-light text-[#999999]">
-                  {t("course.new_course:review_post_details.time_zone")}
-                </p>
-                <abbr
-                  className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={`${timeZone?.data?.name} - ${timeZone?.data?.utc_off_set}`}
-                >
-                  {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
-                </abbr>
-              </div>
+
+              {timeZonesData && timeZonesData?.data?.length > 1 && (
+                <div className="w-[291px]">
+                  <p className="text-sm font-normal text-accent-light text-[#999999]">
+                    {t("course.new_course:review_post_details.time_zone")}
+                  </p>
+                  <abbr
+                    className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
+                    title={`${timeZone?.data?.name} - ${timeZone?.data?.utc_off_set}`}
+                  >
+                    {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
+                  </abbr>
+                </div>
+              )}
+
               <div>{venueSessions()}</div>
             </div>
           )}
@@ -880,7 +1146,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Fees Details"
               content={<NewCourseStep4 />}
-              onClose={() => setOpenFeesDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenFeesDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenFeesDetails(false);
+              }}
               open={openFeesDetails}
               openEdit={() => {
                 setOpenFeesDetails(true);
@@ -908,8 +1180,8 @@ export default function NewCourseReviewPage() {
       4.Early bird cut off editable in settings */}
             {isFeeEditable &&
               newCourseData?.is_early_bird_enabled &&
-              courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
-              courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
+              newCourseData?.feeLevels?.[0]?.is_early_bird_fee_enabled &&
+              newCourseData?.feeLevels?.[0]?.is_early_bird_cut_off_editable && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     {t("new_strings:Early_bird_cutoff_period")}
@@ -936,6 +1208,16 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div> */}
           </div>
+          {/* If No data present in enabledFeeLevelData means fee is not present for the current course data  */}
+          {newCourseData?.feeLevels?.length == 0 ? (
+            <span className="text-[#FF6D6D] text-[12px]">
+              There is no price set for current settings. Select course type and
+              city/center.
+            </span>
+          ) : (
+            //If enabledFeeLevelData is undefined while fetching data, So loading is shown
+            enabledFeeLevelData == undefined && <div className="loader"></div>
+          )}
         </section>
         {/* Accommodation Information */}
         <section className="w-full py-8 text-base border-b">
@@ -948,7 +1230,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Accomidation Details"
               content={<NewCourseStep5 />}
-              onClose={() => setOpenAccomidationDetails(false)}
+              handleSaveClick={(formData: any) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenAccomidationDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenAccomidationDetails(false);
+              }}
               open={openAccomidationDetails}
               openEdit={() => {
                 setOpenAccomidationDetails(true);
@@ -996,7 +1284,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Contact Details"
               content={<NewCourseStep6 />}
-              onClose={() => setOpenContactDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenContactDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenContactDetails(false);
+              }}
               open={openContactDetails}
               openEdit={() => {
                 setOpenContactDetails(true);
@@ -1054,23 +1348,34 @@ export default function NewCourseReviewPage() {
             <div className="truncate">
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.bcc_registration_confirmation_email}
+                // If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying
+                title={
+                  newCourseData?.bcc_registration_confirmation_email
+                    ? newCourseData?.bcc_registration_confirmation_email?.replace(
+                        /(\s*,\s*)*$/,
+                        ""
+                      )
+                    : "-"
+                }
               >
+                {/* If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying */}
                 {newCourseData?.bcc_registration_confirmation_email
-                  ? newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(
+                      /(\s*,\s*)*$/,
+                      ""
+                    )
                   : "-"}
               </abbr>
             </div>
           </div>
         </section>
-        <div className="flex items-center justify-center ">
-          {isSubmitting ? (
-            <Button disabled>
-              <LoadingIcon />
-            </Button>
-          ) : (
-            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
+        <div className="flex items-center justify-center">
+          {isSubmitting && (
+            <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+              <div className="loader"></div>
+            </div>
           )}
+          <Button onClick={handClickContinue}>{t("continue_button")}</Button>
         </div>
       </div>
     </div>
@@ -1122,8 +1427,7 @@ const Accommodation = ({
       >
         <CardValue className="truncate">
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
-          {currencyCode ? currencyCode : ""}
-          {accomdationData?.fee_per_person}
+          {currencyCode ? currencyCode : ""} {accomdationData?.fee_per_person}
         </CardValue>
       </abbr>
     </div>
@@ -1142,6 +1446,44 @@ const Fees = ({
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
   /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the fee details
+   * we will get the currency code in the country config
+   *
+   */
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
+
+  //If custom fee is enabled Need to show custom label.
+  if (feeLevelSettingsData?.is_custom_fee == true) {
+    return (
+      <div className="w-[291px]">
+        <abbr
+          title={translatedText(
+            feeLevelSettingsData?.custom_fee_label as Object
+          )}
+          className="no-underline"
+        >
+          <CardLabel className="truncate">
+            {translatedText(feeLevelSettingsData?.custom_fee_label as Object)}
+          </CardLabel>
+        </abbr>
+        <abbr
+          title={JSON.stringify(feeLevelSettingsData?.total)}
+          className="no-underline"
+        >
+          <CardValue className="truncate">
+            {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+            {feeLevelSettingsData?.total}
+          </CardValue>
+        </abbr>
+      </div>
+    );
+  }
+
+  /**
    * @constant feeLevelData
    * REQUIRMENT we need to show the both fee level type and total of the fee level
    * we have the fee_level_id and we need the fee level type
@@ -1154,18 +1496,7 @@ const Fees = ({
     id: feeLevelSettingsData?.fee_level_id as number,
   });
 
-  /**
-   * @constant countryConfigData
-   * @description this constant stores the country config data based on the organization
-   * REQUIRMENT we need to show the current currency code befor the ammount in the fee details
-   * we will get the currency code in the country config
-   *
-   */
-
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
-
+  //If custom label is false then show only fee_level label.
   return (
     <div className="w-[291px]">
       <abbr
@@ -1182,7 +1513,7 @@ const Fees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {(feeLevelSettingsData?.total)?.toFixed(2)}
+          {feeLevelSettingsData?.total}
         </CardValue>
       </abbr>
     </div>
@@ -1201,6 +1532,47 @@ const EarlyBirdFees = ({
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
   /**
+   * @constant countryConfigData
+   * @description this constant stores the country config data based on the organization
+   * REQUIRMENT we need to show the current currency code befor the ammount in the fee details
+   * we will get the currency code in the country config
+   *
+   */
+
+  const { data: countryConfigData } = useList({
+    resource: "country_config",
+  });
+
+  //If custom fee is enabled Need to show custom label.
+  if (feeLevelSettingsData?.is_custom_fee == true) {
+    return (
+      <div className="w-[291px]">
+        {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
+        <abbr
+          title={`Early Bird ${translatedText(
+            feeLevelSettingsData?.custom_fee_label as object
+          )}`}
+          className="no-underline"
+        >
+          <CardLabel className="truncate">
+            Early Bird{" "}
+            {translatedText(feeLevelSettingsData?.custom_fee_label as object)}
+          </CardLabel>
+        </abbr>
+        <abbr
+          title={JSON.stringify(feeLevelSettingsData?.early_bird_total)}
+          className="no-underline"
+        >
+          <CardValue className="truncate">
+            {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+            {feeLevelSettingsData?.early_bird_total}
+          </CardValue>
+        </abbr>
+      </div>
+    );
+  }
+
+  /**
    * @constant feeLevelData
    * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
    * we have the fee_level_id and we need the fee level type
@@ -1212,19 +1584,8 @@ const EarlyBirdFees = ({
     resource: "option_values",
     id: feeLevelSettingsData?.fee_level_id as number,
   });
-
-  /**
-   * @constant countryConfigData
-   * @description this constant stores the country config data based on the organization
-   * REQUIRMENT we need to show the current currency code befor the ammount in the fee details
-   * we will get the currency code in the country config
-   *
-   */
-
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
   const { t } = useTranslation("new_strings");
+  //If custom fee is false show fee level label.
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
@@ -1243,7 +1604,7 @@ const EarlyBirdFees = ({
       >
         <CardValue className="truncate">
           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-          {(feeLevelSettingsData?.early_bird_total)?.toFixed(2)}
+          {feeLevelSettingsData?.early_bird_total}
         </CardValue>
       </abbr>
     </div>
@@ -1295,12 +1656,19 @@ export const EditCourseSuccessfullyInfo = ({
         <AlertDialogFooter>
           <div className="w-full flex justify-center items-center gap-5">
             <Button
-              disabled={onButtonLoading}
               type="button"
-              className="bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
+              className={`${
+                onButtonLoading
+                  ? "bg-[#fff] border-[1px] rounded-[12px] border-solid border-[#7677F4] w-[210px] h-[46px]"
+                  : "bg-blue-500 rounded-[12px] text-white text-[16px] p-[12px 24px] w-[210px] h-[46px]"
+              }`}
               onClick={handleClick}
             >
-              {onButtonLoading ? <LoadingIcon /> : t("go_to_course_details")}
+              {onButtonLoading ? (
+                <div className="loader !w-[30px]"></div>
+              ) : (
+                t("go_to_course_details")
+              )}
             </Button>
           </div>
         </AlertDialogFooter>

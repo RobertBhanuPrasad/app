@@ -25,9 +25,10 @@ export const handlePostProgramData = async (
    * The current url either add or edit
    */
   pathname: string,
-  countryCode: string
+  countryCode: string,
+  languageCode: string
 ) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   console.log("i will post course data in this functions", body);
 
@@ -203,8 +204,31 @@ const supabase = supabaseClient();
     }
   }
 
-  //Finding course start date
-  const courseStartDate = body?.schedules?.[0]?.date?.toISOString();
+  let sortedSchedules;
+  if (body?.schedules) {
+    //sorting the schedules
+    sortedSchedules = body?.schedules.sort((a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }) as any[];
+  }
+
+  //Finding course start date from new Date object
+  let utcYear = sortedSchedules?.[0]?.date["getFullYear"]();
+  let utcMonth = (sortedSchedules?.[0]?.date["getMonth"]() + 1)
+    .toString()
+    .padStart(2, "0");
+  let utcDay = sortedSchedules?.[0]?.date["getDate"]()
+    .toString()
+    .padStart(2, "0");
+
+  //Construct the course start date time stamp
+  const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
 
   //Fetching fee level settings of course
   const { data: feeData, error } = await supabase.functions.invoke(
@@ -228,7 +252,10 @@ const supabase = supabaseClient();
     console.log("error while fetching fee data", error);
   }
 
-  if (body[NewCourseStep4FormNames?.program_fee_level_settings]?.length == 0) {
+  if (
+    body[NewCourseStep4FormNames?.program_fee_level_settings]?.length == 0 ||
+    body[NewCourseStep4FormNames?.program_fee_level_settings] == undefined
+  ) {
     programBody.program_fee_settings_id = feeData?.[0]?.id;
   } else {
     programBody.early_bird_cut_off_period = body["early_bird_cut_off_period"]
@@ -290,7 +317,7 @@ const supabase = supabaseClient();
     // this url is now posted to the program api which is used to further usage in the details view or at any other place.
 
     // TODO : need to integrate with country code and language code after translations are done
-    const registrationUrl = `${RX_BASE_URL}/programs/${programId}`;
+    const registrationUrl = `${RX_BASE_URL}/${countryCode}-${languageCode}/programs/${programId}`;
 
     // TODO need to integrate with url provided by cx team -(kalyan)
     const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
@@ -447,7 +474,7 @@ export const handlePostProgramInfoData = async (
   body: any,
   programId: number
 ) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // store is_registration_via_3rd_party,registration_via_3rd_party_url data in program_details_info
   const programDetailsInfoData: ProgramDetailsInfoDataBaseType = {
@@ -482,7 +509,7 @@ export const handlePostProgramOrganizersData = async (
   body: any,
   programId: number
 ) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   //store program organizers in program_organizers table and
 
@@ -543,8 +570,7 @@ export const handlePostProgramTeachersData = async (
   body: any,
   programId: number
 ) => {
-
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // Step 1: Retrieve existing teachers of the program from the database
   const { data: existingTeachersResponse } = await supabase
@@ -612,7 +638,7 @@ export const handlePostProgramAssistantTeachersData = async (
   body: any,
   programId: number
 ) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // Step 1: Retrieve existing assistant teachers of the program from the database
   const { data: existingTeachersResponse } = await supabase
@@ -684,8 +710,7 @@ export const handlePostProgramLanguagesData = async (
   body: any,
   programId: number
 ) => {
-
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // Step 1: Retrieve existing languages of the program from the database
   const { data: existingLanguagesResponse } = await supabase
@@ -752,8 +777,7 @@ export const handlePostProgramTranslationLanguagesData = async (
   body: any,
   programId: number
 ) => {
-
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // Step 1: Retrieve existing translation languages of the program from the database
   const { data: existingTranslationLanguagesResponse } = await supabase
@@ -827,7 +851,7 @@ export const handleProgramSchedulesData = async (
   body: any,
   programId: number
 ) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // Delete records which are not present in body schedules and present in database
   const { data: existingScheduleData } = await supabase
@@ -931,8 +955,7 @@ export const handlePostAccommodations = async (
   body: any,
   programId: number
 ) => {
-
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // Delete records which are not present in body accommodations and present in database
   const { data: existingAccommodationData } = await supabase
@@ -995,8 +1018,7 @@ export const handlePostProgramContactDetailsData = async (
   body: any,
   programId: number
 ) => {
-
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // Delete records which are not present in body contact details and present in database
   const { data: existingContactDetailsData } = await supabase
@@ -1086,7 +1108,7 @@ const supabase = supabaseClient();
  * @param body formData
  */
 const handlePostVenueData = async (body: any, loggedInUserId: number) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // if body.isNewVenue true then first we have to create a new venue and then add it to program table with created venue_id
   // if user select and created new venue in step-3 then we have to create new venue and add it to program table
@@ -1200,7 +1222,7 @@ const supabase = supabaseClient();
 };
 
 export const handleProgramStatusUpdate = async (programId: number) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   const { data, error }: any = await supabase
     .from("program")
@@ -1276,7 +1298,7 @@ export const handleProgramFeeLevelSettingsData = async (
   body: any,
   programId: number
 ) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   if (
     body?.program_fee_level_settings?.length == 0 ||
@@ -1329,8 +1351,7 @@ const handleGenerateProgramCode = async (
   programId: number,
   countryCode: string
 ) => {
-
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // to fetch country code call users api
 
@@ -1342,7 +1363,8 @@ const supabase = supabaseClient();
   /**
    * Program code constructed using country code and letter C and program Id represented as 5 digit number
    */
-  let programCode = countryCode + "C" + programId.toString().padStart(5, "0");
+  let programCode =
+    countryCode.toUpperCase() + "C" + programId.toString().padStart(5, "0");
 
   // update program code in program
   const { data: programData, error: programError } = await supabase
@@ -1367,7 +1389,7 @@ const handleProgramAccountingStatusUpdate = async (
   programId: number,
   accountingNotSubmittedStatusId: number
 ) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // updating the accounting status of program to not submitted initially when the program created
 
@@ -1437,7 +1459,7 @@ export const handleDeleteProgramTables = async (
   programId: number,
   pathname: string
 ) => {
-const supabase = supabaseClient();
+  const supabase = supabaseClient();
 
   // we need to do only when it is new course
   if (!IsEditCourse(pathname)) {

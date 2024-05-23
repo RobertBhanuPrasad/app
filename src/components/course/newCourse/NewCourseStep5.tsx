@@ -36,6 +36,8 @@ import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import { IsEditCourse } from "./EditCourseUtil";
 import { supabaseClient } from "src/utility";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
+import { Button } from "src/ui/button";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -79,16 +81,16 @@ export const AccomdationComponent = () => {
   const accommodations = formData.accommodation || [];
 
   return (
-    <div className="rounded-[12px]  border border-[#D6D7D8]">
+    <div className="rounded-[12px] overflow-x-scroll border border-[#D6D7D8]">
       <div className="flex h-[48px]">
-        <div className="p-4 bg-[#7677F41A] w-[288px] ">{t("course.new_course:accommodation_tab.accommodation_type")}</div>
-        <div className="p-4 bg-[#7677F41A]  w-[288px]">
+        <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">{t("course.new_course:accommodation_tab.accommodation_type")}</div>
+        <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">
           {t("new_strings:fee_per_person")} (MYR) {t("new_strings:inc_vat")}
         </div>
-        <div className="p-4  bg-[#7677F41A]  w-[288px]">
+        <div className="p-4  bg-[#7677F41A] min-w-[288px] w-full">
         {t("course.new_course:accommodation_tab.number_of_spots")}
         </div>
-        <div className="p-4 w-24 w-[151px] bg-[#7677F41A] ">{t("actions")}</div>
+        <div className="p-4 w-24 min-w-[200px] w-full bg-[#7677F41A] ">{t("actions")}</div>
       </div>
 
       <div className="my-[10px]">
@@ -139,16 +141,16 @@ export const AccommodationField = ({
 
   return (
     <div className="flex items-center w-full h-auto">
-      <div className="w-[288px] p-[10px]">
+      <div className="min-w-[288px] w-full p-[10px]">
         <AccommodationType index={index} />
       </div>
-      <div className="p-4 w-[288px] p-[10px]">
+      <div className="p-4 min-w-[288px] w-full p-[10px]">
         <FeePerPerson index={index} />
       </div>
-      <div className="p-4 w-[288px] p-[10px]">
+      <div className="p-4 min-w-[288px] w-full p-[10px]">
         <AccomdationSpot index={index} />
       </div>
-      <div className="w-[151px] p-[10px] flex">
+      <div className="min-w-[130spx] w-full p-[10px] flex">
         <AccomdationAction index={index} remove={remove} append={append} />
       </div>
 
@@ -269,7 +271,7 @@ const FeePerPerson = ({ index }: any) => {
   });
 
   return (
-    <div className="w-full">
+    <div className='h-[40px] w-full'>
       {/* Input field for fees */}
       <Input
         value={value}
@@ -278,9 +280,11 @@ const FeePerPerson = ({ index }: any) => {
         }}
         error={error ? true : false}
       />
+      <div>
       {error && (
         <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
       )}
+      </div>
     </div>
   );
 };
@@ -368,7 +372,7 @@ export const AccommodationType = ({
   }, []);
 
   return (
-    <div className="w-full ">
+    <div className='h-[40px] w-full'>
       <Select
         value={value}
         onValueChange={(value: any) => {
@@ -417,7 +421,7 @@ export const AccomdationSpot = ({ index }: { index: number }) => {
   });
 
   return (
-    <div className="w-full">
+    <div className='h-[40px] w-full'>
       {/* Input field for number of spots available */}
       <Input
         value={value}
@@ -448,6 +452,7 @@ const AccomdationAction = ({
   const formData = watch().accommodation || [];
   const isLastRow = index === formData?.length - 1;
   const isFirstRow = index === 0;
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Function to add a new row
   const handleAddRow = () => {
@@ -455,10 +460,11 @@ const AccomdationAction = ({
   };
 
   // Function to delete a row
-  const handleDeleteRow = (index: number) => {
+  const handleDeleteRow= (index: number) => {
     remove(index);
   };
-  const {t} = useTranslation('common')
+
+  const {t} = useTranslation(['common', "new_strings"])
   return (
     <div className="w-[150px] flex gap-4 ">
       {/* Button to add a new row */}
@@ -473,14 +479,43 @@ const AccomdationAction = ({
       )}
       {/* Button to delete a row */}
       {!isFirstRow && (
-        <div
-          onClick={() => handleDeleteRow(index)}
-          className="flex flex-row gap-1 justify-center items-center text-[#7677F4] cursor-pointer"
-        >
-          <Delete />
-          <div>{t("delete_button")}</div>
-        </div>
-      )}
+           <Dialog open={isDeleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+             <DialogTrigger
+             onClick={() => {
+              setDeleteDialogOpen(true)
+             }}
+             className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
+             >
+             <Delete />
+             {t('delete_button')}
+             </DialogTrigger>
+             <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+             <DialogHeader>
+             <DialogTitle className="flex justify-center">{t('delete_button')}</DialogTitle>
+             <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333] whitespace-nowrap">
+               {t('new_strings:are_you_sure_you_want_to_delete_this_accomodation')}
+             </DialogDescription>
+             </DialogHeader>
+             <DialogFooter className="w-full flex !justify-center gap-6">
+             <DialogClose>
+             <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+                {t('no_button')}
+             </Button>
+             </DialogClose>
+             <DialogClose>
+             <Button
+              className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+              onClick={() => {
+              handleDeleteRow(index)
+              }}
+             >
+             {t('yes')}
+             </Button>
+             </DialogClose>
+             </DialogFooter>
+             </DialogContent>
+           </Dialog>
+          )}
     </div>
   );
 };

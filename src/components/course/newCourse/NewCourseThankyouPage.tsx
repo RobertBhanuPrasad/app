@@ -1,8 +1,7 @@
 'use client'
 import { getCourseStatusColorBasedOnStatusId } from '@components/courseBusinessLogic'
-import LoadingIcon from '@public/assets/LoadingIcon'
 import InstagramIcon from '@public/images/InstagramIcon.png'
-import ThankyouGif from '@public/images/ThankYou.png'
+import congrat from '@public/gif/congrat.gif'
 import WhatsappIcon from '@public/images/WhatsappIcon.png'
 import facebookIcon from '@public/images/facebookIcon.png'
 import linkedInIcon from '@public/images/linkedInIcon.png'
@@ -87,16 +86,29 @@ useEffect(() => {
     .join(',')
 
   // Formatting the venue details
-  const venue =
-    data?.data?.venue_id?.address +
-    ', ' +
-    data?.data?.venue_id?.name +
-    ', ' +
-    data?.data?.venue_id?.city_id?.name +
-    ', ' +
-    data?.data?.venue_id?.state_id?.name +
-    ', ' +
-    data?.data?.venue_id?.postal_code
+
+  let venue=""
+
+  if(data?.data?.venue_id?.address){
+    venue=venue+data?.data?.venue_id?.address+", "
+
+  }
+  if(data?.data?.venue_id?.name){
+    venue=data?.data?.venue_id?.name+", "
+  }
+
+  if(data?.data?.venue_id?.city_id?.name){
+    venue=venue+data?.data?.venue_id?.city_id?.name+", "
+
+  }
+  if(data?.data?.venue_id?.state_id?.name){
+    venue=venue+data?.data?.venue_id?.state_id?.name
+
+  }
+  if(data?.data?.venue_id?.postal_code){
+    venue=venue+", "+data?.data?.venue_id?.postal_code
+
+  }
 
   const statusColorCode = getCourseStatusColorBasedOnStatusId(data?.data?.status_id?.id)?.colorCode
   const statusStyles = getCourseStatusColorBasedOnStatusId(data?.data?.status_id?.id)?.styles
@@ -108,7 +120,7 @@ useEffect(() => {
     <div>
       {isThankyouPageDataIsLoading ? (
         <div className="flex items-center justify-center h-16 bg-white shadow-md rounded-3xl">
-          <LoadingIcon />
+          <div className='loader'></div>
         </div>
       ) : (
         <div className="relative pb-8 m-4 bg-white shadow-md rounded-3xl">
@@ -124,7 +136,7 @@ useEffect(() => {
               </Button>
           
           </div>
-          <Image src={ThankyouGif} alt="My Image" width={148} height={148} className="mx-auto" />
+          <Image src={congrat} alt="My Image" width={148} height={148} className="mx-auto" />
           <div className="mx-auto text-center max-w-fit ">
             <p className="text-2xl font-semibold text-accent-primary">{t("course.new_course:congratulations_page.congratulations")}</p>
             <p className="text-accent-secondary">{t("course.new_course:congratulations_page.you_have_successfully")}</p>
@@ -159,7 +171,7 @@ useEffect(() => {
               // for offline we have to show the venue details 
             <div className="flex-[2.5] p-4 border-r border-light">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.venue")}</p>
-              <p className="font-bold text-accent-primary">{venue ? venue : '-'}</p>
+              <p className="font-bold text-accent-primary max-h-[118px] overflow-y-auto">{venue ? venue : '-'}</p>
             </div>
             )
           }
@@ -195,13 +207,13 @@ useEffect(() => {
               {/* We have to display the links only when the course is active */}
               <div className="flex items-center justify-center gap-4 mt-4 ">
                 <div className="relative">
-                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 px-1">
                     {t("registration_link")}
                   </p>
-                  <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
-                    <h4 id="textToCopy" className="">
-                      {data?.data?.registration_link}
-                    </h4>
+                  <div className="flex justify-between items-center gap-2 p-3 border rounded-2xl min-w-72 h-[36px]">
+                    <a id="textToCopy" className="" href={data?.data?.registration_link} target="_blank">
+                     {data?.data?.registration_link}
+                    </a>
                     <div
                       onClick={() => {
                         handleCopyDetailsPageLink(data?.data?.registration_link)
@@ -219,9 +231,10 @@ useEffect(() => {
                     </div>
                   </div>
                 </div>
+                {/* TODO  for now scope this cx url is to be hidden */}
                 {/* we are writing this conditions beacuse if the course is public then only we have to show the details page link */}
                 {/* for the MVP-904 */}
-                {data?.data?.visibility_id?.id == publicVisibilityId && (
+                {/* {data?.data?.visibility_id?.id == publicVisibilityId && (
                   <div className="relative ">
                     <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
                       {t("details_page_link")}
@@ -248,7 +261,7 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </section>
           )}
