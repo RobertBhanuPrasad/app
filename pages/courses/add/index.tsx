@@ -238,7 +238,6 @@ export function NewCourse() {
     defaultValues[NewCourseStep5FormNames?.accommodation_fee_payment_mode] =
       payOnlineId;
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
-    defaultValues[NewCourseStep5FormNames?.is_residential_program] = false;
   }
 
   // fetch data from country_config table for time format
