@@ -75,8 +75,7 @@ import { IsCopyCourse, IsEditCourse } from "@components/course/newCourse/EditCou
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { AlertDialog, AlertDialogContent } from "src/ui/alert-dialog";
-import { supabaseClient } from "src/utility/supabaseClient";
-
+import { supabaseClient } from "src/utility";
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData, "loginUserData");
