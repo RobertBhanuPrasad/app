@@ -8,7 +8,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
-import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
+import { NewCourseStep2FormNames, NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
   PROGRAM_CATEGORY,
@@ -232,6 +232,12 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.program_type_id,
   });
 
+  const {
+    field: { onChange: isResidentialProgramOchange },
+  } = useController({
+    name: NewCourseStep5FormNames?.is_residential_program,
+  });
+
   const selectQuery: any = {
     resource: "program_types",
     meta: {
@@ -348,6 +354,11 @@ export const CourseTypeDropDown = () => {
     const maxAttendes = courseSettings?.[0].maximum_capacity
       ? courseSettings?.[0].maximum_capacity.toString()
       : undefined;
+
+    const isOnlineProgram = courseSettings?.[0]?.is_online_program
+
+    isResidentialProgramOchange(!isOnlineProgram)
+
 
     // when we change the course type and we get new settings we need to set the max capacity from the course type settings otherwise it should be empty
     if (maxAttendes) {
