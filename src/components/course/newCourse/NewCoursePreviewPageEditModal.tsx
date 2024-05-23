@@ -48,6 +48,8 @@ interface EditModalDialogProps {
 import { useTranslation } from "next-i18next";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
+import { useEffect, useState } from "react";
+import { supabaseClient } from "src/utility";
 
 export const EditModalDialog = ({
   title,
@@ -117,13 +119,64 @@ const ButtonsDialog = ({
   const formData = getValues();
   const { t } = useTranslation(["common"]);
   const { newCourseData, setNewCourseData } = newCourseStore();
+  const supabase = supabaseClient();
 
-  let validationFieldsStepWise = requiredValidationFields(formData);
 
+  const { data: loginUserData }: any = useGetIdentity();  
+  const { data: timeZoneData } = useList({ resource: "time_zones" });
+
+    /**
+   * In new course setp 2 we have program type dropdown select component
+   * this variable is used to store latest program type data from selected program type id form form.
+   */
+    const [selectedProgramTypeData, setSelectedProgramTypeData] = useState({});
+
+      /**
+   * @description this function is used to get the latest program type data
+   * @param programTypeId - program type id
+   * @returns latest program type data
+   */
+  const getProgramTypeData = async (
+    programTypeId: number | string | undefined
+  ) => {
+    if (
+      programTypeId === "" ||
+      programTypeId === undefined ||
+      programTypeId === null
+    ) {
+      setSelectedProgramTypeData({});
+      return;
+    }
+
+    const { data: programTypeData, error } = await supabase
+      .from("program_types")
+      .select("*")
+      .eq("id", programTypeId);
+
+    if (!error && programTypeData) {
+      setSelectedProgramTypeData(programTypeData[0]);
+    }
+  };
+
+  // in use Effect we will call the function to get the latest program type data
+  useEffect(() => {
+    getProgramTypeData(formData?.program_type_id);
+  }, [formData?.program_type_id]);
+
+ 
   let isAllFieldsFilled = false;
-
+  
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
+
   const onSubmit = async () => {
+    
+  let validationFieldsStepWise = requiredValidationFields(
+    formData,
+    loginUserData,
+    timeZoneData?.data,
+    selectedProgramTypeData
+  );
+
     isAllFieldsFilled = await ValidateCurrentStepFields(
       validationFieldsStepWise[currentStep - 1]
     );
