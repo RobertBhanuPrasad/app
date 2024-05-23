@@ -389,7 +389,7 @@ export const column = (
                   <DropdownMenuContent align="end">
                     <p>
                       {dropDownMenuData &&
-                        dropDownMenuData.map((data: any,index:any) => (
+                        dropDownMenuData.map((data: any,index:number) => (
                           <DropdownMenuItem
                           key={index}
                             onClick={() => {

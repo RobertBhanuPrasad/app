@@ -377,9 +377,9 @@ export const StateDropDown = ({
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
             {options?.map((option: BaseOption, index: number) => (
-              <div key={index}>
+              <>
                 <SelectItem
-                  key={option.value}
+                  key={index}
                   value={option.value}
                   className="h-[44px]"
                 >
@@ -388,7 +388,7 @@ export const StateDropDown = ({
                 {index < selectOptions.length - 1 && (
                   <hr className="border-[#D6D7D8]" />
                 )}
-              </div>
+              </>
             ))}
           </SelectItems>
         </SelectContent>

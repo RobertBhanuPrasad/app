@@ -32,7 +32,7 @@ function NewCourseStep6() {
   // useEffect to add an initial contact field if none exists
   useEffect(() => {
     if (fields.length === 0) {
-      append(undefined);
+      append({});
     }
   }, []);
 

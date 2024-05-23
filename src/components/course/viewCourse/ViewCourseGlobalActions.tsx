@@ -112,16 +112,15 @@ export const ViewCourseGlobalActions = () => {
       <DropdownMenuContent align="end" className="w-[190px]">
         <div className="flex flex-col gap-1 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
           {globalActionsOptions.map((data: any,index:any) => (
-            <div key={index}>
             <DropdownMenuItem
               onClick={() => {
                 handleGlobalAction(data?.value);
               }}
               className=" cursor-pointer"
+              key={index}
             >
               {data?.label}
             </DropdownMenuItem>
-            </div>
           ))}
         </div>
       </DropdownMenuContent>

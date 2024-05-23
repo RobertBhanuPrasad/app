@@ -354,7 +354,7 @@ export function BaseTable<TData, TValue>({
                       .getAllColumns()
                       .filter((column) => column?.accessorFn)
                       // Here we are filtering the columns which have accessorKey
-                      .map((column: any,index:any) => {
+                      .map((column: any,index:number) => {
                         if (!column.getCanHide()) {
                           //display the disabled options
                           return (
