@@ -869,7 +869,7 @@ export default function NewCourseReviewPage() {
                 {t("max_capacity")}
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold  no-underline text-accent-secondary text-[#666666] line-clamp-1 break-all"
                 title={newCourseData?.max_capacity}
               >
                 {newCourseData?.max_capacity
