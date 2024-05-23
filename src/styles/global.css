@@ -77,9 +77,9 @@
   padding: 4px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(farthest-side, #334bfa 94%, #0000) top/8px 8px
+  background: radial-gradient(farthest-side, #334BFA 94%, #0000) top/8px 8px
       no-repeat,
-    conic-gradient(#0000 30%, #334bfa);
+    conic-gradient(#0000 30%, #334BFA);
   mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
   animation: l13 1s infinite linear;
 }
