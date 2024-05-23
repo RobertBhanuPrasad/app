@@ -50,7 +50,7 @@ function index() {
   const programID: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
-  
+
   const {
     ParticpantFiltersData,
     setSelectedTableRows,
@@ -316,7 +316,7 @@ function index() {
   console.log("Participant table data", participantData);
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>();
   const [
     displayTransactionStatusBulkActionError,
     setDisplayTransactionStatusBulkActionError,
@@ -328,10 +328,13 @@ function index() {
   useEffect(() => {
     if (!participantData?.data?.data) return;
     const allRowSelection: any = {};
-    participantData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      participantData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, participantData?.data?.data]);
 
   useEffect(() => {
@@ -343,8 +346,29 @@ function index() {
     tempCount == 0 && setBulkActionSelectedValue(t("new_strings:bulk_actions"));
   }, [rowSelection]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   *Here whenever i check select all then i need to check and unchekc all row selection also
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    participantData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
+   */
+  const participantsRowSelectionOnChange = (row: any) => {
+    const selectedRow = row();
+    setRowSelection(row);
+    if (Object.values(selectedRow).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   const rowCount = Object.values(rowSelection).filter(
@@ -708,7 +732,7 @@ function index() {
           <BaseTable
             current={current}
             rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
+            setRowSelection={participantsRowSelectionOnChange}
             checkboxSelection={true}
             setCurrent={setCurrent}
             pageCount={pageCount}
