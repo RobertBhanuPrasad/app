@@ -4,7 +4,6 @@ import TransactionActivity from "@components/participants/TransactionActivityPop
 import { handleEditPaymentValues } from "@components/participants/editParticipant/EditParticipantUtil";
 import EditPayment from "@components/participants/editParticipant/editPayment";
 import ViewDonationDetails from "@components/participants/editParticipant/viewDonationDetails";
-import LoadingIcon from "@public/assets/LoadingIcon";
 import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
 import { useTable } from "@refinedev/core"; // Importing useTable hook for fetching table data
 import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type for defining table columns
