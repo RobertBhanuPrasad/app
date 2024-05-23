@@ -147,12 +147,13 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     //   })
     //   .optional(),
     // Step 4 Schema
+    feeLevels:z.array(z.any()).min(1),
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
-    is_residential_program: z.boolean().optional(),
+    is_residential_program: z.boolean(),
     accommodation_fee_payment_mode: z.number({
       required_error: "Fee payment method is required fields",
     }),

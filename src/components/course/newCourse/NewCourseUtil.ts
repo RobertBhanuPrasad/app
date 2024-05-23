@@ -204,8 +204,31 @@ export const handlePostProgramData = async (
     }
   }
 
-  //Finding course start date
-  const courseStartDate = body?.schedules?.[0]?.date?.toISOString();
+  let sortedSchedules;
+  if (body?.schedules) {
+    //sorting the schedules
+    sortedSchedules = body?.schedules.sort((a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }) as any[];
+  }
+
+  //Finding course start date from new Date object
+  let utcYear = sortedSchedules?.[0]?.date["getFullYear"]();
+  let utcMonth = (sortedSchedules?.[0]?.date["getMonth"]() + 1)
+    .toString()
+    .padStart(2, "0");
+  let utcDay = sortedSchedules?.[0]?.date["getDate"]()
+    .toString()
+    .padStart(2, "0");
+
+  //Construct the course start date time stamp
+  const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
 
   //Fetching fee level settings of course
   const { data: feeData, error } = await supabase.functions.invoke(
@@ -229,7 +252,10 @@ export const handlePostProgramData = async (
     console.log("error while fetching fee data", error);
   }
 
-  if (body[NewCourseStep4FormNames?.program_fee_level_settings]?.length == 0) {
+  if (
+    body[NewCourseStep4FormNames?.program_fee_level_settings]?.length == 0 ||
+    body[NewCourseStep4FormNames?.program_fee_level_settings] == undefined
+  ) {
     programBody.program_fee_settings_id = feeData?.[0]?.id;
   } else {
     programBody.early_bird_cut_off_period = body["early_bird_cut_off_period"]
