@@ -1,3 +1,4 @@
+import Tick from "@public/assets/Tick";
 import {
   useGetIdentity,
   useInvalidate,
@@ -5,7 +6,12 @@ import {
   useMany,
   useOne,
 } from "@refinedev/core";
+import _ from "lodash";
+import { useTranslation } from "next-i18next";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { translatedText } from "src/common/translations";
 import {
   COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
@@ -14,12 +20,20 @@ import {
   VISIBILITY,
 } from "src/constants/OptionLabels";
 import {
+  I_AM_CO_TEACHING,
   NATIONAL_ADMIN,
   NOT_SUBMITTED,
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import { CardLabel, CardValue } from "src/ui/TextTags";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
 import {
@@ -30,8 +44,12 @@ import {
   getOptionValueObjectById,
   getOptionValueObjectByOptionOrder,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { IsEditCourse } from "./EditCourseUtil";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
+import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
 import NewCourseStep3 from "./NewCourseStep3";
@@ -39,21 +57,7 @@ import NewCourseStep4 from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "src/ui/alert-dialog";
-import { useRouter } from "next/router";
-import Tick from "@public/assets/Tick";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useTranslation } from "next-i18next";
-import { translatedText } from "src/common/translations";
-import { IsEditCourse } from "./EditCourseUtil";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { validationSchema } from "./NewCourseValidations";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -79,7 +83,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData } = newCourseStore();
+  const { newCourseData, setNewCourseData } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -141,26 +145,25 @@ export default function NewCourseReviewPage() {
       ? newCourseData?.existingVenue?.postal_code
       : newCourseData?.newVenue?.postal_code;
 
+  let VenueData: any = [];
 
-  let VenueData:any =[]
-
-  if(VenueName){
-    VenueData.push(VenueName)
+  if (VenueName) {
+    VenueData.push(VenueName);
   }
-  if(VenueAddress){
-    VenueData.push(VenueAddress)
+  if (VenueAddress) {
+    VenueData.push(VenueAddress);
   }
-  if(CityNames){
-    VenueData.push(CityNames)
+  if (CityNames) {
+    VenueData.push(CityNames);
   }
-  if(StateNames){
-    VenueData.push(StateNames)
+  if (StateNames) {
+    VenueData.push(StateNames);
   }
-  if(VenuePostalCode){
-    VenueData.push(VenuePostalCode)
+  if (VenuePostalCode) {
+    VenueData.push(VenuePostalCode);
   }
 
-  VenueData= VenueData.join(", ")
+  VenueData = VenueData.join(", ");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -176,8 +179,30 @@ export default function NewCourseReviewPage() {
   //fetching the user's language code
   const languageCode = useGetLanguageCode();
 
+  //sorting the schedules
+  let sortedSchedules = newCourseData.schedules.sort((a: any, b: any) => {
+    let aDate = new Date(a.date);
+    aDate.setHours(a?.startHour, a?.startMinute);
+
+    let bDate = new Date(b.date);
+    bDate.setHours(b?.startHour, b?.startMinute);
+
+    return aDate.getTime() - bDate.getTime();
+  });
+
+  //Finding course start date from new Date object
+  let utcYear = sortedSchedules?.[0]?.date["getFullYear"]();
+  let utcMonth = (sortedSchedules?.[0]?.date["getMonth"]() + 1)
+    .toString()
+    .padStart(2, "0");
+  let utcDay = sortedSchedules?.[0]?.date["getDate"]()
+    .toString()
+    .padStart(2, "0");
+
+  //Construct the course start date time stamp
+  const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
   //Finding course start date
-  const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
+  // const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
 
   const fetchFeeData = async () => {
     //Sending all required params
@@ -198,12 +223,90 @@ export default function NewCourseReviewPage() {
     if (error)
       console.log("error while fetching course fee level settings data", error);
     setCourseFeeSettings(data);
+
+    //Fetching login user roles
+    const user_roles: any[] = loginUserData?.userData?.user_roles || [];
+
+    //Checking Weather login user is Super Admin or Not
+    let isUserNationAdminOrSuperAdmin = false;
+
+    if (
+      user_roles.some(
+        (role) =>
+          role.role_id.order === NATIONAL_ADMIN ||
+          role.role_id.order === SUPER_ADMIN
+      )
+    ) {
+      isUserNationAdminOrSuperAdmin = true;
+    }
+
+    //Checking Weather a fee is editable or not
+    const isFeeEditable =
+      isUserNationAdminOrSuperAdmin || data?.[0]?.is_program_fee_editable
+        ? true
+        : false;
+
+    //Inserting data into program_fee_level_settings variable. If it is undefined
+    //This code will execute when user changes program_type or location details or course start date.
+    //when above felids are changes then we are clearing program_fee_level_settings variable.
+    //So we are manually inserting data in program_fee_level_settings variable.
+    if (
+      isFeeEditable &&
+      (newCourseData?.program_fee_level_settings == undefined ||
+        newCourseData?.program_fee_level_settings?.length == 0)
+    ) {
+      setNewCourseData({
+        ...newCourseData,
+        program_fee_level_settings: data?.[0]?.program_fee_level_settings?.map(
+          (feeLevel: any) => {
+            //Removing Id and program_fee_setting_id
+            const { id, program_fee_setting_id, program_id, ...rest } =
+              feeLevel;
+            return {
+              ...rest,
+              fee_level_id: feeLevel?.fee_level_id?.id,
+            };
+          }
+        ),
+        is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
+        early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
+      });
+    }
+    //If none editable fee then need to empty the program_fee_level_settings to stop validation.
+    if (isFeeEditable == false) {
+      setNewCourseData({
+        ...newCourseData,
+        program_fee_level_settings: [],
+      });
+    }
+
+    //If program_fee_level_settings is empty then storing undefined
+    if (
+      data?.length == 0 ||
+      data?.[0]?.program_fee_level_settings?.length == 0
+    ) {
+      setNewCourseData({
+        ...newCourseData,
+        program_fee_level_settings: undefined,
+      });
+    }
   };
 
   useEffect(() => {
-    if(stateId!=0 && cityId!=0 && centerId!=0)
-    fetchFeeData();
-  }, [stateId,cityId,centerId]);
+    //To fetch fee we need the location details. Initially this three variables are set to zero.Based on user actions we will assign values to this variables.
+    //Fetching the fee when these values are assigned.
+    if (stateId != 0 && cityId != 0 && centerId != 0) fetchFeeData();
+  }, [
+    stateId,
+    cityId,
+    centerId,
+    newCourseData?.program_type_id,
+    newCourseData?.schedules,
+    newCourseData?.is_existing_venue,
+    newCourseData?.newVenue,
+    newCourseData?.existingVenue,
+    newCourseData?.organization_id,
+  ]);
 
   const creator =
     newCourseData?.program_created_by &&
@@ -377,20 +480,7 @@ export default function NewCourseReviewPage() {
 
   //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
-    ? newCourseData?.program_fee_level_settings?.map(
-        (feeLevel: { fee_level_id: any }) => {
-          const defaultFeeLevel = defaultFeeLevels?.find(
-            (defaultFee: { fee_level_id: any }) =>
-              defaultFee.fee_level_id == feeLevel?.fee_level_id
-          );
-          //If is_custom_fee is true then need to show custom label. So appending is_custom_fee and custom_fee_label to existing formData
-          return {
-            is_custom_fee: defaultFeeLevel?.is_custom_fee,
-            custom_fee_label: defaultFeeLevel?.custom_fee_label,
-            ...feeLevel,
-          };
-        }
-      )
+    ? newCourseData?.program_fee_level_settings
     : defaultFeeLevels;
 
   //Requirement: Need to show only enabled fee levels.
@@ -405,6 +495,8 @@ export default function NewCourseReviewPage() {
   const [openContactDetails, setOpenContactDetails] = useState(false);
   const [openFeesDetails, setOpenFeesDetails] = useState(false);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
+ 
+
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
 
@@ -423,48 +515,114 @@ export default function NewCourseReviewPage() {
     getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
       ?.id ?? 0;
 
-  const handClickContinue = async () => {
-    setIsSubmitting(true);
+  /**
+   * @constant iAmCoTeachingId
+   * @description thid const stores the id of the i am co teaching
+   */
+  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_CO_TEACHING
+  )?.id;
 
-    /**
-     * This variable will retur true if all api calls has been successfully it will return false if any api call fails
-     */
-    const isPosted = await handlePostProgramData(
-      newCourseData,
-      data?.userData?.id,
-      setProgramId,
-      accountingNotSubmittedStatusId,
-      pathname,
-      countryCode,
-      languageCode
+  const [errors, setErrors] = useState<any>({});
+
+  /**
+   * This is a function where we are calling to display error messages in preview page also
+   * current state : in preview page there is no Form declaration so we have to validate the current data with zod safe parse
+   * and then display error messages
+   * @param formData form Data is independent data
+   * @returns
+   */
+  const handleErrorMessagesInPreviewPageScreen = async (formData: any) => {
+    const requiredFieldsForValidation = await getRequiredFieldsForValidation(
+      formData,
+      loginUserData
     );
 
-    // we are checking the course is edit or user created new course
-    const isEdited = IsEditCourse(pathname);
+    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
 
-    // we have to display thank you page or success modal pop up only when the posting done successfully without any error
-    if (isPosted) {
-      if (isEdited) {
-        setOnEditSuccess(true);
-      } else {
-        // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
-        await invalidate({
-          resource: "program",
-          invalidates: ["list"],
-        });
-        // i need to set params with section=thank_you
-        const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
-        current.set("section", "thank_you");
+    let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 
-        const params = current.toString();
+    let requiredFieldsObject: any = {};
 
-        router.replace(`${pathname}?${params}`);
+    requiredFeilds?.map((field: string) => {
+      requiredFieldsObject[field] = true;
+    });
 
-        setViewPreviewPage(false);
-        setViewThankyouPage(true);
-      }
+    const errors: any = newCourseZodSchema
+      .pick(requiredFieldsObject)
+      .safeParse(formData);
+
+    console.log("form data is", formData, errors);
+
+    if (errors.success === false) {
+      let issues = errors.error.issues;
+      let finalIssues: any = {};
+
+      console.log("issues", issues);
+
+      issues = issues.map((issue: any) => {
+        finalIssues[issue?.path[0]] = issue?.message;
+      });
+
+      setErrors(finalIssues);
+    } else {
+      setErrors({});
     }
-    setIsSubmitting(false);
+    return errors;
+  };
+
+  const handClickContinue = async () => {
+    const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData);
+    console.log("errors", errors);
+
+    if (errors.success === false) {
+      console.log(errors.error.issues, "issuessss");
+    } else {
+      setIsSubmitting(true);
+
+      /**
+       * This variable will retur true if all api calls has been successfully it will return false if any api call fails
+       */
+      const isPosted = await handlePostProgramData(
+        newCourseData,
+        data?.userData?.id,
+        setProgramId,
+        accountingNotSubmittedStatusId,
+        pathname,
+        countryCode,
+        languageCode
+      );
+
+      // we are checking the course is edit or user created new course
+      const isEdited = IsEditCourse(pathname);
+
+      // we have to display thank you page or success modal pop up only when the posting done successfully without any error
+      if (isPosted) {
+        if (isEdited) {
+          setOnEditSuccess(true);
+        } else {
+          // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
+          await invalidate({
+            resource: "program",
+            invalidates: ["list"],
+          });
+          // i need to set params with section=thank_you
+          const current = new URLSearchParams(
+            Array.from(searchParams.entries())
+          ); // -> has to use this form
+          current.set("section", "thank_you");
+
+          const params = current.toString();
+
+          router.replace(`${pathname}?${params}`);
+
+          setViewPreviewPage(false);
+          setViewThankyouPage(true);
+        }
+      }
+      setIsSubmitting(false);
+    }
   };
 
   /**
@@ -484,6 +642,7 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
+
   return (
     <div className="pb-12">
       <div className="text-[24px] my-4 font-semibold ml-6">
@@ -507,7 +666,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("basic_details")}
               content={<NewCourseStep1 />}
-              onClose={() => setOpenBasicDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenBasicDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenBasicDetails(false);
+              }}
               open={openBasicDetails}
               openEdit={() => {
                 setOpenBasicDetails(true);
@@ -519,6 +684,23 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
+            {/* REQUIRMENT in the course edit page we need to display the course code in the course details section */}
+            {
+              IsEditCourse(pathname) && 
+
+            <div className="w-[291px]">
+              <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                {t("course_id")}
+              </p>
+
+              <abbr
+                className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
+                title={newCourseData?.program_code ? newCourseData?.program_code : "-"}
+              >
+                {newCourseData?.program_code ? newCourseData?.program_code : "-"}
+              </abbr>
+            </div>
+            }
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:review_post_details.creator")}
@@ -592,7 +774,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title={t("course.new_course:review_post_details.course_details")}
               content={<NewCourseStep2 />}
-              onClose={() => setOpenCourseDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenCourseDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenCourseDetails(false);
+              }}
               open={openCourseDetails}
               openEdit={() => {
                 setOpenCourseDetails(true);
@@ -611,15 +799,21 @@ export default function NewCourseReviewPage() {
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                 title={
-                  courseType?.data?.name
+                  courseType?.data?.name &&
+                  newCourseData?.program_type_id !== ""
                     ? translatedText(courseType?.data?.name)
                     : "-"
                 }
               >
-                {courseType?.data?.name
+                {courseType?.data?.name && newCourseData?.program_type_id !== ""
                   ? translatedText(courseType?.data?.name)
                   : "-"}
               </abbr>
+              {errors?.program_type_id && (
+                <span className="text-[#FF6D6D] text-[12px]">
+                  {errors?.program_type_id}
+                </span>
+              )}
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -631,6 +825,11 @@ export default function NewCourseReviewPage() {
               >
                 {CourseTeachersNames ? CourseTeachersNames : "-"}
               </abbr>
+              {errors?.teacher_ids && (
+                <span className="text-[#FF6D6D] text-[12px]">
+                  {errors?.teacher_ids}
+                </span>
+              )}
             </div>
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -800,7 +999,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Venue Details"
               content={<NewCourseStep3 />}
-              onClose={() => setOpenVenueDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenVenueDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenVenueDetails(false);
+              }}
               open={openVenueDetails}
               openEdit={() => {
                 setOpenVenueDetails(true);
@@ -820,10 +1025,24 @@ export default function NewCourseReviewPage() {
                 </p>
                 <abbr
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                  title={newCourseData?.online_url}
+                  title={
+                    newCourseData?.online_url &&
+                    newCourseData?.program_type_id !== ""
+                      ? newCourseData?.online_url
+                      : "-"
+                  }
                 >
-                  {newCourseData?.online_url}
+                  {newCourseData?.online_url &&
+                  newCourseData?.program_type_id !== ""
+                    ? newCourseData?.online_url
+                    : "-"}
                 </abbr>
+
+                {errors?.online_url && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.online_url}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -835,6 +1054,12 @@ export default function NewCourseReviewPage() {
                 >
                   {StateNames ? StateNames : "-"}
                 </abbr>
+
+                {errors?.state_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.state_id}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -846,6 +1071,12 @@ export default function NewCourseReviewPage() {
                 >
                   {CityNames ? CityNames : "-"}
                 </abbr>
+
+                {errors?.city_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.city_id}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -857,6 +1088,12 @@ export default function NewCourseReviewPage() {
                 >
                   {CenterNames ? CenterNames : "-"}
                 </abbr>
+
+                {errors?.center_id && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors?.center_id}
+                  </span>
+                )}
               </div>
               <div>{venueSessions()}</div>
             </div>
@@ -867,11 +1104,23 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
-                  title={VenueData ? VenueData : "-"}
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666] h-[118px] overflow-y-auto"
+                  title={
+                    VenueData && newCourseData?.program_type_id != ""
+                      ? VenueData
+                      : "-"
+                  }
                 >
-                  {VenueData ? VenueData : "-"}
+                  {VenueData && newCourseData?.program_type_id != ""
+                    ? VenueData
+                    : "-"}
                 </abbr>
+
+                {errors.is_existing_venue && (
+                  <span className="text-[#FF6D6D] text-[12px]">
+                    {errors.is_existing_venue}
+                  </span>
+                )}
               </div>
               <div className="w-[291px]">
                 <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -920,7 +1169,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Fees Details"
               content={<NewCourseStep4 />}
-              onClose={() => setOpenFeesDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenFeesDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenFeesDetails(false);
+              }}
               open={openFeesDetails}
               openEdit={() => {
                 setOpenFeesDetails(true);
@@ -976,6 +1231,13 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div> */}
           </div>
+          {(enabledFeeLevelData?.length == 0 ||
+            enabledFeeLevelData == undefined) && (
+            <span className="text-[#FF6D6D] text-[12px]">
+              There is no price set for current settings. Select course type and
+              city/center.
+            </span>
+          )}
         </section>
         {/* Accommodation Information */}
         <section className="w-full py-8 text-base border-b">
@@ -988,7 +1250,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Accomidation Details"
               content={<NewCourseStep5 />}
-              onClose={() => setOpenAccomidationDetails(false)}
+              handleSaveClick={(formData: any) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenAccomidationDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenAccomidationDetails(false);
+              }}
               open={openAccomidationDetails}
               openEdit={() => {
                 setOpenAccomidationDetails(true);
@@ -1036,7 +1304,13 @@ export default function NewCourseReviewPage() {
             <EditModalDialog
               title="Contact Details"
               content={<NewCourseStep6 />}
-              onClose={() => setOpenContactDetails(false)}
+              handleSaveClick={(formData) => {
+                handleErrorMessagesInPreviewPageScreen(formData);
+                setOpenContactDetails(false);
+              }}
+              handleCancelClick={() => {
+                setOpenContactDetails(false);
+              }}
               open={openContactDetails}
               openEdit={() => {
                 setOpenContactDetails(true);
@@ -1094,24 +1368,27 @@ export default function NewCourseReviewPage() {
             <div className="truncate">
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.bcc_registration_confirmation_email}
+                // If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying
+                title={newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(/(\s*,\s*)*$/, '')
+                  : "-"}
               >
+                {/* If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying */}                
                 {newCourseData?.bcc_registration_confirmation_email
-                  ? newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(/(\s*,\s*)*$/, '')
                   : "-"}
               </abbr>
             </div>
           </div>
         </section>
         <div className="flex items-center justify-center">
-          {isSubmitting ? (
-            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
-              <div className="loader !w-[30px]"></div>
-            </Button>
-          ) : (
-            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
-          )}
+          {isSubmitting && 
+          <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+            <div className="loader"></div>
+          </div>}
+          <Button onClick={handClickContinue}>{t('continue_button')}</Button>
         </div>
+
       </div>
     </div>
   );
@@ -1162,7 +1439,7 @@ const Accommodation = ({
       >
         <CardValue className="truncate">
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
-          {currencyCode ? currencyCode : ""}
+          {currencyCode ? currencyCode : ""}{" "}
           {accomdationData?.fee_per_person}
         </CardValue>
       </abbr>

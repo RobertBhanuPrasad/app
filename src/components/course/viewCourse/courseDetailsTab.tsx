@@ -98,10 +98,12 @@ function CourseDetailsTab() {
   });
 
   // If the course fee is editable then we can use custom fees otherwise we can use default fees
-  const programFees = courseData?.data?.program_fee_settings_id
+  const programFeeLevels = courseData?.data?.program_fee_settings_id
     ? courseData?.data?.program_fee_settings_id?.program_fee_level_settings
     : courseData?.data?.program_fee_level_settings;
 
+  //Need to show only the fee level enabled by the user at the time of course creation.
+  const programFees=programFeeLevels?.filter((feeLevel: { is_enable: boolean; })=>feeLevel.is_enable)
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
 
@@ -429,17 +431,17 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <div>
                 <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">
-                  <div className="text-[16px] font-semibold w-[90%] break-words">
-                    {courseData?.data?.registration_link
-                      ? courseData?.data?.registration_link
-                      : "-"}
-                  </div>
+                  {courseData?.data?.registration_link
+                    ? <a className="text-[16px] font-semibold w-[90%] break-words" href={courseData?.data?.registration_link} target="_blank"> 
+                      {courseData?.data?.registration_link}
+                    </a>
+                    : "-"}
                   {courseData?.data?.registration_link && (
                     <div
                       onClick={() => {
                         handleCopyRegistrationLink();
                       }}
-                      className="relative mt-1"
+                      className="relative mt-1 cursor-pointer"
                     >
                       <CopyIcon />
                       {copiedRegistrationLink ? (

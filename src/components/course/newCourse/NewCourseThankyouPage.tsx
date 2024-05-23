@@ -1,7 +1,7 @@
 'use client'
 import { getCourseStatusColorBasedOnStatusId } from '@components/courseBusinessLogic'
 import InstagramIcon from '@public/images/InstagramIcon.png'
-import ThankyouGif from '@public/images/ThankYou.png'
+import congrat from '@public/gif/congrat.gif'
 import WhatsappIcon from '@public/images/WhatsappIcon.png'
 import facebookIcon from '@public/images/facebookIcon.png'
 import linkedInIcon from '@public/images/linkedInIcon.png'
@@ -136,7 +136,7 @@ useEffect(() => {
               </Button>
           
           </div>
-          <Image src={ThankyouGif} alt="My Image" width={148} height={148} className="mx-auto" />
+          <Image src={congrat} alt="My Image" width={148} height={148} className="mx-auto" />
           <div className="mx-auto text-center max-w-fit ">
             <p className="text-2xl font-semibold text-accent-primary">{t("course.new_course:congratulations_page.congratulations")}</p>
             <p className="text-accent-secondary">{t("course.new_course:congratulations_page.you_have_successfully")}</p>
@@ -171,7 +171,7 @@ useEffect(() => {
               // for offline we have to show the venue details 
             <div className="flex-[2.5] p-4 border-r border-light">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.venue")}</p>
-              <p className="font-bold text-accent-primary">{venue ? venue : '-'}</p>
+              <p className="font-bold text-accent-primary h-[118px] overflow-y-auto">{venue ? venue : '-'}</p>
             </div>
             )
           }
@@ -207,13 +207,13 @@ useEffect(() => {
               {/* We have to display the links only when the course is active */}
               <div className="flex items-center justify-center gap-4 mt-4 ">
                 <div className="relative">
-                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 px-1">
                     {t("registration_link")}
                   </p>
-                  <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
-                    <h4 id="textToCopy" className="">
-                      {data?.data?.registration_link}
-                    </h4>
+                  <div className="flex justify-between items-center gap-2 p-3 border rounded-2xl min-w-72 h-[36px]">
+                    <a id="textToCopy" className="" href={data?.data?.registration_link} target="_blank">
+                     {data?.data?.registration_link}
+                    </a>
                     <div
                       onClick={() => {
                         handleCopyDetailsPageLink(data?.data?.registration_link)

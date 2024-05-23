@@ -57,7 +57,7 @@ function NewCourseStep1() {
       val.role_id?.order == NATIONAL_ADMIN
   );
   return (
-    <div>
+    <div className="w-full" >
       <RadioCards />
       <div className="mt-8 flex flex-row gap-7 ">
         <div className="flex gap-1 flex-col">
@@ -133,7 +133,7 @@ const RegistrationGateway = () => {
   );
 };
 const RadioCards = () => {
-  const { clearErrors, watch } = useFormContext();
+  const { clearErrors, watch,setValue } = useFormContext();
 
   const { t } = useTranslation(["course.new_course", "new_strings"]);
 
@@ -169,20 +169,30 @@ const RadioCards = () => {
     name: NewCourseStep2FormNames?.teacher_ids,
   });
 
+  const router = useRouter();
+
+
+
   const handleOnChange = (val: string) => {
     onChange(parseInt(val));
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
-    if (parseInt(val) != iAmOrganizerId) {
-      //If teachers does not exist prefill with login user
-      if (!teachers) {
+    if (parseInt(val) == iAmTeachingId) {
+      //Requirement: Need to show only one teacher(login user) in teacher drop-down if I am teaching is selected.
+      teachersOnChange([loginInTeacherData]);
+      setTimeout(() => {
+        clearErrors("teacher_ids");
+      }, 10);
+    }
+
+    //Requirement: Need to prefill teacher drop-down if user select I am co-teaching.
+    if (parseInt(val) == iAmCoTeachingId) {
+      //If teachers are not present just prefill with login user
+      if (teachers == undefined) {
         teachersOnChange([loginInTeacherData]);
-        setTimeout(() => {
-          clearErrors("teacher_ids");
-        }, 10);
       }
       //If already teacher are exist then check weather login user is present in teacher drop down or not. If not prefill with login user
       else if (
-        !teachers.some((obj: any) => _.isEqual(obj, loginInTeacherData))
+        !teachers?.some((obj: any) => _.isEqual(obj, loginInTeacherData))
       ) {
         teachersOnChange([loginInTeacherData, ...teachers]);
         setTimeout(() => {
@@ -201,6 +211,18 @@ const RadioCards = () => {
           clearErrors("teacher_ids");
         }, 10);
       }
+    }
+
+    // If I am changing the program created by then we are removing the course type course type id and the course alias name 
+    // Because if we chanage the created by and then the course type is not present for that created type then 
+    if(!IsEditCourse(router?.pathname)){
+      setValue("program_type_id", "");
+    setValue("program_type", "");
+    setValue("program_alias_name_id", "");
+
+    setTimeout(()=>{
+      clearErrors(['program_type_id','program_type','program_alias_name_id'])
+    },10)
     }
     // we are storing the program created by in the zustand variable to use it in the validatios
     setProgramCreatedById(val);
@@ -261,20 +283,22 @@ const RadioCards = () => {
   );
 
   return (
-    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
-      <div className="flex items-center flex-row gap-7">
+    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange} className="w-full" >
+      <div className="flex items-center flex-row gap-7 w-full">
         {hasTeacherRole && (
           //Added cursor not allowed to all cards if this is disabled
           <Label
             htmlFor={JSON.stringify(iAmTeachingId)}
-            className={`text-[#999999] font-normal ${
+            className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+            
+            ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
             }`}
           >
             <Card
-              className={` p-2 w-72 h-[106px] flex flex-row ${
+              className={` p-2  h-[106px] flex flex-row ${
                 value === iAmTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4] "
                   : ""
               }`}
             >
@@ -302,14 +326,16 @@ const RadioCards = () => {
         {hasTeacherRole && (
           <Label
             htmlFor={JSON.stringify(iAmCoTeachingId)}
-            className={`text-[#999999] font-normal ${
+            className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+            
+            ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
             } `}
           >
             <Card
-              className={` p-2 gap-2 w-72 h-[106px] flex flex-row ${
+              className={` p-2 gap-2 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                   : ""
               }`}
             >
@@ -335,14 +361,16 @@ const RadioCards = () => {
         )}
         <Label
           htmlFor={JSON.stringify(iAmOrganizerId)}
-          className={`text-[#999999] font-normal ${
+          className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+          
+          ${
             value === iAmOrganizerId ? "text-[#7677F4]" : ""
           }`}
         >
           <Card
-            className={`p-2 gap-2 w-72 h-[106px] flex flex-row ${
+            className={`p-2 gap-2 h-[106px] flex flex-row  ${
               value === iAmOrganizerId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                 : ""
             }`}
           >
@@ -381,6 +409,9 @@ const OrganizationDropDown = () => {
    */
   const pathname = usePathname();
 
+  const { clearErrors, watch } = useFormContext();
+
+  const formData = watch();
   /**
    * Checking whether the url contains the edit or not
    */
@@ -389,6 +420,8 @@ const OrganizationDropDown = () => {
   const [pageSize, setPageSize] = useState<number>(1);
 
   const [searchValue, setSearchValue] = useState<string>("");
+
+  const { setValue } = useFormContext();
 
   const { options, onSearch, queryResult } = useSelect({
     resource: "organizations",
@@ -410,6 +443,79 @@ const OrganizationDropDown = () => {
     name: NewCourseStep1FormNames?.organization_id,
   });
 
+  const {
+    field: { onChange: teachersOnChange },
+  } = useController({
+    name: NewCourseStep2FormNames?.teacher_ids,
+  });
+
+  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
+    PROGRAM_ORGANIZER_TYPE,
+    I_AM_ORGANIZER
+  )?.id;
+
+  const { data: loginUserData }: any = useGetIdentity();
+
+  const loginInTeacherData = loginUserData?.userData?.id;
+
+  const handleClearDependencyValues = () => {
+    setValue("program_type_id", "");
+    setValue("program_type", "");
+    setValue("program_alias_name_id", "");
+    setValue("teacher_ids", []);
+
+    //Handling teachers drop down
+    if (formData?.program_created_by != iAmOrganizerId) {
+      //Requirement: If teacher or co-teacher is selected Need to prefill login user in teacher dropdown
+      teachersOnChange([loginInTeacherData]);
+      setTimeout(() => {
+        clearErrors("teacher_ids");
+      }, 10);
+    }
+    setValue("assistant_teacher_ids", []);
+    setValue("language_ids", []);
+    setValue("translation_language_ids", []);
+    setValue("max_capacity", "");
+    setValue("online_url", "");
+    setValue("existingVenue", undefined);
+    setValue("newVenue", undefined);
+    setValue("is_existing_venue", "");
+    setValue("state_id", "");
+    setValue("city_id", "");
+    setValue("center_id", "");
+    setValue("is_residential_program", false);
+
+    //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
+    setValue("program_fee_level_settings", []);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
+
+    // we have to clear errors after we modify the values
+    setTimeout(() => {
+      clearErrors([
+        "program_type_id",
+        "program_alias_name_id",
+        "teacher_ids",
+        "assistant_teacher_ids",
+        "language_ids",
+        "translation_language_ids",
+        "max_capacity",
+        "online_url",
+        "existingVenue",
+        "isExistingVenue",
+        "is_existing_venue",
+        "newVenue",
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period",
+        "state_id",
+        "city_id",
+        "center_id",
+        "is_residential_program",
+      ]);
+    }, 10);
+  };
+
   const handleSearch = (val: { target: { value: string } }) => {
     onSearch(val.target.value);
     setSearchValue(val.target.value);
@@ -423,7 +529,7 @@ const OrganizationDropDown = () => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   return (
-    <div className="w-80 h-20">
+    <div className="h-20">
       <div className="flex gap-1 flex-col">
         <div className="flex flex-row gap-1 items-center">
           <Text className="text-xs font-normal text-[#333333]">
@@ -435,6 +541,7 @@ const OrganizationDropDown = () => {
           value={value}
           onValueChange={(value: any) => {
             onChange(value);
+            handleClearDependencyValues();
           }}
           //disabling the organization dropdown when it is edit
           disabled={isEditCourse}

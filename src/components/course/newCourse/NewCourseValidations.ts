@@ -1,7 +1,7 @@
 import { start } from "repl";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { z } from "zod";
-export const validationSchema = (iAmCoTeachingId:number) => {
+export const validationSchema = (iAmCoTeachingId: number) => {
   return z.object({
     // Step 1 Schema
     organization_id: z.number({
@@ -32,27 +32,36 @@ export const validationSchema = (iAmCoTeachingId:number) => {
       ),
 
     // Step 2 Schema
-    program_type_id: z.number({
-      required_error: "Course type is a required field",
-    }),
-    program_type: z.object({}).optional(),
-    program_alias_name_id: z.number({
-      required_error: "Course Name is a required field",
-    }),
-    teacher_ids: z.array(z.number({ required_error: "Please enter at least one teacher" }))
-    .min(1, "Please enter at least one teacher")
-    .refine((teacher_ids) => {
+    program_type_id: z
+      .number({
+        required_error: "Course type is a required field",
+      })
+      .or(z.string().nonempty({ message: "Course type is a required field" })),
+    program_alias_name_id: z
+      .number({
+        required_error: "Course Name is a required field",
+      })
+      .or(z.string().nonempty({ message: "Course Name is a required field" })),
+    teacher_ids: z
+      .array(z.number({ required_error: "Please enter at least one teacher" }))
+      .min(1, "Please enter at least one teacher")
+      .refine(
+        (teacher_ids) => {
+          const { programCreatedById } = newCourseStore.getState();
 
-      const { programCreatedById } = newCourseStore.getState();
-
-      // REQUIRMENT if the programCreatedById is I am co-teching id then we need to validate the teachers field for min 2
-      if (parseInt(programCreatedById) === iAmCoTeachingId && teacher_ids.length < 2) {
-        return false;
-      }
-      return true;
-    }, {
-      message: 'At least 2 teachers are required for co-teaching',
-    }),
+          // REQUIRMENT if the programCreatedById is I am co-teching id then we need to validate the teachers field for min 2
+          if (
+            parseInt(programCreatedById) === iAmCoTeachingId &&
+            teacher_ids.length < 2
+          ) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: "At least 2 teachers are required for co-teaching",
+        }
+      ),
     assistant_teacher_ids: z
       .array(z.number(), {
         required_error: "Please enter at least one associate teacher",
@@ -78,9 +87,11 @@ export const validationSchema = (iAmCoTeachingId:number) => {
       .optional(),
 
     // Step 3 Schema
-    is_existing_venue: z.string({
-      required_error: "Venue is a required fields",
-    }),
+    is_existing_venue: z
+      .string({
+        required_error: "Venue is a required fields",
+      })
+      .nonempty({ message: "Venue is a required fields" }),
     online_url: z
       .string({
         required_error: "Online meeting URL is a required field",
@@ -91,40 +102,50 @@ export const validationSchema = (iAmCoTeachingId:number) => {
     hour_format_id: z.number({
       required_error: "Time format is a required field",
     }),
-    state_id: z.number({
-      required_error: "State is a required field",
-    }),
-    city_id: 
-    z.union([
-      z.number({
-        required_error: "City is a required field",
-      }).int(), 
-      z.string().nonempty({ message: "City is a required field" })
+    state_id: z.union([
+      z
+        .number({
+          required_error: "State is a required field",
+        })
+        .int(),
+      z.string().nonempty({ message: "State is a required field" }),
+    ]),
+    city_id: z.union([
+      z
+        .number({
+          required_error: "City is a required field",
+        })
+        .int(),
+      z.string().nonempty({ message: "City is a required field" }),
     ]),
     center_id: z.union([
-      z.number({
-        required_error: "Center is a required field",
-      }).int(), 
-      z.string().nonempty({ message: "Center is a required field" })
+      z
+        .number({
+          required_error: "Center is a required field",
+        })
+        .int(),
+      z.string().nonempty({ message: "Center is a required field" }),
     ]),
     time_zone_id: z.number({
       required_error: "Time zone is a required field",
     }),
     schedules: scheduleValidationSchema,
-    name: z.string().optional(),
-    address: z
-      .string({ required_error: "Address is a required field." })
-      .optional(),
-    postal_code: z
-      .string({
-        required_error: "Postal Code is a required field.",
-      })
-      //here we need validate the postal code of different countries 
-      //for example in India we have only 6 digit postal code
-      //but in canada they have combination of alphabets and digits (M5A 1A1)
-      //for this we need to allow both alphabets and digits in the postal code for general validation.
-      .regex(/^[0-9a-zA-Z\s-]{3,10}$/, { message: "Please provide a valid Postal Code" })
-      .optional(),
+    // name: z.string().optional(),
+    // address: z
+    //   .string({ required_error: "Address is a required field." })
+    //   .optional(),
+    // postal_code: z
+    //   .string({
+    //     required_error: "Postal Code is a required field.",
+    //   })
+    //   //here we need validate the postal code of different countries
+    //   //for example in India we have only 6 digit postal code
+    //   //but in canada they have combination of alphabets and digits (M5A 1A1)
+    //   //for this we need to allow both alphabets and digits in the postal code for general validation.
+    //   .regex(/^[0-9a-zA-Z\s-]{3,10}$/, {
+    //     message: "Please provide a valid Postal Code",
+    //   })
+    //   .optional(),
     // Step 4 Schema
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
@@ -140,8 +161,15 @@ export const validationSchema = (iAmCoTeachingId:number) => {
     contact: contactValidationSchema,
     bcc_registration_confirmation_email: z
       .string()
+      /**
+       * In the regression expression we are allowing the spaces and the commas after the email for that tailing spaces we are adding the \s
+       * As i am allowing 0, one or many spaces so i am giving \s*
+       * as they are can be or cannot be present so we are adding the ?
+       * as per the bug 1505 we have added ,? after the email expression, then this was solved 
+       *  */ 
+
       .regex(
-        /^(?:[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?:,[ ]*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
+        /^(?:\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)?(?:,\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)*,?\s*?$/,
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
@@ -149,7 +177,7 @@ export const validationSchema = (iAmCoTeachingId:number) => {
       .refine(
         (value) => {
           //Requirement: Duplicate emails are not allowed
-          const emails = value.split(",").map((email) => email.trim());
+          const emails = value.split(",").map((email) => email.trim()).filter(email => email !== "");
           const uniqueEmails = new Set(emails);
           return emails.length === uniqueEmails.size;
         },
@@ -202,7 +230,10 @@ const accommodationValidationSchema = z.array(
         required_error: "Fee per person is a required field.",
       })
       .nonempty({ message: "Fee per person is a required field." })
-      .regex(/^\d+(\.\d+)?$/, "Please enter a valid money value for fee per person.")
+      .regex(
+        /^\d+(\.\d+)?$/,
+        "Please enter a valid money value for fee per person."
+      )
       .or(z.number()),
     no_of_residential_spots: z
       .string({
