@@ -396,7 +396,7 @@ const columns = () => {
         return (
           <div className="flex justify-center text-primary">
             {isLoading ? (
-              <LoadingIcon />
+              <div className="loader !w-[30px]"></div>
             ) : (
               <div>
                 <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm">
