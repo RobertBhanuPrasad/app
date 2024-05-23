@@ -228,7 +228,7 @@ export function MultiSelect({
                       setOpen(true);
                     }}
                   >
-                    + {t("add_button")}
+                    <span className="text-[16px] leading-none">+</span> {t("add_button")}
                   </button>
                 </div>
               </div>
