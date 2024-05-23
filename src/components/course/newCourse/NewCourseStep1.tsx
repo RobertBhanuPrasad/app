@@ -57,7 +57,7 @@ function NewCourseStep1() {
       val.role_id?.order == NATIONAL_ADMIN
   );
   return (
-    <div>
+    <div className="w-full" >
       <RadioCards />
       <div className="mt-8 flex flex-row gap-7 ">
         <div className="flex gap-1 flex-col">
@@ -229,31 +229,17 @@ const RadioCards = () => {
   };
 
   /**
-   * @constant data is the data from the option_labels table of Program Organizer Type name
-   * @description this const is used store the data from the option_labels table giving the name as Program Organizer Type
-   */
-  const { data } = useList({
-    resource: "option_labels",
-    filters: [
-      {
-        field: "name",
-        operator: "eq",
-        value: "Program Organizer Type",
-      },
-    ],
-  });
-
-  /**
    * @constant programOrganizerTypeData is the data from the option_values
    * @description this const is used to store the data from the option_values which option_label_id is Program Organizer Type
    */
   const { data: programOrganizerTypeData } = useList({
     resource: "option_values",
+    meta:{select:"*,option_label_id!inner(*)"},
     filters: [
       {
-        field: "option_label_id",
+        field: "option_label_id.key",
         operator: "eq",
-        value: data?.data?.[0]?.id,
+        value: PROGRAM_ORGANIZER_TYPE,
       },
     ],
   });
@@ -283,20 +269,22 @@ const RadioCards = () => {
   );
 
   return (
-    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
-      <div className="flex items-center flex-row gap-7">
+    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange} className="w-full" >
+      <div className="flex items-center flex-row gap-7 w-full">
         {hasTeacherRole && (
           //Added cursor not allowed to all cards if this is disabled
           <Label
             htmlFor={JSON.stringify(iAmTeachingId)}
-            className={`text-[#999999] font-normal ${
+            className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+            
+            ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
             }`}
           >
             <Card
-              className={` p-2 w-72 h-[106px] flex flex-row ${
+              className={` p-2  h-[106px] flex flex-row ${
                 value === iAmTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4] "
                   : ""
               }`}
             >
@@ -324,14 +312,16 @@ const RadioCards = () => {
         {hasTeacherRole && (
           <Label
             htmlFor={JSON.stringify(iAmCoTeachingId)}
-            className={`text-[#999999] font-normal ${
+            className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+            
+            ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
             } `}
           >
             <Card
-              className={` p-2 gap-2 w-72 h-[106px] flex flex-row ${
+              className={` p-2 gap-2 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                   : ""
               }`}
             >
@@ -357,14 +347,16 @@ const RadioCards = () => {
         )}
         <Label
           htmlFor={JSON.stringify(iAmOrganizerId)}
-          className={`text-[#999999] font-normal ${
+          className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+          
+          ${
             value === iAmOrganizerId ? "text-[#7677F4]" : ""
           }`}
         >
           <Card
-            className={`p-2 gap-2 w-72 h-[106px] flex flex-row ${
+            className={`p-2 gap-2 h-[106px] flex flex-row  ${
               value === iAmOrganizerId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                 : ""
             }`}
           >
@@ -477,10 +469,11 @@ const OrganizationDropDown = () => {
     setValue("state_id", "");
     setValue("city_id", "");
     setValue("center_id", "");
-    setValue("is_residential_program", false);
+    setValue("is_residential_program", undefined);
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings", []);
+    setValue("program_fee_level_settings",undefined );
+    setValue("feeLevels",undefined );
     setValue("is_early_bird_enabled", undefined);
     setValue("early_bird_cut_off_period", undefined);
 
@@ -523,7 +516,7 @@ const OrganizationDropDown = () => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   return (
-    <div className="w-80 h-20">
+    <div className="h-20">
       <div className="flex gap-1 flex-col">
         <div className="flex flex-row gap-1 items-center">
           <Text className="text-xs font-normal text-[#333333]">
