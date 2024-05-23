@@ -4,6 +4,7 @@ import TransactionActivity from "@components/participants/TransactionActivityPop
 import { handleEditPaymentValues } from "@components/participants/editParticipant/EditParticipantUtil";
 import EditPayment from "@components/participants/editParticipant/editPayment";
 import ViewDonationDetails from "@components/participants/editParticipant/viewDonationDetails";
+import LoadingIcon from "@public/assets/LoadingIcon";
 import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
 import { useTable } from "@refinedev/core"; // Importing useTable hook for fetching table data
 import { ColumnDef } from "@tanstack/react-table"; // Importing ColumnDef type for defining table columns
@@ -365,7 +366,7 @@ const columns = () => {
         const { query } = useRouter();
         const [defaultValues, setDefaultValues] = useState({});
         const [dropdownOpen, setDropdownOpen] = useState(false); //added a dropdownOpen state to control the visibility of the dropdown content.
-
+        const [isLoading, setIsLoading] = useState(true);
         // Function to close the dropdown menu by setting the dropdownOpen state to false
         const closeDropdown = () => {
           setDropdownOpen(false);
@@ -382,6 +383,7 @@ const columns = () => {
                 Number(row?.original?.id)
               );
               setDefaultValues(values);
+              setIsLoading(false);
             } catch (error) {
               console.error("An error occurred:", error);
             }
@@ -393,7 +395,9 @@ const columns = () => {
         }, [Id]);
         return (
           <div className="flex justify-center text-primary">
-            {Object.keys(defaultValues)?.length > 0 && (
+            {isLoading ? (
+              <LoadingIcon />
+            ) : (
               <div>
                 <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm">
                   <Dialog open={editPayment}>
