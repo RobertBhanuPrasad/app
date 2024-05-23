@@ -357,6 +357,8 @@ export const CourseTypeDropDown = () => {
 
     const isOnlineProgram = courseSettings?.[0]?.is_online_program
 
+    // If the course type is online then isOnlineProgram is true then the is residential program is false
+    // so because of that we are assigning residential variable with negotiation of isOnlineProgram
     isResidentialProgramOchange(!isOnlineProgram)
 
 
