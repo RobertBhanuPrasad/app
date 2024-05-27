@@ -1081,7 +1081,7 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666] h-[118px] overflow-y-auto"
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666] max-h-[118px] overflow-y-auto"
                   title={
                     VenueData && newCourseData?.program_type_id != ""
                       ? VenueData
