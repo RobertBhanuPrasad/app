@@ -153,7 +153,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
-    is_residential_program: z.boolean().optional(),
+    is_residential_program: z.boolean(),
     accommodation_fee_payment_mode: z.number({
       required_error: "Fee payment method is required fields",
     }),
