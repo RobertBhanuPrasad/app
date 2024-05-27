@@ -66,6 +66,14 @@ export const CopyCoursePage = () => {
             defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
               _.omit(setting, ['id', 'program_id'])
             );
+            if (defaultValues?.contact){
+              defaultValues.contact = _.map(defaultValues.contact, (setting) => 
+              _.omit(setting, ['id', 'program_id']))
+            }
+            if (defaultValues?.accommodation){
+              defaultValues.accommodation = _.map(defaultValues.accommodation, (setting) => 
+              _.omit(setting, ['id', 'program_id']))
+            }
           }
           setNewCourseData(defaultValues);
           // we are storing the program created by in the zustand variable to use it in the validatios
