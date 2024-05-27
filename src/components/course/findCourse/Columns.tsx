@@ -6,7 +6,7 @@ import { useGetIdentity, useUpdate } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import _ from "lodash";
-import { MoreVertical } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
@@ -30,6 +30,7 @@ import {
 } from "src/ui/dropdown-menu";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 export const column = (
@@ -42,9 +43,26 @@ export const column = (
       column_name: t('course_id'),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-      header: () => {
-        return <div className="w-[100px]">{t('course_id')}</div>;
+      header: ({column}: any) => {
+        return ( 
+        <div>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          {t('course_id')}
+          {column.getIsSorted() === "desc" ? (
+            <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+          ) : column.getIsSorted() === "asc" ? (
+            <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+          ) : (
+            <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+          )}
+        </Button>
+        </div>
+        );
       },
+
       cell: ({ row }: any) => {
         const router = useRouter();
         return (
@@ -104,8 +122,24 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       column_name: t("course.find_course:start_date"),
-      header: () => {
-        return <div className="min-w-[150px]">{t("course.find_course:start_date")}</div>;
+      header: ({column}: any) => {
+        return ( 
+          <div>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            {t('course.find_course:start_date')}
+            {column.getIsSorted() === "desc" ? (
+              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+            ) : (
+              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+            )}
+          </Button>
+          </div>
+          );
       },
       cell: ({ row }: any) => {
         // Check if start_date exists or not

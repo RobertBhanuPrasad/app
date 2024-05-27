@@ -243,6 +243,21 @@ function index() {
   /**
    * Here we are maintaining 2 querys one is for filtering and one is for showing the data in the table and this is the filter query
    */
+
+  //State variable for the sorting functionality 
+  const [sorting, setSorting] = useState([
+    {
+      id: "id",
+      desc: true
+    }
+  ])
+
+// This function fetches the field which needs to sorted in the table
+const fieldvalue = () =>{
+let field = sorting?.[0]?.id
+if(field==="program_schedules") field = "start_date"
+return field
+}
   const {
     tableQueryResult: FilterProgramData,
     pageCount,
@@ -260,8 +275,7 @@ function index() {
     filters: filters,
     sorters: {
       permanent: [
-        // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-        { field: "created_at", order: "desc" },
+        { field: fieldvalue(), order: sorting?.[0]?.desc ? "desc" : "asc" },
       ],
     },
   });
@@ -575,6 +589,8 @@ function index() {
               data={programData?.data?.data || []}
               columnPinning={true}
               columnSelector={true}
+              sorting={sorting}
+              setSorting={setSorting}
             />
           </div>
         )}

@@ -64,6 +64,7 @@ function index() {
     "new_strings",
     "course.find_course",
   ]);
+
   const filters: {
     /**
      * Initial filter state
@@ -290,10 +291,17 @@ function index() {
     }
   ]);
 
+const fieldValue = () => {
 let field = sorting?.[0]?.id
 if(field === 'Name') field = "contact_id(full_name)"
 if(field === "Date of Birth") field = "contact_id(date_of_birth)"
 if(field === "Phone") field = "contact_id(mobile)"
+if(field === "Email") field = "contact_id(email)"
+if(field === "Amount") field = "total_amount"
+if(field === "Attendance Status") field = "participant_attendence_status_id(name)"
+if(field === "Fee Level")field = "price_category_id(fee_level_id(value))"
+return field
+}
 
   const {
     tableQueryResult: participantData,
@@ -315,7 +323,7 @@ if(field === "Phone") field = "contact_id(mobile)"
     sorters:{
       permanent: [
         {
-          field: field,
+          field: fieldValue(),
           order: sorting?.[0]?.desc ? "desc" : "asc"
         },
       ],
@@ -532,7 +540,7 @@ if(field === "Phone") field = "contact_id(mobile)"
       column_name: t(
         "course.participants:edit_participant.participants_information_tab.amount"
       ),
-      path: ["price_category_id", "total"],
+      path: ["total_amount"],
     },
     {
       column_name: t("course.participants:view_participant.transaction_type"),

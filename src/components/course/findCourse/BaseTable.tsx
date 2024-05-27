@@ -230,7 +230,6 @@ export function BaseTable<TData, TValue>({
       rowSelection,
       sorting,
     },
-    // sortDescFirst: false,
     onSortingChange: setSorting,
   });
 
