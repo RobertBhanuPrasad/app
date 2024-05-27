@@ -230,9 +230,9 @@ export const CityDropDown = ({
         >
           <SelectValue placeholder={t("city_placeholder")} />
         </SelectTrigger>
+         {formData?.state_id ? 
+          
         <SelectContent>
-          {formData?.state_id ? 
-          <div>
           <Input
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const value = event.target.value;
@@ -250,11 +250,12 @@ export const CityDropDown = ({
               </SelectItem>
             ))}
           </SelectItems>
-          </div>
-          :
-          <SelectItems></SelectItems>
-}
         </SelectContent>
+          :
+         <SelectContent>
+          <SelectItems></SelectItems>
+         </SelectContent>
+         }
       </Select>
       {cityValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
@@ -516,8 +517,8 @@ export const CenterDropDown = ({
             )}
           />
         </SelectTrigger>
+          {formData?.state_id ? 
         <SelectContent>
-          {formData?.state_id!=="" ? <div>
           <Input
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const value = event.target.value;
@@ -535,12 +536,14 @@ export const CenterDropDown = ({
               </SelectItem>
             ))}
           </SelectItems>
-          </div>
-          : <SelectItems>
-
-          </SelectItems>
-}
         </SelectContent>
+        :
+        <SelectContent>
+          <SelectItems></SelectItems>
+        </SelectContent>
+         
+          
+}
       </Select>
       {centerValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
