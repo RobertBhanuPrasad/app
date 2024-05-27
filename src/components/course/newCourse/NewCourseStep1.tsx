@@ -118,7 +118,7 @@ const RegistrationGateway = () => {
               placeholder={t("new_strings:enter_url")}
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
-              className="placeholder:text-[#999999]"
+              className="placeholder:text-[#999999] rounded-[12px] text-[14px] text-[#333333]"
               error={error ? true : false}
             />
             {error && (
