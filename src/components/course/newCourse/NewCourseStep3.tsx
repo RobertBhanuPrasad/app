@@ -1571,7 +1571,6 @@ export const ExistingVenueListSection = ({
   );
   return (
     <div className="flex flex-row !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4 overflow-y-scroll break-all">
-      <div className="relative group">
       <Checkbox
         id={item.id}
         value={item.id}
@@ -1580,15 +1579,6 @@ export const ExistingVenueListSection = ({
           formData[NewCourseStep3FormNames.venue_id] == item.id ? true : false
         }
       />
-      {(item?.created_by_user_id == loginUserData?.userData?.id ||
-              isUserNationAdminOrSuperAdmin) && (
-                <div className="absolute hidden group-hover:flex bottom-[3px] left-6  w-max p-1  text-white pl-4 bg-gray-800 rounded-lg font-sans text-[14px] font-semibold">
-      Select this checkbox to edit your venue
-      <div id="arrow" className="invisible absolute left-[-4px] top-3 h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit" data-popper-arrow></div>
-    </div>
-              )}
-      
-      </div>
       <div className="space-y-1 leading-none w-full">
 
       {item.name ? (
