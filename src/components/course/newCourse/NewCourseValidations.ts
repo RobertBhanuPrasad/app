@@ -202,7 +202,7 @@ const contactValidationSchema = z.array(
   z.object({
     contact_name: z
       .string()
-      .regex(/^[a-zA-Z\s]*$/, { message: "only alphabets are allowed" })
+      .regex(/^[a-zA-Z\s]*$/, { message: "Only Alaphabets are allowed" })
       .nullable()
       .optional(),
     contact_email: z
