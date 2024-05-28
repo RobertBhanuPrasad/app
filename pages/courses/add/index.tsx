@@ -966,6 +966,7 @@ export const NewCourseTabs = () => {
                       <TabsContent
                         value={JSON.stringify(index + 1)}
                         className={contentStylings}
+                        key={index}
                       >
                         {step.component}
                       </TabsContent>

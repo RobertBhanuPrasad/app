@@ -280,9 +280,9 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             {programFees?.length > 0
-              ? programFees?.map((item: ProgramFeeItem) => {
+              ? programFees?.map((item: ProgramFeeItem,index:number) => {
                   return (
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1" key={index}>
                       <Header2>
                         {translatedText(
                   item?.is_custom_fee
