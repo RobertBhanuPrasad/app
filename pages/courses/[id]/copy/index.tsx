@@ -66,13 +66,15 @@ export const CopyCoursePage = () => {
             defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
               _.omit(setting, ['id', 'program_id'])
             );
+            //Remove the id, program_id from each object in contact array to ensure proper handling of new entries.
             if (defaultValues?.contact){
-              defaultValues.contact = _.map(defaultValues.contact, (setting) => 
-              _.omit(setting, ['id', 'program_id']))
+              defaultValues.contact = _.map(defaultValues.contact, (contact) => 
+              _.omit(contact, ['id', 'program_id']))
             }
+            // Remove the id, program_id from each object in accommodation array to ensure proper handling of new entries.
             if (defaultValues?.accommodation){
-              defaultValues.accommodation = _.map(defaultValues.accommodation, (setting) => 
-              _.omit(setting, ['id', 'program_id']))
+              defaultValues.accommodation = _.map(defaultValues.accommodation, (accomodation) => 
+              _.omit(accomodation, ['id', 'program_id']))
             }
           }
           setNewCourseData(defaultValues);
