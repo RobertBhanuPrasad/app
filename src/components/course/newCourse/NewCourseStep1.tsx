@@ -96,7 +96,7 @@ const RegistrationGateway = () => {
 
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
-      <div className="text-[14px] font-normal">
+      <div className="text-sm font-normal">
         {t("registration_via_3rd_party_gateway")}
       </div>
       <Switch
@@ -122,7 +122,7 @@ const RegistrationGateway = () => {
               error={error ? true : false}
             />
             {error && (
-              <span className="text-[#FF6D6D] text-[12px]">
+              <span className="text-[#FF6D6D] text-xs font-semibold">
                 {error?.message}
               </span>
             )}
@@ -381,7 +381,7 @@ const RadioCards = () => {
               <Organizer
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
-              <div className="w-[240px] text-wrap text-center justify-center">
+              <div className="w-[240px] text-wrap text-center justify-center text-sm">
                 {iAmOrganisingCourse}
               </div>
             </div>
@@ -389,7 +389,7 @@ const RadioCards = () => {
         </Label>
       </div>
       {radioError && (
-        <span className="text-[#FF6D6D] text-[14px]">
+        <span className="text-[#FF6D6D] text-xs font-semibold">
           {radioError?.message}
         </span>
       )}
@@ -574,7 +574,7 @@ const OrganizationDropDown = () => {
         </Select>
 
         {organizationError && (
-          <span className="text-[#FF6D6D] text-[12px]">
+          <span className="text-[#FF6D6D] text-xs font-semibold">
             {organizationError?.message}
           </span>
         )}
@@ -682,7 +682,7 @@ const ProgramOrganizerDropDown = () => {
         error={programOrganizerError}
       />
       {programOrganizerError && (
-        <span className="text-[#FF6D6D] text-[12px]">
+        <span className="text-[#FF6D6D] text-xs font-semibold">
           {programOrganizerError?.message}
         </span>
       )}

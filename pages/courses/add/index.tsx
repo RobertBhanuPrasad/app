@@ -529,8 +529,8 @@ export const NewCourseTabs = () => {
       textColor:
         currentStep === BASIC_DETAILS_STEP_NUMBER ||
         isAllFieldsValid1 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
+          ? "text-[#7677F4] !font-semibold text-[16px] leading-[22px]"
+          : "text-[#999999] font-normal text-[16px] leading-[22px]",
       icon:
         // If the current step is in BASIC_DETAILS_STEP then we show the Profile icon with the #7677F4 color
         // else if the current step is not in the BASIC_DETAILS_STEP and we did not visited the step then we we need to show the Profile icon with #999999 color
@@ -557,8 +557,8 @@ export const NewCourseTabs = () => {
       textColor:
         currentStep === COURSE_DETAILS_STEP_NUMBER ||
         isAllFieldsValid2 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
+          ? "text-[#7677F4] !font-semibold text-[16px] leading-[22px]"
+          : "text-[#999999] font-normal text-[16px] leading-[22px]",
       icon:
         // If the current step is in COURSE_DETAILS_STEP then we show the Group icon with the #7677F4 color
         // else if the current step is not in the COURSE_DETAILS_STEP and we did not visited the step then we we need to show the Group icon with #999999 color
@@ -591,8 +591,8 @@ export const NewCourseTabs = () => {
       textColor:
         currentStep === TIME_AND_VENUE_STEP_NUMBER ||
         isAllFieldsValid3 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
+          ? "text-[#7677F4] !font-semibold text-[16px] leading-[22px]" 
+          : "text-[#999999] font-normal text-[16px] leading-[22px]",
       icon:
         // If the current step is in TIME_AND_VENUE_STEP then we show the Venue icon with the #7677F4 color
         // else if the current step is not in the TIME_AND_VENUE_STEP and we did not visited the step then we we need to show the Venue icon with #999999 color
@@ -624,8 +624,8 @@ export const NewCourseTabs = () => {
       // If the current step is FEE_STEP or the step is visited then we will show that in the #7677F4 color, else if we not visted and we are not in that step number then we will show in the #999999
       textColor:
         currentStep === FEE_STEP_NUMBER || isAllFieldsValid4 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
+          ? "text-[#7677F4] !font-semibold text-[16px] leading-[22px]"
+          : "text-[#999999] font-normal text-[16px] leading-[22px]",
       icon:
         // If the current step is in FEE_STEP then we show the Fees icon with the #7677F4 color
         // else if the current step is not in the FEE_STEP and we did not visited the step then we we need to show the Fees icon with #999999 color
@@ -653,8 +653,8 @@ export const NewCourseTabs = () => {
       textColor:
         currentStep === ACCOMMODATION_STEP_NUMBER ||
         isAllFieldsValid5 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
+          ? "text-[#7677F4] !font-semibold text-[16px] leading-[22px]"
+          : "text-[#999999] font-normal text-[16px] leading-[22px]",
       icon:
         // If the current step is in ACCOMMODATION_STEP then we show the Car icon with the #7677F4 color
         // else if the current step is not in the ACCOMMODATION_STEP and we did not visited the step then we we need to show the Car icon with #999999 color
@@ -687,8 +687,8 @@ export const NewCourseTabs = () => {
       textColor:
         currentStep === CONTACT_INFO_STEP_NUMBER ||
         isAllFieldsValid6 !== undefined
-          ? "text-[#7677F4] !font-semibold"
-          : "text-[#999999]",
+          ? "text-[#7677F4] !font-semibold text-[16px] leading-[22px]"
+          : "text-[#999999] font-normal text-[16px] leading-[22px]",
       icon:
         // If the current step is in CONTACT_INFO_STEP then we show the Info icon with the #7677F4 color
         // else if the current step is not in the CONTACT_INFO_STEP and we did not visited the step then we we need to show the Info icon with #999999 color
@@ -792,7 +792,7 @@ export const NewCourseTabs = () => {
                       e.preventDefault();
                       handleClickPrevious();
                     }}
-                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold"
+                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[16px] leading-[22px] text-[#7677F4] font-bold"
                   >
                     {t("previous_button")}
                   </Button>
@@ -800,7 +800,7 @@ export const NewCourseTabs = () => {
 
                 {currentStep < stepTitles.length && (
                   <Button
-                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-bold text-[16px] leading-[22px]"
                     onClick={async (e) => {
                       e.preventDefault();
                       await handleClickNext(
