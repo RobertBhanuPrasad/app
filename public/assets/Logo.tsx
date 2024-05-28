@@ -15,8 +15,8 @@ function Logo() {
     <path d="M78.1068 31.9325C78.2813 30.9892 78.3618 29.6596 78.3618 28.5591C78.3618 18.8971 70.6295 11.0273 61.1296 11.0273C51.6298 11.0273 43.8975 18.8926 43.8975 28.5591C43.8975 29.5967 44.0451 30.9667 44.2331 31.9325H78.1068Z" fill="url(#paint0_radial_2135_47781)"/>
     <defs>
     <radialGradient id="paint0_radial_2135_47781" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(54.0345 13.5686) scale(23.2969 23.3861)">
-    <stop stop-color="#FFF200"/>
-    <stop offset="1" stop-color="#F37021"/>
+    <stop stopColor="#FFF200"/>
+    <stop offset="1" stopColor="#F37021"/>
     </radialGradient>
     </defs>
     </svg>

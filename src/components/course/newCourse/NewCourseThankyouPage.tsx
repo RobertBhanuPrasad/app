@@ -177,9 +177,9 @@ useEffect(() => {
           }
             <div className="flex-[2.5] p-4 ">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.course_date")} (UTC 05:00)</p>
-              {data?.data?.program_schedules?.map((data: any) => {
+              {data?.data?.program_schedules?.map((data: any,index:any) => {
                 return (
-                  <p className="font-semibold truncate text-accent-secondary">
+                  <p className="font-semibold truncate text-accent-secondary" key={index}>
                     {formatDateTime(data?.start_time, data?.end_time)}
                   </p>
                 )

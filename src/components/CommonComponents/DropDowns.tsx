@@ -379,7 +379,7 @@ export const StateDropDown = ({
             {options?.map((option: BaseOption, index: number) => (
               <>
                 <SelectItem
-                  key={option.value}
+                  key={index}
                   value={option.value}
                   className="h-[44px]"
                 >
