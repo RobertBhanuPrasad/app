@@ -152,13 +152,13 @@ export const CityDropDown = ({
   const formData = watch();
 
   let filter: Array<CrudFilter> = [];
-  if (formData?.state_id) {
+  
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData?.state_id,
     });
-  }
+  
 
   const { options, onSearch } = useSelect({
     resource: "city",
@@ -229,7 +229,7 @@ export const CityDropDown = ({
           className="font-semibold text-sm "
         >
           <SelectValue placeholder={t("city_placeholder")} />
-        </SelectTrigger>
+        </SelectTrigger>          
         <SelectContent>
           <Input
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -431,13 +431,12 @@ export const CenterDropDown = ({
   //   });
   // }
 
-  if (formData?.state_id) {
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData.state_id,
     });
-  }
+  
 
   const { options, onSearch: centerOnSearch } = useSelect({
     resource: "center",
