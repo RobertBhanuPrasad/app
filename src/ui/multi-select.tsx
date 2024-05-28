@@ -228,7 +228,7 @@ export function MultiSelect({
                       setOpen(true);
                     }}
                   >
-                    + {t("add_button")}
+                    <span className="text-[16px] leading-none">+</span> {t("add_button")}
                   </button>
                 </div>
               </div>
@@ -301,7 +301,7 @@ export function MultiSelect({
                   className="max-h-[250px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
                 >
                   {selectables?.map((option, index) => (
-                    <div>
+                    <div key={index}>
                       <CommandItem
                         key={option?.value}
                         onSelect={() => handleOnSelect(option.value)}

@@ -171,15 +171,15 @@ useEffect(() => {
               // for offline we have to show the venue details 
             <div className="flex-[2.5] p-4 border-r border-light">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.venue")}</p>
-              <p className="font-bold text-accent-primary">{venue ? venue : '-'}</p>
+              <p className="font-bold text-accent-primary max-h-[118px] overflow-y-auto">{venue ? venue : '-'}</p>
             </div>
             )
           }
             <div className="flex-[2.5] p-4 ">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.course_date")} (UTC 05:00)</p>
-              {data?.data?.program_schedules?.map((data: any) => {
+              {data?.data?.program_schedules?.map((data: any,index:any) => {
                 return (
-                  <p className="font-semibold truncate text-accent-secondary">
+                  <p className="font-semibold truncate text-accent-secondary" key={index}>
                     {formatDateTime(data?.start_time, data?.end_time)}
                   </p>
                 )
@@ -207,10 +207,10 @@ useEffect(() => {
               {/* We have to display the links only when the course is active */}
               <div className="flex items-center justify-center gap-4 mt-4 ">
                 <div className="relative">
-                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
+                  <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 px-1">
                     {t("registration_link")}
                   </p>
-                  <div className="flex justify-between gap-2 p-3 border rounded-2xl min-w-72">
+                  <div className="flex justify-between items-center gap-2 p-3 border rounded-2xl min-w-72 h-[36px]">
                     <a id="textToCopy" className="" href={data?.data?.registration_link} target="_blank">
                      {data?.data?.registration_link}
                     </a>

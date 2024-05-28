@@ -135,5 +135,8 @@
   "session_start_time_must_be_greater_than_end_time": "Session start time must be greater than end time",
   "a_session_cannot_start_before_ending_another_session": "A session cannot start before ending another session",
   "program_organizer": "Program organizer",
-  "vat_reg": "VAT REG."
+  "vat_reg": "VAT REG.",
+  "are_you_sure_you_want_to_delete_the_session":"Are you sure you want to delete the session",
+  "are_you_sure_you_want_to_delete_this_accomodation":"Are you sure you want to delete this accommodation",
+  "are_you_sure_you_want_to_delete_the_contact": "Are you sure you want to delete this contact"
 }

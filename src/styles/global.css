@@ -88,7 +88,7 @@
   100% {
     transform: rotate(1turn);
   }
-} 
+}
 
 @layer base {
   :root {
