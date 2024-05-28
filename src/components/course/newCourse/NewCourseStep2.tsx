@@ -8,7 +8,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
-import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
+import { NewCourseStep2FormNames, NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
   PROGRAM_CATEGORY,
@@ -232,6 +232,12 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.program_type_id,
   });
 
+  const {
+    field: { onChange: isResidentialProgramOchange },
+  } = useController({
+    name: NewCourseStep5FormNames?.is_residential_program,
+  });
+
   const selectQuery: any = {
     resource: "program_types",
     meta: {
@@ -277,14 +283,60 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.max_capacity,
   });
 
-  const clearCourseTypeDependentValues = () => {
+  /**
+   * @function clearCourseTypeDependentValues will clear the all dependent variables
+   * @param previousCourseTypeId is the previous course type id
+   * @param newCourseTypeId is the new course type id
+   */
+  const clearCourseTypeDependentValues = (
+    previousCourseTypeId: number,
+    newCourseTypeId: number
+  ) => {
+
+    //TODO: When the new Select is implemented need to changed the code.
+    const previousCourseSettings = queryResult?.data?.data.filter(
+      (data) => data.id == previousCourseTypeId
+    );
+
+    //TODO: When the new Select is implemented need to changed the code.
+    const newCourseTypeSettings = queryResult?.data?.data.filter(
+      (data) => data.id == newCourseTypeId
+    );
+
+    //If course type is changed form offline to online or online to office need to clear venue details.
+    if (
+      previousCourseSettings?.[0]?.is_online_program !==
+      newCourseTypeSettings?.[0]?.is_online_program
+    ) {
+      setValue("existingVenue", undefined);
+      setValue("newVenue", undefined);
+      setValue("state_id", "");
+      setValue("city_id", "");
+      setValue("center_id", "");
+      setValue("is_existing_venue","")
+      setValue("online_url","")
+    }
+
     setValue("program_alias_name_id", "");
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever program_type is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings",[])
-    setValue("is_early_bird_enabled",undefined)
-    setValue("early_bird_cut_off_period",undefined)
+    setValue("program_fee_level_settings", undefined);
+    setValue("feeLevels", undefined);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
     setTimeout(() => {
-      clearErrors(["program_alias_name_id","program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+      clearErrors([
+        "program_alias_name_id",
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period",
+        "existingVenue",
+        "newVenue",
+        "state_id",
+        "city_id",
+        "center_id",
+        "is_existing_venue",
+        "online_url"
+      ]);
     }, 10);
   };
 
@@ -302,6 +354,13 @@ export const CourseTypeDropDown = () => {
     const maxAttendes = courseSettings?.[0].maximum_capacity
       ? courseSettings?.[0].maximum_capacity.toString()
       : undefined;
+
+    const isOnlineProgram = courseSettings?.[0]?.is_online_program
+
+    // If the course type is online then isOnlineProgram is true then the is residential program is false
+    // so because of that we are assigning residential variable with negotiation of isOnlineProgram
+    isResidentialProgramOchange(!isOnlineProgram)
+
 
     // when we change the course type and we get new settings we need to set the max capacity from the course type settings otherwise it should be empty
     if (maxAttendes) {
@@ -329,9 +388,9 @@ export const CourseTypeDropDown = () => {
       <Select
         value={value}
         onValueChange={(val: any) => {
+          clearCourseTypeDependentValues(value, val);
           onChange(val);
           getCourseTypeSettings(val);
-          clearCourseTypeDependentValues();
         }}
         disabled={isEditCourse}
       >
@@ -353,7 +412,7 @@ export const CourseTypeDropDown = () => {
             {options?.map((option: any, index: number) => (
               <>
                 <SelectItem
-                  key={option.value}
+                  key={index}
                   value={option.value}
                   className="h-[44px]"
                 >

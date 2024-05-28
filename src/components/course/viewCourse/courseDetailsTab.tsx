@@ -280,23 +280,23 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
             {programFees?.length > 0
-              ? programFees?.map((item: ProgramFeeItem) => {
-                return (
-                  <div className="flex flex-col gap-1">
-                    <Header2>
-                      {translatedText(
-                        item?.is_custom_fee
-                          ? item?.custom_fee_label
-                          : item?.fee_level_id?.name as object
-                      )}
-                    </Header2>
-                    <ItemValue>
-                      {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                      {(item?.total)?.toFixed(2)}
-                    </ItemValue>
-                  </div>
-                );
-              })
+              ? programFees?.map((item: ProgramFeeItem,index:number) => {
+                  return (
+                    <div className="flex flex-col gap-1" key={index}>
+                      <Header2>
+                        {translatedText(
+                  item?.is_custom_fee
+                   ? item?.custom_fee_label
+                    : item?.fee_level_id?.name as object
+                )}
+                      </Header2>
+                      <ItemValue>
+                        {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                        {(item?.total)?.toFixed(2)}
+                      </ItemValue>
+                    </div>
+                  );
+                })
               : ""}
             {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
             {IsEarlyBirdFeeEnable

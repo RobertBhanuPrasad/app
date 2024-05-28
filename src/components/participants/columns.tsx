@@ -532,46 +532,45 @@ export const columns = () =>
   {
     id: "actions",
     enableHiding: false,
-    // TODO  : for now may-13 release it has to be hidden //
-    // cell: ({ row }) => {
-    //   const optionsValues = [
-    //     t("course.view_course:participants_tab.view_participant"),
-    //     t("new_strings:edit_participant"),
-    //     // TODO(Not in MVP scope): Integrate these actions later
-    //     // "Transfer",
-    //     // "Send Email",
-    //     // "Perform sale with cash, check offline credit card payment",
-    //     // "Send registration confirmation email",
-    //     // "Upload offline payment receipt",
-    //     // "Download receipt",
-    //     // "Transaction Activity",
-    //   ];
+    cell: ({ row }) => {
+      const optionsValues = [
+        t("course.view_course:participants_tab.view_participant"),
+        t("new_strings:edit_participant"),
+        // TODO(Not in MVP scope): Integrate these actions later
+        // "Transfer",
+        // "Send Email",
+        // "Perform sale with cash, check offline credit card payment",
+        // "Send registration confirmation email",
+        // "Upload offline payment receipt",
+        // "Download receipt",
+        // "Transaction Activity",
+      ];
 
-    //   const router = useRouter();
-    //   return (
-    //     <DropdownMenu>
-    //       <DropdownMenuTrigger asChild>
-    //         <Button variant="ghost" className="h-8 w-8 p-0 text-[#7677F4]">
-    //           <span className="sr-only">Open menu</span>
-    //           <MoreVertical className="h-4 w-4" />
-    //         </Button>
-    //       </DropdownMenuTrigger>
-    //       <DropdownMenuContent align="end">
-    //         <div className="flex flex-col gap-2 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
-    //           {optionsValues.map((value, index) => (
-    //             <DropdownMenuItem
-    //               onClick={() => {
-    //                 handleActions(index, row?.original?.id, router);
-    //               }}
-    //             >
-    //               {value}
-    //             </DropdownMenuItem>
-    //           ))}
-    //         </div>
-    //       </DropdownMenuContent>
-    //     </DropdownMenu>
-    //   );
-    // },
+      const router = useRouter();
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0 text-[#7677F4]">
+              <span className="sr-only">Open menu</span>
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <div className="flex flex-col gap-2 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
+              {optionsValues.map((value, index) => (
+                <DropdownMenuItem
+                  onClick={() => {
+                    handleActions(index, row?.original?.id, router);
+                  }}
+                >
+                  {value}
+                </DropdownMenuItem>
+              ))}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
 
