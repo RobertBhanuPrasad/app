@@ -152,13 +152,13 @@ export const CityDropDown = ({
   const formData = watch();
 
   let filter: Array<CrudFilter> = [];
-  if (formData?.state_id) {
+  
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData?.state_id,
     });
-  }
+  
 
   const { options, onSearch } = useSelect({
     resource: "city",
@@ -229,9 +229,7 @@ export const CityDropDown = ({
           className="font-semibold text-sm "
         >
           <SelectValue placeholder={t("city_placeholder")} />
-        </SelectTrigger>
-         {formData?.state_id ? 
-          
+        </SelectTrigger>          
         <SelectContent>
           <Input
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -251,11 +249,6 @@ export const CityDropDown = ({
             ))}
           </SelectItems>
         </SelectContent>
-          :
-         <SelectContent>
-          <SelectItems></SelectItems>
-         </SelectContent>
-         }
       </Select>
       {cityValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
@@ -438,13 +431,12 @@ export const CenterDropDown = ({
   //   });
   // }
 
-  if (formData?.state_id) {
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData.state_id,
     });
-  }
+  
 
   const { options, onSearch: centerOnSearch } = useSelect({
     resource: "center",
@@ -517,7 +509,6 @@ export const CenterDropDown = ({
             )}
           />
         </SelectTrigger>
-          {formData?.state_id ? 
         <SelectContent>
           <Input
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -537,13 +528,6 @@ export const CenterDropDown = ({
             ))}
           </SelectItems>
         </SelectContent>
-        :
-        <SelectContent>
-          <SelectItems></SelectItems>
-        </SelectContent>
-         
-          
-}
       </Select>
       {centerValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
