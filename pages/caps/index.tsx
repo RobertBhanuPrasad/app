@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle
-} from "../../src/ui/card";
+} from "src/ui/card";
 import {useRouter} from "next/router";
 
 const CustomCard = (props: { title: string; description: string; content: React.ReactNode; }) => {
