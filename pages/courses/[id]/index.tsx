@@ -407,7 +407,7 @@ function ViewDetails() {
               <TabsTrigger
                 key={index}
                 value={JSON.stringify(trigger.value)}
-                className={` data-[state=active]:text-[#7677F4] data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end  text-sm font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none  `}
+                className={` data-[state=active]:text-[#7677F4] text-base data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none  `}
                 disabled={handleTabsBasedOnStatus(
                   courseData?.data?.status_id?.id,
                   trigger.value
@@ -557,7 +557,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
+        <SelectTrigger className="w-[192px] border text-[#333333] text-sm font-semibold !border-[#999999]">
           <SelectValue placeholder={t("pending_approval")} />
         </SelectTrigger>
         <SelectContent>
@@ -842,7 +842,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border !text-[#333333] !font-semibold !border-[#999999]">
+        <SelectTrigger className="w-[192px] border !text-[#333333] !font-semibold text-sm !border-[#999999]">
           <SelectValue placeholder={t('actions')} />
         </SelectTrigger>
         <SelectContent>

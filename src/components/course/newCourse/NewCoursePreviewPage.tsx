@@ -1369,7 +1369,7 @@ export default function NewCourseReviewPage() {
             </div>
           </div>
         </section>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center text-base justify-center">
           {isSubmitting && (
             <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
               <div className="loader"></div>

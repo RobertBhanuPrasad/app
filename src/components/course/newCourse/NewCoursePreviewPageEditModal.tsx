@@ -190,7 +190,7 @@ const ButtonsDialog = ({
   };
 
   return (
-    <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
+    <DialogFooter className="flex text-base flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2 pt-5">
       <Button
         onClick={handleCancelClick}
         className="w-[100px] border border-[#7677F4] bg-[white] text-[#7677F4] font-semibold"

@@ -908,7 +908,7 @@ export const NewCourseTabs = () => {
                     <TabsTrigger
                       key={index}
                       value={JSON.stringify(tab.value)}
-                      className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      className="!h-12  items-center text-base w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                       onClick={async () => {
                         let validationFieldsStepWise = requiredValidationFields(
                           formData,
