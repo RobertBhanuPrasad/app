@@ -18,13 +18,12 @@ import { IsEditCourse } from "./EditCourseUtil";
 
 export const handlePostProgramData = async (
   body: any,
-  loggedInUserId: number,
-  setProgramId: (by: number) => void,
+  loggedin_user_id: number,
   accountingNotSubmittedStatusId: number,
   /**
    * The current url either add or edit
    */
-  pathname: string,
+  method: string,
   countryCode: string,
   languageCode: string
 ) => {
@@ -36,7 +35,7 @@ export const handlePostProgramData = async (
   // we have to create course only when we dont have id
   //   if (!programId) {
   const programBody: ProgramDataBaseType = {
-    last_modified_by_user_id: loggedInUserId,
+    last_modified_by_user_id: loggedin_user_id,
     modified_at: new Date(),
   };
 
@@ -121,7 +120,7 @@ export const handlePostProgramData = async (
 
   //We have to create a venue when the program is offline .no need to create venue for online program
   if (programTypeData?.is_online_program === false) {
-    const venuId = await handlePostVenueData(body, loggedInUserId);
+    const venuId = await handlePostVenueData(body, loggedin_user_id);
 
     if (venuId === false) {
       return false;
@@ -322,18 +321,18 @@ export const handlePostProgramData = async (
     // TODO need to integrate with url provided by cx team -(kalyan)
     const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
 
-    // here we have to update the created_by_user_id with loggedInUserId because this field is required
+    // here we have to update the created_by_user_id with loggedin_user_id because this field is required
     // to know the who is created this course and this attribute is used to at the course details page who is announced this course.
     // here we have to update when we are creating the program that is when created_by_user_id is null
     // other wise no need to update the created_by_user_id
     // when one user create one program at that time we have to post created_by_user_id
     // if another person is going to edit the program which is already created by another user in this case we need not to patch the created by user id.
     // only at the time of create new program at that time only we need to update the created_by_user_id because one program is announced by one user only.
-    if (loggedInUserId && programData[0].created_by_user_id == null) {
+    if (loggedin_user_id && programData[0].created_by_user_id == null) {
       await supabase
         .from("program")
         .update({
-          created_by_user_id: loggedInUserId,
+          created_by_user_id: loggedin_user_id,
           details_page_link: CX_BASE_URL,
           registration_link: registrationUrl,
         })
@@ -356,7 +355,7 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
@@ -364,7 +363,7 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
@@ -372,7 +371,7 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
@@ -380,7 +379,7 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
@@ -388,14 +387,14 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
   if (!(await handleProgramSchedulesData(body, programId))) {
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
@@ -403,7 +402,7 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
@@ -411,7 +410,7 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
   //if it is not online program and it is residential only we need to post the accommodations to the program_accommodations table
@@ -423,7 +422,7 @@ export const handlePostProgramData = async (
       // if the course is not created then we need to delete the program and its childrens tables
       // and we need to delete only when user in add course page when error occurs
       // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-      handleDeleteProgramTables(programId, pathname);
+      handleDeleteProgramTables(programId, method);
       return false;
     }
   }
@@ -436,7 +435,7 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
@@ -450,20 +449,18 @@ export const handlePostProgramData = async (
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
   // We need to call one supabase edge function to update the course details in sync DB aswell to reflect the changes in unity pages
   // edge function name : sync-program
   // we need to call this edge funtion only when all program data has been saved
-  if (
-    !(await handleSyncProgramEdgeFunction(programId, pathname, countryCode))
-  ) {
+  if (!(await handleSyncProgramEdgeFunction(programId, method, countryCode))) {
     // if the course is not created then we need to delete the program and its childrens tables
     // and we need to delete only when user in add course page when error occurs
     // when user in edit page and any error occurs ideally we dont need to delete program and children tables
-    handleDeleteProgramTables(programId, pathname);
+    handleDeleteProgramTables(programId, method);
     return false;
   }
 
@@ -1107,7 +1104,7 @@ export const handlePostProgramContactDetailsData = async (
  * We need to update existing venue table if it is already present
  * @param body formData
  */
-const handlePostVenueData = async (body: any, loggedInUserId: number) => {
+const handlePostVenueData = async (body: any, loggedin_user_id: number) => {
   const supabase = supabaseClient();
 
   // if body.isNewVenue true then first we have to create a new venue and then add it to program table with created venue_id
@@ -1124,7 +1121,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
     //For New Venue directly posting data in venue table
     const { data, error } = await supabase
       .from("venue")
-      .insert({ ...venueData, created_by_user_id: loggedInUserId })
+      .insert({ ...venueData, created_by_user_id: loggedin_user_id })
       .select();
 
     if (error) {
@@ -1164,7 +1161,7 @@ const handlePostVenueData = async (body: any, loggedInUserId: number) => {
       venueBody.postal_code = venueData.postal_code;
     }
 
-    venueBody.created_by_user_id = loggedInUserId;
+    venueBody.created_by_user_id = loggedin_user_id;
 
     //Exacting deleted venue IDs from form
     const deleteVenueIDs = body.deletedVenueID;
@@ -1243,7 +1240,7 @@ export const handleProgramStatusUpdate = async (programId: number) => {
   if (is_approval_required === null) {
     console.log("in program type there is no is_approval_required");
     console.warn("it should need to be true or false");
-    return false;
+    return true;
   }
 
   if (is_approval_required) {
@@ -1419,11 +1416,9 @@ const handleProgramAccountingStatusUpdate = async (
  */
 export const handleSyncProgramEdgeFunction = async (
   programId: number,
-  pathname: string,
+  method: string,
   countryCode: string
 ) => {
-  const method = IsEditCourse(pathname) ? "PUT" : "POST";
-
   console.log("method", method);
 
   const supabase = supabaseClient();
@@ -1453,16 +1448,16 @@ export const handleSyncProgramEdgeFunction = async (
 /**
  * Function to handle the deletion of program tables.
  * @param programId - The ID of the program to delete.
- * @param pathname - The pathname of the current page.
+ * @param method - The method of the current page.
  */
 export const handleDeleteProgramTables = async (
   programId: number,
-  pathname: string
+  method: string
 ) => {
   const supabase = supabaseClient();
 
   // we need to do only when it is new course
-  if (!IsEditCourse(pathname)) {
+  if (method === "POST") {
     console.warn(
       "program was not created because of some errors while we are posting the data"
     );

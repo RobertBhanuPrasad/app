@@ -560,9 +560,8 @@ export default function NewCourseReviewPage() {
       const isPosted = await handlePostProgramData(
         newCourseData,
         data?.userData?.id,
-        setProgramId,
         accountingNotSubmittedStatusId,
-        pathname,
+        IsEditCourse(pathname) === true ? "PUT" : "POST",
         countryCode,
         languageCode
       );
