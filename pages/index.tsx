@@ -18,7 +18,7 @@ export default function Index() {
           program_data: body,
           loggedin_user_id: 2,
           accounting_not_submitted_status_id: 64,
-          country_code: "public",
+          language_code: "en",
         },
       });
 
