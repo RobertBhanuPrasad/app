@@ -736,6 +736,9 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
 
   const [pageSize, setPageSize] = useState(10);
 
+  const [citySelectClicked, setCitySelectClicked] = useState(false)
+
+
   const { watch } = useFormContext();
 
   const formData = watch();
@@ -770,6 +773,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   };
   const { t } = useTranslation("common");
   return (
+    <div>
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
@@ -782,6 +786,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         }));
         temporaryOnChange(val);
       }}
+      onOpenChange={()=>setCitySelectClicked(true)}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t("city_placeholder")} />
@@ -806,6 +811,8 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         </SelectItems>
       </SelectContent>
     </Select>
+     {(citySelectClicked && !formData?.temporaryadvancefilter?.state) && (<p className="text-[#FF6D6D] mt-1 text-[12px]">Please select State</p>)}
+     </div>
   );
 };
 
@@ -819,6 +826,8 @@ export const Center = ({
     name: "temporaryadvancefilter.center",
   });
   const [pageSize, setPageSize] = useState(10);
+
+  const [centerSelectClicked, setCenterSelectClicked] = useState(false)
 
   const { watch } = useFormContext();
   const formData = watch();
@@ -854,6 +863,7 @@ export const Center = ({
   };
   const { t } = useTranslation("new_strings");
   return (
+    <div>
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
@@ -866,6 +876,7 @@ export const Center = ({
         }));
         temporaryOnChange(val);
       }}
+      onOpenChange={()=>setCenterSelectClicked(true)}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t("select_center")} />
@@ -890,6 +901,8 @@ export const Center = ({
         </SelectItems>
       </SelectContent>
     </Select>
+    {(centerSelectClicked && !formData?.temporaryadvancefilter?.state) && (<p className="text-[#FF6D6D] mt-1 text-[12px]">Please select State</p>)}
+    </div>
   );
 };
 

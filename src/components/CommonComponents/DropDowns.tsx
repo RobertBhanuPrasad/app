@@ -142,6 +142,7 @@ export const CityDropDown = ({
 }) => {
   const { t } = useTranslation("common");
   const [pageSize, setPageSize] = useState(10);
+  const [citySelectClicked, setCitySelectClicked] = useState(false)
 
   const {
     field: { value: cityValue, onChange: cityValueOnChange },
@@ -222,8 +223,8 @@ export const CityDropDown = ({
         <Text className="text-xs font-normal text-[#333333]">{t("city")}</Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
-
-      <Select value={cityValue} onValueChange={handleCityValueChange}>
+    <div>
+      <Select value={cityValue} onValueChange={handleCityValueChange}  onOpenChange={()=>setCitySelectClicked(true)}>
         <SelectTrigger
           error={cityValueError ? true : false}
           className="font-semibold text-sm "
@@ -250,6 +251,8 @@ export const CityDropDown = ({
           </SelectItems>
         </SelectContent>
       </Select>
+      {(citySelectClicked && !formData?.state_id && !cityValueError) && (<p className="text-[#FF6D6D] mt-2 text-[12px]">Please select State</p>)}
+     </div>
       {cityValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
           {cityValueError.message}
@@ -411,6 +414,8 @@ export const CenterDropDown = ({
 }) => {
   const { t } = useTranslation(["common", "course.new_course"]);
   const [pageSize, setPageSize] = useState(10);
+  const [centerSelectClicked, setCenterSelectClicked] = useState(false)
+
 
   const {
     field: { value: centerValue, onChange: centerValueOnChange },
@@ -498,7 +503,8 @@ export const CenterDropDown = ({
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
-      <Select value={centerValue} onValueChange={handleCenterValueChange}>
+      <div>
+      <Select value={centerValue} onValueChange={handleCenterValueChange} onOpenChange={()=>setCenterSelectClicked(true)}>
         <SelectTrigger
           className="w-full font-semibold text-sm"
           error={centerValueError ? true : false}
@@ -529,6 +535,8 @@ export const CenterDropDown = ({
           </SelectItems>
         </SelectContent>
       </Select>
+      {(centerSelectClicked && !formData?.state_id && !centerValueError) && (<p className="text-[#FF6D6D] mt-2 text-[12px]">Please select State</p>)}
+     </div>
       {centerValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
           {centerValueError.message}
