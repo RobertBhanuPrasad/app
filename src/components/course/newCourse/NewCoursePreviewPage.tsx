@@ -381,9 +381,9 @@ export default function NewCourseReviewPage() {
         {newCourseData?.schedules?.map((data: any) => {
           const schedule = `${formatDateString(data.date)} | ${
             data?.startHour || "00"
-          } : ${data?.startMinute || "00"}  ${
+          }:${data?.startMinute || "00"}  ${
             data?.startTimeFormat ? data?.startTimeFormat : ""
-          } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
+          } to ${data?.endHour || "00"}:${data?.endMinute || "00"}  ${
             data?.endTimeFormat ? data?.endTimeFormat : ""
           }`;
 
