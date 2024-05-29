@@ -354,11 +354,11 @@ export function BaseTable<TData, TValue>({
                       .getAllColumns()
                       .filter((column) => column?.accessorFn)
                       // Here we are filtering the columns which have accessorKey
-                      .map((column: any) => {
+                      .map((column: any,index:number) => {
                         if (!column.getCanHide()) {
                           //display the disabled options
                           return (
-                            <div className="flex flex-row gap-4 items-center">
+                            <div className="flex flex-row gap-4 items-center" key={index}>
                               <Checkbox
                                 key={column.id}
                                 disabled={!column.getCanHide()}

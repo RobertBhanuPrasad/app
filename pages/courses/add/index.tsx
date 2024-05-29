@@ -966,6 +966,7 @@ export const NewCourseTabs = () => {
                       <TabsContent
                         value={JSON.stringify(index + 1)}
                         className={contentStylings}
+                        key={index}
                       >
                         {step.component}
                       </TabsContent>
@@ -982,7 +983,7 @@ export const NewCourseTabs = () => {
                       e.preventDefault();
                       handleClickPrevious();
                     }}
-                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]"
+                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[16px] leading-[22px] text-[#7677F4] font-bold rounded-[12px]"
                   >
                     {t("previous_button")}
                   </Button>
@@ -990,7 +991,7 @@ export const NewCourseTabs = () => {
 
                 {currentStep < stepTitles.length && (
                   <Button
-                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-bold text-[16px] leading-[22px]"
                     onClick={async (e) => {
                       e.preventDefault();
 
