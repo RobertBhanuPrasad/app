@@ -137,7 +137,7 @@ export default function EditParticipantTabs() {
       label: "Transaction Details",
       content: (
         <div>
-          <ViewParticipantTransactionDetails participantId={Id} />
+          <ViewParticipantTransactionDetails participantId={query?.participant_id} />
         </div>
       ),
     },
@@ -159,7 +159,9 @@ export default function EditParticipantTabs() {
 
   // Both functions are confirmation popups to save or cancel the changes of the edit participant form
   const cancelConfirmation = () => {
-    if (!_.isEqual(initialValue, formData)) {
+    const initialData =_.omitBy(initialValue, _.isUndefined)
+    const formValues=_.omitBy(formData, _.isUndefined)
+    if (!_.isEqual(initialData, formValues)) {
       setcancelEditParticipant(true);
     } else {
       router.back();
