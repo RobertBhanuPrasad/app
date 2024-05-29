@@ -557,20 +557,48 @@ export default function NewCourseReviewPage() {
       /**
        * This variable will retur true if all api calls has been successfully it will return false if any api call fails
        */
-      const isPosted = await handlePostProgramData(
-        newCourseData,
-        data?.userData?.id,
-        accountingNotSubmittedStatusId,
-        IsEditCourse(pathname) === true ? "PUT" : "POST",
-        countryCode,
-        languageCode
-      );
+      // const isPosted = await handlePostProgramData(
+      //   newCourseData,
+      //   data?.userData?.id,
+      //   accountingNotSubmittedStatusId,
+      //   IsEditCourse(pathname) === true ? "PUT" : "POST",
+      //   countryCode,
+      //   languageCode
+      // );
 
-      // we are checking the course is edit or user created new course
-      const isEdited = IsEditCourse(pathname);
+      const method = IsEditCourse(pathname) === true ? "PUT" : "POST";
 
-      // we have to display thank you page or success modal pop up only when the posting done successfully without any error
-      if (isPosted) {
+      try {
+        const { data: upsertCourseData, error } =
+          await supabase.functions.invoke("upsert-course", {
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+              "country-code": countryCode,
+            },
+            method,
+            body: {
+              program_data: newCourseData,
+              loggedin_user_id: data?.userData?.id,
+              accounting_not_submitted_status_id:
+                accountingNotSubmittedStatusId,
+              language_code: languageCode,
+            },
+          });
+
+        if (error) {
+          console.log("error in catch block", error);
+          throw error;
+        }
+
+        console.log("data is ", upsertCourseData, error);
+
+        setProgramId(upsertCourseData?.message?.response?.id);
+
+        // we are checking the course is edit or user created new course
+        const isEdited = IsEditCourse(pathname);
+
+        // we have to display thank you page or success modal pop up only when the posting done successfully without any error
         if (isEdited) {
           setOnEditSuccess(true);
         } else {
@@ -592,6 +620,8 @@ export default function NewCourseReviewPage() {
           setViewPreviewPage(false);
           setViewThankyouPage(true);
         }
+      } catch (error) {
+        console.log("error in catch block", error);
       }
     }
     setIsSubmitting(false);
