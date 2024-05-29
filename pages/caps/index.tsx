@@ -14,7 +14,7 @@ const CustomCard = (props: { title: string; description: string; content: React.
       <Card className=" border-black rounded-5 p-3 text-center m-3 w-4/6">
           <CardHeader>
               <CardTitle >{props.title}</CardTitle>
-              <CardDescription>{props.description}</CardDescription>
+              <CardDescription className="text-base text-foreground">{props.description}</CardDescription>
           </CardHeader>
           <CardContent>
               <p>{props.content}</p>
