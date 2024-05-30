@@ -1375,7 +1375,7 @@ export default function NewCourseReviewPage() {
               <div className="loader"></div>
             </div>
           )}
-          <Button onClick={handClickContinue}>{t("continue_button")}</Button>
+          <Button className="text-base" onClick={handClickContinue}>{t("continue_button")}</Button>
         </div>
       </div>
     </div>

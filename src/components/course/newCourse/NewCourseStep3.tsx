@@ -1228,7 +1228,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
             // we need to validate schedules after date changes to get instant errors
             trigger("schedules");
           }}
-          className="w-24 rounded-[12px]"
+          className="w-24 rounded-[12px] text-base"
         >
           {t("save_button")}
         </Button>
@@ -1431,7 +1431,7 @@ const {
           </div>
         </GetScrollTypesAlert>
       </div>
-      <div className="w-full flex items-center justify-center mt-8">
+      <div className="w-full flex items-center justify-center mt-8 ">
         <DialogClose>
           <Button
             type="submit"
@@ -1440,6 +1440,7 @@ const {
               formData[NewCourseStep3FormNames.venue_id] && isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList();
             }}
+            className="text-base"
           >
             {t("save_button")}
           </Button>
@@ -1732,8 +1733,8 @@ export const AddOrEditVenue = ({
         </span>
       )}
       <DialogFooter>
-        <div className="w-full flex items-center justify-center mt-8">
-          <Button onClick={handleSubmit}>{t("save_button")}</Button>
+        <div className="w-full flex items-center justify-center mt-8 ">
+          <Button onClick={handleSubmit} className="w-24 rounded-[12px] text-base">{t("save_button")}</Button>
         </div>
       </DialogFooter> 
     </div>
