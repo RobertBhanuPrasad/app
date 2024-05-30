@@ -131,7 +131,7 @@ useEffect(() => {
               {translatedText(data?.data?.status_id?.name)}
             </Button>
           
-              <Button variant="outline" className="text-indigo-600border-indigo-600 text-lg " onClick={() => {router.replace('/courses/list')}}>
+              <Button variant="outline" className="text-indigo-600 border-indigo-600 text-lg " onClick={() => {router.replace('/courses/list')}}>
               {t("course.new_course:congratulations_page.go_to_course_listing")}
               </Button>
           
