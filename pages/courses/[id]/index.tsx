@@ -244,7 +244,7 @@ function ViewDetails() {
   )?.id;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col text-sm">
       <div className="mx-8">
         <div className="flex flex-row justify-between">
           <div className="text-[32px] font-semibold">
@@ -350,7 +350,7 @@ function ViewDetails() {
           )}
         </div>
 
-        <div className="flex flex-row items-center gap-2 w-full justify-end ">
+        <div className="flex flex-row items-center gap-2 w-full justify-end text-sm">
           {t("new_strings:announced_by")}:{" "}
           {courseData?.data?.created_by_user_id?.contact_id?.full_name}
           <HoverCard>

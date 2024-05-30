@@ -764,7 +764,7 @@ const Venue = () => {
                   <DialogTrigger>
                     <Badge
                       variant="outline"
-                      className="absolute right-[43%] -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
+                      className="absolute right-[43%] -bottom-3 bg-[white] text-base w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
                     >
                       {t("course.new_course:time_and_venue_tab.view_all")}
                     </Badge>
@@ -848,7 +848,7 @@ const Venue = () => {
         ) : (
           <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue} className="flex-[1]">
-              <div className="h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
+              <div className="h-[118px] rounded-[16px] text-base border flex items-center justify-center text-[#7677F4]">
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>

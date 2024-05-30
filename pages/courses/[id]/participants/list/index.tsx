@@ -781,7 +781,7 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
+                className="flex flex-row gap-2 text-sm text-[#7677F4] border  border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
                 {loading ? (

@@ -180,7 +180,7 @@ export const ResidentialCourse = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-sm font-normal text-[#333333]">
+      <div className="text-xs font-normal text-[#333333]">
         {t("residential_course")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
@@ -231,7 +231,7 @@ export const AccommodationFeeMode = () => {
 
   return (
     <div className="flex gap-1 flex-col mt-[32px]">
-      <div className="text-sm font-normal text-[#333333]">
+      <div className="text-xs font-normal text-[#333333]">
         {t("course.new_course:accommodation_tab.accommodation_fee")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
