@@ -163,7 +163,7 @@ export const CityDropDown = ({
       value: formData?.state_id,
     });
   
-  // fetch the cities from the city table based on the filter 
+  //when state is selected  fetch the cities from the city table corresponding to the state 
   const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
@@ -221,12 +221,11 @@ export const CityDropDown = ({
   };
 
   return (
-    <div className="flex gap-1 flex-col h-[60px]">
+    <div className="flex gap-1 flex-col">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">{t("city")}</Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
-    <div>
       <Select value={cityValue} onValueChange={handleCityValueChange}  onOpenChange={()=>setCitySelectClicked(true)}>
         <SelectTrigger
           error={cityValueError ? true : false}
@@ -254,14 +253,15 @@ export const CityDropDown = ({
           </SelectItems>
         </SelectContent>
       </Select>
-        {/* when does not click on next button and click on the city dropdown before selecting the state  then it show the error*/}
-        {(citySelectClicked && !formData?.state_id && !cityValueError) && (<p className="text-[#FF6D6D] mt-2 text-[12px]">Please select State</p>)}
-     </div>
       {cityValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
           {cityValueError.message}
         </span>
       )}
+      {/*
+      confluence - https://aoldwiki.artofliving.org/display/MVP/New+Course
+      */}
+       {(citySelectClicked && !formData?.state_id) && (<p className="text-[#FF6D6D] text-[12px]">Please select State</p>)}
     </div>
   );
 };
@@ -360,7 +360,7 @@ export const StateDropDown = ({
   }
 
   return (
-    <div className="flex gap-1 flex-col h-[60px] w-full">
+    <div className="flex gap-1 flex-col w-full">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">
           {t("course.find_course:state")}
@@ -449,7 +449,7 @@ export const CenterDropDown = ({
       value: formData.state_id,
     });
   
-  // fetch the centers from the center table based on the filter 
+  //when state is selected  fetch the centers from the center table corresponding to the state 
   const { options, onSearch: centerOnSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
@@ -502,7 +502,7 @@ export const CenterDropDown = ({
   }
 
   return (
-    <div className="flex gap-1 flex-col h-[60px]">
+    <div className="flex gap-1 flex-col">
       <div className="flex flex-row gap-1 items-center">
         <Text className="text-xs font-normal text-[#333333]">
           {" "}
@@ -510,7 +510,6 @@ export const CenterDropDown = ({
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
-      <div>
       <Select value={centerValue} onValueChange={handleCenterValueChange} onOpenChange={()=>setCenterSelectClicked(true)}>
         <SelectTrigger
           className="w-full font-semibold text-sm"
@@ -542,14 +541,15 @@ export const CenterDropDown = ({
           </SelectItems>
         </SelectContent>
       </Select>
-      {/* when does not click on next button and click on the center dropdown before selecting the state  then it show the error*/}
-      {(centerSelectClicked && !formData?.state_id && !centerValueError) && (<p className="text-[#FF6D6D] mt-2 text-[12px]">Please select State</p>)}
-     </div>
       {centerValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
           {centerValueError.message}
         </span>
       )}
+      {/*
+      confluence - https://aoldwiki.artofliving.org/display/MVP/New+Course
+      */}
+      {(centerSelectClicked && !formData?.state_id ) && (<p className="text-[#FF6D6D] text-[12px]">Please select State</p>)}
     </div>
   );
 };

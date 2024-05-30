@@ -752,7 +752,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
       value: formData?.temporaryadvancefilter?.state
     });
   
-  // fetch the cities from the city table based on the filter 
+  //when state is selected  fetch the cities from the city table corresponding to the state 
   const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
@@ -813,7 +813,9 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         </SelectItems>
       </SelectContent>
     </Select>
-    {/* when click on the city dropdown before selecting the state it show the error*/}
+   {/*
+      confluence - https://aoldwiki.artofliving.org/display/MVP/New+Course
+  */}
      {(citySelectClicked && !formData?.temporaryadvancefilter?.state) && (<p className="text-[#FF6D6D] mt-1 text-[12px]">Please select State</p>)}
      </div>
   );
@@ -845,7 +847,7 @@ export const Center = ({
       value: formData?.temporaryadvancefilter?.state
     });
 
-  // fetching the data from the center table
+  //when state is selected  fetch the centers from the center table corresponding to the state 
   const { options, onSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
@@ -907,7 +909,9 @@ export const Center = ({
         </SelectItems>
       </SelectContent>
     </Select>
-    {/*click on the center dropdown before selecting the state it show the error*/}
+    {/*
+      confluence - https://aoldwiki.artofliving.org/display/MVP/New+Course
+    */}
     {(centerSelectClicked && !formData?.temporaryadvancefilter?.state) && (<p className="text-[#FF6D6D] mt-1 text-[12px]">Please select State</p>)}
     </div>
   );
