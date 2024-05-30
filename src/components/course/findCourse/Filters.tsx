@@ -742,22 +742,12 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   const { watch } = useFormContext();
 
   const formData = watch();
-
-  let filter: Array<CrudFilter> = [];
   
-  // filter for apply while fetching the cities based on the state 
-    filter.push({
-      field: "state_id",
-      operator: "eq",
-      value: formData?.temporaryadvancefilter?.state
-    });
-  
-  //when state is selected  fetch the cities from the city table corresponding to the state 
+  // fetch all the cities from the city table 
   const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
-    filters:filter,
     pagination: {
       pageSize: pageSize,
       mode: "server",
@@ -775,7 +765,6 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   };
   const { t } = useTranslation("common");
   return (
-    <div>
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
@@ -813,11 +802,6 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         </SelectItems>
       </SelectContent>
     </Select>
-   {/*
-      confluence - https://aoldwiki.artofliving.org/display/MVP/New+Course
-  */}
-     {(citySelectClicked && !formData?.temporaryadvancefilter?.state) && (<p className="text-[#FF6D6D] mt-1 text-[12px]">Please select State</p>)}
-     </div>
   );
 };
 
@@ -838,16 +822,7 @@ export const Center = ({
   const { watch } = useFormContext();
   const formData = watch();
 
-  let filter: Array<CrudFilter> = [];
-  
-  // filter for apply while fetching the centers based on the state
-    filter.push({
-      field: "state_id",
-      operator: "eq",
-      value: formData?.temporaryadvancefilter?.state
-    });
-
-  //when state is selected  fetch the centers from the center table corresponding to the state 
+  //fetch all the centers from the center table
   const { options, onSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
@@ -856,7 +831,6 @@ export const Center = ({
       pageSize: pageSize,
       mode: "server",
     },
-    filters:filter,
     onSearch: (value) => [
       {
         field: "name",
@@ -871,7 +845,6 @@ export const Center = ({
   };
   const { t } = useTranslation("new_strings");
   return (
-    <div>
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
@@ -909,14 +882,8 @@ export const Center = ({
         </SelectItems>
       </SelectContent>
     </Select>
-    {/*
-      confluence - https://aoldwiki.artofliving.org/display/MVP/New+Course
-    */}
-    {(centerSelectClicked && !formData?.temporaryadvancefilter?.state) && (<p className="text-[#FF6D6D] mt-1 text-[12px]">Please select State</p>)}
-    </div>
   );
 };
-
 export const CourseStatus = () => {
   const { getValues } = useFormContext();
 
