@@ -1,7 +1,7 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAllIcon from "@public/assets/ClearAllIcon";
 import CrossIcon from "@public/assets/CrossIcon";
-import { useSelect } from "@refinedev/core";
+import { CrudFilter, useList, useSelect } from "@refinedev/core";
 import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { CountComponent, DateRangePickerComponent } from "pages/courses/list";
@@ -39,6 +39,7 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 // Entity implies City,Center,State,...
@@ -632,6 +633,37 @@ export const State = ({
   });
 
   const [pageSize, setPageSize] = useState(10);
+  
+  /**
+   * Getting country code from route using useGetCountryCode function
+   */
+  const countryCode = useGetCountryCode();
+
+  /**
+   * Getting country data based on country code
+   */
+  const { data } = useList<any>({
+    resource: "country",
+    filters: [
+      {
+        field: "abbr",
+        operator: "contains",
+        value: countryCode,
+      },
+    ],
+  });
+
+  
+  let filter: Array<CrudFilter> = [];
+
+  //If the country code is public then dont make the filter for country
+  if (countryCode !== "public") {
+    filter.push({
+      field: "country_id",
+      operator: "eq",
+      value: data?.data?.[0]?.id,
+    });
+  }
 
   const { options, onSearch } = useSelect({
     resource: "state",
@@ -641,6 +673,7 @@ export const State = ({
       pageSize: pageSize,
       mode: "server",
     },
+    filters:filter,
     onSearch: (value) => [
       {
         field: "name",
@@ -703,10 +736,23 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
 
   const [pageSize, setPageSize] = useState(10);
 
+  const { watch } = useFormContext();
+
+  const formData = watch();
+
+  let filter: Array<CrudFilter> = [];
+  
+    filter.push({
+      field: "state_id",
+      operator: "eq",
+      value: formData?.temporaryadvancefilter?.state
+    });
+
   const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
+    filters:filter,
     pagination: {
       pageSize: pageSize,
       mode: "server",
@@ -774,6 +820,17 @@ export const Center = ({
   });
   const [pageSize, setPageSize] = useState(10);
 
+  const { watch } = useFormContext();
+  const formData = watch();
+
+  let filter: Array<CrudFilter> = [];
+  
+    filter.push({
+      field: "state_id",
+      operator: "eq",
+      value: formData?.temporaryadvancefilter?.state
+    });
+
   const { options, onSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
@@ -782,6 +839,7 @@ export const Center = ({
       pageSize: pageSize,
       mode: "server",
     },
+    filters:filter,
     onSearch: (value) => [
       {
         field: "name",
