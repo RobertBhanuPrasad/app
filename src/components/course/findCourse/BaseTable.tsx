@@ -613,7 +613,7 @@ export function BaseTable<TData, TValue>({
                   )}
                 </SelectContent>
               </Select>
-              <div className="text-[13px]">{t('course.find_course:of')} {total}</div>
+              <div className="text-[14px] font-normal">{t('course.find_course:of')} {total}</div>
             </div>}
           </div>
         )}
