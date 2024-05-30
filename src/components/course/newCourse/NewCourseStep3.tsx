@@ -1948,7 +1948,7 @@ const TimeSelector = ({
           <div className="flex gap-2 items-center">
             <Clock />
             <div>
-              {hourValue} : {minuteValue} {is12HourFormat && timeFormat}
+              {hourValue}:{minuteValue} {is12HourFormat && timeFormat}
             </div>
           </div>
           <div className="px-1 py-[7px]">
