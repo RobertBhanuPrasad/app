@@ -15,15 +15,13 @@ import {
 } from "@refinedev/core";
 import { format } from "date-fns";
 import _ from "lodash";
-import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
   useController,
   useFieldArray,
-  useForm,
   useFormContext,
   useFormState,
-  useWatch,
+  useWatch
 } from "react-hook-form";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { DateCalendar } from "src/ui/DateCalendar";
@@ -52,13 +50,19 @@ import {
   VenueNameComponent,
 } from "@components/CommonComponents/DropDowns";
 import GetScrollTypesAlert from "@components/GetScrollAlert";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import Important from "@public/assets/Important";
+import { translatedText } from "src/common/translations";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import {
   NATIONAL_ADMIN,
   SUPER_ADMIN,
   TIME_FORMAT_12_HOURS,
 } from "src/constants/OptionValueOrder";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "src/ui/hover-card";
 import { Label } from "src/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
@@ -76,13 +80,6 @@ import {
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
-import { translatedText } from "src/common/translations";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "src/ui/hover-card";
-import Important from "@public/assets/Important";
 
 import { useTranslation } from "next-i18next";
 
@@ -129,7 +126,8 @@ const OnlineProgram = () => {
 
   //Requirement: Fee is fetch based on program_type,location and course start date.So when ever state_id,city_id and center_id is changed need to remove existing fee levels.
   const handleRemoveFeeLevels=()=>{
-    setValue("program_fee_level_settings",[])
+    setValue("program_fee_level_settings",undefined)
+    setValue("feeLevels",undefined );
     setValue("is_early_bird_enabled",undefined)
     setValue("early_bird_cut_off_period",undefined)
     setTimeout(() => {
@@ -303,7 +301,7 @@ const SchedulesHeader = () => {
                 <SelectItems onBottomReached={() => {}}>
                   {options?.map((option, index) => {
                     return (
-                      <div>
+                      <div key={index}>
                         <SelectItem
                           key={option.value}
                           value={option.value}
@@ -660,7 +658,8 @@ const Venue = () => {
         }
         //Requirement: Fee is fetch based on program_type,location and course start date.So when ever New Venue's state_id,city_id and center_id is changed need to remove existing fee levels.
         if(!(formData?.newVenue?.state_id==newVenueData?.state_id && formData?.newVenue?.city_id==newVenueData?.city_id && formData?.newVenue?.center_id==newVenueData?.center_id)){
-          setValue("program_fee_level_settings",[])
+          setValue("program_fee_level_settings",undefined)
+          setValue("feeLevels",undefined );
           setValue("is_early_bird_enabled",undefined)
           setValue("early_bird_cut_off_period",undefined)
           setTimeout(() => {
@@ -706,7 +705,8 @@ const Venue = () => {
 
   const handleRemoveFeeLevel=()=>{
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings", []);
+    setValue("program_fee_level_settings", undefined);
+    setValue("feeLevels",undefined );
     setValue("is_early_bird_enabled", undefined);
     setValue("early_bird_cut_off_period", undefined);
     setTimeout(() => {
@@ -727,7 +727,7 @@ const Venue = () => {
       >
         <Label htmlFor="existing-venue" className="flex-[1]">
           <div
-            className={`rounded-[16px] h-[118px] relative flex py-[24px] px-4 flex-col ${
+            className={`rounded-[16px] h-[118px] relative flex py-[24px] px-6 flex-col ${
               value === "existing-venue"
                 ? "border border-[#7677F4]"
                 : "border border-[#D6D7D8]"
@@ -746,19 +746,12 @@ const Venue = () => {
                 />
               )}
               {/* If we not selected the existing venue then it is not in the position moving to the left so if we not selected then we are adjusting it with the ml */}
-              <div
-                className={`${
-                  (formData?.is_existing_venue == "" ||
-                    formData?.is_existing_venue == "new-venue") &&
-                  formData?.existingVenue == undefined &&
-                  "ml-7"
-                }`}
-              >
+              <div>
                 {t("course.new_course:time_and_venue_tab.existing_venue")}
               </div>
             </div>
             {data ? (
-              <div>
+              <div className="h-full">
                 {existingVenue ? (
                   <ExistingVenueDetails />
                 ) : (
@@ -792,7 +785,7 @@ const Venue = () => {
         {formData?.newVenue ? (
           <Label htmlFor="new-venue" className="flex-[1]">
             <div
-              className={`h-[118px] rounded-[16px] border border-[#7677F4] px-4 py-6 ${
+              className={`h-[118px]  rounded-[16px] border break-all border-[#7677F4] px-4 py-6 ${
                 value === "new-venue"
                   ? "border border-[#7677F4]"
                   : "border border-[#D6D7D8]"
@@ -901,7 +894,7 @@ const NewVenueDetails = () => {
   }
 
   return (
-    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
+    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666] h-full overflow-y-scroll">
     {name  ? `${name}, ` : ''}
     {address  ? `${address}, ` : ''}{data?.data?.name}, {data?.data?.state_id?.name}
     {postal_code  ? `, ${" "}${postal_code} ` : ''}
@@ -925,7 +918,7 @@ const ExistingVenueDetails = () => {
   }
 
   return (
-    <div className="ml-7 text-wrap text-[16px] font-normal leading-6 text-[#666666]">
+    <div className="ml-7 text-wrap text-[16px] h-full font-normal leading-6 text-[#666666] break-all overflow-y-auto ">
       {existingVenue?.name?`${existingVenue?.name}, `:""}{existingVenue?.address?`${existingVenue?.address}, `:''}{cityData?.data?.name},{" "}
       {cityData?.data?.state.name}{existingVenue?.postal_code?`, ${existingVenue?.postal_code}`:''}
     </div>
@@ -1162,7 +1155,8 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   //After sorting if first schedule is different for both original and temporary schedule then user as changed start date of course (start date is first schedule)
   if(sortedOriginalSchedules?.[0]?.date.getTime()!=sortedTempSchedules?.[0]?.date.getTime()){
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever start date of schedule is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings",[])
+    setValue("program_fee_level_settings",undefined)
+    setValue("feeLevels",undefined );
     setValue("is_early_bird_enabled",undefined)
     setValue("early_bird_cut_off_period",undefined)
     setTimeout(() => {
@@ -1372,7 +1366,8 @@ const {
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
     if(existingVenue?.id!=existingVenueObject?.[0]){
-      setValue("program_fee_level_settings",[])
+      setValue("program_fee_level_settings",undefined)
+      setValue("feeLevels",undefined );
       setValue("is_early_bird_enabled",undefined)
       setValue("early_bird_cut_off_period",undefined)
       setTimeout(() => {
@@ -1575,7 +1570,7 @@ export const ExistingVenueListSection = ({
       role.role_id.order == NATIONAL_ADMIN || role.role_id.order == SUPER_ADMIN
   );
   return (
-    <div className="flex flex-row justify-between !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4">
+    <div className="flex flex-row justify-between !w-[390px] h-[102px] items-start space-x-3 space-y-0 rounded-[16px] border p-4 overflow-y-scroll break-all">
       <Checkbox
         id={item.id}
         value={item.id}
@@ -1953,7 +1948,7 @@ const TimeSelector = ({
           <div className="flex gap-2 items-center">
             <Clock />
             <div>
-              {hourValue} : {minuteValue} {is12HourFormat && timeFormat}
+              {hourValue}:{minuteValue} {is12HourFormat && timeFormat}
             </div>
           </div>
           <div className="px-1 py-[7px]">

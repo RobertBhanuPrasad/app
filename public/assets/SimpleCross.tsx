@@ -11,9 +11,9 @@ export default function SimpleCross() {
                 <path
                     d="M18 2L2 18M2 2L18 18"
                     stroke="#333333"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                 />
             </svg>
         </div>

@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { fetchCourseFee } from "pages/courses/add";
 import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
@@ -6,12 +7,13 @@ import {
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
-import { SUPER_ADMIN } from "src/constants/OptionValueOrder";
+import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
 
 export const getRequiredFieldsForValidation = async (
   formData: any,
-  loginUserData: any
+  loginUserData: any,
+  countryCode: any
 ) => {
   const supabase = supabaseClient();
 
@@ -81,6 +83,37 @@ export const getRequiredFieldsForValidation = async (
     RequiredNewCourseStep3FormNames.push("time_zone_id");
   }
 
+  //Checking Weather login user is Super Admin or Not
+  let isUserNationAdminOrSuperAdmin = false;
+
+  //Fetching login user roles
+  const user_roles: any[] = loginUserData?.userData?.user_roles || [];
+
+  if (
+    user_roles.some(
+      (role) =>
+        role.role_id.order === NATIONAL_ADMIN ||
+        role.role_id.order === SUPER_ADMIN
+    )
+  ) {
+    isUserNationAdminOrSuperAdmin = true;
+  }
+
+  const feeData = await fetchCourseFee({ formData, countryCode: countryCode });
+
+  //Checking Weather a fee is editable or not
+  const isFeeEditable =
+    isUserNationAdminOrSuperAdmin || feeData?.[0]?.is_program_fee_editable
+      ? true
+      : false;
+
+  let RequiredNewCourseStep4FormNames: string[] = ["feeLevels"];
+
+  //If it is a Editable fee need to validate
+  if (isFeeEditable) {
+    RequiredNewCourseStep4FormNames = [...RequiredNewCourseStep4FormNames,"is_early_bird_enabled","program_fee_level_settings"];
+  }
+
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false
       ? [
@@ -97,7 +130,7 @@ export const getRequiredFieldsForValidation = async (
     Object.values(RequiredNewCourseStep1FormNames),
     Object.values(RequiredNewCourseStep2FormNames),
     RequiredNewCourseStep3FormNames,
-    Object.values(NewCourseStep4FormNames),
+    RequiredNewCourseStep4FormNames,
     Object.values(RequiredNewCourseStep5FormNames),
     Object.values(NewCourseStep6FormNames),
   ];

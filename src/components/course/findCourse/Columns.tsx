@@ -316,32 +316,11 @@ export const column = (
         };
 
         /**
-         * Handles creating a new course.
-         * Retrieves default values for the course with the given ID,
-         * sets the retrieved values as the new course data, and
-         * switches the view to the new course page.
+         * when we click on copy course we change the route with particular course id with copy in the link
          */
         const handleCopyCourse = async () => {
-          setViewThankyouPage(false);
+          router.push(`/courses/${row.original.id}/copy`);
 
-          let defaultValues = await handleCourseDefaultValues(
-            row.original.id,
-            timeFormat12HoursId
-          );
-          // we have to delete schedules when user click on cipy course and other we need to prefill
-          defaultValues = _.omit(defaultValues, ["id", "schedules"]);
-          //remove the id, program_id from each object in program_fee_level_settings array
-          if (defaultValues?.program_fee_level_settings) {
-            defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
-              _.omit(setting, ['id', 'program_id'])
-            );
-          }
-          setNewCourseData(defaultValues);
-          // we are storing the program created by in the zustand variable to use it in the validatios
-          setProgramCreatedById(defaultValues?.program_created_by)
-          // when we do copy course we have to set the current step to first step
-          setCurrentStep(1);
-          router.push({ pathname: "/courses/add", query: { action: "Copy" } });
         };
 
         dropDownMenuData?.unshift({ label: t('course.find_course:view_course_details'), value: 9 });
@@ -410,8 +389,9 @@ export const column = (
                   <DropdownMenuContent align="end">
                     <p>
                       {dropDownMenuData &&
-                        dropDownMenuData.map((data: any) => (
+                        dropDownMenuData.map((data: any,index:number) => (
                           <DropdownMenuItem
+                          key={index}
                             onClick={() => {
                               handleSelected(data.value);
                             }}

@@ -770,7 +770,7 @@ export const CourseTypeComponent = ({ name }: any) => {
           {options.map((option: any, index: number) => (
             <>
               <SelectItem
-                key={option.value}
+                key={index}
                 value={option.value}
                 className="h-[44px]"
               >

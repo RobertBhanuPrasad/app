@@ -63,32 +63,10 @@ export const ViewCourseGlobalActions = () => {
   )?.id as number;
 
   /**
-   * Handles creating a new course.
-   * Retrieves default values for the course with the given ID,
-   * sets the retrieved values as the new course data, and
-   * switches the view to the new course page.
+   * when we click on copy course we change the route with particular course id and with copy in the route link
    */
   const handleCopyCourse = async () => {
-    setViewThankyouPage(false);
-
-    let defaultValues = await handleCourseDefaultValues(
-      ID,
-      timeFormat12HoursId
-    );
-    // we have to delete schedules when user click on cipy course and other we need to prefill
-    defaultValues = _.omit(defaultValues, ["id", "schedules"]);
-    //remove the id, program_id from each object in program_fee_level_settings array
-    if (defaultValues?.program_fee_level_settings) {
-      defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
-        _.omit(setting, ['id', 'program_id'])
-      );
-    }
-    setNewCourseData(defaultValues);
-    // we are storing the program created by in the zustand variable to use it in the validatios
-    setProgramCreatedById(defaultValues?.program_created_by)
-    // when we do copy course we have to set the current step to first step
-    setCurrentStep(1);
-    router.push({ pathname: "/courses/add", query: { action: "Copy" } });
+    router.push(`/courses/${ID}/copy`);
   };
 
   const handleGlobalAction = (option: number) => {
@@ -133,12 +111,13 @@ export const ViewCourseGlobalActions = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[190px]">
         <div className="flex flex-col gap-1 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
-          {globalActionsOptions.map((data: any) => (
+          {globalActionsOptions.map((data: any,index:any) => (
             <DropdownMenuItem
               onClick={() => {
                 handleGlobalAction(data?.value);
               }}
               className=" cursor-pointer"
+              key={index}
             >
               {data?.label}
             </DropdownMenuItem>

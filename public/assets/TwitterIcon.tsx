@@ -11,7 +11,7 @@ function TwitterIcon() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <circle cx="24" cy="24" r="24" fill="#F6F7FF" />
-        <g clip-path="url(#clip0_5226_18473)">
+        <g clipPath="url(#clip0_5226_18473)">
           <path
             d="M24 8C15.1637 8 8 15.1637 8 24C8 32.8363 15.1637 40 24 40C32.8363 40 40 32.8363 40 24C40 15.1637 32.8363 8 24 8Z"
             fill="black"

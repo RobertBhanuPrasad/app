@@ -4,7 +4,7 @@ import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import {
@@ -96,14 +96,14 @@ const RegistrationGateway = () => {
 
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
-      <div className="text-[14px] font-normal">
+      <div className="text-sm font-normal">
         {t("registration_via_3rd_party_gateway")}
       </div>
       <Switch
         id="registration"
         className="!w-[57px] !h-[24px]"
         onCheckedChange={onChange}
-        checked={registrationSieUrl}
+        checked={value}
       />
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">
@@ -118,11 +118,11 @@ const RegistrationGateway = () => {
               placeholder={t("new_strings:enter_url")}
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
-              className="placeholder:text-[#999999]"
+              className="placeholder:text-[#999999] rounded-[12px] text-[14px] text-[#333333]"
               error={error ? true : false}
             />
             {error && (
-              <span className="text-[#FF6D6D] text-[12px]">
+              <span className="text-[#FF6D6D] text-xs font-semibold">
                 {error?.message}
               </span>
             )}
@@ -229,31 +229,17 @@ const RadioCards = () => {
   };
 
   /**
-   * @constant data is the data from the option_labels table of Program Organizer Type name
-   * @description this const is used store the data from the option_labels table giving the name as Program Organizer Type
-   */
-  const { data } = useList({
-    resource: "option_labels",
-    filters: [
-      {
-        field: "name",
-        operator: "eq",
-        value: "Program Organizer Type",
-      },
-    ],
-  });
-
-  /**
    * @constant programOrganizerTypeData is the data from the option_values
    * @description this const is used to store the data from the option_values which option_label_id is Program Organizer Type
    */
   const { data: programOrganizerTypeData } = useList({
     resource: "option_values",
+    meta:{select:"*,option_label_id!inner(*)"},
     filters: [
       {
-        field: "option_label_id",
+        field: "option_label_id.key",
         operator: "eq",
-        value: data?.data?.[0]?.id,
+        value: PROGRAM_ORGANIZER_TYPE,
       },
     ],
   });
@@ -387,7 +373,7 @@ const RadioCards = () => {
               <Organizer
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
-              <div className="w-[240px] text-wrap text-center justify-center">
+              <div className="w-[240px] text-wrap text-center justify-center text-sm">
                 {iAmOrganisingCourse}
               </div>
             </div>
@@ -395,7 +381,7 @@ const RadioCards = () => {
         </Label>
       </div>
       {radioError && (
-        <span className="text-[#FF6D6D] text-[14px]">
+        <span className="text-[#FF6D6D] text-xs font-semibold">
           {radioError?.message}
         </span>
       )}
@@ -483,10 +469,11 @@ const OrganizationDropDown = () => {
     setValue("state_id", "");
     setValue("city_id", "");
     setValue("center_id", "");
-    setValue("is_residential_program", false);
+    setValue("is_residential_program", undefined);
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings", []);
+    setValue("program_fee_level_settings",undefined );
+    setValue("feeLevels",undefined );
     setValue("is_early_bird_enabled", undefined);
     setValue("early_bird_cut_off_period", undefined);
 
@@ -561,7 +548,7 @@ const OrganizationDropDown = () => {
             <SelectItems onBottomReached={handleOnBottomReached}>
               {options?.map((option, index) => {
                 return (
-                  <div>
+                  <div key={index}>
                     <SelectItem
                       key={option.value}
                       value={option.value}
@@ -580,7 +567,7 @@ const OrganizationDropDown = () => {
         </Select>
 
         {organizationError && (
-          <span className="text-[#FF6D6D] text-[12px]">
+          <span className="text-[#FF6D6D] text-xs font-semibold">
             {organizationError?.message}
           </span>
         )}
@@ -688,7 +675,7 @@ const ProgramOrganizerDropDown = () => {
         error={programOrganizerError}
       />
       {programOrganizerError && (
-        <span className="text-[#FF6D6D] text-[12px]">
+        <span className="text-[#FF6D6D] text-xs font-semibold">
           {programOrganizerError?.message}
         </span>
       )}
