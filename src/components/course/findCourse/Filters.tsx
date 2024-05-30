@@ -736,8 +736,8 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
 
   const [pageSize, setPageSize] = useState(10);
 
+  // track whether the city drop down is clicked or not
   const [citySelectClicked, setCitySelectClicked] = useState(false)
-
 
   const { watch } = useFormContext();
 
@@ -745,12 +745,14 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
 
   let filter: Array<CrudFilter> = [];
   
+  // filter for apply while fetching the cities based on the state 
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData?.temporaryadvancefilter?.state
     });
-
+  
+  // fetch the cities from the city table based on the filter 
   const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
@@ -811,6 +813,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         </SelectItems>
       </SelectContent>
     </Select>
+    {/* when click on the city dropdown before selecting the state it show the error*/}
      {(citySelectClicked && !formData?.temporaryadvancefilter?.state) && (<p className="text-[#FF6D6D] mt-1 text-[12px]">Please select State</p>)}
      </div>
   );
@@ -827,6 +830,7 @@ export const Center = ({
   });
   const [pageSize, setPageSize] = useState(10);
 
+  // track whether the center drop down is clicked or not
   const [centerSelectClicked, setCenterSelectClicked] = useState(false)
 
   const { watch } = useFormContext();
@@ -834,12 +838,14 @@ export const Center = ({
 
   let filter: Array<CrudFilter> = [];
   
+  // filter for apply while fetching the centers based on the state
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData?.temporaryadvancefilter?.state
     });
 
+  // fetching the data from the center table
   const { options, onSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
@@ -901,6 +907,7 @@ export const Center = ({
         </SelectItems>
       </SelectContent>
     </Select>
+    {/*click on the center dropdown before selecting the state it show the error*/}
     {(centerSelectClicked && !formData?.temporaryadvancefilter?.state) && (<p className="text-[#FF6D6D] mt-1 text-[12px]">Please select State</p>)}
     </div>
   );

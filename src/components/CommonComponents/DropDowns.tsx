@@ -142,6 +142,8 @@ export const CityDropDown = ({
 }) => {
   const { t } = useTranslation("common");
   const [pageSize, setPageSize] = useState(10);
+
+  // track whether the city drop down is clicked or not
   const [citySelectClicked, setCitySelectClicked] = useState(false)
 
   const {
@@ -154,13 +156,14 @@ export const CityDropDown = ({
 
   let filter: Array<CrudFilter> = [];
   
+  // filter for apply while fetching the cities based on the state 
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData?.state_id,
     });
   
-
+  // fetch the cities from the city table based on the filter 
   const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
@@ -251,7 +254,8 @@ export const CityDropDown = ({
           </SelectItems>
         </SelectContent>
       </Select>
-      {(citySelectClicked && !formData?.state_id && !cityValueError) && (<p className="text-[#FF6D6D] mt-2 text-[12px]">Please select State</p>)}
+        {/* when does not click on next button and click on the city dropdown before selecting the state  then it show the error*/}
+        {(citySelectClicked && !formData?.state_id && !cityValueError) && (<p className="text-[#FF6D6D] mt-2 text-[12px]">Please select State</p>)}
      </div>
       {cityValueError && (
         <span className="text-[#FF6D6D] text-[12px]">
@@ -414,6 +418,8 @@ export const CenterDropDown = ({
 }) => {
   const { t } = useTranslation(["common", "course.new_course"]);
   const [pageSize, setPageSize] = useState(10);
+
+  // track whether the center drop down is clicked or not
   const [centerSelectClicked, setCenterSelectClicked] = useState(false)
 
 
@@ -436,13 +442,14 @@ export const CenterDropDown = ({
   //   });
   // }
 
+  // filter for apply while fetching the centers based on the state 
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData.state_id,
     });
   
-
+  // fetch the centers from the center table based on the filter 
   const { options, onSearch: centerOnSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
@@ -535,6 +542,7 @@ export const CenterDropDown = ({
           </SelectItems>
         </SelectContent>
       </Select>
+      {/* when does not click on next button and click on the center dropdown before selecting the state  then it show the error*/}
       {(centerSelectClicked && !formData?.state_id && !centerValueError) && (<p className="text-[#FF6D6D] mt-2 text-[12px]">Please select State</p>)}
      </div>
       {centerValueError && (
