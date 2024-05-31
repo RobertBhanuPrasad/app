@@ -27,6 +27,8 @@ interface NewCourseStore {
   programId: number;
   setProgramId: (by: number) => void;
   setProgramCreatedById : (by: any) => void;
+  paymentGatewaysData: PaymentGateway[]
+  setPaymentGatewaysData:(by: PaymentGateway[]) => void;
   /**
    * This variable is used to store the id of the program created by id
    * which is i am organizing or i am teaching or i am co-teaching
@@ -57,6 +59,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   programId: 1,
   viewSuccessModal: false,
   viewRejectedModal: false,
+  paymentGatewaysData: [],
 
   viewCourseAccountingSuccessModal: false,
   viewCourseAccountingRejectedDescriptionModal: false,
@@ -89,6 +92,11 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
     set(() => ({
       newCourseData: data,
     }));
+  },
+  setPaymentGatewaysData:(data: PaymentGateway[]) => {
+    set(()=>({
+      paymentGatewaysData: data
+    }))
   },
   newAdvanceFilterData: {},
   setNewAdvanceFilterData: (data: any) => {

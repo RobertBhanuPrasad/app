@@ -860,3 +860,14 @@ interface CourseAccountingFormFieldTypes {
   program_offline_revenue?: ProgramOfflineRevenueDatabaseType[];
   course_accounting_user_consent?: boolean;
 }
+
+
+interface PaymentGateway {
+  id: number;
+  type: string;
+  name: string;
+  description: string;
+  test: boolean;
+  transaction_intent: boolean;
+  enabled: boolean;
+}
