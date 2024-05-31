@@ -143,6 +143,9 @@ export const CityDropDown = ({
   const { t } = useTranslation("common");
   const [pageSize, setPageSize] = useState(10);
 
+  // track whether the city drop down is clicked or not
+  const [citySelectClicked, setCitySelectClicked] = useState(false)
+
   const {
     field: { value: cityValue, onChange: cityValueOnChange },
     fieldState: { error: cityValueError },
@@ -153,13 +156,14 @@ export const CityDropDown = ({
 
   let filter: Array<CrudFilter> = [];
   
+  // filter for apply while fetching the cities based on the state 
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData?.state_id,
     });
   
-
+  //when state is selected  fetch the cities from the city table corresponding to the state 
   const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
@@ -217,13 +221,12 @@ export const CityDropDown = ({
   };
 
   return (
-    <div className="flex gap-1 flex-col h-[60px]">
+    <div className="flex gap-1 flex-col">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">{t("city")}</Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
-
-      <Select value={cityValue} onValueChange={handleCityValueChange}>
+      <Select value={cityValue} onValueChange={handleCityValueChange}  onOpenChange={()=>setCitySelectClicked(true)}>
         <SelectTrigger
           error={cityValueError ? true : false}
           className="font-semibold text-sm "
@@ -255,6 +258,10 @@ export const CityDropDown = ({
           {cityValueError.message}
         </span>
       )}
+      {/*
+      confluence - https://aoldwiki.artofliving.org/display/MVP/New+Course
+      */}
+       {(citySelectClicked && !formData?.state_id) && (<p className="text-[#FF6D6D] text-[12px]">Please select State</p>)}
     </div>
   );
 };
@@ -353,7 +360,7 @@ export const StateDropDown = ({
   }
 
   return (
-    <div className="flex gap-1 flex-col h-[60px] w-full">
+    <div className="flex gap-1 flex-col w-full">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">
           {t("course.find_course:state")}
@@ -412,6 +419,10 @@ export const CenterDropDown = ({
   const { t } = useTranslation(["common", "course.new_course"]);
   const [pageSize, setPageSize] = useState(10);
 
+  // track whether the center drop down is clicked or not
+  const [centerSelectClicked, setCenterSelectClicked] = useState(false)
+
+
   const {
     field: { value: centerValue, onChange: centerValueOnChange },
     fieldState: { error: centerValueError },
@@ -431,13 +442,14 @@ export const CenterDropDown = ({
   //   });
   // }
 
+  // filter for apply while fetching the centers based on the state 
     filter.push({
       field: "state_id",
       operator: "eq",
       value: formData.state_id,
     });
   
-
+  //when state is selected  fetch the centers from the center table corresponding to the state 
   const { options, onSearch: centerOnSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
@@ -490,7 +502,7 @@ export const CenterDropDown = ({
   }
 
   return (
-    <div className="flex gap-1 flex-col h-[60px]">
+    <div className="flex gap-1 flex-col">
       <div className="flex flex-row gap-1 items-center">
         <Text className="text-xs font-normal text-[#333333]">
           {" "}
@@ -498,7 +510,7 @@ export const CenterDropDown = ({
         </Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
-      <Select value={centerValue} onValueChange={handleCenterValueChange}>
+      <Select value={centerValue} onValueChange={handleCenterValueChange} onOpenChange={()=>setCenterSelectClicked(true)}>
         <SelectTrigger
           className="w-full font-semibold text-sm"
           error={centerValueError ? true : false}
@@ -534,6 +546,10 @@ export const CenterDropDown = ({
           {centerValueError.message}
         </span>
       )}
+      {/*
+      confluence - https://aoldwiki.artofliving.org/display/MVP/New+Course
+      */}
+      {(centerSelectClicked && !formData?.state_id ) && (<p className="text-[#FF6D6D] text-[12px]">Please select State</p>)}
     </div>
   );
 };
