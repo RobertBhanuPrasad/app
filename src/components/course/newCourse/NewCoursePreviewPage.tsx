@@ -381,9 +381,9 @@ export default function NewCourseReviewPage() {
         {newCourseData?.schedules?.map((data: any) => {
           const schedule = `${formatDateString(data.date)} | ${
             data?.startHour || "00"
-          } : ${data?.startMinute || "00"}  ${
+          }:${data?.startMinute || "00"}  ${
             data?.startTimeFormat ? data?.startTimeFormat : ""
-          } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
+          } to ${data?.endHour || "00"}:${data?.endMinute || "00"}  ${
             data?.endTimeFormat ? data?.endTimeFormat : ""
           }`;
 
@@ -1369,13 +1369,13 @@ export default function NewCourseReviewPage() {
             </div>
           </div>
         </section>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center text-base justify-center">
           {isSubmitting && (
             <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
               <div className="loader"></div>
             </div>
           )}
-          <Button onClick={handClickContinue}>{t("continue_button")}</Button>
+          <Button className="text-base" onClick={handClickContinue}>{t("continue_button")}</Button>
         </div>
       </div>
     </div>
