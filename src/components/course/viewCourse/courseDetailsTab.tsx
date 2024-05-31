@@ -12,6 +12,7 @@ import { formatDateTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from 'next-i18next';
 import _ from "lodash";
+import { sortFeeLevels } from "../newCourse/NewCourseStep4";
 
 interface fullNameObject {
   user_id?: {
@@ -105,7 +106,7 @@ function CourseDetailsTab() {
 
   //Need to show only the fee level enabled by the user at the time of course creation.
   const programFees=programFeeLevels?.filter((feeLevel: { is_enable: boolean; })=>feeLevel.is_enable);
-  const sortProgramFees=_.sortBy(programFees, ['is_custom_fee', 'order']);
+  const sortProgramFees= sortFeeLevels(programFees);
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
 

@@ -51,7 +51,7 @@ import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
 import NewCourseStep3 from "./NewCourseStep3";
-import NewCourseStep4 from "./NewCourseStep4";
+import NewCourseStep4, { sortFeeLevels } from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
@@ -462,7 +462,7 @@ export default function NewCourseReviewPage() {
   const enabledFeeLevelData = feeLevels?.filter(
     (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
   );
-const sortEnabledFeeLevelData = _.sortBy(enabledFeeLevelData, ['is_custom_fee', 'order'])
+const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
   const [openVenueDetails, setOpenVenueDetails] = useState(false);

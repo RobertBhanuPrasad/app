@@ -80,6 +80,11 @@ export default function CourseTable() {
     </>
   );
 }
+export const sortFeeLevels = (feeLevels: any) => {
+  // Sort fee levels: regular, student, repeater, senior citizen, and custom fees
+  return _.sortBy(feeLevels, ['is_custom_fee', 'order']);
+};
+
 function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
@@ -163,13 +168,12 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   });
  
   // Sorted the data for ordering fee_levels_ids in this order: regular, student, repeater, senior citizen and remaining custom fees (MVP:1502)
-  const sortedFeeData =  _.sortBy(courseFeeData, ['is_custom_fee', 'order'])
+const sortCourseFeeData= sortFeeLevels(courseFeeData);
 
-  console.log(sortedFeeData, "sortedFeeDatas");
   useEffect(() => {
     //Initializing setting data into form if fee is editable.Appending only if we have no data present in field
     if (isFeeEditable && feeLevels?.length == 0) {
-      const feeData = sortedFeeData?.map((fee) => {
+      const feeData = sortCourseFeeData?.map((fee) => {
         return {
           // By default all checkbox will be false
           is_enable: fee?.is_enable,
@@ -565,10 +569,10 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       <div className="h-auto overflow-x-scroll rounded-2xl border">
         {isFeeEditable ? (
           feeLevels?.length > 0 && (
-            <DataTable columns={feeColumns} data={sortedFeeData} />
+            <DataTable columns={feeColumns} data={sortCourseFeeData} />
           )
         ) : (
-          <DataTable columns={feeColumns} data={sortedFeeData} />
+          <DataTable columns={feeColumns} data={sortCourseFeeData} />
         )}
       </div>
 
