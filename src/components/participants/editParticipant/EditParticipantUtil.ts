@@ -29,14 +29,13 @@ export const handleEditPaymentValues = async (paymentHistoryId: number) => {
   const { data, error } = await supabase
     .from("participant_payment_history")
     .select(
-      "id,payment_method_id(id,name),transaction_status_id!inner(id,name),payment_date,send_payment_confirmation"
+      "id,payment_method_id(id,name),transaction_status_id!inner(id,name),payment_date,send_payment_confirmation,participant_id!inner(memo,participant_attendence_status_id)"
     )
     .eq("id", paymentHistoryId);
   if (!error) {
     const defaultValues = await getDefaultValues(
       data[0] as unknown as ParticipantPaymentHistoryDataBaseType
     );
-
     return defaultValues;
   }
   return {};
