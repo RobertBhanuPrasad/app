@@ -36,7 +36,7 @@ const PaymentDashboard = () => {
   return (
     <div>
       <div className="flex justify-center font-semibold"> Payment Gateway Dashboard</div>
-      <div className="mx-6 mt-[-25px] mb-8">
+      <div className="mx-6 mt-[-25px] mb-8 bg-white">
         <BaseTable
           columns={pgDashboardColumns}
           data={paymentGatewaysData || []}
@@ -205,7 +205,8 @@ const pgDashboardColumns: ExtendedColumnDef<any>[] = [
 
         // Check if the response is not ok or if the checkSuccess function returns false
         if (error || !checkSuccess(message)) {
-          alert(JSON.stringify({ title: "Delete Error", description: "Could not delete the payment gateway: " + message }));
+          // alert(JSON.stringify({ title: "Delete Error", description: "Could not delete the payment gateway: " + message }));
+          alert("Delete Error :  Could not delete the payment gateway: " + message );
           return;
         } else {
           const updatedGateways = _.cloneDeep(paymentGatewaysData); // Clone the array to avoid mutating state directly
@@ -277,7 +278,7 @@ const StatusCheckBox = ({ index }: { index: number }) => {
       .eq("id", index)
 
     if (error) {
-      alert(JSON.stringify({ title: "Update Error", description: "Could not update the table. Please try again after some time." + error }, null, 2));
+      alert("Update Error : Could not update the table. Please try again after some time.: " +error);
       return;
     } else {
       const updatedData = _.map(paymentGatewaysData, (obj) =>
