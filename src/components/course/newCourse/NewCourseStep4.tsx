@@ -163,7 +163,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   });
  
   // Sorted the data for ordering fee_levels_ids in this order: regular, student, repeater, senior citizen and remaining custom fees (MVP:1502)
-  const sortedFeeData =  _.sortBy(courseFeeData, ['is_custom_fee', 'order'])
+  const sortedFeeData =  _.sortBy(courseFeeData, [ 'order', 'is_custom_fee',])
 
   console.log(sortedFeeData, "sortedFeeDatas");
   useEffect(() => {
@@ -178,6 +178,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           fee_level_id: fee?.feeLevelId,
           is_custom_fee: fee?.is_custom_fee,
           custom_fee_label: fee?.custom_fee_label,
+          order: fee?.order,
         };
       });
       console.log(feeData, "feeData");
@@ -620,6 +621,7 @@ CourseTable.noLayout = false;
 
 //Type for FeeLevels
 type FeeLevelType = {
+  order: number;
   earlyBirdSubTotal: number;
   earlyBirdTax: number;
   earlyBirdTotal: number;
