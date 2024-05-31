@@ -98,7 +98,7 @@ function index() {
                 <ParticipantsListMainHeader />
             </div>
             <div className="flex p-[20px] w-full">
-                <div className="w-[18%] pl-[10px] ">
+                <div className="w-[18%] min-w-[318px] pl-[10px] ">
                     <ViewParticipantInformation participantId={Id} />
                 </div>
                 <div className="sticky  w-[82%] ">
