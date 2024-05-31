@@ -314,10 +314,23 @@ const columns = () => {
               <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm">
                 <Dialog open={editPayment}>
                   <DialogTrigger asChild={editPayment}></DialogTrigger>
-                  <Form onSubmit={() => {}} defaultValues={defaultValues}>
-                    {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
-                    <EditPayment paymentId={Number(row?.original?.id)} setEditPayment={setEditPayment} />
-                  </Form>
+                  {!defaultValues ||
+                                    Object.keys(defaultValues).length === 0 ? (
+                                        <div></div>
+                                    ) : (
+                                        <Form
+                                            onSubmit={() => {}}
+                                            defaultValues={defaultValues}
+                                        >
+                                            {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
+                                            <EditPayment
+                                                paymentId={Number(
+                                                    row?.original?.id
+                                                )}
+                                                setEditPayment={setEditPayment}
+                                            />
+                                        </Form>
+                                    )}
                 </Dialog>
               </div>
             </div>

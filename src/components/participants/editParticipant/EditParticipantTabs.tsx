@@ -183,7 +183,7 @@ export default function EditParticipantTabs() {
         </div>
         <div>
           <Button
-            className="bg-[#7677F4] w-[86px] h-[46px] rounded-[12px] "
+            className="bg-[#7677F4] w-[86px] h-[46px] rounded-[12px] text-base "
             onClick={() => {
               onFormSubmission(formData)
             }}

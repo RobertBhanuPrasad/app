@@ -76,7 +76,7 @@ export function DataTable<TData, TValue>({
           {table &&
             table?.getHeaderGroups()?.map((headerGroup) => (
               <TableRow
-                className="border-none text-[16px] font-bold"
+                className="border-none text-sm font-bold"
                 key={headerGroup?.id}
               >
                 {headerGroup?.headers?.map((header) => {
