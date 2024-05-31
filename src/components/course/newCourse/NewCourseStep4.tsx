@@ -163,7 +163,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   });
  
   // Sorted the data for ordering fee_levels_ids in this order: regular, student, repeater, senior citizen and remaining custom fees (MVP:1502)
-  const sortedFeeData =  _.sortBy(courseFeeData, [ 'order', 'is_custom_fee',])
+  const sortedFeeData =  _.sortBy(courseFeeData, ['is_custom_fee', 'order'])
 
   console.log(sortedFeeData, "sortedFeeDatas");
   useEffect(() => {
