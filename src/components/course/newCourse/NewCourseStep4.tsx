@@ -231,6 +231,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   ];
 
   //Editable Fee Columns
+  
   let editableFeeColumns: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
@@ -396,7 +397,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         const [earlyBirdTotal, setEarlyBirdTotal] = useState(value);
 
         return (
-          <div className="w-[75px]">
+          <div className="w-[75px] text-sm">
             <Input
               value={earlyBirdTotal}
               onChange={(val) => {

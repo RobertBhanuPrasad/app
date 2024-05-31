@@ -195,7 +195,7 @@ const Filters = ({
           )} */}
           {/* Course Status Accordion */}
           <AccordionItem value="item-2" className="border-none ">
-            <AccordionTrigger className="text-base font-semibold pr-3">
+            <AccordionTrigger className="text-lg font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:course_status")}</div>
                 {formData?.temporaryadvancefilter?.course_status?.length >
@@ -259,7 +259,7 @@ const Filters = ({
 
           {/* Course Visibility Accordion */}
           <AccordionItem value="item-5" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div> {t("course.find_course:course_visibility")}</div>
                 {formData?.temporaryadvancefilter?.visibility && (
@@ -275,7 +275,7 @@ const Filters = ({
 
           {/* State Accordion */}
           <AccordionItem value="item-6" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:state")}</div>
                 {formData?.temporaryadvancefilter?.state && (
@@ -319,7 +319,7 @@ const Filters = ({
 
           {/* City Accordion */}
           <AccordionItem value="item-7" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("city")}</div>
                 {formData?.temporaryadvancefilter?.city && (
@@ -363,7 +363,7 @@ const Filters = ({
 
           {/* Center Accordion */}
           <AccordionItem value="item-8" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:center")}</div>
                 {formData?.temporaryadvancefilter?.center && (
@@ -407,7 +407,7 @@ const Filters = ({
 
           {/* Residential Course Accordion */}
           <AccordionItem value="item-9" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("residential_course")}</div>
                 {formData?.temporaryadvancefilter?.is_residential_course && (
@@ -423,7 +423,7 @@ const Filters = ({
 
           {/* Program Organizer Accordion */}
           <AccordionItem value="item-10" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("program_organizer")}</div>
                 {formData?.temporaryadvancefilter?.program_organiser?.length >
@@ -447,7 +447,7 @@ const Filters = ({
 
           {/* Teacher Name Accordion */}
           <AccordionItem value="item-11" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:teacher_name")}</div>
                 {formData?.temporaryadvancefilter?.course_teacher && (
@@ -465,7 +465,7 @@ const Filters = ({
 
           {/* Course Fees Accordion */}
           <AccordionItem value="item-12" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("new_strings:course_fees")}</div>
                 {formData?.temporaryadvancefilter?.is_course_fee && (
