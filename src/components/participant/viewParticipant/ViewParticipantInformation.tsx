@@ -147,7 +147,7 @@ function ViewParticipantInformation({ participantId }: any) {
 
   // Render component content based on loading state
   return !isLoading ? (
-    <div className="w-[303px] bg-[white] border border-[#D9D9D9] rounded-[15px] shadow-lg flex justify-center items-center">
+    <div className="w-[303px] bg-[white] border border-[#D9D9D9] rounded-[15px] shadow-lg flex justify-center items-center py-[20px]">
       <div className="w-[263px]">
         <p className="font-[600] text-[18px] font-sans">
           {t('view_participant.participants_information.participants_information')}

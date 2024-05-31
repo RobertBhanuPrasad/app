@@ -97,11 +97,11 @@ function index() {
             <div className="top-[94px] sticky z-10 bg-white shadow-md w-full">
                 <ParticipantsListMainHeader />
             </div>
-            <div className="flex p-[20px]">
-                <div>
+            <div className="flex p-[20px] w-full">
+                <div className="w-[18%] pl-[10px] ">
                     <ViewParticipantInformation participantId={Id} />
                 </div>
-                <div className="sticky w-full p-[20px]">
+                <div className="sticky  w-[82%] ">
                     <SampleTabs tabs={tabs} />
                 </div>
             </div>
