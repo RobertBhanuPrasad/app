@@ -42,6 +42,7 @@ import { useTranslation } from "next-i18next";
 import { Text } from "src/ui/TextTags";
 import { useRouter } from "next/router";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -409,7 +410,7 @@ const OrganizationDropDown = () => {
 
   const { setValue } = useFormContext();
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "organizations",
     optionLabel: "name",
     optionValue: "id",
