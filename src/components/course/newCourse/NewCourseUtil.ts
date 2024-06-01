@@ -1603,9 +1603,9 @@ export const handleDeleteProgramTables = async (
 };
 
 export const handleRouteChangeStart = (url: string,condition: boolean,pathname: any,router: any,newCourseCreateSuccessOrNot: boolean,setNewCourseCreateSuccessOrNot: any,navigationConfirmed: boolean,setNavigationConfirmed: any ) => {
-  
-  if (!navigationConfirmed && ((pathname === '/courses/add' || IsEditCourse(pathname) || IsCopyCourse(pathname)))) {
-      if (condition) {
+
+  if (!navigationConfirmed && ((pathname === '/courses/add' || IsEditCourse(pathname) || IsCopyCourse(pathname))) && condition) {
+    
           if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
               setNavigationConfirmed(true);
               setTimeout(() => {
@@ -1616,6 +1616,5 @@ export const handleRouteChangeStart = (url: string,condition: boolean,pathname: 
               router.events.emit('routeChangeError');
               throw 'Route change aborted. User confirmation required.';
           }
-      }
   }
 };

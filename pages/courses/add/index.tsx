@@ -446,15 +446,21 @@ export type ItabsNextButtonClickStatus = nextButtonClicks[];
 export type ItabsValidationStatus = ("valid" | "invalid" | "neutral")[];
 
 export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
+
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
+
   const searchParams = useSearchParams();
+
   const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
+
   const pathname = usePathname();
+
   const router = useRouter();
+
   const { setNewCourseData, currentStep, setCurrentStep,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot } = newCourseStore();
 
   const supabase = supabaseClient();
-  
+
   const { watch, setValue } = useFormContext();
 
   const formData: NewCourseFormFieldTypes = watch();
@@ -468,17 +474,22 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
    */
 
    useEffect(() => {
+
     const routeChange = (url:string) => {
+
       Object.keys(formData).forEach(key => formData[key] === undefined ? delete formData[key] : {});
 
       const condition = !_.isEqual(defaultValues,formData)
 
       handleRouteChangeStart(url,condition,pathname,router,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
     }
+
     router.events.on('routeChangeStart', routeChange);
+
     return () => {
         router.events.off('routeChangeStart', routeChange);
     };
+
 }, [pathname,formData, router.events,navigationConfirmed]);
  
   const { data: loginUserData }: any = useGetIdentity();

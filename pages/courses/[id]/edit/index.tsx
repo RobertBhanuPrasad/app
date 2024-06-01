@@ -16,6 +16,7 @@ import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { handleRouteChangeStart } from "@components/course/newCourse/NewCourseUtil";
 
 const index = () => {
+  
   const { setNewCourseCreateSuccessOrNot,newCourseCreateSuccessOrNot,editCourseData,newCourseData} = newCourseStore();
 
   const { data: loginUserData }: any = useGetIdentity();
@@ -36,6 +37,7 @@ const index = () => {
   }: any = useRouter();
 
   console.log(section);
+
   /**
    * useEffect hook to handle route changes.
    * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
@@ -45,7 +47,9 @@ const index = () => {
    */
   
   useEffect(() => {
+
     const routeChange = (url:string) => {
+
       const condition = !_.isEqual(newCourseData,editCourseData)
       handleRouteChangeStart(url,condition,pathname,router,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
     }
@@ -55,7 +59,9 @@ const index = () => {
     return () => {
         router.events.off('routeChangeStart', routeChange);
     };
+
 }, [pathname, navigationConfirmed, router.events, newCourseData]);
+
   if (section === "thank_you") {
     return (
       <div className="mb-8">
