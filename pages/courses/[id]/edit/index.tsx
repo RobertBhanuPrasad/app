@@ -12,8 +12,6 @@ import { authProvider } from "src/authProvider";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { handleRouteChangeStart } from "@components/course/newCourse/NewCourseUtil";
 
@@ -24,20 +22,12 @@ const index = () => {
 
   const router = useRouter();
 
-  const params = useParams()
-
   const loggedUserData = loginUserData?.userData?.id;
 
   console.log("heyy logged user data", loggedUserData);
 
    // Get the current pathname using the useRouter hook
    const pathname = usePathname();
-
-    //fetching the user's country code
-    const countryCode = useGetCountryCode();
-
-    //fetching the user's language code
-    const languageCode = useGetLanguageCode();
    
   const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
 
@@ -57,7 +47,7 @@ const index = () => {
   useEffect(() => {
     const routeChange = (url:string) => {
       const condition = !_.isEqual(newCourseData,editCourseData)
-      handleRouteChangeStart(url,condition,pathname,router,params,countryCode,languageCode,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
+      handleRouteChangeStart(url,condition,pathname,router,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
     }
 
     router.events.on('routeChangeStart', routeChange);

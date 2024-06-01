@@ -454,11 +454,9 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
   const { setNewCourseData, currentStep, setCurrentStep,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot } = newCourseStore();
 
   const supabase = supabaseClient();
-  const params = useParams() 
-    //fetching the user's language code
-    const languageCode = useGetLanguageCode();
-
+  
   const { watch, setValue } = useFormContext();
+
   const formData: NewCourseFormFieldTypes = watch();
 
  /**
@@ -472,8 +470,10 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
    useEffect(() => {
     const routeChange = (url:string) => {
       Object.keys(formData).forEach(key => formData[key] === undefined ? delete formData[key] : {});
+
       const condition = !_.isEqual(defaultValues,formData)
-      handleRouteChangeStart(url,condition,pathname,router,params,countryCode,languageCode,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
+
+      handleRouteChangeStart(url,condition,pathname,router,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
     }
     router.events.on('routeChangeStart', routeChange);
     return () => {

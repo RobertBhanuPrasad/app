@@ -1602,10 +1602,10 @@ export const handleDeleteProgramTables = async (
   }
 };
 
-export const handleRouteChangeStart = (url: string,condition: boolean,pathname: any,router: any,params: any,countryCode: any,languageCode: any,newCourseCreateSuccessOrNot: boolean,setNewCourseCreateSuccessOrNot: any,navigationConfirmed: boolean,setNavigationConfirmed: any ) => {
-
+export const handleRouteChangeStart = (url: string,condition: boolean,pathname: any,router: any,newCourseCreateSuccessOrNot: boolean,setNewCourseCreateSuccessOrNot: any,navigationConfirmed: boolean,setNavigationConfirmed: any ) => {
+  
   if (!navigationConfirmed && ((pathname === '/courses/add' || IsEditCourse(pathname) || IsCopyCourse(pathname)))) {
-      if (!newCourseCreateSuccessOrNot && condition) {
+      if (condition) {
           if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
               setNavigationConfirmed(true);
               setTimeout(() => {
