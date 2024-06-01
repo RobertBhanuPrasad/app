@@ -6,7 +6,7 @@ import { Switch } from "src/ui/switch"
 
 export const CapsFormFields = ({ form }: { form: UseFormReturn<FormType> }) => {
     return (
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-col items-start">
 
             <p className="text-lg text-[#454545] font-semibold text-center">Entity Details</p>
 
@@ -18,7 +18,7 @@ export const CapsFormFields = ({ form }: { form: UseFormReturn<FormType> }) => {
                     <FormItem className="flex flex-row items-center mt-2 py-3">
                         <FormLabel className="!w-28">Is it Test Mode</FormLabel>
                         <FormControl>
-                            <Switch
+                            <Switch className="w-[56px]"
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
                             />
