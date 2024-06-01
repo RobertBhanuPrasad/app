@@ -62,7 +62,7 @@ export const columns = () =>
           <Button
             variant="ghost"
             onClick={() => {
-              column.toggleSorting(column.getIsSorted() === "asc")
+              column.toggleSorting(undefined,column.getIsSorted() === "asc")
             }}
           >
             {t('course.participants:find_participant.registration_date')}
@@ -93,7 +93,7 @@ export const columns = () =>
         <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(undefined,column.getIsSorted() === "asc")}
           >
             {t('course.participants:find_participant.name')}
             {column.getIsSorted() === "desc" ? (
@@ -141,7 +141,7 @@ export const columns = () =>
         <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(undefined,column.getIsSorted() === "asc")}
           >
             {t('course.participants:find_participant.date_of_birth')}
             {column.getIsSorted() === "desc" ? (
@@ -174,7 +174,7 @@ export const columns = () =>
         <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(undefined,column.getIsSorted() === "asc")}
           >
             {t('course.participants:find_participant.phone')}
             {column.getIsSorted() === "desc" ? (
@@ -206,7 +206,7 @@ export const columns = () =>
         <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(undefined,column.getIsSorted() === "asc")}
           >
              {t('course.participants:find_participant.email')}
             {column.getIsSorted() === "desc" ? (
@@ -238,7 +238,7 @@ export const columns = () =>
         <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(undefined,column.getIsSorted() === "asc")}
           >
            {t('course.participants:view_participant.fee_level')}
             {column.getIsSorted() === "desc" ? (
@@ -270,7 +270,7 @@ export const columns = () =>
         <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(undefined,column.getIsSorted() === "asc")}
           >
              {t('course.participants:edit_participant.participants_information_tab.amount')}
             {column.getIsSorted() === "desc" ? (
@@ -405,7 +405,7 @@ export const columns = () =>
         <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(undefined,column.getIsSorted() === "asc")}
           >
             {t('course.participants:find_participant.attendance_status')}
             {column.getIsSorted() === "desc" ? (

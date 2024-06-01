@@ -218,6 +218,7 @@ export function BaseTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns: columns,
+    enableSortingRemoval: true,
     getCoreRowModel: getCoreRowModel(),
     // getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
@@ -233,6 +234,7 @@ export function BaseTable<TData, TValue>({
     onSortingChange: setSorting,
   });
 
+  console.log("asciskac",sorting)
   /**
    * Function to handle the select all checkbox changes
    */

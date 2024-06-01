@@ -48,7 +48,7 @@ export const column = (
         <div>
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(null,column.getIsSorted() === "asc")}
         >
           {t('course_id')}
           {column.getIsSorted() === "desc" ? (
@@ -127,7 +127,7 @@ export const column = (
           <div>
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(null,column.getIsSorted() === "asc")}
           >
             {t('course.find_course:start_date')}
             {column.getIsSorted() === "desc" ? (

@@ -292,6 +292,12 @@ function index() {
   ]);
 
 const fieldValue = () => {
+if(!sorting.length){
+  setSorting([{
+    id: "id",
+    desc: true
+  }])
+}
 let field = sorting?.[0]?.id
 if(field === 'Name') field = "contact_id(full_name)"
 if(field === "Date of Birth") field = "contact_id(date_of_birth)"

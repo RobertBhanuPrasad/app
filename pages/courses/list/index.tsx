@@ -247,13 +247,19 @@ function index() {
   //State variable for the sorting functionality 
   const [sorting, setSorting] = useState([
     {
-      id: "id",
+      id: "created_at",
       desc: true
     }
   ])
 
 // This function fetches the field which needs to sorted in the table
 const fieldvalue = () =>{
+if(!sorting.length){
+  setSorting([{
+    id: "created_at",
+    desc: true
+  }])
+}
 let field = sorting?.[0]?.id
 if(field==="program_schedules") field = "start_date"
 return field
@@ -313,7 +319,7 @@ return field
       sorters: {
         permanent: [
           // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-          { field: "created_at", order: "desc" },
+          { field: fieldvalue(), order: sorting?.[0]?.desc ? "desc" : "asc"},
         ],
       },
     });
