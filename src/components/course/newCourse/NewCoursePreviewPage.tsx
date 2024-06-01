@@ -51,7 +51,7 @@ import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
 import NewCourseStep3 from "./NewCourseStep3";
-import NewCourseStep4 from "./NewCourseStep4";
+import NewCourseStep4, { sortFeeLevels } from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
@@ -462,7 +462,7 @@ export default function NewCourseReviewPage() {
   const enabledFeeLevelData = feeLevels?.filter(
     (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
   );
-
+const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
   const [openVenueDetails, setOpenVenueDetails] = useState(false);
@@ -1164,14 +1164,17 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
-            {enabledFeeLevelData?.map((feeLevel: any, index: number) => {
-              return <Fees feeLevelSettingsData={feeLevel} />;
+            {sortEnabledFeeLevelData?.map((feeLevel: any, index: number) => {
+              return(
+              <>
+              <Fees feeLevelSettingsData={feeLevel} />
+              {newCourseData?.is_early_bird_enabled &&
+          (
+            <EarlyBirdFees feeLevelSettingsData={feeLevel} />
+          )}
+              </>
+              )
             })}
-
-            {newCourseData?.is_early_bird_enabled &&
-              enabledFeeLevelData?.map((feeLevel: any, index: number) => {
-                return <EarlyBirdFees feeLevelSettingsData={feeLevel} />;
-              })}
 
             {/* Requirment: Show the early bird calender when 
       1.Super or National Admin is logged in 
@@ -1216,7 +1219,7 @@ export default function NewCourseReviewPage() {
             </span>
           ) : (
             //If enabledFeeLevelData is undefined while fetching data, So loading is shown
-            enabledFeeLevelData == undefined && <div className="loader"></div>
+            sortEnabledFeeLevelData == undefined && <div className="loader"></div>
           )}
         </section>
         {/* Accommodation Information */}

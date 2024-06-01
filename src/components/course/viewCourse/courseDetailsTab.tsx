@@ -11,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { formatDateTime } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from 'next-i18next';
+import _ from "lodash";
+import { sortFeeLevels } from "../newCourse/NewCourseStep4";
 
 interface fullNameObject {
   user_id?: {
@@ -103,7 +105,8 @@ function CourseDetailsTab() {
     : courseData?.data?.program_fee_level_settings;
 
   //Need to show only the fee level enabled by the user at the time of course creation.
-  const programFees=programFeeLevels?.filter((feeLevel: { is_enable: boolean; })=>feeLevel.is_enable)
+  const programFees=programFeeLevels?.filter((feeLevel: { is_enable: boolean; })=>feeLevel.is_enable);
+  const sortProgramFees= sortFeeLevels(programFees);
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
 
@@ -279,10 +282,11 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {programFees?.length > 0
-              ? programFees?.map((item: ProgramFeeItem,index:number) => {
+            {sortProgramFees?.length > 0
+              ? sortProgramFees?.map((item: ProgramFeeItem,index:number) => {
                   return (
-                    <div className="flex flex-col gap-1" key={index}>
+                    <div className="flex flex-col gap-4" key={index}>
+                      <div className="flex flex-col gap-1">
                       <Header2>
                         {translatedText(
                   item?.is_custom_fee
@@ -295,30 +299,27 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                         {(item?.total)?.toFixed(2)}
                       </ItemValue>
                     </div>
+                     {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
+                     {IsEarlyBirdFeeEnable && (
+                      <div className="flex flex-col gap-1">
+                        <Header2>
+                          {t("new_strings:early_bird")}{" "}
+                          {translatedText(
+                            item?.is_custom_fee
+                              ? item?.custom_fee_label
+                              : item?.fee_level_id?.name as object
+                          )}
+                        </Header2>
+                        <ItemValue>
+                          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                          {(item?.early_bird_total as unknown as number)?.toFixed(2)}
+                        </ItemValue>
+                      </div>
+                    )}
+                    </div>
                   );
                 })
               : ""}
-              {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
-             {IsEarlyBirdFeeEnable
-               && programFees?.map((item: ProgramFeeItem) => {
-              return (
-              <div className="flex flex-col gap-1">
-              <Header2>
-                {t("new_strings:early_bird")}{" "}
-                {translatedText(
-                item?.is_custom_fee
-                 ? item?.custom_fee_label
-                  : item?.fee_level_id?.name as object
-                )}
-              </Header2>
-              <ItemValue>
-              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-              {(item?.early_bird_total as unknown as number)?.toFixed(2)}
-              </ItemValue>
-              </div>
-            );
-            })
-            }
             {courseData?.data?.program_accommodations?.length > 0
               ? courseData?.data?.program_accommodations?.map(
                   (item: AccommodationItem) => {
