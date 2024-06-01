@@ -7,6 +7,7 @@ import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
+import { handleRouteChangeStart } from "@components/course/newCourse/NewCourseUtil"; 
 import Car from "@public/assets/Car";
 import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
@@ -109,7 +110,7 @@ function index() {
   }
 }
 export function NewCourse() {
-  const { setCurrentStep ,setNewCourseCreateSuccessOrNot,newCourseCreateSuccessOrNot} = newCourseStore();
+  const { setCurrentStep ,setNewCourseCreateSuccessOrNot,newCourseData} = newCourseStore();
   const { data: loginUserData }: any = useGetIdentity();
   const router = useRouter();
 
@@ -123,14 +124,6 @@ export function NewCourse() {
    // Get the current pathname using the useRouter hook
    const pathname = usePathname();
 
-    //fetching the user's country code
-    const countryCode = useGetCountryCode();
-
-    //fetching the user's language code
-    const languageCode = useGetLanguageCode();
-
-   const [pendingUrl, setPendingUrl] = useState<string | null>(null); // State to keep track of the URL the user intends to navigate to
-  const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
 
   const onSubmit = (formData: any) => {
     // console.log(formData);
@@ -151,52 +144,7 @@ export function NewCourse() {
     setNewCourseCreateSuccessOrNot(false)
 
   }, []);
-
-
-  /**
-   * useEffect hook to handle route changes.
-   * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
-   * - Emits a routeChangeError event to cancel the navigation when necessary.
-   * - Sets a pending URL and opens an alert dialog for user confirmation.
-   * - Resets the navigation confirmation flag once the route change completes.
-   */
-   useEffect(() => {
-    const handleRouteChangeStart = (url: string) => {
-        const basePath = url.split('?')[0];
-        const addCoursePath = `/${countryCode}-${languageCode}/courses/add`;
-        const copyCoursePath =`/courses/${params?.id}/copy`
-        if (!navigationConfirmed && ((pathname === '/courses/add' || pathname === copyCoursePath) && basePath !== addCoursePath)) {
-            if (!newCourseCreateSuccessOrNot) {
-                if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
-                    setNavigationConfirmed(true);
-                    setTimeout(() => {
-                        router.push(url);
-                        setNewCourseCreateSuccessOrNot(false);
-                    }, 0);
-                } else {
-                    setPendingUrl(url);
-                    router.events.emit('routeChangeError');
-                    throw 'Route change aborted. User confirmation required.';
-                }
-            }
-        }
-    };
-
-    const handleRouteChangeComplete = () => {
-        setNavigationConfirmed(false);
-    };
-
-    router.events.on('routeChangeStart', handleRouteChangeStart);
-    router.events.on('routeChangeComplete', handleRouteChangeComplete);
-    router.events.on('routeChangeError', handleRouteChangeComplete);
-
-    return () => {
-        router.events.off('routeChangeStart', handleRouteChangeStart);
-        router.events.off('routeChangeComplete', handleRouteChangeComplete);
-        router.events.off('routeChangeError', handleRouteChangeComplete);
-    };
-}, [pathname, navigationConfirmed, router.events, newCourseCreateSuccessOrNot]);
-
+  
 
   //Finding program Organizer role id
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
@@ -225,7 +173,6 @@ export function NewCourse() {
 
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
-  const { newCourseData } = newCourseStore();
 
   /**
    *variable that holds whether the logged in user has super admin role or not
@@ -371,7 +318,7 @@ export function NewCourse() {
           defaultValues={defaultValues}
           schema={validationSchema(iAmCoTeachingId as number)}
         >
-          <NewCourseTabs />
+          <NewCourseTabs defaultValues={defaultValues}/>
         </Form>
       </div>
     </div>
@@ -390,7 +337,6 @@ export const requiredValidationFields = (
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
-
   let RequiredNewCourseStep1FormNames = _.omit(
     NewCourseStep1FormNames,
     formData?.is_registration_via_3rd_party
@@ -499,18 +445,42 @@ export type ItabsNextButtonClickStatus = nextButtonClicks[];
 
 export type ItabsValidationStatus = ("valid" | "invalid" | "neutral")[];
 
-export const NewCourseTabs = () => {
+export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   const searchParams = useSearchParams();
+  const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
   const pathname = usePathname();
   const router = useRouter();
-  const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
+  const { setNewCourseData, currentStep, setCurrentStep,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot } = newCourseStore();
 
   const supabase = supabaseClient();
+  const params = useParams() 
+    //fetching the user's language code
+    const languageCode = useGetLanguageCode();
 
   const { watch, setValue } = useFormContext();
   const formData: NewCourseFormFieldTypes = watch();
 
+ /**
+   * useEffect hook to handle route changes.
+   * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
+   * - Emits a routeChangeError event to cancel the navigation when necessary.
+   * - Sets a pending URL and opens an alert dialog for user confirmation.
+   * - Resets the navigation confirmation flag once the route change completes.
+   */
+
+   useEffect(() => {
+    const routeChange = (url:string) => {
+      Object.keys(formData).forEach(key => formData[key] === undefined ? delete formData[key] : {});
+      const condition = !_.isEqual(defaultValues,formData)
+      handleRouteChangeStart(url,condition,pathname,router,params,countryCode,languageCode,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
+    }
+    router.events.on('routeChangeStart', routeChange);
+    return () => {
+        router.events.off('routeChangeStart', routeChange);
+    };
+}, [pathname,formData, router.events,navigationConfirmed]);
+ 
   const { data: loginUserData }: any = useGetIdentity();
   const { data: timeZoneData } = useList({ resource: "time_zones" });
 

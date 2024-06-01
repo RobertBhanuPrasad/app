@@ -12,7 +12,7 @@ import {
 import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
 import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
-import { IsEditCourse } from "./EditCourseUtil";
+import { IsCopyCourse, IsEditCourse } from "./EditCourseUtil";
 
 // const supabase = supabaseClient();
 
@@ -1599,5 +1599,23 @@ export const handleDeleteProgramTables = async (
       programData,
       error
     );
+  }
+};
+
+export const handleRouteChangeStart = (url: string,condition: boolean,pathname: any,router: any,params: any,countryCode: any,languageCode: any,newCourseCreateSuccessOrNot: boolean,setNewCourseCreateSuccessOrNot: any,navigationConfirmed: boolean,setNavigationConfirmed: any ) => {
+
+  if (!navigationConfirmed && ((pathname === '/courses/add' || IsEditCourse(pathname) || IsCopyCourse(pathname)))) {
+      if (!newCourseCreateSuccessOrNot && condition) {
+          if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
+              setNavigationConfirmed(true);
+              setTimeout(() => {
+                  router.push(url);
+                  setNewCourseCreateSuccessOrNot(false);
+              }, 0);
+          } else {
+              router.events.emit('routeChangeError');
+              throw 'Route change aborted. User confirmation required.';
+          }
+      }
   }
 };
