@@ -131,7 +131,7 @@ useEffect(() => {
               {translatedText(data?.data?.status_id?.name)}
             </Button>
           
-              <Button variant="outline" className="text-indigo-600 border-indigo-600 " onClick={() => {router.replace('/courses/list')}}>
+              <Button variant="outline" className="text-indigo-600 border-indigo-600 text-base" onClick={() => {router.replace('/courses/list')}}>
               {t("course.new_course:congratulations_page.go_to_course_listing")}
               </Button>
           
@@ -177,9 +177,9 @@ useEffect(() => {
           }
             <div className="flex-[2.5] p-4 ">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.course_date")} (UTC 05:00)</p>
-              {data?.data?.program_schedules?.map((data: any) => {
+              {data?.data?.program_schedules?.map((data: any,index:any) => {
                 return (
-                  <p className="font-semibold truncate text-accent-secondary">
+                  <p className="font-semibold truncate text-accent-secondary" key={index}>
                     {formatDateTime(data?.start_time, data?.end_time)}
                   </p>
                 )
@@ -211,7 +211,7 @@ useEffect(() => {
                     {t("registration_link")}
                   </p>
                   <div className="flex justify-between items-center gap-2 p-3 border rounded-2xl min-w-72 h-[36px]">
-                    <a id="textToCopy" className="" href={data?.data?.registration_link} target="_blank">
+                    <a id="textToCopy" className="text-sm" href={data?.data?.registration_link} target="_blank">
                      {data?.data?.registration_link}
                     </a>
                     <div

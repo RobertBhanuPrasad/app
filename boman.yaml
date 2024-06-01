@@ -1,0 +1,8 @@
+Auth:
+  project_token: 8e0917f9-9389-4579-adf5-a4fc1cb57582
+  customer_token: d02c0dfd-ba66-4b8a-abfe-3b77b8a73361
+SAST:
+  language: semgrep
+SCA:
+  language: nodejs
+Secret_Scan: true

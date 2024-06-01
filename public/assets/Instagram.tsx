@@ -36,13 +36,13 @@ function Instagram() {
             y2="14.7232"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#FEE411" />
-            <stop offset="0.052" stop-color="#FEDB16" />
-            <stop offset="0.138" stop-color="#FEC125" />
-            <stop offset="0.248" stop-color="#FE983D" />
-            <stop offset="0.376" stop-color="#FE5F5E" />
-            <stop offset="0.5" stop-color="#FE2181" />
-            <stop offset="1" stop-color="#9000DC" />
+            <stop stopColor="#FEE411" />
+            <stop offset="0.052" stopColor="#FEDB16" />
+            <stop offset="0.138" stopColor="#FEC125" />
+            <stop offset="0.248" stopColor="#FE983D" />
+            <stop offset="0.376" stopColor="#FE5F5E" />
+            <stop offset="0.5" stopColor="#FE2181" />
+            <stop offset="1" stopColor="#9000DC" />
           </linearGradient>
         </defs>
       </svg>

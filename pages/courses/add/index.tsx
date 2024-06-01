@@ -908,7 +908,7 @@ export const NewCourseTabs = () => {
                     <TabsTrigger
                       key={index}
                       value={JSON.stringify(tab.value)}
-                      className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      className="!h-12  items-center text-base w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                       onClick={async () => {
                         let validationFieldsStepWise = requiredValidationFields(
                           formData,
@@ -966,6 +966,7 @@ export const NewCourseTabs = () => {
                       <TabsContent
                         value={JSON.stringify(index + 1)}
                         className={contentStylings}
+                        key={index}
                       >
                         {step.component}
                       </TabsContent>
@@ -982,7 +983,7 @@ export const NewCourseTabs = () => {
                       e.preventDefault();
                       handleClickPrevious();
                     }}
-                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]"
+                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[16px] leading-[22px] text-[#7677F4] font-bold rounded-[12px]"
                   >
                     {t("previous_button")}
                   </Button>
@@ -990,7 +991,7 @@ export const NewCourseTabs = () => {
 
                 {currentStep < stepTitles.length && (
                   <Button
-                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-bold text-[16px] leading-[22px]"
                     onClick={async (e) => {
                       e.preventDefault();
 
@@ -1012,7 +1013,7 @@ export const NewCourseTabs = () => {
 
                 {currentStep == CONTACT_INFO_STEP_NUMBER && (
                   <Button
-                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
+                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] text-base"
                     onClick={async () => {
                       let validationFieldsStepWise = requiredValidationFields(
                         formData,

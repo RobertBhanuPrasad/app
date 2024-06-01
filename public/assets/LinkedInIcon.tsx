@@ -11,7 +11,7 @@ function LinkedInIcon() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <circle cx="24" cy="24" r="24" fill="#F6F7FF" />
-        <g clip-path="url(#clip0_5226_18488)">
+        <g clipPath="url(#clip0_5226_18488)">
           <path
             d="M24 40C32.8366 40 40 32.8366 40 24C40 15.1634 32.8366 8 24 8C15.1634 8 8 15.1634 8 24C8 32.8366 15.1634 40 24 40Z"
             fill="#007AB9"
