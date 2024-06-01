@@ -547,7 +547,7 @@ const OrganizationDropDown = () => {
           <SelectContent>
             <Input value={searchValue} onChange={handleSearch} />
             <SelectItems onBottomReached={handleOnBottomReached}>
-              {options?.map((option, index) => {
+              {options?.map((option : any, index : any) => {
                 return (
                   <div key={index}>
                     <SelectItem
