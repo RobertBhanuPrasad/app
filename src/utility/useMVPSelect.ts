@@ -16,7 +16,6 @@ export type UseSelectReturnType<
   TData extends BaseRecord = BaseRecord,
   TError extends HttpError = HttpError,
   TOption extends BaseOption = BaseOption
-
 > = {
   queryResult: QueryObserverResult<GetListResponse<TData>, TError>;
   defaultValueQueryResult: QueryObserverResult<GetManyResponse<TData>>;
@@ -46,18 +45,12 @@ export const useMVPSelect = <
   TError extends HttpError = HttpError,
   TData extends BaseRecord = TQueryFnData,
   TOption extends BaseOption = BaseOption
-
 >(
   props: UseSelectProps<TQueryFnData, TError, TData>
 ): UseSelectReturnType<TData, TError, TOption> => {
   
-  // The function then
-  // maps the results of the `queryResult` and `defaultValueQueryResult` to extract the necessary labels and values. The labels and values from both the query results 
-  // and default values are combined using the `uniqBy` function.These combined options are then assigned to `customOptions`.
-  //   The function only processes the query results and default values when they are not loading (`isLoading` is false) and have successfully 
-  //    retrieved data (`isSuccess` is true). Finally, `customOptions` is returned as `options`, and that will be passed to select dropdowns
-
   const { options, defaultValueQueryResult, queryResult, ...rest } = useSelect(props);
+
   const customOptions = () => {
    // Execute the queryOptions and defaultOptions only when isLoading is false and isSuccess is true
     if (!queryResult.isLoading && queryResult.isSuccess || !defaultValueQueryResult.isLoading && defaultValueQueryResult.isSuccess ) {
@@ -70,6 +63,7 @@ export const useMVPSelect = <
         label: get(item, props.optionLabel as any),  // Get label from item using optionLabel
         value: get(item, props.optionValue as any), // Get value from item using optionValue
       })) ?? [];
+
       return uniqBy([...queryOptions, ...defaultOptions], 'value');  // Combine both queryOptions and defaultOptions ensuring uniqueness by 'value'
     }
   };
