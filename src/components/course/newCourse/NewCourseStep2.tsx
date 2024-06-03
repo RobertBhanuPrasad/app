@@ -262,7 +262,7 @@ export const CourseTypeDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { onSearch, queryResult } = useMVPSelect(selectQuery);
+  const { onSearch, queryResult } = useSelect(selectQuery);
 
   const options: { label: string; value: number }[] =
     queryResult?.data?.data?.map((programType) => {
@@ -662,7 +662,7 @@ const TeachersDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { options, queryResult, onSearch } = useSelect(selectQuery);
+  const { options, queryResult, onSearch } = useMVPSelect(selectQuery);
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
@@ -760,7 +760,7 @@ const AssistantTeachersDropDown = () => {
     });
   }
 
-  const { queryResult, onSearch } = useSelect({
+  const { queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select:
@@ -1002,7 +1002,7 @@ const LanguageDropDown = () => {
     name: NewCourseStep2FormNames?.language_ids,
   });
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
@@ -1075,7 +1075,7 @@ const LanguageTranslationDropDown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
@@ -1099,7 +1099,7 @@ const LanguageTranslationDropDown = () => {
     },
   });
 
-  const filteredOptions = options?.filter((val) => {
+  const filteredOptions = options?.filter((val : any) => {
     if (formData?.language_ids?.includes(val.value)) return false;
 
     return true;
