@@ -2,7 +2,7 @@ import { Authenticated, Refine } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import type { GetServerSideProps, NextPage } from "next";
 import { AppProps } from "next/app";
-
+import "caps-ui/dist/caps.css"
 import { Layout } from "@components/layout";
 import { dataProvider } from "@refinedev/supabase";
 import "@styles/global.css";

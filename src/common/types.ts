@@ -233,6 +233,7 @@ interface ProgramFeeLevelSettingsDataBaseType {
   id?: number;
   created_at?: Date;
   sub_total?: number;
+  order?: number;
   total?: number;
   tax?: number;
   is_enable?: boolean;
