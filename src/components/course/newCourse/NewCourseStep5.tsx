@@ -38,6 +38,7 @@ import { IsEditCourse } from "./EditCourseUtil";
 import { supabaseClient } from "src/utility";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -322,7 +323,7 @@ export const AccommodationType = ({
   });
 
   // Hook to fetch and manage options for a select input
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "accomdation_types",
     optionLabel: "name",
     optionValue: "id",
@@ -335,8 +336,8 @@ export const AccommodationType = ({
     ],
   });
 
-  const filteredOptions = options.filter(
-    (option) => !existingAccommodationValues?.includes(option.value)
+  const filteredOptions = options?.filter(
+    (option : any) => !existingAccommodationValues?.includes(option.value)
   );
 
   const [isDisabled, setIsDisabled] = useState(false);
@@ -386,7 +387,7 @@ export const AccommodationType = ({
         <SelectContent>
           <Input onChange={(val) => onSearch(val.target.value)} />
           <SelectItems onBottomReached={() => {}}>
-            {filteredOptions?.map((option, index) => {
+            {filteredOptions?.map((option : any, index: any) => {
               return (
                 <div>
                   <SelectItem

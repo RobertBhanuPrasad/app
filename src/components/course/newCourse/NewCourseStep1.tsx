@@ -598,7 +598,7 @@ const ProgramOrganizerDropDown = () => {
     PROGRAM_ORGANIZER
   )?.id;
 
-  const { options, queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",

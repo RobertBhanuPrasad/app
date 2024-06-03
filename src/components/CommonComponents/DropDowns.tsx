@@ -21,6 +21,7 @@ import {
 import { supabaseClient } from "src/utility";
 import { useTranslation } from "next-i18next";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 
 export const VenueNameComponent = () => {
   const { t } = useTranslation(["common", "course.new_course"]);
@@ -160,7 +161,7 @@ export const CityDropDown = ({
     });
   
 
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
@@ -238,7 +239,7 @@ export const CityDropDown = ({
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
-            {options.map((option: BaseOption) => (
+            {options?.map((option: BaseOption) => (
               <SelectItem
                 key={option.value}
                 value={option.value}
@@ -312,7 +313,7 @@ export const StateDropDown = ({
     });
   }
 
-  const { options, onSearch: stateOnsearch } = useSelect({
+  const { options, onSearch: stateOnsearch } = useMVPSelect({
     resource: "state",
     meta: { select: "*" },
     optionLabel: "name",
@@ -438,7 +439,7 @@ export const CenterDropDown = ({
     });
   
 
-  const { options, onSearch: centerOnSearch } = useSelect({
+  const { options, onSearch: centerOnSearch } = useMVPSelect({
     resource: "center",
     optionLabel: "name",
     optionValue: "id",
@@ -517,7 +518,7 @@ export const CenterDropDown = ({
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
-            {options.map((option: BaseOption) => (
+            {options?.map((option: BaseOption) => (
               <SelectItem
                 key={option.value}
                 value={option.value}

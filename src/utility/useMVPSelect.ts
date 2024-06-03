@@ -50,7 +50,7 @@ export const useMVPSelect = <
 ): UseSelectReturnType<TData, TError, TOption> => {
   
   const { options, defaultValueQueryResult, queryResult, ...rest } = useSelect(props);
-
+  
   const customOptions = () => {
    // Execute the queryOptions and defaultOptions only when isLoading is false and isSuccess is true
     if (!queryResult.isLoading && queryResult.isSuccess || !defaultValueQueryResult.isLoading && defaultValueQueryResult.isSuccess ) {

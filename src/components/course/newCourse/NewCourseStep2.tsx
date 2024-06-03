@@ -48,6 +48,7 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "./EditCourseUtil";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -261,7 +262,7 @@ export const CourseTypeDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { onSearch, queryResult } = useSelect(selectQuery);
+  const { onSearch, queryResult } = useMVPSelect(selectQuery);
 
   const options: { label: string; value: number }[] =
     queryResult?.data?.data?.map((programType) => {
@@ -469,7 +470,7 @@ const CourseNameDropDown = () => {
 
   const formData = watch();
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -532,7 +533,7 @@ const CourseNameDropDown = () => {
             }
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
-            {options.map((option: any, index: number) => (
+            {options?.map((option: any, index: number) => (
               <>
                 <SelectItem
                   key={option.value}
