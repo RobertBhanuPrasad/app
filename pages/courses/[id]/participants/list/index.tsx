@@ -921,7 +921,7 @@ const HeaderSection = () => {
         <ParticipantsAdvanceFilter />
       </div>
       {/* Search Section */}
-      <div className="flex flex-row items-center border-2 px-3 rounded-lg">
+      <div className="flex flex-row items-center border-2 px-2 rounded-lg">
         <div>
           <SearchIcon className="text-[#7677F4]" />
         </div>
@@ -930,7 +930,7 @@ const HeaderSection = () => {
             value={Searchvalue}
             onChange={handleSearchChange}
             type="text"
-            className=" border-0 outline-none"
+            className="border-0 outline-none w-[190px]"
             placeholder={t(
               "course.participants:find_participant.search_registration"
             )}
@@ -986,7 +986,7 @@ const HeaderSection = () => {
                     </div>
                   )
                 ) : (
-                  <span className="font-thin text-[#999999]">
+                  <span className="font-normal text-[#999999]">
                     {t("new_strings:search_by_registration_date")}
                   </span>
                 )}
