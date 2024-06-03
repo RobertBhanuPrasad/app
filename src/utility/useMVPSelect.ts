@@ -24,6 +24,23 @@ export type UseSelectReturnType<
   options: any;
 } & UseLoadingOvertimeReturnType;
 
+  /**
+   *  Requirement : The performance is slow, causing a poor user experience. To improve performance, we are implementing this code.
+   * 
+   * Bug no :1432
+   * 
+   * Implementation : Previously, we were mapping options, but initially, `options` was an empty array,
+   *  causing a delay in displaying the options. To address this, we now use `queryResult`, which fetches data immediately.
+   *  However, changing every instance of `options` to `queryResult` is not ideal. Instead, we introduce `customOptions`, 
+   * initially an empty array, which maps `queryResult` and appends it to `options` before returning. 
+     The `defaultValueQueryResult` handles scenarios where navigating between pages might cause delays due to selected 
+     options not being in the initial set of options. By combining `queryResult` and `defaultValueQueryResult` with the 
+    `uniqBy` function, we ensure all options, including selected ones, are readily available. This approach
+     optimizes performance and ensures selected options are always visible.
+
+   * @returns
+   */
+
 export const useMVPSelect = <
   TQueryFnData extends BaseRecord = BaseRecord,
   TError extends HttpError = HttpError,
@@ -34,22 +51,13 @@ export const useMVPSelect = <
   props: UseSelectProps<TQueryFnData, TError, TData>
 ): UseSelectReturnType<TData, TError, TOption> => {
   
+  // The function then
+  // maps the results of the `queryResult` and `defaultValueQueryResult` to extract the necessary labels and values. The labels and values from both the query results 
+  // and default values are combined using the `uniqBy` function.These combined options are then assigned to `customOptions`.
+  //   The function only processes the query results and default values when they are not loading (`isLoading` is false) and have successfully 
+  //    retrieved data (`isSuccess` is true). Finally, `customOptions` is returned as `options`, and that will be passed to select dropdowns
+
   const { options, defaultValueQueryResult, queryResult, ...rest } = useSelect(props);
-
-  /**
-   *  Requirement : The performance is slow, causing a poor user experience. To improve performance, we are implementing this code.
-   * 
-   * Bug no :1432
-   * 
-   * Implementation : This function `useMVPSelect` uses the `useSelect` hook and fetch the data  Initially, `customOptions` is an empty array. The function then
-    maps the results of the `queryResult` and `defaultValueQueryResult` to extract the necessary labels and values. The labels and values from both the query results 
-    and default values are combined using the `uniqBy` function.These combined options are then assigned to `customOptions`.
-      The function only processes the query results and default values when they are not loading (`isLoading` is false) and have successfully 
-       retrieved data (`isSuccess` is true). Finally, `customOptions` is returned as `options`, and that will be passed to select dropdowns
-
-   * @returns
-   */
-
   const customOptions = () => {
    // Execute the queryOptions and defaultOptions only when isLoading is false and isSuccess is true
     if (!queryResult.isLoading && queryResult.isSuccess || !defaultValueQueryResult.isLoading && defaultValueQueryResult.isSuccess ) {

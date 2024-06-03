@@ -43,6 +43,7 @@ import { Text } from "src/ui/TextTags";
 import { useRouter } from "next/router";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import { getDefaultValues } from "@components/participants/editParticipant/EditParticipantUtil";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -625,6 +626,10 @@ const ProgramOrganizerDropDown = () => {
       mode: "server",
     },
   });
+console.log(options, 'optionsssss')
+console.log(queryResult, "queryresulttttt");
+console.log(getDefaultValues, "defaultvalueeeee");
+
 
   const { watch } = useFormContext();
 
