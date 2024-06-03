@@ -262,7 +262,7 @@ export const CourseTypeDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { onSearch, queryResult } = useSelect(selectQuery);
+  const { onSearch, queryResult } = useMVPSelect(selectQuery);
 
   const options: { label: string; value: number }[] =
     queryResult?.data?.data?.map((programType) => {
