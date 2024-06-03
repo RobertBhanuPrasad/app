@@ -626,9 +626,6 @@ const ProgramOrganizerDropDown = () => {
       mode: "server",
     },
   });
-console.log(options, 'optionsssss')
-console.log(queryResult, "queryresulttttt");
-console.log(getDefaultValues, "defaultvalueeeee");
 
 
   const { watch } = useFormContext();
