@@ -33,19 +33,19 @@ export const columns = () =>
     // This any will be removed after internal dataStructure implementation
 
     cell: ({ row }: any) => {
-      // const router = useRouter();
+      const router = useRouter();
       return (
-        // <a
-        //   className="cursor-pointer"
-        //   onClick={() => {
-        //     const routePath = router.asPath.split("list")[0];
-        //     router.push(`/${routePath}/${row?.original?.id}`);
-        //   }}
-        // >
+        <a
+          className="cursor-pointer"
+          onClick={() => {
+            const routePath = router.asPath.split("list")[0];
+            router.push(`/${routePath}/${row?.original?.id}`);
+          }}
+        >
           <div className="min-w-[150px] text-left font-bold text-[#7677F4]">
             {row?.original?.participant_code}
           </div>
-        // </a>
+        </a>
       );
     },
   },
