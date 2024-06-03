@@ -40,6 +40,7 @@ import {
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 // Entity implies City,Center,State,...
@@ -560,7 +561,7 @@ export const CourseName = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -568,7 +569,7 @@ export const CourseName = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "alias_name",
         operator: "contains",
@@ -602,7 +603,7 @@ export const CourseName = () => {
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -665,7 +666,7 @@ export const State = ({
     });
   }
 
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "state",
     optionLabel: "name",
     optionValue: "id",
@@ -674,7 +675,7 @@ export const State = ({
       mode: "server",
     },
     filters:filter,
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
@@ -707,7 +708,7 @@ export const State = ({
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -744,7 +745,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   const formData = watch();
   
   // fetch all the cities from the city table 
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
@@ -752,7 +753,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
@@ -785,7 +786,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -823,7 +824,7 @@ export const Center = ({
   const formData = watch();
 
   //fetch all the centers from the center table
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "center",
     optionLabel: "name",
     optionValue: "id",
@@ -831,7 +832,7 @@ export const Center = ({
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
@@ -865,7 +866,7 @@ export const Center = ({
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -1124,14 +1125,14 @@ export const ProgramOrganiser = () => {
 
   const [pageSize, setPageSize] = useState(20);
 
-  const { options, queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
     },
     optionLabel: "contact_id.full_name",
     optionValue: "id",
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "contact_id.full_name",
         operator: "contains",
@@ -1176,13 +1177,13 @@ export const TeacherDropdown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "users",
     meta: {
       select:
         "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "contact_id.full_name",
         operator: "contains",
