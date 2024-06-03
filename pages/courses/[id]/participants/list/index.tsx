@@ -298,7 +298,7 @@ function index() {
     },
     meta: {
       select:
-        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
     sorters: {
