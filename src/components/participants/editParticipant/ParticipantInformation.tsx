@@ -77,7 +77,6 @@ export default function ParticipantInformation() {
                     </div>
                 </div>
             </div>
-            <hr />
         </div>
     );
 }

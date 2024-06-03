@@ -78,7 +78,6 @@ export default function CourseFee() {
                     </Text>
                 </div>
             </div>
-            <hr />
         </div>
     );
 }

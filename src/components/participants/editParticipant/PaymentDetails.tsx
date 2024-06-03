@@ -183,7 +183,6 @@ export default function PaymentDetails() {
           </div>
         </div>
       </div>
-      <hr />
     </div>
   );
 }

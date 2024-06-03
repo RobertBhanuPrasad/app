@@ -298,7 +298,6 @@ export default function AccomodationDetails() {
                     </span>
                 )}
             </div>
-            <hr />
         </div>
     );
 }
