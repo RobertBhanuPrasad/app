@@ -344,6 +344,7 @@ function index() {
     setSelectedTableRows(tempCount);
     setSelectedRowObjects(rowSelection);
     tempCount == 0 && setBulkActionSelectedValue(t("new_strings:bulk_actions"));
+    tempCount == 0 && setEnableBulkOptions(true);
   }, [rowSelection]);
 
   /**
