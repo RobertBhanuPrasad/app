@@ -736,23 +736,18 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
 
   const [pageSize, setPageSize] = useState(10);
 
+  // track whether the city drop down is clicked or not
+  const [citySelectClicked, setCitySelectClicked] = useState(false)
+
   const { watch } = useFormContext();
 
   const formData = watch();
-
-  let filter: Array<CrudFilter> = [];
   
-    filter.push({
-      field: "state_id",
-      operator: "eq",
-      value: formData?.temporaryadvancefilter?.state
-    });
-
+  // fetch all the cities from the city table 
   const { options, onSearch } = useSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
-    filters:filter,
     pagination: {
       pageSize: pageSize,
       mode: "server",
@@ -782,6 +777,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         }));
         temporaryOnChange(val);
       }}
+      onOpenChange={()=>setCitySelectClicked(true)}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t("city_placeholder")} />
@@ -820,17 +816,13 @@ export const Center = ({
   });
   const [pageSize, setPageSize] = useState(10);
 
+  // track whether the center drop down is clicked or not
+  const [centerSelectClicked, setCenterSelectClicked] = useState(false)
+
   const { watch } = useFormContext();
   const formData = watch();
 
-  let filter: Array<CrudFilter> = [];
-  
-    filter.push({
-      field: "state_id",
-      operator: "eq",
-      value: formData?.temporaryadvancefilter?.state
-    });
-
+  //fetch all the centers from the center table
   const { options, onSearch } = useSelect({
     resource: "center",
     optionLabel: "name",
@@ -839,7 +831,6 @@ export const Center = ({
       pageSize: pageSize,
       mode: "server",
     },
-    filters:filter,
     onSearch: (value) => [
       {
         field: "name",
@@ -866,6 +857,7 @@ export const Center = ({
         }));
         temporaryOnChange(val);
       }}
+      onOpenChange={()=>setCenterSelectClicked(true)}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t("select_center")} />
@@ -892,7 +884,6 @@ export const Center = ({
     </Select>
   );
 };
-
 export const CourseStatus = () => {
   const { getValues } = useFormContext();
 
