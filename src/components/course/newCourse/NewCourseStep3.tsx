@@ -82,6 +82,7 @@ import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
 
 import { useTranslation } from "next-i18next";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -232,7 +233,7 @@ const SchedulesHeader = () => {
     }
   );
 
-  const { options } = useSelect({
+  const { options } = useMVPSelect({
     resource: "time_zones",
     optionLabel: "name",
     optionValue: "id",
@@ -299,7 +300,7 @@ const SchedulesHeader = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
-                  {options?.map((option, index) => {
+                  {options?.map((option : any, index : any) => {
                     return (
                       <div key={index}>
                         <SelectItem
