@@ -59,7 +59,7 @@ import { validationSchema } from "./NewCourseValidations";
 import { fetchCourseFee, handleRouteChangeStart } from "pages/courses/add";
 import _ from "lodash";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
-import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
+import { NewCourseStep3FormNames, NewCourseStep4FormNames } from "src/constants/CourseConstants";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -523,6 +523,8 @@ export default function NewCourseReviewPage() {
 
   const [errors, setErrors] = useState<any>({});
 
+  
+ 
   /**
    * This is a function where we are calling to display error messages in preview page also
    * current state : in preview page there is no Form declaration so we have to validate the current data with zod safe parse
@@ -586,12 +588,19 @@ export default function NewCourseReviewPage() {
    */
   const schedulesData = preprocessSchedules()
 
+/**
+ * @constant feeData
+ * @description feeData stores the preprocessed fee data we are using order to sort the fee levels as per requirement in Newcourse step 4
+ * so that while posting we have to remove this order from program_fee_level_settings as there was no order in the db
+ */
+  const feeData = preprocessFee()
+
   /**
    * @constant programBody
-   * @description we are using this to store the preprocessed schedules data and the newCourseData and
+   * @description we are using this to store the preprocessed schedules data and the newCourseData and feeData and
    * We will send to the edge function where it directly post to the program tables and the remaining tables
    */
-  let programBody={...newCourseData,schedules:schedulesData}
+  let programBody={...newCourseData,schedules:schedulesData,program_fee_level_settings:feeData}
 
   // In edge function we need to give the methods if we are coming from the edit page then we need to update the program of respective id
   // if we are coming from the new then we need to post the data
@@ -755,6 +764,16 @@ export default function NewCourseReviewPage() {
   );
   
   return schedulesData
+  }
+
+  const preprocessFee= ()=> {
+    //If the fees are not present then we will just sent the empty array 
+    if(!Array.isArray(newCourseData?.program_fee_level_settings)) return [];
+    if (newCourseData?.program_fee_level_settings) {
+     return _.map(newCourseData?.program_fee_level_settings, (setting) =>
+        _.omit(setting, ['order'])
+      );
+    }
   }
 
   return (
