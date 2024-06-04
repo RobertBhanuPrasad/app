@@ -219,6 +219,7 @@ export function BaseTable<TData, TValue>({
     data,
     columns: columns,
     enableSortingRemoval: true,
+    sortDescFirst: false,
     getCoreRowModel: getCoreRowModel(),
     // getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
