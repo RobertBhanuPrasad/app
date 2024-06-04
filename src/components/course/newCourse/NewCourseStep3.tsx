@@ -138,7 +138,7 @@ const OnlineProgram = () => {
   return (
     <div className="">
       <div>
-        <div className="flex flex-row gap-1 items-center">
+        <div className="flex flex-row gap-1 items-center text-xs">
           {t("course.new_course:time_and_venue_tab.online_meeting_url")}{" "}
           <div className="text-[#7677F4]"> *</div>
           <HoverCard>
@@ -172,7 +172,7 @@ const OnlineProgram = () => {
         </div>
       </div>
       <div className="mt-8">
-        <div>
+        <div className="text-base font-semibold">
           {t("course.new_course:time_and_venue_tab.specific_location")}
         </div>
         <div className="flex gap-7">

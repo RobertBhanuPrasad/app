@@ -523,7 +523,7 @@ const Filters = ({
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary hover:text-[#5E5FC3]">{t("clear_all")}</p>
+          <p className="text-primary hover:text-[#5E5FC3] text-sm font-semibold">{t("clear_all")}</p>
         </div>
         <Button
           className="hover:bg-[#5E5FC3]"
