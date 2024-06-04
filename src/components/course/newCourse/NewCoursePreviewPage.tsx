@@ -260,6 +260,7 @@ export default function NewCourseReviewPage() {
     console.log("Temporary New Course Data", tempCourseData);
     //Updating newCourseData
     setNewCourseData(tempCourseData);
+    // add the fee data when user in preview page and should not update the fee data when user is edited
     if(!editCourseDefaultValues){
       setEditCourseDefaultValues(tempCourseData)
     }
@@ -603,33 +604,33 @@ export default function NewCourseReviewPage() {
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
 
       try {
-        const { data: upsertCourseData, error } =
-          await supabase.functions.invoke("upsert-course", {
-            headers: {
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-              "country-code": countryCode,
-            },
-            method,
-            body: {
-              program_data: programBody,
-              loggedin_user_id: data?.userData?.id,
-              accounting_not_submitted_status_id:
-                accountingNotSubmittedStatusId,
-              language_code: languageCode,
-              rx_base_url:RX_BASE_URL,
-              cx_base_url:CX_BASE_URL,
-            },
-          });
+        // const { data: upsertCourseData, error } =
+        //   await supabase.functions.invoke("upsert-course", {
+        //     headers: {
+        //       Authorization:
+        //         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+        //       "country-code": countryCode,
+        //     },
+        //     method,
+        //     body: {
+        //       program_data: programBody,
+        //       loggedin_user_id: data?.userData?.id,
+        //       accounting_not_submitted_status_id:
+        //         accountingNotSubmittedStatusId,
+        //       language_code: languageCode,
+        //       rx_base_url:RX_BASE_URL,
+        //       cx_base_url:CX_BASE_URL,
+        //     },
+        //   });
 
-        if (error) {
-          console.log("error in catch block", error);
-          throw error;
-        }
+        // if (error) {
+        //   console.log("error in catch block", error);
+        //   throw error;
+        // }
 
-        console.log("data is ", upsertCourseData, error);
+        // console.log("data is ", upsertCourseData, error);
 
-        setProgramId(upsertCourseData?.message?.response?.id);
+        // setProgramId(upsertCourseData?.message?.response?.id);
 
         // we are checking the course is edit or user created new course
         const isEdited = IsEditCourse(pathname);
@@ -655,7 +656,9 @@ export default function NewCourseReviewPage() {
 
           setViewPreviewPage(false);
           setViewThankyouPage(true);
-         router.events.off('routeChangeStart', handleRouteChangeStart)
+          // until course is created we should alert the user if navigates to any other page 
+          // when course is created user should able to move any other page
+          router.events.off('routeChangeStart', handleRouteChangeStart)
         }
       } catch (error) {
         console.log("error in catch block", error);
