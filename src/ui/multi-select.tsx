@@ -152,7 +152,7 @@ export function MultiSelect({
                 >
                   <div className="max-w-[60px] truncate">
                     <abbr
-                      className="no-underline"
+                      className="no-underline font-semibold text-[14px] leading-[20px]"
                       title={findObjectById(item)?.label}
                     >
                       {findObjectById(item)?.label}
@@ -223,7 +223,7 @@ export function MultiSelect({
                 <div className="flex self-end">
                   <button
                     type="button"
-                    className="ml-1 rounded-full text-[#7677F4] text-[12px] font-semibold"
+                    className="ml-1 rounded-full text-[#7677F4] leading-[18px] text-[14px] font-medium"
                     onClick={(e) => {
                       setOpen(true);
                     }}
@@ -301,7 +301,7 @@ export function MultiSelect({
                   className="max-h-[250px] text-[#333333] mr-1 mt-1 overflow-y-auto scrollbar"
                 >
                   {selectables?.map((option, index) => (
-                    <div>
+                    <div key={index}>
                       <CommandItem
                         key={option?.value}
                         onSelect={() => handleOnSelect(option.value)}

@@ -29,6 +29,7 @@ import { DateField } from "src/ui/DateField";
 import { Text } from "src/ui/TextTags";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { FEE_LEVEL } from "src/constants/OptionLabels";
+import _ from "lodash";
 
 // Define CourseTable component
 
@@ -79,6 +80,11 @@ export default function CourseTable() {
     </>
   );
 }
+export const sortFeeLevels = (feeLevels: any) => {
+  // Sort fee levels: regular, student, repeater, senior citizen, and custom fees
+  return _.sortBy(feeLevels, ['is_custom_fee', 'order']);
+};
+
 function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
@@ -134,6 +140,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           ? translatedText(val?.custom_fee_label)
           : translatedText(val?.fee_level_id?.name),
         is_enable: val?.is_enable,
+        order: val?.fee_level_id?.order,
         subTotal: (val?.total - val?.total * taxRate)?.toFixed(2),
         tax: (val?.total * taxRate)?.toFixed(2),
         total: parseFloat(val?.total)?.toFixed(2),
@@ -159,11 +166,14 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { fields: feeLevels, replace } = useFieldArray({
     name: "program_fee_level_settings",
   });
-  console.log(courseFeeData, "courseFeeData");
+ 
+  // Sorted the data for ordering fee_levels_ids in this order: regular, student, repeater, senior citizen and remaining custom fees (MVP:1502)
+const sortCourseFeeData= sortFeeLevels(courseFeeData);
+
   useEffect(() => {
     //Initializing setting data into form if fee is editable.Appending only if we have no data present in field
     if (isFeeEditable && feeLevels?.length == 0) {
-      const feeData = courseFeeData?.map((fee) => {
+      const feeData = sortCourseFeeData?.map((fee) => {
         return {
           // By default all checkbox will be false
           is_enable: fee?.is_enable,
@@ -172,6 +182,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
           fee_level_id: fee?.feeLevelId,
           is_custom_fee: fee?.is_custom_fee,
           custom_fee_label: fee?.custom_fee_label,
+          order: fee?.order,
         };
       });
       console.log(feeData, "feeData");
@@ -225,6 +236,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   ];
 
   //Editable Fee Columns
+  
   let editableFeeColumns: ColumnDef<FeeLevelType>[] = [
     {
       cell: ({ row }) => {
@@ -390,7 +402,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
         const [earlyBirdTotal, setEarlyBirdTotal] = useState(value);
 
         return (
-          <div className="w-[75px]">
+          <div className="w-[75px] text-sm">
             <Input
               value={earlyBirdTotal}
               onChange={(val) => {
@@ -557,10 +569,10 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
       <div className="h-auto overflow-x-scroll rounded-2xl border">
         {isFeeEditable ? (
           feeLevels?.length > 0 && (
-            <DataTable columns={feeColumns} data={courseFeeData} />
+            <DataTable columns={feeColumns} data={sortCourseFeeData} />
           )
         ) : (
-          <DataTable columns={feeColumns} data={courseFeeData} />
+          <DataTable columns={feeColumns} data={sortCourseFeeData} />
         )}
       </div>
 
@@ -614,6 +626,7 @@ CourseTable.noLayout = false;
 
 //Type for FeeLevels
 type FeeLevelType = {
+  order: number;
   earlyBirdSubTotal: number;
   earlyBirdTax: number;
   earlyBirdTotal: number;

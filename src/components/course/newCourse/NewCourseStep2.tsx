@@ -8,7 +8,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
-import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
+import { NewCourseStep2FormNames, NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
   PROGRAM_CATEGORY,
@@ -48,6 +48,7 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "./EditCourseUtil";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -232,6 +233,12 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.program_type_id,
   });
 
+  const {
+    field: { onChange: isResidentialProgramOchange },
+  } = useController({
+    name: NewCourseStep5FormNames?.is_residential_program,
+  });
+
   const selectQuery: any = {
     resource: "program_types",
     meta: {
@@ -255,7 +262,7 @@ export const CourseTypeDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { onSearch, queryResult } = useSelect(selectQuery);
+  const { onSearch, queryResult } = useMVPSelect(selectQuery);
 
   const options: { label: string; value: number }[] =
     queryResult?.data?.data?.map((programType) => {
@@ -349,6 +356,13 @@ export const CourseTypeDropDown = () => {
       ? courseSettings?.[0].maximum_capacity.toString()
       : undefined;
 
+    const isOnlineProgram = courseSettings?.[0]?.is_online_program
+
+    // If the course type is online then isOnlineProgram is true then the is residential program is false
+    // so because of that we are assigning residential variable with negotiation of isOnlineProgram
+    isResidentialProgramOchange(!isOnlineProgram)
+
+
     // when we change the course type and we get new settings we need to set the max capacity from the course type settings otherwise it should be empty
     if (maxAttendes) {
       maxCapacityOnChange(maxAttendes);
@@ -399,7 +413,7 @@ export const CourseTypeDropDown = () => {
             {options?.map((option: any, index: number) => (
               <>
                 <SelectItem
-                  key={option.value}
+                  key={index}
                   value={option.value}
                   className="h-[44px]"
                 >
@@ -456,7 +470,7 @@ const CourseNameDropDown = () => {
 
   const formData = watch();
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -519,7 +533,7 @@ const CourseNameDropDown = () => {
             }
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
-            {options.map((option: any, index: number) => (
+            {options?.map((option: any, index: number) => (
               <>
                 <SelectItem
                   key={option.value}
@@ -648,7 +662,7 @@ const TeachersDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { options, queryResult, onSearch } = useSelect(selectQuery);
+  const { options, queryResult, onSearch } = useMVPSelect(selectQuery);
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
@@ -746,7 +760,7 @@ const AssistantTeachersDropDown = () => {
     });
   }
 
-  const { queryResult, onSearch } = useSelect({
+  const { queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select:
@@ -988,7 +1002,7 @@ const LanguageDropDown = () => {
     name: NewCourseStep2FormNames?.language_ids,
   });
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
@@ -1061,7 +1075,7 @@ const LanguageTranslationDropDown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
@@ -1085,7 +1099,7 @@ const LanguageTranslationDropDown = () => {
     },
   });
 
-  const filteredOptions = options?.filter((val) => {
+  const filteredOptions = options?.filter((val : any) => {
     if (formData?.language_ids?.includes(val.value)) return false;
 
     return true;

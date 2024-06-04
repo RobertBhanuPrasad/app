@@ -1,7 +1,7 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAllIcon from "@public/assets/ClearAllIcon";
 import CrossIcon from "@public/assets/CrossIcon";
-import { useSelect } from "@refinedev/core";
+import { CrudFilter, useList, useSelect } from "@refinedev/core";
 import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { CountComponent, DateRangePickerComponent } from "pages/courses/list";
@@ -39,6 +39,8 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 // Entity implies City,Center,State,...
@@ -194,7 +196,7 @@ const Filters = ({
           )} */}
           {/* Course Status Accordion */}
           <AccordionItem value="item-2" className="border-none ">
-            <AccordionTrigger className="text-base font-semibold pr-3">
+            <AccordionTrigger className="text-lg font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:course_status")}</div>
                 {formData?.temporaryadvancefilter?.course_status?.length >
@@ -258,7 +260,7 @@ const Filters = ({
 
           {/* Course Visibility Accordion */}
           <AccordionItem value="item-5" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div> {t("course.find_course:course_visibility")}</div>
                 {formData?.temporaryadvancefilter?.visibility && (
@@ -274,7 +276,7 @@ const Filters = ({
 
           {/* State Accordion */}
           <AccordionItem value="item-6" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:state")}</div>
                 {formData?.temporaryadvancefilter?.state && (
@@ -318,7 +320,7 @@ const Filters = ({
 
           {/* City Accordion */}
           <AccordionItem value="item-7" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("city")}</div>
                 {formData?.temporaryadvancefilter?.city && (
@@ -362,7 +364,7 @@ const Filters = ({
 
           {/* Center Accordion */}
           <AccordionItem value="item-8" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:center")}</div>
                 {formData?.temporaryadvancefilter?.center && (
@@ -406,7 +408,7 @@ const Filters = ({
 
           {/* Residential Course Accordion */}
           <AccordionItem value="item-9" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("residential_course")}</div>
                 {formData?.temporaryadvancefilter?.is_residential_course && (
@@ -422,7 +424,7 @@ const Filters = ({
 
           {/* Program Organizer Accordion */}
           <AccordionItem value="item-10" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("program_organizer")}</div>
                 {formData?.temporaryadvancefilter?.program_organiser?.length >
@@ -446,7 +448,7 @@ const Filters = ({
 
           {/* Teacher Name Accordion */}
           <AccordionItem value="item-11" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:teacher_name")}</div>
                 {formData?.temporaryadvancefilter?.course_teacher && (
@@ -464,7 +466,7 @@ const Filters = ({
 
           {/* Course Fees Accordion */}
           <AccordionItem value="item-12" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("new_strings:course_fees")}</div>
                 {formData?.temporaryadvancefilter?.is_course_fee && (
@@ -559,7 +561,7 @@ export const CourseName = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -567,7 +569,7 @@ export const CourseName = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "alias_name",
         operator: "contains",
@@ -601,7 +603,7 @@ export const CourseName = () => {
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -632,8 +634,39 @@ export const State = ({
   });
 
   const [pageSize, setPageSize] = useState(10);
+  
+  /**
+   * Getting country code from route using useGetCountryCode function
+   */
+  const countryCode = useGetCountryCode();
 
-  const { options, onSearch } = useSelect({
+  /**
+   * Getting country data based on country code
+   */
+  const { data } = useList<any>({
+    resource: "country",
+    filters: [
+      {
+        field: "abbr",
+        operator: "contains",
+        value: countryCode,
+      },
+    ],
+  });
+
+  
+  let filter: Array<CrudFilter> = [];
+
+  //If the country code is public then dont make the filter for country
+  if (countryCode !== "public") {
+    filter.push({
+      field: "country_id",
+      operator: "eq",
+      value: data?.data?.[0]?.id,
+    });
+  }
+
+  const { options, onSearch } = useMVPSelect({
     resource: "state",
     optionLabel: "name",
     optionValue: "id",
@@ -641,7 +674,8 @@ export const State = ({
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    filters:filter,
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
@@ -674,7 +708,7 @@ export const State = ({
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -703,7 +737,15 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch } = useSelect({
+  // track whether the city drop down is clicked or not
+  const [citySelectClicked, setCitySelectClicked] = useState(false)
+
+  const { watch } = useFormContext();
+
+  const formData = watch();
+  
+  // fetch all the cities from the city table 
+  const { options, onSearch } = useMVPSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
@@ -711,7 +753,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
@@ -736,6 +778,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         }));
         temporaryOnChange(val);
       }}
+      onOpenChange={()=>setCitySelectClicked(true)}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t("city_placeholder")} />
@@ -743,7 +786,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -774,7 +817,14 @@ export const Center = ({
   });
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch } = useSelect({
+  // track whether the center drop down is clicked or not
+  const [centerSelectClicked, setCenterSelectClicked] = useState(false)
+
+  const { watch } = useFormContext();
+  const formData = watch();
+
+  //fetch all the centers from the center table
+  const { options, onSearch } = useMVPSelect({
     resource: "center",
     optionLabel: "name",
     optionValue: "id",
@@ -782,7 +832,7 @@ export const Center = ({
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
@@ -808,6 +858,7 @@ export const Center = ({
         }));
         temporaryOnChange(val);
       }}
+      onOpenChange={()=>setCenterSelectClicked(true)}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t("select_center")} />
@@ -815,7 +866,7 @@ export const Center = ({
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -834,7 +885,6 @@ export const Center = ({
     </Select>
   );
 };
-
 export const CourseStatus = () => {
   const { getValues } = useFormContext();
 
@@ -1075,14 +1125,14 @@ export const ProgramOrganiser = () => {
 
   const [pageSize, setPageSize] = useState(20);
 
-  const { options, queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
     },
     optionLabel: "contact_id.full_name",
     optionValue: "id",
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "contact_id.full_name",
         operator: "contains",
@@ -1127,13 +1177,13 @@ export const TeacherDropdown = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "users",
     meta: {
       select:
         "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "contact_id.full_name",
         operator: "contains",

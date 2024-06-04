@@ -43,7 +43,7 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return <div className="w-[100px]">{t('course_id')}</div>;
+        return <div className="w-[100px] text-sm">{t('course_id')}</div>;
       },
       cell: ({ row }: any) => {
         const router = useRouter();
@@ -67,7 +67,7 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return <div className="w-[150px]">{t("new_strings:course_type_name")}</div>;
+        return <div className="w-[150px] text-sm">{t("new_strings:course_type_name")}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="w-[150px]">{translatedText(row?.original?.program_types?.name)}</div>
@@ -93,7 +93,7 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return <div className="min-w-[150px]">{t("course.find_course:course_status")}</div>;
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:course_status")}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{translatedText(row?.original?.status_id?.name)}</div>
@@ -105,7 +105,7 @@ export const column = (
       enableHiding: false,
       column_name: t("course.find_course:start_date"),
       header: () => {
-        return <div className="min-w-[150px]">{t("course.find_course:start_date")}</div>;
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:start_date")}</div>;
       },
       cell: ({ row }: any) => {
         // Check if start_date exists or not
@@ -121,7 +121,7 @@ export const column = (
       accessorKey: "state",
       column_name: t("course.find_course:state"),
       header: () => {
-        return <div className="min-w-[150px]">{t("course.find_course:state")}</div>;
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:state")}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
@@ -131,7 +131,7 @@ export const column = (
       accessorKey: "city",
       column_name: t("city"),
       header: () => {
-        return <div className="min-w-[150px]">{t("city")}</div>;
+        return <div className="min-w-[150px] text-sm">{t("city")}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
@@ -141,7 +141,7 @@ export const column = (
       accessorKey: "center",
       column_name: t("course.find_course:center"),
       header: () => {
-        return <div className="min-w-[150px]">{t("course.find_course:center")}</div>;
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:center")}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.center?.name}</div>
@@ -153,7 +153,7 @@ export const column = (
       enableHiding: false,
       column_name: t('course.participants:view_participant.course_information_tab.Teachers(S)'),
       header: () => {
-        return <div className="min-w-[150px]">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
+        return <div className="min-w-[150px] text-sm">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
       },
       cell: ({ row }: any) => {
         const teachers = row?.original?.program_teachers?.map(
@@ -170,7 +170,7 @@ export const column = (
       accessorKey: "program_organizers",
       column_name: t('program_organizer'),
       header: () => {
-        return <div className="min-w-[150px]">{t('program_organizer')}</div>;
+        return <div className="min-w-[150px] text-sm">{t('program_organizer')}</div>;
       },
       cell: ({ row }: any) => {
         //Mapping all the programOrganizers in the comma separated name
@@ -192,7 +192,7 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return <div>{t("course.find_course:attendees")}</div>;
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:attendees")}</div>;
       },
       cell: ({ row }: any) => {
         const router = useRouter()
@@ -211,7 +211,7 @@ export const column = (
       accessorKey: "visibility_id",
       column_name: t('new_strings:visibility'),
       header: () => {
-        return <div>{t('new_strings:visibility')}</div>;
+        return <div className="min-w-[150px] text-sm">{t('new_strings:visibility')}</div>;
       },
       cell: ({ row }: any) => {
 
@@ -254,7 +254,7 @@ export const column = (
       accessorKey: "revenue",
       column_name: t('course.view_course:revenue_summary_tab.revenue'),
       header: () => {
-        return <div className="min-w-[150px]">{t('course.view_course:revenue_summary_tab.revenue')}</div>;
+        return <div className="min-w-[150px] text-sm">{t('course.view_course:revenue_summary_tab.revenue')}</div>;
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.revenue}</div>;
@@ -389,8 +389,9 @@ export const column = (
                   <DropdownMenuContent align="end">
                     <p>
                       {dropDownMenuData &&
-                        dropDownMenuData.map((data: any) => (
+                        dropDownMenuData.map((data: any,index:number) => (
                           <DropdownMenuItem
+                          key={index}
                             onClick={() => {
                               handleSelected(data.value);
                             }}

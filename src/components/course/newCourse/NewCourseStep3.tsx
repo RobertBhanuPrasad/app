@@ -82,6 +82,7 @@ import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
 
 import { useTranslation } from "next-i18next";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -232,7 +233,7 @@ const SchedulesHeader = () => {
     }
   );
 
-  const { options } = useSelect({
+  const { options } = useMVPSelect({
     resource: "time_zones",
     optionLabel: "name",
     optionValue: "id",
@@ -299,9 +300,9 @@ const SchedulesHeader = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
-                  {options?.map((option, index) => {
+                  {options?.map((option : any, index : any) => {
                     return (
-                      <div>
+                      <div key={index}>
                         <SelectItem
                           key={option.value}
                           value={option.value}
@@ -764,7 +765,7 @@ const Venue = () => {
                   <DialogTrigger>
                     <Badge
                       variant="outline"
-                      className="absolute right-[43%] -bottom-3 bg-[white] w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
+                      className="absolute right-[43%] -bottom-3 bg-[white] text-base w-[93px] h-[34px] items-center justify-center text-[#7677F4] border border-[#7677F4]"
                     >
                       {t("course.new_course:time_and_venue_tab.view_all")}
                     </Badge>
@@ -848,7 +849,7 @@ const Venue = () => {
         ) : (
           <Dialog open={openAddNewVenue} onOpenChange={setOpenAddNewVenue}>
             <DialogTrigger onClick={handleOpenAddNewVenue} className="flex-[1]">
-              <div className="h-[118px] rounded-[16px] border flex items-center justify-center text-[#7677F4]">
+              <div className="h-[118px] rounded-[16px] text-base border flex items-center justify-center text-[#7677F4]">
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
@@ -1228,7 +1229,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
             // we need to validate schedules after date changes to get instant errors
             trigger("schedules");
           }}
-          className="w-24 rounded-[12px]"
+          className="w-24 rounded-[12px] text-base"
         >
           {t("save_button")}
         </Button>
@@ -1431,7 +1432,7 @@ const {
           </div>
         </GetScrollTypesAlert>
       </div>
-      <div className="w-full flex items-center justify-center mt-8">
+      <div className="w-full flex items-center justify-center mt-8 ">
         <DialogClose>
           <Button
             type="submit"
@@ -1440,6 +1441,7 @@ const {
               formData[NewCourseStep3FormNames.venue_id] && isExistingVenueOnchange("existing-venue")
               handleSubmitVenueList();
             }}
+            className="text-base"
           >
             {t("save_button")}
           </Button>
@@ -1732,8 +1734,8 @@ export const AddOrEditVenue = ({
         </span>
       )}
       <DialogFooter>
-        <div className="w-full flex items-center justify-center mt-8">
-          <Button onClick={handleSubmit}>{t("save_button")}</Button>
+        <div className="w-full flex items-center justify-center mt-8 ">
+          <Button onClick={handleSubmit} className="w-24 rounded-[12px] text-base">{t("save_button")}</Button>
         </div>
       </DialogFooter> 
     </div>
@@ -1948,7 +1950,7 @@ const TimeSelector = ({
           <div className="flex gap-2 items-center">
             <Clock />
             <div>
-              {hourValue} : {minuteValue} {is12HourFormat && timeFormat}
+              {hourValue}:{minuteValue} {is12HourFormat && timeFormat}
             </div>
           </div>
           <div className="px-1 py-[7px]">

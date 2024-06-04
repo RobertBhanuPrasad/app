@@ -325,7 +325,7 @@ export function BaseTable<TData, TValue>({
   const {t} = useTranslation(['common', "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center h-[50px]">
+      <div className="flex flex-row justify-between items-center max-h-[50px]">
         {columnSelector && (
           <div>
             <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -354,11 +354,11 @@ export function BaseTable<TData, TValue>({
                       .getAllColumns()
                       .filter((column) => column?.accessorFn)
                       // Here we are filtering the columns which have accessorKey
-                      .map((column: any) => {
+                      .map((column: any,index:number) => {
                         if (!column.getCanHide()) {
                           //display the disabled options
                           return (
-                            <div className="flex flex-row gap-4 items-center">
+                            <div className="flex flex-row gap-4 items-center" key={index}>
                               <Checkbox
                                 key={column.id}
                                 disabled={!column.getCanHide()}
@@ -613,7 +613,7 @@ export function BaseTable<TData, TValue>({
                   )}
                 </SelectContent>
               </Select>
-              <div>{t('course.find_course:of')} {total}</div>
+              <div className="text-[14px] font-normal">{t('course.find_course:of')} {total}</div>
             </div>}
           </div>
         )}
@@ -675,13 +675,13 @@ const DataPagination = ({
 const {t} = useTranslation(["common", "new_strings"])
 
   return (
-    <div className="flex flex-row self-center items-center space-x-2 p-2">
+    <div className="flex flex-row self-center items-center text-[13px] space-x-2 p-2">
       {/* prev button */}
       {/* Check if there are more than one page, and if so, display a button for navigating to the previous page. */}
       {pageCount > 1 && (
         <Button
           variant="outline"
-          className="h-8 w-8 p-0 border-none"
+          className="h-8 w-8 p-0 border-none text-[13px]"
           onClick={() => setCurrent(current - 1)}
           disabled={current <= 1}
         >
@@ -694,14 +694,14 @@ const {t} = useTranslation(["common", "new_strings"])
           <div key={index}>
             {/* Check if the current page is a placeholder for ellipsis.If yes, display the ellipsis.Otherwise, display a button for the page. */}
             {page === DOTS ? (
-              <span className="p-2">{DOTS}</span>
+              <span className="p-2 text-[13px]">{DOTS}</span>
             ) : (
               <Button
                 variant={page === current ? "default" : "outline"}
                 onClick={() => {
                   setCurrent(page);
                 }}
-                className={`h-8 w-8 p-0 ${page === current ? 'hover:bg-[#5E5FC3]' : 'hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]'}`}
+                className={`h-8 w-8 text-[13px] p-0 ${page === current ? 'hover:bg-[#5E5FC3]' : 'hover:border-solid hover:border-[1px] hover:border-[#7677F4]'}`}
               >
                 {page}
               </Button>
@@ -713,7 +713,7 @@ const {t} = useTranslation(["common", "new_strings"])
       {pageCount > 1 && (
         <Button
           variant="outline"
-          className="h-8 w-8 p-0 border-none"
+          className="h-8 w-8 p-0 border-none text-[13px]"
           onClick={() => setCurrent(current + 1)}
           disabled={current >= pageCount}
         >

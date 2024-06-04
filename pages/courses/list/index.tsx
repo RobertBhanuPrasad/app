@@ -46,6 +46,7 @@ import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { SupabaseClient, supabaseClient } from "src/utility/supabaseClient";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
@@ -608,7 +609,7 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
+                className="flex flex-row gap-2 text-sm text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
                 //if select all is false or row count less than equal to 0 then it should be true
                 disabled={allSelected === false || rowCount <= 0}
               >
@@ -725,7 +726,7 @@ export const CourseTypeComponent = ({ name }: any) => {
   });
 
   const [pageSize, setPageSize] = useState(10);
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "program_types",
     optionLabel: "name",
     optionValue: "id",
@@ -767,10 +768,10 @@ export const CourseTypeComponent = ({ name }: any) => {
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
-                key={option.value}
+                key={index}
                 value={option.value}
                 className="h-[44px]"
               >

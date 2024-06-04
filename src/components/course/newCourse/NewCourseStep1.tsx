@@ -4,7 +4,7 @@ import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import {
@@ -42,6 +42,8 @@ import { useTranslation } from "next-i18next";
 import { Text } from "src/ui/TextTags";
 import { useRouter } from "next/router";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useMVPSelect } from "src/utility/useMVPSelect";
+import { getDefaultValues } from "@components/participants/editParticipant/EditParticipantUtil";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -96,14 +98,14 @@ const RegistrationGateway = () => {
 
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
-      <div className="text-[14px] font-normal">
+      <div className="text-sm font-normal">
         {t("registration_via_3rd_party_gateway")}
       </div>
       <Switch
         id="registration"
         className="!w-[57px] !h-[24px]"
         onCheckedChange={onChange}
-        checked={registrationSieUrl}
+        checked={value}
       />
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">
@@ -118,11 +120,11 @@ const RegistrationGateway = () => {
               placeholder={t("new_strings:enter_url")}
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
-              className="placeholder:text-[#999999]"
+              className="placeholder:text-[#999999] rounded-[12px] text-[14px] text-[#333333]"
               error={error ? true : false}
             />
             {error && (
-              <span className="text-[#FF6D6D] text-[12px]">
+              <span className="text-[#FF6D6D] text-xs font-semibold">
                 {error?.message}
               </span>
             )}
@@ -373,7 +375,7 @@ const RadioCards = () => {
               <Organizer
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
-              <div className="w-[240px] text-wrap text-center justify-center">
+              <div className="w-[240px] text-wrap text-center justify-center text-sm">
                 {iAmOrganisingCourse}
               </div>
             </div>
@@ -381,7 +383,7 @@ const RadioCards = () => {
         </Label>
       </div>
       {radioError && (
-        <span className="text-[#FF6D6D] text-[14px]">
+        <span className="text-[#FF6D6D] text-xs font-semibold">
           {radioError?.message}
         </span>
       )}
@@ -409,7 +411,7 @@ const OrganizationDropDown = () => {
 
   const { setValue } = useFormContext();
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "organizations",
     optionLabel: "name",
     optionValue: "id",
@@ -469,7 +471,7 @@ const OrganizationDropDown = () => {
     setValue("state_id", "");
     setValue("city_id", "");
     setValue("center_id", "");
-    setValue("is_residential_program", false);
+    setValue("is_residential_program", undefined);
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
     setValue("program_fee_level_settings",undefined );
@@ -546,9 +548,9 @@ const OrganizationDropDown = () => {
           <SelectContent>
             <Input value={searchValue} onChange={handleSearch} />
             <SelectItems onBottomReached={handleOnBottomReached}>
-              {options?.map((option, index) => {
+              {options?.map((option : any, index : any) => {
                 return (
-                  <div>
+                  <div key={index}>
                     <SelectItem
                       key={option.value}
                       value={option.value}
@@ -567,7 +569,7 @@ const OrganizationDropDown = () => {
         </Select>
 
         {organizationError && (
-          <span className="text-[#FF6D6D] text-[12px]">
+          <span className="text-[#FF6D6D] text-xs font-semibold">
             {organizationError?.message}
           </span>
         )}
@@ -596,7 +598,7 @@ const ProgramOrganizerDropDown = () => {
     PROGRAM_ORGANIZER
   )?.id;
 
-  const { options, queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
@@ -624,6 +626,7 @@ const ProgramOrganizerDropDown = () => {
       mode: "server",
     },
   });
+
 
   const { watch } = useFormContext();
 
@@ -675,7 +678,7 @@ const ProgramOrganizerDropDown = () => {
         error={programOrganizerError}
       />
       {programOrganizerError && (
-        <span className="text-[#FF6D6D] text-[12px]">
+        <span className="text-[#FF6D6D] text-xs font-semibold">
           {programOrganizerError?.message}
         </span>
       )}

@@ -67,9 +67,18 @@ import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { NextRouter, useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useTranslation } from "next-i18next";
+import {
+  IsCopyCourse,
+  IsEditCourse,
+} from "@components/course/newCourse/EditCourseUtil";
+import { IsNewCourse } from "@components/course/newCourse/NewCourseUtil";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { supabaseClient } from "src/utility";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
@@ -107,8 +116,7 @@ function index() {
   }
 }
 export function NewCourse() {
-
-  const { setCurrentStep ,newCourseData} = newCourseStore();
+  const { setCurrentStep, newCourseData } = newCourseStore();
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -118,9 +126,8 @@ export function NewCourse() {
 
   console.log("heyy logged user data", loggedUserData);
 
-   // Get the current pathname using the useRouter hook
-   const pathname = usePathname();
-
+  // Get the current pathname using the useRouter hook
+  const pathname = usePathname();
 
   const onSubmit = (formData: any) => {
     // console.log(formData);
@@ -138,9 +145,7 @@ export function NewCourse() {
      * This initializes the component state for the first step.
      */
     setCurrentStep(1);
-
   }, []);
-  
 
   //Finding program Organizer role id
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
@@ -169,7 +174,6 @@ export function NewCourse() {
 
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
-
   /**
    *variable that holds whether the logged in user has super admin role or not
    */
@@ -177,15 +181,10 @@ export function NewCourse() {
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
- 
-
- 
-
   /**
    * Getting the search params from useSearchParams function
    */
   const searchparams = useSearchParams();
-
 
   /**
    * defining the ref using use Ref function
@@ -242,7 +241,6 @@ export function NewCourse() {
     defaultValues[NewCourseStep5FormNames?.accommodation_fee_payment_mode] =
       payOnlineId;
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
-    defaultValues[NewCourseStep5FormNames?.is_residential_program] = false;
   }
 
   // fetch data from country_config table for time format
@@ -314,7 +312,7 @@ export function NewCourse() {
           defaultValues={defaultValues}
           schema={validationSchema(iAmCoTeachingId as number)}
         >
-          <NewCourseTabs defaultValues={defaultValues}/>
+          <NewCourseTabs defaultValues={defaultValues} />
         </Form>
       </div>
     </div>
@@ -441,12 +439,10 @@ export type ItabsNextButtonClickStatus = nextButtonClicks[];
 
 export type ItabsValidationStatus = ("valid" | "invalid" | "neutral")[];
 
-export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
-
+export const NewCourseTabs = ({ defaultValues }: { defaultValues: any }) => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   const searchParams = useSearchParams();
-
 
   const pathname = usePathname();
 
@@ -460,7 +456,7 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
 
   const formData: NewCourseFormFieldTypes = watch();
 
- /**
+  /**
    * useEffect hook to handle route changes.
    * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
    * - Emits a routeChangeError event to cancel the navigation when necessary.
@@ -486,9 +482,8 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
     return () => {
         router.events.off('routeChangeStart', routeChange);
     };
+  }, [formData]);
 
-}, [formData]);
- 
   const { data: loginUserData }: any = useGetIdentity();
   const { data: timeZoneData } = useList({ resource: "time_zones" });
 
@@ -675,7 +670,6 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
 
       // setViewPreviewPage(true);
       setNewCourseData(formData);
-  
 
       // i need to set params with section=preview_page
       const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
@@ -949,7 +943,7 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
                     <TabsTrigger
                       key={index}
                       value={JSON.stringify(tab.value)}
-                      className="!h-12  items-center w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      className="!h-12  items-center text-base w-[230px] text-[#999999] !font-normal data-[state=active]:text-[#7677F4]  data-[state=active]:bg-gradient-to-r from-[#7677F4]/20  to-[#7677F4]/10 gap-[9px] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                       onClick={async () => {
                         let validationFieldsStepWise = requiredValidationFields(
                           formData,
@@ -1007,6 +1001,7 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
                       <TabsContent
                         value={JSON.stringify(index + 1)}
                         className={contentStylings}
+                        key={index}
                       >
                         {step.component}
                       </TabsContent>
@@ -1023,7 +1018,7 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
                       e.preventDefault();
                       handleClickPrevious();
                     }}
-                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[#7677F4] font-semibold rounded-[12px]"
+                    className="border border-[#7677F4] bg-[white] w-[118px] h-[46px] text-[16px] leading-[22px] text-[#7677F4] font-bold rounded-[12px]"
                   >
                     {t("previous_button")}
                   </Button>
@@ -1031,7 +1026,7 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
 
                 {currentStep < stepTitles.length && (
                   <Button
-                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-semibold"
+                    className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] font-bold text-[16px] leading-[22px]"
                     onClick={async (e) => {
                       e.preventDefault();
 
@@ -1053,7 +1048,7 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
 
                 {currentStep == CONTACT_INFO_STEP_NUMBER && (
                   <Button
-                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] "
+                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] text-base"
                     onClick={async () => {
                       let validationFieldsStepWise = requiredValidationFields(
                         formData,
@@ -1119,7 +1114,6 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     },
   };
 };
-
 
 /**
  * @function fetchCourseFee is used to fetch course-fee based on user input
@@ -1242,20 +1236,26 @@ interface CourseFeeBody {
   center_id?: number;
   start_date?: string;
 }
-{/**
+{
+  /**
 This function will check the any modifications in the form before leaving the page. if any changes are there then it alert the user
-*/}
-export const handleRouteChangeStart = (url: string,router: any,pathname: string,condition?: boolean,routeChange?: Function ) => {
-  // check is there any data entered or not and check is it in newCourse or copyCourse or editCourse. 
-  if (!condition && ( IsNewCourse(pathname) || IsCopyCourse(pathname) || IsEditCourse(pathname)) ) {
+*/
+}
+export const handleRouteChangeStart = (
+  url: string,
+  router: NextRouter,
+  pathname: string,
+  condition?: boolean
+) => {
+  // check is there any data entered or not and check is it in newCourse or copyCourse or editCourse.
+  if (
+    !condition &&
+    (IsNewCourse(pathname) || IsCopyCourse(pathname) || IsEditCourse(pathname))
+  ) {
     // if the navigated url contain the query parameters then we don't need to alert the user.
     if((url.split('?')[0]===url)){
       if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
-        // In the alert if user clicked on the 'yes' then user navigated to corresponding url
-        router.events.off('routeChangeStart', routeChange);
-            setTimeout(() => {
-                router.push(url);
-            }, 0);
+        console.log("ok go ahead")
         } 
         else {
             router.events.emit('routeChangeError');

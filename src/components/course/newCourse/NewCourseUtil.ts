@@ -87,9 +87,7 @@ export const handlePostProgramData = async (
       body[NewCourseStep2FormNames.is_language_translation_for_participants];
   }
 
-  if (body[NewCourseStep2FormNames.max_capacity]) {
-    programBody.max_capacity = body[NewCourseStep2FormNames.max_capacity];
-  }
+    programBody.max_capacity = body[NewCourseStep2FormNames.max_capacity] ? body[NewCourseStep2FormNames.max_capacity] : null;
 
   // is_geo_restriction_applicable
   if (
@@ -282,10 +280,8 @@ export const handlePostProgramData = async (
 
   // step 6
   //bcc_registration_confirmation_email
-  if (body[NewCourseStep6FormNames.bcc_registration_confirmation_email]) {
     programBody.bcc_registration_confirmation_email =
       body[NewCourseStep6FormNames.bcc_registration_confirmation_email];
-  }
 
   console.log("body to create program", programBody);
 
@@ -1053,13 +1049,9 @@ export const handlePostProgramContactDetailsData = async (
       contact_email: contactData.contact_email,
     };
 
-    if (contactData?.contact_name) {
       dataObject.contact_name = contactData.contact_name;
-    }
 
-    if (contactData?.contact_number) {
-      dataObject.contact_number = contactData.contact_number;
-    }
+      dataObject.contact_number = contactData.contact_number == "" ? null : contactData.contact_number;
 
     if (contactData.id) {
       dataObject.id = contactData.id;
