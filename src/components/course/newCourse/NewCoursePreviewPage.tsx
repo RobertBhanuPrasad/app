@@ -655,6 +655,7 @@ export default function NewCourseReviewPage() {
 
           setViewPreviewPage(false);
           setViewThankyouPage(true);
+         router.events.off('routeChangeStart', handleRouteChangeStart)
         }
       } catch (error) {
         console.log("error in catch block", error);
