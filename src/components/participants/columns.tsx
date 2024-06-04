@@ -51,9 +51,7 @@ export const columns = () =>
   },
   {
     accessorKey: "created_at",
-    column_name: t('course.participants:find_participant.registration_date'),
-    enableHiding: false,
-    enableSorting: true,
+    column_name: t('course.participants:find_participant.registration_date'), 
     header: ({ column }) => {
       return (
         <div>
