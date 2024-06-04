@@ -6,9 +6,8 @@ import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage"; 
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
-import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
@@ -18,8 +17,7 @@ import {
   HttpError,
   UseLoadingOvertimeReturnType,
   useGetIdentity,
-  useList,
-  useOne,
+  useList
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -61,21 +59,20 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 
+import { IsCopyCourse, IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import { IsNewCourse } from "@components/course/newCourse/NewCourseUtil";
 import Error from "@public/assets/Error";
 import Success from "@public/assets/Success";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { useTranslation } from "next-i18next";
-import { IsCopyCourse, IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
-import { IsNewCourse } from "@components/course/newCourse/NewCourseUtil";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { supabaseClient } from "src/utility";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import { newCourseStore } from "src/zustandStore/NewCourseStore";
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData, "loginUserData");
@@ -473,13 +470,14 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
    useEffect(() => {
 
     const routeChange = (url:string) => {
+      const tempFormData = formData
 
       // we have remove the undefined key:value pairs in formData
-      Object.keys(formData).forEach(key => formData[key] === undefined ? delete formData[key] : {});
+      Object.keys(formData).forEach(key => tempFormData[key] === undefined ? delete tempFormData[key] : {});
 
       // to check whether we enter the any field value in the form and if we enter the  fields and try to navigate to another page it show the alert 
       // this varaible holds the boolean value that the data is entered or not
-      const condition = _.isEqual(defaultValues,formData)
+      const condition = _.isEqual(defaultValues,tempFormData)
 
       handleRouteChangeStart(url,router,pathname,condition,routeChange)
     }
@@ -1247,11 +1245,9 @@ interface CourseFeeBody {
 {/**
 This function will check the any modifications in the form before leaving the page. if any changes are there then it alert the user
 */}
-export const handleRouteChangeStart = (url: any,router: any,pathname: any,condition?: boolean,routeChange?: any ) => {
-  
+export const handleRouteChangeStart = (url: string,router: any,pathname: string,condition?: boolean,routeChange?: Function ) => {
   // check is there any data entered or not and check is it in newCourse or copyCourse or editCourse. 
   if (!condition && ( IsNewCourse(pathname) || IsCopyCourse(pathname) || IsEditCourse(pathname)) ) {
-
     // if the navigated url contain the query parameters then we don't need to alert the user.
     if((url.split('?')[0]===url)){
       if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {

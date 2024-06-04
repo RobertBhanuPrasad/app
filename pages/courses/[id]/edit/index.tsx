@@ -17,7 +17,7 @@ import { handleRouteChangeStart } from "pages/courses/add";
 
 const index = () => {
 
-  const { editCourseData,newCourseData } = newCourseStore();
+  const { editCourseDefaultValues,newCourseData } = newCourseStore();
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -45,14 +45,15 @@ const index = () => {
    */
   
   useEffect(() => {
-
     const routeChange = (url:string) => {
        // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
       // this varaible holds the boolean value that the data is edited or not
-      const condition = _.isEqual(newCourseData,editCourseData)
-
+      const condition = _.isEqual(newCourseData,editCourseDefaultValues)
+      const {query} = router
+      // we take the id from the url
+      const Id=url.split('/').filter((x)=>x===query.id?.toString())
       // we donot display the alert for the user if navigated from edited course to course details page
-      if(IsEditCourse(url)){
+      if(!(Id.length>0)){
         handleRouteChangeStart(url,router,pathname,condition,routeChange)
       }
 

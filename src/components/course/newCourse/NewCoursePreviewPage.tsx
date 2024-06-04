@@ -84,7 +84,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData, setNewCourseData,setEditCourseData,editCourseData } = newCourseStore();
+  const { newCourseData, setNewCourseData,setEditCourseDefaultValues,editCourseDefaultValues } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -259,10 +259,11 @@ export default function NewCourseReviewPage() {
     console.log("Temporary New Course Data", tempCourseData);
     //Updating newCourseData
     setNewCourseData(tempCourseData);
-    if(!editCourseData){
-      setEditCourseData(tempCourseData)
+    if(!editCourseDefaultValues){
+      setEditCourseDefaultValues(tempCourseData)
     }
   };
+
 
   useEffect(() => {
     //Fetching Course Fee Data

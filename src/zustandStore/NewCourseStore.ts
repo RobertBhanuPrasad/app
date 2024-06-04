@@ -2,8 +2,7 @@ import { create } from "zustand";
 
 interface NewCourseStore {
   viewPreviewPage: boolean;
-  editCourseData: null;
-  pendingUrl: any;
+  editCourseDefaultValues: null; // to check any changes made in edit page
   viewThankyouPage: boolean;
   viewSuccessModal: boolean;
   viewRejectedModal: boolean;
@@ -12,8 +11,7 @@ interface NewCourseStore {
   viewCourseAccountingRejectedModal: boolean;
 
   setViewRejectedModal: (by: boolean) => void;
-  setEditCourseData: (by: any) => void;
-  setPendingUrl: (by: any) => void;
+  setEditCourseDefaultValues: (by: any) => void;
   setViewPreviewPage: (by: boolean) => void;
   setViewThankyouPage: (by: boolean) => void;
   setViewSuccessModal: (by: boolean) => void;
@@ -56,8 +54,7 @@ interface NewCourseStore {
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
   viewPreviewPage: false,
-  editCourseData: null,
-  pendingUrl: null,
+  editCourseDefaultValues: null,
   viewThankyouPage: false,
   newCourseData: null,
   programId: 1,
@@ -74,14 +71,9 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
     }));
   },
 
-  setPendingUrl: (data: any) => {
+  setEditCourseDefaultValues: (data: any) => {
     set(() => ({
-      pendingUrl: data,
-    }));
-  },
-  setEditCourseData: (data: any) => {
-    set(() => ({
-      editCourseData: data,
+      editCourseDefaultValues: data,
     }));
   },
   setViewSuccessModal: (data: boolean) => {
