@@ -147,12 +147,13 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     //   })
     //   .optional(),
     // Step 4 Schema
+    feeLevels:z.array(z.any()).min(1),
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
-    is_residential_program: z.boolean().optional(),
+    is_residential_program: z.boolean(),
     accommodation_fee_payment_mode: z.number({
       required_error: "Fee payment method is required fields",
     }),
@@ -161,8 +162,15 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     contact: contactValidationSchema,
     bcc_registration_confirmation_email: z
       .string()
+      /**
+       * In the regression expression we are allowing the spaces and the commas after the email for that tailing spaces we are adding the \s
+       * As i am allowing 0, one or many spaces so i am giving \s*
+       * as they are can be or cannot be present so we are adding the ?
+       * as per the bug 1505 we have added ,? after the email expression, then this was solved 
+       *  */ 
+
       .regex(
-        /^(?:[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?:,[ ]*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
+        /^(?:\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)?(?:,\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)*,?\s*?$/,
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
@@ -170,7 +178,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
       .refine(
         (value) => {
           //Requirement: Duplicate emails are not allowed
-          const emails = value.split(",").map((email) => email.trim());
+          const emails = value.split(",").map((email) => email.trim()).filter(email => email !== "");
           const uniqueEmails = new Set(emails);
           return emails.length === uniqueEmails.size;
         },
@@ -194,7 +202,7 @@ const contactValidationSchema = z.array(
   z.object({
     contact_name: z
       .string()
-      .regex(/^[a-zA-Z\s]*$/, { message: "only alphabets are allowed" })
+      .regex(/^[a-zA-Z\s]*$/, { message: "Only Alaphabets are allowed" })
       .nullable()
       .optional(),
     contact_email: z

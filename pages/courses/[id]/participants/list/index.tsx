@@ -50,7 +50,7 @@ function index() {
   const programID: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
-  
+
   const {
     ParticpantFiltersData,
     setSelectedTableRows,
@@ -298,7 +298,7 @@ function index() {
     },
     meta: {
       select:
-        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
     sorters: {
@@ -316,7 +316,7 @@ function index() {
   console.log("Participant table data", participantData);
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>();
   const [
     displayTransactionStatusBulkActionError,
     setDisplayTransactionStatusBulkActionError,
@@ -328,10 +328,13 @@ function index() {
   useEffect(() => {
     if (!participantData?.data?.data) return;
     const allRowSelection: any = {};
-    participantData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      participantData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, participantData?.data?.data]);
 
   useEffect(() => {
@@ -341,10 +344,32 @@ function index() {
     setSelectedTableRows(tempCount);
     setSelectedRowObjects(rowSelection);
     tempCount == 0 && setBulkActionSelectedValue(t("new_strings:bulk_actions"));
+    tempCount == 0 && setEnableBulkOptions(true);
   }, [rowSelection]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   *Here whenever i check select all then i need to check and unchekc all row selection also
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    participantData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
+   */
+  const participantsRowSelectionOnChange = (row: any) => {
+    const selectedRow = row();
+    setRowSelection(row);
+    if (Object.values(selectedRow).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   const rowCount = Object.values(rowSelection).filter(
@@ -612,13 +637,12 @@ function index() {
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
-        {/* TODO  : for now may-13 release it has to be hidden */}
         {/* Bulk actions section */}
-        {/* <div className="flex gap-10 justify-end w-full"> */}
+        <div className="flex gap-10 justify-end w-full">
         {/* Bulk Actions Dropdown */}
-        {/* <div> */}
-        {/* <DropdownMenu> */}
-        {/* <DropdownMenuTrigger asChild>
+        <div>
+        <DropdownMenu>
+        <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
@@ -629,27 +653,27 @@ function index() {
                   <CountComponent count={selectedTableRows} />
                   <DropDown />
                 </Button>
-              </DropdownMenuTrigger> */}
-        {/* <DropdownMenuContent align="end"> */}
-        {/* <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]"> */}
+              </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+        <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
         {/* TODO (Not in MVP Scope): Print Registration Form */}
-        {/* <DropdownMenuItem
+        <DropdownMenuItem
                     onClick={() => {
                       setEnableBulkOptions(true);
                     }}
                   >
                     Print Registration Form
-                  </DropdownMenuItem> */}
-        {/* <DropdownMenuItem
+                  </DropdownMenuItem>
+        <DropdownMenuItem
                     onClick={() => {
                       setBulkActionSelectedValue(t('new_strings:update_attendance_status'));
                       setEnableBulkOptions(false);
                       setBulkAction("attendance");
                     }}
-                  > */}
-        {/* {t('new_strings:update_attendance_status')} */}
-        {/* </DropdownMenuItem> */}
-        {/* <DropdownMenuItem
+                  >
+        {t('new_strings:update_attendance_status')}
+        </DropdownMenuItem>
+        <DropdownMenuItem
                     onClick={() => {
                       setBulkActionSelectedValue(t('new_strings:update_transaction_status'));
                       setEnableBulkOptions(false);
@@ -657,13 +681,13 @@ function index() {
                     }}
                   >
                     {t('new_strings:update_transaction_status')}
-                  </DropdownMenuItem> */}
-        {/* </div> */}
-        {/* </DropdownMenuContent> */}
-        {/* </DropdownMenu> */}
-        {/* </div> */}
+                  </DropdownMenuItem>
+        </div>
+        </DropdownMenuContent>
+        </DropdownMenu>
+        </div>
         {/* Bulk actions options dropdown */}
-        {/* <div>
+        <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -702,13 +726,13 @@ function index() {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div> */}
-        {/* </div> */}
+          </div>
+        </div>
         <div className="w-full">
           <BaseTable
             current={current}
             rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
+            setRowSelection={participantsRowSelectionOnChange}
             checkboxSelection={true}
             setCurrent={setCurrent}
             pageCount={pageCount}
@@ -757,7 +781,7 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
+                className="flex flex-row gap-2 text-sm text-[#7677F4] border  border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
                 {loading ? (
@@ -897,7 +921,7 @@ const HeaderSection = () => {
         <ParticipantsAdvanceFilter />
       </div>
       {/* Search Section */}
-      <div className="flex flex-row items-center border-2 px-3 rounded-lg">
+      <div className="flex flex-row items-center border-2 px-2 rounded-lg">
         <div>
           <SearchIcon className="text-[#7677F4]" />
         </div>
@@ -906,7 +930,7 @@ const HeaderSection = () => {
             value={Searchvalue}
             onChange={handleSearchChange}
             type="text"
-            className=" border-0 outline-none"
+            className="border-0 outline-none w-[190px]"
             placeholder={t(
               "course.participants:find_participant.search_registration"
             )}
@@ -962,7 +986,7 @@ const HeaderSection = () => {
                     </div>
                   )
                 ) : (
-                  <span className="font-thin text-[#999999]">
+                  <span className="font-normal text-[#999999]">
                     {t("new_strings:search_by_registration_date")}
                   </span>
                 )}
@@ -993,6 +1017,7 @@ const HeaderSection = () => {
           onSearch={() => {}}
           onChange={onSelectChange}
           searchBar={false}
+          variant='basic'
         />
       </div>
       {/* Clear, Apply Filters Section */}

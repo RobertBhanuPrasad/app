@@ -36,6 +36,9 @@ import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import { IsEditCourse } from "./EditCourseUtil";
 import { supabaseClient } from "src/utility";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
+import { Button } from "src/ui/button";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -45,7 +48,7 @@ export default function CourseTable() {
   const formData = watch();
 
   return (
-    <div className="flex flex-col gap-8 w-[70vw]">
+    <div className="flex flex-col gap-8 w-full">
       <ResidentialCourse />
       {formData?.is_residential_program == true && (
         <div>
@@ -178,7 +181,7 @@ export const ResidentialCourse = () => {
 
   return (
     <div className="flex gap-1 flex-col">
-      <div className="text-sm font-normal text-[#333333]">
+      <div className="text-xs font-normal text-[#333333]">
         {t("residential_course")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
@@ -229,7 +232,7 @@ export const AccommodationFeeMode = () => {
 
   return (
     <div className="flex gap-1 flex-col mt-[32px]">
-      <div className="text-sm font-normal text-[#333333]">
+      <div className="text-xs font-normal text-[#333333]">
         {t("course.new_course:accommodation_tab.accommodation_fee")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
@@ -320,7 +323,7 @@ export const AccommodationType = ({
   });
 
   // Hook to fetch and manage options for a select input
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "accomdation_types",
     optionLabel: "name",
     optionValue: "id",
@@ -333,8 +336,8 @@ export const AccommodationType = ({
     ],
   });
 
-  const filteredOptions = options.filter(
-    (option) => !existingAccommodationValues?.includes(option.value)
+  const filteredOptions = options?.filter(
+    (option : any) => !existingAccommodationValues?.includes(option.value)
   );
 
   const [isDisabled, setIsDisabled] = useState(false);
@@ -384,7 +387,7 @@ export const AccommodationType = ({
         <SelectContent>
           <Input onChange={(val) => onSearch(val.target.value)} />
           <SelectItems onBottomReached={() => {}}>
-            {filteredOptions?.map((option, index) => {
+            {filteredOptions?.map((option : any, index: any) => {
               return (
                 <div>
                   <SelectItem
@@ -450,6 +453,7 @@ const AccomdationAction = ({
   const formData = watch().accommodation || [];
   const isLastRow = index === formData?.length - 1;
   const isFirstRow = index === 0;
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Function to add a new row
   const handleAddRow = () => {
@@ -457,10 +461,11 @@ const AccomdationAction = ({
   };
 
   // Function to delete a row
-  const handleDeleteRow = (index: number) => {
+  const handleDeleteRow= (index: number) => {
     remove(index);
   };
-  const {t} = useTranslation('common')
+
+  const {t} = useTranslation(['common', "new_strings"])
   return (
     <div className="w-[150px] flex gap-4 ">
       {/* Button to add a new row */}
@@ -475,14 +480,43 @@ const AccomdationAction = ({
       )}
       {/* Button to delete a row */}
       {!isFirstRow && (
-        <div
-          onClick={() => handleDeleteRow(index)}
-          className="flex flex-row gap-1 justify-center items-center text-[#7677F4] cursor-pointer"
-        >
-          <Delete />
-          <div>{t("delete_button")}</div>
-        </div>
-      )}
+           <Dialog open={isDeleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+             <DialogTrigger
+             onClick={() => {
+              setDeleteDialogOpen(true)
+             }}
+             className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
+             >
+             <Delete />
+             {t('delete_button')}
+             </DialogTrigger>
+             <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+             <DialogHeader>
+             <DialogTitle className="flex justify-center">{t('delete_button')}</DialogTitle>
+             <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333] whitespace-nowrap">
+               {t('new_strings:are_you_sure_you_want_to_delete_this_accomodation')}
+             </DialogDescription>
+             </DialogHeader>
+             <DialogFooter className="w-full flex !justify-center gap-6">
+             <DialogClose>
+             <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+                {t('no_button')}
+             </Button>
+             </DialogClose>
+             <DialogClose>
+             <Button
+              className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+              onClick={() => {
+              handleDeleteRow(index)
+              }}
+             >
+             {t('yes')}
+             </Button>
+             </DialogClose>
+             </DialogFooter>
+             </DialogContent>
+           </Dialog>
+          )}
     </div>
   );
 };

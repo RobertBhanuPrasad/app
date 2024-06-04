@@ -52,7 +52,7 @@ export const ParticipantsListMainHeader = () => {
   });
   const {t} = useTranslation(["course.view_course", "course.new_course", "new_strings", "common"])
   return (
-    <div className="flex justify-between w-full px-8 h-auto ">
+    <div className="flex justify-between w-full px-8 h-auto">
       {/* Course Details Section */}
       <div className="flex gap-2">
         <ChevronLeftIcon
@@ -66,7 +66,7 @@ export const ParticipantsListMainHeader = () => {
         />
         <div>
           {/* Course Name */}
-          <div className="text-[24px] font-medium">
+          <div className="text-[24px] font-medium ">
             {courseData?.data?.program_alias_name_id
               ? translatedText(
                   courseData?.data?.program_alias_name_id?.alias_name
@@ -89,7 +89,7 @@ export const ParticipantsListMainHeader = () => {
             {/* Participant Count */}
             <div className="flex gap-2 items-center">
               <ParticipantsIcon />
-              <div className="cursor-pointer text-[#7677F4] font-medium">
+              <div className="text-[#7677F4] font-medium">
                 {courseData?.data?.participant_count}
               </div>
               <HoverCard>

@@ -244,7 +244,7 @@ function ViewDetails() {
   )?.id;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col text-sm">
       <div className="mx-8">
         <div className="flex flex-row justify-between">
           <div className="text-[32px] font-semibold">
@@ -350,7 +350,7 @@ function ViewDetails() {
           )}
         </div>
 
-        <div className="flex flex-row items-center gap-2 w-full justify-end ">
+        <div className="flex flex-row items-center gap-2 w-full justify-end text-xs text-[#999999]">
           {t("new_strings:announced_by")}:{" "}
           {courseData?.data?.created_by_user_id?.contact_id?.full_name}
           <HoverCard>
@@ -407,7 +407,7 @@ function ViewDetails() {
               <TabsTrigger
                 key={index}
                 value={JSON.stringify(trigger.value)}
-                className={` data-[state=active]:text-[#7677F4] data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end  text-sm font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none  `}
+                className={` data-[state=active]:text-[#7677F4] text-base data-[state=active]:border-[#7677F4] h-full data-[state=active]:border-b !pb-2 items-end font-medium  !data-[state=active]:text-[#7677F4]  !data-[disabled]:text-[#999999] rounded-none  `}
                 disabled={handleTabsBasedOnStatus(
                   courseData?.data?.status_id?.id,
                   trigger.value
@@ -557,7 +557,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border text-[#333333] font-semibold !border-[#999999]">
+        <SelectTrigger className="w-[192px] border text-[#333333] text-sm font-semibold !border-[#999999]">
           <SelectValue placeholder={t("pending_approval")} />
         </SelectTrigger>
         <SelectContent>
@@ -781,24 +781,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
    */
   const handleCopyCourse = async () => {
     if (courseId) {
-      let defaultValues = await handleCourseDefaultValues(
-        courseId,
-        timeFormat12HoursId
-      );
-
-      // we have to delete schedules when user click on copy course and other we need to prefill
-
-      defaultValues = _.omit(defaultValues, ['id', 'schedules'])
-      //remove the id, program_id from each object in program_fee_level_settings array
-      if (defaultValues?.program_fee_level_settings) {
-        defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
-          _.omit(setting, ['id', 'program_id'])
-        );
-      }
-      setNewCourseData(defaultValues)
-      // we are storing the program created by in the zustand variable to use it in the validation of the co-teaching
-      setProgramCreatedById(defaultValues?.program_created_by)
-      router.push({ pathname: '/courses/add', query: { action: 'Copy' } })
+      router.push(`/courses/${courseId}/copy`);
     }
   };
 
@@ -859,7 +842,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border !text-[#333333] !font-semibold !border-[#999999]">
+        <SelectTrigger className="w-[192px] border !text-[#333333] !font-semibold text-sm !border-[#999999]">
           <SelectValue placeholder={t('actions')} />
         </SelectTrigger>
         <SelectContent>

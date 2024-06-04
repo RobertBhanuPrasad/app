@@ -1,3 +1,4 @@
+import Tick from "@public/assets/Tick";
 import {
   useGetIdentity,
   useInvalidate,
@@ -5,7 +6,11 @@ import {
   useMany,
   useOne,
 } from "@refinedev/core";
+import { useTranslation } from "next-i18next";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { translatedText } from "src/common/translations";
 import {
   COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
@@ -21,6 +26,13 @@ import {
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import { CardLabel, CardValue } from "src/ui/TextTags";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
 import {
@@ -31,36 +43,23 @@ import {
   getOptionValueObjectById,
   getOptionValueObjectByOptionOrder,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { IsEditCourse } from "./EditCourseUtil";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
 import NewCourseStep3 from "./NewCourseStep3";
-import NewCourseStep4 from "./NewCourseStep4";
+import NewCourseStep4, { sortFeeLevels } from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "src/ui/alert-dialog";
-import { useRouter } from "next/router";
-import Tick from "@public/assets/Tick";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useTranslation } from "next-i18next";
-import { translatedText } from "src/common/translations";
-import { IsEditCourse } from "./EditCourseUtil";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { validationSchema } from "./NewCourseValidations";
-import { requiredValidationFields } from "pages/courses/add";
+import { fetchCourseFee } from "pages/courses/add";
 import _ from "lodash";
-import { z } from "zod";
-import { useFormState } from "react-hook-form";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
+import { NewCourseStep3FormNames, NewCourseStep4FormNames } from "src/constants/CourseConstants";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -174,59 +173,43 @@ export default function NewCourseReviewPage() {
 
   const pathname = usePathname();
 
-  const [courseFeeSettings, setCourseFeeSettings] = useState<any>();
-
   //fetching the user's country code
   const countryCode = useGetCountryCode();
 
   //fetching the user's language code
   const languageCode = useGetLanguageCode();
 
-  //sorting the schedules
-  let sortedSchedules = newCourseData.schedules.sort((a: any, b: any) => {
-    let aDate = new Date(a.date);
-    aDate.setHours(a?.startHour, a?.startMinute);
-
-    let bDate = new Date(b.date);
-    bDate.setHours(b?.startHour, b?.startMinute);
-
-    return aDate.getTime() - bDate.getTime();
-  });
-
-  //Finding course start date from new Date object
-  let utcYear = sortedSchedules?.[0]?.date["getFullYear"]();
-  let utcMonth = (sortedSchedules?.[0]?.date["getMonth"]() + 1)
-    .toString()
-    .padStart(2, "0");
-  let utcDay = sortedSchedules?.[0]?.date["getDate"]()
-    .toString()
-    .padStart(2, "0");
-
-  //Construct the course start date time stamp
-  const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
-  //Finding course start date
-  // const courseStartDate = newCourseData?.schedules?.[0]?.date?.toISOString();
-
+  //This function is used to fetch fee data
   const fetchFeeData = async () => {
-    //Sending all required params
-    const { data, error } = await supabase.functions.invoke("course-fee", {
-      method: "POST",
-      body: {
-        state_id: stateId,
-        city_id: cityId,
-        center_id: centerId,
-        start_date: courseStartDate,
-        program_type_id: newCourseData?.program_type_id,
-      },
-      headers: {
-        "country-code": countryCode,
-      },
+    //Fetching the course fee based on new course data
+    const data = await fetchCourseFee({
+      formData: newCourseData,
+      countryCode: countryCode,
     });
 
-    if (error)
-      console.log("error while fetching course fee level settings data", error);
-    setCourseFeeSettings(data);
+    console.log("Fee Data from API is", data);
 
+    /**@variable tempCourseData is used to store the updated course fee data (feeLevels,early_bird_cut_off_period,is_early_bird_enabled and program_fee_level_settings) */
+    let tempCourseData = { ...newCourseData, feeLevels: data };
+
+    //Updating early_bird_cut_off_period
+    if (newCourseData?.early_bird_cut_off_period == undefined) {
+      tempCourseData = {
+        ...tempCourseData,
+        early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
+      };
+    }
+
+    //Updating is_early_bird_enabled
+    if (
+      newCourseData?.is_early_bird_enabled == undefined &&
+      data?.[0]?.is_early_bird_fee_enabled != null
+    ) {
+      tempCourseData = {
+        ...tempCourseData,
+        is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
+      };
+    }
     //Fetching login user roles
     const user_roles: any[] = loginUserData?.userData?.user_roles || [];
 
@@ -255,11 +238,10 @@ export default function NewCourseReviewPage() {
     //So we are manually inserting data in program_fee_level_settings variable.
     if (
       isFeeEditable &&
-      (newCourseData?.program_fee_level_settings == undefined ||
-        newCourseData?.program_fee_level_settings?.length == 0)
+      newCourseData?.program_fee_level_settings == undefined
     ) {
-      setNewCourseData({
-        ...newCourseData,
+      tempCourseData = {
+        ...tempCourseData,
         program_fee_level_settings: data?.[0]?.program_fee_level_settings?.map(
           (feeLevel: any) => {
             //Removing Id and program_fee_setting_id
@@ -273,32 +255,16 @@ export default function NewCourseReviewPage() {
         ),
         is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
         early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
-      });
+      };
     }
-    //If none editable fee then need to empty the program_fee_level_settings to stop validation.
-    if (isFeeEditable == false) {
-      setNewCourseData({
-        ...newCourseData,
-        program_fee_level_settings: [],
-      });
-    }
-
-    //If program_fee_level_settings is empty then storing undefined
-    if (
-      data?.length == 0 ||
-      data?.[0]?.program_fee_level_settings?.length == 0
-    ) {
-      setNewCourseData({
-        ...newCourseData,
-        program_fee_level_settings: undefined,
-      });
-    }
+    console.log("Temporary New Course Data", tempCourseData);
+    //Updating newCourseData
+    setNewCourseData(tempCourseData);
   };
 
   useEffect(() => {
-    //To fetch fee we need the location details. Initially this three variables are set to zero.Based on user actions we will assign values to this variables.
-    //Fetching the fee when these values are assigned.
-    if (stateId != 0 && cityId != 0 && centerId != 0) fetchFeeData();
+    //Fetching Course Fee Data
+    fetchFeeData();
   }, [
     stateId,
     cityId,
@@ -309,6 +275,9 @@ export default function NewCourseReviewPage() {
     newCourseData?.newVenue,
     newCourseData?.existingVenue,
     newCourseData?.organization_id,
+    newCourseData?.state_id,
+    newCourseData?.city_id,
+    newCourseData?.center_id,
   ]);
 
   const creator =
@@ -413,9 +382,9 @@ export default function NewCourseReviewPage() {
         {newCourseData?.schedules?.map((data: any) => {
           const schedule = `${formatDateString(data.date)} | ${
             data?.startHour || "00"
-          } : ${data?.startMinute || "00"}  ${
+          }:${data?.startMinute || "00"}  ${
             data?.startTimeFormat ? data?.startTimeFormat : ""
-          } to ${data?.endHour || "00"} : ${data?.endMinute || "00"}  ${
+          } to ${data?.endHour || "00"}:${data?.endMinute || "00"}  ${
             data?.endTimeFormat ? data?.endTimeFormat : ""
           }`;
 
@@ -468,20 +437,24 @@ export default function NewCourseReviewPage() {
   //Checking Weather a fee is editable or not
   const isFeeEditable =
     isUserNationAdminOrSuperAdmin ||
-    courseFeeSettings?.[0]?.is_program_fee_editable
+    newCourseData?.feeLevels?.[0]?.is_program_fee_editable
       ? true
       : false;
-
+  // console.log(isFeeEditable, "isFeeEditable isFeeEditable");
   //Exacting default Fee Levels from settings.In this Data we will have entire object in fee_level_id but we need only fee_level_id.
   const defaultFeeLevels =
-    courseFeeSettings?.[0]?.program_fee_level_settings?.map((feeLevel: any) => {
-      return {
-        ...feeLevel,
-        fee_level_id: feeLevel?.fee_level_id?.id,
-      };
-    });
+    newCourseData?.feeLevels?.length == 0
+      ? []
+      : newCourseData?.feeLevels?.[0]?.program_fee_level_settings?.map(
+          (feeLevel: any) => {
+            return {
+              ...feeLevel,
+              fee_level_id: feeLevel?.fee_level_id?.id,
+            };
+          }
+        );
 
-  //If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
+  // If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
     ? newCourseData?.program_fee_level_settings
     : defaultFeeLevels;
@@ -490,7 +463,7 @@ export default function NewCourseReviewPage() {
   const enabledFeeLevelData = feeLevels?.filter(
     (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
   );
-
+const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
   const [openVenueDetails, setOpenVenueDetails] = useState(false);
@@ -527,6 +500,8 @@ export default function NewCourseReviewPage() {
 
   const [errors, setErrors] = useState<any>({});
 
+  
+ 
   /**
    * This is a function where we are calling to display error messages in preview page also
    * current state : in preview page there is no Form declaration so we have to validate the current data with zod safe parse
@@ -537,7 +512,8 @@ export default function NewCourseReviewPage() {
   const handleErrorMessagesInPreviewPageScreen = async (formData: any) => {
     const requiredFieldsForValidation = await getRequiredFieldsForValidation(
       formData,
-      loginUserData
+      loginUserData,
+      countryCode
     );
 
     const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
@@ -574,32 +550,78 @@ export default function NewCourseReviewPage() {
   };
 
   const handClickContinue = async () => {
+    setIsSubmitting(true);
     const errors = await handleErrorMessagesInPreviewPageScreen(newCourseData);
     console.log("errors", errors);
 
     if (errors.success === false) {
       console.log(errors.error.issues, "issuessss");
     } else {
-      setIsSubmitting(true);
 
-      /**
-       * This variable will retur true if all api calls has been successfully it will return false if any api call fails
-       */
-      const isPosted = await handlePostProgramData(
-        newCourseData,
-        data?.userData?.id,
-        setProgramId,
-        accountingNotSubmittedStatusId,
-        pathname,
-        countryCode,
-        languageCode
-      );
+  /**
+   * @constant schedulesData
+   * @description this schedulesData is stores the preprocessed schedules data and 
+   * we will use that to send to the edge function and in posting the schedules data
+   */
+  const schedulesData = preprocessSchedules()
 
-      // we are checking the course is edit or user created new course
-      const isEdited = IsEditCourse(pathname);
+/**
+ * @constant feeData
+ * @description feeData stores the preprocessed fee data we are using order to sort the fee levels as per requirement in Newcourse step 4
+ * so that while posting we have to remove this order from program_fee_level_settings as there was no order in the db
+ */
+  const feeData = preprocessFee()
 
-      // we have to display thank you page or success modal pop up only when the posting done successfully without any error
-      if (isPosted) {
+  /**
+   * @constant programBody
+   * @description we are using this to store the preprocessed schedules data and the newCourseData and feeData and
+   * We will send to the edge function where it directly post to the program tables and the remaining tables
+   */
+  let programBody={...newCourseData,schedules:schedulesData,program_fee_level_settings:feeData}
+
+  // In edge function we need to give the methods if we are coming from the edit page then we need to update the program of respective id
+  // if we are coming from the new then we need to post the data
+  // for that we are using this const
+  const method = IsEditCourse(pathname) === true ? "PUT" : "POST";
+
+  // this RX base url coming from env file now.(need to change after proper table was there in backend)
+  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+
+  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
+
+      try {
+        const { data: upsertCourseData, error } =
+          await supabase.functions.invoke("upsert-course", {
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+              "country-code": countryCode,
+            },
+            method,
+            body: {
+              program_data: programBody,
+              loggedin_user_id: data?.userData?.id,
+              accounting_not_submitted_status_id:
+                accountingNotSubmittedStatusId,
+              language_code: languageCode,
+              rx_base_url:RX_BASE_URL,
+              cx_base_url:CX_BASE_URL,
+            },
+          });
+
+        if (error) {
+          console.log("error in catch block", error);
+          throw error;
+        }
+
+        console.log("data is ", upsertCourseData, error);
+
+        setProgramId(upsertCourseData?.message?.response?.id);
+
+        // we are checking the course is edit or user created new course
+        const isEdited = IsEditCourse(pathname);
+
+        // we have to display thank you page or success modal pop up only when the posting done successfully without any error
         if (isEdited) {
           setOnEditSuccess(true);
         } else {
@@ -621,9 +643,11 @@ export default function NewCourseReviewPage() {
           setViewPreviewPage(false);
           setViewThankyouPage(true);
         }
+      } catch (error) {
+        console.log("error in catch block", error);
       }
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   };
 
   /**
@@ -643,6 +667,88 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
+
+  /**
+   * @function schedulesPreprocessing
+   * @description this function is used for the preprocessing of the schedules and making the schedules ready to post to the program_schedules table
+   * In this we are changing the schedules times and dates as the Greenwich Mean Time because while accessing the schedules we are using the tolocaletimestring which will convert time and date based on the users timezone.
+   * @returns schedulesData which is an array stores the start time end time and the order
+   */
+  const preprocessSchedules = () => {
+
+  //If the schedules are not present then we will just sent the empty array 
+  if(!Array.isArray(newCourseData[NewCourseStep3FormNames.schedules])) return [];
+
+  // sort the scheules by date, startHour, startMinute, endHour, endMinute
+  let schedules = newCourseData[NewCourseStep3FormNames.schedules].sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }
+  );
+
+  const schedulesData: ProgramSchedulesDataBaseType[] = schedules.map(
+    (scheduleData: any, index: number) => {
+      const {
+        startHour = "00",
+        startMinute = "00",
+        endHour = "00",
+        endMinute = "00",
+        startTimeFormat,
+        endTimeFormat,
+        date,
+        program_id
+      } = scheduleData;
+
+      // Parse date and time strings to create Date objects
+      const startTime = new Date(date);
+      startTime.setHours(parseInt(startHour), parseInt(startMinute), 0);
+      if (startTimeFormat === "PM")
+        startTime.setHours(startTime.getHours() + 12);
+
+      const endTime = new Date(date);
+      endTime.setHours(parseInt(endHour), parseInt(endMinute), 0);
+      if (endTimeFormat === "PM") endTime.setHours(endTime.getHours() + 12);
+
+      const scheduleBody: ProgramSchedulesDataBaseType = {
+        program_id,
+        start_time: startTime,
+        end_time: endTime,
+        program_schedule_name: `Schedule ${index + 1}`,
+        //TODO: schedule_type is optional if need we need to pass here
+        order: index + 1,
+      };
+
+      if (scheduleData.id) {
+        scheduleBody.id = scheduleData.id;
+      }
+
+      return scheduleBody;
+    }
+  );
+
+  console.log(
+    "schedulesData to create or update program_schedules was",
+    schedulesData
+  );
+  
+  return schedulesData
+  }
+
+  const preprocessFee= ()=> {
+    //If the fees are not present then we will just sent the empty array 
+    if(!Array.isArray(newCourseData?.program_fee_level_settings)) return [];
+    if (newCourseData?.program_fee_level_settings) {
+     return _.map(newCourseData?.program_fee_level_settings, (setting) =>
+        _.omit(setting, ['order'])
+      );
+    }
+  }
 
   return (
     <div className="pb-12">
@@ -685,6 +791,27 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-2">
+            {/* REQUIRMENT in the course edit page we need to display the course code in the course details section */}
+            {IsEditCourse(pathname) && (
+              <div className="w-[291px]">
+                <p className="text-sm font-normal text-accent-light text-[#999999] ">
+                  {t("course_id")}
+                </p>
+
+                <abbr
+                  className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
+                  title={
+                    newCourseData?.program_code
+                      ? newCourseData?.program_code
+                      : "-"
+                  }
+                >
+                  {newCourseData?.program_code
+                    ? newCourseData?.program_code
+                    : "-"}
+                </abbr>
+              </div>
+            )}
             <div className="w-[291px]">
               <p className="text-sm font-normal text-accent-light text-[#999999] ">
                 {t("course.new_course:review_post_details.creator")}
@@ -876,7 +1003,7 @@ export default function NewCourseReviewPage() {
                 {t("max_capacity")}
               </p>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
+                className="font-semibold  no-underline text-accent-secondary text-[#666666]  truncate block"
                 title={newCourseData?.max_capacity}
               >
                 {newCourseData?.max_capacity
@@ -1088,7 +1215,7 @@ export default function NewCourseReviewPage() {
                   {t("venue_address")}
                 </p>
                 <abbr
-                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666]"
+                  className="font-semibold break-all block no-underline text-accent-secondary text-[#666666] max-h-[118px] overflow-y-auto"
                   title={
                     VenueData && newCourseData?.program_type_id != ""
                       ? VenueData
@@ -1171,14 +1298,17 @@ export default function NewCourseReviewPage() {
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
-            {enabledFeeLevelData?.map((feeLevel: any, index: number) => {
-              return <Fees feeLevelSettingsData={feeLevel} />;
+            {sortEnabledFeeLevelData?.map((feeLevel: any, index: number) => {
+              return(
+              <>
+              <Fees feeLevelSettingsData={feeLevel} />
+              {newCourseData?.is_early_bird_enabled &&
+          (
+            <EarlyBirdFees feeLevelSettingsData={feeLevel} />
+          )}
+              </>
+              )
             })}
-
-            {newCourseData?.is_early_bird_enabled &&
-              enabledFeeLevelData?.map((feeLevel: any, index: number) => {
-                return <EarlyBirdFees feeLevelSettingsData={feeLevel} />;
-              })}
 
             {/* Requirment: Show the early bird calender when 
       1.Super or National Admin is logged in 
@@ -1187,8 +1317,8 @@ export default function NewCourseReviewPage() {
       4.Early bird cut off editable in settings */}
             {isFeeEditable &&
               newCourseData?.is_early_bird_enabled &&
-              courseFeeSettings?.[0]?.is_early_bird_fee_enabled &&
-              courseFeeSettings?.[0]?.is_early_bird_cut_off_editable && (
+              newCourseData?.feeLevels?.[0]?.is_early_bird_fee_enabled &&
+              newCourseData?.feeLevels?.[0]?.is_early_bird_cut_off_editable && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     {t("new_strings:Early_bird_cutoff_period")}
@@ -1215,12 +1345,15 @@ export default function NewCourseReviewPage() {
               </abbr>
             </div> */}
           </div>
-          {(enabledFeeLevelData?.length == 0 ||
-            enabledFeeLevelData == undefined) && (
+          {/* If No data present in enabledFeeLevelData means fee is not present for the current course data  */}
+          {newCourseData?.feeLevels?.length == 0 ? (
             <span className="text-[#FF6D6D] text-[12px]">
               There is no price set for current settings. Select course type and
               city/center.
             </span>
+          ) : (
+            //If enabledFeeLevelData is undefined while fetching data, So loading is shown
+            sortEnabledFeeLevelData == undefined && <div className="loader"></div>
           )}
         </section>
         {/* Accommodation Information */}
@@ -1352,23 +1485,34 @@ export default function NewCourseReviewPage() {
             <div className="truncate">
               <abbr
                 className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                title={newCourseData?.bcc_registration_confirmation_email}
+                // If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying
+                title={
+                  newCourseData?.bcc_registration_confirmation_email
+                    ? newCourseData?.bcc_registration_confirmation_email?.replace(
+                        /(\s*,\s*)*$/,
+                        ""
+                      )
+                    : "-"
+                }
               >
+                {/* If the bcc registration mails are there then we are checking the tailing zeros and the commas and replacing with single space while displaying */}
                 {newCourseData?.bcc_registration_confirmation_email
-                  ? newCourseData?.bcc_registration_confirmation_email
+                  ? newCourseData?.bcc_registration_confirmation_email?.replace(
+                      /(\s*,\s*)*$/,
+                      ""
+                    )
                   : "-"}
               </abbr>
             </div>
           </div>
         </section>
-        <div className="flex items-center justify-center">
-          {isSubmitting ? (
-            <Button className="bg-[white] border-[1px] border-[#7677F4] h-[46px] w-[100px] border-solid">
-              <div className="loader !w-[30px]"></div>
-            </Button>
-          ) : (
-            <Button onClick={handClickContinue}>{t("continue_button")}</Button>
+        <div className="flex items-center text-base justify-center">
+          {isSubmitting && (
+            <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+              <div className="loader"></div>
+            </div>
           )}
+          <Button className="text-base" onClick={handClickContinue}>{t("continue_button")}</Button>
         </div>
       </div>
     </div>
@@ -1420,8 +1564,7 @@ const Accommodation = ({
       >
         <CardValue className="truncate">
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
-          {currencyCode ? currencyCode : ""}
-          {accomdationData?.fee_per_person}
+          {currencyCode ? currencyCode : ""} {accomdationData?.fee_per_person}
         </CardValue>
       </abbr>
     </div>
