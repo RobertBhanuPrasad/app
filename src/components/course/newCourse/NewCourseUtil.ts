@@ -12,7 +12,7 @@ import {
 import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
 import { NOT_SUBMITTED } from "src/constants/OptionValueOrder";
 import { supabaseClient } from "src/utility";
-import { IsEditCourse } from "./EditCourseUtil";
+import { IsCopyCourse, IsEditCourse } from "./EditCourseUtil";
 
 // const supabase = supabaseClient();
 
@@ -1593,3 +1593,14 @@ export const handleDeleteProgramTables = async (
     );
   }
 };
+
+
+    /**
+ * This function is used to determine whether the particular url contains edit or not
+ * @param url
+ * @returns a boolean
+ */
+    export const IsNewCourse = (url: string) => {
+      return url.includes("/add");
+    };
+    

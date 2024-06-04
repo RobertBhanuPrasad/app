@@ -465,7 +465,7 @@ export function BaseTable<TData, TValue>({
                             checked={table.getIsAllPageRowsSelected()}
                             onCheckedChange={(value: boolean) => {
                               table.toggleAllPageRowsSelected(value);
-                            }}
+                            }}  
                             aria-label="Select all"
                           />
                         </TableHead>

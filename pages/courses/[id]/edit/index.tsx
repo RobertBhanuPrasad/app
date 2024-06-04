@@ -1,8 +1,11 @@
-import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
+import { IsEditCourse, handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
+import { useGetIdentity } from "@refinedev/core";
+import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
@@ -10,13 +13,59 @@ import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { handleRouteChangeStart } from "pages/courses/add"; 
 
 const index = () => {
+
+  const { editCourseData,newCourseData } = newCourseStore();
+
+  const { data: loginUserData }: any = useGetIdentity();
+
+  const router = useRouter();
+
+  const loggedUserData = loginUserData?.userData?.id;
+
+  console.log("heyy logged user data", loggedUserData);
+
+   // Get the current pathname using the useRouter hook
+   const pathname = usePathname();
+  
+
   const {
     query: { section },
   }: any = useRouter();
 
-  console.log(section);
+
+  /**
+   * useEffect hook to handle route changes.
+   * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
+   * - Emits a routeChangeError event to cancel the navigation when necessary.
+   * - Sets a pending URL and opens an alert dialog for user confirmation.
+   * - Resets the navigation confirmation flag once the route change completes.
+   */
+  
+  useEffect(() => {
+
+    const routeChange = (url:string) => {
+       // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
+      // this varaible holds the boolean value that the data is edited or not
+      const condition = _.isEqual(newCourseData,editCourseData)
+
+      // we donot display the alert for the user if navigated from edited course to course details page
+      if(IsEditCourse(url)){
+        handleRouteChangeStart(url,router,pathname,condition,routeChange)
+      }
+
+    }
+
+    router.events.on('routeChangeStart', routeChange);
+
+    return () => {
+        router.events.off('routeChangeStart', routeChange);
+    };
+
+}, [newCourseData]);
+
   if (section === "thank_you") {
     return (
       <div className="mb-8">
@@ -43,7 +92,7 @@ const EditCourseReviewPage = () => {
     TIME_FORMAT_12_HOURS
   )?.id as number;
 
-  const { setNewCourseData,setProgramCreatedById } = newCourseStore();
+  const { setNewCourseData,setProgramCreatedById  } = newCourseStore();
 
   useEffect(() => {
     const fetchDefaultValues = async () => {
@@ -57,8 +106,9 @@ const EditCourseReviewPage = () => {
         timeFormat12HoursId
       );
       console.log("default values are", defaultValues);
-
+     
       setNewCourseData(defaultValues);
+      
       // we are storing the program created by in the zustand variable to use it in the validatios
       setProgramCreatedById(defaultValues?.program_created_by)
       setIsLoading(false);

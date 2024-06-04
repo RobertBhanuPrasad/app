@@ -1,21 +1,18 @@
-// import Bell from '@public/assets/Bell'
-import LoadingIcon from '@public/assets/LoadingIcon'
-import Logo from '@public/assets/Logo'
-import LogoutIcon from '@public/assets/LogoutIcon'
-import TableMenu from '@public/assets/TableMenu'
-import { useGetIdentity, useOne } from '@refinedev/core'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { destroyCookie } from 'nookies'
-import { useState } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar'
+import LoadingIcon from '@public/assets/LoadingIcon';
+import Logo from '@public/assets/Logo';
+import LogoutIcon from '@public/assets/LogoutIcon';
+import { useGetIdentity } from '@refinedev/core';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { destroyCookie } from 'nookies';
+import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from 'src/ui/dropdown-menu'
+} from 'src/ui/dropdown-menu';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -24,16 +21,15 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
-} from 'src/ui/navigation-menu'
-import { supabaseClient } from 'src/utility'
+} from 'src/ui/navigation-menu';
+import { supabaseClient } from 'src/utility';
+
 
 
 function Navbar() {
-
-  const { data: loginUserData }: any = useGetIdentity()
-
-  const router = useRouter()
-
+  const { data: loginUserData }: any = useGetIdentity();
+  const router = useRouter();
+ 
   // Define navigation components and their respective routes
   const components = [
     {
@@ -179,7 +175,7 @@ function Navbar() {
         </DropdownMenu>
       </div>
     </div>
-  )
+  );
 }
 
 export default Navbar
@@ -194,5 +190,7 @@ const MenuList = ({ Name, route }: any) => {
         </NavigationMenuLink>
       </Link>
     </div>
-  )
-}
+  );
+};
+
+
