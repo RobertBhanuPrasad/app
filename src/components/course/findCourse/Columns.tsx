@@ -45,10 +45,10 @@ export const column = (
       enableHiding: false,
       header: ({column}: any) => {
         return ( 
-        <div>
-        <Button
-          variant="ghost"
+        <Button 
+          variant="ghost" 
           onClick={() => column.toggleSorting(null,column.getIsSorted() === "asc")}
+          className="!pl-0"
         >
           {t('course_id')}
           {column.getIsSorted() === "desc" ? (
@@ -59,7 +59,6 @@ export const column = (
             <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
           )}
         </Button>
-        </div>
         );
       },
 
@@ -123,23 +122,22 @@ export const column = (
       enableHiding: false,
       column_name: t("course.find_course:start_date"),
       header: ({column}: any) => {
-        return ( 
-          <div>
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(null,column.getIsSorted() === "asc")}
-          >
-            {t('course.find_course:start_date')}
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
-          </Button>
-          </div>
-          );
+      return ( 
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(null,column.getIsSorted() === "asc")}
+          className="!pl-0"
+        >
+          {t('course.find_course:start_date')}
+          {column.getIsSorted() === "desc" ? (
+            <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+          ) : column.getIsSorted() === "asc" ? (
+            <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+          ) : (
+            <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+          )}
+        </Button>
+        );
       },
       cell: ({ row }: any) => {
         // Check if start_date exists or not
