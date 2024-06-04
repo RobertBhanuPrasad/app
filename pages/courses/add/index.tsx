@@ -1013,7 +1013,7 @@ export const NewCourseTabs = () => {
 
                 {currentStep == CONTACT_INFO_STEP_NUMBER && (
                   <Button
-                    className="bg-[#7677F4] w-[117px] h-[46px] rounded-[12px] text-base"
+                    className="bg-[#7677F4] w-[165px] h-[46px] rounded-[12px] text-base font-bold"
                     onClick={async () => {
                       let validationFieldsStepWise = requiredValidationFields(
                         formData,
