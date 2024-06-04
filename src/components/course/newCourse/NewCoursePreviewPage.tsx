@@ -575,6 +575,11 @@ export default function NewCourseReviewPage() {
   // for that we are using this const
   const method = IsEditCourse(pathname) === true ? "PUT" : "POST";
 
+  // this RX base url coming from env file now.(need to change after proper table was there in backend)
+  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+
+  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
+
       try {
         const { data: upsertCourseData, error } =
           await supabase.functions.invoke("upsert-course", {
@@ -590,6 +595,8 @@ export default function NewCourseReviewPage() {
               accounting_not_submitted_status_id:
                 accountingNotSubmittedStatusId,
               language_code: languageCode,
+              rx_base_url:RX_BASE_URL,
+              cx_base_url:CX_BASE_URL,
             },
           });
 
