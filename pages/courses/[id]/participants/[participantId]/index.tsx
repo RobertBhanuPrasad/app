@@ -18,11 +18,14 @@ import {
     VIEW_PARTICIPANT_TRANSACTION_DETAILS,
     VIEW_PARTICIPANT_UTM_PARAMETERS,
 } from "src/constants/Tabs";
+import ScrollablePage from "@components/participant/viewParticipant/ScrollableTab";
+import { useState } from "react";
 
 
 function index() {
     const {t} = useTranslation("course.participants")
     const router = useRouter();
+    const [activeTabId, setActiveTabId] = useState<string>("");
     const Id: number | undefined = router?.query?.participantId
         ? parseInt(router.query.participantId as string)
         : undefined;
@@ -56,7 +59,7 @@ function index() {
     ];
     const tabs = [
         {
-            id: 0,
+            id: "section1",
             label: t('course.participants:view_participant.course_information_tab.course_information'),
             content: (
                 <div>
@@ -65,7 +68,7 @@ function index() {
             ),
         },
         {
-            id: 1,
+            id: "section2",
             label: t('course.participants:view_participant.transaction_details'),
             content: (
                 <div>
@@ -75,23 +78,27 @@ function index() {
             ),
         },
         {
-            id: 2,
+            id: "section3",
             label: "Email Delivery Logs",
             content: <ViewParticipantEmailDeliveryLogs participantId={Id} />,
         },
         {
-            id: 3,
+            id: "section4",
             label: t('course.participants:view_participant.customer_device_details'),
             content: (
                 <ViewParticipantCustomerDeviceDetails participantId={Id} />
             ),
         },
         {
-            id: 4,
+            id: "section5",
             label: "UTM Parameters",
             content: <ViewParticipantUtmParameters participantId={Id} />,
         },
     ];
+    const handleActiveTabChange = (tabId: string) => {
+        setActiveTabId(tabId);
+        console.log("active tab id", activeTabId);
+    };
     return (
         <div>
             <div className="top-[94px] sticky z-10 bg-white shadow-md w-full">
@@ -102,7 +109,7 @@ function index() {
                     <ViewParticipantInformation participantId={Id} />
                 </div>
                 <div className="sticky  w-[82%] ">
-                    <SampleTabs tabs={tabs} />
+                    <ScrollablePage tabs={tabs} onActiveTabChange={handleActiveTabChange}/>
                 </div>
             </div>
         </div>

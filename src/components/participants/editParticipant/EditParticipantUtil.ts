@@ -8,6 +8,7 @@ export const handleEditParticipantValues = async (participantId: number) => {
   const { data, error } = await supabase
     .from("participant_payment_history")
     .select(
+      // TODO: check with ajay about payment date
       "id,payment_method_id,transaction_status_id!inner(id,value),payment_date,send_payment_confirmation,transaction_status,participant_id!inner(id,memo,roommate_snore,accommodation_snore,participant_code,participant_attendence_status_id,discount_code, payment_method)"
     )
     .order("created_at", { ascending: false })

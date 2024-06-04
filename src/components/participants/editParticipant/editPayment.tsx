@@ -45,7 +45,6 @@ export default function EditPayment({ setEditPayment, paymentId }: EditPaymentPr
   const [saveChangesConfirmation, setSaveChangesConfirmation] = useState(false)
   let formData = watch()
   const [initialValue, setinitialValue] = useState(formData)
-
   // Posting edit payment form data to payment history api
   const onFormSubmission = () => {
     mutate({
