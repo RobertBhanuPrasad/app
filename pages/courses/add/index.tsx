@@ -6,8 +6,7 @@ import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
-import { handleRouteChangeStart } from "@components/course/newCourse/NewCourseUtil"; 
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage"; 
 import Car from "@public/assets/Car";
 import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
@@ -73,6 +72,7 @@ import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { useTranslation } from "next-i18next";
 import { IsCopyCourse, IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import { IsNewCourse } from "@components/course/newCourse/NewCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { supabaseClient } from "src/utility";
@@ -110,12 +110,12 @@ function index() {
   }
 }
 export function NewCourse() {
-  const { setCurrentStep ,setNewCourseCreateSuccessOrNot,newCourseData} = newCourseStore();
+
+  const { setCurrentStep ,newCourseData} = newCourseStore();
+
   const { data: loginUserData }: any = useGetIdentity();
+
   const router = useRouter();
-
-  const params = useParams()
-
 
   const loggedUserData = loginUserData?.userData?.id;
 
@@ -141,7 +141,6 @@ export function NewCourse() {
      * This initializes the component state for the first step.
      */
     setCurrentStep(1);
-    setNewCourseCreateSuccessOrNot(false)
 
   }, []);
   
@@ -451,13 +450,12 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
 
   const searchParams = useSearchParams();
 
-  const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
 
   const pathname = usePathname();
 
   const router = useRouter();
 
-  const { setNewCourseData, currentStep, setCurrentStep,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot } = newCourseStore();
+  const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
 
   const supabase = supabaseClient();
 
@@ -472,25 +470,26 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
    * - Sets a pending URL and opens an alert dialog for user confirmation.
    * - Resets the navigation confirmation flag once the route change completes.
    */
-
    useEffect(() => {
 
     const routeChange = (url:string) => {
 
+      // we have remove the undefined key:value pairs in formData
       Object.keys(formData).forEach(key => formData[key] === undefined ? delete formData[key] : {});
 
-      const condition = !_.isEqual(defaultValues,formData)
+      // to check whether we enter the any field value in the form and if we enter the  fields and try to navigate to another page it show the alert 
+      // this varaible holds the boolean value that the data is entered or not
+      const condition = _.isEqual(defaultValues,formData)
 
-      handleRouteChangeStart(url,condition,pathname,router,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
+      handleRouteChangeStart(url,router,pathname,condition,routeChange)
     }
-
-    router.events.on('routeChangeStart', routeChange);
-
+      router.events.on('routeChangeStart', routeChange);
+    
     return () => {
         router.events.off('routeChangeStart', routeChange);
     };
 
-}, [pathname,formData, router.events,navigationConfirmed]);
+}, [formData]);
  
   const { data: loginUserData }: any = useGetIdentity();
   const { data: timeZoneData } = useList({ resource: "time_zones" });
@@ -678,6 +677,7 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
 
       // setViewPreviewPage(true);
       setNewCourseData(formData);
+  
 
       // i need to set params with section=preview_page
       const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
@@ -1244,3 +1244,30 @@ interface CourseFeeBody {
   center_id?: number;
   start_date?: string;
 }
+{/**
+This function will check the any modifications in the form before leaving the page. if any changes are there then it alert the user
+*/}
+export const handleRouteChangeStart = (url: any,router: any,pathname: any,condition?: boolean,routeChange?: any ) => {
+  
+  // check is there any data entered or not and check is it in newCourse or copyCourse or editCourse. 
+  if (!condition && ( IsNewCourse(pathname) || IsCopyCourse(pathname) || IsEditCourse(pathname)) ) {
+
+    // if the navigated url contain the query parameters then we don't need to alert the user.
+    if((url.split('?')[0]===url)){
+      if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
+        // In the alert if user clicked on the 'yes' then user navigated to corresponding url
+        router.events.off('routeChangeStart', routeChange);
+            setTimeout(() => {
+                router.push(url);
+            }, 0);
+        } 
+        else {
+            router.events.emit('routeChangeError');
+            throw 'Route change aborted. User confirmation required.';
+        }
+    }
+   
+          
+         
+  }
+};

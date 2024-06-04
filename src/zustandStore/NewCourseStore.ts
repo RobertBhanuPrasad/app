@@ -3,7 +3,6 @@ import { create } from "zustand";
 interface NewCourseStore {
   viewPreviewPage: boolean;
   editCourseData: null;
-  navigationConfirmed: boolean;
   pendingUrl: any;
   viewThankyouPage: boolean;
   viewSuccessModal: boolean;
@@ -11,11 +10,9 @@ interface NewCourseStore {
   viewCourseAccountingSuccessModal: boolean;
   viewCourseAccountingRejectedDescriptionModal: boolean;
   viewCourseAccountingRejectedModal: boolean;
-  newCourseCreateSuccessOrNot: boolean;
 
   setViewRejectedModal: (by: boolean) => void;
   setEditCourseData: (by: any) => void;
-  setNavigationConfirmed: (by: any) => void;
   setPendingUrl: (by: any) => void;
   setViewPreviewPage: (by: boolean) => void;
   setViewThankyouPage: (by: boolean) => void;
@@ -34,7 +31,6 @@ interface NewCourseStore {
   programId: number;
   setProgramId: (by: number) => void;
   setProgramCreatedById : (by: any) => void;
-  setNewCourseCreateSuccessOrNot: (by: boolean) => void;
   /**
    * This variable is used to store the id of the program created by id
    * which is i am organizing or i am teaching or i am co-teaching
@@ -60,7 +56,6 @@ interface NewCourseStore {
 
 export const newCourseStore = create<NewCourseStore>((set) => ({
   viewPreviewPage: false,
-  navigationConfirmed: false,
   editCourseData: null,
   pendingUrl: null,
   viewThankyouPage: false,
@@ -71,7 +66,6 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   viewCourseAccountingSuccessModal: false,
   viewCourseAccountingRejectedDescriptionModal: false,
   viewCourseAccountingRejectedModal: false,
-  newCourseCreateSuccessOrNot: false,
   courseAccountingFormDefaultValues: {},
   programCreatedById:null,
   setViewRejectedModal: (data: boolean) => {
@@ -79,11 +73,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       viewRejectedModal: data,
     }));
   },
-  setNavigationConfirmed: (data: boolean) => {
-    set(() => ({
-      navigationConfirmed: data,
-    }));
-  },
+
   setPendingUrl: (data: any) => {
     set(() => ({
       pendingUrl: data,
@@ -165,9 +155,5 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
       programCreatedById:data,
     }))
   },
-  setNewCourseCreateSuccessOrNot : (data: boolean) => {
-    set(() => ({
-      newCourseCreateSuccessOrNot:data,
-    }))
-  }
+
 }));

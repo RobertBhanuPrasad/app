@@ -1602,19 +1602,13 @@ export const handleDeleteProgramTables = async (
   }
 };
 
-export const handleRouteChangeStart = (url: string,condition: boolean,pathname: any,router: any,newCourseCreateSuccessOrNot: boolean,setNewCourseCreateSuccessOrNot: any,navigationConfirmed: boolean,setNavigationConfirmed: any ) => {
 
-  if (!navigationConfirmed && ((pathname === '/courses/add' || IsEditCourse(pathname) || IsCopyCourse(pathname))) && condition) {
+    /**
+ * This function is used to determine whether the particular url contains edit or not
+ * @param url
+ * @returns a boolean
+ */
+    export const IsNewCourse = (url: string) => {
+      return url.includes("/add");
+    };
     
-          if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
-              setNavigationConfirmed(true);
-              setTimeout(() => {
-                  router.push(url);
-                  setNewCourseCreateSuccessOrNot(false);
-              }, 0);
-          } else {
-              router.events.emit('routeChangeError');
-              throw 'Route change aborted. User confirmation required.';
-          }
-  }
-};

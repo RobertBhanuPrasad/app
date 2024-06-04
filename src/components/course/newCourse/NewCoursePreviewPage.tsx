@@ -56,7 +56,7 @@ import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { handlePostProgramData } from "./NewCourseUtil";
 import { validationSchema } from "./NewCourseValidations";
-import { fetchCourseFee } from "pages/courses/add";
+import { fetchCourseFee, handleRouteChangeStart } from "pages/courses/add";
 import _ from "lodash";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 
@@ -84,7 +84,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData, setNewCourseData } = newCourseStore();
+  const { newCourseData, setNewCourseData,setEditCourseData,editCourseData } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -259,6 +259,9 @@ export default function NewCourseReviewPage() {
     console.log("Temporary New Course Data", tempCourseData);
     //Updating newCourseData
     setNewCourseData(tempCourseData);
+    if(!editCourseData){
+      setEditCourseData(tempCourseData)
+    }
   };
 
   useEffect(() => {
@@ -373,6 +376,25 @@ export default function NewCourseReviewPage() {
       return aDate.getTime() - bDate.getTime();
     });
 
+     useEffect(() => {
+     
+      const routeChange = (url:string) => {
+        // we donot allow the user to navigate to any other url while user in preview page
+        const condition =false
+        handleRouteChangeStart(url,router,pathname,condition,routeChange)
+      }
+
+      // we donot show the alert when the user from edit course path
+      if(!IsEditCourse(pathname)){
+        router.events.on('routeChangeStart', routeChange);
+      }
+      
+      return () => {
+          router.events.off('routeChangeStart', routeChange);
+      };
+  
+  }, []);
+
     return (
       <div className="w-[291px]">
         <p className="text-sm font-normal text-accent-light text-[#999999]">
@@ -473,7 +495,7 @@ export default function NewCourseReviewPage() {
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
 
-  const { setProgramId, setViewPreviewPage, setViewThankyouPage, setNewCourseCreateSuccessOrNot } =
+  const { setProgramId, setViewPreviewPage, setViewThankyouPage,  } =
     newCourseStore();
 
   /**
@@ -591,8 +613,7 @@ export default function NewCourseReviewPage() {
           router.replace(`${pathname}?${params}`);
 
           setViewPreviewPage(false);
-          setViewThankyouPage(true);
-          setNewCourseCreateSuccessOrNot(true)
+          setViewThankyouPage(true);         
         }
       }
     }

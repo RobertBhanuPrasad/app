@@ -1,11 +1,11 @@
-import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
+import { IsEditCourse, handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import { useGetIdentity } from "@refinedev/core";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
@@ -13,11 +13,11 @@ import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { handleRouteChangeStart } from "@components/course/newCourse/NewCourseUtil";
+import { handleRouteChangeStart } from "pages/courses/add"; 
 
 const index = () => {
-  
-  const { setNewCourseCreateSuccessOrNot,newCourseCreateSuccessOrNot,editCourseData,newCourseData} = newCourseStore();
+
+  const { editCourseData,newCourseData } = newCourseStore();
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -29,14 +29,12 @@ const index = () => {
 
    // Get the current pathname using the useRouter hook
    const pathname = usePathname();
-   
-  const [navigationConfirmed, setNavigationConfirmed] = useState<boolean>(false); // State to track if navigation is confirmed
+  
 
   const {
     query: { section },
   }: any = useRouter();
 
-  console.log(section);
 
   /**
    * useEffect hook to handle route changes.
@@ -49,9 +47,15 @@ const index = () => {
   useEffect(() => {
 
     const routeChange = (url:string) => {
+       // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
+      // this varaible holds the boolean value that the data is edited or not
+      const condition = _.isEqual(newCourseData,editCourseData)
 
-      const condition = !_.isEqual(newCourseData,editCourseData)
-      handleRouteChangeStart(url,condition,pathname,router,newCourseCreateSuccessOrNot,setNewCourseCreateSuccessOrNot,navigationConfirmed,setNavigationConfirmed)
+      // we donot display the alert for the user if navigated from edited course to course details page
+      if(IsEditCourse(url)){
+        handleRouteChangeStart(url,router,pathname,condition,routeChange)
+      }
+
     }
 
     router.events.on('routeChangeStart', routeChange);
@@ -60,7 +64,7 @@ const index = () => {
         router.events.off('routeChangeStart', routeChange);
     };
 
-}, [pathname, navigationConfirmed, router.events, newCourseData]);
+}, [newCourseData]);
 
   if (section === "thank_you") {
     return (
@@ -88,7 +92,7 @@ const EditCourseReviewPage = () => {
     TIME_FORMAT_12_HOURS
   )?.id as number;
 
-  const { setNewCourseData,setProgramCreatedById,setEditCourseData } = newCourseStore();
+  const { setNewCourseData,setProgramCreatedById  } = newCourseStore();
 
   useEffect(() => {
     const fetchDefaultValues = async () => {
@@ -102,9 +106,9 @@ const EditCourseReviewPage = () => {
         timeFormat12HoursId
       );
       console.log("default values are", defaultValues);
-
+     
       setNewCourseData(defaultValues);
-      setEditCourseData(defaultValues)
+      
       // we are storing the program created by in the zustand variable to use it in the validatios
       setProgramCreatedById(defaultValues?.program_created_by)
       setIsLoading(false);
