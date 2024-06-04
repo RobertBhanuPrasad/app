@@ -52,11 +52,9 @@ export const columns = () =>
   {
     accessorKey: "created_at",
     column_name: t('course.participants:find_participant.registration_date'),
-    // enableHiding: false,
-    // enableSorting: true,
+    enableHiding: false,
+    enableSorting: true,
     header: ({ column }) => {
-      // console.log("cods",column.getIsSorted() === false ? "asc" : "desc")
-      console.log("adada",column.getIsSorted())
       return (
         <div>
           <Button
