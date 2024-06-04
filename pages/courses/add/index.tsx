@@ -67,21 +67,12 @@ import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { NextRouter, useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { useTranslation } from "next-i18next";
-import {
-  IsCopyCourse,
-  IsEditCourse,
-} from "@components/course/newCourse/EditCourseUtil";
-import { IsNewCourse } from "@components/course/newCourse/NewCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { supabaseClient } from "src/utility";
-import useGetCountryCode from "src/utility/useGetCountryCode";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData, "loginUserData");
@@ -475,7 +466,7 @@ export const NewCourseTabs = ({ defaultValues }: { defaultValues: any }) => {
       // this varaible holds the boolean value that the data is entered or not
       const condition = _.isEqual(defaultValues,tempFormData)
 
-      handleRouteChangeStart(url,router,pathname,condition,routeChange)
+      handleRouteChangeStart(url,router,pathname,condition)
     }
       router.events.on('routeChangeStart', routeChange);
     
