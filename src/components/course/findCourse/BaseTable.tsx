@@ -685,7 +685,7 @@ const {t} = useTranslation(["common", "new_strings"])
           onClick={() => setCurrent(current - 1)}
           disabled={current <= 1}
         >
-          <div>{t('new_strings:prev')}</div>
+          <div className="text-[#D6D7D8] font-semibold">{t('new_strings:prev')}</div>
         </Button>
       )}
       {/* pages buttons */}

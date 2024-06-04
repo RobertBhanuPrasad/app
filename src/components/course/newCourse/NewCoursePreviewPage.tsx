@@ -59,6 +59,7 @@ import { validationSchema } from "./NewCourseValidations";
 import { fetchCourseFee, handleRouteChangeStart } from "pages/courses/add";
 import _ from "lodash";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
+import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -576,24 +577,64 @@ export default function NewCourseReviewPage() {
     if (errors.success === false) {
       console.log(errors.error.issues, "issuessss");
     } else {
-      /**
-       * This variable will retur true if all api calls has been successfully it will return false if any api call fails
-       */
-      const isPosted = await handlePostProgramData(
-        newCourseData,
-        data?.userData?.id,
-        setProgramId,
-        accountingNotSubmittedStatusId,
-        pathname,
-        countryCode,
-        languageCode
-      );
 
-      // we are checking the course is edit or user created new course
-      const isEdited = IsEditCourse(pathname);
+  /**
+   * @constant schedulesData
+   * @description this schedulesData is stores the preprocessed schedules data and 
+   * we will use that to send to the edge function and in posting the schedules data
+   */
+  const schedulesData = preprocessSchedules()
 
-      // we have to display thank you page or success modal pop up only when the posting done successfully without any error
-      if (isPosted) {
+  /**
+   * @constant programBody
+   * @description we are using this to store the preprocessed schedules data and the newCourseData and
+   * We will send to the edge function where it directly post to the program tables and the remaining tables
+   */
+  let programBody={...newCourseData,schedules:schedulesData}
+
+  // In edge function we need to give the methods if we are coming from the edit page then we need to update the program of respective id
+  // if we are coming from the new then we need to post the data
+  // for that we are using this const
+  const method = IsEditCourse(pathname) === true ? "PUT" : "POST";
+
+  // this RX base url coming from env file now.(need to change after proper table was there in backend)
+  const RX_BASE_URL: string = process.env.NEXT_PUBLIC_RX_BASE_URL as string;
+
+  const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
+
+      try {
+        const { data: upsertCourseData, error } =
+          await supabase.functions.invoke("upsert-course", {
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+              "country-code": countryCode,
+            },
+            method,
+            body: {
+              program_data: programBody,
+              loggedin_user_id: data?.userData?.id,
+              accounting_not_submitted_status_id:
+                accountingNotSubmittedStatusId,
+              language_code: languageCode,
+              rx_base_url:RX_BASE_URL,
+              cx_base_url:CX_BASE_URL,
+            },
+          });
+
+        if (error) {
+          console.log("error in catch block", error);
+          throw error;
+        }
+
+        console.log("data is ", upsertCourseData, error);
+
+        setProgramId(upsertCourseData?.message?.response?.id);
+
+        // we are checking the course is edit or user created new course
+        const isEdited = IsEditCourse(pathname);
+
+        // we have to display thank you page or success modal pop up only when the posting done successfully without any error
         if (isEdited) {
           setOnEditSuccess(true);
         } else {
@@ -615,6 +656,8 @@ export default function NewCourseReviewPage() {
           setViewPreviewPage(false);
           setViewThankyouPage(true);
         }
+      } catch (error) {
+        console.log("error in catch block", error);
       }
     }
     setIsSubmitting(false);
@@ -637,6 +680,78 @@ export default function NewCourseReviewPage() {
       },
     ],
   });
+
+  /**
+   * @function schedulesPreprocessing
+   * @description this function is used for the preprocessing of the schedules and making the schedules ready to post to the program_schedules table
+   * In this we are changing the schedules times and dates as the Greenwich Mean Time because while accessing the schedules we are using the tolocaletimestring which will convert time and date based on the users timezone.
+   * @returns schedulesData which is an array stores the start time end time and the order
+   */
+  const preprocessSchedules = () => {
+
+  //If the schedules are not present then we will just sent the empty array 
+  if(!Array.isArray(newCourseData[NewCourseStep3FormNames.schedules])) return [];
+
+  // sort the scheules by date, startHour, startMinute, endHour, endMinute
+  let schedules = newCourseData[NewCourseStep3FormNames.schedules].sort(
+    (a: any, b: any) => {
+      let aDate = new Date(a.date);
+      aDate.setHours(a?.startHour, a?.startMinute);
+
+      let bDate = new Date(b.date);
+      bDate.setHours(b?.startHour, b?.startMinute);
+
+      return aDate.getTime() - bDate.getTime();
+    }
+  );
+
+  const schedulesData: ProgramSchedulesDataBaseType[] = schedules.map(
+    (scheduleData: any, index: number) => {
+      const {
+        startHour = "00",
+        startMinute = "00",
+        endHour = "00",
+        endMinute = "00",
+        startTimeFormat,
+        endTimeFormat,
+        date,
+        program_id
+      } = scheduleData;
+
+      // Parse date and time strings to create Date objects
+      const startTime = new Date(date);
+      startTime.setHours(parseInt(startHour), parseInt(startMinute), 0);
+      if (startTimeFormat === "PM")
+        startTime.setHours(startTime.getHours() + 12);
+
+      const endTime = new Date(date);
+      endTime.setHours(parseInt(endHour), parseInt(endMinute), 0);
+      if (endTimeFormat === "PM") endTime.setHours(endTime.getHours() + 12);
+
+      const scheduleBody: ProgramSchedulesDataBaseType = {
+        program_id,
+        start_time: startTime,
+        end_time: endTime,
+        program_schedule_name: `Schedule ${index + 1}`,
+        //TODO: schedule_type is optional if need we need to pass here
+        order: index + 1,
+      };
+
+      if (scheduleData.id) {
+        scheduleBody.id = scheduleData.id;
+      }
+
+      return scheduleBody;
+    }
+  );
+
+  console.log(
+    "schedulesData to create or update program_schedules was",
+    schedulesData
+  );
+  
+  return schedulesData
+  }
 
   return (
     <div className="pb-12">
