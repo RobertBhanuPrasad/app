@@ -8,7 +8,7 @@ import {
 } from "@refinedev/core";
 import { useTranslation } from "next-i18next";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { translatedText } from "src/common/translations";
 import {
@@ -71,7 +71,7 @@ export default function NewCourseReviewPage() {
 
   const { data: loginUserData }: any = useGetIdentity();
 
-  const router = useRouter();
+  const router: NextRouter = useRouter();
   const searchParams = useSearchParams();
 
   // Checking weather login user is super admin or not
@@ -84,7 +84,8 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData, setNewCourseData,setEditCourseData,editCourseData } = newCourseStore();
+  const { newCourseData, setNewCourseData, setEditCourseData, editCourseData } =
+    newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -259,8 +260,8 @@ export default function NewCourseReviewPage() {
     console.log("Temporary New Course Data", tempCourseData);
     //Updating newCourseData
     setNewCourseData(tempCourseData);
-    if(!editCourseData){
-      setEditCourseData(tempCourseData)
+    if (!editCourseData) {
+      setEditCourseData(tempCourseData);
     }
   };
 
@@ -376,24 +377,23 @@ export default function NewCourseReviewPage() {
       return aDate.getTime() - bDate.getTime();
     });
 
-     useEffect(() => {
-     
-      const routeChange = (url:string) => {
+    useEffect(() => {
+      const routeChange = (url: string) => {
         // we donot allow the user to navigate to any other url while user in preview page
-        const condition =false
-        handleRouteChangeStart(url,router,pathname,condition,routeChange)
+        const condition = false;
+        handleRouteChangeStart(url, router, pathname, condition);
+      };
+
+      // This listner is need only for new course page
+      // so we are skipping when user is from edit course page
+      if (!IsEditCourse(pathname)) {
+        router.events.on("routeChangeStart", routeChange);
       }
 
-      // we donot show the alert when the user from edit course path
-      if(!IsEditCourse(pathname)){
-        router.events.on('routeChangeStart', routeChange);
-      }
-      
       return () => {
-          router.events.off('routeChangeStart', routeChange);
+        router.events.off("routeChangeStart", routeChange);
       };
-  
-  }, []);
+    }, []);
 
     return (
       <div className="w-[291px]">
@@ -484,7 +484,7 @@ export default function NewCourseReviewPage() {
   const enabledFeeLevelData = feeLevels?.filter(
     (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
   );
-const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
+  const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData);
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
   const [openVenueDetails, setOpenVenueDetails] = useState(false);
@@ -495,7 +495,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
   const [onEditSuccess, setOnEditSuccess] = useState(false);
 
-  const { setProgramId, setViewPreviewPage, setViewThankyouPage,  } =
+  const { setProgramId, setViewPreviewPage, setViewThankyouPage } =
     newCourseStore();
 
   /**
@@ -613,7 +613,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
           router.replace(`${pathname}?${params}`);
 
           setViewPreviewPage(false);
-          setViewThankyouPage(true);         
+          setViewThankyouPage(true);
         }
       }
     }
@@ -1187,15 +1187,14 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
             {sortEnabledFeeLevelData?.map((feeLevel: any, index: number) => {
-              return(
-              <>
-              <Fees feeLevelSettingsData={feeLevel} />
-              {newCourseData?.is_early_bird_enabled &&
-          (
-            <EarlyBirdFees feeLevelSettingsData={feeLevel} />
-          )}
-              </>
-              )
+              return (
+                <>
+                  <Fees feeLevelSettingsData={feeLevel} />
+                  {newCourseData?.is_early_bird_enabled && (
+                    <EarlyBirdFees feeLevelSettingsData={feeLevel} />
+                  )}
+                </>
+              );
             })}
 
             {/* Requirment: Show the early bird calender when 
@@ -1241,7 +1240,9 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
             </span>
           ) : (
             //If enabledFeeLevelData is undefined while fetching data, So loading is shown
-            sortEnabledFeeLevelData == undefined && <div className="loader"></div>
+            sortEnabledFeeLevelData == undefined && (
+              <div className="loader"></div>
+            )
           )}
         </section>
         {/* Accommodation Information */}
@@ -1400,7 +1401,9 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
               <div className="loader"></div>
             </div>
           )}
-          <Button className="text-base" onClick={handClickContinue}>{t("continue_button")}</Button>
+          <Button className="text-base" onClick={handClickContinue}>
+            {t("continue_button")}
+          </Button>
         </div>
       </div>
     </div>

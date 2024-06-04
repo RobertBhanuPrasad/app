@@ -6,7 +6,7 @@ import NewCourseStep3 from "@components/course/newCourse/NewCourseStep3";
 import NewCourseStep4 from "@components/course/newCourse/NewCourseStep4";
 import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
-import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage"; 
+import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
 import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
@@ -67,11 +67,14 @@ import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { useTranslation } from "next-i18next";
-import { IsCopyCourse, IsEditCourse } from "@components/course/newCourse/EditCourseUtil";
+import {
+  IsCopyCourse,
+  IsEditCourse,
+} from "@components/course/newCourse/EditCourseUtil";
 import { IsNewCourse } from "@components/course/newCourse/NewCourseUtil";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
@@ -110,8 +113,7 @@ function index() {
   }
 }
 export function NewCourse() {
-
-  const { setCurrentStep ,newCourseData} = newCourseStore();
+  const { setCurrentStep, newCourseData } = newCourseStore();
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -121,9 +123,8 @@ export function NewCourse() {
 
   console.log("heyy logged user data", loggedUserData);
 
-   // Get the current pathname using the useRouter hook
-   const pathname = usePathname();
-
+  // Get the current pathname using the useRouter hook
+  const pathname = usePathname();
 
   const onSubmit = (formData: any) => {
     // console.log(formData);
@@ -141,9 +142,7 @@ export function NewCourse() {
      * This initializes the component state for the first step.
      */
     setCurrentStep(1);
-
   }, []);
-  
 
   //Finding program Organizer role id
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
@@ -172,7 +171,6 @@ export function NewCourse() {
 
   console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
 
-
   /**
    *variable that holds whether the logged in user has super admin role or not
    */
@@ -180,15 +178,10 @@ export function NewCourse() {
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
- 
-
- 
-
   /**
    * Getting the search params from useSearchParams function
    */
   const searchparams = useSearchParams();
-
 
   /**
    * defining the ref using use Ref function
@@ -316,7 +309,7 @@ export function NewCourse() {
           defaultValues={defaultValues}
           schema={validationSchema(iAmCoTeachingId as number)}
         >
-          <NewCourseTabs defaultValues={defaultValues}/>
+          <NewCourseTabs defaultValues={defaultValues} />
         </Form>
       </div>
     </div>
@@ -443,12 +436,10 @@ export type ItabsNextButtonClickStatus = nextButtonClicks[];
 
 export type ItabsValidationStatus = ("valid" | "invalid" | "neutral")[];
 
-export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
-
+export const NewCourseTabs = ({ defaultValues }: { defaultValues: any }) => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   const searchParams = useSearchParams();
-
 
   const pathname = usePathname();
 
@@ -462,7 +453,7 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
 
   const formData: NewCourseFormFieldTypes = watch();
 
- /**
+  /**
    * useEffect hook to handle route changes.
    * - Monitors route changes and triggers an alert if navigating away from '/courses/add' without saving.
    * - Emits a routeChangeError event to cancel the navigation when necessary.
@@ -487,9 +478,8 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
     return () => {
         router.events.off('routeChangeStart', routeChange);
     };
+  }, [formData]);
 
-}, [formData]);
- 
   const { data: loginUserData }: any = useGetIdentity();
   const { data: timeZoneData } = useList({ resource: "time_zones" });
 
@@ -676,7 +666,6 @@ export const NewCourseTabs = ({defaultValues}:{defaultValues:any}) => {
 
       // setViewPreviewPage(true);
       setNewCourseData(formData);
-  
 
       // i need to set params with section=preview_page
       const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
@@ -1122,7 +1111,6 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   };
 };
 
-
 /**
  * @function fetchCourseFee is used to fetch course-fee based on user input
  * @param formData is parameter where entire object is stored
@@ -1244,22 +1232,26 @@ interface CourseFeeBody {
   center_id?: number;
   start_date?: string;
 }
-{/**
+{
+  /**
 This function will check the any modifications in the form before leaving the page. if any changes are there then it alert the user
-*/}
-export const handleRouteChangeStart = (url: any,router: any,pathname: any,condition?: boolean,routeChange?: any ) => {
-  
-  // check is there any data entered or not and check is it in newCourse or copyCourse or editCourse. 
-  if (!condition && ( IsNewCourse(pathname) || IsCopyCourse(pathname) || IsEditCourse(pathname)) ) {
-
+*/
+}
+export const handleRouteChangeStart = (
+  url: string,
+  router: NextRouter,
+  pathname: string,
+  condition?: boolean
+) => {
+  // check is there any data entered or not and check is it in newCourse or copyCourse or editCourse.
+  if (
+    !condition &&
+    (IsNewCourse(pathname) || IsCopyCourse(pathname) || IsEditCourse(pathname))
+  ) {
     // if the navigated url contain the query parameters then we don't need to alert the user.
     if((url.split('?')[0]===url)){
       if (confirm("Do you want to leave this page? Unsaved changes may be lost.")) {
-        // In the alert if user clicked on the 'yes' then user navigated to corresponding url
-        router.events.off('routeChangeStart', routeChange);
-            setTimeout(() => {
-                router.push(url);
-            }, 0);
+        console.log("ok go ahead")
         } 
         else {
             router.events.emit('routeChangeError');
