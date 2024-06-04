@@ -59,7 +59,7 @@ import { validationSchema } from "./NewCourseValidations";
 import { fetchCourseFee } from "pages/courses/add";
 import _ from "lodash";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
-import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
+import { NewCourseStep3FormNames, NewCourseStep4FormNames } from "src/constants/CourseConstants";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -500,6 +500,17 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
   const [errors, setErrors] = useState<any>({});
 
+  const preprocessFee= ()=> {
+    //If the fees are not present then we will just sent the empty array 
+    if(!Array.isArray(newCourseData?.program_fee_level_settings)) return [];
+    if (newCourseData?.program_fee_level_settings) {
+      newCourseData.program_fee_level_settings = _.map(newCourseData?.program_fee_level_settings, (setting) =>
+        _.omit(setting, ['order'])
+      );
+    }
+  }
+  const feeData = preprocessFee()
+  let programBody={...newCourseData, program_fee_level_settings:feeData}
   /**
    * This is a function where we are calling to display error messages in preview page also
    * current state : in preview page there is no Form declaration so we have to validate the current data with zod safe parse
