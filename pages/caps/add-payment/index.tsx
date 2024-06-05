@@ -62,7 +62,7 @@ const AddPayment = () => {
         _site_url: null,
         _recurring_url: null,
       });
-    const message = JSON.stringify(response?.json());
+     const message = JSON.stringify(response);
     if (error) {
       console.error('Error:', error);
       setDialogConfig({
