@@ -42,8 +42,7 @@ function ViewParticipantCourseInformation({ participantId }: any) {
 
   return (
     <div>
-      <p className="text-[#7677F4] text-[18px] font-[600]">{t('course.participants:view_participant.course_information_tab.course_information')}</p>
-      <div className="grid grid-cols-3 gap-4 mt-[20px]">
+     <div className="grid grid-cols-3 gap-4 mt-[20px]">
         {/* Rendering course information */}
         {coursePaticipantInformation.map((info, index) => (
           <div key={index}>

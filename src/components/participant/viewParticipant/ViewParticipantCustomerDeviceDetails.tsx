@@ -24,7 +24,6 @@ function ViewParticipantCustomerDeviceDetails({ participantId }: any) {
   return (
     
     <div>
-      <p className="text-[18px] font-[600]">{t('course.participants:view_participant.customer_device_details')}</p>
       <div>
         <BaseTable
           checkboxSelection={false}

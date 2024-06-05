@@ -2,7 +2,8 @@ import ScrollableTab from "@components/participant/viewParticipant/ScrollableTab
 import ViewParticipantTransactionDetails from "@components/participant/viewParticipant/ViewParticipantTransactionDetails";
 import ViewParticipantUtmParameters from "@components/participant/viewParticipant/ViewParticipantUtmParameters";
 import CrossIcon from "@public/assets/CrossIcon";
-import { useList, useUpdate } from "@refinedev/core";
+import TransactionActivityIcon from "@public/assets/TransactionActivityIcon";
+import { useList, useTable, useUpdate } from "@refinedev/core";
 import _ from "lodash";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -18,6 +19,7 @@ import {
 } from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
+import TransactionActivity from "../TransactionActivityPopover";
 import AccomodationDetails from "./AccomodationDetails";
 import CourseFee from "./CourseFee";
 import ParticipantInformation from "./ParticipantInformation";
@@ -102,6 +104,28 @@ export default function EditParticipantTabs() {
             });
         router.back();
     };
+    let {
+        tableQueryResult: participantTransactionDetailsData, // Table data result
+        pageCount, // Number of pages
+        pageSize, // Number of items per page
+        setPageSize, // Function to set page size
+        current, // Current page number
+        setCurrent, // Function to set current page number
+    } = useTable({
+        resource: "participant_payment_history", // Resource name for fetching data
+        meta: {
+            select: "*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*),accommodation_type_id(*,accommodation_type_id(*))", // Selecting specific fields
+        },
+        filters: {
+            permanent: [
+                {
+                    field: "participant_id",
+                    operator: "eq",
+                    value: Id,
+                },
+            ],
+        },
+    });
 
     // TODO: need to integrated with efficient tabs component
 
@@ -116,6 +140,19 @@ export default function EditParticipantTabs() {
                     <ParticipantInformation />
                 </div>
             ),
+            header: (
+                <div>
+                    <p
+                        className={`font-semibold text-[18px] pt-[25px] ${
+                            activeTabId == "section1" && "text-[#7677F4]"
+                        }`}
+                    >
+                        {t(
+                            "edit_participant.participants_information_tab.participants_details"
+                        )}
+                    </p>
+                </div>
+            ),
         },
         {
             id: "section2",
@@ -125,6 +162,19 @@ export default function EditParticipantTabs() {
             content: (
                 <div>
                     <CourseFee />
+                </div>
+            ),
+            header: (
+                <div>
+                    <p
+                        className={`font-semibold text-[18px] pt-[25px] ${
+                            activeTabId == "section2" && "text-[#7677F4]"
+                        }`}
+                    >
+                        {t(
+                            "edit_participant.participants_information_tab.course_fees"
+                        )}
+                    </p>
                 </div>
             ),
         },
@@ -138,6 +188,19 @@ export default function EditParticipantTabs() {
                     <AccomodationDetails />
                 </div>
             ),
+            header: (
+                <div>
+                    <p
+                        className={`font-semibold text-[18px] py-[25px] ${
+                            activeTabId == "section3" && "text-[#7677F4]"
+                        }`}
+                    >
+                        {t(
+                            "edit_participant.participants_information_tab.accommodation_details"
+                        )}
+                    </p>
+                </div>
+            ),
         },
         {
             id: "section4",
@@ -149,6 +212,19 @@ export default function EditParticipantTabs() {
                     <PaymentDetails />
                 </div>
             ),
+            header: (
+                <div>
+                    <p
+                        className={`font-semibold text-[18px] py-[25px] ${
+                            activeTabId == "section4" && "text-[#7677F4]"
+                        }`}
+                    >
+                        {t(
+                            "course.participants:edit_participant.participants_information_tab.payment_details"
+                        )}
+                    </p>
+                </div>
+            ),
         },
         {
             id: "section5",
@@ -158,6 +234,31 @@ export default function EditParticipantTabs() {
                     <ViewParticipantTransactionDetails participantId={Id} />
                 </div>
             ),
+            header: (
+                <div className="flex">
+                    
+                    <p
+                        className={`text-[18px] font-[600] pr-[10px] !m-[0] !py-[0] !h-[0] ${
+                            activeTabId == "section5" && "text-[#7677F4]"
+                        }`}
+                    >
+                        {t(
+                            "course.participants:view_participant.transaction_details"
+                        )}
+                    </p>
+                    <div className="cursor-pointer ">
+                        <div className="text-left ">
+                            <TransactionActivity
+                                transactionHistory={
+                                    participantTransactionDetailsData?.data
+                                        ?.data
+                                }
+                                renderHeader={<TransactionActivityIcon />}
+                            />
+                        </div>
+                    </div>
+                </div>
+            ),
         },
         {
             id: "section6",
@@ -165,6 +266,17 @@ export default function EditParticipantTabs() {
             content: (
                 <div>
                     <ViewParticipantUtmParameters participantId={Id} />
+                </div>
+            ),
+            header: (
+                <div>
+                    <p
+                        className={`text-[18px] font-[600] ${
+                            activeTabId == "section6" && "text-[#7677F4]"
+                        }`}
+                    >
+                        UTM Parameters
+                    </p>
                 </div>
             ),
         },
