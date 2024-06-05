@@ -217,7 +217,7 @@ const pgDashboardColumns: ExtendedColumnDef<any>[] = [
       }
 
       const handleEditPaymentGateway = () => {
-        router.push(`/caps/add-payment?id=${row?.original?.id}`)
+        router.push(`/caps/edit-payment?id=${row?.original?.id}`)
       }
 
       const handleSelectedValue = (value: number) => {
