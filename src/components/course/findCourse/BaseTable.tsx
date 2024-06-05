@@ -235,7 +235,6 @@ export function BaseTable<TData, TValue>({
     onSortingChange: setSorting,
   });
 
-  console.log("asciskac",sorting)
   /**
    * Function to handle the select all checkbox changes
    */
