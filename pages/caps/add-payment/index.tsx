@@ -88,7 +88,7 @@ const AddPayment = () => {
           <br />
           To check the same, please visit the Payment Gateways Dashboard Page.
         </>,
-        onClick: () => { router.push('/caps/add-payment') },
+        onClick: () => { router.push('/caps/payment-dashboard') },
         buttonMessage: "Go to Dashboard"
       })
 
