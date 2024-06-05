@@ -58,6 +58,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   viewSuccessModal: false,
   viewRejectedModal: false,
 
+
   viewCourseAccountingSuccessModal: false,
   viewCourseAccountingRejectedDescriptionModal: false,
   viewCourseAccountingRejectedModal: false,
