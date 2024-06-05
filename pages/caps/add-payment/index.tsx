@@ -30,6 +30,7 @@ const AddPayment = () => {
       // Define the list of fields to reset for each type
       const fieldsToReset: Record<PGType, string[]> = {
         stripe: ["signature", "signatureLabel", "passphrase"],
+        paypal: ["signature", "signatureLabel", "passphrase"],
         corvuspay: ["signature", "passphrase", "signatureLabel"]
       };
 
@@ -83,7 +84,7 @@ const AddPayment = () => {
         message: <>
           The gateway has successfully been added.
           <br />
-          Please configure the following webhook in your payment gateway: <p><a href="#" className="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{`${CAPS_BASE_URL}/${response?.id}`}</a></p>
+          Please configure the following webhook in your payment gateway: <p><a href="#" className="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{`${CAPS_BASE_URL}/webhooks/${response?.id}`}</a></p>
           <br />
           To check the same, please visit the Payment Gateways Dashboard Page.
         </>,
@@ -217,7 +218,7 @@ const AddPayment = () => {
 export default AddPayment
 
 
-const pgTypes = ["stripe", "corvuspay"] as const;
+const pgTypes = ["stripe", "corvuspay","paypal"] as const;
 type PGType = typeof pgTypes[number]
 const schema = z.object({
   name: z.string().min(1, { message: "Please enter the name of the Payment Gateway" }),
