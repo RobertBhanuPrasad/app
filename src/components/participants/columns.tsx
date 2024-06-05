@@ -1,8 +1,8 @@
 import Form from "@components/Formfield";
-import { CaretSortIcon } from "@radix-ui/react-icons";
+import { CaretSortIcon, CountdownTimerIcon, LapTimerIcon } from "@radix-ui/react-icons";
 import { useList } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
+import { AlarmClock, ArrowDownIcon, ArrowUpIcon, CalendarClockIcon, Clock10Icon, ClockIcon, LucideClock, LucideFileClock, LucideTimer, MoreVertical, TimerIcon, TimerOff, TimerReset } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -439,7 +439,7 @@ export const columns = () => {
                 return (
                     <div className="text-left">
                         {row?.original?.participant_payment_history?.length >
-                        0 ? (
+                            0 ? (
                             <TransactionActivity
                                 transactionHistory={
                                     row?.original?.participant_payment_history
@@ -505,8 +505,8 @@ export const columns = () => {
                     <div className="text-left">
                         {row?.original?.payment_method?.name
                             ? translatedText(
-                                  row?.original?.payment_method?.name
-                              )
+                                row?.original?.payment_method?.name
+                            )
                             : "-"}
                     </div>
                 );
@@ -598,24 +598,24 @@ export const columns = () => {
                         fetchData();
                     }
                 }, [paymentHistoryId]);
-                console.log(payment?.data?.data[0]?.id,defaultValues, "payment");
                 return (
                     <div>
-                        <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm">
+                        <div className="p-[5px] cursor-pointer rounded-sm">
                             <Dialog open={editPayment}>
                                 <DialogTrigger asChild={editPayment}>
                                     <div
-                                        className="text-left "
+                                        className={row?.original?.payment_status_id?.value == 'Pending' ? `text-left flex items-center gap-3 text-red-500 font-bold` : `text-left flex items-center gap-3`}
                                         onClick={() =>
                                             setEditPayment(!editPayment)
                                         }
                                     >
-                                        {row?.original?.payment_status_id?.name
+                                        {row?.original?.payment_status_id?.value
                                             ? translatedText(
-                                                  row?.original
-                                                      ?.payment_status_id?.name
-                                              )
+                                                row?.original
+                                                    ?.payment_status_id?.name
+                                            )
                                             : "-"}
+                                        {row?.original?.payment_status_id?.value == 'Pending' && <CountdownTimerIcon />}
                                     </div>
                                 </DialogTrigger>
                                 {/* <DialogContent> */}
@@ -624,16 +624,16 @@ export const columns = () => {
                                         <div></div>
                                     ) : ( */}
                                 {Object.keys(defaultValues).length > 0 &&
-                                <Form
-                                    onSubmit={() => {}}
-                                    defaultValues={defaultValues}
-                                >
-                                    {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
-                                    <EditPayment
-                                        paymentId={Number(paymentHistoryId)}
-                                        setEditPayment={setEditPayment}
-                                    />
-                                </Form>}
+                                    <Form
+                                        onSubmit={() => { }}
+                                        defaultValues={defaultValues}
+                                    >
+                                        {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
+                                        <EditPayment
+                                            paymentId={Number(paymentHistoryId)}
+                                            setEditPayment={setEditPayment}
+                                        />
+                                    </Form>}
                                 {/* )}  */}
                                 {/* </DialogContent> */}
                             </Dialog>
@@ -688,9 +688,9 @@ export const columns = () => {
                     <div className="text-left !min-w-[150px] pl-4">
                         {row?.original?.participant_attendence_status_id?.name
                             ? translatedText(
-                                  row?.original
-                                      ?.participant_attendence_status_id?.name
-                              )
+                                row?.original
+                                    ?.participant_attendence_status_id?.name
+                            )
                             : "-"}
                     </div>
                 );
@@ -745,8 +745,8 @@ export const columns = () => {
                     row?.original?.is_program_agreement_checked === true
                         ? "Completed"
                         : row?.original?.is_program_agreement_checked === false
-                        ? "Pending"
-                        : "-";
+                            ? "Pending"
+                            : "-";
                 return <div className="min-w-[150px] text-left">{toggle}</div>;
             },
         },
@@ -800,8 +800,8 @@ export const columns = () => {
                     row?.original?.is_health_declaration_checked === true
                         ? "Completed"
                         : row?.original?.is_health_declaration_checked === false
-                        ? "Pending"
-                        : "-";
+                            ? "Pending"
+                            : "-";
                 return <div className="min-w-[150px] text-left">{toggle}</div>;
             },
         },
