@@ -301,7 +301,6 @@ export default function EditParticipantTabs() {
     };
     const handleActiveTabChange = (tabId: string) => {
         setActiveTabId(tabId);
-        console.log("active tab id", activeTabId);
     };
 
     return (

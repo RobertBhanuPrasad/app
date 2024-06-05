@@ -618,11 +618,6 @@ export const columns = () => {
                                         {row?.original?.payment_status_id?.value == 'Pending' && <CountdownTimerIcon />}
                                     </div>
                                 </DialogTrigger>
-                                {/* <DialogContent> */}
-                                {/* {!defaultValues ||
-                                    Object.keys(defaultValues).length === 0 ? (
-                                        <div></div>
-                                    ) : ( */}
                                 {Object.keys(defaultValues).length > 0 &&
                                     <Form
                                         onSubmit={() => { }}
@@ -634,8 +629,6 @@ export const columns = () => {
                                             setEditPayment={setEditPayment}
                                         />
                                     </Form>}
-                                {/* )}  */}
-                                {/* </DialogContent> */}
                             </Dialog>
                         </div>
                     </div>
