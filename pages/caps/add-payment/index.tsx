@@ -62,8 +62,9 @@ const AddPayment = () => {
         _site_url: null,
         _recurring_url: null,
       });
-     const message = JSON.stringify(response);
-    if (error) {
+    const message = JSON.stringify(response);
+    const { match, id } = checkSuccess(message);
+    if (error || !match) {
       console.error('Error:', error);
       setDialogConfig({
         title: "Oops!",
@@ -84,7 +85,7 @@ const AddPayment = () => {
         message: <>
           The gateway has successfully been added.
           <br />
-          Please configure the following webhook in your payment gateway: <p><a href="#" className="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{`${CAPS_BASE_URL}/webhooks/${response?.id}`}</a></p>
+          Please configure the following webhook in your payment gateway: <p><a href="#" className="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{`${CAPS_BASE_URL}/webhooks/${id}`}</a></p>
           <br />
           To check the same, please visit the Payment Gateways Dashboard Page.
         </>,
@@ -99,9 +100,9 @@ const AddPayment = () => {
     <div>
       {showForm &&
         <Form onSubmit={handleSubmit(postData)} defaultValues={{}}>
-          <div className="bg-white ">
+          <div className="bg-white  ">
             <div className="max-w-fit mx-auto font-semibold text-2xl">Add Payment Gateway</div>
-            <div className="flex justify-center flex-wrap gap-x-16 gap-y-4 mt-6">
+            <div className="flex flex-wrap gap-x-16 gap-y-4 mt-6 w-[80%] mx-auto ">
               <div className=" flex flex-col w-[360px]">
                 <label className="font-medium" htmlFor="name">Name</label>
                 <input id="name" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="text" placeholder="Stripe Germany"{...register("name")} />
@@ -168,11 +169,13 @@ const AddPayment = () => {
                   {errors.signatureLabel && <p id="signatureLabelError" className="text-[#FF6D6D] text-[14px]">{errors.signatureLabel.message}</p>}
                 </div>
               }
-              <div className="flex flex-col w-[360px]">
-                <label className="font-medium" htmlFor="webhookSecret">Webhook Secret</label>
-                <input id="webhookSecret" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="password" placeholder="wh_sec_xxx" {...register("webhookSecret")} />
-                {errors.webhookSecret && <p id="webhookSecretError" className="text-[#FF6D6D] text-[14px]">{errors.webhookSecret.message}</p>}
-              </div>
+              {selectedType !== 'corvuspay' &&
+                <div className="flex flex-col w-[360px]">
+                  <label className="font-medium" htmlFor="webhookSecret">Webhook Secret</label>
+                  <input id="webhookSecret" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="password" placeholder="wh_sec_xxx" {...register("webhookSecret")} />
+                  {errors.webhookSecret && <p id="webhookSecretError" className="text-[#FF6D6D] text-[14px]">{errors.webhookSecret.message}</p>}
+                </div>
+              }
 
               <div className="flex flex-col w-[360px]">
                 <label className="font-medium" htmlFor="purpose">Purpose</label>
@@ -218,7 +221,7 @@ const AddPayment = () => {
 export default AddPayment
 
 
-const pgTypes = ["stripe", "corvuspay","paypal"] as const;
+const pgTypes = ["stripe", "corvuspay", "paypal"] as const;
 type PGType = typeof pgTypes[number]
 const schema = z.object({
   name: z.string().min(1, { message: "Please enter the name of the Payment Gateway" }),
@@ -258,6 +261,18 @@ function encodeCertificate(e: React.ChangeEvent<HTMLInputElement>, setValue: any
     }
     reader.readAsDataURL(file);
   };
+}
+
+function checkSuccess(message: string) {
+  const regex = /inserted successfully \| (\d+)/;
+  const match = message.match(regex);
+
+  if (match) {
+    const extractedInteger = parseInt(match[1], 10);
+    return { match: true as const, id: extractedInteger };
+  }
+
+  return { match: false as const };
 }
 
 
