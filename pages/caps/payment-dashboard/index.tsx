@@ -9,11 +9,11 @@ import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "src/ui/dropdown-menu";
 import { supabaseClient } from "src/utility";
-import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { capsAdminStore } from "src/zustandStore/CapsAdminStore";
 
 const PaymentDashboard = () => {
 
-  const { setPaymentGatewaysData, paymentGatewaysData } = newCourseStore()
+  const { setPaymentGatewaysData, paymentGatewaysData } = capsAdminStore()
 
   const router = useRouter();
 
@@ -23,9 +23,9 @@ const PaymentDashboard = () => {
     const { data: paymentGatewayData } = await supabase
       .from("payment_gateways")
       .select("id,type,name,description,test,transaction_intent,enabled")
+      .order("id", { ascending: true });
     if (paymentGatewayData) {
-      const sortedPaymentGatewayData = _.sortBy(paymentGatewayData, "id")
-      setPaymentGatewaysData(sortedPaymentGatewayData)
+      setPaymentGatewaysData(paymentGatewayData)
     }
   }
 
@@ -173,7 +173,7 @@ const pgDashboardColumns: ExtendedColumnDef<any>[] = [
 
       const router = useRouter();
 
-      const { setPaymentGatewaysData, paymentGatewaysData } = newCourseStore()
+      const { setPaymentGatewaysData, paymentGatewaysData } = capsAdminStore()
 
       const menuData: {
         label: string,
@@ -217,7 +217,7 @@ const pgDashboardColumns: ExtendedColumnDef<any>[] = [
       }
 
       const handleEditPaymentGateway = () => {
-        router.push(`/caps/${row?.original?.id}/edit-payment`)
+        router.push(`/caps/add-payment?id=${row?.original?.id}`)
       }
 
       const handleSelectedValue = (value: number) => {
@@ -267,7 +267,7 @@ const pgDashboardColumns: ExtendedColumnDef<any>[] = [
 
 const StatusCheckBox = ({ index }: { index: number }) => {
 
-  const { setPaymentGatewaysData, paymentGatewaysData } = newCourseStore()
+  const { setPaymentGatewaysData, paymentGatewaysData } = capsAdminStore()
 
   const supabase = supabaseClient("caps")
 
