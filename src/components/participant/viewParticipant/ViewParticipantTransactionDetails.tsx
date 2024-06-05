@@ -404,7 +404,6 @@ const columns = () => {
                         fetchData();
                     }
                 }, [Id]);
-                console.log(defaultValues, "defaultValues");
                 return (
                     <div className="flex justify-center text-primary">
                         <div>

@@ -62,13 +62,20 @@ export default function EditPayment({
             resource: "participant_payment_history",
             values: {
                 send_payment_confirmation: formData?.send_payment_confirmation,
-                transaction_date: formData?.payment_date,
+                payment_date: formData?.payment_date,
                 payment_method_id: formData?.payment_method_id,
                 transaction_status_id: formData?.transaction_status_id,
             },
             id: paymentId,
         });
-        setSaveChangesConfirmation(true);
+        const initialData = _.omitBy(initialValue, _.isUndefined);
+        const formValues = _.omitBy(formData, _.isUndefined);
+        if (!_.isEqual(initialData, formValues)) {
+            setSaveChangesConfirmation(true);
+            setEditPayment(false);
+        } else {
+            setEditPayment(false);
+        }
     };
 
     // Form fileds useControllers
@@ -83,7 +90,6 @@ export default function EditPayment({
     } = useController({
         name: "payment_date",
     });
-    console.log("fetch payment date", payment_date);
     const {
         field: { value: payment_method_id, onChange: paymentMethodOnchange },
     } = useController({
@@ -497,7 +503,7 @@ export default function EditPayment({
                                     className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] text-base"
                                     onClick={() => {
                                         onFormSubmission();
-                                    }}
+}}
                                 >
                                     {t("save_button")}
                                 </Button>
@@ -553,7 +559,7 @@ export default function EditPayment({
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
-
+                       
                         <AlertDialog open={saveChangesConfirmation}>
                             <AlertDialogContent>
                                 <div className="flex justify-end">
