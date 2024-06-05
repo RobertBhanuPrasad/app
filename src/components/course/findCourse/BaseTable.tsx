@@ -325,7 +325,7 @@ export function BaseTable<TData, TValue>({
   const {t} = useTranslation(['common', "course.find_course", "new_strings"])
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center h-[50px]">
+      <div className="flex flex-row justify-between items-center max-h-[50px]">
         {columnSelector && (
           <div>
             <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -685,7 +685,7 @@ const {t} = useTranslation(["common", "new_strings"])
           onClick={() => setCurrent(current - 1)}
           disabled={current <= 1}
         >
-          <div>{t('new_strings:prev')}</div>
+          <div className="text-[#D6D7D8] font-semibold">{t('new_strings:prev')}</div>
         </Button>
       )}
       {/* pages buttons */}

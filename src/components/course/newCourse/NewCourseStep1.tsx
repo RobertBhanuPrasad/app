@@ -42,6 +42,8 @@ import { useTranslation } from "next-i18next";
 import { Text } from "src/ui/TextTags";
 import { useRouter } from "next/router";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useMVPSelect } from "src/utility/useMVPSelect";
+import { getDefaultValues } from "@components/participants/editParticipant/EditParticipantUtil";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -409,7 +411,7 @@ const OrganizationDropDown = () => {
 
   const { setValue } = useFormContext();
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "organizations",
     optionLabel: "name",
     optionValue: "id",
@@ -546,7 +548,7 @@ const OrganizationDropDown = () => {
           <SelectContent>
             <Input value={searchValue} onChange={handleSearch} />
             <SelectItems onBottomReached={handleOnBottomReached}>
-              {options?.map((option, index) => {
+              {options?.map((option : any, index : any) => {
                 return (
                   <div key={index}>
                     <SelectItem
@@ -596,7 +598,7 @@ const ProgramOrganizerDropDown = () => {
     PROGRAM_ORGANIZER
   )?.id;
 
-  const { options, queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
@@ -624,6 +626,7 @@ const ProgramOrganizerDropDown = () => {
       mode: "server",
     },
   });
+
 
   const { watch } = useFormContext();
 
