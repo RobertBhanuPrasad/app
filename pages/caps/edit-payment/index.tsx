@@ -1,16 +1,20 @@
 import Form from "@components/Formfield";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
 import { z } from "zod";
+import { Dialog, DialogProps } from "../add-payment";
 
 const EditPaymentGateway = () => {
     const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<FormValues>({
         resolver: zodResolver(schema),
     });
+
+    const router = useRouter();
 
     const supabase = supabaseClient('caps')
 
@@ -189,7 +193,7 @@ const EditPaymentGateway = () => {
                     <br />
                     To check the same, please visit the Payment Gateways Dashboard Page.
                 </>,
-                onClick: () => { },
+                onClick: () => { router.push('/caps/payment-dashboard') },
                 buttonMessage: "Go to Dashboard"
             });
 
@@ -241,7 +245,7 @@ const EditPaymentGateway = () => {
                 <Form onSubmit={handleSubmit(updateData)} defaultValues={{}}>
                     <div className="bg-white">
                         <div className="max-w-fit mx-auto font-semibold text-2xl">Edit Payment Gateway</div>
-                        <div className="flex justify-center flex-wrap gap-x-16 gap-y-4 mt-6">
+                        <div className="flex flex-wrap gap-x-16 gap-y-4 mt-6 w-[80%] mx-auto">
                             <div className="flex flex-col w-[360px]">
                                 <label className="font-medium" htmlFor="name">Name</label>
                                 <input id="name" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="text" placeholder="Stripe Germany" {...register("name", { onChange: handleInputChange })} />
@@ -259,9 +263,9 @@ const EditPaymentGateway = () => {
                                 <label className="font-medium" htmlFor="username">Username</label>
                                 <input id="username" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="password" placeholder="pk_xxx" {...register("username", { onChange: handleInputChange })} />
                                 {errors.username && <small id="usernameError" className="text-[#FF6D6D] text-[14px]">{errors.username.message}</small>}
-                                <div className="form-check">
-                                    <input className="w-4 h-4" type="checkbox" value="" onClick={() => { passwordVisibility('username') }} id="flexCheckDefault" />
-                                    <label className="form-check-label" htmlFor="flexCheckDefault">
+                                <div className="mt-2 flex items-center gap-1 text-[14px]">
+                                    <input className="w-4 h-4 " type="checkbox" value="" onClick={() => { passwordVisibility('username') }} id="flexCheckDefault" />
+                                    <label htmlFor="flexCheckDefault">
                                         Show Username
                                     </label>
                                 </div>
@@ -277,9 +281,9 @@ const EditPaymentGateway = () => {
                                 <label className="font-medium" htmlFor="password">Password</label>
                                 <input id="password" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="password" placeholder="sk_xxx" {...register("password", { onChange: handleInputChange })} />
                                 {errors.password && <small id="passwordError" className="text-[#FF6D6D] text-[14px]">{errors.password.message}</small>}
-                                <div className="form-check">
+                                <div className="mt-2 flex items-center gap-1 text-[14px]">
                                     <input className="w-4 h-4" type="checkbox" value="" onClick={() => { passwordVisibility('password') }} id="flexCheckDefault1" />
-                                    <label className="form-check-label" htmlFor="flexCheckDefault1">
+                                    <label htmlFor="flexCheckDefault1">
                                         Show Password
                                     </label>
                                 </div>
@@ -295,7 +299,7 @@ const EditPaymentGateway = () => {
                                 <div className="flex flex-col w-[360px]">
                                     <label className="font-medium" htmlFor="apiCertificate">API Certificate (.p12 format)</label>
                                     <input id="apiCertificate" className="mt-2" type="file" accept="application/x-pkcs12" onChange={(e) => { encodeCertificate(e, setValue) }} />
-                                    <button type='button' style={{ marginTop: '10px' }} className='btn btn-outline-primary' onClick={handleDownload}>Download File</button>
+                                    <Button type='button' style={{ marginTop: '10px' }} onClick={handleDownload} className="max-w-fit">Download File</Button>
                                 </div>
                             }
 
@@ -311,9 +315,9 @@ const EditPaymentGateway = () => {
                                     <label className="font-medium" htmlFor="signature">Signature</label>
                                     <input id="signature" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="password" placeholder="CA95-05e74kkk" {...register("signature", { onChange: handleInputChange })} />
                                     {errors.signature && <small id="signatureError" className="text-[#FF6D6D] text-[14px]">{errors.signature.message}</small>}
-                                    <div className="form-check">
+                                    <div className="mt-2 flex items-center gap-1 text-[14px]">
                                         <input className="w-4 h-4" type="checkbox" value="" onClick={() => { passwordVisibility('signature') }} id="flexCheckDefault2" />
-                                        <label className="form-check-label" htmlFor="flexCheckDefault2">
+                                        <label htmlFor="flexCheckDefault2">
                                             Show Signature
                                         </label>
                                     </div>
@@ -333,9 +337,9 @@ const EditPaymentGateway = () => {
                                     <label className="font-medium" htmlFor="webhook_secret">Webhook Secret</label>
                                     <input id="webhook_secret" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="password" placeholder="wh_sec_xxx" {...register("webhook_secret", { onChange: handleInputChange })} />
                                     {errors.webhook_secret && <small id="webhookSecretError" className="text-[#FF6D6D] text-[14px]">{errors.webhook_secret.message}</small>}
-                                    <div className="form-check">
+                                    <div className="mt-2 flex items-center gap-1 text-[14px]">
                                         <input className="w-4 h-4" type="checkbox" value="" onClick={() => { passwordVisibility('webhook_secret') }} id="flexCheckDefault3" />
-                                        <label className="form-check-label" htmlFor="flexCheckDefault3">
+                                        <label htmlFor="flexCheckDefault3">
                                             Show webhook_secret
                                         </label>
                                     </div>
@@ -370,7 +374,7 @@ const EditPaymentGateway = () => {
                                         <label className="font-medium" htmlFor="testNo">No</label>
                                     </div>
                                 </div>
-                                {errors.test && (<><br /><small id="isTestGatewayError" className="form-text text-danger">{errors.test.message}</small></>)}
+                                {errors.test && (<small id="isTestGatewayError" className="text-[#FF6D6D] text-[14px]">{errors.test.message}</small>)}
                             </div>
 
 
@@ -382,6 +386,7 @@ const EditPaymentGateway = () => {
                 </Form>
 
             )}
+            {!showForm && <Dialog {...dialogConfig} />}
         </div>
     )
 }
@@ -477,34 +482,6 @@ function checkSuccess(message: string) {
     return { match: false as const };
 }
 
-
-
-
-export type DialogProps = {
-    message: React.ReactNode;
-    buttonMessage: string;
-    onClick: React.MouseEventHandler<HTMLButtonElement>;
-    title: string;
-}
-
-
-export function Dialog(props: DialogProps) {
-    return (<AlertDialog defaultOpen>
-        {/* <AlertDialogTrigger>Open</AlertDialogTrigger> */}
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>{props.title}</AlertDialogTitle>
-                <AlertDialogDescription>
-                    {props.message}
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="text-center">
-                {/* <AlertDialogCancel>Retry</AlertDialogCancel> */}
-                <AlertDialogAction onClick={props.onClick}>{props.buttonMessage}</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>);
-}
 
 
 

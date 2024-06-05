@@ -36,7 +36,7 @@ const PaymentDashboard = () => {
   return (
     <div>
       <div className="flex justify-center font-semibold"> Payment Gateway Dashboard</div>
-      <div className="mx-6 mt-[-25px] mb-8 bg-white">
+      <div className="mx-6 mb-8 bg-white">
         <BaseTable
           columns={pgDashboardColumns}
           data={paymentGatewaysData || []}
