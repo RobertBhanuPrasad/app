@@ -323,7 +323,7 @@ return field
     },
     meta: {
       select:
-        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
     sorters:{
@@ -953,7 +953,7 @@ const HeaderSection = () => {
         <ParticipantsAdvanceFilter />
       </div>
       {/* Search Section */}
-      <div className="flex flex-row items-center border-2 px-3 rounded-lg">
+      <div className="flex flex-row items-center border-2 px-2 rounded-lg">
         <div>
           <SearchIcon className="text-[#7677F4]" />
         </div>
@@ -962,7 +962,7 @@ const HeaderSection = () => {
             value={Searchvalue}
             onChange={handleSearchChange}
             type="text"
-            className=" border-0 outline-none"
+            className="border-0 outline-none w-[190px]"
             placeholder={t(
               "course.participants:find_participant.search_registration"
             )}
@@ -1018,7 +1018,7 @@ const HeaderSection = () => {
                     </div>
                   )
                 ) : (
-                  <span className="font-thin text-[#999999]">
+                  <span className="font-normal text-[#999999]">
                     {t("new_strings:search_by_registration_date")}
                   </span>
                 )}

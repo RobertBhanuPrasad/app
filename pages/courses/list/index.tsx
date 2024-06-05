@@ -46,6 +46,7 @@ import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
 import { SupabaseClient, supabaseClient } from "src/utility/supabaseClient";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
@@ -747,7 +748,7 @@ export const CourseTypeComponent = ({ name }: any) => {
   });
 
   const [pageSize, setPageSize] = useState(10);
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "program_types",
     optionLabel: "name",
     optionValue: "id",
@@ -789,7 +790,7 @@ export const CourseTypeComponent = ({ name }: any) => {
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={index}

@@ -350,7 +350,7 @@ function ViewDetails() {
           )}
         </div>
 
-        <div className="flex flex-row items-center gap-2 w-full justify-end text-sm">
+        <div className="flex flex-row items-center gap-2 w-full justify-end text-xs text-[#999999]">
           {t("new_strings:announced_by")}:{" "}
           {courseData?.data?.created_by_user_id?.contact_id?.full_name}
           <HoverCard>
