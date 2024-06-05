@@ -49,7 +49,14 @@ const index = () => {
        // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
       // this varaible holds the boolean value that the data is edited or not
       const condition = _.isEqual(newCourseData,editCourseDefaultValues)
+      console.log(_.isEqual(newCourseData,editCourseDefaultValues),newCourseData,editCourseDefaultValues,"editcaleed")
+      const {query} = router
+      // we take the id from the url
+      const Id=url.split('/').filter((x)=>x===query.id?.toString())
+      // we donot display the alert for the user if navigated from edited course to course details page
+      if(!(Id.length>0)){
         handleRouteChangeStart(url,router,pathname,condition)
+      }
 
     }
 

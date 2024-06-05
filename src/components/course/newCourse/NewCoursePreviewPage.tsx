@@ -6,11 +6,14 @@ import {
   useMany,
   useOne,
 } from "@refinedev/core";
+import _ from "lodash";
 import { useTranslation } from "next-i18next";
 import { usePathname, useSearchParams } from "next/navigation";
 import { NextRouter, useRouter } from "next/router";
+import { fetchCourseFee, handleRouteChangeStart } from "pages/courses/add";
 import { useEffect, useState } from "react";
 import { translatedText } from "src/common/translations";
+import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import {
   COURSE_ACCOUNTING_STATUS,
   PAYMENT_MODE,
@@ -48,18 +51,14 @@ import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { IsEditCourse } from "./EditCourseUtil";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
+import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
 import NewCourseStep3 from "./NewCourseStep3";
 import NewCourseStep4, { sortFeeLevels } from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
-import { handlePostProgramData } from "./NewCourseUtil";
 import { validationSchema } from "./NewCourseValidations";
-import { fetchCourseFee, handleRouteChangeStart } from "pages/courses/add";
-import _ from "lodash";
-import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
-import { NewCourseStep3FormNames, NewCourseStep4FormNames } from "src/constants/CourseConstants";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -613,37 +612,37 @@ export default function NewCourseReviewPage() {
   const CX_BASE_URL: string = process.env.NEXT_PUBLIC_CX_BASE_URL as string;
 
       try {
-        // const { data: upsertCourseData, error } =
-        //   await supabase.functions.invoke("upsert-course", {
-        //     headers: {
-        //       Authorization:
-        //         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-        //       "country-code": countryCode,
-        //     },
-        //     method,
-        //     body: {
-        //       program_data: programBody,
-        //       loggedin_user_id: data?.userData?.id,
-        //       accounting_not_submitted_status_id:
-        //         accountingNotSubmittedStatusId,
-        //       language_code: languageCode,
-        //       rx_base_url:RX_BASE_URL,
-        //       cx_base_url:CX_BASE_URL,
-        //     },
-        //   });
+        const { data: upsertCourseData, error } =
+          await supabase.functions.invoke("upsert-course", {
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+              "country-code": countryCode,
+            },
+            method,
+            body: {
+              program_data: programBody,
+              loggedin_user_id: data?.userData?.id,
+              accounting_not_submitted_status_id:
+                accountingNotSubmittedStatusId,
+              language_code: languageCode,
+              rx_base_url:RX_BASE_URL,
+              cx_base_url:CX_BASE_URL,
+            },
+          });
 
-        // if (error) {
-        //   console.log("error in catch block", error);
-        //   throw error;
-        // }
+        if (error) {
+          console.log("error in catch block", error);
+          throw error;
+        }
 
-        // console.log("data is ", upsertCourseData, error);
+        console.log("data is ", upsertCourseData, error);
 
-        // setProgramId(upsertCourseData?.message?.response?.id);
+        setProgramId(upsertCourseData?.message?.response?.id);
 
         // we are checking the course is edit or user created new course
         const isEdited = IsEditCourse(pathname);
-
+         
         // we have to display thank you page or success modal pop up only when the posting done successfully without any error
         if (isEdited) {
           setOnEditSuccess(true);
@@ -665,10 +664,9 @@ export default function NewCourseReviewPage() {
 
           setViewPreviewPage(false);
           setViewThankyouPage(true);
-          // until course is created we should alert the user if navigates to any other page 
-          // when course is created user should able to move any other page
-          router.events.off('routeChangeStart', handleRouteChangeStart)
         }
+
+
       } catch (error) {
         console.log("error in catch block", error);
       }

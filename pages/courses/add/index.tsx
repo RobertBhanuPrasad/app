@@ -460,11 +460,15 @@ export const NewCourseTabs = ({ defaultValues }: { defaultValues: any }) => {
       const tempFormData = formData
 
       // we have remove the undefined key:value pairs in formData
-      Object.keys(formData).forEach(key => tempFormData[key] === undefined ? delete tempFormData[key] : {});
+      Object.keys(tempFormData).forEach(key => tempFormData[key] === undefined ? delete tempFormData[key] : {});
+      Object.keys(defaultValues).forEach(key => defaultValues[key] === undefined ? delete defaultValues[key] : {});
+
+
 
       // to check whether we enter the any field value in the form and if we enter the  fields and try to navigate to another page it show the alert 
       // this varaible holds the boolean value that the data is entered or not
       const condition = _.isEqual(defaultValues,tempFormData)
+      console.log(_.isEqual(defaultValues,tempFormData),defaultValues,tempFormData,"add")
 
       handleRouteChangeStart(url,router,pathname,condition)
     }
