@@ -197,7 +197,7 @@ const ButtonsDialog = ({
       >
         {t("cancel_button")}
       </Button>
-      <Button className="w-[100px]" onClick={onSubmit}>
+      <Button className="w-[100px] text-base" onClick={onSubmit}>
         {t("save_button")}
       </Button>
     </DialogFooter>
