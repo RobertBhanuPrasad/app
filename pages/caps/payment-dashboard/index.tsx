@@ -40,6 +40,7 @@ const PaymentDashboard = () => {
   return (
     <div>
       <div className="flex justify-center font-semibold"> Payment Gateway Dashboard</div>
+      
       {isLoading ? (
         <section className="flex justify-center align-center pt-[10%]">
           <div className="loader"></div>
@@ -55,8 +56,7 @@ const PaymentDashboard = () => {
                 rowStyles: "!important border-none",
               }}
               columnPinning={true}
-            >
-            </BaseTable>
+            />
           </div>
 
           <div className="flex justify-between mx-6">
