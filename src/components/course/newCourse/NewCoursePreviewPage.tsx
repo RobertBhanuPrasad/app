@@ -87,7 +87,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData, setNewCourseData } = newCourseStore();
+  const { newCourseData, setNewCourseData, setEditCourseDefaultValues, editCourseDefaultValues } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "program_types",
@@ -262,6 +262,10 @@ export default function NewCourseReviewPage() {
     console.log("Temporary New Course Data", tempCourseData);
     //Updating newCourseData
     setNewCourseData(tempCourseData);
+    // add the fee data when user in preview page and should not update the fee data when user is edited
+    if(!editCourseDefaultValues){
+      setEditCourseDefaultValues(tempCourseData)
+    }
   };
 
   useEffect(() => {
@@ -625,6 +629,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
         // we have to display thank you page or success modal pop up only when the posting done successfully without any error
         if (isEdited) {
+          setEditCourseDefaultValues(newCourseData)
           setOnEditSuccess(true);
         } else {
           // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
