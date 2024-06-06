@@ -92,7 +92,7 @@ function index() {
   const isNewCourseEditedRef = useRef(false);
 
   const router = useRouter();
-   
+  
   const pathname = usePathname();
 
   const {
@@ -107,13 +107,12 @@ function index() {
   useEffect(() => {
     const routeChange = (url: string) => {
       if (isNewCourseEditedRef.current) {
-        
         // remove the country and language code in destination url.
-        const newUrl = '/'+url.split('/').slice(2).join('/')
+        const newUrl = "/" + url.split("/").slice(2).join("/");
 
-        // if the destination url is other than newCourse or if the current path and destination path is same 
+        // if the destination url is other than newCourse or if the current path and destination path is same
         // then alert the user for lossing the entered data
-        if(!IsNewCourse(url) || pathname===newUrl){
+        if (!IsNewCourse(url) || pathname === newUrl) {
           if (
             confirm(
               "Do you want to leave this page? Unsaved changes may be lost."
@@ -157,7 +156,11 @@ function index() {
   }
 
   if (section === "preview_page") {
-    return <NewCourseReviewPage />;
+    return (
+      <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
+        <NewCourseReviewPage />
+      </NewCourseContext.Provider>
+    );
   } else {
     return (
       <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
