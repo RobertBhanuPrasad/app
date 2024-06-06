@@ -75,6 +75,7 @@ export default function CourseFee() {
                     </Text>
                 </div>
             </div>
+            <div className='pt-[10px] border-b-2'></div>
         </div>
     );
 }

@@ -28,7 +28,7 @@ const ScrollablePage = ({ tabs, onActiveTabChange }: ScrollablePageProps) => {
 
     return (
         <div className="flex flex-col items-center w-full ">
-            <div className="flex justify-start w-full h-10 p-1 sticky top-[180px] z-1000 bg-white border-b-2 ">
+            <div className="flex justify-start w-full h-10 p-1 sticky top-[160px] z-1000 bg-white border-b-2 ">
                 {tabs?.map((tab: Tab, id) => (
                     <div key={id}>
                         <Link
@@ -56,9 +56,7 @@ const ScrollablePage = ({ tabs, onActiveTabChange }: ScrollablePageProps) => {
                     <div key={index}>
                         <Element
                             name={tab?.id}
-                            className={`px-5 ${
-                                index != tabs?.length - 1 && "border-b-2"
-                            } py-7`}
+                            className={`px-5 py-7`}
                         >
                             <div>{tab?.header}</div>
                             <div>{tab?.content}</div>

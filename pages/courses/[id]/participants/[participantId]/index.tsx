@@ -145,7 +145,9 @@ function index() {
         {
             id: "section3",
             label: "Email Delivery Logs",
-            content: <ViewParticipantEmailDeliveryLogs participantId={Id} />,
+            content:(<div>
+                <ViewParticipantEmailDeliveryLogs participantId={Id} />
+                </div> ),
             header: (
                 <p
                     className={` font-semibold text-[18px] pt-[25px] ${
@@ -162,7 +164,9 @@ function index() {
                 "course.participants:view_participant.customer_device_details"
             ),
             content: (
-                <ViewParticipantCustomerDeviceDetails participantId={Id} />
+                (<div>
+                    <ViewParticipantCustomerDeviceDetails participantId={Id} />
+                    </div>)
             ),
             header: (
                 <p
@@ -179,7 +183,9 @@ function index() {
         {
             id: "section5",
             label: "UTM Parameters",
-            content: <ViewParticipantUtmParameters participantId={Id} />,
+            content: (<div>
+                <ViewParticipantUtmParameters participantId={Id} />
+                </div>),
             header: (
                 <p
                     className={`font-semibold text-[18px] pt-[25px] ${

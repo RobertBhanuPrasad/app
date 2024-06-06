@@ -180,6 +180,7 @@ export default function PaymentDetails() {
           </div>
         </div>
       </div>
+      <div className='pt-[10px] border-b-2'></div>
     </div>
   );
 }

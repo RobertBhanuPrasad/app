@@ -295,6 +295,7 @@ export default function AccomodationDetails() {
                     </span>
                 )}
             </div>
+            <div className='pt-[10px] border-b-2'></div>
         </div>
     );
 }

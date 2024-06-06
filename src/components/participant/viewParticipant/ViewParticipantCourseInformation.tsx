@@ -51,6 +51,7 @@ function ViewParticipantCourseInformation({ participantId }: any) {
           </div>
         ))}
       </div>
+      <div className='pt-[10px] border-b-2'></div>
     </div>
   )
 }
