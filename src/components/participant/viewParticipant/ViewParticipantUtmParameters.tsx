@@ -19,7 +19,6 @@ function ViewParticipantUtmParameters({ participantId }: any) {
 
   return (
     <div>
-      <p className="text-[18px] font-[600] ">UTM Parameters</p>
       <div>
         <BaseTable
           checkboxSelection={false}
