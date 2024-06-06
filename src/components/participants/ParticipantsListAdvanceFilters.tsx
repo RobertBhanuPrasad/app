@@ -1,111 +1,160 @@
-import ClearAllIcon from '@public/assets/ClearAllIcon'
-import CrossIcon from '@public/assets/CrossIcon'
-import FilterIcon from '@public/assets/FilterIcon'
-import { CountComponent } from 'pages/courses/list'
-import { useEffect, useRef, useState } from 'react'
-import { useController, useFormContext } from 'react-hook-form'
-import { translatedText } from 'src/common/translations'
-import { FEE_LEVEL, PARTICIPANT_ATTENDANCE_STATUS, PAYMENT_METHOD, TRANSACTION_TYPE } from 'src/constants/OptionLabels'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from 'src/ui/accordion'
-import { Button } from 'src/ui/button'
-import { Checkbox } from 'src/ui/checkbox'
-import { Input } from 'src/ui/input'
-import { Label } from 'src/ui/label'
-import { MultiSelect } from 'src/ui/multi-select'
-import { Separator } from 'src/ui/separator'
-import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTrigger } from 'src/ui/sheet'
-import { getOptionValuesByOptionLabel } from 'src/utility/GetOptionValuesByOptionLabel'
-import { ParticipantStore } from 'src/zustandStore/ParticipantStore'
-import { useTranslation } from 'next-i18next';
+import ClearAllIcon from "@public/assets/ClearAllIcon";
+import CrossIcon from "@public/assets/CrossIcon";
+import FilterIcon from "@public/assets/FilterIcon";
+import { CountComponent } from "pages/courses/list";
+import { useEffect, useRef, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
+import { translatedText } from "src/common/translations";
+import {
+  FEE_LEVEL,
+  PARTICIPANT_ATTENDANCE_STATUS,
+  PAYMENT_METHOD,
+  TRANSACTION_TYPE,
+} from "src/constants/OptionLabels";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "src/ui/accordion";
+import { Button } from "src/ui/button";
+import { Checkbox } from "src/ui/checkbox";
+import { Input } from "src/ui/input";
+import { Label } from "src/ui/label";
+import { MultiSelect } from "src/ui/multi-select";
+import { Separator } from "src/ui/separator";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTrigger,
+} from "src/ui/sheet";
+import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+import { ParticipantStore } from "src/zustandStore/ParticipantStore";
+import { useTranslation } from "next-i18next";
 
 export function ParticipantsAdvanceFilter() {
-
-  const {t} = useTranslation(["common", "new_strings" ,"course.participants", "course.find_course", "course.view_course" ])
-  const { setParticpantFiltersData, advanceFilterCount, setAdvanceFilterCount } = ParticipantStore()
-  const { watch, setValue, getValues } = useFormContext()
-  const formData = watch()
-  const [openAdvFilter, setOpenAdvFilter] = useState(false)
-  const [count, setCount] = useState(0)
+  const { t } = useTranslation([
+    "common",
+    "new_strings",
+    "course.participants",
+    "course.find_course",
+    "course.view_course",
+  ]);
+  const {
+    setParticpantFiltersData,
+    advanceFilterCount,
+    setAdvanceFilterCount,
+  } = ParticipantStore();
+  const { watch, setValue, getValues } = useFormContext();
+  const formData = watch();
+  const [openAdvFilter, setOpenAdvFilter] = useState(false);
+  const [count, setCount] = useState(0);
 
   const filterCount = () => {
-    const { advanceFilter } = getValues()
-    let res = 0
-    if (advanceFilter?.full_name?.length || advanceFilter?.email?.length || advanceFilter?.mobile?.length) res += 1
+    const { advanceFilter } = getValues();
+    let res = 0;
+    if (
+      advanceFilter?.full_name?.length ||
+      advanceFilter?.email?.length ||
+      advanceFilter?.mobile?.length
+    )
+      res += 1;
     // if (advanceFilter?.email?.length) res += 1;
     // if (advanceFilter?.mobile?.length) res += 1;
-    if (advanceFilter?.transaction_type?.length) res += 1
-    if (advanceFilter?.payment_method?.length) res += 1
-    if (advanceFilter?.fee_level?.length) res += 1
-    if (advanceFilter?.attendance_status?.length) res += 1
-    if (advanceFilter?.health_consent_status?.completed || advanceFilter?.health_consent_status?.pending) res += 1
+    if (advanceFilter?.transaction_type?.length) res += 1;
+    if (advanceFilter?.payment_method?.length) res += 1;
+    if (advanceFilter?.fee_level?.length) res += 1;
+    if (advanceFilter?.attendance_status?.length) res += 1;
+    if (
+      advanceFilter?.health_consent_status?.completed ||
+      advanceFilter?.health_consent_status?.pending
+    )
+      res += 1;
     // if (advanceFilter?.health_consent_status?.pending) res += 1;
-    if (advanceFilter?.program_agreement_status?.completed || advanceFilter?.program_agreement_status?.pending) res += 1
+    if (
+      advanceFilter?.program_agreement_status?.completed ||
+      advanceFilter?.program_agreement_status?.pending
+    )
+      res += 1;
     // if (advanceFilter?.program_agreement_status?.pending) res += 1;
 
-    setAdvanceFilterCount(res)
+    setAdvanceFilterCount(res);
 
-    return res
-  }
+    return res;
+  };
 
-  const sheetRef = useRef<HTMLDivElement>(null)
+  const sheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (sheetRef.current && !sheetRef.current.contains(event.target as Node)) {
-        setOpenAdvFilter(false)
+      if (
+        sheetRef.current &&
+        !sheetRef.current.contains(event.target as Node)
+      ) {
+        setOpenAdvFilter(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [sheetRef])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [sheetRef]);
 
   return (
     <Sheet open={openAdvFilter}>
       <SheetTrigger
         onClick={() => {
-          setOpenAdvFilter(true)
+          setOpenAdvFilter(true);
         }}
       >
         <Button
           variant="outline"
-          className="flex gap-4 px-10 pl-5"
+          className="flex gap-4 px-10 pl-5 hover:border-primary"
           onClick={() => {
-            const advanceFilterValues = { ...formData }
+            const advanceFilterValues = { ...formData };
 
-            setValue('tempFilters', advanceFilterValues.advanceFilter)
+            setValue("tempFilters", advanceFilterValues.advanceFilter);
           }}
         >
-          {' '}
+          {" "}
           <FilterIcon />
           {t("course.participants:find_participant.all_filters")}
-          {advanceFilterCount > 0 && <CountComponent count={advanceFilterCount} />}
+          {advanceFilterCount > 0 && (
+            <CountComponent count={advanceFilterCount} />
+          )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[446px] rounded-l-xl" ref={sheetRef}>
-        <div className="flex flex-col gap-4">
-          <div className="max-h-[90vh] overflow-y-auto scrollbar pr-4">
-            <SheetHeader className="p-3 text-2xl font-semibold flex flex-row">
-              <div className="flex justify-between items-center flex-grow">
-                <div className="text-2xl font-semibold">{t("course.find_course:filter_by")}</div>
-                <div
-                  onClick={() => {
-                    setOpenAdvFilter(false)
-                  }}
-                  className="cursor-pointer"
-                >
-                  <CrossIcon width={16} height={16} />
-                </div>
-              </div>
-            </SheetHeader>
-            <Separator />
+      <SheetContent className="w-[446px] rounded-l-xl gap-3" ref={sheetRef}>
+        <SheetHeader className="pb-3 text-2xl font-semibold flex flex-row">
+          <div className="flex justify-between items-center flex-grow">
+            <div className="text-2xl font-semibold">
+              {t("course.find_course:filter_by")}
+            </div>
+            <div
+              onClick={() => {
+                setOpenAdvFilter(false);
+              }}
+              className="cursor-pointer"
+            >
+              <CrossIcon width={16} height={16} fill="#333333" />
+            </div>
+          </div>
+        </SheetHeader>
+        <div className="flex flex-col gap-4 max-h-[75vh] py-3">
+          <Separator />
+          <div className=" overflow-y-auto scrollbar pr-4">
             <Accordion type="single" collapsible defaultValue="item-1">
               <AccordionItem value="item-1">
                 <AccordionTrigger>
                   <div className="flex flex-row gap-3 items-center">
-                    <div>{t("course.view_course:basic_details_tab.contact_details")}</div>
+                    <div>
+                      {t(
+                        "course.view_course:basic_details_tab.contact_details"
+                      )}
+                    </div>
                     {getContactCount()}
                   </div>
                 </AccordionTrigger>
@@ -118,9 +167,15 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-4">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>{t("course.participants:find_participant.transaction_type")}</div>
+                    <div>
+                      {t(
+                        "course.participants:find_participant.transaction_type"
+                      )}
+                    </div>
                     {formData?.tempFilters?.transaction_type?.length > 0 && (
-                      <CountComponent count={formData?.tempFilters?.transaction_type?.length} />
+                      <CountComponent
+                        count={formData?.tempFilters?.transaction_type?.length}
+                      />
                     )}
                   </div>
                 </AccordionTrigger>
@@ -133,9 +188,13 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-5">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>{t("course.participants:find_participant.payment_method")}</div>
+                    <div>
+                      {t("course.participants:find_participant.payment_method")}
+                    </div>
                     {formData?.tempFilters?.payment_method?.length > 0 && (
-                      <CountComponent count={formData?.tempFilters?.payment_method?.length} />
+                      <CountComponent
+                        count={formData?.tempFilters?.payment_method?.length}
+                      />
                     )}
                   </div>
                 </AccordionTrigger>
@@ -148,9 +207,13 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-6">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>{t("course.participants:view_participant.fee_level")}</div>
+                    <div>
+                      {t("course.participants:view_participant.fee_level")}
+                    </div>
                     {formData?.tempFilters?.fee_level?.length > 0 && (
-                      <CountComponent count={formData?.tempFilters?.fee_level?.length} />
+                      <CountComponent
+                        count={formData?.tempFilters?.fee_level?.length}
+                      />
                     )}
                   </div>
                 </AccordionTrigger>
@@ -164,9 +227,15 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-7">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>{t("course.participants:find_participant.attendance_status")}</div>
+                    <div>
+                      {t(
+                        "course.participants:find_participant.attendance_status"
+                      )}
+                    </div>
                     {formData?.tempFilters?.attendance_status?.length > 0 && (
-                      <CountComponent count={formData?.tempFilters?.attendance_status?.length} />
+                      <CountComponent
+                        count={formData?.tempFilters?.attendance_status?.length}
+                      />
                     )}
                   </div>
                 </AccordionTrigger>
@@ -181,12 +250,14 @@ export function ParticipantsAdvanceFilter() {
                   <div className="flex gap-3 items-center">
                     <div>{t("new_strings:health_consent_status")}</div>
                     {formData?.tempFilters &&
-                      Object.values(formData?.tempFilters?.health_consent_status || {}).filter(value => value === true)
-                        ?.length > 0 && (
+                      Object.values(
+                        formData?.tempFilters?.health_consent_status || {}
+                      ).filter((value) => value === true)?.length > 0 && (
                         <CountComponent
                           count={
-                            Object.values(formData?.tempFilters?.health_consent_status).filter(value => value === true)
-                              ?.length
+                            Object.values(
+                              formData?.tempFilters?.health_consent_status
+                            ).filter((value) => value === true)?.length
                           }
                         />
                       )}
@@ -201,16 +272,21 @@ export function ParticipantsAdvanceFilter() {
               <AccordionItem value="item-9">
                 <AccordionTrigger>
                   <div className="flex gap-3 items-center">
-                    <div>{t("course.participants:find_participant.program_agreement_status")}</div>
+                    <div>
+                      {t(
+                        "course.participants:find_participant.program_agreement_status"
+                      )}
+                    </div>
                     {formData?.tempFilters &&
-                      Object.values(formData?.tempFilters?.program_agreement_status || {}).filter(
-                        value => value === true
-                      ).length > 0 && (
+                      Object.values(
+                        formData?.tempFilters?.program_agreement_status || {}
+                      ).filter((value) => value === true).length > 0 && (
                         <CountComponent
                           count={
-                            Object.values(formData?.tempFilters?.program_agreement_status || {}).filter(
-                              value => value === true
-                            ).length
+                            Object.values(
+                              formData?.tempFilters?.program_agreement_status ||
+                                {}
+                            ).filter((value) => value === true).length
                           }
                         />
                       )}
@@ -222,92 +298,91 @@ export function ParticipantsAdvanceFilter() {
               </AccordionItem>
             </Accordion>
           </div>
-          <div>
-            <SheetFooter>
-              <div className="flex justify-end w-full gap-4">
-                <div
-                  onClick={() => {
-                    setValue('tempFilters.full_name', '')
-                    setValue('tempFilters.email', '')
-                    setValue('tempFilters.mobile', '')
-                    setValue('tempFilters.transaction_type', '')
-                    setValue('tempFilters.payment_method', [])
-                    setValue('tempFilters.fee_level', [])
-                    setValue('tempFilters.attendance_status', '')
-                    setValue('tempFilters.health_consent_status', {
-                      completed: false,
-                      pending: false
-                    })
-                    setValue('tempFilters.program_agreement_status', {
-                      completed: false,
-                      pending: false
-                    })
-                    setValue('advanceFilter', {})
-                  }}
-                  className="flex gap-1 items-center cursor-pointer"
-                >
-                  <ClearAllIcon />
-                  <p className="text-primary font-semibold"> {t("clear_all")}</p>
-                </div>
-                <Button
-                  className=" font-bold"
-                  onClick={() => {
-                    const tempFilterData = getValues()
-
-                    setValue('advanceFilter', tempFilterData?.tempFilters)
-                    setParticpantFiltersData(getValues())
-                    setOpenAdvFilter(false)
-                    setCount(filterCount)
-                  }}
-                >
-                 {t("apply_button")}
-                </Button>
-              </div>
-            </SheetFooter>
-          </div>
         </div>
+        <SheetFooter>
+          <div className="flex justify-end w-full gap-4 pt-2">
+            <div
+              onClick={() => {
+                setValue("tempFilters.full_name", "");
+                setValue("tempFilters.email", "");
+                setValue("tempFilters.mobile", "");
+                setValue("tempFilters.transaction_type", "");
+                setValue("tempFilters.payment_method", []);
+                setValue("tempFilters.fee_level", []);
+                setValue("tempFilters.attendance_status", "");
+                setValue("tempFilters.health_consent_status", {
+                  completed: false,
+                  pending: false,
+                });
+                setValue("tempFilters.program_agreement_status", {
+                  completed: false,
+                  pending: false,
+                });
+                setValue("advanceFilter", {});
+              }}
+              className="flex gap-1 items-center cursor-pointer"
+            >
+              <ClearAllIcon />
+              <p className="text-primary font-semibold"> {t("clear_all")}</p>
+            </div>
+            <Button
+              className=" font-bold"
+              onClick={() => {
+                const tempFilterData = getValues();
+
+                setValue("advanceFilter", tempFilterData?.tempFilters);
+                setParticpantFiltersData(getValues());
+                setOpenAdvFilter(false);
+                setCount(filterCount);
+              }}
+            >
+              {t("apply_button")}
+            </Button>
+          </div>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
 
 export const ContactDetails = () => {
-  const {t} =  useTranslation(["common" , "course.participant"])
+  const { t } = useTranslation(["common", "course.participant"]);
   const {
-    field: { value: contactName, onChange: onNameChange }
+    field: { value: contactName, onChange: onNameChange },
   } = useController({
-    name: 'tempFilters.full_name'
-  })
+    name: "tempFilters.full_name",
+  });
 
   const {
-    field: { value: contactEmail, onChange: onEmailChange }
+    field: { value: contactEmail, onChange: onEmailChange },
   } = useController({
-    name: 'tempFilters.email'
-  })
+    name: "tempFilters.email",
+  });
 
   const {
-    field: { value: contactPhone, onChange: onPhoneChange }
+    field: { value: contactPhone, onChange: onPhoneChange },
   } = useController({
-    name: 'tempFilters.mobile'
-  })
+    name: "tempFilters.mobile",
+  });
 
-  const emailRegex: RegExp = /^[^\s]+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  const emailRegex: RegExp =
+    /^[^\s]+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const handleNameChange = (event: any) => {
-    const { value } = event.target
-    const updatedName = value.replace(/[^\w\s]|[\d_]/gi, '') //Regex to allow only alphabets
+    const { value } = event.target;
+    const updatedName = value.replace(/[^\w\s]|[\d_]/gi, ""); //Regex to allow only alphabets
 
     if (updatedName.length <= 50) {
-      onNameChange({ target: { value: updatedName } })
+      onNameChange({ target: { value: updatedName } });
     }
-  }
+  };
 
   const handlePhoneChange = (event: any) => {
-    const { value } = event.target
-    const updatedPhone = value.replace(/\D/g, '') // Regex to allow only numeric characters
+    const { value } = event.target;
+    const updatedPhone = value.replace(/\D/g, ""); // Regex to allow only numeric characters
 
-    onPhoneChange({ target: { value: updatedPhone } })
-  }
+    onPhoneChange({ target: { value: updatedPhone } });
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -318,38 +393,47 @@ export const ContactDetails = () => {
       </div>
       <div className="flex flex-col gap-2">
         <Label>{t("course.participants:find_participant.email")}</Label>
-        <Input onChange={onEmailChange} value={contactEmail} type="email"></Input>
+        <Input
+          onChange={onEmailChange}
+          value={contactEmail}
+          type="email"
+        ></Input>
         {contactEmail?.length >= 1 &&
           (emailRegex.test(contactEmail) ? (
-            ''
+            ""
           ) : (
             <div className="text-red-600">{t("new_strings:enter_valid_email_id_and_enter_only_one_email_at_a_time")}</div>
           ))}
       </div>
       <div className="flex flex-col gap-2">
         <Label>{t("course.participants:find_participant.phone")}</Label>
-        <Input onChange={handlePhoneChange} value={contactPhone} type="tel"></Input>
+        <Input
+          onChange={handlePhoneChange}
+          value={contactPhone}
+          type="tel"
+        ></Input>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const TransactionType = () => {
   const {
-    field: { value: transactionTypes = [], onChange: onStatusChange }
+    field: { value: transactionTypes = [], onChange: onStatusChange },
   } = useController({
-    name: 'tempFilters.transaction_type'
-  })
+    name: "tempFilters.transaction_type",
+  });
 
-  const transactionTypeOptions = getOptionValuesByOptionLabel(TRANSACTION_TYPE)?.[0]?.option_values
+  const transactionTypeOptions =
+    getOptionValuesByOptionLabel(TRANSACTION_TYPE)?.[0]?.option_values;
 
   const toggleTransactionStatus = (id: number) => {
     const selectedValues = transactionTypes?.includes(id)
       ? transactionTypes?.filter((val: number) => val !== id)
-      : [...transactionTypes, id]
+      : [...transactionTypes, id];
 
-    onStatusChange(selectedValues)
-  }
+    onStatusChange(selectedValues);
+  };
 
   return (
     <div className="flex gap-2 flex-wrap">
@@ -357,7 +441,9 @@ export const TransactionType = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              transactionTypes?.includes(status?.id) ? 'bg-primary text-white' : 'bg-white border border-[#D6D7D8]'
+              transactionTypes?.includes(status?.id)
+                ? "bg-primary text-white"
+                : "bg-white border border-[#D6D7D8]"
             }`}
             variant="outline"
             onClick={() => toggleTransactionStatus(status?.id)}
@@ -367,26 +453,26 @@ export const TransactionType = () => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 export const PaymentMethod = () => {
-  const {t}= useTranslation( "new_strings")
+  const { t } = useTranslation("new_strings");
   const {
-    field: { value: paymentMethods, onChange: onSelectChange }
+    field: { value: paymentMethods, onChange: onSelectChange },
   } = useController({
-    name: 'tempFilters.payment_method'
-  })
+    name: "tempFilters.payment_method",
+  });
 
-  const paymentMethodOptions = getOptionValuesByOptionLabel(PAYMENT_METHOD)?.[0]?.option_values
+  const paymentMethodOptions =
+    getOptionValuesByOptionLabel(PAYMENT_METHOD)?.[0]?.option_values;
 
   const paymentMethodValues = paymentMethodOptions.map((record: any) => {
-
     return {
       label: translatedText(record?.name),
-      value: record?.id
-    }
-  })
+      value: record?.id,
+    };
+  });
 
   return (
     <div>
@@ -398,64 +484,69 @@ export const PaymentMethod = () => {
         onSearch={() => {}}
         onChange={onSelectChange}
         searchBar={false}
-        variant='basic'
+        variant="basic"
       />
     </div>
-  )
-}
+  );
+};
 
 export const FeeLevel = () => {
-  const {t} = useTranslation("course.participant")
+  const { t } = useTranslation("course.participant");
   const {
-    field: { value: feeLevels, onChange: onSelectChange }
+    field: { value: feeLevels, onChange: onSelectChange },
   } = useController({
-    name: 'tempFilters.fee_level'
-  })
+    name: "tempFilters.fee_level",
+  });
 
-  const feeLevelOptions = getOptionValuesByOptionLabel(FEE_LEVEL)?.[0]?.option_values
+  const feeLevelOptions =
+    getOptionValuesByOptionLabel(FEE_LEVEL)?.[0]?.option_values;
 
   const feeLevelValues = feeLevelOptions.map((record: any) => {
     return {
       label: translatedText(record?.name),
-      value: record?.id
-    }
-  })
+      value: record?.id,
+    };
+  });
 
   return (
     <div>
       <MultiSelect
         value={feeLevels}
-        placeholder={t("course.participants:assisted_registration.fee_level_placeholder")}
+        placeholder={t(
+          "course.participants:assisted_registration.fee_level_placeholder"
+        )}
         data={feeLevelValues}
         onBottomReached={() => {}}
         onSearch={() => {}}
         onChange={onSelectChange}
         searchBar={false}
-        variant='basic'
+        variant="basic"
       />
     </div>
-  )
-}
+  );
+};
 
 export const AttendanceStatus = () => {
-  const { getValues } = useFormContext()
-  const formData = getValues()
+  const { getValues } = useFormContext();
+  const formData = getValues();
 
   const {
-    field: { value: attendanceValues = [], onChange: onStatusChange }
+    field: { value: attendanceValues = [], onChange: onStatusChange },
   } = useController({
-    name: 'tempFilters.attendance_status'
-  })
+    name: "tempFilters.attendance_status",
+  });
 
-  const attendanceStatusOptions = getOptionValuesByOptionLabel(PARTICIPANT_ATTENDANCE_STATUS)?.[0]?.option_values
+  const attendanceStatusOptions = getOptionValuesByOptionLabel(
+    PARTICIPANT_ATTENDANCE_STATUS
+  )?.[0]?.option_values;
 
   const toggleTransactionStatus = (id: number) => {
     const selectedValues = attendanceValues?.includes(id)
       ? attendanceValues?.filter((val: number) => val !== id)
-      : [...attendanceValues, id]
+      : [...attendanceValues, id];
 
-    onStatusChange(selectedValues)
-  }
+    onStatusChange(selectedValues);
+  };
 
   return (
     <div className="flex gap-2 flex-wrap">
@@ -463,7 +554,9 @@ export const AttendanceStatus = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              attendanceValues?.includes(status?.id) ? 'bg-primary text-white' : 'bg-white border border-[#D6D7D8]'
+              attendanceValues?.includes(status?.id)
+                ? "bg-primary text-white"
+                : "bg-white border border-[#D6D7D8]"
             }`}
             variant="outline"
             onClick={() => toggleTransactionStatus(status?.id)}
@@ -473,20 +566,20 @@ export const AttendanceStatus = () => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 export const HealthConsentStatus = () => {
-  const {t}= useTranslation(["course.find_course" , "course.participant"])
-  const { getValues } = useFormContext()
-  const formData = getValues()
+  const { t } = useTranslation(["course.find_course", "course.participant"]);
+  const { getValues } = useFormContext();
+  const formData = getValues();
 
   const {
-    field: { value: healthDeclarationStatus = {}, onChange: onStatusChange }
+    field: { value: healthDeclarationStatus = {}, onChange: onStatusChange },
   } = useController({
-    name: 'tempFilters.health_consent_status',
-    defaultValue: { completed: false, pending: false }
-  })
+    name: "tempFilters.health_consent_status",
+    defaultValue: { completed: false, pending: false },
+  });
 
   return (
     <div className="flex flex-row gap-4 flex-wrap">
@@ -500,8 +593,8 @@ export const HealthConsentStatus = () => {
           onClick={() => {
             healthDeclarationStatus?.completed
               ? (healthDeclarationStatus.completed = false)
-              : (healthDeclarationStatus.completed = true)
-            onStatusChange(healthDeclarationStatus)
+              : (healthDeclarationStatus.completed = true);
+            onStatusChange(healthDeclarationStatus);
           }}
         />
         <label
@@ -521,8 +614,8 @@ export const HealthConsentStatus = () => {
           onClick={() => {
             healthDeclarationStatus?.pending
               ? (healthDeclarationStatus.pending = false)
-              : (healthDeclarationStatus.pending = true)
-            onStatusChange(healthDeclarationStatus)
+              : (healthDeclarationStatus.pending = true);
+            onStatusChange(healthDeclarationStatus);
           }}
         />
         <label
@@ -533,20 +626,20 @@ export const HealthConsentStatus = () => {
         </label>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const ProgramAgreementStatus = () => {
-  const {t} = useTranslation(["course.find_course","course.participants"])
-  const { getValues } = useFormContext()
-  const formData = getValues()
+  const { t } = useTranslation(["course.find_course", "course.participants"]);
+  const { getValues } = useFormContext();
+  const formData = getValues();
 
   const {
-    field: { value: programAgreementStatus = {}, onChange: onStatusChange }
+    field: { value: programAgreementStatus = {}, onChange: onStatusChange },
   } = useController({
-    name: 'tempFilters.program_agreement_status',
-    defaultValue: { completed: false, pending: false }
-  })
+    name: "tempFilters.program_agreement_status",
+    defaultValue: { completed: false, pending: false },
+  });
 
   return (
     <div className="flex flex-row gap-4 flex-wrap">
@@ -560,8 +653,8 @@ export const ProgramAgreementStatus = () => {
           onClick={() => {
             programAgreementStatus?.completed
               ? (programAgreementStatus.completed = false)
-              : (programAgreementStatus.completed = true)
-            onStatusChange(programAgreementStatus)
+              : (programAgreementStatus.completed = true);
+            onStatusChange(programAgreementStatus);
           }}
         />
         <label
@@ -581,8 +674,8 @@ export const ProgramAgreementStatus = () => {
           onClick={() => {
             programAgreementStatus?.pending
               ? (programAgreementStatus.pending = false)
-              : (programAgreementStatus.pending = true)
-            onStatusChange(programAgreementStatus)
+              : (programAgreementStatus.pending = true);
+            onStatusChange(programAgreementStatus);
           }}
         />
         <label
@@ -593,19 +686,19 @@ export const ProgramAgreementStatus = () => {
         </label>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const getContactCount = () => {
-  let count = 0
-  const { getValues } = useFormContext()
-  const formData = getValues()
+  let count = 0;
+  const { getValues } = useFormContext();
+  const formData = getValues();
 
-  if (formData?.tempFilters?.full_name?.length > 0) count += 1
-  if (formData?.tempFilters?.email?.length > 0) count += 1
-  if (formData?.tempFilters?.mobile?.length > 0) count += 1
+  if (formData?.tempFilters?.full_name?.length > 0) count += 1;
+  if (formData?.tempFilters?.email?.length > 0) count += 1;
+  if (formData?.tempFilters?.mobile?.length > 0) count += 1;
 
   if (count > 0) {
-    return <CountComponent count={count} />
+    return <CountComponent count={count} />;
   }
-}
+};
