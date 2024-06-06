@@ -45,8 +45,7 @@ const PaymentDashboard = () => {
             rowStyles: "!important border-none",
           }}
           columnPinning={true}
-        >
-        </BaseTable>
+        />
       </div>
       <div className="flex justify-between mx-6">
         <div> The above is the list of Payment Gateways configured in CAPS</div>
@@ -206,7 +205,7 @@ const pgDashboardColumns: ExtendedColumnDef<any>[] = [
         // Check if the response is not ok or if the checkSuccess function returns false
         if (error || !checkSuccess(message)) {
           // alert(JSON.stringify({ title: "Delete Error", description: "Could not delete the payment gateway: " + message }));
-          alert("Delete Error :  Could not delete the payment gateway: " + message );
+          alert("Delete Error :  Could not delete the payment gateway: " + message);
           return;
         } else {
           const updatedGateways = _.cloneDeep(paymentGatewaysData); // Clone the array to avoid mutating state directly
@@ -278,7 +277,7 @@ const StatusCheckBox = ({ index }: { index: number }) => {
       .eq("id", index)
 
     if (error) {
-      alert("Update Error : Could not update the table. Please try again after some time.: " +error);
+      alert("Update Error : Could not update the table. Please try again after some time.: " + error);
       return;
     } else {
       const updatedData = _.map(paymentGatewaysData, (obj) =>
