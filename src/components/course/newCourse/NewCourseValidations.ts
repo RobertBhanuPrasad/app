@@ -13,7 +13,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
       .refine((val) => val.length <= 10, {
         message: "Maximum number of organizers allowed is 10",
       }),
-    program_created_by: z.number({
+    program_created_by: z.string({
       required_error: "Select who is going to teach the course",
     }),
     is_registration_via_3rd_party: z.boolean().optional(),

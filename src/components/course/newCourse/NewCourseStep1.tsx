@@ -44,6 +44,7 @@ import { useRouter } from "next/router";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { useMVPSelect } from "src/utility/useMVPSelect";
 import { getDefaultValues } from "@components/participants/editParticipant/EditParticipantUtil";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -137,7 +138,10 @@ const RegistrationGateway = () => {
 const RadioCards = () => {
   const { clearErrors, watch,setValue } = useFormContext();
 
-  const { t } = useTranslation(["course.new_course", "new_strings","enum"]);
+  const {optionLabelValue}=optionLabelValueStore()
+
+  const { t } = useTranslation(["course.new_course", "new_strings"]);
+
   const { setProgramCreatedById } = newCourseStore();
   const {
     field: { value, onChange },
@@ -145,19 +149,11 @@ const RadioCards = () => {
   } = useController({
     name: NewCourseStep1FormNames?.program_created_by,
   });
-  const iAmTeachingId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_TEACHING
-  )?.id;
-  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_CO_TEACHING
-  )?.id;
-  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_ORGANIZER
-  )?.id;
-  const { data: loginUserData }: any = useGetIdentity();
+
+  const iAmTeachingType = optionLabelValue?.program_manage_type.I_AM_TEACHING as string 
+  const iAmCoTeachingType = optionLabelValue?.program_manage_type.I_AM_CO_TEACHING as string 
+  const iAmOrganizerType = optionLabelValue?.program_manage_type.I_AM_ORGANIZING as string 
+    const { data: loginUserData }: any = useGetIdentity();
   const user_roles: any[] = loginUserData?.userData?.user_roles;
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
@@ -175,9 +171,9 @@ const RadioCards = () => {
 
 
   const handleOnChange = (val: string) => {
-    onChange(parseInt(val));
+    onChange(val);
     //If the selected option is I am organizing then no need to fill teacher dropdown else need to prefill teacher drop down with login user
-    if (parseInt(val) == iAmTeachingId) {
+    if (val == iAmTeachingType) {
       //Requirement: Need to show only one teacher(login user) in teacher drop-down if I am teaching is selected.
       teachersOnChange([loginInTeacherData]);
       setTimeout(() => {
@@ -186,7 +182,7 @@ const RadioCards = () => {
     }
 
     //Requirement: Need to prefill teacher drop-down if user select I am co-teaching.
-    if (parseInt(val) == iAmCoTeachingId) {
+    if (val == iAmCoTeachingType) {
       //If teachers are not present just prefill with login user
       if (teachers == undefined) {
         teachersOnChange([loginInTeacherData]);
@@ -202,7 +198,7 @@ const RadioCards = () => {
       }
     }
     // Check if the selected value is equal to the organizer's ID
-    if (parseInt(val) === iAmOrganizerId) {
+    if (val === iAmOrganizerType) {
       // If there are already teachers selected
       if (teachers) {
         // Remove the logged-in teacher's ID from the list of selected teachers
@@ -255,44 +251,40 @@ const RadioCards = () => {
    * @constant iAmCoTeachingCourse
    * @description this const stores the data of the order 2 which is i am co-teaching the course
    */
-  const iAmCoTeachingCourse = translatedText(
-    _.find(programOrganizerTypeData?.data, { order: I_AM_CO_TEACHING })?.name
-  );
+  const iAmCoTeachingCourse = t("enum:I_AM_CO_TEACHING")
 
   /**
    * @constant iAmOrganisingCourse
    * @description this const stores the data of the order 3 which is i am organizing the course
    */
-  const iAmOrganisingCourse = translatedText(
-    _.find(programOrganizerTypeData?.data, { order: I_AM_ORGANIZER })?.name
-  );
+  const iAmOrganisingCourse =   t("enum:I_AM_ORGANIZING")
 
   return (
-    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange} className="w-full" >
+    <RadioGroup value={value} onValueChange={handleOnChange} className="w-full" >
       <div className="flex items-center flex-row gap-7 w-full">
         {hasTeacherRole && (
           //Added cursor not allowed to all cards if this is disabled
           <Label
-            htmlFor={JSON.stringify(iAmTeachingId)}
+            htmlFor={iAmTeachingType}
             className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
             
             ${
-              value === iAmTeachingId ? "text-[#7677F4]" : ""
+              value === iAmTeachingType ? "text-[#7677F4]" : ""
             }`}
           >
             <Card
               className={` p-2  h-[106px] flex flex-row ${
-                value === iAmTeachingId
+                value === iAmTeachingType
                   ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4] "
                   : ""
               }`}
             >
               <div>
                 <RadioGroupCheckItem
-                  value={JSON.stringify(iAmTeachingId)}
-                  id={JSON.stringify(iAmTeachingId)}
+                  value={iAmTeachingType}
+                  id={iAmTeachingType}
                   className={
-                    value === iAmTeachingId
+                    value === iAmTeachingType
                       ? "!bg-[#7677F4] !border-none "
                       : "!border-[#D6D7D8] !shadow-none "
                   }
@@ -300,7 +292,7 @@ const RadioCards = () => {
               </div>
               <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
                 <Teacher
-                  color={` ${value === iAmTeachingId ? "#7677F4" : "#999999"}`}
+                  color={` ${value === iAmTeachingType ? "#7677F4" : "#999999"}`}
                 />
 
                 {iAmTeachingCourse}
@@ -310,25 +302,25 @@ const RadioCards = () => {
         )}
         {hasTeacherRole && (
           <Label
-            htmlFor={JSON.stringify(iAmCoTeachingId)}
+            htmlFor={JSON.stringify(iAmCoTeachingType)}
             className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
             
             ${
-              value === iAmCoTeachingId ? "text-[#7677F4]" : ""
+              value === iAmCoTeachingType ? "text-[#7677F4]" : ""
             } `}
           >
             <Card
               className={` p-2 gap-2 h-[106px] flex flex-row ${
-                value === iAmCoTeachingId
+                value === iAmCoTeachingType
                   ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                   : ""
               }`}
             >
               <RadioGroupCheckItem
-                value={JSON.stringify(iAmCoTeachingId)}
-                id={JSON.stringify(iAmCoTeachingId)}
+                value={iAmCoTeachingType}
+                id={JSON.stringify(iAmCoTeachingType)}
                 className={
-                  value === iAmCoTeachingId
+                  value === iAmCoTeachingType
                     ? "!bg-[#7677F4] !border-none "
                     : "!border-[#D6D7D8] !shadow-none "
                 }
@@ -336,7 +328,7 @@ const RadioCards = () => {
               <div className="flex flex-col items-center gap-[16px]  w-full justify-center">
                 <Coteacher
                   color={` ${
-                    value === iAmCoTeachingId ? "#7677F4" : "#999999"
+                    value === iAmCoTeachingType ? "#7677F4" : "#999999"
                   }`}
                 />
                 {iAmCoTeachingCourse}
@@ -345,32 +337,32 @@ const RadioCards = () => {
           </Label>
         )}
         <Label
-          htmlFor={JSON.stringify(iAmOrganizerId)}
+          htmlFor={JSON.stringify(iAmOrganizerType)}
           className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
           
           ${
-            value === iAmOrganizerId ? "text-[#7677F4]" : ""
+            value === iAmOrganizerType ? "text-[#7677F4]" : ""
           }`}
         >
           <Card
             className={`p-2 gap-2 h-[106px] flex flex-row  ${
-              value === iAmOrganizerId
+              value === iAmOrganizerType
                 ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                 : ""
             }`}
           >
             <RadioGroupCheckItem
-              value={JSON.stringify(iAmOrganizerId)}
-              id={JSON.stringify(iAmOrganizerId)}
+              value={iAmOrganizerType}
+              id={JSON.stringify(iAmOrganizerType)}
               className={
-                value === iAmOrganizerId
+                value === iAmOrganizerType
                   ? "!bg-[#7677F4] !border-none "
                   : "!border-[#D6D7D8] !shadow-none "
               }
             />
             <div className="flex flex-col items-center gap-[14px]  w-full justify-center">
               <Organizer
-                color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
+                color={` ${value === iAmOrganizerType ? "#7677F4" : "#999999"}`}
               />
               <div className="w-[240px] text-wrap text-center justify-center text-sm">
                 {iAmOrganisingCourse}
@@ -412,7 +404,7 @@ const OrganizationDropDown = () => {
     resource: "organizations",
     optionLabel: "name",
     optionValue: "id",
-    onSearch: (value) => [
+    onSearch: (value) => [     
       {
         field: "name",
         operator: "contains",
@@ -599,7 +591,7 @@ const ProgramOrganizerDropDown = () => {
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
-    },
+    }, 
     optionLabel: "contact_id.full_name",
     optionValue: "id",
     filters: [
@@ -607,7 +599,8 @@ const ProgramOrganizerDropDown = () => {
       {
         field: "user_roles.role_id",
         operator: "eq",
-        value: programOrganizationId,
+        //TODO need to change after completion of role managment
+        value: 43,
       },
     ],
     defaultValue: value,
