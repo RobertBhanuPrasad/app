@@ -33,8 +33,8 @@ export default function Edit() {
         }
     }, [Id]);
     return (
-        <div >
-            <div className="top-0  z-[100] bg-white shadow-xl w-full">
+        <div>
+            <div className="top-0 bg-white shadow-xl w-full sticky top-[100px]">
                 <ParticipantsListMainHeader />
             </div>
             <div className="px-[20px] py-[20px]">
@@ -62,7 +62,13 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
 
     const translateProps = await serverSideTranslations(
         context.locale ?? "en",
-        ["common", "course.participants", "new_strings", "course.find_course","course.new_course"]
+        [
+            "common",
+            "course.participants",
+            "new_strings",
+            "course.find_course",
+            "course.new_course",
+        ]
     );
 
     if (!authenticated) {

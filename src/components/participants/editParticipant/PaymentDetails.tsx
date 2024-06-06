@@ -91,9 +91,6 @@ export default function PaymentDetails() {
 
   return (
     <div className="flex-row pb-[5px]" id="Payment">
-      <Text className="font-semibold text-[18px] py-[25px]">
-        {t('course.participants:edit_participant.participants_information_tab.payment_details')}
-      </Text>
       <div className="flex ">
         <div className="w-[303px]">
           <Text className="text-[#999999]  text-[14px] ">{t('course.participants:edit_participant.participants_information_tab.course_fee')}</Text>
@@ -183,7 +180,7 @@ export default function PaymentDetails() {
           </div>
         </div>
       </div>
-      <hr />
+      <div className='pt-[10px] border-b-2'></div>
     </div>
   );
 }
