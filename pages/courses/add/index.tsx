@@ -285,21 +285,22 @@ export function NewCourse() {
     }
   }
 
+  //TODO: Need to uncomment after working on index.tsx file
   // If the form is still loading, display a loading message
   // we have to display loading icon until the below variables will be get from database
   // isLoading also we need becuase we need to set the data right
-  if (
-    (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) ||
-    isLoading ||
-    timeZoneLoading
-  ) {
-    return (
-      <section className="flex justify-center align-center pt-[15%]">
-        {" "}
-        <div className="loader"></div>
-      </section>
-    );
-  }
+  // if (
+  //   (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) ||
+  //   isLoading ||
+  //   timeZoneLoading
+  // ) {
+    // return (
+    //   <section className="flex justify-center align-center pt-[15%]">
+    //     {" "}
+    //     <div className="loader"></div>
+    //   </section>
+    // );
+  // }
 
   return (
     <div className="mx-auto min-w-[1000px] w-full max-w-[1640px] px-8 pb-8">
