@@ -83,6 +83,7 @@ import {
   NewCourseContext,
   useNewCourseContext,
 } from "@contexts/NewCourseContext";
+import { IsNewCourse } from "@components/course/newCourse/NewCourseUtil";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -91,6 +92,8 @@ function index() {
   const isNewCourseEditedRef = useRef(false);
 
   const router = useRouter();
+   
+  const pathname = usePathname();
 
   const {
     query: { section },
@@ -104,15 +107,23 @@ function index() {
   useEffect(() => {
     const routeChange = (url: string) => {
       if (isNewCourseEditedRef.current) {
-        if (
-          confirm(
-            "Do you want to leave this page? Unsaved changes may be lost."
-          )
-        ) {
-          console.log("ok go ahead");
-        } else {
-          router.events.emit("routeChangeError");
-          throw "Route change aborted. User confirmation required.";
+        
+        // remove the country and language code in destination url.
+        const newUrl = '/'+url.split('/').slice(2).join('/')
+
+        // if the destination url is other than newCourse or if the current path and destination path is same 
+        // then alert the user for lossing the entered data
+        if(!IsNewCourse(url) || pathname===newUrl){
+          if (
+            confirm(
+              "Do you want to leave this page? Unsaved changes may be lost."
+            )
+          ) {
+            console.log("ok go ahead");
+          } else {
+            router.events.emit("routeChangeError");
+            throw "Route change aborted. User confirmation required.";
+          }
         }
       }
     };

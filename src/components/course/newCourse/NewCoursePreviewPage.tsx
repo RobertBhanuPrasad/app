@@ -60,8 +60,10 @@ import { fetchCourseFee } from "pages/courses/add";
 import _ from "lodash";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 import { NewCourseStep3FormNames, NewCourseStep4FormNames } from "src/constants/CourseConstants";
+import { useNewCourseContext } from "@contexts/NewCourseContext";
 
 export default function NewCourseReviewPage() {
+  const {isNewCourseEditedRef}= useNewCourseContext()
   const { t } = useTranslation([
     "common",
     "course.new_course",
@@ -642,6 +644,11 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
           setViewPreviewPage(false);
           setViewThankyouPage(true);
+          isNewCourseEditedRef.current=false;
+
+          console.log("rajkiran",isNewCourseEditedRef.current)
+
+          
         }
       } catch (error) {
         console.log("error in catch block", error);
