@@ -137,8 +137,7 @@ const RegistrationGateway = () => {
 const RadioCards = () => {
   const { clearErrors, watch,setValue } = useFormContext();
 
-  const { t } = useTranslation(["course.new_course", "new_strings"]);
-
+  const { t } = useTranslation(["course.new_course", "new_strings","enum"]);
   const { setProgramCreatedById } = newCourseStore();
   const {
     field: { value, onChange },
@@ -250,9 +249,7 @@ const RadioCards = () => {
    * @constant iAmTeachingCourse
    * @description this const stores the data of the order 1 which is i am teaching the course
    */
-  const iAmTeachingCourse = translatedText(
-    _.find(programOrganizerTypeData?.data, { order: I_AM_TEACHING })?.name
-  );
+  const iAmTeachingCourse = t("enum:I_AM_TEACHING")
 
   /**
    * @constant iAmCoTeachingCourse

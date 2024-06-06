@@ -1058,6 +1058,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "course.participants",
     "course.view_course",
     "course.find_course",
+    "enum"
   ]);
 
   if (!authenticated) {
