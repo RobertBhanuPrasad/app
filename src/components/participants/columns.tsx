@@ -18,7 +18,7 @@ type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
 export const columns = () =>
 {
-  const {t} = useTranslation(['common','course.participants','new_strings', 'course.view_course'])
+  const {t} = useTranslation(['common','course.participants','new_strings', 'course.view_course', 'course.find_course'])
   const columns: ExtendedColumnDef<any>[] = [
   {
     accessorKey: "participant_code",
@@ -454,12 +454,21 @@ export const columns = () =>
 
     // This any will be removed after internal dataStructure implementation
 
+    // cell: ({ row }: any) => {
+    //   const toggle =
+    //     row?.original?.is_program_agreement_checked === true
+    //       ? "Completed"
+    //       : row?.original?.is_program_agreement_checked === false
+    //       ? "Pending"
+    //       : "-";
+    //   return <div className="min-w-[150px] text-left">{toggle}</div>;
+    // },
     cell: ({ row }: any) => {
       const toggle =
         row?.original?.is_program_agreement_checked === true
-          ? "Completed"
+          ? t('course.find_course:completed')
           : row?.original?.is_program_agreement_checked === false
-          ? "Pending"
+          ?  t('course.participants:edit_participant.pending')
           : "-";
       return <div className="min-w-[150px] text-left">{toggle}</div>;
     },
@@ -495,12 +504,21 @@ export const columns = () =>
 
     // This any will be removed after internal dataStructure implementation
 
+    // cell: ({ row }: any) => {
+    //   const toggle =
+    //     row?.original?.is_health_declaration_checked === true
+    //       ? "Completed"
+    //       : row?.original?.is_health_declaration_checked === false
+    //       ? "Pending"
+    //       : "-";
+    //   return <div className="min-w-[150px] text-left">{toggle}</div>;
+    // },
     cell: ({ row }: any) => {
       const toggle =
         row?.original?.is_health_declaration_checked === true
-          ? "Completed"
+          ? t('course.find_course:completed')
           : row?.original?.is_health_declaration_checked === false
-          ? "Pending"
+          ? t('course.participants:edit_participant.pending')
           : "-";
       return <div className="min-w-[150px] text-left">{toggle}</div>;
     },
@@ -537,13 +555,13 @@ export const columns = () =>
         t("course.view_course:participants_tab.view_participant"),
         t("new_strings:edit_participant"),
         // TODO(Not in MVP scope): Integrate these actions later
-        // "Transfer",
-        // "Send Email",
-        // "Perform sale with cash, check offline credit card payment",
-        // "Send registration confirmation email",
-        // "Upload offline payment receipt",
-        // "Download receipt",
-        // "Transaction Activity",
+        // t("new_strings:transfer"),
+        // t("new_strings:send_email"),
+        // t("new_strings:perform_sale_with_cash_check_offline_credit_card_payment"),
+        // t("new_strings:send_registration_confirmation_email"),
+        // t("new_strings:upload_offline_payment_receipt"),
+        // t('course.participants:edit_participant.download_receipt'),
+        // t("new_strings:transaction_activity"),
       ];
 
       const router = useRouter();

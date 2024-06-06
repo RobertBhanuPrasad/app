@@ -138,5 +138,17 @@
   "vat_reg": "VAT REG.",
   "are_you_sure_you_want_to_delete_the_session":"Are you sure you want to delete the session",
   "are_you_sure_you_want_to_delete_this_accomodation":"Are you sure you want to delete this accommodation",
-  "are_you_sure_you_want_to_delete_the_contact": "Are you sure you want to delete this contact"
+  "are_you_sure_you_want_to_delete_the_contact": "Are you sure you want to delete this contact",
+  "transfer": "Transfer",
+  "send_email": "Send Email",
+  "perform_sale_with_cash_check_offline_credit_card_payment":"Perform sale with cash, check offline credit card payment",
+  "send_registration_confirmation_email": "Send registration confirmation email",
+  "upload_offline_payment_receipt":"Upload offline payment receipt",
+  "transaction_activity":"Transaction Activity",
+  "reached_maximum_character_limit_50":"Reached maximum character limit: 50",
+  "enter_valid_email_id_and_enter_only_one_email_at_a_time":"Enter valid email id and Enter only one email at a time",
+  "sale_completed":"Sale Completed",
+  "partial_refund_raised":"Partial Refund Raised",
+  "refund_raised":"Refund Raised",
+  "transaction_amount":"Transaction Amount"
 }
