@@ -1,17 +1,28 @@
 import { useEffect } from "react";
 import { Element, Link, scroller } from "react-scroll";
 interface Tab {
-    id: string;
-    label: string;
-    header: JSX.Element;
-    content: JSX.Element;
+  id: string;
+  label: string;
+  header: JSX.Element;
+  content: JSX.Element;
 }
 interface ScrollablePageProps {
-    tabs: Tab[];
-    onActiveTabChange: (activeTabId: string) => void;
+  tabs: Tab[];
+  onActiveTabChange: (activeTabId: string) => void;
 }
 const ScrollablePage = ({ tabs, onActiveTabChange }: ScrollablePageProps) => {
-    
+  useEffect(() => {
+    // Scroll to the default section (first tab) when the component mounts
+    if (tabs && tabs.length > 0) {
+      scroller.scrollTo(tabs[0].id, {
+        duration: 800,
+        delay: 0,
+        smooth: "easeInOutQuart",
+        offset: -200, // Adjust based on your needs
+      });
+      onActiveTabChange(tabs[0].id);
+    }
+  }, []);
 
     useEffect(() => {
         // Scroll to the default section (first tab) when the component mounts
