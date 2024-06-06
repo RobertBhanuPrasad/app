@@ -3,7 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { TableHeader, Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { Checkbox } from "src/ui/checkbox";
@@ -17,15 +17,19 @@ const PaymentDashboard = () => {
 
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const supabase = supabaseClient("caps");
 
   const getPaymentGatewayData = async () => {
+    setIsLoading(true)
     const { data: paymentGatewayData } = await supabase
       .from("payment_gateways")
       .select("id,type,name,description,test,transaction_intent,enabled")
       .order("id", { ascending: true });
     if (paymentGatewayData) {
       setPaymentGatewaysData(paymentGatewayData)
+      setIsLoading(false)
     }
   }
 
@@ -36,21 +40,31 @@ const PaymentDashboard = () => {
   return (
     <div>
       <div className="flex justify-center font-semibold"> Payment Gateway Dashboard</div>
-      <div className="mx-6 mt-[-25px] mb-8 bg-white">
-        <BaseTable
-          columns={pgDashboardColumns}
-          data={paymentGatewaysData || []}
-          tableStyles={{
-            table: "",
-            rowStyles: "!important border-none",
-          }}
-          columnPinning={true}
-        />
-      </div>
-      <div className="flex justify-between mx-6">
-        <div> The above is the list of Payment Gateways configured in CAPS</div>
-        <div className="mb-4"><Button onClick={() => router.push('/caps/add-payment')}>Add Gateway</Button></div>
-      </div>
+      
+      {isLoading ? (
+        <section className="flex justify-center align-center pt-[10%]">
+          <div className="loader"></div>
+        </section>
+      ) : (
+        <div>
+          <div className="mx-6 mb-8 bg-white">
+            <BaseTable
+              columns={pgDashboardColumns}
+              data={paymentGatewaysData || []}
+              tableStyles={{
+                table: "",
+                rowStyles: "!important border-none",
+              }}
+              columnPinning={true}
+            />
+          </div>
+
+          <div className="flex justify-between mx-6">
+            <div> The above is the list of Payment Gateways configured in CAPS</div>
+            <div className="mb-4"><Button onClick={() => router.push('/caps/add-payment')}>Add Gateway</Button></div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

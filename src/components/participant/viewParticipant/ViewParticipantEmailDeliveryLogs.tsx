@@ -24,7 +24,6 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
   
   return (
     <div>
-      <p className="text-[18px] font-[600] ">Email Delivery Logs</p>
       <div>
         <BaseTable
           checkboxSelection={false}
