@@ -9,7 +9,7 @@ import { formatGlobalDate } from 'src/utility/DateFunctions'
 function ViewParticipantInformation({ participantId }: any) {
   // State variable to track whether the registration link has been copied
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
-  const { t } = useTranslation('course.participants')
+  const { t } = useTranslation('course.participants,new_strings')
   const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
@@ -119,7 +119,7 @@ function ViewParticipantInformation({ participantId }: any) {
           {!copiedRegistrationLink ? (
             <CopyIcon />
           ) : (
-            <p className="text-[#7677F4] -left-12 bottom-8 rounded-md px-5 shadow-md sm:-left-8 sm:bottom-12">Copied</p>
+            <p className="text-[#7677F4] -left-12 bottom-8 rounded-md px-5 shadow-md sm:-left-8 sm:bottom-12">{t('new_strings:copied')}</p>
           )}
         </div>
       </div>
