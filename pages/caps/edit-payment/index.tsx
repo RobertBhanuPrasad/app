@@ -399,7 +399,7 @@ export default EditPaymentGateway
 
 
 
-const pgTypes = ["stripe", "corvuspay"] as const;
+const pgTypes = ["stripe", "corvuspay","paypal"] as const;
 type PGType = typeof pgTypes[number];
 
 const schema = z.object({
