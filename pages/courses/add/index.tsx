@@ -79,14 +79,52 @@ import {
   IsCopyCourse,
   IsEditCourse,
 } from "@components/course/newCourse/EditCourseUtil";
+import {
+  NewCourseContext,
+  useNewCourseContext,
+} from "@contexts/NewCourseContext";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
   console.log(loginUserData, "loginUserData");
 
+  const isNewCourseEditedRef = useRef(false);
+
+  const router = useRouter();
+
   const {
     query: { section },
   } = useRouter();
+
+  /**
+   * This context is used to keep track of whether the new course form is edited or not
+   * Requirement: We have to stop the user when he is changing route form one to another
+   * Implementation: To make it simple we are using useRef
+   */
+  useEffect(() => {
+    const routeChange = (url: string) => {
+      if (isNewCourseEditedRef.current) {
+        if (
+          confirm(
+            "Do you want to leave this page? Unsaved changes may be lost."
+          )
+        ) {
+          console.log("ok go ahead");
+        } else {
+          router.events.emit("routeChangeError");
+          throw "Route change aborted. User confirmation required.";
+        }
+      }
+    };
+
+    router.events.off("routeChangeStart", routeChange);
+
+    router.events.on("routeChangeStart", routeChange);
+
+    return () => {
+      router.events.off("routeChangeStart", routeChange);
+    };
+  }, [isNewCourseEditedRef]);
 
   console.log("router is ", section);
 
@@ -110,7 +148,11 @@ function index() {
   if (section === "preview_page") {
     return <NewCourseReviewPage />;
   } else {
-    return <NewCourse />;
+    return (
+      <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
+        <NewCourse />
+      </NewCourseContext.Provider>
+    );
   }
 }
 export function NewCourse() {
@@ -447,7 +489,26 @@ export const NewCourseTabs = () => {
   const supabase = supabaseClient();
 
   const { watch, setValue } = useFormContext();
-  const formData: NewCourseFormFieldTypes = watch();
+  const formData: NewCourseFormFieldTypes | any = watch();
+
+  const { isNewCourseEditedRef } = useNewCourseContext();
+
+  // we need to make isNewCourseEditedRef to true when new course step 1 field change
+  // when program_created_by, is_registration_via_3rd_party, registration_via_3rd_party_url, organization_id
+  useEffect(() => {
+    // need to make true when the belowe fields have values
+    if (
+      formData[NewCourseStep1FormNames.program_created_by] ||
+      formData[NewCourseStep1FormNames.registration_via_3rd_party_url] ||
+      formData[NewCourseStep1FormNames.organization_id]
+    ) {
+      isNewCourseEditedRef.current = true;
+    }
+  }, [
+    formData[NewCourseStep1FormNames.program_created_by],
+    formData[NewCourseStep1FormNames.registration_via_3rd_party_url],
+    formData[NewCourseStep1FormNames.organization_id],
+  ]);
 
   const { data: loginUserData }: any = useGetIdentity();
   const { data: timeZoneData } = useList({ resource: "time_zones" });
