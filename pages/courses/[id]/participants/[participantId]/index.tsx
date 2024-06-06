@@ -211,7 +211,7 @@ function index() {
                     <ViewParticipantInformation participantId={Id} />
                 </div>
 
-                <div>
+                <div className="w-[82%]">
                     <ScrollablePage
                         tabs={tabs}
                         onActiveTabChange={handleActiveTabChange}

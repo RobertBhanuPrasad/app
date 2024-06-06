@@ -68,7 +68,7 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
                     columnPinning={true} // Enable column pinning
                 />
             </div>
-            <div className='pt-[20px] border-b-2'></div>
+            
         </div>
     );
 }
