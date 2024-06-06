@@ -639,7 +639,7 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(certification_level_id,program_type_id!inner(organization_id)),contact_id!inner(full_name))",
+        "*,program_type_teachers!inner(certification_level,program_type_id!inner(organization_id)),contact_id!inner(full_name))",
     },
     filters: filter,
     onSearch: (value: any) => [
@@ -762,7 +762,7 @@ const AssistantTeachersDropDown = () => {
     resource: "users",
     meta: {
       select:
-        "*,contact_id!inner(first_name,last_name),program_type_teachers!inner(program_type_id,certification_level_id)",
+        "*,contact_id!inner(first_name,last_name),program_type_teachers!inner(program_type_id,certification_level)",
     },
     filters: filter,
     onSearch: (value) => [
