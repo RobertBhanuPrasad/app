@@ -20,7 +20,7 @@ const ScrollablePage = ({ tabs, onActiveTabChange }: ScrollablePageProps) => {
                 duration: 800,
                 delay: 0,
                 smooth: "easeInOutQuart",
-                offset: -200, // Adjust based on your needs
+                offset: -180, // Adjust based on your needs
             });
             onActiveTabChange(tabs[0].id);
         }
@@ -38,7 +38,7 @@ const ScrollablePage = ({ tabs, onActiveTabChange }: ScrollablePageProps) => {
                             spy={true}
                             smooth={true}
                             duration={500}
-                            offset={-200}
+                            offset={-180}
                             activeStyle={{
                                 borderBottom: "2px solid #7677F4",
                                 color: "#7677F4",
@@ -63,7 +63,7 @@ const ScrollablePage = ({ tabs, onActiveTabChange }: ScrollablePageProps) => {
                         </Element>
                     </div>
                 ))}
-                <div className="h-[470px]"></div>
+                <div className="h-[500px]"></div>
             </div>
         </div>
     );

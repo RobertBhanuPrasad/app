@@ -121,7 +121,7 @@ function index() {
                     
                     <p
                         className={`text-[18px] font-[600] pr-[10px] !m-[0] !py-[0] !h-[0] ${
-                            activeTabId == "section5" && "text-[#7677F4]"
+                            activeTabId == "section2" && "text-[#7677F4]"
                         }`}
                     >
                         {t(
