@@ -8,7 +8,6 @@ import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
-import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
@@ -18,8 +17,7 @@ import {
   HttpError,
   UseLoadingOvertimeReturnType,
   useGetIdentity,
-  useList,
-  useOne,
+  useList
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -42,22 +40,11 @@ import {
   VALID,
 } from "src/constants/CourseConstants";
 import {
-  PAYMENT_MODE,
-  PROGRAM_ORGANIZER_TYPE,
-  TIME_FORMAT,
-  VISIBILITY,
-} from "src/constants/OptionLabels";
-import {
-  I_AM_CO_TEACHING,
   NATIONAL_ADMIN,
-  PAY_ONLINE,
-  PUBLIC,
-  SUPER_ADMIN,
-  TIME_FORMAT_24_HOURS,
+  SUPER_ADMIN
 } from "src/constants/OptionValueOrder";
 import { Button } from "src/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { validationSchema } from "../../../src/components/course/newCourse/NewCourseValidations";
 
@@ -71,14 +58,14 @@ import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
-import { useTranslation } from "next-i18next";
-import { supabaseClient } from "src/utility";
-import { cn } from "src/lib/utils";
-import useGetCountryCode from "src/utility/useGetCountryCode";
 import {
   IsCopyCourse,
   IsEditCourse,
 } from "@components/course/newCourse/EditCourseUtil";
+import { useTranslation } from "next-i18next";
+import { supabaseClient } from "src/utility";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -118,6 +105,9 @@ export function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
 
   const loggedUserData = loginUserData?.userData?.id;
+  const {optionLabelValue}=optionLabelValueStore()
+  console.log(optionLabelValue,'trail');
+  
 
   console.log("heyy logged user data", loggedUserData);
 
@@ -139,31 +129,22 @@ export function NewCourse() {
   }, []);
 
   //Finding program Organizer role id
-  const publicVisibilityId = getOptionValueObjectByOptionOrder(
-    VISIBILITY,
-    PUBLIC
-  )?.id;
+  const publicVisibility = optionLabelValue?.program_visibility?.PUBLIC
 
-  const payOnlineId = getOptionValueObjectByOptionOrder(
-    PAYMENT_MODE,
-    PAY_ONLINE
-  )?.id;
 
-  const timeFormat24HoursId = getOptionValueObjectByOptionOrder(
-    TIME_FORMAT,
-    TIME_FORMAT_24_HOURS
-  )?.id;
+  const payOnline = optionLabelValue?.payment_mode?.ONLINE
+
+  const timeFormat24Hours = optionLabelValue?.hour_format?.HOURS_24
+  console.log(timeFormat24Hours,'asd');
+  
 
   /**
-   * @constant iAmCoTeachingId
+   * @constant iAmCoTeaching
    * @description thid const stores the id of the i am co teaching
    */
-  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_CO_TEACHING
-  )?.id;
+  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING
 
-  console.log("hehehe", timeFormat24HoursId, payOnlineId, publicVisibilityId);
+  console.log("hehehe", timeFormat24Hours, payOnline, publicVisibility);
 
   const { newCourseData } = newCourseStore();
 
@@ -221,7 +202,7 @@ export function NewCourse() {
       ]);
     }
   } else {
-    defaultValues[NewCourseStep2FormNames?.visibility_id] = publicVisibilityId;
+    defaultValues[NewCourseStep2FormNames?.visibility_id] = publicVisibility;
     defaultValues[
       NewCourseStep2FormNames?.is_language_translation_for_participants
     ] = true;
@@ -236,7 +217,7 @@ export function NewCourse() {
     defaultValues[NewCourseStep2FormNames?.is_geo_restriction_applicable] =
       false;
     defaultValues[NewCourseStep5FormNames?.accommodation_fee_payment_mode] =
-      payOnlineId;
+    payOnline;
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
   }
 
@@ -273,7 +254,7 @@ export function NewCourse() {
       timeZonesData?.data[0]?.id;
   }
 
-  //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
+  //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24Hours
   // and same we need to set only if it is not edit and copy
   if (IsEditCourse(pathname) === false && IsCopyCourse(pathname) === false) {
     if (data?.data[0]?.hour_format_id) {
@@ -281,7 +262,7 @@ export function NewCourse() {
         data?.data[0]?.hour_format_id;
     } else {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
-        timeFormat24HoursId;
+      timeFormat24Hours;
     }
   }
 
@@ -290,7 +271,7 @@ export function NewCourse() {
   // we have to display loading icon until the below variables will be get from database
   // isLoading also we need becuase we need to set the data right
   // if (
-  //   (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) ||
+  //   (!publicVisibility && !payOnline && !timeFormat24Hours) ||
   //   isLoading ||
   //   timeZoneLoading
   // ) {
@@ -308,7 +289,7 @@ export function NewCourse() {
         <Form
           onSubmit={onSubmit}
           defaultValues={defaultValues}
-          schema={validationSchema(iAmCoTeachingId as number)}
+          schema={validationSchema(iAmCoTeaching as string)}
         >
           <NewCourseTabs />
         </Form>
@@ -444,6 +425,7 @@ export const NewCourseTabs = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
+  const {optionLabelValue}=optionLabelValueStore()
 
   const supabase = supabaseClient();
 
@@ -757,13 +739,10 @@ export const NewCourseTabs = () => {
   ];
 
   /**
-   * @constant iAmCoTeachingId
+   * @constant iAmCoTeaching
    * @description thid const stores the id of the i am co teaching
    */
-  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_CO_TEACHING
-  )?.id;
+  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING
 
   /**
    * Validate every time with the form data to display tabs success or error messages
@@ -837,7 +816,7 @@ export const NewCourseTabs = () => {
     //!important right now we will do this for only where tabs next button clicked
     validationFieldsStepWise.forEach((fields, index) => {
       if (tabsNextButtonClickStatus[index] === NEXT_BUTTON_CLICKED) {
-        const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+        const newCourseZodSchema = validationSchema(iAmCoTeaching as string);
 
         let modifiedFields: any = {};
         fields.forEach((field) => {

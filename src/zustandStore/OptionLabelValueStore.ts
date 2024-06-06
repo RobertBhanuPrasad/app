@@ -26,8 +26,8 @@ enum ProgramLanguageType {
 }
 
 enum HourFormat {
-  HOURS_12 = "12_HOURS",
-  HOURS_24 = "24_HOURS"
+  HOURS_12 = "HOURS_12",
+  HOURS_24 = "HOURS_24"
 }
 
 enum ParticipantPaymentStatus {

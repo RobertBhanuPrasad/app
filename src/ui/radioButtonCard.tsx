@@ -5,7 +5,7 @@ import { Label } from "./label";
 
 interface RadioItemProps {
   selectedRadioValue?: string;
-  value: string;
+  value: any;
   className?: string;
   label: string;
 }

@@ -1,7 +1,7 @@
 import { start } from "repl";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { z } from "zod";
-export const validationSchema = (iAmCoTeachingId: number) => {
+export const validationSchema = (iAmCoTeaching: string) => {
   return z.object({
     // Step 1 Schema
     organization_id: z.number({
@@ -51,7 +51,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
 
           // REQUIRMENT if the programCreatedById is I am co-teching id then we need to validate the teachers field for min 2
           if (
-            parseInt(programCreatedById) === iAmCoTeachingId &&
+            programCreatedById === iAmCoTeaching &&
             teacher_ids.length < 2
           ) {
             return false;
