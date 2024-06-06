@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { supabaseClient } from "src/utility";
 import { z } from "zod";
@@ -19,6 +18,8 @@ const EditPaymentGateway = () => {
     const supabase = supabaseClient('caps')
 
     const [showForm, setShowForm] = useState(true);
+
+    const [isLoading, setIsLoading] = useState(false)
 
     const [data, setData] = useState<any>({});
 
@@ -135,7 +136,7 @@ const EditPaymentGateway = () => {
 
     const updateData = async (formData: FormValues) => {
         try {
-            setShowForm(false);
+            setIsLoading(true)
             if (data.name != formData.name || data.description != formData.description || data.transaction_intent != (formData.transaction_intent === 'sale' ? false : true) || data.test != (formData.test === 'yes' ? true : false)) {
                 const { error } = await supabase.from('payment_gateways').update({
                     name: formData.name,
@@ -145,14 +146,14 @@ const EditPaymentGateway = () => {
                 }).eq('id', getId());
 
                 if (error) {
+                    setShowForm(false);
+                    setIsLoading(false)
                     setDialogConfig({
                         title: "Oops!",
                         message: <>
-                            Something went wrong while updating this Gateway.
-                            <br />
-                            <span className="text-danger ">{error.message}</span>
-                            <br />
-                            Please try again after some time
+                            <p className="py-2 text-[14px] font-medium"> Something went wrong while updating this Gateway.</p>
+                            <p className="text-[#FF6D6D] text-[14px] font-medium py-2">{error.message}</p>
+                            <p className="py-2 text-[14px] font-medium">Please try again after some time</p>
                         </>,
                         onClick: () => { setShowForm(true); },
                         buttonMessage: "Ok",
@@ -185,13 +186,13 @@ const EditPaymentGateway = () => {
             if (data.webhook_secret != formData.webhook_secret) {
                 await updateCreds('webhook_secret', formData.webhook_secret, formData.webhook_secret, formData.webhook_secret === '' ? true : false);
             }
-
+            setIsLoading(false)
+            setShowForm(false)
             setDialogConfig({
                 title: "Gateway update Successful",
                 message: <>
-                    The gateway has successfully been updated.
-                    <br />
-                    To check the same, please visit the Payment Gateways Dashboard Page.
+                    <p className="py-2 text-[14px] font-medium">The gateway has successfully been updated.</p>
+                    <p className="py-2 text-[14px] font-medium"> To check the same, please visit the Payment Gateways Dashboard Page.</p>
                 </>,
                 onClick: () => { router.push('/caps/payment-dashboard') },
                 buttonMessage: "Go to Dashboard"
@@ -199,14 +200,14 @@ const EditPaymentGateway = () => {
 
 
         } catch (error: any) {
+            setIsLoading(false)
+            setShowForm(false)
             setDialogConfig({
                 title: "Error",
                 message: <>
-                    Something went wrong while updating this Gateway.
-                    <br />
-                    <span className="text-danger ">{error.message}</span>
-                    <br />
-                    Please try again after some time
+                    <p className="py-2 text-[14px] font-medium"> Something went wrong while updating this Gateway.</p>
+                    <p className="text-[#FF6D6D] text-[14px] font-medium py-2">{error.message}</p>
+                    <p className="py-2 text-[14px] font-medium">Please try again after some time</p>
                 </>,
                 onClick: () => { setShowForm(true); },
                 buttonMessage: "Ok",
@@ -376,10 +377,13 @@ const EditPaymentGateway = () => {
                                 </div>
                                 {errors.test && (<small id="isTestGatewayError" className="text-[#FF6D6D] text-[14px]">{errors.test.message}</small>)}
                             </div>
-
-
                         </div>
-                        <div className="text-center mt-8">
+                        <div className="flex items-center text-base justify-center mt-8">
+                            {isLoading && (
+                                <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+                                    <div className="loader"></div>
+                                </div>
+                            )}
                             <Button type="submit" className="w-[240px] h-[42px] ">Submit</Button>
                         </div>
                     </div>
