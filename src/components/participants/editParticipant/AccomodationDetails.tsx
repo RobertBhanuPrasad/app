@@ -92,9 +92,6 @@ export default function AccomodationDetails() {
 
     return (
         <div id="Accomodation">
-            <Text className="font-semibold text-[18px] py-[25px]">
-                {t('edit_participant.participants_information_tab.accommodation_details')}
-            </Text>
             <div className="flex gap-4">
                 <div className="text-[#999999] gap-2">
                     <div className="flex gap-2">
@@ -298,7 +295,7 @@ export default function AccomodationDetails() {
                     </span>
                 )}
             </div>
-            <hr />
+            <div className='pt-[10px] border-b-2'></div>
         </div>
     );
 }
