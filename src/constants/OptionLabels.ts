@@ -27,3 +27,8 @@ export const PAYMENT_MODE = "PAYMENT_MODE";
 export const TRANSACTION_TYPE = "TRANSACTION_TYPE";
 
 export const PAYMENT_METHOD = "PAYMENT_METHOD";
+
+
+
+//Enum labels
+export const HOUR_FORMAT="hour_format"

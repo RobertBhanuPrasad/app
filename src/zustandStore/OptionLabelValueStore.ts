@@ -116,7 +116,7 @@ enum ProgramCategory {
   CAMPAIGN = "CAMPAIGN"
 }
 
-interface Enums {
+export interface Enums {
   user_type: typeof UserType;
   program_language_type: typeof ProgramLanguageType;
   hour_format: typeof HourFormat;

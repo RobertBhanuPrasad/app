@@ -62,3 +62,34 @@ export const getOptionValueObjectById = (
 
 //   return response;
 // };
+
+interface enumObject {
+  [key: string]: string;
+}
+
+/**
+ * .@function getEnumsWithLabel is used to get list of enums based on language
+ * @param label - The label used to retrieve the corresponding enumeration values.
+ * @param t - The transformation function for data rendering
+ * @returns {string[]} An array of language based enum values .
+ */
+export const getEnumsWithLabel = ({ label, t }: { label: string, t: any }) => {
+  // Retrieve the current state and extract optionLabelValue
+  const { optionLabelValue } = optionLabelValueStore.getState() as any;
+
+  // Retrieve the enumeration group corresponding to the provided label
+  const groupedEnum = optionLabelValue?.[label];
+
+  let modifiedArray: any[] = [];
+
+  // Iterate over the enumeration values and collect them into modifiedArray
+  Object.keys(groupedEnum).map((enumValue: string) => {
+      modifiedArray.push({
+        label:t(`enum:${enumValue}`),
+        value:enumValue
+      });
+  });
+
+  // Return the array of transformed enumeration labels
+  return modifiedArray;
+};

@@ -99,7 +99,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
       .nonempty({ message: "Online meeting URL is a required field" })
       .url({ message: "Online meeting URL is not valid" }),
 
-    hour_format_id: z.number({
+    hour_format_id: z.string({
       required_error: "Time format is a required field",
     }),
     state_id: z.union([
