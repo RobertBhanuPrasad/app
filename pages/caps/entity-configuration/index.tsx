@@ -345,6 +345,8 @@ const EntityConfig = () => {
 
 export default EntityConfig
 
+EntityConfig.requireAuth = false
+
 function shorten(text: string | null, maxLen: number = 20) {
     text = text ? text : "";
 

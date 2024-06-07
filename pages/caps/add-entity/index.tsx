@@ -24,19 +24,18 @@ const Entity = () => {
   });
   const router = useRouter();
   const [error, setError] = useState<string>();
-  const [alert, setAlert] = useState<CustomAlert>();
+  const [alert2, setAlert] = useState<CustomAlert>();
 
   // Retrive QueryParam 
   useEffect(() => {
-    const errorParam = router.query.error;
-    if (Array.isArray(errorParam)) {
-      setError(errorParam[0]);
-    } else {
-      setError(errorParam);
-    }
-    router.replace({pathname:router.pathname}, undefined, {shallow:true})
-  }, []);
-
+    if (error) {
+      router.replace({pathname:router.pathname}, undefined, {shallow:true})
+      return
+    };
+    setError(router.query.error as string);
+    
+  }, [router, error]);
+  
   // Alert Error message
   const errorAlertMessage = () => {
     setAlert({ title: "Oops! Something went wrong.", description: 'Please try again later.' })
@@ -57,7 +56,7 @@ const Entity = () => {
   // Alert Ui design
   const AlertDestructive = (props: CustomAlert) => {
     return (
-      <ErrorAlerts title={props.title} description={props.description} onClose = {()=>setAlert(undefined)}/>
+      <ErrorAlerts title={props.title} description={props.description} onClose = {()=>setError(undefined)}/>
     )
   }
 
@@ -66,7 +65,7 @@ const Entity = () => {
       {error &&  (
         <AlertDestructive title={"Oops! Error URL."} description={"Please try again later"} />
       )}
-      {alert && <AlertDestructive {...alert} />}
+      {alert2 && <AlertDestructive {...alert2} />}
       <form className="px-4" autoComplete="off" onSubmit={handleSubmit(createEntity)}>
         <div className="pd-5 text-center bg-body-tertiary">
           <h1 className="mb-3">Add Entity</h1>
@@ -96,3 +95,5 @@ const Entity = () => {
 };
 
 export default Entity;
+
+Entity.requireAuth = false
