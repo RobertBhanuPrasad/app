@@ -1003,7 +1003,7 @@ const LanguageDropDown = () => {
   });
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "languages",
+    resource: "product_languages",
     optionLabel: "language_name",
     optionValue: "id",
     defaultValue: value,
@@ -1076,7 +1076,7 @@ const LanguageTranslationDropDown = () => {
   const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "languages",
+    resource: "product_languages",
     optionLabel: "language_name",
     optionValue: "id",
     filters: [

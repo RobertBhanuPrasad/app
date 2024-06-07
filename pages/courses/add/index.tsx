@@ -484,7 +484,7 @@ export const NewCourseTabs = () => {
     }
 
     const { data: programTypeData, error } = await supabase
-      .from("program_types")
+      .from("product")
       .select("*")
       .eq("id", programTypeId);
 
@@ -1097,7 +1097,7 @@ export const fetchCourseFee = async ({
   //Need to fetch program_types data when program_type_id is present
   if (formData?.program_type_id) {
     const programTypeData = await supabase
-      .from("program_types")
+      .from("product")
       .select("*")
       .eq("id", formData?.program_type_id)
       .single();
