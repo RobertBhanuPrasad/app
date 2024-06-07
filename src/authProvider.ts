@@ -136,7 +136,7 @@ export const authProvider: AuthBindings = {
     const { data: userData, error } = await supabase
       .from("users")
       .select(
-        "*,contact_id(*),user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
+        "*,user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
       )
       .eq("user_identifier", data?.user?.id);
 
