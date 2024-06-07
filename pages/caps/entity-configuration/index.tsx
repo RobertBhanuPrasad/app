@@ -163,12 +163,6 @@ const EntityConfig = () => {
 
     const AlertDestructive = (props: CustomAlert) => {
         return (
-            // <div className="mx-5 alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
-            //     {props.title}<br />{props.description}
-            //     <button type="button" className="btn-lg px-2 h-7 rounded-lg" aria-label="Close" onClick={() => setAlert(undefined)}>
-            //         <X />
-            //     </button>
-            // </div>
             <ErrorAlerts title={props.title} description={props.description} onClose = {()=>setAlert(undefined)}/>
         )
     }
@@ -245,7 +239,7 @@ const EntityConfig = () => {
     }
 
     if (isLoading) {
-        return <div className="loader !w-[35px]"></div>
+        return <section className="flex justify-center align-center pt-[10%]"> <div className="loader"></div> </section>
     }
 
     return (
