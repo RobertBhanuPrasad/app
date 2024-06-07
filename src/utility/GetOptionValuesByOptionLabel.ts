@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { useTranslation } from "next-i18next";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 // import { OpenStreetMapProvider } from "leaflet-geosearch";
 
@@ -73,7 +74,8 @@ interface enumObject {
  * @param t - The transformation function for data rendering
  * @returns {string[]} An array of language based enum values .
  */
-export const getEnumsWithLabel = ({ label, t }: { label: string, t: any }) => {
+export const getEnumsWithLabel = ({ label}: { label: string}) => {
+  const {t}=useTranslation(["enum"])
   // Retrieve the current state and extract optionLabelValue
   const { optionLabelValue } = optionLabelValueStore.getState() as any;
 
@@ -85,7 +87,7 @@ export const getEnumsWithLabel = ({ label, t }: { label: string, t: any }) => {
   // Iterate over the enumeration values and collect them into modifiedArray
   Object.keys(groupedEnum).map((enumValue: string) => {
       modifiedArray.push({
-        label:t(`enum:${enumValue}`),
+        label:t(`${enumValue}`),
         value:enumValue
       });
   });

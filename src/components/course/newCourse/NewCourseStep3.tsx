@@ -220,7 +220,7 @@ const SchedulesHeader = () => {
     fieldState: { error: timeZoneError },
   } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
 
-  let timeFormatOptions = getEnumsWithLabel({label:HOUR_FORMAT,t});
+  let timeFormatOptions = getEnumsWithLabel({label:HOUR_FORMAT});
 
   const { options } = useMVPSelect({
     resource: "time_zones",
