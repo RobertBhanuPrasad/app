@@ -11,7 +11,7 @@ interface NewCourseStore {
   viewCourseAccountingRejectedModal: boolean;
 
   setViewRejectedModal: (by: boolean) => void;
-  setEditCourseDefaultValues: (by: boolean) => void;
+  setEditCourseDefaultValues: (by: any) => void;
   setViewPreviewPage: (by: boolean) => void;
   setViewThankyouPage: (by: boolean) => void;
   setViewSuccessModal: (by: boolean) => void;

@@ -45,9 +45,12 @@ const EditCourseReviewPage = () => {
     TIME_FORMAT_12_HOURS
   )?.id as number;
 
-  const { setNewCourseData,setProgramCreatedById, editCourseDefaultValues, newCourseData } = newCourseStore();
+  const { setNewCourseData,setProgramCreatedById, editCourseDefaultValues, newCourseData, setEditCourseDefaultValues } = newCourseStore();
 
   const router = useRouter()
+
+  const {query} = router
+  
   const pathname = usePathname()
 
 
@@ -64,7 +67,8 @@ const EditCourseReviewPage = () => {
       );
       console.log("default values are", defaultValues);
 
-      setNewCourseData(defaultValues);
+      setNewCourseData(defaultValues); 
+      setEditCourseDefaultValues(defaultValues);
       // we are storing the program created by in the zustand variable to use it in the validatios
       setProgramCreatedById(defaultValues?.program_created_by)
       setIsLoading(false);
@@ -82,15 +86,17 @@ const EditCourseReviewPage = () => {
   
   useEffect(() => {
     const routeChange = (url:string) => {
-       // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
+
+      // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
       // this varaible holds the boolean value that the data is edited or not
       const condition = _.isEqual(newCourseData,editCourseDefaultValues)
-      console.log(_.isEqual(newCourseData,editCourseDefaultValues),newCourseData,editCourseDefaultValues,"editcaleed")
-      const {query} = router
+
       // we take the id from the url
       const Id=url.split('/').filter((x)=>x===query.id?.toString())
+
       // we donot display the alert for the user if navigated from edited course to course details page
       if(!(Id.length>0)){
+        //if user change the data we should alert the user when navigated
         if (!condition && IsEditCourse(pathname)) {
           if (
             confirm(
@@ -114,7 +120,7 @@ const EditCourseReviewPage = () => {
         router.events.off('routeChangeStart', routeChange);
     };
 
-}, [newCourseData]);
+}, [newCourseData,editCourseDefaultValues]);
 
   if (isLoading) {
     return <section className="flex justify-center align-center pt-[15%]"><div className="loader"></div></section>

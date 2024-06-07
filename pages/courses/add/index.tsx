@@ -8,7 +8,6 @@ import NewCourseStep5 from "@components/course/newCourse/NewCourseStep5";
 import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
-import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
 import Info from "@public/assets/Info";
 import Profile from "@public/assets/Profile";
@@ -18,8 +17,7 @@ import {
   HttpError,
   UseLoadingOvertimeReturnType,
   useGetIdentity,
-  useList,
-  useOne,
+  useList
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -71,10 +69,6 @@ import { useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
-import { useTranslation } from "next-i18next";
-import { supabaseClient } from "src/utility";
-import { cn } from "src/lib/utils";
-import useGetCountryCode from "src/utility/useGetCountryCode";
 import {
   IsCopyCourse,
   IsEditCourse,
@@ -83,7 +77,9 @@ import {
   NewCourseContext,
   useNewCourseContext,
 } from "@contexts/NewCourseContext";
-import { IsNewCourse } from "@components/course/newCourse/NewCourseUtil";
+import { useTranslation } from "next-i18next";
+import { supabaseClient } from "src/utility";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -100,19 +96,35 @@ function index() {
   } = useRouter();
 
   /**
+   * this function will check the current path and destination path if same return true else return false.
+   * @param url 
+   * @returns 
+   */
+  const IsPathnameAndUrlIsSame = (url:string) => {
+    return pathname === url;
+  }
+
+  /**
    * This context is used to keep track of whether the new course form is edited or not
    * Requirement: We have to stop the user when he is changing route form one to another
    * Implementation: To make it simple we are using useRef
    */
   useEffect(() => {
     const routeChange = (url: string) => {
+
+      // when we fill any fields in step1 of newCourse then it will be true
       if (isNewCourseEditedRef.current) {
+
         // remove the country and language code in destination url.
         const newUrl = "/" + url.split("/").slice(2).join("/");
 
-        // if the destination url is other than newCourse or if the current path and destination path is same
-        // then alert the user for lossing the entered data
-        if (!IsNewCourse(url) || pathname === newUrl) {
+        const IsClickingNewCourse = IsPathnameAndUrlIsSame(newUrl)
+
+        const sectionFromUrl = getSectionFromUrl(url,'section')
+
+        // if the destination url is the preview page then we don't need to show the confirm box.
+        // if the data is entered and then click on newCourse again we have to show the confirm box.
+        if (sectionFromUrl!=='preview_page' || IsClickingNewCourse) {
           if (
             confirm(
               "Do you want to leave this page? Unsaved changes may be lost."
@@ -134,6 +146,7 @@ function index() {
     return () => {
       router.events.off("routeChangeStart", routeChange);
     };
+
   }, [isNewCourseEditedRef]);
 
   console.log("router is ", section);
@@ -1275,4 +1288,19 @@ interface CourseFeeBody {
   city_id?: number;
   center_id?: number;
   start_date?: string;
+}
+
+  /**
+   * this function will give the query parameters present in url 
+   * @param url 
+   * @param paramName 
+   * @returns 
+   */
+  export const getSectionFromUrl = (url:string, paramName:string) => {
+    // Create a URL object
+    const urlObj = new URL(url, 'http://example.com'); // Base URL to handle relative paths
+    const params = new URLSearchParams(urlObj.search);
+
+    // Get the specific parameter value
+    return params.get(paramName);
 }

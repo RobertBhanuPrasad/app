@@ -1,11 +1,12 @@
 import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
+import { NewCourseContext, useNewCourseContext } from "@contexts/NewCourseContext";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { NewCourse } from "pages/courses/add";
+import { NewCourse, getSectionFromUrl } from "pages/courses/add";
 import { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
@@ -14,9 +15,62 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 const index = () => {
-    const {
+
+      const router = useRouter()
+
+      const {
         query: { section },
-      } = useRouter();
+      } = router;
+
+      const {isNewCourseEditedRef} = useNewCourseContext()
+
+      // we need to make the condition of isNewCourseEditedRef is true inorder to alert the user even user not edited
+      useEffect(()=>{
+        isNewCourseEditedRef.current=true
+      },[])
+     
+ /**
+   * This context is used to keep track of whether the copy course form is edited or not
+   * Requirement: We have to stop the user when he is changing route form one to another
+   * Implementation: To make it simple we are using useRef
+   */
+  useEffect(() => {
+    const routeChange = (url: string) => {
+      // we should alert the user when user navigate to other pages even not edited. 
+      if (isNewCourseEditedRef.current) {
+
+        // remove the country and language code in destination url.
+        const newUrl = "/" + url.split("/").slice(2).join("/");
+
+        const sectionFromUrl = getSectionFromUrl(url,'section')
+
+        // if the destination url is the preview page then we don't need to show the confirm box.
+        // if the data is entered and then click on newCourse again we have to show the confirm box.
+        if (sectionFromUrl!=='preview_page') {
+          if (
+            confirm(
+              "Do you want to leave this page? Unsaved changes may be lost."
+            )
+          ) {
+            console.log("ok go ahead");
+          } else {
+            router.events.emit("routeChangeError");
+            throw "Route change aborted. User confirmation required.";
+          }
+        }
+      }
+    };
+
+    router.events.off("routeChangeStart", routeChange);
+
+    router.events.on("routeChangeStart", routeChange);
+
+    return () => {
+      router.events.off("routeChangeStart", routeChange);
+    };
+    
+  }, [isNewCourseEditedRef]);
+
     if (section === "thank_you") {
         return (
           <div className="mb-8">
@@ -26,9 +80,17 @@ const index = () => {
       }
     
       if (section === "preview_page") {
-        return <NewCourseReviewPage />;
+        return(
+      <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
+        <NewCourseReviewPage />
+      </NewCourseContext.Provider>
+        )
       } else {
-        return <CopyCoursePage />;
+        return(
+      <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
+        <CopyCoursePage />
+      </NewCourseContext.Provider>
+      );
       }
 }
 
