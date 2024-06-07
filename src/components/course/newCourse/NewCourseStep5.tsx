@@ -39,6 +39,7 @@ import { supabaseClient } from "src/utility";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -219,16 +220,9 @@ export const AccommodationFeeMode = () => {
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
-
-  const payOnlineId = getOptionValueObjectByOptionOrder(
-    PAYMENT_MODE,
-    PAY_ONLINE
-  )?.id;
-
-  const payOfflineId = getOptionValueObjectByOptionOrder(
-    PAYMENT_MODE,
-    PAY_OFFLINE
-  )?.id;
+  const {optionLabelValue}=optionLabelValueStore()
+  const payOnlineId = optionLabelValue?.payment_mode.ONLINE as string
+  const payOfflineId = optionLabelValue?.payment_mode.OFFLINE as string
 
   return (
     <div className="flex gap-1 flex-col mt-[32px]">
@@ -236,21 +230,21 @@ export const AccommodationFeeMode = () => {
         {t("course.new_course:accommodation_tab.accommodation_fee")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
-        value={JSON.stringify(value)}
+        value={value}
         onValueChange={(value) => {
-          onChange(parseInt(value));
+          onChange(value);
         }}
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value={JSON.stringify(payOnlineId)}
-            selectedRadioValue={JSON.stringify(value)}
+            value={payOnlineId}
+            selectedRadioValue={value}
             label={t("course.new_course:accommodation_tab.pay_online")}
             className="w-[131px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
-            value={JSON.stringify(payOfflineId)}
-            selectedRadioValue={JSON.stringify(value)}
+            value={payOfflineId}
+            selectedRadioValue={value}
             label={t("course.new_course:accommodation_tab.pay_offline")}
             className="w-[131px] h-[40px] rounded-[12px]"
           />
