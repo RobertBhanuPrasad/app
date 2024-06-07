@@ -106,7 +106,7 @@ export const columns = () =>
 
     cell: ({ row }: any) => {
       return (
-        <div className="text-left pl-4 !min-w-[175px] capitalize">
+        <div className="text-left pl-4 !min-w-[175px]">
           {row?.original?.contact_id?.full_name}
         </div>
       );
