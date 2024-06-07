@@ -18,9 +18,9 @@ export const CERTIFICATION_TYPE = "CERTIFICATION_TYPE";
 
 export const VISIBILITY = "VISIBILITY";
 
-export const PROGRAM_STATUS = "PROGRAM_STATUS";
+// export const PROGRAM_STATUS = "PROGRAM_STATUS";
 
-export const COURSE_ACCOUNTING_STATUS = "COURSE_ACCOUNTING_STATUS";
+// export const COURSE_ACCOUNTING_STATUS = "COURSE_ACCOUNTING_STATUS";
 
 export const PAYMENT_MODE = "PAYMENT_MODE";
 
@@ -31,4 +31,8 @@ export const PAYMENT_METHOD = "PAYMENT_METHOD";
 
 
 //Enum labels
-export const HOUR_FORMAT="hour_format"
+export const HOUR_FORMAT="hour_format";
+
+export const PROGRAM_STATUS="program_status"
+
+export const COURSE_ACCOUNTING_STATUS="program_accounting_status"
