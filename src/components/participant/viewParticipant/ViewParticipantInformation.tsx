@@ -9,7 +9,7 @@ import { formatGlobalDate } from 'src/utility/DateFunctions'
 function ViewParticipantInformation({ participantId }: any) {
   // State variable to track whether the registration link has been copied
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
-  const { t } = useTranslation('course.participants,new_strings')
+  const { t } = useTranslation(['course.participants','new_strings']);
   const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)

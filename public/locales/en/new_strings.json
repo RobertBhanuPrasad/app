@@ -150,5 +150,21 @@
   "sale_completed":"Sale Completed",
   "partial_refund_raised":"Partial Refund Raised",
   "refund_raised":"Refund Raised",
-  "transaction_amount":"Transaction Amount"
+  "transaction_amount":"Transaction Amount",
+  "memo_is_required_field":"Memo is required field",
+  "select_accommodation_type":"Select Accommodation Type",
+  "select_one_option":"Select one option",
+  "select_attendance_status":"Select Attendance status",
+  "bulk_transaction_status_update":"Bulk Transaction Status Update",
+  "records_successfully_updated":"Records Successfully Updated",
+  "bulk_action_saved_message":"The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.",
+  "bulk_action_error_message":"Bulk update can only be done for payments with “Pending” status.
+        Please select records whose transaction status value is only
+        “Pending”. To update the payments with status other than
+        “Pending”, please visit the Registration details for that
+        participant.",
+  "error_bulk_transaction_status_update":"ERROR: Bulk Transaction Status Update",
+  "no_transaction_history_found":"No transaction history found for the selected participant(s)",
+  "there_are_no_participants":"There are no participants"
 }
+

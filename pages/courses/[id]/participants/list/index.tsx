@@ -401,12 +401,16 @@ function index() {
     if (!error) {
       setDisplayTransactionStatusBulkActionError(true);
       setbulkActionsSuccessIcon(true);
-      setBulkActionsErrorTitle(
-        `${participantIds?.length} Records Successfully Updated`
+      // setBulkActionsErrorTitle(
+      //   `${participantIds?.length} Records Successfully Updated`
+      // );
+      setBulkActionsErrorTitle( 
+        `${participantIds?.length} t("new_strings:records_successfully_updated")`
       );
-      setBulkActionsErrorMessage(
-        `The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.`
-      );
+      // setBulkActionsErrorMessage(
+      //   `The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.`
+      // );
+      setBulkActionsErrorMessage(t("new_strings:bulk_action_saved_message"));
     }
   };
 
@@ -452,28 +456,36 @@ function index() {
         if (!error) {
           setDisplayTransactionStatusBulkActionError(true);
           setbulkActionsSuccessIcon(true);
-          setBulkActionsErrorTitle("Bulk Transaction Status Update");
+          // setBulkActionsErrorTitle("Bulk Transaction Status Update");
+          setBulkActionsErrorTitle(t('new_strings:bulk_transaction_status_update'));
+          // setBulkActionsErrorMessage(
+          //   `${participantIds?.length} Records Successfully Updated`
+          // );
           setBulkActionsErrorMessage(
-            `${participantIds?.length} Records Successfully Updated`
+            `${participantIds?.length} t('new_strings:records_successfully_updated)`
           );
         }
       } else {
         setDisplayTransactionStatusBulkActionError(true);
         setbulkActionsSuccessIcon(false);
-        setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
-        setBulkActionsErrorMessage(`Bulk update can only be done for payments with “Pending” status.
-        Please select records whose transaction status value is only
-        “Pending”. To update the payments with status other than
-        “Pending”, please visit the Registration details for that
-        participant.`);
+        // setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
+        setBulkActionsErrorTitle(t('new_strings:error_bulk_transaction_status_update'));
+        // setBulkActionsErrorMessage(`Bulk update can only be done for payments with “Pending” status.
+        // Please select records whose transaction status value is only
+        // “Pending”. To update the payments with status other than
+        // “Pending”, please visit the Registration details for that
+        // participant.`);
+        setBulkActionsErrorMessage(t('new_strings:bulk_action_error_message'));
       }
     } else {
       setDisplayTransactionStatusBulkActionError(true);
       setbulkActionsSuccessIcon(false);
-      setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
-      setBulkActionsErrorMessage(
-        "No transaction history found for the selected participant(s)"
-      );
+      // setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
+      setBulkActionsErrorTitle(t('new_strings:error_bulk_transaction_status_update'));
+      // setBulkActionsErrorMessage(
+      //   "No transaction history found for the selected participant(s)"
+      // );
+      setBulkActionsErrorMessage(t("new_strings:no_transaction_history_found"));
     }
   };
 
@@ -748,7 +760,7 @@ function index() {
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
-            noRecordsPlaceholder="There are no participants"
+            noRecordsPlaceholder= {t("new_strings:there_are_no_participants")}
           />
         </div>
       </div>
