@@ -67,7 +67,7 @@ export const validationSchema = (iAmCoTeaching: string) => {
         required_error: "Please enter at least one associate teacher",
       })
       .optional(),
-    visibility_id: z.number(),
+    visibility_id: z.string(),
     is_language_translation_for_participants: z.boolean().optional(),
     is_geo_restriction_applicable: z.boolean(),
     language_ids: z.array(z.number()).optional(),

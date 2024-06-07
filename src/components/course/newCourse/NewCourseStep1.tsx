@@ -35,7 +35,6 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { Switch } from "src/ui/switch";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { IsEditCourse } from "./EditCourseUtil";
 
 import { useTranslation } from "next-i18next";
@@ -381,6 +380,7 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
+  const {optionLabelValue}=optionLabelValueStore()
   /**
    * This variable holds the path of the url
    */
@@ -426,10 +426,8 @@ const OrganizationDropDown = () => {
     name: NewCourseStep2FormNames?.teacher_ids,
   });
 
-  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_ORGANIZER
-  )?.id;
+  const iAmOrganizer = optionLabelValue?.program_manage_type?.I_AM_ORGANIZING
+
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -442,7 +440,7 @@ const OrganizationDropDown = () => {
     setValue("teacher_ids", []);
 
     //Handling teachers drop down
-    if (formData?.program_created_by != iAmOrganizerId) {
+    if (formData?.program_created_by != iAmOrganizer) {
       //Requirement: If teacher or co-teacher is selected Need to prefill login user in teacher dropdown
       teachersOnChange([loginInTeacherData]);
       setTimeout(() => {
@@ -580,12 +578,6 @@ const ProgramOrganizerDropDown = () => {
   } = useController({
     name: NewCourseStep1FormNames?.organizer_ids,
   });
-
-  //Finding program Organizer role id
-  const programOrganizationId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    PROGRAM_ORGANIZER
-  )?.id;
 
   const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
