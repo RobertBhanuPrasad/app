@@ -44,7 +44,7 @@ const Entity = () => {
 
   // Create entity or Find entity
   const createEntity = async (data: FormValues) => {
-    const response = await customFetch("/rest/1/rpc/get_entity", "POST", { _country: data.country, _org: data.org, _module: data.module });
+    const response = await customFetch("/rest/v1/rpc/get_entity", "POST", { _country: data.country, _org: data.org, _module: data.module });
     const message = JSON.stringify(await response.json());
     const match = message.match(/(\d+)/);
     if (match) {
