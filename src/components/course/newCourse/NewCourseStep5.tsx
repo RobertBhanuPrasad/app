@@ -213,8 +213,8 @@ export const AccommodationFeeMode = () => {
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
   const {optionLabelValue}=optionLabelValueStore()
-  const payOnlineId = optionLabelValue?.payment_mode.ONLINE as string
-  const payOfflineId = optionLabelValue?.payment_mode.OFFLINE as string
+  const payOnlineType = optionLabelValue?.payment_mode.ONLINE as string
+  const payOfflineType = optionLabelValue?.payment_mode.OFFLINE as string
 
   return (
     <div className="flex gap-1 flex-col mt-[32px]">
@@ -229,13 +229,13 @@ export const AccommodationFeeMode = () => {
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value={payOnlineId}
+            value={payOnlineType}
             selectedRadioValue={value}
             label={t("course.new_course:accommodation_tab.pay_online")}
             className="w-[131px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
-            value={payOfflineId}
+            value={payOfflineType}
             selectedRadioValue={value}
             label={t("course.new_course:accommodation_tab.pay_offline")}
             className="w-[131px] h-[40px] rounded-[12px]"
