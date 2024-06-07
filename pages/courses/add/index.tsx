@@ -80,6 +80,7 @@ import {
 import { useTranslation } from "next-i18next";
 import { supabaseClient } from "src/utility";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { IsShowConfirmBoxInNewCourse } from "@components/courseBusinessLogic";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -95,14 +96,7 @@ function index() {
     query: { section },
   } = useRouter();
 
-  /**
-   * this function will check the current path and destination path if same return true else return false.
-   * @param url 
-   * @returns 
-   */
-  const IsPathnameAndUrlIsSame = (url:string) => {
-    return pathname === url;
-  }
+
 
   /**
    * This context is used to keep track of whether the new course form is edited or not
@@ -115,16 +109,10 @@ function index() {
       // when we fill any fields in step1 of newCourse then it will be true
       if (isNewCourseEditedRef.current) {
 
-        // remove the country and language code in destination url.
-        const newUrl = "/" + url.split("/").slice(2).join("/");
-
-        const IsClickingNewCourse = IsPathnameAndUrlIsSame(newUrl)
-
         const sectionFromUrl = getSectionFromUrl(url,'section')
 
-        // if the destination url is the preview page then we don't need to show the confirm box.
-        // if the data is entered and then click on newCourse again we have to show the confirm box.
-        if (sectionFromUrl!=='preview_page' || IsClickingNewCourse) {
+
+        if (IsShowConfirmBoxInNewCourse(sectionFromUrl,section)) {
           if (
             confirm(
               "Do you want to leave this page? Unsaved changes may be lost."

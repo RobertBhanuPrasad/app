@@ -62,7 +62,6 @@ import NewCourseStep6 from "./NewCourseStep6";
 import { validationSchema } from "./NewCourseValidations";
 
 export default function NewCourseReviewPage() {
-  const {isNewCourseEditedRef}= useNewCourseContext()
   const { t } = useTranslation([
     "common",
     "course.new_course",
@@ -652,7 +651,6 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
           setViewPreviewPage(false);
           setViewThankyouPage(true);
-          isNewCourseEditedRef.current=false;
           
         }
       } catch (error) {

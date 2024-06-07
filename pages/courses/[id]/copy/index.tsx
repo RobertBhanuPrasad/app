@@ -1,6 +1,7 @@
 import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
+import { IsShowConfirmBoxInNewCourse } from "@components/courseBusinessLogic";
 import { NewCourseContext, useNewCourseContext } from "@contexts/NewCourseContext";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
@@ -22,12 +23,6 @@ const index = () => {
         query: { section },
       } = router;
 
-      const {isNewCourseEditedRef} = useNewCourseContext()
-
-      // we need to make the condition of isNewCourseEditedRef is true inorder to alert the user even user not edited
-      useEffect(()=>{
-        isNewCourseEditedRef.current=true
-      },[])
      
  /**
    * This context is used to keep track of whether the copy course form is edited or not
@@ -35,18 +30,13 @@ const index = () => {
    * Implementation: To make it simple we are using useRef
    */
   useEffect(() => {
-    const routeChange = (url: string) => {
-      // we should alert the user when user navigate to other pages even not edited. 
-      if (isNewCourseEditedRef.current) {
-
-        // remove the country and language code in destination url.
-        const newUrl = "/" + url.split("/").slice(2).join("/");
+    const routeChange = (url: string) => {  
 
         const sectionFromUrl = getSectionFromUrl(url,'section')
 
         // if the destination url is the preview page then we don't need to show the confirm box.
         // if the data is entered and then click on newCourse again we have to show the confirm box.
-        if (sectionFromUrl!=='preview_page') {
+        if (IsShowConfirmBoxInNewCourse(sectionFromUrl,section)) {
           if (
             confirm(
               "Do you want to leave this page? Unsaved changes may be lost."
@@ -58,7 +48,7 @@ const index = () => {
             throw "Route change aborted. User confirmation required.";
           }
         }
-      }
+      
     };
 
     router.events.off("routeChangeStart", routeChange);
@@ -69,7 +59,7 @@ const index = () => {
       router.events.off("routeChangeStart", routeChange);
     };
     
-  }, [isNewCourseEditedRef]);
+  }, []);
 
     if (section === "thank_you") {
         return (
@@ -80,17 +70,9 @@ const index = () => {
       }
     
       if (section === "preview_page") {
-        return(
-      <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
-        <NewCourseReviewPage />
-      </NewCourseContext.Provider>
-        )
+        return<NewCourseReviewPage />
       } else {
-        return(
-      <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
-        <CopyCoursePage />
-      </NewCourseContext.Provider>
-      );
+        return<CopyCoursePage />
       }
 }
 

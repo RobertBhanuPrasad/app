@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 interface NewCourseStore {
   viewPreviewPage: boolean;
-  editCourseDefaultValues: any;
+  editCourseDefaultValues: any; // to store the default values and used for comparing any changes in the edit course 
   viewThankyouPage: boolean;
   viewSuccessModal: boolean;
   viewRejectedModal: boolean;
