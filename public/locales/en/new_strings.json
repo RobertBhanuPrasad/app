@@ -158,11 +158,7 @@
   "bulk_transaction_status_update":"Bulk Transaction Status Update",
   "records_successfully_updated":"Records Successfully Updated",
   "bulk_action_saved_message":"The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.",
-  "bulk_action_error_message":"Bulk update can only be done for payments with “Pending” status.
-        Please select records whose transaction status value is only
-        “Pending”. To update the payments with status other than
-        “Pending”, please visit the Registration details for that
-        participant.",
+  "bulk_action_error_message":"Bulk update can only be done for payments with “Pending” status. Please select records whose transaction status value is only “Pending”. To update the payments with status other than “Pending”, please visit the Registration details for that participant.",
   "error_bulk_transaction_status_update":"ERROR: Bulk Transaction Status Update",
   "no_transaction_history_found":"No transaction history found for the selected participant(s)",
   "there_are_no_participants":"There are no participants"
