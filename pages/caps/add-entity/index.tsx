@@ -7,7 +7,7 @@ import { Button } from "src/ui/button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { customFetch } from "../../../src/utility/custom-fetch";
 import { useRouter } from "next/router";
-import { X } from "lucide-react";
+import ErrorAlerts from "@components/ErrorAlert";
 
 const schema = z.object({
   country: z.string().refine((v) => countryCodes.includes(v as CountryCode), { message: "Please enter a correct country code" }),
@@ -34,11 +34,12 @@ const Entity = () => {
     } else {
       setError(errorParam);
     }
-  }, [router.query]);
+    router.replace({pathname:router.pathname}, undefined, {shallow:true})
+  }, []);
 
   // Alert Error message
   const errorAlertMessage = () => {
-    setAlert({ title: "Sorry! Something went wrong.", description: 'Please try again later.' })
+    setAlert({ title: "Oops! Something went wrong.", description: 'Please try again later.' })
   }
 
   // Create entity or Find entity
@@ -56,24 +57,14 @@ const Entity = () => {
   // Alert Ui design
   const AlertDestructive = (props: CustomAlert) => {
     return (
-      <div className="mx-5 alert gjjgjgjhg alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
-        {props.title}<br />{props.description}
-        <button type="button" className="btn-lg px-2 h-7 rounded-lg" aria-label="Close" onClick={() => setAlert(undefined)}>
-          <X />
-        </button>
-      </div>
+      <ErrorAlerts title={props.title} description={props.description} onClose = {()=>setAlert(undefined)}/>
     )
   }
 
   return (
     <>
-      {error && (
-        <div className="mx-5 alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
-          {error}
-          <button type="button" className=" close bg-red-400 btn-lg px-2 h-7 rounded-lg" data-dismiss="alert" aria-label="Close" onClick={() => setError(undefined)}>
-            <span aria-hidden="true" className="font-bold">&times;</span>
-          </button>
-        </div>
+      {error &&  (
+        <AlertDestructive title={"Oops! Error URL."} description={"Please try again later"} />
       )}
       {alert && <AlertDestructive {...alert} />}
       <form className="px-4" autoComplete="off" onSubmit={handleSubmit(createEntity)}>

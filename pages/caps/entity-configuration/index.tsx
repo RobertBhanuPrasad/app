@@ -21,6 +21,7 @@ import { z } from "zod";
 import { useRouter } from "next/router";
 import { supabaseClient } from "src/utility";
 import { X } from "lucide-react";
+import ErrorAlerts from "@components/ErrorAlert";
 
 
 const schema = z.object({
@@ -162,12 +163,13 @@ const EntityConfig = () => {
 
     const AlertDestructive = (props: CustomAlert) => {
         return (
-            <div className="mx-5 alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
-                {props.title}<br />{props.description}
-                <button type="button" className="btn-lg px-2 h-7 rounded-lg" aria-label="Close" onClick={() => setAlert(undefined)}>
-                    <X />
-                </button>
-            </div>
+            // <div className="mx-5 alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
+            //     {props.title}<br />{props.description}
+            //     <button type="button" className="btn-lg px-2 h-7 rounded-lg" aria-label="Close" onClick={() => setAlert(undefined)}>
+            //         <X />
+            //     </button>
+            // </div>
+            <ErrorAlerts title={props.title} description={props.description} onClose = {()=>setAlert(undefined)}/>
         )
     }
     const unselectPG = (index: number) => {
