@@ -1,13 +1,15 @@
 
 import { CapsEnvironment, CountryCode, CurrencyCode, GatewayAddress, GatewayCustomer, GatewayStyle, PaymentGateways, PaymentGatewaysConfig, countryCodes, currencyCodes } from "caps-ui"
 
+import { CapsFormFields } from "@components/CapsFormFields"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
-import { FormProvider, useForm } from "react-hook-form"
-import { z } from "zod"
-import { Form } from "src/ui/form"
+import { useForm } from "react-hook-form"
 import { Button } from "src/ui/button"
-import { CapsFormFields } from "@components/CapsFormFields"
+import { Form } from "src/ui/form"
+import { z } from "zod"
+import useGetCountryCode from "src/utility/useGetCountryCode"
+import useGetLanguageCode from "src/utility/useGetLanguageCode"
 
 
 // Form Validation Schema
@@ -34,6 +36,14 @@ const formValidationSchema = z.object({
 
 const TestPayment = () => {
     const [pConfig, setPConfig] = useState<PaymentGatewaysConfig>()
+    
+    const countryCode = useGetCountryCode()
+    const languageCode = useGetLanguageCode()
+
+    const CAPS_BASE_URL = process.env.NEXT_PUBLIC_RETURN_URL
+
+    const ReturnURL = `${CAPS_BASE_URL}/${countryCode}-${languageCode}/caps/thankyou-page`
+
     useEffect(() => document.getElementById("testing123")?.click(), [])
     const form = useForm<FormType>({
         resolver: zodResolver(formValidationSchema),
@@ -106,7 +116,7 @@ const TestPayment = () => {
             customerInfo: customerDetails,
             metadata: data.metaData ? parseInputToObject(data.metaData) : null,
             appearance: style,
-            returnUrl: process.env.NEXT_PUBLIC_RETURN_URL!,
+            returnUrl: ReturnURL!,
             environment: process.env.NEXT_PUBLIC_CAPS_ENVIRONMENT! as CapsEnvironment
         };
 
