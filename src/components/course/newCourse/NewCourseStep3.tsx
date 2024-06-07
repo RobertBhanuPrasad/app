@@ -89,7 +89,7 @@ function NewCourseStep3() {
   const { program_type_id } = watch();
 
   const { data: programTypeData, isLoading } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: program_type_id,
   });
 
@@ -997,7 +997,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
    * Getting settings Program type databased on program type id form form 
    */
   const { data: programTypeData } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: formData?.program_type_id,
   });
 
