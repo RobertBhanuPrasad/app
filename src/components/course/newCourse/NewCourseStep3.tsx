@@ -11,7 +11,6 @@ import {
   useGetIdentity,
   useList,
   useOne,
-  useSelect,
 } from "@refinedev/core";
 import { format } from "date-fns";
 import _ from "lodash";

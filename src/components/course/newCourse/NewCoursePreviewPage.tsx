@@ -12,16 +12,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { translatedText } from "src/common/translations";
 import {
-  COURSE_ACCOUNTING_STATUS,
-  PAYMENT_MODE,
-  PROGRAM_ORGANIZER_TYPE,
-  TIME_FORMAT,
-  VISIBILITY,
-} from "src/constants/OptionLabels";
-import {
-  I_AM_CO_TEACHING,
   NATIONAL_ADMIN,
-  NOT_SUBMITTED,
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
@@ -50,12 +41,11 @@ import NewCourseStep3 from "./NewCourseStep3";
 import NewCourseStep4, { sortFeeLevels } from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
-import { handlePostProgramData } from "./NewCourseUtil";
 import { validationSchema } from "./NewCourseValidations";
 import { fetchCourseFee } from "pages/courses/add";
 import _ from "lodash";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
-import { NewCourseStep3FormNames, NewCourseStep4FormNames } from "src/constants/CourseConstants";
+import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export default function NewCourseReviewPage() {
