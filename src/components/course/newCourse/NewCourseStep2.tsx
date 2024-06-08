@@ -344,10 +344,10 @@ export const CourseTypeDropDown = () => {
   };
 
   /**
-   * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
+   * @description this function is used to get all the fields in the product and assign to the setCourseTypeSettings
    * @function getCourseTypeSettings
    * @param val
-   * This functions sets the data which is came from program_types table usign the id we have  in the setCourseTypeSettings redux variable
+   * This functions sets the data which is came from product table usign the id we have  in the setCourseTypeSettings redux variable
    */
   const getCourseTypeSettings = async (val: any) => {
     const courseSettings = queryResult?.data?.data.filter(
@@ -997,7 +997,7 @@ const LanguageDropDown = () => {
   });
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "languages",
+    resource: "product_languages",
     optionLabel: "language_name",
     optionValue: "id",
     defaultValue: value,
@@ -1070,7 +1070,7 @@ const LanguageTranslationDropDown = () => {
   const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "languages",
+    resource: "product_languages",
     optionLabel: "language_name",
     optionValue: "id",
     filters: [
