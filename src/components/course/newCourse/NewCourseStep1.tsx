@@ -228,17 +228,6 @@ const RadioCards = () => {
    * @constant programOrganizerTypeData is the data from the option_values
    * @description this const is used to store the data from the option_values which option_label_id is Program Organizer Type
    */
-  const { data: programOrganizerTypeData } = useList({
-    resource: "option_values",
-    meta:{select:"*,option_label_id!inner(*)"},
-    filters: [
-      {
-        field: "option_label_id.key",
-        operator: "eq",
-        value: PROGRAM_ORGANIZER_TYPE,
-      },
-    ],
-  });
 
   /**
    * @constant iAmTeachingCourse
@@ -582,9 +571,9 @@ const ProgramOrganizerDropDown = () => {
   const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
-      select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
+      select: "*,user_roles!inner(role_id)",
     }, 
-    optionLabel: "contact_id.full_name",
+    optionLabel: "full_name",
     optionValue: "id",
     filters: [
       //Fetch the users with Program Organizer role
@@ -598,7 +587,7 @@ const ProgramOrganizerDropDown = () => {
     defaultValue: value,
     onSearch: (value) => [
       {
-        field: "contact_id.full_name",
+        field: "full_name",
         operator: "contains",
         value,
       },
