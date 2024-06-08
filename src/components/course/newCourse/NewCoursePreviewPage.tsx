@@ -39,7 +39,6 @@ import {
   formatDateString,
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
-
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
@@ -242,17 +241,7 @@ export default function NewCourseReviewPage() {
     ) {
       tempCourseData = {
         ...tempCourseData,
-        program_fee_level_settings: data?.[0]?.program_fee_level_settings?.map(
-          (feeLevel: any) => {
-            //Removing Id and program_fee_setting_id
-            const { id, program_fee_setting_id, program_id, ...rest } =
-              feeLevel;
-            return {
-              ...rest,
-              fee_level_id: feeLevel?.fee_level_id?.id,
-            };
-          }
-        ),
+        program_fee_level_settings: data?.[0]?.product_fee_level_settings,
         is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
         early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
       };
@@ -434,14 +423,7 @@ export default function NewCourseReviewPage() {
   const defaultFeeLevels =
     newCourseData?.feeLevels?.length == 0
       ? []
-      : newCourseData?.feeLevels?.[0]?.program_fee_level_settings?.map(
-          (feeLevel: any) => {
-            return {
-              ...feeLevel,
-              fee_level_id: feeLevel?.fee_level_id?.id,
-            };
-          }
-        );
+      : newCourseData?.feeLevels?.[0]?.product_fee_level_settings
 
   // If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
@@ -452,6 +434,7 @@ export default function NewCourseReviewPage() {
   const enabledFeeLevelData = feeLevels?.filter(
     (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
   );
+
 const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
@@ -1571,6 +1554,8 @@ const Fees = ({
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
+  const { t } = useTranslation(["enum"]);
+
   /**
    * @constant countryConfigData
    * @description this constant stores the country config data based on the organization
@@ -1608,29 +1593,15 @@ const Fees = ({
       </div>
     );
   }
-
-  /**
-   * @constant feeLevelData
-   * REQUIRMENT we need to show the both fee level type and total of the fee level
-   * we have the fee_level_id and we need the fee level type
-   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
-   * @description this data const is used to store the fee level type data with respective to the fee level type id
-   *
-   */
-  const { data: feeLevelData } = useOne({
-    resource: "option_values",
-    id: feeLevelSettingsData?.fee_level_id as number,
-  });
-
   //If custom label is false then show only fee_level label.
   return (
     <div className="w-[291px]">
       <abbr
-        title={translatedText(feeLevelData?.data?.name)}
+        title={t(`enum:${feeLevelSettingsData?.fee_level}`)}
         className="no-underline"
       >
         <CardLabel className="truncate">
-          {translatedText(feeLevelData?.data?.name)}
+          {t(`enum:${feeLevelSettingsData?.fee_level}`)}
         </CardLabel>
       </abbr>
       <abbr
@@ -1698,30 +1669,19 @@ const EarlyBirdFees = ({
     );
   }
 
-  /**
-   * @constant feeLevelData
-   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
-   * we have the fee_level_id and we need the fee level type
-   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
-   * @description this data const is used to store the fee level type data with respective to the fee level type id
-   *
-   */
-  const { data: feeLevelData } = useOne({
-    resource: "option_values",
-    id: feeLevelSettingsData?.fee_level_id as number,
-  });
-  const { t } = useTranslation("new_strings");
+  const { t } = useTranslation(["new_strings","enum"]);
   //If custom fee is false show fee level label.
+
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
       <abbr
-        title={`Early Bird ${translatedText(feeLevelData?.data?.name)}`}
+        title={`Early Bird ${t(`enum:${feeLevelSettingsData.fee_level}`)}`}
         className="no-underline"
       >
         <CardLabel className="truncate">
           {t("new_strings:early_bird")}{" "}
-          {translatedText(feeLevelData?.data?.name)}
+          {t(`enum:${feeLevelSettingsData.fee_level}`)}
         </CardLabel>
       </abbr>
       <abbr

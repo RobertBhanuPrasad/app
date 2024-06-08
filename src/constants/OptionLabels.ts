@@ -4,7 +4,7 @@ export const TIME_FORMAT = "TIME_FORMAT";
 
 export const GENDER = "GENDER";
 
-export const FEE_LEVEL = "FEE_LEVEL";
+// export const FEE_LEVEL = "FEE_LEVEL";
 
 export const PARTICIPANT_PAYMENT_STATUS = "PARTICIPANT_PAYMENT_STATUS";
 
@@ -36,3 +36,5 @@ export const HOUR_FORMAT="hour_format";
 export const PROGRAM_STATUS="program_status"
 
 export const COURSE_ACCOUNTING_STATUS="program_accounting_status"
+
+export const FEE_LEVEL="program_fee_level"
