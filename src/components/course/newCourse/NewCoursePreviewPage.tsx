@@ -294,8 +294,6 @@ export default function NewCourseReviewPage() {
     resource: "organizations",
     id: newCourseData?.organization_id,
   });
-console.log(newCourseData,'newCourseData',newCourseData?.organizer_ids);
-
   const { data: ProgramOrganizer } = useMany({
     resource: "users",
     ids: newCourseData?.organizer_ids || [],
@@ -337,7 +335,6 @@ console.log(newCourseData,'newCourseData',newCourseData?.organizer_ids);
     ids: newCourseData?.teacher_ids || [],
     meta: { select: "contact_id(full_name)" },
   });
-console.log(CourseTeachers,'CourseTeachers');
 
   const CourseTeachersNames: any = CourseTeachers?.data
     ?.map((teacher_id) => {
