@@ -639,12 +639,12 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(certification_level,program_type_id!inner(organization_id)),contact_id!inner(full_name))",
+        "*,program_type_teachers!inner(certification_level,program_type_id!inner(organization_id)),full_name)",
     },
     filters: filter,
     onSearch: (value: any) => [
       {
-        field: "contact_id.full_name",
+        field: "full_name",
         operator: "contains",
         value,
       },
@@ -653,7 +653,7 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
       pageSize: pageSize,
       mode: "server",
     },
-    optionLabel: "contact_id.full_name",
+    optionLabel: "full_name",
     optionValue: "id",
   };
 
@@ -662,6 +662,9 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
   }
 
   const { options, queryResult, onSearch } = useMVPSelect(selectQuery);
+
+  console.log(options,);
+  
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
@@ -687,7 +690,7 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
       */}
       {isTeacherShownInTeacherField(formData?.program_created_by) ? (
         <Input
-          value={loginUserData?.userData?.contact_id?.full_name}
+          value={loginUserData?.userData?.full_name}
           disabled={true}
           className="rounded-[12px] text-[14px] font-normal"
         />
@@ -762,12 +765,12 @@ const AssistantTeachersDropDown = () => {
     resource: "users",
     meta: {
       select:
-        "*,contact_id!inner(first_name,last_name),program_type_teachers!inner(program_type_id,certification_level)",
+        "*,first_name,last_name,program_type_teachers!inner(program_type_id,certification_level)",
     },
     filters: filter,
     onSearch: (value) => [
       {
-        field: "contact_id.full_name",
+        field: "full_name",
         operator: "contains",
         value,
       },
@@ -786,7 +789,7 @@ const AssistantTeachersDropDown = () => {
 
   const teachers: any = queryResult.data?.data?.map((val) => {
     return {
-      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
+      label: val?.first_name + " " + val?.last_name,
       value: val?.id,
     };
   });
