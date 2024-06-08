@@ -8,6 +8,7 @@ import ViewParticipantUtmParameters from "@components/participant/viewParticipan
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { authProvider } from "src/authProvider";
 import {
     VIEW_CUSTOMER_DEVICE_DETAILS,
@@ -98,7 +99,7 @@ function index() {
                 <ViewParticipantInformation participantId={Id} />
             </div> */}
             <div className="w-full p-[20px]">
-                <ScrollableTab tabs={tabs}  onActiveTabChange={handleActiveTabChange} />
+                <ScrollableTab tabs={tabs as any}  onActiveTabChange={handleActiveTabChange} />
             </div>
         </div>
     );
