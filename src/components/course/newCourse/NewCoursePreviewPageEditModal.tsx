@@ -50,6 +50,7 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "src/utility";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export const EditModalDialog = ({
   title,
@@ -62,14 +63,12 @@ export const EditModalDialog = ({
   currentStep,
 }: EditModalDialogProps) => {
   const { newCourseData } = newCourseStore();
+  const {optionLabelValue}=optionLabelValueStore()
   /**
    * @constant iAmCoTeachingId
    * @description thid const stores the id of the i am co teaching
    */
-  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_CO_TEACHING
-  )?.id;
+  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -86,7 +85,7 @@ export const EditModalDialog = ({
           onSubmit={function (data: any): void {
             throw new Error("Function not implemented.");
           }}
-          schema={validationSchema(iAmCoTeachingId as number)}
+          schema={validationSchema(iAmCoTeaching as string)}
         >
           {content}
           {/* From now we can call this a new component instead of keeping it inside the form to avoid rerendering */}
@@ -149,7 +148,7 @@ const ButtonsDialog = ({
     }
 
     const { data: programTypeData, error } = await supabase
-      .from("program_types")
+      .from("product")
       .select("*")
       .eq("id", programTypeId);
 

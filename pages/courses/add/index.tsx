@@ -69,6 +69,8 @@ import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
+  const {optionLabelValue}=optionLabelValueStore()
+  
   console.log(loginUserData, "loginUserData");
 
   const {
@@ -77,12 +79,13 @@ function index() {
 
   console.log("router is ", section);
 
-  if (!loginUserData?.userData) {
+  if (!loginUserData?.userData || !optionLabelValue) {
     return (
-      <section className="flex justify-center align-center pt-[15%]">
+      <div  className="flex justify-center align-center pt-[15%]">
+      <section className="loader">
         {" "}
-        <div>Loading...</div>
       </section>
+      </div>
     );
   }
 
@@ -467,7 +470,7 @@ export const NewCourseTabs = () => {
     }
 
     const { data: programTypeData, error } = await supabase
-      .from("program_types")
+      .from("product")
       .select("*")
       .eq("id", programTypeId);
 
@@ -1078,7 +1081,7 @@ export const fetchCourseFee = async ({
   //Need to fetch program_types data when program_type_id is present
   if (formData?.program_type_id) {
     const programTypeData = await supabase
-      .from("program_types")
+      .from("product")
       .select("*")
       .eq("id", formData?.program_type_id)
       .single();
