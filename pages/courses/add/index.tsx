@@ -69,6 +69,8 @@ import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
+  const {optionLabelValue}=optionLabelValueStore()
+  
   console.log(loginUserData, "loginUserData");
 
   const {
@@ -77,12 +79,13 @@ function index() {
 
   console.log("router is ", section);
 
-  if (!loginUserData?.userData) {
+  if (!loginUserData?.userData || !optionLabelValue) {
     return (
-      <section className="flex justify-center align-center pt-[15%]">
+      <div  className="flex justify-center align-center pt-[15%]">
+      <section className="loader">
         {" "}
-        <div>Loading...</div>
       </section>
+      </div>
     );
   }
 
@@ -1157,7 +1160,7 @@ export const fetchCourseFee = async ({
 
     console.log(courseFeeBody, "Body Send to course-fee Edge function");
     //Sending all required params
-    const { data, error } = await supabase.functions.invoke("course-fee", {
+    const { data, error } = await supabase.functions.invoke("course-fees", {
       method: "POST",
       body: courseFeeBody,
       headers: {

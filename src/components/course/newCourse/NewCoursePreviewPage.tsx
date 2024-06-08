@@ -299,7 +299,7 @@ export default function NewCourseReviewPage() {
   const { data: ProgramOrganizer } = useMany({
     resource: "users",
     ids: newCourseData?.organizer_ids || [],
-    meta: { select: "contact_id(full_name)" },
+    meta: { select: "full_name" },
   });
 
   const programOrganizersNames = ProgramOrganizer?.data
@@ -309,7 +309,7 @@ export default function NewCourseReviewPage() {
     .join(", ");
 
   const { data: CourseLanguages } = useMany({
-    resource: "languages",
+    resource: "product_languages",
     ids: newCourseData?.language_ids || [],
     meta: { select: "language_name" },
   });
@@ -321,7 +321,7 @@ export default function NewCourseReviewPage() {
     .join(", ");
 
   const { data: CourseTranslation } = useMany({
-    resource: "languages",
+    resource: "product_languages",
     ids: newCourseData?.translation_language_ids || [],
     meta: { select: "language_name" },
   });
@@ -335,7 +335,7 @@ export default function NewCourseReviewPage() {
   const { data: CourseTeachers } = useMany({
     resource: "users",
     ids: newCourseData?.teacher_ids || [],
-    meta: { select: "contact_id(full_name)" },
+    meta: { select: "full_name" },
   });
 
   const CourseTeachersNames: any = CourseTeachers?.data
