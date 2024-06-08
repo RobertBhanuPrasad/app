@@ -663,7 +663,6 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
 
   const { options, queryResult, onSearch } = useMVPSelect(selectQuery);
 
-  console.log(options,);
   
 
   // Handler for bottom reached to load more options
