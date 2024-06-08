@@ -67,7 +67,8 @@ const Select: React.FC<SelectProps> = ({
         defaultValue={defaultValue as string}
         // Handle the onValueChange event and convert the value back to its
         // original type before passing it to the consumer.
-        onValueChange={(e) => onValueChange?.(JSON.parse(e))}
+        //If the call back is a string then no need to do parse. If callback is a number like "1" then need to parse
+        onValueChange={(e):any => {onValueChange?.(Number.isNaN(parseInt(e))? e : JSON.parse(e))}}
         // Pass all other props to the underlying select component.
         {...props}
       >

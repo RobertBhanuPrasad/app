@@ -1,19 +1,14 @@
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "../../DataTable";
 import React, { useEffect, useRef, useState } from "react";
 import {
   useFieldArray,
   useFormContext,
   useController,
-  FieldValues,
-  useWatch,
-  useFormState,
 } from "react-hook-form";
-import { Checkbox } from "src/ui/checkbox";
+
 import { Input } from "src/ui/input";
 import Delete from "@public/assets/Delete";
-import CustomSelect from "src/ui/custom-select";
-import { useList, useOne, useSelect } from "@refinedev/core";
+
+import {  useOne } from "@refinedev/core";
 import Add from "@public/assets/Add";
 import { RadioButtonCard } from "src/ui/radioButtonCard";
 import { RadioGroup } from "src/ui/radio-group";
@@ -27,9 +22,6 @@ import {
   SelectValue,
 } from "src/ui/select";
 import _ from "lodash";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import { PAYMENT_MODE } from "src/constants/OptionLabels";
-import { PAY_OFFLINE, PAY_ONLINE } from "src/constants/OptionValueOrder";
 import { useTranslation } from 'next-i18next';
 import { translatedText } from "src/common/translations";
 import { useRouter } from "next/router";
@@ -39,6 +31,7 @@ import { supabaseClient } from "src/utility";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -219,16 +212,9 @@ export const AccommodationFeeMode = () => {
   } = useController({
     name: NewCourseStep5FormNames?.accommodation_fee_payment_mode,
   });
-
-  const payOnlineId = getOptionValueObjectByOptionOrder(
-    PAYMENT_MODE,
-    PAY_ONLINE
-  )?.id;
-
-  const payOfflineId = getOptionValueObjectByOptionOrder(
-    PAYMENT_MODE,
-    PAY_OFFLINE
-  )?.id;
+  const {optionLabelValue}=optionLabelValueStore()
+  const payOnlineType = optionLabelValue?.payment_mode.ONLINE as string
+  const payOfflineType = optionLabelValue?.payment_mode.OFFLINE as string
 
   return (
     <div className="flex gap-1 flex-col mt-[32px]">
@@ -236,21 +222,21 @@ export const AccommodationFeeMode = () => {
         {t("course.new_course:accommodation_tab.accommodation_fee")} <span className="text-[#7677F4]">*</span>
       </div>
       <RadioGroup
-        value={JSON.stringify(value)}
+        value={value}
         onValueChange={(value) => {
-          onChange(parseInt(value));
+          onChange(value);
         }}
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value={JSON.stringify(payOnlineId)}
-            selectedRadioValue={JSON.stringify(value)}
+            value={payOnlineType}
+            selectedRadioValue={value}
             label={t("course.new_course:accommodation_tab.pay_online")}
             className="w-[131px] h-[40px] rounded-[12px] "
           />
           <RadioButtonCard
-            value={JSON.stringify(payOfflineId)}
-            selectedRadioValue={JSON.stringify(value)}
+            value={payOfflineType}
+            selectedRadioValue={value}
             label={t("course.new_course:accommodation_tab.pay_offline")}
             className="w-[131px] h-[40px] rounded-[12px]"
           />

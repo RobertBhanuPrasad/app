@@ -23,7 +23,7 @@ import {
   useFormState,
   useWatch
 } from "react-hook-form";
-import { TIME_FORMAT } from "src/constants/OptionLabels";
+import { HOUR_FORMAT } from "src/constants/OptionLabels";
 import { DateCalendar } from "src/ui/DateCalendar";
 import { Badge } from "src/ui/badge";
 import { Button } from "src/ui/button";
@@ -55,8 +55,7 @@ import { translatedText } from "src/common/translations";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import {
   NATIONAL_ADMIN,
-  SUPER_ADMIN,
-  TIME_FORMAT_12_HOURS,
+  SUPER_ADMIN
 } from "src/constants/OptionValueOrder";
 import {
   HoverCard,
@@ -75,14 +74,14 @@ import {
   SelectValue,
 } from "src/ui/select";
 import {
-  getOptionValueObjectByOptionOrder,
-  getOptionValuesByOptionLabel,
+  getEnumsWithLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import useDebounce from "src/utility/useDebounceHook";
 
 import { useTranslation } from "next-i18next";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -90,7 +89,7 @@ function NewCourseStep3() {
   const { program_type_id } = watch();
 
   const { data: programTypeData, isLoading } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: program_type_id,
   });
 
@@ -210,7 +209,7 @@ const Schedules = () => {
 };
 
 const SchedulesHeader = () => {
-  const { t } = useTranslation(["course.new_course", "new_strings"]);
+  const { t } = useTranslation(["course.new_course", "new_strings","enum"]);
   const {
     field: { value: hoursFormat, onChange: hoursFormatOnChange },
     fieldState: { error: schedulesHeaderErrors },
@@ -221,17 +220,7 @@ const SchedulesHeader = () => {
     fieldState: { error: timeZoneError },
   } = useController({ name: NewCourseStep3FormNames?.time_zone_id });
 
-  let timeFormatOptions =
-    getOptionValuesByOptionLabel(TIME_FORMAT)?.[0]?.option_values;
-
-  timeFormatOptions = timeFormatOptions?.map(
-    (val: { id: any; name: object }) => {
-      return {
-        value: val?.id,
-        label: val?.name,
-      };
-    }
-  );
+  let timeFormatOptions = getEnumsWithLabel({label:HOUR_FORMAT});
 
   const { options } = useMVPSelect({
     resource: "time_zones",
@@ -268,7 +257,7 @@ const SchedulesHeader = () => {
             <SelectContent className="w-[161px]">
               {timeFormatOptions?.map((option: any) => (
                 <SelectItem key={option.value} value={option.value}>
-                  {translatedText(option.label)}
+                  {option.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -341,6 +330,9 @@ const Sessions = () => {
   const formData = watch();
   const schedules = formData?.schedules || [];
 
+  const {optionLabelValue} =optionLabelValueStore()
+  const timeFormat12Hours = optionLabelValue?.hour_format.HOURS_12
+
   /**
    * We need to add a new session when user click on add session
    * But here we have so much requirement
@@ -374,7 +366,7 @@ const Sessions = () => {
     // and we need to set to 06:00PM as start time and end time as 08:00PM for all countries
     // in future if client asks we need to set date and time as per each country what ever theu want
 
-    if (formData?.hour_format_id === timeFormat12HoursId) {
+    if (formData?.hour_format_id === timeFormat12Hours) {
       tempSchedule["startHour"] = "06";
       tempSchedule["startMinute"] = "00";
       tempSchedule["endHour"] = "08";
@@ -417,10 +409,6 @@ const Sessions = () => {
   const handleRemoveSession = (index: number) => {
     remove(index);
   };
-  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-    TIME_FORMAT,
-    TIME_FORMAT_12_HOURS
-  )?.id;
 
   return (
     <div className="flex flex-col gap-4">
@@ -462,11 +450,10 @@ const ScheduleComponent = ({
 
   const schedule = formData?.schedules[index];
 
-  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-    TIME_FORMAT,
-    TIME_FORMAT_12_HOURS
-  )?.id;
   const { t } = useTranslation(["common", "course.new_course","new_strings"]);
+
+  const {optionLabelValue} =optionLabelValueStore()
+  const timeFormat12Hours = optionLabelValue?.hour_format.HOURS_12
 
   return (
     <div className="h-15 flex flex-col gap-1 justify-between">
@@ -502,7 +489,7 @@ const ScheduleComponent = ({
         <TimePicker
           index={index}
           is12HourFormat={
-            formData?.hour_format_id == timeFormat12HoursId ? true : false
+            formData?.hour_format_id == timeFormat12Hours ? true : false
           }
         />
         <div className="w-[127px] flex gap-4 ">
@@ -1010,7 +997,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
    * Getting settings Program type databased on program type id form form 
    */
   const { data: programTypeData } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: formData?.program_type_id,
   });
 

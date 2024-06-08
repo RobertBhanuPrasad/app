@@ -45,10 +45,10 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { Switch } from "src/ui/switch";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "./EditCourseUtil";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -61,12 +61,15 @@ export default function NewCourseStep2() {
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
+  const {optionLabelValue}=optionLabelValueStore()
+  console.log(optionLabelValue,'optionLabelValue');
+  
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
     <div className="pt-2 w-auto h-auto ">
       <div className="flex flex-wrap gap-x-7 gap-y-3">
         <div className="w-80 h-20">
-          <CourseTypeDropDown />
+          <CourseTypeDropDown/>
         </div>
         {/* Course Name drop will come from settings */}
         {/* //TODO: Need to BussinessLayer for this with proper code */}
@@ -168,6 +171,7 @@ export default function NewCourseStep2() {
 
 export const CourseTypeDropDown = () => {
   const { watch, setValue, clearErrors } = useFormContext();
+  const {optionLabelValue}=optionLabelValueStore()
 
   /**
    * This variable holds the path of the url
@@ -185,10 +189,8 @@ export const CourseTypeDropDown = () => {
 
   const formData = watch();
 
-  const courseCategoryId = getOptionValueObjectByOptionOrder(
-    PROGRAM_CATEGORY,
-    COURSE
-  )?.id;
+  const courseCategoryType = optionLabelValue?.program_category?.COURSE
+
 
   //Requirement: Fetch only the course types of organization selected in Step-1
   let filter: Array<CrudFilter> = [
@@ -198,9 +200,9 @@ export const CourseTypeDropDown = () => {
       value: formData?.organization_id,
     },
     {
-      field: "program_category_id",
+      field: "program_category",
       operator: "eq",
-      value: courseCategoryId,
+      value: courseCategoryType,
     },
   ];
 
@@ -240,7 +242,7 @@ export const CourseTypeDropDown = () => {
   });
 
   const selectQuery: any = {
-    resource: "program_types",
+    resource: "product",
     meta: {
       select: "*,program_type_teachers!inner(user_id)",
     },
@@ -560,6 +562,7 @@ const CourseNameDropDown = () => {
 
 const TeachersDropDown = () => {
   const { data: loginUserData }: any = useGetIdentity();
+  const {optionLabelValue}=optionLabelValueStore()
 
   const { watch } = useFormContext();
 
@@ -572,35 +575,30 @@ const TeachersDropDown = () => {
     name: NewCourseStep2FormNames?.teacher_ids,
   });
 
-  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_ORGANIZER
-  )?.id;
+
+  const iAmOrganizer = optionLabelValue?.program_manage_type?.I_AM_ORGANIZING
+
 
   /**
    * This holds the certification certified level id
    */
-  const certificationCeritifiedLevelId = getOptionValueObjectByOptionOrder(
-    CERTIFICATION_TYPE,
-    CERTIFIED
-  )?.id;
+  const certificationCeritifiedLevel = optionLabelValue?.program_certification_level?.CERTIFIED
+
 
   /**
    * This holds the certification co teach level id
    */
-  const certificationCoTeachLevelId = getOptionValueObjectByOptionOrder(
-    CERTIFICATION_TYPE,
-    CO_TEACH
-  )?.id;
+  const certificationCoTeachLevel = optionLabelValue?.program_certification_level?.CO_TEACH
+
 
   /**
    * Initiall filter array holds the certification level for teachers and it fetch only those whose certification levl is co teach and cerified
    */
   let filter: Array<CrudFilter> = [
     {
-      field: "program_type_teachers.certification_level_id",
+      field: "program_type_teachers.certification_level",
       operator: "in",
-      value: [certificationCeritifiedLevelId, certificationCoTeachLevelId],
+      value: [certificationCeritifiedLevel, certificationCoTeachLevel],
     },
   ];
 
@@ -620,13 +618,14 @@ const TeachersDropDown = () => {
       value: formData?.organization_id,
     });
   }
+console.log(formData?.program_created_by,'formData?.program_created_by');
 
   /* This condition checks if the program was created by the currently logged-in user as only the iam the organizer for another teacher */
   /* If the program was created by the organizer, it proceeds to add a filter */
   /* The filter excludes the currently logged-in user from the list of teachers */
   /* This ensures that the organizer is not included in the list of teachers */
   /* The filter is applied to the 'program_type_teachers.user_id' field */
-  if (formData?.program_created_by == iAmOrganizerId) {
+  if (formData?.program_created_by == iAmOrganizer) {
     filter.push({
       field: "program_type_teachers.user_id",
       operator: "ne",
@@ -640,7 +639,7 @@ const TeachersDropDown = () => {
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(certification_level_id,program_type_id!inner(organization_id)),contact_id!inner(full_name))",
+        "*,program_type_teachers!inner(certification_level,program_type_id!inner(organization_id)),contact_id!inner(full_name))",
     },
     filters: filter,
     onSearch: (value: any) => [
@@ -708,7 +707,7 @@ const TeachersDropDown = () => {
             //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
             if (
               option === loginUserData?.userData?.id &&
-              formData?.program_created_by != iAmOrganizerId
+              formData?.program_created_by != iAmOrganizer
             ) {
               return {
                 disable: true,
@@ -733,22 +732,21 @@ const TeachersDropDown = () => {
 
 const AssistantTeachersDropDown = () => {
   const { watch } = useFormContext();
+  const {optionLabelValue}=optionLabelValueStore()
 
   const [pageSize, setPageSize] = useState(10);
 
   const formData = watch();
 
   //Finding program Organizer role id
-  const certificationLevelId = getOptionValueObjectByOptionOrder(
-    CERTIFICATION_TYPE,
-    ASSIST
-  )?.id;
+  const certificationLevel = optionLabelValue?.program_certification_level?.ASSIST
+
 
   let filter: Array<CrudFilter> = [
     {
-      field: "program_type_teachers.certification_level_id",
+      field: "program_type_teachers.certification_level",
       operator: "eq",
-      value: certificationLevelId,
+      value: certificationLevel,
     },
   ];
 
@@ -764,7 +762,7 @@ const AssistantTeachersDropDown = () => {
     resource: "users",
     meta: {
       select:
-        "*,contact_id!inner(first_name,last_name),program_type_teachers!inner(program_type_id,certification_level_id)",
+        "*,contact_id!inner(first_name,last_name),program_type_teachers!inner(program_type_id,certification_level)",
     },
     filters: filter,
     onSearch: (value) => [
@@ -831,17 +829,13 @@ const Visibility = () => {
   } = useController({
     name: NewCourseStep2FormNames?.visibility_id,
   });
-
+  const {optionLabelValue}=optionLabelValueStore()
   //Finding program Organizer role id
-  const publicVisibilityId = getOptionValueObjectByOptionOrder(
-    VISIBILITY,
-    PUBLIC
-  )?.id;
+  const publicVisibility = optionLabelValue?.program_visibility?.PUBLIC
 
-  const privateVisibilityId = getOptionValueObjectByOptionOrder(
-    VISIBILITY,
-    PRIVATE
-  )?.id;
+
+  const privateVisibility = optionLabelValue?.program_visibility?.PRIVATE
+
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
     <div className="flex gap-1 flex-col">
@@ -878,20 +872,20 @@ const Visibility = () => {
 
       <RadioGroup
         onValueChange={(val: string) => {
-          onChange(parseInt(val));
+          onChange(val);
         }}
-        value={JSON.stringify(value)}
+        value={value}
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value={JSON.stringify(publicVisibilityId)}
-            selectedRadioValue={JSON.stringify(value)}
+            value={publicVisibility}
+            selectedRadioValue={value}
             label={t("public")}
-            className="w-[112px] h-[40px] rounded-[12px] "
+            className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
-            value={JSON.stringify(privateVisibilityId)}
-            selectedRadioValue={JSON.stringify(value)}
+            value={privateVisibility}
+            selectedRadioValue={value}
             label={t("private")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />

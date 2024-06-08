@@ -67,6 +67,7 @@ export default function NewCourseReviewPage() {
     "course.new_course",
     "course.view_course",
     "new_strings",
+    "enums"
   ]);
   const supabase = supabaseClient();
 
@@ -88,7 +89,7 @@ export default function NewCourseReviewPage() {
   const { newCourseData, setNewCourseData } = newCourseStore();
 
   const { data: programTypeData } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: newCourseData?.program_type_id,
   });
 
@@ -281,24 +282,14 @@ export default function NewCourseReviewPage() {
   ]);
 
   const creator =
-    newCourseData?.program_created_by &&
-    getOptionValueObjectById(
-      PROGRAM_ORGANIZER_TYPE,
-      newCourseData?.program_created_by
-    );
+    newCourseData?.program_created_by 
 
-  const paymentMethod = getOptionValueObjectById(
-    PAYMENT_MODE,
-    newCourseData?.accommodation_fee_payment_mode
-  );
 
-  const timeFormat =
-    newCourseData?.hour_format_id &&
-    getOptionValueObjectById(TIME_FORMAT, newCourseData?.hour_format_id);
+  const paymentMethod = newCourseData?.accommodation_fee_payment_mode 
+  const timeFormat = newCourseData?.hour_format_id;
 
-  const visibility =
-    newCourseData?.visibility_id &&
-    getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id);
+  const visibility = newCourseData?.visibility_id 
+
 
   const { data: organizationName } = useOne({
     resource: "organizations",
@@ -355,7 +346,7 @@ export default function NewCourseReviewPage() {
     .join(", ");
 
   const { data: courseType } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: newCourseData?.program_type_id,
   });
 
@@ -821,7 +812,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                 className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
                 title={translatedText(creator?.name)}
               >
-                {creator?.name ? translatedText(creator?.name) : "-"}
+                {creator ? t(`enum:${creator}`) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -915,6 +906,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                     ? translatedText(courseType?.data?.name)
                     : "-"
                 }
+                
               >
                 {courseType?.data?.name && newCourseData?.program_type_id !== ""
                   ? translatedText(courseType?.data?.name)
@@ -1019,7 +1011,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={translatedText(visibility?.name)}
               >
-                {visibility ? translatedText(visibility?.name) : "-"}
+                {visibility ? t(`enum:${visibility}`) : "-"}
               </abbr>
             </div>
             {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
@@ -1241,10 +1233,10 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={timeFormat?.value}
                 >
-                  {timeFormat?.value
-                    ? timeFormat?.value.split(" ")[0] +
+                  {t(`enum:${timeFormat}`)
+                    ? t(`enum:${timeFormat}`).split(" ")[0] +
                       " " +
-                      timeFormat?.value.split(" ")[1] +
+                      t(`enum:${timeFormat}`).split(" ")[1] +
                       "s"
                     : "-"}
                 </abbr>
@@ -1386,6 +1378,8 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
           {newCourseData?.is_residential_program && (
             <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
               {newCourseData?.accommodation?.map((data: any) => {
+   
+                
                 return (
                   <Accommodation
                     accomdationData={data}
@@ -1404,7 +1398,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={translatedText(paymentMethod?.name)}
                 >
-                  {translatedText(paymentMethod?.name)}
+                   {t(`enum:${paymentMethod}`)}
                 </abbr>
               </div>
             </div>
