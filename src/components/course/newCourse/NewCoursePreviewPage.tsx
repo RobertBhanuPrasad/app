@@ -39,10 +39,7 @@ import {
   formatDateString,
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
-import {
-  getOptionValueObjectById,
-  getOptionValueObjectByOptionOrder,
-} from "src/utility/GetOptionValuesByOptionLabel";
+
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
@@ -60,6 +57,7 @@ import { fetchCourseFee } from "pages/courses/add";
 import _ from "lodash";
 import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 import { NewCourseStep3FormNames, NewCourseStep4FormNames } from "src/constants/CourseConstants";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -72,6 +70,7 @@ export default function NewCourseReviewPage() {
   const supabase = supabaseClient();
 
   const { data: loginUserData }: any = useGetIdentity();
+  const {optionLabelValue}=optionLabelValueStore()
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -295,6 +294,7 @@ export default function NewCourseReviewPage() {
     resource: "organizations",
     id: newCourseData?.organization_id,
   });
+console.log(newCourseData,'newCourseData',newCourseData?.organizer_ids);
 
   const { data: ProgramOrganizer } = useMany({
     resource: "users",
@@ -304,7 +304,7 @@ export default function NewCourseReviewPage() {
 
   const programOrganizersNames = ProgramOrganizer?.data
     ?.map((user_id) => {
-      if (user_id?.contact_id?.full_name) return user_id?.contact_id?.full_name;
+      if (user_id?.full_name) return user_id?.full_name;
     })
     .join(", ");
 
@@ -335,8 +335,9 @@ export default function NewCourseReviewPage() {
   const { data: CourseTeachers } = useMany({
     resource: "users",
     ids: newCourseData?.teacher_ids || [],
-    meta: { select: "full_name" },
+    meta: { select: "contact_id(full_name)" },
   });
+console.log(CourseTeachers,'CourseTeachers');
 
   const CourseTeachersNames: any = CourseTeachers?.data
     ?.map((teacher_id) => {
@@ -476,18 +477,15 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   /**
    * The variable holds the course accounting status not submitted id
    */
-  const accountingNotSubmittedStatusId =
-    getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
-      ?.id ?? 0;
-
+  const accountingNotSubmittedStatus=optionLabelValue?.program_accounting_status?.NOT_SUBMITTED
+   
   /**
    * @constant iAmCoTeachingId
    * @description thid const stores the id of the i am co teaching
    */
-  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_CO_TEACHING
-  )?.id;
+
+
+  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING
 
   const [errors, setErrors] = useState<any>({});
 
@@ -507,7 +505,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
       countryCode
     );
 
-    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+    const newCourseZodSchema = validationSchema(iAmCoTeaching as string);
 
     let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 
@@ -593,7 +591,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
               program_data: programBody,
               loggedin_user_id: data?.userData?.id,
               accounting_not_submitted_status_id:
-                accountingNotSubmittedStatusId,
+                accountingNotSubmittedStatus,
               language_code: languageCode,
               rx_base_url:RX_BASE_URL,
               cx_base_url:CX_BASE_URL,
