@@ -1,16 +1,13 @@
-
-import { CapsEnvironment, CountryCode, CurrencyCode, GatewayAddress, GatewayCustomer, GatewayStyle, PaymentGateways, PaymentGatewaysConfig, countryCodes, currencyCodes } from "caps-ui"
-
 import { CapsFormFields } from "@components/CapsFormFields"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useState } from "react"
+import { CapsEnvironment, CountryCode, CurrencyCode, GatewayAddress, GatewayCustomer, GatewayStyle, PaymentGateways, PaymentGatewaysConfig, countryCodes, currencyCodes } from "caps-ui"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Button } from "src/ui/button"
 import { Form } from "src/ui/form"
-import { z } from "zod"
 import useGetCountryCode from "src/utility/useGetCountryCode"
 import useGetLanguageCode from "src/utility/useGetLanguageCode"
-
+import { z } from "zod"
 
 // Form Validation Schema
 const formValidationSchema = z.object({
@@ -29,29 +26,27 @@ const formValidationSchema = z.object({
     metaData: z.string().optional(),
     module: z.string(),
     amount: z.string(),
-    currency: z.string().refine(v => currencyCodes.includes(v as CurrencyCode), { message: "Please enter a correct country code" }),
+    currency: z.string().refine(v => currencyCodes.includes(v as CurrencyCode), { message: "Please enter a correct currency code" }),
     test: z.boolean()
 })
 
-
 const TestPayment = () => {
     const [pConfig, setPConfig] = useState<PaymentGatewaysConfig>()
-    
+    const submitButtonRef = useRef<HTMLButtonElement>(null)
+
     const countryCode = useGetCountryCode()
     const languageCode = useGetLanguageCode()
 
     const BX_BASE_URL = process.env.NEXT_PUBLIC_BX_BASE_URL
-
     const ReturnURL = `${BX_BASE_URL}/${countryCode}-${languageCode}/caps/thankyou-page`
 
-    useEffect(() => document.getElementById("testing123")?.click(), [])
     const form = useForm<FormType>({
         resolver: zodResolver(formValidationSchema),
         defaultValues: {
-            name: "Rohit",
-            surname: "Nandwani",
-            phone: "+919537935955",
-            email: "rohit@gmail.com",
+            name: "Jhon",
+            surname: "Armstrong",
+            phone: "+919701295781",
+            email: "jhonarmstrong@gmail.com",
             line1: "201, Sonia Apartment",
             line2: "Bhatar Road",
             city: "Surat",
@@ -60,7 +55,7 @@ const TestPayment = () => {
             pgCountry: "CA",
             pincode: "395001",
             org: "1",
-            metaData: undefined, // or null depending on how you handle optional values
+            metaData: undefined,
             module: "RX",
             amount: "1000",
             currency: "eur",
@@ -70,16 +65,17 @@ const TestPayment = () => {
     })
 
     const parseInputToObject = (inputString: string) => {
-        const keyValuePairs = inputString.split(';').map(pair => pair.trim());
-        const result: Record<string, string> = {};
+        const keyValuePairs = inputString.split(';').map(pair => pair.trim())
+        const result: Record<string, string> = {}
 
         keyValuePairs.forEach(pair => {
-            const [key, value] = pair.split(':').map(item => item.replace(/"/g, '').trim());
-            result[key] = value;
-        });
+            const [key, value] = pair.split(':').map(item => item.replace(/"/g, '').trim())
+            result[key] = value
+        })
 
-        return result;
-    };
+        return result
+    }
+
     const handleSubmit = (data: FormType) => {
         const customerAddress: GatewayAddress = {
             line1: data.line1,
@@ -116,14 +112,16 @@ const TestPayment = () => {
             customerInfo: customerDetails,
             metadata: data.metaData ? parseInputToObject(data.metaData) : null,
             appearance: style,
-            returnUrl: ReturnURL!,
+            returnUrl: ReturnURL,
             environment: process.env.NEXT_PUBLIC_CAPS_ENVIRONMENT! as CapsEnvironment
-        };
+        }
 
         setPConfig(pConfig)
-
     }
 
+    useEffect(() => {
+        submitButtonRef.current?.click()
+    }, [])
 
     return (
         <div className="flex flex-col justify-center sm:flex-row gap-5 p-5">
@@ -133,7 +131,7 @@ const TestPayment = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSubmit)} method="onchange">
                         <CapsFormFields form={form} />
-                        <Button id="testing123">Submit</Button>
+                        <Button ref={submitButtonRef} type="submit">Submit</Button>
                     </form>
                 </Form>
             </div>
@@ -142,16 +140,16 @@ const TestPayment = () => {
             <div className="w-[350px]">
                 <p className="font-semibold text-lg pb-3">Available Payment Gateways</p>
                 {pConfig && (
-                    < PaymentGateways config={pConfig} />
+                    <PaymentGateways config={pConfig} />
                 )}
             </div>
         </div>
     )
 }
-// TestPayment.noLayout = true;
-TestPayment.requireAuth = true;
+
+TestPayment.requireAuth = true
 
 export default TestPayment
-// Form Interface
-export type FormType = z.infer<typeof formValidationSchema>;
 
+// Form Interface
+export type FormType = z.infer<typeof formValidationSchema>
