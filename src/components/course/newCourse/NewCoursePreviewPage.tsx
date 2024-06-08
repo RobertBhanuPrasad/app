@@ -299,14 +299,12 @@ export default function NewCourseReviewPage() {
   const { data: ProgramOrganizer } = useMany({
     resource: "users",
     ids: newCourseData?.organizer_ids || [],
-    meta: { select: "contact_id(full_name)" },
+    meta: { select: "*" },
   });
 
   const programOrganizersNames = ProgramOrganizer?.data
-    ?.map((user_id) => {
-      if (user_id?.contact_id?.full_name) return user_id?.contact_id?.full_name;
-    })
-    .join(", ");
+  ? ProgramOrganizer.data.map(organizer => organizer.full_name).join(", ")
+  : "";
 
   const { data: CourseLanguages } = useMany({
     resource: "languages",
