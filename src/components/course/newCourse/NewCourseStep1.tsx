@@ -213,11 +213,11 @@ const RadioCards = () => {
     // Because if we chanage the created by and then the course type is not present for that created type then 
     if(!IsEditCourse(router?.pathname)){
       setValue("program_type_id", "");
-    setValue("product", "");
+    setValue("program_type", "");
     setValue("program_alias_name_id", "");
 
     setTimeout(()=>{
-      clearErrors(['program_type_id','product','program_alias_name_id'])
+      clearErrors(['program_type_id','program_type','program_alias_name_id'])
     },10)
     }
     // we are storing the program created by in the zustand variable to use it in the validatios
@@ -424,7 +424,7 @@ const OrganizationDropDown = () => {
 
   const handleClearDependencyValues = () => {
     setValue("program_type_id", "");
-    setValue("product", "");
+    setValue("program_type", "");
     setValue("program_alias_name_id", "");
     setValue("teacher_ids", []);
 
