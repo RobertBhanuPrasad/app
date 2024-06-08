@@ -40,9 +40,9 @@ const TestPayment = () => {
     const countryCode = useGetCountryCode()
     const languageCode = useGetLanguageCode()
 
-    const CAPS_BASE_URL = process.env.NEXT_PUBLIC_RETURN_URL
+    const BX_BASE_URL = process.env.NEXT_PUBLIC_BX_BASE_URL
 
-    const ReturnURL = `${CAPS_BASE_URL}/${countryCode}-${languageCode}/caps/thankyou-page`
+    const ReturnURL = `${BX_BASE_URL}/${countryCode}-${languageCode}/caps/thankyou-page`
 
     useEffect(() => document.getElementById("testing123")?.click(), [])
     const form = useForm<FormType>({
