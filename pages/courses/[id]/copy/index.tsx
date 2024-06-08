@@ -59,7 +59,7 @@ const index = () => {
       router.events.off("routeChangeStart", routeChange);
     };
     
-  }, []);
+  }, [section]);
 
     if (section === "thank_you") {
         return (

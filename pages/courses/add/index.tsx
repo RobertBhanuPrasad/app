@@ -73,6 +73,7 @@ import {
   IsCopyCourse,
   IsEditCourse,
 } from "@components/course/newCourse/EditCourseUtil";
+import { IsShowConfirmBoxInNewCourse } from "@components/courseBusinessLogic";
 import {
   NewCourseContext,
   useNewCourseContext,
@@ -80,7 +81,6 @@ import {
 import { useTranslation } from "next-i18next";
 import { supabaseClient } from "src/utility";
 import useGetCountryCode from "src/utility/useGetCountryCode";
-import { IsShowConfirmBoxInNewCourse } from "@components/courseBusinessLogic";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -135,7 +135,7 @@ function index() {
       router.events.off("routeChangeStart", routeChange);
     };
 
-  }, [isNewCourseEditedRef]);
+  }, [isNewCourseEditedRef,section]);
 
   console.log("router is ", section);
 
