@@ -1157,7 +1157,7 @@ export const fetchCourseFee = async ({
 
     console.log(courseFeeBody, "Body Send to course-fee Edge function");
     //Sending all required params
-    const { data, error } = await supabase.functions.invoke("course-fee", {
+    const { data, error } = await supabase.functions.invoke("course-fees", {
       method: "POST",
       body: courseFeeBody,
       headers: {
