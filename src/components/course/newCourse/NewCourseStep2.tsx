@@ -1,28 +1,13 @@
 import { isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
-import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
-import LockIcon from "@public/assets/Lock";
-import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
+import { CrudFilter, useGetIdentity } from "@refinedev/core";
 import _ from "lodash";
-import { usePathname, useSearchParams } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useController, useFormContext, useFormState } from "react-hook-form";
+import { usePathname } from "next/navigation";
+import { ChangeEvent, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import { NewCourseStep2FormNames, NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
-  CERTIFICATION_TYPE,
-  PROGRAM_CATEGORY,
-  PROGRAM_ORGANIZER_TYPE,
-  VISIBILITY,
-} from "src/constants/OptionLabels";
-import {
-  ASSIST,
-  CERTIFIED,
-  COURSE,
-  CO_TEACH,
-  I_AM_ORGANIZER,
-  PRIVATE,
-  PUBLIC,
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
@@ -62,7 +47,6 @@ export default function NewCourseStep2() {
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
   const {optionLabelValue}=optionLabelValueStore()
-  console.log(optionLabelValue,'optionLabelValue');
   
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (

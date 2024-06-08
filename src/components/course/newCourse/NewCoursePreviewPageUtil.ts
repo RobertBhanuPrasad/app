@@ -3,7 +3,6 @@ import { fetchCourseFee } from "pages/courses/add";
 import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
-  NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";

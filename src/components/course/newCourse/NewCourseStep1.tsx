@@ -1,23 +1,17 @@
 import Coteacher from "@public/assets/Coteacher";
 import Organizer from "@public/assets/Organizer";
 import Teacher from "@public/assets/Teacher";
-import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
+import { useGetIdentity} from "@refinedev/core";
 import _ from "lodash";
 import { usePathname } from "next/navigation";
 import React, {  useState } from "react";
-import { useController, useFormContext, useFormState } from "react-hook-form";
-import { translatedText } from "src/common/translations";
+import { useController, useFormContext } from "react-hook-form";
 import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
 } from "src/constants/CourseConstants";
-import { PROGRAM_ORGANIZER_TYPE, USER_ROLE } from "src/constants/OptionLabels";
 import {
-  I_AM_CO_TEACHING,
-  I_AM_ORGANIZER,
-  I_AM_TEACHING,
   NATIONAL_ADMIN,
-  PROGRAM_ORGANIZER,
   SUPER_ADMIN,
   TEACHER,
 } from "src/constants/OptionValueOrder";
@@ -42,7 +36,6 @@ import { Text } from "src/ui/TextTags";
 import { useRouter } from "next/router";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { useMVPSelect } from "src/utility/useMVPSelect";
-import { getDefaultValues } from "@components/participants/editParticipant/EditParticipantUtil";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 function NewCourseStep1() {

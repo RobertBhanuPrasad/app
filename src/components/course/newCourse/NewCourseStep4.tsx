@@ -2,11 +2,9 @@ import { DataTable } from "../../DataTable";
 import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "src/ui/checkbox";
-import { supabaseClient } from "src/utility";
 import { useGetIdentity, useList, useOne } from "@refinedev/core";
 import {
   NATIONAL_ADMIN,
-  REGULAR,
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import {
@@ -17,18 +15,10 @@ import {
 } from "react-hook-form";
 import { Input } from "src/ui/input";
 import { NewCourseStep4FormNames } from "src/constants/CourseConstants";
-import { DateCalendar } from "src/ui/DateCalendar";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import { Button } from "src/ui/button";
-import CalenderIcon from "@public/assets/CalenderIcon";
-import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { translatedText } from "src/common/translations";
-import useGetCountryCode from "src/utility/useGetCountryCode";
 import { DateField } from "src/ui/DateField";
 import { Text } from "src/ui/TextTags";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import { FEE_LEVEL } from "src/constants/OptionLabels";
 import _ from "lodash";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
@@ -40,11 +30,6 @@ export default function CourseTable() {
   const { watch } = useFormContext();
 
   const formData = watch();
-
-  const { data: programTypeData } = useOne({
-    resource: "program_types",
-    id: formData?.program_type_id,
-  });
 
   const { data: organizationData, isLoading } = useOne({
     resource: "organizations",
