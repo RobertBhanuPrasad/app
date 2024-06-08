@@ -40,7 +40,6 @@ import {
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
 import {
-  getOptionValueObjectById,
   getOptionValueObjectByOptionOrder,
 } from "src/utility/GetOptionValuesByOptionLabel";
 import useGetCountryCode from "src/utility/useGetCountryCode";
@@ -438,7 +437,6 @@ export default function NewCourseReviewPage() {
     (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
   );
 
-  console.log(feeLevels,'feeLevels AAAAAAAAAAAAAAAA')
 const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
