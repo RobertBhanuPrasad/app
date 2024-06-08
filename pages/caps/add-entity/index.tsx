@@ -23,18 +23,14 @@ const Entity = () => {
     resolver: zodResolver(schema),
   });
   const router = useRouter();
-  const [error, setError] = useState<string>();
   const [alert2, setAlert] = useState<CustomAlert>();
 
   // Retrive QueryParam 
   useEffect(() => {
-    if (error) {
-      router.replace({pathname:router.pathname}, undefined, {shallow:true})
-      return
-    };
-    setError(router.query.error as string);
-    
-  }, [router, error]);
+    const _error = new URL(window.location.href).searchParams.get("error");
+    router.replace({pathname:window.location.pathname}, undefined, {shallow : true});
+    if (_error) setAlert({title : "Oops!", description :_error});
+  },[]);
   
   // Alert Error message
   const errorAlertMessage = () => {
@@ -56,15 +52,12 @@ const Entity = () => {
   // Alert Ui design
   const AlertDestructive = (props: CustomAlert) => {
     return (
-      <ErrorAlerts title={props.title} description={props.description} onClose = {()=>setError(undefined)}/>
+      <ErrorAlerts title={props.title} description={props.description} onClose = {()=>{console.log("yo");setAlert(undefined)}}/>
     )
   }
 
   return (
     <>
-      {error &&  (
-        <AlertDestructive title={"Oops! Error URL."} description={"Please try again later"} />
-      )}
       {alert2 && <AlertDestructive {...alert2} />}
       <form className="px-4" autoComplete="off" onSubmit={handleSubmit(createEntity)}>
         <div className="pd-5 text-center bg-body-tertiary">
@@ -96,4 +89,4 @@ const Entity = () => {
 
 export default Entity;
 
-Entity.requireAuth = false
+Entity.requireAuth = true

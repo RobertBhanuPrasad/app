@@ -20,13 +20,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/router";
 import { supabaseClient } from "src/utility";
-import { X } from "lucide-react";
 import ErrorAlerts from "@components/ErrorAlert";
 
 
-const schema = z.object({
-
-});
+const schema = z.object({});
 type FormValues = z.infer<typeof schema>;
 
 type Gateway = {
@@ -299,11 +296,6 @@ const EntityConfig = () => {
                         <option value={-1} disabled>--- choose which gateways to allow for this entity ---</option>
                         {allGateways.map((gateway, index) => {
                             return <option value={index}>{gateway.name}</option>
-                            // if (!selectedIds.find(pg => pg.pg_id === gateway.id)) {
-                            //     return <option value={index}>
-                            //         {shorten(gateway.name)} | {shorten(gateway.description, 30)} | {shorten(gateway.type, 10)} | {gateway.test} | {shorten(gateway.purpose, 10)}
-                            //     </option>
-                            // }
                         })
                         }
                     </select>
@@ -345,17 +337,7 @@ const EntityConfig = () => {
 
 export default EntityConfig
 
-EntityConfig.requireAuth = false
-
-function shorten(text: string | null, maxLen: number = 20) {
-    text = text ? text : "";
-
-    if (text.length > maxLen) {
-        return text.substring(0, maxLen - 3) + '...';
-    }
-    const remaining = maxLen - text.length;
-    return (repeat(Math.floor(remaining / 2)) + text + repeat(remaining - Math.floor(remaining / 2)))
-}
+EntityConfig.requireAuth = true
 
 function repeat(times: number, char: string = '\u00a0') {
     if (times <= 0) return '';
