@@ -1,16 +1,12 @@
-import { AuthBindings } from "@refinedev/core";
-import nookies from "nookies";
+import { AuthProvider } from "@refinedev/core";
 
 import { supabaseClient } from "./utility";
 
-export const authProvider: AuthBindings = {
+const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
     const supabase = supabaseClient();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } = await signInWithKeycloak();
 
     if (error) {
       return {
@@ -19,31 +15,14 @@ export const authProvider: AuthBindings = {
       };
     }
 
-    if (data?.session) {
-      nookies.set(null, "token", data.session.access_token, {
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-      });
-
-      return {
-        success: true,
-        redirectTo: "/",
-      };
-    }
-
-    // for third-party login
     return {
-      success: false,
-      error: {
-        name: "LoginError",
-        message: "Invalid username or password",
-      },
+      success: true,
+      redirectTo: "/",
     };
   },
   logout: async () => {
     const supabase = supabaseClient();
 
-    nookies.destroy(null, "token");
     const { error } = await supabase.auth.signOut();
 
     if (error) {
@@ -59,63 +38,27 @@ export const authProvider: AuthBindings = {
     };
   },
   register: async ({ email, password }) => {
-    const supabase = supabaseClient();
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            user_name: "Bhargavi",
-          },
-        },
-      });
-
-      if (error) {
-        return {
-          success: false,
-          error,
-        };
-      }
-
-      if (data) {
-        return {
-          success: true,
-          redirectTo: "/",
-        };
-      }
-    } catch (error: any) {
-      return {
-        success: false,
-        error,
-      };
-    }
-
     return {
       success: false,
       error: {
-        message: "Register failed",
-        name: "Invalid email or password",
+        message: "Registeration not enabled yet",
+        name: "RegDisabled",
       },
     };
   },
   check: async (ctx) => {
     const supabase = supabaseClient();
 
-    const { token } = nookies.get(ctx);
-    const { data } = await supabase.auth.getUser(token);
-    const { user } = data;
-
-    if (user) {
+    const { data, error } = await supabase.from("users").select("*").limit(1);
+    if (error || data.length !== 1) {
       return {
-        authenticated: true,
+        authenticated: false,
+        redirectTo: "/login",
       };
     }
 
     return {
-      authenticated: false,
-      redirectTo: "/login",
+      authenticated: true,
     };
   },
   getPermissions: async () => {
@@ -156,3 +99,20 @@ export const authProvider: AuthBindings = {
     return { error };
   },
 };
+
+const signInWithKeycloak = async () => {
+  const supabase = supabaseClient();
+
+  return await supabase.auth.signInWithOAuth({
+    provider: "keycloak",
+    options: {
+      scopes: "openid",
+      // redirectTo: "http://localhost:2000/auth/callback",
+      queryParams: {
+        response_type: "token",
+      },
+    },
+  });
+};
+
+export { authProvider, signInWithKeycloak };

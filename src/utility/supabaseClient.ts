@@ -1,5 +1,6 @@
 import { createClient } from "@refinedev/supabase";
 import { SupabaseClient } from "@supabase/supabase-js";
+import nookies from "nookies";
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -36,7 +37,7 @@ if (schema === "caps") {
 
   if (schema === undefined) schema = countryCode || "public";
 
-  return createClient(SUPABASE_URL, SUPABASE_KEY, {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
     db: {
       schema,
     },
@@ -46,9 +47,18 @@ if (schema === "caps") {
     global: {
       headers: {
         "country-code": schema,
+        Authorization: `Bearer ${nookies.get(null).token || SUPABASE_KEY}`,
       },
     },
   });
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_OUT") {
+      nookies.destroy(null, "token");
+    }
+  });
+
+  return supabase;
 };
 
 // Generic SupabaseClient Type for allowing non-public schemas as well
