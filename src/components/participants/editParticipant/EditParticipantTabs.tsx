@@ -136,7 +136,7 @@ export default function EditParticipantTabs() {
                 "edit_participant.participants_information_tab.participant_information"
             ),
             content: (
-                <div className="">
+                <div>
                     <ParticipantInformation />
                 </div>
             ),
