@@ -275,7 +275,7 @@ export default function EditParticipantTabs() {
                             activeTabId == "section6" && "text-[#7677F4]"
                         }`}
                     >
-                        UTM Parameters
+                        {t("course.participants:view_participant.utm_parameters")}
                     </p>
                 </div>
             ),
