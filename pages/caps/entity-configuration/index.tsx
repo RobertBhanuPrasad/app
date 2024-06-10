@@ -55,9 +55,6 @@ const checkEntityQueryParam = async (entityId: number): Promise<boolean> => {
         .from('pg_entity')
         .select('id')
         .eq('id', entityId)
-        .limit(1);
-    console.log('Supabase Data:', data);
-    console.log('Supabase Error:', error);
     if (error) {
         console.error('Error checking entity existence:', error);
         return false;
@@ -68,7 +65,6 @@ const checkEntityQueryParam = async (entityId: number): Promise<boolean> => {
 
 const entityQueryParam = async (id: string | string[] | undefined) => {
     const idString = Array.isArray(id) ? id[0] : id;
-    console.log('ID is :', idString);
     if (idString && /^[1-9][0-9]*$/.test(idString)) {
         const idNumber = parseInt(idString, 10);
         if (await checkEntityQueryParam(idNumber)) {
@@ -369,9 +365,7 @@ const EntityConfig = () => {
                     <select className="form-select border-dark " onChange={(e) => { selectPG(e.target.value); setSelectedValue(-1) }} value={selectedValue} style={{ fontFamily: "monospace" }}>
                         <option value={-1} disabled>--- choose which gateways to allow for this entity ---</option>
                             {allGateways.map((gateway, index) => {
-                            if (!selectedIds.find(pg => pg.pg_id === gateway.id)) {
-                                console.log(selectedIds,'All Gateways');
-                                
+                            if (!selectedIds.find(pg => pg.pg_id === gateway.id)) {                             
                                 return <option value={index}>
                                     {shorten(gateway.name)} | {shorten(gateway.description, 30)} | {shorten(gateway.type, 10)} | {gateway.test} | {shorten(gateway.purpose, 10)}
                                 </option>

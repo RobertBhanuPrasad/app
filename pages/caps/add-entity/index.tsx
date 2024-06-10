@@ -67,7 +67,7 @@ const Entity = () => {
   // Alert Ui design
   const AlertDestructive = (props: CustomAlert) => {
     return (
-      <ErrorAlerts title={props.title} description={props.description} onClose = {()=>{console.log("yo");setAlert(undefined)}}/>
+      <ErrorAlerts title={props.title} description={props.description} onClose = {()=>setAlert(undefined)}/>
     )
   }
 
