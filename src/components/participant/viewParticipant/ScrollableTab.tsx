@@ -74,7 +74,7 @@ const ScrollablePage = ({ tabs, onActiveTabChange }: ScrollablePageProps) => {
                         </Element>
                     </div>
                 ))}
-                <div className="h-[550px]"></div>
+                <div className="h-[600px]"></div>
             </div>
         </div>
     );
