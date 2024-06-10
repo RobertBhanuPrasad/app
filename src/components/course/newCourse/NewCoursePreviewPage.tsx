@@ -312,13 +312,13 @@ export default function NewCourseReviewPage() {
   const { data: CourseTeachers } = useMany({
     resource: "users",
     ids: newCourseData?.teacher_ids || [],
-    meta: { select: "contact_id(full_name)" },
+    meta: { select: "full_name" },
   });
 
   const CourseTeachersNames: any = CourseTeachers?.data
     ?.map((teacher_id) => {
-      if (teacher_id?.contact_id?.full_name)
-        return teacher_id?.contact_id?.full_name;
+      if (teacher_id?.full_name)
+        return teacher_id?.full_name;
     })
     .join(", ");
 
