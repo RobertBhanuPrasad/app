@@ -136,14 +136,14 @@ export default function EditParticipantTabs() {
                 "edit_participant.participants_information_tab.participant_information"
             ),
             content: (
-                <div>
+                <div className="">
                     <ParticipantInformation />
                 </div>
             ),
             header: (
                 <div>
                     <p
-                        className={`font-semibold text-[18px] pt-[25px] ${
+                        className={`font-semibold text-[18px] pt-[20px] ${
                             activeTabId == "section1" && "text-[#7677F4]"
                         }`}
                     >
@@ -167,7 +167,7 @@ export default function EditParticipantTabs() {
             header: (
                 <div>
                     <p
-                        className={`font-semibold text-[18px] pt-[25px] ${
+                        className={`font-semibold text-[18px] pt-[20px]  ${
                             activeTabId == "section2" && "text-[#7677F4]"
                         }`}
                     >
@@ -191,7 +191,7 @@ export default function EditParticipantTabs() {
             header: (
                 <div>
                     <p
-                        className={`font-semibold text-[18px] py-[25px] ${
+                        className={`font-semibold text-[18px] pt-[20px] ${
                             activeTabId == "section3" && "text-[#7677F4]"
                         }`}
                     >
@@ -215,7 +215,7 @@ export default function EditParticipantTabs() {
             header: (
                 <div>
                     <p
-                        className={`font-semibold text-[18px] py-[25px] ${
+                        className={`font-semibold text-[18px] pt-[20px]  ${
                             activeTabId == "section4" && "text-[#7677F4]"
                         }`}
                     >
@@ -235,10 +235,10 @@ export default function EditParticipantTabs() {
                 </div>
             ),
             header: (
-                <div className="flex">
+                <div className="flex pt-[20px]">
                     
                     <p
-                        className={`text-[18px] font-[600] pr-[10px] !m-[0] !py-[0] !h-[0] ${
+                        className={`text-[18px] font-[600] pr-[10px]  ${
                             activeTabId == "section5" && "text-[#7677F4]"
                         }`}
                     >
@@ -271,7 +271,7 @@ export default function EditParticipantTabs() {
             header: (
                 <div>
                     <p
-                        className={`text-[18px] font-[600] ${
+                        className={`text-[18px] font-[600] pt-[20px] ${
                             activeTabId == "section6" && "text-[#7677F4]"
                         }`}
                     >
