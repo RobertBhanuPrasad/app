@@ -526,7 +526,7 @@ export default function EditPayment({
                                     </div>
                                     <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center p-[15px]">
                                         {t(
-                                            "new_strings:changes_made_will_be_lost are_you_sure_you_want_to_continue"
+                                            "new_strings:changes_made_will_be_lost_are_you_sure_you_want_to_continue"
                                         )}
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
