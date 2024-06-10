@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "src/ui/button";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { customFetch } from "../../../src/utility/custom-fetch";
+import { customFetch } from "src/utility/custom-fetch";
 import { useRouter } from "next/router";
 import ErrorAlerts from "@components/ErrorAlert";
 
@@ -48,6 +48,8 @@ const Entity = () => {
       errorAlertMessage()
     }
   };
+
+  
 
   // Alert Ui design
   const AlertDestructive = (props: CustomAlert) => {
