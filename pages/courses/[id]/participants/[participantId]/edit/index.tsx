@@ -34,10 +34,10 @@ export default function Edit() {
     }, [Id]);
     return (
         <div>
-            <div className="top-0 bg-white shadow-xl w-full sticky top-[100px]">
+            <div className="top-0 bg-white shadow-xl w-full sticky top-[120px]">
                 <ParticipantsListMainHeader />
             </div>
-            <div className="px-[20px] py-[20px]">
+            <div className="px-[20px] ">
                 <div>
                     {!defaultValues ||
                     Object.keys(defaultValues).length === 0 ? (
