@@ -32,8 +32,10 @@ const PaymentDashboard = () => {
       setIsLoading(false)
     }
   }
-
   
+  useEffect(() => {
+    getPaymentGatewayData()
+  }, [])  
 
   return (
     <div>
