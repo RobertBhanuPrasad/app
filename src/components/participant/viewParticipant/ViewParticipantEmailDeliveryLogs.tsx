@@ -4,9 +4,15 @@ import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import { TableHeader, Text } from 'src/ui/TextTags'
 import { formatDateAndTime } from 'src/utility/DateFunctions'
+import { useTranslation } from 'next-i18next';
+import { translatedText } from "src/common/translations";
+
+
+
 // Component for viewing participant email delivery logs
 function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
  
+  const {t} = useTranslation(['common','course.participants','new_strings'])
 
   // Fetching participant registration data
   const { tableQueryResult: participantEmailDeliveryLogsData } = useTable({
@@ -33,7 +39,7 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
             table: '',
             rowStyles: ''
           }}
-          columns={columns as ColumnDef<any>[]}
+          columns={columns() as ColumnDef<any>[]}
           data={participantEmailDeliveryLogsData?.data?.data || []}
           columnPinning={false}
         />
@@ -44,11 +50,14 @@ function ViewParticipantEmailDeliveryLogs({ participantId }: any) {
 
 export default ViewParticipantEmailDeliveryLogs
 
+const columns = () => {
+  const {t} = useTranslation(['common','course.participants','new_strings'])
+
 const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'type',
     header: () => {
-      return <TableHeader>Type</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.type')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text>{row?.original?.type}</Text>
@@ -57,7 +66,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'delivery_status',
     header: () => {
-      return <TableHeader>Delivery status</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.delivery_status')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text>{row?.original?.delivery_status}</Text>
@@ -66,7 +75,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'delivery_time_stamp',
     header: () => {
-      return <TableHeader>Delivery time Stamp</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.delivery_time_stamp')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text>{row?.original?.delivery_time_stamp ? `${row.original.delivery_time_stamp.slice(0,10)} ${row.original.delivery_time_stamp.slice(11,19)}` : '-'}</Text>
@@ -75,7 +84,7 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'source',
     header: () => {
-      return <TableHeader>Source</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.source')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text>{row?.original?.source}</Text>
@@ -84,10 +93,13 @@ const columns: ColumnDef<ParticipantEmailDeliveryLogsDataBaseType>[] = [
   {
     accessorKey: 'open_time_stamp',
     header: () => {
-      return <TableHeader>Open time stamp</TableHeader>
+      return <TableHeader>{t('course.participants:view_participant.open_time_stamp')}</TableHeader>
     },
     cell: ({ row }) => {
       return <Text>{row?.original?.open_time_stamp ? `${row.original.open_time_stamp.slice(0,10)} ${row.original.open_time_stamp.slice(11,19)}` : '-'}</Text>
     }
   }
-]
+];
+return columns;
+};
+

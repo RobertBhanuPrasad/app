@@ -22,30 +22,19 @@ import EditPayment from "./editParticipant/editPayment";
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-export const columns = () => {
-    const { t } = useTranslation([
-        "common",
-        "course.participants",
-        "new_strings",
-        "course.view_course",
-    ]);
-    const columns: ExtendedColumnDef<any>[] = [
-        {
-            accessorKey: "participant_code",
-            column_name: t(
-                "course.participants:find_participant.registration_id"
-            ),
-            enablePinning: true,
-            enableHiding: false,
-            header: ({ column }) => {
-                return (
-                    <div className="min-w-[150px] text-left">
-                        {t(
-                            "course.participants:find_participant.registration_id"
-                        )}
-                    </div>
-                );
-            },
+export const columns = () =>
+{
+  const {t} = useTranslation(['common','course.participants','new_strings', 'course.view_course', 'course.find_course'])
+  const columns: ExtendedColumnDef<any>[] = [
+  {
+    accessorKey: "participant_code",
+    column_name: t('course.participants:find_participant.registration_id'),
+    enablePinning: true,
+    enableHiding: false,
+    header: ({ column }) => {
+      return <div className="min-w-[150px] text-left">
+      {t('course.participants:find_participant.registration_id')}</div>;
+    },
 
             // This any will be removed after internal dataStructure implementation
 
@@ -733,30 +722,33 @@ export const columns = () => {
 
             // This any will be removed after internal dataStructure implementation
 
-            cell: ({ row }: any) => {
-                const toggle =
-                    row?.original?.is_program_agreement_checked === true
-                        ? "Completed"
-                        : row?.original?.is_program_agreement_checked === false
-                            ? "Pending"
-                            : "-";
-                return <div className="min-w-[150px] text-left">{toggle}</div>;
-            },
-        },
-        {
-            accessorKey: "Program Agreement Date",
-            column_name: t(
-                "course.participants:find_participant.program_agreement_date"
-            ),
-            header: ({ column }) => {
-                return (
-                    <div className="min-w-[150px] text-left">
-                        {t(
-                            "course.participants:find_participant.program_agreement_date"
-                        )}
-                    </div>
-                );
-            },
+    // cell: ({ row }: any) => {
+    //   const toggle =
+    //     row?.original?.is_program_agreement_checked === true
+    //       ? "Completed"
+    //       : row?.original?.is_program_agreement_checked === false
+    //       ? "Pending"
+    //       : "-";
+    //   return <div className="min-w-[150px] text-left">{toggle}</div>;
+    // },
+    cell: ({ row }: any) => {
+      const toggle =
+        row?.original?.is_program_agreement_checked === true
+          ? t('course.find_course:completed')
+          : row?.original?.is_program_agreement_checked === false
+          ?  t('course.participants:edit_participant.pending')
+          : "-";
+      return <div className="min-w-[150px] text-left">{toggle}</div>;
+    },
+  },
+  {
+    accessorKey: "Program Agreement Date",
+    column_name: t('course.participants:find_participant.program_agreement_date'),
+    header: ({ column }) => {
+      return (
+        <div className="min-w-[150px] text-left">{t('course.participants:find_participant.program_agreement_date')}</div>
+      );
+    },
 
             // This any will be removed after internal dataStructure implementation
 
@@ -788,62 +780,65 @@ export const columns = () => {
 
             // This any will be removed after internal dataStructure implementation
 
-            cell: ({ row }: any) => {
-                const toggle =
-                    row?.original?.is_health_declaration_checked === true
-                        ? "Completed"
-                        : row?.original?.is_health_declaration_checked === false
-                            ? "Pending"
-                            : "-";
-                return <div className="min-w-[150px] text-left">{toggle}</div>;
-            },
-        },
-        {
-            accessorKey: "Health Declaration Consent Date",
-            column_name: t(
-                "course.participants:find_participant.health_declaration_consent_date"
-            ),
-            header: ({ column }) => {
-                return (
-                    <div className="min-w-[150px] text-left">
-                        {t(
-                            "course.participants:find_participant.health_declaration_consent_date"
-                        )}
-                    </div>
-                );
-            },
+    // cell: ({ row }: any) => {
+    //   const toggle =
+    //     row?.original?.is_health_declaration_checked === true
+    //       ? "Completed"
+    //       : row?.original?.is_health_declaration_checked === false
+    //       ? "Pending"
+    //       : "-";
+    //   return <div className="min-w-[150px] text-left">{toggle}</div>;
+    // },
+    cell: ({ row }: any) => {
+      const toggle =
+        row?.original?.is_health_declaration_checked === true
+          ? t('course.find_course:completed')
+          : row?.original?.is_health_declaration_checked === false
+          ? t('course.participants:edit_participant.pending')
+          : "-";
+      return <div className="min-w-[150px] text-left">{toggle}</div>;
+    },
+  },
+  {
+    accessorKey: "Health Declaration Consent Date",
+    column_name: t('course.participants:find_participant.health_declaration_consent_date'),
+    header: ({ column }) => {
+      return (
+        <div className="min-w-[150px] text-left">
+          {t('course.participants:find_participant.health_declaration_consent_date')}
+        </div>
+      );
+    },
 
             // This any will be removed after internal dataStructure implementation
 
-            cell: ({ row }: any) => {
-                const db_date = formatDate(
-                    row?.original?.health_declaration_consent_date
-                );
-                return (
-                    <div className="min-w-[150px] text-left">
-                        {row?.original?.health_declaration_consent_date
-                            ? db_date
-                            : "-"}
-                    </div>
-                );
-            },
-        },
-        {
-            id: "actions",
-            enableHiding: false,
-            cell: ({ row }) => {
-                const optionsValues = [
-                    t("course.view_course:participants_tab.view_participant"),
-                    t("new_strings:edit_participant"),
-                    // TODO(Not in MVP scope): Integrate these actions later
-                    // "Transfer",
-                    // "Send Email",
-                    // "Perform sale with cash, check offline credit card payment",
-                    // "Send registration confirmation email",
-                    // "Upload offline payment receipt",
-                    // "Download receipt",
-                    // "Transaction Activity",
-                ];
+    cell: ({ row }: any) => {
+      const db_date = formatDate(
+        row?.original?.health_declaration_consent_date
+      );
+      return (
+        <div className="min-w-[150px] text-left">
+          {row?.original?.health_declaration_consent_date ? db_date : "-"}
+        </div>
+      );
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const optionsValues = [
+        t("course.view_course:participants_tab.view_participant"),
+        t("new_strings:edit_participant"),
+        // TODO(Not in MVP scope): Integrate these actions later
+        // t("new_strings:transfer"),
+        // t("new_strings:send_email"),
+        // t("new_strings:perform_sale_with_cash_check_offline_credit_card_payment"),
+        // t("new_strings:send_registration_confirmation_email"),
+        // t("new_strings:upload_offline_payment_receipt"),
+        // t('course.participants:edit_participant.download_receipt'),
+        // t("new_strings:transaction_activity"),
+      ];
 
                 const router = useRouter();
                 return (
