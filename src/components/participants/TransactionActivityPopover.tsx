@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { Separator } from "src/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "src/ui/sheet";
 import { Button } from "../../../src/ui/button";
+import { useTranslation } from 'next-i18next';
+import { translatedText } from "src/common/translations";
 
 export default function TransactionActivity({
   transactionHistory,
@@ -13,6 +15,7 @@ export default function TransactionActivity({
   transactionHistory?: any;
   renderHeader?: any;
 }) {
+  const {t} = useTranslation(['common','course.participants','new_strings', 'course.view_course', 'course.find_course'])
   const [open, setOpen] = useState(false);
 
   const getTransactionIcon = (type: string) => {
@@ -31,11 +34,11 @@ export default function TransactionActivity({
   const getTransactionTypeName = (type: string) => {
     switch (type) {
       case "Sale":
-        return <div>Sale Completed</div>;
+        return <div>{t("new_strings:sale_completed")}</div>;
       case "Partial refund":
-        return <div>Partial Refund Raised</div>;
+        return <div>{t("new_strings:partial_refund_raised")}</div>;
       case "Refund":
-        return <div>Refund Raised</div>;
+        return <div>{t("new_strings:refund_raised")}</div>;
       default:
         return null; // Default case if no matching transaction type is found
     }
@@ -44,13 +47,13 @@ export default function TransactionActivity({
   const getTransactionStatusName = (status: string) => {
     switch (status) {
       case "Success":
-        return <div>Completed</div>;
+        return <div>{t("course.find_course:completed")}</div>;
       case "Pending":
-        return <div>Pending</div>;
+        return <div>{t('course.participants:edit_participant.pending')}</div>;
       case "Not Received":
-        return <div>Not Received</div>;
+        return <div>{t('course.participants:edit_participant.not_received')}</div>;
       case "Failed":
-        return <div>Failed</div>;
+        return <div>{t('course.participants:edit_participant.failed')}</div>;
       default:
         return null; // Default case if no matching transaction type is found
     }
@@ -89,7 +92,7 @@ export default function TransactionActivity({
       >
         <SheetHeader className="p-3 text-2xl font-semibold flex flex-row">
           <div className="flex justify-between items-center flex-grow">
-            <div className="text-2xl font-semibold">Transaction Activity</div>
+            <div className="text-2xl font-semibold">{t("new_strings:transaction_activity")}</div>
             <div onClick={() => setOpen(false)} className="cursor-pointer">
               <CrossIcon width={16} height={16} />
             </div>
@@ -135,15 +138,16 @@ export default function TransactionActivity({
                 <div className="flex flex-col gap-2">
                   <div className="flex">
                     <span className="font-semibold text-base leading-5 pr-2">
-                      Transaction Amount:
+                      {t("new_strings:transaction_amount")}:
                     </span>
                     <span className="font-normal text-base leading-5">
+                       {/* // TODO:  Update this with country currency code // */}
                       EUR {transaction?.total_amount}
                     </span>
                   </div>
                   <div className="flex">
                     <span className="font-semibold text-base leading-5 pr-2">
-                      Time Stamp:
+                      {t('course.participants:view_participant.time_stamp')}:
                     </span>
                     <span className="font-normal text-base leading-5">
                       {/* // TODO:  Update this with function to display in proper format , praveen has already done it // */}
@@ -152,7 +156,7 @@ export default function TransactionActivity({
                   </div>
                   <div className="flex">
                     <span className="font-semibold text-base leading-5 pr-2">
-                      Transaction id:
+                    {t('course.participants:view_participant.transaction_id')}:
                     </span>
                     <span className="font-normal text-base leading-5">
                       {transaction.payment_transaction_id
@@ -162,7 +166,7 @@ export default function TransactionActivity({
                   </div>
                   <div className="flex">
                     <span className="font-semibold text-base leading-5 pr-2">
-                      Transaction Status:
+                    {t('course.participants:view_participant.transaction_status')}:
                     </span>
                     <span
                       className="font-normal text-base leading-5"
@@ -186,7 +190,7 @@ export default function TransactionActivity({
         </div>
         <div className="flex justify-center p-t-5">
           <Button className="font-bold" onClick={() => setOpen(false)}>
-            Close
+            {t('close')}
           </Button>
         </div>
       </SheetContent>
