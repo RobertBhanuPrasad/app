@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "src/ui/button";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { customFetch } from "src/utility/custom-fetch";
 import { useRouter } from "next/router";
 import ErrorAlerts from "@components/ErrorAlert";
+import { supabaseClient } from "src/utility";
 
 const schema = z.object({
   country: z.string().refine((v) => countryCodes.includes(v as CountryCode), { message: "Please enter a correct country code" }),
@@ -17,6 +17,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 type CustomAlert = { title: string; description: string };
+const supabase = supabaseClient("caps");
 
 const Entity = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
@@ -39,15 +40,27 @@ const Entity = () => {
 
   // Create entity or Find entity
   const createEntity = async (data: FormValues) => {
-    const response = await customFetch("/rest/v1/rpc/get_entity", "POST", { _country: data.country, _org: data.org, _module: data.module });
-    const message = JSON.stringify(await response.json());
-    const match = message.match(/(\d+)/);
-    if (match) {
-      router.push("/caps/entity-configuration?" + new URLSearchParams([["id", match[1]]]))
-    } else {
-      errorAlertMessage()
+      try {
+        const { data: result, error } = await supabase
+            .rpc('get_entity', { _country: data.country, _org: data.org, _module: data.module });
+
+        if (error) {
+            throw error;
+        }
+
+        // Convert the result to a JSON string and extract the entity ID
+        const message = JSON.stringify(result);
+        const match = message.match(/(\d+)/);
+
+        if (match) {
+            router.push("/caps/entity-configuration?" + new URLSearchParams([["id", match[1]]]));
+        } else {
+            errorAlertMessage();
+        }
+    } catch (error: any) {
+        setAlert({ title: "Error", description: error.message });
     }
-  };
+};
 
   
 

@@ -1,4 +1,3 @@
-import { customFetch } from "src/utility/custom-fetch";
 import {
     Alert,
     AlertDescription,
