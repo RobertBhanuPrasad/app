@@ -261,25 +261,26 @@ export default function EditParticipantTabs() {
             ),
         },
         {
-            id: "section6",
-            label: t("view_participant.utm_parameters"),
-            content: (
+            id:"section6",
+            label:t("view_participant.utm_parameters"),
+            content:(
                 <div>
-                    <ViewParticipantUtmParameters participantId={Id} />
+                      <ViewParticipantUtmParameters participantId={Id} />
                 </div>
             ),
-            header: (
+            header:
+            (
                 <div>
-                    <p
-                        className={`font-semibold text-[18px] pt-[20px] ${
-                            activeTabId == "section6" && "text-[#7677F4]"
-                        }`}
-                    >
-                        UTM Parameters
-                    </p>
-                </div>
-            ),
-        },
+                <p
+                    className={`font-semibold text-[18px] pt-[20px]  ${
+                        activeTabId == "section6" && "text-[#7677F4]"
+                    }`}
+                >
+                    {t("view_participant.utm_parameters")}
+                </p>
+            </div>  
+            )
+        }
     ];
 
     // Check if accommodation tab should be rendered in tabs list or not
