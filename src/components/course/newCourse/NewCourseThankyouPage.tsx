@@ -74,14 +74,14 @@ useEffect(() => {
     id: programId,
     meta: {
       select:
-        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,name),registration_link,details_page_link'
+        'online_url,visibility,program_code,program_type_id,status,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_users(users(full_name)),program_schedules(start_time,end_time),registration_link,details_page_link'
     }
   })
 
   // Formatting teacher string
-  const teachers = data?.data?.program_teachers
+  const teachers = data?.data?.program_users
     ?.map((teacher: any) => {
-      return teacher?.users?.contact_id?.full_name
+      return teacher?.users?.full_name
     })
     .join(',')
 
