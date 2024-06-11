@@ -5,7 +5,7 @@ import { CrudFilter, useList, useSelect } from "@refinedev/core";
 import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { CountComponent, DateRangePickerComponent } from "pages/courses/list";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import {
@@ -734,9 +734,10 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   } = useController({
     name: "temporaryadvancefilter.city",
   });
-
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [pageSize, setPageSize] = useState(10);
-
+  const [searchTerm, setSearchTerm] = useState("");
+  
   // track whether the city drop down is clicked or not
   const [citySelectClicked, setCitySelectClicked] = useState(false)
 
@@ -759,12 +760,18 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         operator: "contains",
         value,
       },
-    ],
+      ],
+    defaultValue:temporaryValue
   });
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("common");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
@@ -784,23 +791,28 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         <SelectValue placeholder={t("city_placeholder")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
-        <SelectItems onBottomReached={handleOnBottomReached}>
+        <Input
+          ref={inputRef}  
+          value={searchTerm}
+          onChange={handleSearchChange}
+          onBlur={() => inputRef.current?.focus()} // Ensure focus returns immediately on blur
+        />
+          <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
-              <SelectItem
+                  <SelectItem
                 key={option.value}
                 value={option.value}
                 className="h-[44px]"
               >
-                {option.label}
-              </SelectItem>
-              {index < options?.length - 1 && (
-                <hr className="border-[#D6D7D8]" />
-              )}
-            </>
-          ))}
-        </SelectItems>
+                  {option.label}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
       </SelectContent>
     </Select>
   );
