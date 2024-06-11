@@ -48,7 +48,7 @@ export const CopyCoursePage = () => {
     
 
 
-    const { setNewCourseData,setProgramCreatedById,setCurrentStep,programCreatedById } = newCourseStore();
+    const { setNewCourseData,setProgramCreatedById,setCurrentStep } = newCourseStore();
   
     useEffect(() => {
       const fetchDefaultValues = async () => {
@@ -119,6 +119,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
       "course.participants",
       "course.view_course",
       "course.find_course",
+      "enum"
     ]);
   
     if (!authenticated) {
