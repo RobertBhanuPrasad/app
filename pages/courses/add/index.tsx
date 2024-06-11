@@ -109,7 +109,6 @@ export function NewCourse() {
 
   const loggedUserData = loginUserData?.userData?.id;
   const {optionLabelValue}=optionLabelValueStore()
-  console.log(optionLabelValue,'trail');
   
 
   console.log("heyy logged user data", loggedUserData);
@@ -138,9 +137,8 @@ export function NewCourse() {
   const payOnline = optionLabelValue?.payment_mode?.ONLINE
 
   const timeFormat24Hours = optionLabelValue?.hour_format?.HOURS_24
-  console.log(timeFormat24Hours,'asd');
-  
 
+  
   /**
    * @constant iAmCoTeaching
    * @description thid const stores the id of the i am co teaching

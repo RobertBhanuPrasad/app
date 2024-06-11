@@ -12,6 +12,7 @@ import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 const index = () => {
     const {
@@ -41,13 +42,13 @@ export const CopyCoursePage = () => {
     const {
       query: { id },
     }: any = useRouter();
+    const {optionLabelValue}=optionLabelValueStore()
   
-    const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-      TIME_FORMAT,
-      TIME_FORMAT_12_HOURS
-    )?.id as number;
+    const timeFormat12Hours = optionLabelValue?.hour_format?.HOURS_12
+    
 
-    const { setNewCourseData,setProgramCreatedById,setCurrentStep } = newCourseStore();
+
+    const { setNewCourseData,setProgramCreatedById,setCurrentStep,programCreatedById } = newCourseStore();
   
     useEffect(() => {
       const fetchDefaultValues = async () => {
@@ -55,27 +56,27 @@ export const CopyCoursePage = () => {
         /**
          * load default value by calling this function and store in newCourseData redux variable so that it will be used to prefill
          */
-        let defaultValues = await handleCourseDefaultValues(
+        let defaultValues:any= await handleCourseDefaultValues(
           id,
-          timeFormat12HoursId
+          timeFormat12Hours as string
         );
         
           // we have to delete schedules when user click on copy course and other we need to prefill
           defaultValues = _.omit(defaultValues, ["id", "schedules"]);
 
           //remove the id, program_id from each object in program_fee_level_settings array
-          if (defaultValues?.program_fee_level_settings) {
-            defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
-              _.omit(setting, ['id', 'program_id'])
-            );
-          }
+          //TODO: need to add this after program_fee_level_settings addede
+          // if (defaultValues?.program_fee_level_settings) {
+          //   defaultValues.program_fee_level_settings = _.map(defaultValues.program_fee_level_settings, (setting) =>
+          //     _.omit(setting, ['id', 'program_id'])
+          //   );
+          // }
 
           //Remove the id, program_id from each object in contact array
           if (defaultValues?.contact){
             defaultValues.contact = _.map(defaultValues.contact, (contact) => 
             _.omit(contact, ['id', 'program_id']))
           }
-
           // Remove the id, program_id from each object in accommodation array
           if (defaultValues?.accommodation){
             defaultValues.accommodation = _.map(defaultValues.accommodation, (accomodation) => 

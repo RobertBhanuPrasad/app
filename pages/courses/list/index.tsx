@@ -13,11 +13,12 @@ import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { useList, useSelect, useTable } from "@refinedev/core";
+import { useList, useTable } from "@refinedev/core";
 import { format } from "date-fns";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { authProvider } from "src/authProvider";
@@ -535,17 +536,29 @@ function index() {
     "course.view_course",
     "course.participants",
   ]);
+  const router = useRouter();
+  const handleCopyCourse = async () => {
+    router.push(`/courses/1019/copy`);
+
+  };
+  const handleSelected=()=>{
+    handleCopyCourse()
+  }
   return (
     <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">
         {t("new_strings:find_courses")}
       </p>
       <div className="mx-8 flex flex-col mt-4 bg-[white]">
+        <button onClick={() => {
+          handleSelected();
+                }}>
+                  click me
+        </button>
         <HeaderSection
           hasAliasNameFalse={hasAliasNameFalse(data)}
           setCurrent={setCurrent}
         />
-
         {programData?.isLoading ? (
           <section className="flex justify-center align-center pt-[10%]">
             <div className="loader"></div>
