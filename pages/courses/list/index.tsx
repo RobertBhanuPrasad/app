@@ -537,12 +537,11 @@ function index() {
     "course.participants",
   ]);
   const router = useRouter();
-  const handleCopyCourse = async () => {
-    router.push(`/courses/1019/copy`);
-
+  const handleEditCourse = async () => {
+    router.push(`/courses/1019/edit`);
   };
   const handleSelected=()=>{
-    handleCopyCourse()
+    handleEditCourse()
   }
   return (
     <div className="flex flex-col justify-between relative">

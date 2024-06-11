@@ -10,6 +10,7 @@ import { TIME_FORMAT } from "src/constants/OptionLabels";
 import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 const index = () => {
   const {
@@ -33,15 +34,14 @@ export default index;
 const EditCourseReviewPage = () => {
   console.log("hehehheheehhe");
   const [isLoading, setIsLoading] = useState(true);
+  const {optionLabelValue}=optionLabelValueStore()
 
   const {
     query: { id },
   }: any = useRouter();
 
-  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-    TIME_FORMAT,
-    TIME_FORMAT_12_HOURS
-  )?.id as number;
+  const timeFormat12Hours = optionLabelValue?.hour_format?.HOURS_12
+
 
   const { setNewCourseData,setProgramCreatedById } = newCourseStore();
 
@@ -54,7 +54,7 @@ const EditCourseReviewPage = () => {
        */
       const defaultValues = await handleCourseDefaultValues(
         id,
-        timeFormat12HoursId
+        timeFormat12Hours as string
       );
       console.log("default values are", defaultValues);
 
