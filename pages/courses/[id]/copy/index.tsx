@@ -45,7 +45,6 @@ export const CopyCoursePage = () => {
     const {optionLabelValue}=optionLabelValueStore()
   
     const timeFormat12Hours = optionLabelValue?.hour_format?.HOURS_12
-    console.log(timeFormat12Hours,'timeFormat12Hours');
     
 
 
