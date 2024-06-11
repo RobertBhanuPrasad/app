@@ -159,6 +159,28 @@ export const Breadcrumb = () => {
         className: '',
         href: ''
       }
+    ],
+    '/courses/[id]/course-accounting-form': [
+      {
+        label: 'Home',
+        className: '',
+        href: ''
+      },
+      {
+        label: 'Courses',
+        className: 'text-primary cursor-pointer',
+        href: '/courses/list'
+      },
+      {
+        label: 'Course Details',
+        className: 'text-primary cursor-pointer',
+        href: `/courses/${router.query.id}`
+      },
+      {
+        label: 'Course Accounting Form',
+        className: '',
+        href: ''
+      }
     ]
   }
 

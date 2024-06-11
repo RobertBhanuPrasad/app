@@ -22,7 +22,7 @@ function HeaderSection() {
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
-
+  
   const { data: courseData } = useOne({
     resource: "program",
     id: Id,
@@ -31,7 +31,7 @@ function HeaderSection() {
         '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,name),program_schedules!inner(*)'
     }
   })
- 
+  
   const startDate = formatDate(courseData?.data?.program_schedules[0]?.start_time)
 
   const endDate = formatDate(
@@ -47,42 +47,41 @@ function HeaderSection() {
   const { programId } = newCourseStore();
 
   return (
-    <div className="flex flex-col mx-8">
-      <div className="flex flex-row items-center ">
+    <div className="flex justify-between w-full px-8 h-auto">
+      {/* course accounting section */}
+      <div className="flex gap-2 pb-3 pt-3">
         <div
-          className="  text-[#7677F4] pt-3 cursor-pointer"
+          className="text-[#7677F4] pt-3 cursor-pointer w-8 h-8"
           onClick={() => {
-            replace(`/courses/${programId}?tab=course_accounting_form`);
+            replace(`/courses/${Id}?tab=course_accounting_form`);
           }}
         >
           <Back />
         </div>
-        <div className="text-[33px] font-semibold pl-5 ">
+        <div className="pl-3">
+        {/* course name */}
+        <div className="text-2xl font-semibold">
           {courseData?.data?.program_alias_name_id
             ? translatedText(courseData?.data?.program_alias_name_id?.alias_name)
             : translatedText(courseData?.data?.program_type_id?.name)}
         </div>
-        <div className="pr-2 ml-auto  ">
-          <ActionsDropDown courseData={courseData?.data} />
-        </div>
-      </div>
-      <div className="flex flex-row gap-5 ">
-        <p className=" pl-9  text-[#666666] text-[16px]">
+        {/* course info */}
+      <div className="flex flex-row gap-6">
+        <p className="text-[#666666] text-base font-normal">
           Course Accounting Form
         </p>
         <div className="  ">
           <Line />
         </div>
-        <div className="text-[#333333] text-[14px]">
+        <div className="text-[#333333] text-base font-normal">
           {startDate} to {endDate}
         </div>
         <div className="">
           <Line />
         </div>
-
-        <div className="">
+            {/* participants count */}
+        <div className="flex gap-2 items-center w-[76px]">
           <ParticipantsIcon />
-        </div>
         <div
           onClick={() => {
             router.push("/");
@@ -93,12 +92,10 @@ function HeaderSection() {
         </div>
         <HoverCard>
           <HoverCardTrigger>
-            <div className=" pt-1">
               <Important />
-            </div>
           </HoverCardTrigger>
           <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+            <div className="w-[231px] text-wrap !rounded-[15px] font-normal bg-[red]">
               {courseData?.data?.participant_count} Participants with:
               Transaction status = Confirmed / Pending Attendance status =
               Confirmed / Pending / Dropout Total participants records:
@@ -106,23 +103,21 @@ function HeaderSection() {
             </div>
           </HoverCardContent>
         </HoverCard>
-        <div className="pt-1">
-          <Currency />
         </div>
-
+        {/* revenue */}
+        <div className="flex gap-2 items-center w-[135px]">
+          <Currency />
         <div
           onClick={() => {
             router.push("/");
           }}
-          className="cursor-pointer text-[#7677F4] "
+          className="cursor-pointer text-[#7677F4] font-medium"
         >
           {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
         </div>
         <HoverCard>
           <HoverCardTrigger>
-            <div className="pt-1">
               <Important />
-            </div>
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
@@ -132,7 +127,14 @@ function HeaderSection() {
             </div>
           </HoverCardContent>
         </HoverCard>
+        </div>
       </div>
+      </div>
+      </div>
+      {/* action dropdown */}
+      <div className="flex items-center">
+          <ActionsDropDown courseData={courseData?.data} />
+        </div>
     </div>
   );
 }

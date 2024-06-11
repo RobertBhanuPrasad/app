@@ -98,7 +98,8 @@ import { Separator } from "src/ui/separator";
 import { Textarea } from "src/ui/textarea";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
+import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";4
+import {isViewCourseAccountingTabDisplay} from "../../../src/components/courseBusinessLogic";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -120,7 +121,6 @@ function ViewDetails() {
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
-
   const { data: courseData } = useOne({
     resource: "program",
     id: Id,
@@ -165,13 +165,12 @@ function ViewDetails() {
       tab_query_name: "participants",
     },
 
-    // TODO : it has to hidden for may 13 release
-    // {
-    //   value: REVENUE_SUMMARY_TAB,
-    //   label:t('course.view_course:revenue_summary_tab.revenue_summary'),
-    //   disabled: false,
-    //   tab_query_name: "revenue_summary",
-    // },
+    {
+      value: REVENUE_SUMMARY_TAB,
+      label:t('course.view_course:revenue_summary_tab.revenue_summary'),
+      disabled: false,
+      tab_query_name: "revenue_summary",
+    },
   ];
 
   /**
@@ -179,27 +178,27 @@ function ViewDetails() {
    * we have to view course accounting form tab
    * based on course status and course accounting status
    */
-  // const isViewCourseAccountingTabToDisplay = isViewCourseAccountingTabDisplay(
-  //   courseData?.data?.status_id?.id,
-  //   courseData?.data?.program_accounting_status_id
-  // );
+  const isViewCourseAccountingTabToDisplay = isViewCourseAccountingTabDisplay(
+    courseData?.data?.status_id?.id,
+    courseData?.data?.program_accounting_status_id
+  );
 
   // Check if the tab should be enabled and append the object accordingly
-  // if (isViewCourseAccountingTabToDisplay) {
-  //   tabTriggers.push({
-  //     value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
-  //     label: "View Course Accounting Form",
-  //     disabled: true,
-  //     tab_query_name: "view_course_accounting_form",
-  //   });
-  // } else {
-  //   tabTriggers.push({
-  //     value: COURSE_ACCOUNTING_FORM_TAB,
-  //     label:t('course_accounting_form_tab.course_accounting_form'),
-  //     disabled: true,
-  //     tab_query_name: "course_accounting_form",
-  //   });
-  // }
+  if (isViewCourseAccountingTabToDisplay) {
+    tabTriggers.push({
+      value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
+      label: "View Course Accounting Form",
+      disabled: true,
+      tab_query_name: "view_course_accounting_form",
+    });
+  } else {
+    tabTriggers.push({
+      value: COURSE_ACCOUNTING_FORM_TAB,
+      label:t('course_accounting_form_tab.course_accounting_form'),
+      disabled: true,
+      tab_query_name: "course_accounting_form",
+    });
+  }
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -258,7 +257,7 @@ function ViewDetails() {
             <DisplayingCourseStatus
               statusId={courseData?.data?.status_id?.value}
             />
-            {/* <ShareButton /> */}
+            <ShareButton />
           </div>
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
@@ -415,13 +414,13 @@ function ViewDetails() {
               >
                 <div className="flex flex-col gap-1">
                   {trigger.label}
-                  {/* <div
+                  <div
                     className={`${
                       getTabQueryName() === JSON.stringify(trigger.value)
                         ? 'bg-[#7677F4] rounded w-full h-[2px]'
                         : 'w-full h-[2px]'
                     }`}
-                  ></div> */}
+                  ></div>
                 </div>
               </TabsTrigger>
             ))}
