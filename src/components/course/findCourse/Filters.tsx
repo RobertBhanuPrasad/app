@@ -707,7 +707,6 @@ export const State = ({
         <SelectValue placeholder={t("select_state")} />
       </SelectTrigger>
       <SelectContent>
-        {/* <Input onChange={(val) => onSearch(val.target.value)} /> */}
         <SelectInput onChange={(val : any) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
