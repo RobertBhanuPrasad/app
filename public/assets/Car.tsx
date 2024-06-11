@@ -3,7 +3,7 @@ import React from "react";
 function Car({ color = "#000000" }: any) {
   return (
     <svg
-      width="24"
+      width="22"
       height="16"
       viewBox="0 0 24 16"
       fill="none"

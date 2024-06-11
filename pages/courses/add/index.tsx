@@ -738,7 +738,7 @@ export const NewCourseTabs = () => {
     {
       value: FEE_STEP_NUMBER,
       label: t("fees"),
-      icon: (color: string) => <Venue color={color} />,
+      icon: (color: string) => <Fees color={color} />,
       component: <NewCourseStep4 />,
     },
     {
