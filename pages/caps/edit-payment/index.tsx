@@ -257,7 +257,6 @@ const EditPaymentGateway = () => {
                             <div className="flex flex-col w-[360px]">
                                 <label className="font-medium" htmlFor="type">Type</label>
                                 <input id="type" className="border border-black px-2 h-[42px] rounded-[10px] mt-2" type="text" disabled={true} placeholder="stripe" {...register("type", { onChange: handleInputChange })} />
-                                <small id="typeDisclaimer" className="text-[14px]">"Stripe" and "Corvuspay" implemented till now</small>
                             </div>
 
                             <div className="flex flex-col w-[360px]">
@@ -399,7 +398,7 @@ export default EditPaymentGateway
 
 
 
-const pgTypes = ["stripe", "corvuspay","paypal"] as const;
+const pgTypes = ["stripe", "corvuspay", "paypal"] as const;
 type PGType = typeof pgTypes[number];
 
 const schema = z.object({

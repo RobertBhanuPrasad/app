@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "src/ui/button";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { customFetch } from "../../../src/utility/custom-fetch";
 import { useRouter } from "next/router";
 import ErrorAlerts from "@components/ErrorAlert";
+import { supabaseClient } from "src/utility";
 
 const schema = z.object({
   country: z.string().refine((v) => countryCodes.includes(v as CountryCode), { message: "Please enter a correct country code" }),
@@ -17,26 +17,22 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 type CustomAlert = { title: string; description: string };
+const supabase = supabaseClient("caps");
 
 const Entity = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
   const router = useRouter();
-  const [error, setError] = useState<string>();
-  const [alert, setAlert] = useState<CustomAlert>();
+  const [alert2, setAlert] = useState<CustomAlert>();
 
   // Retrive QueryParam 
   useEffect(() => {
-    const errorParam = router.query.error;
-    if (Array.isArray(errorParam)) {
-      setError(errorParam[0]);
-    } else {
-      setError(errorParam);
-    }
-    router.replace({pathname:router.pathname}, undefined, {shallow:true})
-  }, []);
-
+    const _error = new URL(window.location.href).searchParams.get("error");
+    router.replace({pathname:window.location.pathname}, undefined, {shallow : true});
+    if (_error) setAlert({title : "Oops!", description :_error});
+  },[]);
+  
   // Alert Error message
   const errorAlertMessage = () => {
     setAlert({ title: "Oops! Something went wrong.", description: 'Please try again later.' })
@@ -44,15 +40,29 @@ const Entity = () => {
 
   // Create entity or Find entity
   const createEntity = async (data: FormValues) => {
-    const response = await customFetch("/rest/v1/rpc/get_entity", "POST", { _country: data.country, _org: data.org, _module: data.module });
-    const message = JSON.stringify(await response.json());
-    const match = message.match(/(\d+)/);
-    if (match) {
-      router.push("/caps/entity-configuration?" + new URLSearchParams([["id", match[1]]]))
-    } else {
-      errorAlertMessage()
+      try {
+        const { data: result, error } = await supabase
+            .rpc('get_entity', { _country: data.country, _org: data.org, _module: data.module });
+
+        if (error) {
+            throw error;
+        }
+
+        // Convert the result to a JSON string and extract the entity ID
+        const message = JSON.stringify(result);
+        const match = message.match(/(\d+)/);
+
+        if (match) {
+            router.push("/caps/entity-configuration?" + new URLSearchParams([["id", match[1]]]));
+        } else {
+            errorAlertMessage();
+        }
+    } catch (error: any) {
+        setAlert({ title: "Error", description: error.message });
     }
-  };
+};
+
+  
 
   // Alert Ui design
   const AlertDestructive = (props: CustomAlert) => {
@@ -63,10 +73,7 @@ const Entity = () => {
 
   return (
     <>
-      {error &&  (
-        <AlertDestructive title={"Oops! Error URL."} description={"Please try again later"} />
-      )}
-      {alert && <AlertDestructive {...alert} />}
+      {alert2 && <AlertDestructive {...alert2} />}
       <form className="px-4" autoComplete="off" onSubmit={handleSubmit(createEntity)}>
         <div className="pd-5 text-center bg-body-tertiary">
           <h1 className="mb-3">Add Entity</h1>
@@ -96,3 +103,5 @@ const Entity = () => {
 };
 
 export default Entity;
+
+Entity.requireAuth = true

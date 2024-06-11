@@ -44,6 +44,6 @@ const Home = () => {
 }
 
 // Home.noLayout = true;
-Home.requireAuth = false;
+Home.requireAuth = true;
 
 export default Home;

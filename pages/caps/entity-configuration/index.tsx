@@ -1,4 +1,3 @@
-import { customFetch } from "../../../src/utility/custom-fetch";
 import {
     Alert,
     AlertDescription,
@@ -20,13 +19,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/router";
 import { supabaseClient } from "src/utility";
-import { X } from "lucide-react";
 import ErrorAlerts from "@components/ErrorAlert";
+import _ from "lodash";
 
 
-const schema = z.object({
-
-});
+const schema = z.object({});
 type FormValues = z.infer<typeof schema>;
 
 type Gateway = {
@@ -51,16 +48,13 @@ type EndPoint = {
     headers: { name: string; value: string }[] | null;
     compressedHeaders: string | null;
 };
-
+const supabase = supabaseClient("caps");
 const checkEntityQueryParam = async (entityId: number): Promise<boolean> => {
-    const supabase = supabaseClient("caps");
+
     const { data, error } = await supabase
         .from('pg_entity')
         .select('id')
         .eq('id', entityId)
-        .limit(1);
-    console.log('Supabase Data:', data);
-    console.log('Supabase Error:', error);
     if (error) {
         console.error('Error checking entity existence:', error);
         return false;
@@ -71,7 +65,6 @@ const checkEntityQueryParam = async (entityId: number): Promise<boolean> => {
 
 const entityQueryParam = async (id: string | string[] | undefined) => {
     const idString = Array.isArray(id) ? id[0] : id;
-    console.log('ID is :', idString);
     if (idString && /^[1-9][0-9]*$/.test(idString)) {
         const idNumber = parseInt(idString, 10);
         if (await checkEntityQueryParam(idNumber)) {
@@ -106,46 +99,113 @@ const EntityConfig = () => {
                 router.push("/caps/add-entity?" + new URLSearchParams([["error", "Error fetching data:" + error]]))
             }
             // first fetch all the gateways
-            customFetch("/rest/v1/payment_gateways", "GET", null, [["select", "id,type,name,description,test,transaction_intent"], ["order", "id"]])
-                .then(response => response.json())
-                .then(list => {
-                    const _gateways: Gateway[] = [];
-                    list.forEach((gateway: any) => {
-                        _gateways.push({
-                            id: gateway.id,
-                            type: gateway.type.charAt(0).toUpperCase() + gateway.type.substring(1).toLowerCase(),
-                            name: gateway.name,
-                            description: gateway.description,
-                            test: gateway.test ? "test" : "live",
-                            purpose: gateway.transaction_intent ? "for refund" : "for sale",
-                        })
-                    });
+            const fetchPaymentGateways = async () => {
+                try {
+                    setLoading(true)
+                    const { data, error } = await supabase
+                        .from('payment_gateways')
+                        .select('id,type,name,description,test,transaction_intent')
+                        .order('id', { ascending: true });
+                    // Handle any errors
+                    if (error) {
+                        throw error;
+                    }
+                    const _gateways = data.map(gateway => ({
+                        id: gateway.id,
+                        type: gateway.type.charAt(0).toUpperCase() + gateway.type.substring(1).toLowerCase(),
+                        name: gateway.name,
+                        description: gateway.description,
+                        test: gateway.test ? "test" : "live",
+                        purpose: gateway.transaction_intent ? "for refund" : "for sale",
+                    }));
+                    // Set the gateways if data is available
                     if (_gateways.length > 0) {
                         setAllGateways(_gateways);
+                        setLoading(false)
                     }
-                })
-                .catch(err => setAlert({ title: "Oops!", description: "Something went wrong : " + err }));
+                } catch (err: any) {
+                    let errorMessage = "Something went wrong";
+
+                    // Extracting the error message
+                    if (err instanceof Error) {
+                        errorMessage += ": " + err.message;
+                    } else if (err && typeof err.message === 'string') {
+                        errorMessage += ": " + err.message;
+                    } else {
+                        errorMessage += ": An unknown error occurred.";
+                    }
+
+                    setAlert({ title: "Oops!", description: errorMessage });
+                }
+            }
+
+            fetchPaymentGateways();
 
             // then fetch the gateways set for this entity
-            customFetch("/rest/v1/pg_mapping", "GET", null, [["entity_id", "eq." + _entity], ["select", "pg_id"], ["order", "sort_order"]])
-                .then(response => response.json())
-                .then(list => setSelectedIds(list))
-                .catch(err => setAlert({ title: "Oops!", description: "Something went wrong : " + err }));
+            const fetchPGMapping = async (_entity: any) => {
+                try {
+                    const { data, error } = await supabase
+                        .from('pg_mapping')
+                        .select('pg_id')
+                        .eq('entity_id', _entity)
+                        .order('sort_order', { ascending: true });
+                    if (error) {
+                        throw error;
+                    }
+
+                    setSelectedIds(data);
+                } catch (err: any) {
+                    let errorMessage = "Something went wrong";
+
+                    // Extracting the error message
+                    if (err instanceof Error) {
+                        errorMessage += ": " + err.message;
+                    } else if (err && typeof err.message === 'string') {
+                        errorMessage += ": " + err.message;
+                    } else {
+                        errorMessage += ": An unknown error occurred.";
+                    }
+
+                    setAlert({ title: "Oops!", description: errorMessage });
+                }
+            }
+            fetchPGMapping(_entity);
 
             // fetch external enpoints config for this entity
-            customFetch("/rest/v1/pg_external_endpoints", "GET", null, [["entity", "eq." + _entity], ["select", "id,internal_status,external_endpoint,headers"], ["order", "internal_status"]])
-                .then(response => response.json())
-                .then(list => {
-                    const _endpoints: EndPoint[] = [];
-                    list.forEach((endpoint: any) => {
-                        _endpoints.push({
-                            ...endpoint,
-                            compressedHeaders: endpoint.headers ? compress(endpoint.headers) : null
-                        })
-                    });
+            const fetchExternalEndpoints = async (_entity: any) => {
+                try {
+                    const {data, error} = await supabase
+                        .from('pg_external_endpoints')
+                        .select('id,internal_status,external_endpoint,headers')
+                        .eq('entity', _entity)
+                        .order('internal_status', { ascending: true });
+
+                    if (error) {
+                        throw error;
+                    }
+                    const _endpoints = data.map(endpoint => ({
+                        ...endpoint,
+                        compressedHeaders: endpoint.headers ? compress(endpoint.headers) : null
+                    }));
+            
                     setExternalEndpoints(_endpoints);
-                })
-                .catch(err => setAlert({ title: "Oops!", description: "Something went wrong while fetching external endpoints config : " + err }));
+                } catch (err: any) {
+                    let errorMessage = "Something went wrong while fetching external endpoints config";
+            
+                    // Extracting the error message
+                    if (err instanceof Error) {
+                        errorMessage += ": " + err.message;
+                    } else if (err && typeof err.message === 'string') {
+                        errorMessage += ": " + err.message;
+                    } else {
+                        errorMessage += ": An unknown error occurred.";
+                    }
+            
+                    setAlert({ title: "Oops!", description: errorMessage });
+                }
+           }
+           fetchExternalEndpoints(_entity)
+
         };
 
         fetchData()
@@ -163,7 +223,7 @@ const EntityConfig = () => {
 
     const AlertDestructive = (props: CustomAlert) => {
         return (
-            <ErrorAlerts title={props.title} description={props.description} onClose = {()=>setAlert(undefined)}/>
+            <ErrorAlerts title={props.title} description={props.description} onClose={() => setAlert(undefined)} />
         )
     }
     const unselectPG = (index: number) => {
@@ -190,53 +250,60 @@ const EntityConfig = () => {
 
     const updateConfig = async () => {
         if (!selectedIds || !externalEndpoints) return;
-
-        // delete previous mapping
-        // , ["pg_id", "not.in.(" + selectedIds.map(({ pg_id }) => pg_id) + ")"]
-        let response = await customFetch('/rest/v1/pg_mapping', "DELETE", null, [["entity_id", "eq." + entity]]);
-
-        if (!response.ok) {
-            setAlert({ title: "Delete Error", description: "Could not delete entries for payment_gateways configuration. Please try again after some time." });
-            return;
-        }
-
-        // inser new mapping
-        // [["Prefer", "resolution=merge-duplicates"]]
-        response = await customFetch('/rest/v1/pg_mapping', 'POST', selectedIds.map(({ pg_id }, index) => ({
-            entity_id: entity,
-            pg_id,
-            sort_order: index + 1
-        })));
-
-        if (!response.ok) {
-            setAlert({ title: "Creation Error", description: "Could not create entries for payment_gateways configuration. Please try again after some time." });
-            return;
-        }
-
-        // update pg_external_endpoints
-        response = await customFetch('/rest/v1/pg_external_endpoints', 'POST', externalEndpoints.map(endpoint => {
-            if (endpoint.compressedHeaders) {
-                try {
-                    endpoint.headers = expand(endpoint.compressedHeaders);
-                } catch { }
+    
+        try {
+            // Delete previous mappings
+            const deleteMappingResponse = await supabase
+                .from('pg_mapping')
+                .delete()
+                .eq('entity_id', entity);
+    
+            if (!deleteMappingResponse) {
+                throw new Error("Could not delete entries for payment_gateways configuration. Please try again after some time.");
             }
-
-            return {
-                id: endpoint.id,
-                entity: entity,
-                internal_status: endpoint.internal_status,
-                external_endpoint: endpoint.external_endpoint,
-                headers: endpoint.headers
-            };
-        }), undefined, [["Prefer", "resolution=merge-duplicates"]]);
-
-        if (!response.ok) {
-            setAlert({ title: "Update Error", description: "Could not update entries for external_endpoints configuration. Please try again after some time." });
-            return;
+    
+            // Insert new mappings
+            const insertMappingResponse = await supabase
+                .from('pg_mapping')
+                .insert(selectedIds.map(({ pg_id }, index) => ({
+                    entity_id: entity,
+                    pg_id,
+                    sort_order: index + 1
+                })));
+    
+            if (!insertMappingResponse) {
+                throw new Error("Could not create entries for payment_gateways configuration. Please try again after some time.");
+            }
+    
+            // Update pg_external_endpoints
+            const updateEndpointsResponse = await supabase
+                .from('pg_external_endpoints')
+                .upsert(externalEndpoints.map(endpoint => {
+                    if (endpoint.compressedHeaders) {
+                        try {
+                            endpoint.headers = expand(endpoint.compressedHeaders);
+                        } catch { }
+                    }
+    
+                    return {
+                        id: endpoint.id,
+                        entity: entity,
+                        internal_status: endpoint.internal_status,
+                        external_endpoint: endpoint.external_endpoint,
+                        headers: endpoint.headers
+                    };
+                }), { onConflict: 'id'});
+    
+            if (!updateEndpointsResponse) {
+                throw new Error("Could not update entries for external_endpoints configuration. Please try again after some time.");
+            }
+    
+            window.location.reload();
+        } catch (error: any) {
+            setAlert({ title: "Error", description: error.message });
         }
-
-        window.location.reload();
-    }
+    };
+    
 
     if (isLoading) {
         return <section className="flex justify-center align-center pt-[10%]"> <div className="loader"></div> </section>
@@ -297,13 +364,12 @@ const EntityConfig = () => {
                 <div className="form-group pb-3 pt-3">
                     <select className="form-select border-dark " onChange={(e) => { selectPG(e.target.value); setSelectedValue(-1) }} value={selectedValue} style={{ fontFamily: "monospace" }}>
                         <option value={-1} disabled>--- choose which gateways to allow for this entity ---</option>
-                        {allGateways.map((gateway, index) => {
-                            return <option value={index}>{gateway.name}</option>
-                            // if (!selectedIds.find(pg => pg.pg_id === gateway.id)) {
-                            //     return <option value={index}>
-                            //         {shorten(gateway.name)} | {shorten(gateway.description, 30)} | {shorten(gateway.type, 10)} | {gateway.test} | {shorten(gateway.purpose, 10)}
-                            //     </option>
-                            // }
+                            {allGateways.map((gateway, index) => {
+                            if (!selectedIds.find(pg => pg.pg_id === gateway.id)) {                             
+                                return <option value={index}>
+                                    {shorten(gateway.name)} | {shorten(gateway.description, 30)} | {shorten(gateway.type, 10)} | {gateway.test} | {shorten(gateway.purpose, 10)}
+                                </option>
+                            }
                         })
                         }
                     </select>
@@ -344,6 +410,8 @@ const EntityConfig = () => {
 }
 
 export default EntityConfig
+
+EntityConfig.requireAuth = true
 
 function shorten(text: string | null, maxLen: number = 20) {
     text = text ? text : "";
