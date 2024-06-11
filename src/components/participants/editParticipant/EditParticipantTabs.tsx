@@ -143,7 +143,7 @@ export default function EditParticipantTabs() {
             header: (
                 <div>
                     <p
-                        className={`font-semibold text-[18px] pt-[25px] ${
+                        className={`font-semibold text-[18px] pt-[20px] ${
                             activeTabId == "section1" && "text-[#7677F4]"
                         }`}
                     >
@@ -167,7 +167,7 @@ export default function EditParticipantTabs() {
             header: (
                 <div>
                     <p
-                        className={`font-semibold text-[18px] pt-[25px] ${
+                        className={`font-semibold text-[18px] pt-[20px]  ${
                             activeTabId == "section2" && "text-[#7677F4]"
                         }`}
                     >
@@ -191,7 +191,7 @@ export default function EditParticipantTabs() {
             header: (
                 <div>
                     <p
-                        className={`font-semibold text-[18px] py-[25px] ${
+                        className={`font-semibold text-[18px] pt-[20px] ${
                             activeTabId == "section3" && "text-[#7677F4]"
                         }`}
                     >
@@ -215,7 +215,7 @@ export default function EditParticipantTabs() {
             header: (
                 <div>
                     <p
-                        className={`font-semibold text-[18px] py-[25px] ${
+                        className={`font-semibold text-[18px] pt-[20px]  ${
                             activeTabId == "section4" && "text-[#7677F4]"
                         }`}
                     >
@@ -235,7 +235,7 @@ export default function EditParticipantTabs() {
                 </div>
             ),
             header: (
-                <div className="flex">
+                <div className="flex pt-[20px]">
                     
                     <p
                         className={`text-[18px] font-[600] pr-[10px] !m-[0] !py-[0] !h-[0] ${
@@ -261,25 +261,26 @@ export default function EditParticipantTabs() {
             ),
         },
         {
-            id: "section6",
-            label: t("view_participant.utm_parameters"),
-            content: (
+            id:"section6",
+            label:t("view_participant.utm_parameters"),
+            content:(
                 <div>
-                    <ViewParticipantUtmParameters participantId={Id} />
+                      <ViewParticipantUtmParameters participantId={Id} />
                 </div>
             ),
-            header: (
+            header:
+            (
                 <div>
-                    <p
-                        className={`text-[18px] font-[600] ${
-                            activeTabId == "section6" && "text-[#7677F4]"
-                        }`}
-                    >
-                        UTM Parameters
-                    </p>
-                </div>
-            ),
-        },
+                <p
+                    className={`font-semibold text-[18px] pt-[20px]  ${
+                        activeTabId == "section6" && "text-[#7677F4]"
+                    }`}
+                >
+                    {t("course.participants:view_participant.utm_parameters")}
+                </p>
+            </div>  
+            )
+        }
     ];
 
     // Check if accommodation tab should be rendered in tabs list or not

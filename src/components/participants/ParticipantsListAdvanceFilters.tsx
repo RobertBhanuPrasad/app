@@ -388,17 +388,8 @@ export const ContactDetails = () => {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label>{t("course.participants:find_participant.name")}</Label>
-        <Input
-          onChange={handleNameChange}
-          value={contactName}
-          type="text"
-          maxLength={50}
-        ></Input>
-        {contactName?.length >= 50 && (
-          <div className=" text-red-600">
-            Reached maximum character limit: 50
-          </div>
-        )}
+        <Input onChange={handleNameChange} value={contactName} type="text" maxLength={50}></Input>
+        {contactName?.length >= 50 && <div className=" text-red-600">{t("new_strings:reached_maximum_character_limit_50")}</div>}
       </div>
       <div className="flex flex-col gap-2">
         <Label>{t("course.participants:find_participant.email")}</Label>
@@ -411,9 +402,7 @@ export const ContactDetails = () => {
           (emailRegex.test(contactEmail) ? (
             ""
           ) : (
-            <div className="text-red-600">
-              Enter valid email id and Enter only one email at a time
-            </div>
+            <div className="text-red-600">{t("new_strings:enter_valid_email_id_and_enter_only_one_email_at_a_time")}</div>
           ))}
       </div>
       <div className="flex flex-col gap-2">

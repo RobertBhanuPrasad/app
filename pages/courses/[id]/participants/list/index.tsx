@@ -34,7 +34,10 @@ import {
 import { Input } from "src/ui/input";
 import { MultiSelect } from "src/ui/multi-select";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
-import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+import {
+  getOptionValueObjectByOptionOrder,
+  getOptionValuesByOptionLabel,
+} from "src/utility/GetOptionValuesByOptionLabel";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 import { GetServerSideProps } from "next";
@@ -298,7 +301,7 @@ function index() {
     },
     meta: {
       select:
-        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
     sorters: {
@@ -388,6 +391,11 @@ function index() {
     PARTICIPANT_PAYMENT_STATUS
   )?.[0]?.option_values;
 
+  const transactionStatusPendingObject = getOptionValueObjectByOptionOrder(
+    "PARTICIPANT_PAYMENT_STATUS",
+    2
+  );
+
   const handleUpdateAttendanceStatus = async (attendance_status_id: number) => {
     const participantIds: number[] = Object.keys(selectedRowObjects)
       .filter((key: any) => selectedRowObjects[key] === true)
@@ -401,12 +409,18 @@ function index() {
     if (!error) {
       setDisplayTransactionStatusBulkActionError(true);
       setbulkActionsSuccessIcon(true);
+      // setBulkActionsErrorTitle(
+      //   `${participantIds?.length} Records Successfully Updated`
+      // );
       setBulkActionsErrorTitle(
-        `${participantIds?.length} Records Successfully Updated`
+        `${participantIds?.length} ${t(
+          "new_strings:records_successfully_updated"
+        )}`
       );
-      setBulkActionsErrorMessage(
-        `The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.`
-      );
+      // setBulkActionsErrorMessage(
+      //   `The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.`
+      // );
+      setBulkActionsErrorMessage(t("new_strings:bulk_action_saved_message"));
     }
   };
 
@@ -421,15 +435,15 @@ function index() {
       .filter((key: any) => selectedRowObjects[key] === true)
       .map(Number);
 
-    const transactionPendingStatusID = paymentStatusOptions.find(
-      (record: any) => record.value == "Pending"
-    )?.id;
+    const transactionPendingStatusID = transactionStatusPendingObject?.id;
 
     const { data: selectedTransactionStatusValues } = await supabase
       .from("participant_payment_history")
       .select("transaction_status_id")
       .match({ program_id: programID })
-      .in("participant_id", participantIds);
+      .in("participant_id", participantIds)
+      .order("transaction_date", { ascending: false })
+      .limit(1);
 
     const selectTransactionStatusIds = selectedTransactionStatusValues?.map(
       (record) => record?.transaction_status_id
@@ -447,33 +461,51 @@ function index() {
             program_id: programID,
             transaction_status_id: transactionPendingStatusID,
           })
-          .in("participant_id", participantIds);
+          .in("participant_id", participantIds)
+          .order("transaction_date", { ascending: false })
+          .limit(1);
 
         if (!error) {
           setDisplayTransactionStatusBulkActionError(true);
           setbulkActionsSuccessIcon(true);
-          setBulkActionsErrorTitle("Bulk Transaction Status Update");
+          // setBulkActionsErrorTitle("Bulk Transaction Status Update");
+          setBulkActionsErrorTitle(
+            t("new_strings:bulk_transaction_status_update")
+          );
+          // setBulkActionsErrorMessage(
+          //   `${participantIds?.length} Records Successfully Updated`
+          // );
           setBulkActionsErrorMessage(
-            `${participantIds?.length} Records Successfully Updated`
+            `${participantIds?.length} ${t(
+              "new_strings:records_successfully_updated"
+            )}`
           );
         }
       } else {
         setDisplayTransactionStatusBulkActionError(true);
         setbulkActionsSuccessIcon(false);
-        setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
-        setBulkActionsErrorMessage(`Bulk update can only be done for payments with “Pending” status.
-        Please select records whose transaction status value is only
-        “Pending”. To update the payments with status other than
-        “Pending”, please visit the Registration details for that
-        participant.`);
+        // setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
+        setBulkActionsErrorTitle(
+          t("new_strings:error_bulk_transaction_status_update")
+        );
+        // setBulkActionsErrorMessage(`Bulk update can only be done for payments with “Pending” status.
+        // Please select records whose transaction status value is only
+        // “Pending”. To update the payments with status other than
+        // “Pending”, please visit the Registration details for that
+        // participant.`);
+        setBulkActionsErrorMessage(t("new_strings:bulk_action_error_message"));
       }
     } else {
       setDisplayTransactionStatusBulkActionError(true);
       setbulkActionsSuccessIcon(false);
-      setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
-      setBulkActionsErrorMessage(
-        "No transaction history found for the selected participant(s)"
+      // setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
+      setBulkActionsErrorTitle(
+        t("new_strings:error_bulk_transaction_status_update")
       );
+      // setBulkActionsErrorMessage(
+      //   "No transaction history found for the selected participant(s)"
+      // );
+      setBulkActionsErrorMessage(t("new_strings:no_transaction_history_found"));
     }
   };
 
@@ -639,10 +671,10 @@ function index() {
         </Form>
         {/* Bulk actions section */}
         <div className="flex gap-10 justify-end w-full">
-        {/* Bulk Actions Dropdown */}
-        <div>
-        <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+          {/* Bulk Actions Dropdown */}
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
                   onClick={() => setOpen(true)}
                   variant="outline"
@@ -654,40 +686,44 @@ function index() {
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-        <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
-        {/* TODO (Not in MVP Scope): Print Registration Form */}
-        <DropdownMenuItem
+              <DropdownMenuContent align="end">
+                <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
+                  {/* TODO (Not in MVP Scope): Print Registration Form */}
+                  <DropdownMenuItem
                     onClick={() => {
                       setEnableBulkOptions(true);
                     }}
                   >
                     Print Registration Form
                   </DropdownMenuItem>
-        <DropdownMenuItem
+                  <DropdownMenuItem
                     onClick={() => {
-                      setBulkActionSelectedValue(t('new_strings:update_attendance_status'));
+                      setBulkActionSelectedValue(
+                        t("new_strings:update_attendance_status")
+                      );
                       setEnableBulkOptions(false);
                       setBulkAction("attendance");
                     }}
                   >
-        {t('new_strings:update_attendance_status')}
-        </DropdownMenuItem>
-        <DropdownMenuItem
+                    {t("new_strings:update_attendance_status")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
                     onClick={() => {
-                      setBulkActionSelectedValue(t('new_strings:update_transaction_status'));
+                      setBulkActionSelectedValue(
+                        t("new_strings:update_transaction_status")
+                      );
                       setEnableBulkOptions(false);
                       setBulkAction("transaction");
                     }}
                   >
-                    {t('new_strings:update_transaction_status')}
+                    {t("new_strings:update_transaction_status")}
                   </DropdownMenuItem>
-        </div>
-        </DropdownMenuContent>
-        </DropdownMenu>
-        </div>
-        {/* Bulk actions options dropdown */}
-        <div>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          {/* Bulk actions options dropdown */}
+          <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -696,7 +732,7 @@ function index() {
                   className="flex flex-row justify-between w-[152px] h-10"
                   disabled={selectedTableRows > 0 ? disableBulkOptions : true}
                 >
-                  {t('course.participants:find_participant.select_status')}
+                  {t("course.participants:find_participant.select_status")}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -748,7 +784,7 @@ function index() {
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
-            noRecordsPlaceholder="There are no participants"
+            noRecordsPlaceholder={t("new_strings:there_are_no_participants")}
           />
         </div>
       </div>
@@ -832,7 +868,6 @@ function index() {
 
 export default index;
 
-
 const HeaderSection = () => {
   const { t } = useTranslation([
     "common",
@@ -850,7 +885,7 @@ const HeaderSection = () => {
   const { watch, setValue } = useFormContext();
   const formData = watch();
   const router = useRouter();
-  
+
   const {
     field: { value: Searchvalue, onChange: onSearch },
   } = useController({
@@ -1017,7 +1052,7 @@ const HeaderSection = () => {
           onSearch={() => {}}
           onChange={onSelectChange}
           searchBar={false}
-          variant='basic'
+          variant="basic"
         />
       </div>
       {/* Clear, Apply Filters Section */}
@@ -1081,7 +1116,7 @@ const handleExportExcel = async (
   filters: any,
   selectOption: string,
   setLoading: (by: boolean) => void,
-  countryCode:string
+  countryCode: string
 ) => {
   setLoading(true);
   const supabase = supabaseClient();
@@ -1096,7 +1131,6 @@ const handleExportExcel = async (
       file_type: selectOption,
     });
 
-
     //invoking the export_to_file function
     const { data, error } = await supabase.functions.invoke(
       `export_to_file?${params}`,
@@ -1104,7 +1138,7 @@ const handleExportExcel = async (
         headers: {
           Authorization:
             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-            "country-code": countryCode,
+          "country-code": countryCode,
         },
       }
     );

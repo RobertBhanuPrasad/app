@@ -84,7 +84,7 @@ export const ParticipantsListMainHeader = () => {
             {/* Course Schedule */}
             <div className="flex gap-2 items-center border-x-2 px-6">
               <CalenderIcon color="#7677F4" />
-              {startDate} {t('course.new_course:time_and_venue_tab.to')} {endDate}
+             {startDate} {t('course.new_course:time_and_venue_tab.to')} {endDate}
             </div>
             {/* Participant Count */}
             <div className="flex gap-2 items-center">
