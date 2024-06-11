@@ -642,6 +642,9 @@ interface ProgramOfflineRevenueDatabaseType {
 }
 
 interface ProgramDataBaseType {
+  language_type: any;
+  manage_type: any;
+  program_users: any;
   id?: number;
   created_by_user_id?: number | UsersDataBaseType;
   created_at?: Date;
@@ -651,11 +654,11 @@ interface ProgramDataBaseType {
   program_code?: string;
   program_fee_settings_id?: number | ProgramFeeSettingsDataBaseType;
   program_type_id?: number | ProgramTypesDataBaseType;
-  visibility_id?: number | OptionValuesDataBaseType;
+  visibility?: string | OptionValuesDataBaseType;
   status_id?: number | OptionValuesDataBaseType;
   is_registration_via_3rd_party?: boolean;
   registration_via_3rd_party_url?: string;
-  hour_format_id?: number | OptionValuesDataBaseType;
+  hour_format?: string;
   time_zone_id?: number | OptionValuesDataBaseType;
   disable_bank_transfer_paylater?: boolean;
   early_bird_cut_off_period?: number;
@@ -705,29 +708,29 @@ interface NewCourseFormFieldTypes {
 
   //step 1
   organization_id?: number;
-  organizer_ids?: number[];
+  organizer_ids?: string[];
   is_registration_via_3rd_party?: boolean;
   registration_via_3rd_party_url?: string;
-  program_created_by?: number;
+  program_created_by?: string;
   created_by_user_id?: number;
 
   //step 2
   program_type_id?: number | string;
-  teacher_ids?: number[];
-  assistant_teacher_ids?: number[];
-  visibility_id?: number;
+  teacher_ids?: string[];
+  assistant_teacher_ids?: string[];
+  visibility_id?: string;
   is_language_translation_for_participants?: boolean;
   program_alias_name_id?: number;
   is_geo_restriction_applicable?: boolean;
   is_registration_required?: boolean;
   language_ids?: number[];
-  translation_language_ids?: number[];
+  translation_language_ids?: string[];
   allowed_countries?: string[];
   max_capacity?: string;
 
   // Step 3
   online_url?: string;
-  hour_format_id?: number;
+  hour_format_id?: string;
   time_zone_id?: number;
   schedules?: any[];
   state_id?: number;
