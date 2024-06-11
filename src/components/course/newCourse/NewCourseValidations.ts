@@ -1,7 +1,7 @@
 import { start } from "repl";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { z } from "zod";
-export const validationSchema = (iAmCoTeachingId: number) => {
+export const validationSchema = (iAmCoTeaching: string) => {
   return z.object({
     // Step 1 Schema
     organization_id: z.number({
@@ -13,7 +13,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
       .refine((val) => val.length <= 10, {
         message: "Maximum number of organizers allowed is 10",
       }),
-    program_created_by: z.number({
+    program_created_by: z.string({
       required_error: "Select who is going to teach the course",
     }),
     is_registration_via_3rd_party: z.boolean().optional(),
@@ -51,7 +51,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
 
           // REQUIRMENT if the programCreatedById is I am co-teching id then we need to validate the teachers field for min 2
           if (
-            parseInt(programCreatedById) === iAmCoTeachingId &&
+            programCreatedById === iAmCoTeaching &&
             teacher_ids.length < 2
           ) {
             return false;
@@ -67,7 +67,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
         required_error: "Please enter at least one associate teacher",
       })
       .optional(),
-    visibility_id: z.number(),
+    visibility_id: z.string(),
     is_language_translation_for_participants: z.boolean().optional(),
     is_geo_restriction_applicable: z.boolean(),
     language_ids: z.array(z.number()).optional(),
@@ -99,7 +99,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
       .nonempty({ message: "Online meeting URL is a required field" })
       .url({ message: "Online meeting URL is not valid" }),
 
-    hour_format_id: z.number({
+    hour_format_id: z.string({
       required_error: "Time format is a required field",
     }),
     state_id: z.union([
@@ -154,7 +154,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
     is_residential_program: z.boolean(),
-    accommodation_fee_payment_mode: z.number({
+    accommodation_fee_payment_mode: z.string({
       required_error: "Fee payment method is required fields",
     }),
 
