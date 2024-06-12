@@ -37,11 +37,9 @@ const CourseDetails = () => {
     id: Id,
     meta: {
       select:
-        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,name),program_schedules(*),program_teachers(*,user_id(contact_id(*))),program_accounting_status_id(id,name),program_contact_details(*)",
+        "*,center_id(id,name),state_id(id,name),city_id(id,name),created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,name),program_schedules(*),program_teachers(*,user_id(contact_id(*))),program_accounting_status_id(id,name),program_contact_details(*)",
     },
   });
-
-  console.log(courseData, "courseData");
 
   // Get total revenue from participant data
   const totalRevenue = courseData?.data?.revenue;
@@ -60,22 +58,35 @@ const CourseDetails = () => {
 
   // it is program  Teacher address where we are maping and getting the contact of the teacher
   // to show the address of the teacher we are using this
-  const programTeachersAddress = courseData?.data?.program_teachers?.map(
+  const programTeachersData = courseData?.data?.program_teachers?.map(
     (item: fullNameObject) => {
       return item?.user_id?.contact_id;
     }
   );
 
-  console.log(programTeachersAddress, "programTeachersAddress");
-
-  //from programTeachersAddress we are getting the teacher contact id
+  //from programTeachersData we are getting the teacher contact id
   // from this id we are calling contact table and feting country, state, city names to show them in accordian
   const { data: teacherPlace } = useOne({
     resource: "contact",
-    id: programTeachersAddress?.[0]?.id,
+    id: programTeachersData?.[0]?.id,
     meta: { select: "city_id(name),state_id(name,id),country_id(name,id)" },
   });
 
+  const venueAddress =
+    courseData?.data?.venue_id?.address +
+    ", " +
+    courseData?.data?.venue_id?.postal_code +
+    ", " +
+    courseData?.data?.venue_id?.state_id?.name +
+    ", " +
+    courseData?.data?.venue_id?.city_id?.name;
+
+  const onlineVenueAddress =
+    courseData?.data?.state_id?.name +
+    ", " +
+    courseData?.data?.city_id?.name +
+    ", " +
+    courseData?.data?.center_id?.name;
   return (
     <div>
       <div className="grid grid-cols-4 gap-9">
@@ -124,10 +135,14 @@ const CourseDetails = () => {
 
           <abbr
             className=" no-underline truncate block text-[16px] text-[#666666]"
-            title={programTeachersAddress?.[0]?.full_name}
+            title={programTeachersData?.[0]?.full_name}
           >
-            {programTeachersAddress?.[0]?.full_name
-              ? programTeachersAddress?.[0]?.full_name
+            {courseData?.data?.program_teachers?.length > 0
+              ? courseData?.data?.program_teachers
+                  .map((item: fullNameObject) => {
+                    return item?.user_id?.contact_id?.full_name;
+                  })
+                  .join(", ")
               : "-"}
           </abbr>
         </div>
@@ -138,11 +153,11 @@ const CourseDetails = () => {
           />
 
           <div className="text-[#666666] text-[16px]">
-            {programTeachersAddress?.[0]?.street_address},{" "}
+            {programTeachersData?.[0]?.street_address},{" "}
             {teacherPlace?.data?.city_id?.name},{" "}
             {teacherPlace?.data?.state_id?.name},
             {teacherPlace?.data?.country_id?.name}{" "}
-            {programTeachersAddress?.[0]?.postal_code}
+            {programTeachersData?.[0]?.postal_code}
           </div>
         </div>
         <div>
@@ -202,10 +217,7 @@ const CourseDetails = () => {
           />
 
           <div className="text-[#666666] text-[16px]">
-            {courseData?.data?.venue_id?.address},{" "}
-            {courseData?.data?.venue_id?.postal_code},{" "}
-            {courseData?.data?.venue_id?.state_id?.name},{" "}
-            {courseData?.data?.venue_id?.city_id?.name}
+            {courseData?.data?.venue_id ? venueAddress : onlineVenueAddress}
           </div>
         </div>
         <div>
@@ -213,11 +225,15 @@ const CourseDetails = () => {
 
           <abbr
             className=" no-underline  truncate block text-[16px] text-[#666666]"
-            title={courseData?.data?.venue_id?.center_id?.name}
+            title={
+              courseData?.data?.venue_id
+                ? courseData?.data?.venue_id?.center_id?.name
+                : courseData?.data?.center_id?.name
+            }
           >
-            {courseData?.data?.venue_id?.center_id?.name
+            {courseData?.data?.venue_id
               ? courseData?.data?.venue_id?.center_id?.name
-              : "-"}
+              : courseData?.data?.center_id?.name}
           </abbr>
         </div>
         <div>
