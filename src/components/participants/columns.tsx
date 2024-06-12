@@ -6,21 +6,7 @@ import {
 } from "@radix-ui/react-icons";
 import { useGetIdentity, useList } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  AlarmClock,
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CalendarClockIcon,
-  Clock10Icon,
-  ClockIcon,
-  LucideClock,
-  LucideFileClock,
-  LucideTimer,
-  MoreVertical,
-  TimerIcon,
-  TimerOff,
-  TimerReset,
-} from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -763,7 +749,12 @@ export const columns = () => {
                 {actionMenu?.map((value: any, index) => (
                   <DropdownMenuItem
                     onClick={() => {
-                      handleActions(value?.order, row?.original?.id, router, row?.original?.contact_id?.email);
+                      handleActions(
+                        value?.order,
+                        row?.original?.id,
+                        router,
+                        row?.original?.contact_id?.email
+                      );
                     }}
                   >
                     {value?.option}
@@ -813,9 +804,9 @@ export const handleActions = (
       break;
     }
     case 4: {
-        //open the default mail application witn the selected participant mail as to email address.
-        const mailtoUrl = `mailto:${participant_email}`;
-        window.open(mailtoUrl)
+      //open the default mail application witn the selected participant mail as to email address.
+      const mailtoUrl = `mailto:${participant_email}`;
+      window.open(mailtoUrl);
       break;
     }
     case 5: {
