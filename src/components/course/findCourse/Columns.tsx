@@ -75,7 +75,7 @@ export const column = (
       }
     },
 
-  
+    //TODO : for now may-13 release it has to be hidden
     {
       accessorKey: "program_type_alias_names",
       column_name: t("new_strings:course_name"),

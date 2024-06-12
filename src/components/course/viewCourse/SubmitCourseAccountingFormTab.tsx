@@ -8,7 +8,6 @@ function SubmitCourseAccountingFormTab() {
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
-    console.log(Id, 'Id CAF submit')
   /**
    * Function to handle click of continue button
    * We have to navigate to the close participants section out of 3 sections

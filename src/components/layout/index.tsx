@@ -17,7 +17,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         <Navbar />
         <Breadcrumb />
       </div>
-      <div className="mt-[98px]">
+      <div className="mt-[120px]">
         <div className="absolute -top-[145px] -z-10 w-full">
           <Image src={background} alt="bg" className="w-full h-[300px]" />
         </div>
