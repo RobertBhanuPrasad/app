@@ -10,7 +10,7 @@ import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyo
 import Car from "@public/assets/Car";
 import Fees from "@public/assets/Fees";
 import Group from "@public/assets/Group";
-import Info from "@public/assets/Info";
+import ContactInfo from "@public/assets/ContactInfo";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import {
@@ -750,7 +750,7 @@ export const NewCourseTabs = () => {
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: t("new_strings:contact_info"),
-      icon: (color: string) => <Info color={color} />,
+      icon: (color: string) => <ContactInfo color={color} />,
       component: <NewCourseStep6 />,
     },
   ];
