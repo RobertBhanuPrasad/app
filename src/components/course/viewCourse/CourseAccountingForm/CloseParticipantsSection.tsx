@@ -34,6 +34,7 @@ import { useRouter as useNextRouter } from "next/router";
 import Tick from "@public/assets/Tick.png";
 import { translatedText } from "src/common/translations";
 
+
 function CloseParticipantsSection() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -72,7 +73,6 @@ function CloseParticipantsSection() {
     // we have to use this replace method
     replace(`${pathname}?${params.toString()}`);
   }
-
   /**
    * variable for getting the pending attendence status id
    */
@@ -234,7 +234,7 @@ function CloseParticipantsSection() {
 
   return (
     <div>
-      <div className="m-6 flex flex-col gap-4">
+      <div className="m-6 flex flex-col gap-4 bg-[white]">
         <div className="ml-auto flex flex-row gap-4">
           <div>
             {/* select dropdown for displaying actions */}

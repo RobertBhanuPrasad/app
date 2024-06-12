@@ -121,7 +121,6 @@ function ViewDetails() {
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
-
   const { data: courseData } = useOne({
     resource: "program",
     id: Id,
@@ -166,13 +165,12 @@ function ViewDetails() {
       tab_query_name: "participants",
     },
 
-    // TODO : it has to hidden for may 13 release
-    // {
-    //   value: REVENUE_SUMMARY_TAB,
-    //   label:t('course.view_course:revenue_summary_tab.revenue_summary'),
-    //   disabled: false,
-    //   tab_query_name: "revenue_summary",
-    // },
+    {
+      value: REVENUE_SUMMARY_TAB,
+      label:t('course.view_course:revenue_summary_tab.revenue_summary'),
+      disabled: false,
+      tab_query_name: "revenue_summary",
+    },
   ];
 
   /**
@@ -260,7 +258,7 @@ function ViewDetails() {
             <DisplayingCourseStatus
               statusId={courseData?.data?.status_id?.value}
             />
-            {/* <ShareButton /> */}
+            <ShareButton />
           </div>
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
@@ -417,13 +415,13 @@ function ViewDetails() {
               >
                 <div className="flex flex-col gap-1">
                   {trigger.label}
-                  {/* <div
+                  <div
                     className={`${
                       getTabQueryName() === JSON.stringify(trigger.value)
                         ? 'bg-[#7677F4] rounded w-full h-[2px]'
                         : 'w-full h-[2px]'
                     }`}
-                  ></div> */}
+                  ></div>
                 </div>
               </TabsTrigger>
             ))}
