@@ -56,51 +56,6 @@ export const columns = () =>
             },
         },
         {
-            accessorKey: "created_at",
-            column_name: t(
-                "course.participants:find_participant.registration_date"
-            ),
-            header: ({ column }) => {
-                return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t(
-                                "course.participants:find_participant.registration_date"
-                            )}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
-                );
-            },
-
-            cell: ({ row }: any) => {
-                const db_date = formatDate(row?.original?.created_at);
-                return <div className="text-left pl-4">{db_date}</div>;
-            },
-        },
-        {
             accessorKey: "Name",
             column_name: t("course.participants:find_participant.name"),
             enableHiding: false,
@@ -142,79 +97,6 @@ export const columns = () =>
                 return (
                     <div className="text-left pl-4 !min-w-[175px] capitalize">
                         {row?.original?.contact_id?.full_name}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "NIF",
-            column_name: t("course.participants:find_participant.nif"),
-            header: ({ column }) => {
-                return (
-                    <div className="text-left">
-                        {" "}
-                        {t("course.participants:find_participant.nif")}
-                    </div>
-                );
-            },
-
-            // This any will be removed after internal dataStructure implementation
-
-            cell: ({ row }: any) => {
-                return (
-                    <div className="text-left !min-w-[125px]">
-                        {row?.original?.contact_id?.nif}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Date of Birth",
-            column_name: t(
-                "course.participants:find_participant.date_of_birth"
-            ),
-            header: ({ column }) => {
-                return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t(
-                                "course.participants:find_participant.date_of_birth"
-                            )}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
-                );
-            },
-
-            cell: ({ row }: any) => {
-                const db_date = formatDate(
-                    row?.original?.contact_id?.date_of_birth
-                );
-                return (
-                    <div className="text-left !min-w-[150px] pl-4">
-                        {db_date.length ? db_date : "-"}
                     </div>
                 );
             },
@@ -408,123 +290,6 @@ export const columns = () =>
             },
         },
         {
-            accessorKey: "Transaction Type",
-            column_name: t(
-                "course.participants:view_participant.transaction_type"
-            ),
-            header: ({ column }) => {
-                return (
-                    <div className="min-w-[150px] text-left">
-                        {t(
-                            "course.participants:view_participant.transaction_type"
-                        )}
-                    </div>
-                );
-            },
-
-            // This any will be removed after internal dataStructure implementation
-
-            cell: ({ row }: any) => {
-                return (
-                    <div className="text-left">
-                        {row?.original?.participant_payment_history?.length >
-                            0 ? (
-                            <TransactionActivity
-                                transactionHistory={
-                                    row?.original?.participant_payment_history
-                                }
-                            />
-                        ) : (
-                            "-"
-                        )}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Transaction ID",
-            column_name: t(
-                "course.participants:view_participant.transaction_id"
-            ),
-            header: ({ column }) => {
-                return (
-                    <div className=" min-w-[200px] text-left">
-                        {t(
-                            "course.participants:view_participant.transaction_id"
-                        )}
-                    </div>
-                );
-            },
-
-            // This any will be removed after internal dataStructure implementation
-
-            cell: ({ row }: any) => {
-                const sortedRows =
-                    row?.original?.participant_payment_history.sort(
-                        (a: any, b: any) => b?.id - a?.id
-                    );
-                return (
-                    <div className="text-left">
-                        {row?.original?.participant_payment_history?.length
-                            ? sortedRows[0]?.payment_transaction_id
-                            : "-"}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Payment Method",
-            column_name: t(
-                "course.participants:view_participant.payment_method"
-            ),
-            header: ({ column }) => {
-                return (
-                    <div className="min-w-[200px] text-left">
-                        {t(
-                            "course.participants:view_participant.payment_method"
-                        )}
-                    </div>
-                );
-            },
-
-            // This any will be removed after internal dataStructure implementation
-
-            cell: ({ row }: any) => {
-                return (
-                    <div className="text-left">
-                        {row?.original?.payment_method?.name
-                            ? translatedText(
-                                row?.original?.payment_method?.name
-                            )
-                            : "-"}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Balance",
-            column_name: t("new_strings:balance_due"),
-            header: ({ column }) => {
-                return (
-                    <div className="text-left">
-                        {t("new_strings:balance_due")}
-                    </div>
-                );
-            },
-
-            // This any will be removed after internal dataStructure implementation
-
-            cell: ({ row }: any) => {
-                return (
-                    <div className="text-left">
-                        {row?.original?.balance_due
-                            ? row?.original?.balance_due?.toFixed(2)
-                            : "-"}
-                    </div>
-                );
-            },
-        },
-        {
             accessorKey: "Transaction Status",
             column_name: t(
                 "course.participants:find_participant.transaction_status"
@@ -673,6 +438,241 @@ export const columns = () =>
                                 row?.original
                                     ?.participant_attendence_status_id?.name
                             )
+                            : "-"}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "NIF",
+            column_name: t("course.participants:find_participant.nif"),
+            header: ({ column }) => {
+                return (
+                    <div className="text-left">
+                        {" "}
+                        {t("course.participants:find_participant.nif")}
+                    </div>
+                );
+            },
+
+            // This any will be removed after internal dataStructure implementation
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className="text-left !min-w-[125px]">
+                        {row?.original?.contact_id?.nif}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Date of Birth",
+            column_name: t(
+                "course.participants:find_participant.date_of_birth"
+            ),
+            header: ({ column }) => {
+                return (
+                    <div>
+                        <Button
+                            variant="ghost"
+                            onClick={() =>
+                                column.toggleSorting(
+                                    column.getIsSorted() === "asc"
+                                )
+                            }
+                        >
+                            {t(
+                                "course.participants:find_participant.date_of_birth"
+                            )}
+                            {column.getIsSorted() === "desc" ? (
+                                <ArrowDownIcon
+                                    className="ml-2 size-4"
+                                    aria-hidden="true"
+                                />
+                            ) : column.getIsSorted() === "asc" ? (
+                                <ArrowUpIcon
+                                    className="ml-2 size-4"
+                                    aria-hidden="true"
+                                />
+                            ) : (
+                                <CaretSortIcon
+                                    className="ml-2 size-4"
+                                    aria-hidden="true"
+                                />
+                            )}
+                        </Button>
+                    </div>
+                );
+            },
+
+            cell: ({ row }: any) => {
+                const db_date = formatDate(
+                    row?.original?.contact_id?.date_of_birth
+                );
+                return (
+                    <div className="text-left !min-w-[150px] pl-4">
+                        {db_date.length ? db_date : "-"}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "created_at",
+            column_name: t(
+                "course.participants:find_participant.registration_date"
+            ),
+            header: ({ column }) => {
+                return (
+                    <div>
+                        <Button
+                            variant="ghost"
+                            onClick={() =>
+                                column.toggleSorting(
+                                    column.getIsSorted() === "asc"
+                                )
+                            }
+                        >
+                            {t(
+                                "course.participants:find_participant.registration_date"
+                            )}
+                            {column.getIsSorted() === "desc" ? (
+                                <ArrowDownIcon
+                                    className="ml-2 size-4"
+                                    aria-hidden="true"
+                                />
+                            ) : column.getIsSorted() === "asc" ? (
+                                <ArrowUpIcon
+                                    className="ml-2 size-4"
+                                    aria-hidden="true"
+                                />
+                            ) : (
+                                <CaretSortIcon
+                                    className="ml-2 size-4"
+                                    aria-hidden="true"
+                                />
+                            )}
+                        </Button>
+                    </div>
+                );
+            },
+
+            cell: ({ row }: any) => {
+                const db_date = formatDate(row?.original?.created_at);
+                return <div className="text-left pl-4">{db_date}</div>;
+            },
+        },
+        {
+            accessorKey: "Transaction Type",
+            column_name: t(
+                "course.participants:view_participant.transaction_type"
+            ),
+            header: ({ column }) => {
+                return (
+                    <div className="min-w-[150px] text-left">
+                        {t(
+                            "course.participants:view_participant.transaction_type"
+                        )}
+                    </div>
+                );
+            },
+
+            // This any will be removed after internal dataStructure implementation
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className="text-left">
+                        {row?.original?.participant_payment_history?.length >
+                            0 ? (
+                            <TransactionActivity
+                                transactionHistory={
+                                    row?.original?.participant_payment_history
+                                }
+                            />
+                        ) : (
+                            "-"
+                        )}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Transaction ID",
+            column_name: t(
+                "course.participants:view_participant.transaction_id"
+            ),
+            header: ({ column }) => {
+                return (
+                    <div className=" min-w-[200px] text-left">
+                        {t(
+                            "course.participants:view_participant.transaction_id"
+                        )}
+                    </div>
+                );
+            },
+
+            // This any will be removed after internal dataStructure implementation
+
+            cell: ({ row }: any) => {
+                const sortedRows =
+                    row?.original?.participant_payment_history.sort(
+                        (a: any, b: any) => b?.id - a?.id
+                    );
+                return (
+                    <div className="text-left">
+                        {row?.original?.participant_payment_history?.length
+                            ? sortedRows[0]?.payment_transaction_id
+                            : "-"}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Payment Method",
+            column_name: t(
+                "course.participants:view_participant.payment_method"
+            ),
+            header: ({ column }) => {
+                return (
+                    <div className="min-w-[200px] text-left">
+                        {t(
+                            "course.participants:view_participant.payment_method"
+                        )}
+                    </div>
+                );
+            },
+
+            // This any will be removed after internal dataStructure implementation
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className="text-left">
+                        {row?.original?.payment_method?.name
+                            ? translatedText(
+                                row?.original?.payment_method?.name
+                            )
+                            : "-"}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Balance",
+            column_name: t("new_strings:balance_due"),
+            header: ({ column }) => {
+                return (
+                    <div className="text-left">
+                        {t("new_strings:balance_due")}
+                    </div>
+                );
+            },
+
+            // This any will be removed after internal dataStructure implementation
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className="text-left">
+                        {row?.original?.balance_due
+                            ? row?.original?.balance_due?.toFixed(2)
                             : "-"}
                     </div>
                 );
