@@ -808,7 +808,16 @@ export const NewCourseTabs = () => {
     handleCourseFeeData();
   }, [
     formData?.program_type_id,
-    formData?.schedules,
+    /**
+     * This approach converts the schedules array into a string, 
+     * allowing a deep comparison of the array's content. 
+     * If any part of the schedules array changes, the string representation will also change then we will fetch the fee again
+     * We have changed this because we got the bug that the fee is loading when we change the date (ticket 1921)
+     * What is happening here is, it is comparing shallow comparision that is just comparing a new thing added or deleted only
+     * so it is not comparing in details, but we are changing the fee data to undefined when the schedules is changed, 
+     * but we are not udating the fee again so that we are getting the continues loading
+     */
+    JSON.stringify(formData?.schedules),
     formData?.is_existing_venue,
     formData?.newVenue,
     formData?.existingVenue,
