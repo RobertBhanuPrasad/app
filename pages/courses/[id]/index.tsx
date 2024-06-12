@@ -186,7 +186,7 @@ function ViewDetails() {
   );
 
   // Check if the tab should be enabled and append the object accordingly
-  
+
   if (isViewCourseAccountingTabToDisplay) {
     tabTriggers.push({
       value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
@@ -197,7 +197,7 @@ function ViewDetails() {
   } else {
     tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
-      label:t('course_accounting_form_tab.course_accounting_form'),
+      label: t("course_accounting_form_tab.course_accounting_form"),
       disabled: true,
       tab_query_name: "course_accounting_form",
     });
@@ -251,10 +251,8 @@ function ViewDetails() {
         <div className="flex flex-row justify-between">
           <div className="text-[32px] font-semibold">
             {courseData?.data?.program_code +
-                  " " +
-
-                  translatedText(courseData?.data?.program_type_id?.name)
-            }
+              " " +
+              translatedText(courseData?.data?.program_type_id?.name)}
           </div>
           <div className="flex items-center gap-4">
             <DisplayingCourseStatus
@@ -754,7 +752,8 @@ export const ActionsDropDown = ({ courseData }: any) => {
   const [cancelCourseModalOpen, setCancelCourseModalOpen] = useState(false);
   const [cancelSuccessModalOpen, setCancelSuccessModalOpen] = useState(false);
 
-  const { setNewCourseData, setViewPreviewPage,setProgramCreatedById } = newCourseStore()
+  const { setNewCourseData, setViewPreviewPage, setProgramCreatedById } =
+    newCourseStore();
   const options = DisplayOptions(
     courseData?.status_id?.id,
     courseData?.program_accounting_status_id,
@@ -845,7 +844,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
         }}
       >
         <SelectTrigger className="w-[192px] border !text-[#333333] !font-semibold text-sm !border-[#999999]">
-          <SelectValue placeholder={t('actions')} />
+          <SelectValue placeholder={t("actions")} />
         </SelectTrigger>
         <SelectContent>
           <SelectItems>
