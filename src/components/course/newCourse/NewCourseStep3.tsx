@@ -142,8 +142,8 @@ const OnlineProgram = () => {
             <TooltipTrigger>
               <Important />
             </TooltipTrigger>
-            <TooltipContent className="min-w-[256px] min-h-[170px] !w-full py-3 bg-[#333333] text-white border-none">
-              <div className="w-[231px] text-wrap !rounded-[15px]">
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+              <div className="text-wrap">
                 {t("new_strings:online_course_hovered_text")}
               </div>
               <TooltipArrow height={15} width={17} fill="#333333"/>

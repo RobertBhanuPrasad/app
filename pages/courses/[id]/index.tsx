@@ -285,8 +285,8 @@ function ViewDetails() {
                 <TooltipTrigger>
                   <Important />
                 </TooltipTrigger>
-                <TooltipContent className="min-w-[312px] min-h-[100px] !w-full py-3 bg-[#333333] text-white border-none">
-                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                <TooltipContent className="max-w-[312px] py-3 bg-[#333333] text-white border-none">
+                  <div className="text-wrap">
                     {courseData?.data?.participant_count}{" "}
                     {t("new_strings:participants_header_hover_text")}
                     {courseData?.data?.total_participant_count}
@@ -307,8 +307,8 @@ function ViewDetails() {
                 <TooltipTrigger>
                   <Important />
                 </TooltipTrigger>
-                <TooltipContent className="min-h-[64px] !w-full py-3 bg-[#333333] text-white border-none">
-                  <div className="w-[331px] text-wrap !rounded-[15px] font-normal">
+                <TooltipContent className="max-w-[331px] py-3 bg-[#333333] text-white border-none">
+                  <div className="text-wrap">
                     {t(
                       "course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction"
                     )}{" "}
@@ -360,8 +360,8 @@ function ViewDetails() {
             <TooltipTrigger>
               <Important />
             </TooltipTrigger>
-            <TooltipContent className="min-w-[231px] min-h-[120px] !w-full py-3 bg-[#333333] text-white border-none">
-              <div className="!rounded-[15px] font-normal flex flex-col mb-[-1px]">
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+              <div className="flex flex-col mb-[-1px]">
                 <p>{t("course.view_course:basic_details_tab.approved_by")}:</p>
                 <p>
                   {courseData?.data?.approved_by_user_id &&

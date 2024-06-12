@@ -850,8 +850,7 @@ const Visibility = () => {
           <TooltipTrigger>
             <Important />
           </TooltipTrigger>
-          <TooltipContent className="min-w-[256px] min-h-[130px] !w-full py-3 bg-[#333333] text-white border-none">
-            <div className="w-[231px] text-wrap !rounded-[15px]">
+          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
               {/* <div className="flex flex-row gap-1 items-center">
                 <Globe />
                 {t("public")}
@@ -865,10 +864,9 @@ const Visibility = () => {
                 {t("private")}
               </div>
               <div>{t("new_strings:there_are_a_lot_of_things")}</div> */}
-                          <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
+              <Text className="text-[#FFFFFF] text-wrap text-xs">
               {t("new_strings:program_visibility_info_icon_text")}
               </Text>
-            </div>
           <TooltipArrow height={15} width={17} fill="#333333"/>
           </TooltipContent>
         </Tooltip>
@@ -956,8 +954,8 @@ const GeoRestriction = () => {
           <TooltipTrigger>
             <Important />
           </TooltipTrigger>
-          <TooltipContent className="min-w-[256px] min-h-[114px] !w-full py-3 bg-[#333333] text-white border-none">
-            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+            <div className="text-wrap">
               {t("new_strings:text_entered_in_the_email_notes")}
             </div>
             <TooltipArrow height={15} width={17} fill="#333333"/>
@@ -1214,8 +1212,8 @@ const MaximumCapacity = () => {
           <TooltipTrigger>
             <Important />
           </TooltipTrigger>
-          <TooltipContent className="min-w-[256px] min-h-[66px] !w-full py-3 bg-[#333333] text-white border-none">
-            <Text className="text-[#FFFFFF] w-[222px] text-wrap text-xs font-normal">
+          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
+            <Text className="text-[#FFFFFF] text-wrap text-xs">
               {t("new_strings:if_this_field_is_blank")}
             </Text>
             <TooltipArrow height={15} width={17} fill="#333333"/>
