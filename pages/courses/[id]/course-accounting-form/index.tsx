@@ -1,4 +1,3 @@
-// import HeaderSection from '../../../src/components/course/viewCourse/CourseAccountingForm/CourseAccountingFormHeader'
 import HeaderSection from '@components/course/viewCourse/CourseAccountingForm/CourseAccountingFormHeader'
 import Form from '@components/Formfield'
 import CloseParticipantsSection from '@components/course/viewCourse/CourseAccountingForm/CloseParticipantsSection'

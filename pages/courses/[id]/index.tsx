@@ -46,6 +46,7 @@ import {
   handleTabsBasedOnStatus,
   isApproved,
   isCourseAccountingFormApprovalNeeded,
+  isViewCourseAccountingTabDisplay,
 } from "@components/courseBusinessLogic";
 import CopyIcon from "@public/assets/CopyIcon";
 import Cross from "@public/assets/Cross";
@@ -184,6 +185,7 @@ function ViewDetails() {
   );
 
   // Check if the tab should be enabled and append the object accordingly
+  
   if (isViewCourseAccountingTabToDisplay) {
     tabTriggers.push({
       value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
