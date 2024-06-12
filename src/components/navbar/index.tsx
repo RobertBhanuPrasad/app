@@ -44,10 +44,18 @@ function Navbar() {
       title: 'Find Course',
       href: '/courses/list'
     },
+    
     // {
     //   title: 'Discount Codes',
     //   href: '/Courses/DiscountCodes'
     // }
+  ]
+
+  const eventComponents =[
+    {
+      title: 'New Event',
+      href: "/events/addevent"
+    }
   ]
 
   const supabase = supabaseClient()
@@ -121,11 +129,20 @@ function Navbar() {
               </NavigationMenuContent>
             </NavigationMenuItem>
             {/* Events Navigation */}
-            {/* <NavigationMenuItem>
-              <Link href="/course" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Events</NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem> */}
+             <NavigationMenuItem>
+             <NavigationMenuTrigger className={firstRouteName === 'Courses' ? '!text-[#7677F4] font-semibold' : ''}>
+                Events
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="NavigationMenuViewport">
+                <ul className="grid w-[160px] gap-3 py-4 px-2 ">
+                  {eventComponents.map(component => (
+                    <li key={component.title}>
+                      <MenuList Name={component.title} route={component.href} />
+                    </li>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem> 
             {/* Teachers Navigation */}
             {/* <NavigationMenuItem>
               <Link href="/course" legacyBehavior passHref>
