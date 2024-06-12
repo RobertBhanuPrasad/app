@@ -26,11 +26,6 @@ import {
   REJECTED,
   TIME_FORMAT_12_HOURS,
 } from "src/constants/OptionValueOrder";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "src/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import { formatDate, formatDateString } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
@@ -96,6 +91,7 @@ import {
 } from "src/ui/select";
 import { Separator } from "src/ui/separator";
 import { Textarea } from "src/ui/textarea";
+import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "src/ui/tooltip";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
@@ -284,18 +280,21 @@ function ViewDetails() {
               >
                 {courseData?.data?.participant_count}
               </Text>
-              <HoverCard>
-                <HoverCardTrigger>
+              <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
                   <Important />
-                </HoverCardTrigger>
-                <HoverCardContent>
+                </TooltipTrigger>
+                <TooltipContent className="min-w-[312px] min-h-[100px] !w-full py-3 bg-[#333333] text-white border-none">
                   <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                     {courseData?.data?.participant_count}{" "}
                     {t("new_strings:participants_header_hover_text")}
                     {courseData?.data?.total_participant_count}
                   </div>
-                </HoverCardContent>
-              </HoverCard>
+                  <TooltipArrow height={15} width={17} fill="#333333"/>
+                </TooltipContent>
+              </Tooltip>
+              </TooltipProvider>
               <div>
                 <CurrencyIcon />
               </div>
@@ -303,23 +302,26 @@ function ViewDetails() {
                 {countryConfigData?.data?.[0]?.default_currency_code}{" "}
                 {totalRevenue}
               </Text>
-              <HoverCard>
-                <HoverCardTrigger>
+              <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
                   <Important />
-                </HoverCardTrigger>
-                <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                </TooltipTrigger>
+                <TooltipContent className="min-h-[64px] !w-full py-3 bg-[#333333] text-white border-none">
+                  <div className="w-[331px] text-wrap !rounded-[15px] font-normal">
                     {t(
                       "course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction"
                     )}{" "}
                     {t(
                       "course.view_course:basic_details_tab.participants_revenue"
-                    )}
+                      )}
                     :{countryConfigData?.data?.[0]?.default_currency_code}{" "}
                     {totalRevenue}
                   </div>
-                </HoverCardContent>
-              </HoverCard>
+                  <TooltipArrow height={15} width={17} fill="#333333"/>
+                </TooltipContent>
+              </Tooltip>
+              </TooltipProvider>
             </div>
           )}
         </div>
@@ -353,12 +355,13 @@ function ViewDetails() {
         <div className="flex flex-row items-center gap-2 w-full justify-end text-xs text-[#999999]">
           {t("new_strings:announced_by")}:{" "}
           {courseData?.data?.created_by_user_id?.contact_id?.full_name}
-          <HoverCard>
-            <HoverCardTrigger>
+          <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
               <Important />
-            </HoverCardTrigger>
-            <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
-              <div className="!rounded-[15px] font-normal flex flex-col">
+            </TooltipTrigger>
+            <TooltipContent className="min-w-[231px] min-h-[120px] !w-full py-3 bg-[#333333] text-white border-none">
+              <div className="!rounded-[15px] font-normal flex flex-col mb-[-1px]">
                 <p>{t("course.view_course:basic_details_tab.approved_by")}:</p>
                 <p>
                   {courseData?.data?.approved_by_user_id &&
@@ -387,8 +390,10 @@ function ViewDetails() {
                     : "-"}
                 </p>
               </div>
-            </HoverCardContent>
-          </HoverCard>
+              <TooltipArrow height={15} width={17} fill="#333333"/>
+            </TooltipContent>
+          </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       <div className="w-full mt-6 ">
