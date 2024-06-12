@@ -1,9 +1,9 @@
+import { getTranslatedMonth } from "./useGetLanguageCode"
 export const formatDate = (dateString: any) => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
   const date = new Date(dateString)
   const day = date.getDate()
-  const month = months[date.getMonth()]
+  const month = getTranslatedMonth(dateString)
   const hours = date.getHours()
   const minutes = date.getMinutes()
   const ampm = hours >= 12 ? 'pm' : 'am'
@@ -40,7 +40,7 @@ export const formatDateTime = (startDateTime: string, endDateTime: string) => {
   }
 
   // Format month to display the first three letters of the month name
-  const startMonth = startDate?.toLocaleString('default', { month: 'long' }).slice(0, 3)
+  const startMonth = getTranslatedMonth(startDate.toISOString())
 
   // Extract and format the year
   const startYear = startDate.getFullYear()
@@ -73,7 +73,7 @@ export const formatDateTime = (startDateTime: string, endDateTime: string) => {
 export const formatDateString = (date: Date): string => {
   // Extract day, month, and year components from the Date object
   const day = date.getDate()
-  const month = date?.toLocaleString('default', { month: 'long' }).slice(0, 3)
+  const month = getTranslatedMonth(date.toISOString())
   const year = date.getFullYear()
 
   // Return the formatted date string in the format "DD MMM, YYYY"

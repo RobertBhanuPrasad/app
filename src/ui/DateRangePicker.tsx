@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "./select";
 import { useEffect, useState } from "react";
+import { getTranslatedMonthInProps, getTranslatedWeekday } from "src/utility/useGetLanguageCode";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -80,10 +81,10 @@ function DateRangePicker({
         IconLeft: ({ ...props }) => <ChevronLeft className="h-5 w-5" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-5 w-5" />,
         HeadRow: () => {
-          const weekNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+          const weekNames = getTranslatedWeekday();
 
           return (
-            <div className="flex flex-row gap-7 mr-4 text-[#999999] items-center justify-center text-[13px]">
+            <div className="flex flex-row gap-6 mr-4 text-[#999999] items-center justify-center text-[13px]">
               {weekNames.map((day, index) => (
                 <div key={index}>{day}</div>
               ))}
@@ -114,7 +115,7 @@ function DateRangePicker({
                 )}
               >
                 <SelectValue placeholder={props?.caption}>
-                  {props?.caption}
+                {getTranslatedMonthInProps({props})}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="max-h-[var(--radix-popper-available-height);] h-[400px] overflow-y-auto scrollbar">
@@ -128,7 +129,7 @@ function DateRangePicker({
                           (child as React.ReactElement<any>)?.props?.value,
                       })}
                     >
-                      {(child as React.ReactElement<any>)?.props?.children}
+                      {getTranslatedMonthInProps((child as React.ReactElement<any>)?.props)}
                     </SelectItem>
                   ))}
               </SelectContent>

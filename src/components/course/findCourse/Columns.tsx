@@ -30,6 +30,7 @@ import {
 } from "src/ui/dropdown-menu";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { getTranslatedMonth } from "src/utility/useGetLanguageCode";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 export const column = (
@@ -110,7 +111,7 @@ export const column = (
       cell: ({ row }: any) => {
         // Check if start_date exists or not
         if (row?.original?.start_date) {
-          const startDate = format(row?.original?.start_date, "dd MMM, yyyy");
+          const startDate = format(new Date(row?.original?.start_date), "dd") + " "+ getTranslatedMonth(row?.original?.start_date) + " "+ format(new Date(row?.original?.start_date), "yyyy")
           return (
             <div className="min-w-[150px]">{startDate ? startDate : "-"} </div>
           );
