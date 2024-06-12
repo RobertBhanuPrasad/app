@@ -5,7 +5,7 @@ import { CrudFilter, useList, useSelect } from "@refinedev/core";
 import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { CountComponent, DateRangePickerComponent } from "pages/courses/list";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import {
