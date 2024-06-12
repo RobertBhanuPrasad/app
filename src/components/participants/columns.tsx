@@ -12,15 +12,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { translatedText } from "src/common/translations";
 import { Button } from "src/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "src/ui/dialog";
+import { Dialog, DialogTrigger } from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +26,19 @@ import { getActionMenuItems } from "./ParticipantUtils";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
 import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "src/ui/alert-dialog";
+import CrossIcon from "@public/assets/CrossIcon";
+import EmailConfimrationIcon from "@public/assets/EmailConfirmationIcon";
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -735,34 +740,125 @@ export const columns = () => {
         const actionMenu = getActionMenuItems(
           loggedInUserData?.userData.user_roles
         );
+        const [openSendEmailComfirmation, setOpenSendEmailComfirmation] =
+          useState(false);
+
+        const handleActions = (
+          index: number,
+          participant_id: any,
+          router: any,
+          participant_email: string
+        ) => {
+          switch (index) {
+            case 1: {
+              // TODO: Navigate to view participant page
+              const routePath = router.asPath.split("list")[0];
+              router.push(`/${routePath}/${participant_id}`);
+              break;
+            }
+            case 2: {
+              // TODO: Navigate to edit participant page
+              const routePath = router.asPath.split("list")[0];
+              router.push(`/${routePath}/${participant_id}/edit`);
+              break;
+            }
+            case 3: {
+              // TODO(Not in PI-2 scope): Transfer
+              break;
+            }
+            case 4: {
+              //open the default mail application witn the selected participant mail as to email address.
+              const mailtoUrl = `mailto:${participant_email}`;
+              window.open(mailtoUrl);
+              break;
+            }
+            case 5: {
+              // TODO(Not in PI-2 scope): Perform Sale
+              break;
+            }
+            case 6: {
+              // TODO: Send Registration confirmation email, dependency on Harmony API
+              setOpenSendEmailComfirmation(true);
+              break;
+            }
+            case 7: {
+              // TODO(Not in PI-2 scope): Upload offline payment receipt
+              break;
+            }
+            case 8: {
+              // TODO: Download Receipt
+              break;
+            }
+            case 9: {
+              // TODO: Navigate to view participant page -> Transaction activity tab
+              break;
+            }
+          }
+        };
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 text-[#7677F4]">
-                <span className="sr-only">Open menu</span>
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <div className="flex flex-col gap-2 max-h-[300px] max-w-[170px] overflow-y-auto scrollbar text-[#333333]">
-                {actionMenu?.map((value: any, index) => (
-                  <DropdownMenuItem
-                    onClick={() => {
-                      handleActions(
-                        value?.order,
-                        row?.original?.id,
-                        router,
-                        row?.original?.contact_id?.email
-                      );
-                    }}
-                  >
-                    {value?.option}
-                  </DropdownMenuItem>
-                ))}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 text-[#7677F4]">
+                  <span className="sr-only">Open menu</span>
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <div className="flex flex-col gap-2 max-h-[300px] max-w-[170px] overflow-y-auto scrollbar text-[#333333]">
+                  {actionMenu?.map((value: any, index) => (
+                    <DropdownMenuItem
+                      onClick={() => {
+                        handleActions(
+                          value?.order,
+                          row?.original?.id,
+                          router,
+                          row?.original?.contact_id?.email
+                        );
+                      }}
+                    >
+                      {value?.option}
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {openSendEmailComfirmation && (
+              <AlertDialog open={openSendEmailComfirmation}>
+                <AlertDialogContent>
+                  <div className="w-full flex flex-col text-center items-center gap-4">
+                    <EmailConfimrationIcon />
+                    <div className="font-thin text-[16px]">
+                      {t("new_strings:email_confirmation_text")}
+                      <br></br>
+                      <span className="font-medium">
+                        {row?.original?.contact_id?.email}
+                      </span>
+                    </div>
+                    <div className="flex gap-4">
+                      <Button
+                        variant={"outline"}
+                        className="border-primary text-primary"
+                        onClick={() => {
+                          setOpenSendEmailComfirmation(false);
+                        }}
+                      >
+                        {t("cancel_button")}
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setOpenSendEmailComfirmation(false);
+                        }}
+                      >
+                        {t("new_strings:ok_button")}
+                      </Button>
+                    </div>
+                  </div>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
         );
       },
     },
@@ -779,55 +875,3 @@ export function formatDate(date: string): string {
   };
   return new Date(date).toLocaleDateString("en-US", options);
 }
-
-export const handleActions = (
-  index: number,
-  participant_id: any,
-  router: any,
-  participant_email: string
-) => {
-  switch (index) {
-    case 1: {
-      // TODO: Navigate to view participant page
-      const routePath = router.asPath.split("list")[0];
-      router.push(`/${routePath}/${participant_id}`);
-      break;
-    }
-    case 2: {
-      // TODO: Navigate to edit participant page
-      const routePath = router.asPath.split("list")[0];
-      router.push(`/${routePath}/${participant_id}/edit`);
-      break;
-    }
-    case 3: {
-      // TODO(Not in PI-2 scope): Transfer
-      break;
-    }
-    case 4: {
-      //open the default mail application witn the selected participant mail as to email address.
-      const mailtoUrl = `mailto:${participant_email}`;
-      window.open(mailtoUrl);
-      break;
-    }
-    case 5: {
-      // TODO(Not in PI-2 scope): Perform Sale
-      break;
-    }
-    case 6: {
-      // TODO: Send Registration confirmation email, dependency on Harmony API
-      break;
-    }
-    case 7: {
-      // TODO(Not in PI-2 scope): Upload offline payment receipt
-      break;
-    }
-    case 8: {
-      // TODO: Download Receipt
-      break;
-    }
-    case 9: {
-      // TODO: Navigate to view participant page -> Transaction activity tab
-      break;
-    }
-  }
-};
