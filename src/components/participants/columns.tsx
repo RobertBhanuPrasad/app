@@ -26,7 +26,15 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { translatedText } from "src/common/translations";
 import { Button } from "src/ui/button";
-import { Dialog, DialogTrigger } from "src/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "src/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -277,8 +285,10 @@ export const columns = () => {
       // This any will be removed after internal dataStructure implementation
 
       cell: ({ row }: any) => {
-
-        const pendingStatusId = getOptionValueObjectByOptionOrder(PARTICIPANT_PAYMENT_STATUS, PARTICIPANT_PENDING_PAYMENT_STATUS)?.id
+        const pendingStatusId = getOptionValueObjectByOptionOrder(
+          PARTICIPANT_PAYMENT_STATUS,
+          PARTICIPANT_PENDING_PAYMENT_STATUS
+        )?.id;
         const [editPayment, setEditPayment] = useState(false);
 
         const [defaultValues, setDefaultValues] = useState({});
@@ -302,7 +312,7 @@ export const columns = () => {
           sorters: [
             {
               field: "created_at",
-              order: "desc"
+              order: "desc",
             },
           ],
         });
@@ -334,7 +344,10 @@ export const columns = () => {
                         ? `text-left flex items-center gap-3 text-red-500 font-bold`
                         : `text-left flex items-center gap-3`
                     }
-                    onClick={() => row?.original?.payment_status_id?.id == pendingStatusId && setEditPayment(!editPayment)}
+                    onClick={() =>
+                      row?.original?.payment_status_id?.id == pendingStatusId &&
+                      setEditPayment(!editPayment)
+                    }
                   >
                     {row?.original?.payment_status_id?.value
                       ? translatedText(row?.original?.payment_status_id?.name)
@@ -731,22 +744,11 @@ export const columns = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const optionsValues = [
-          t("course.view_course:participants_tab.view_participant"),
-          t("new_strings:edit_participant"),
-          // TODO(Not in MVP scope): Integrate these actions later
-          // t("new_strings:transfer"),
-          // t("new_strings:send_email"),
-          // t("new_strings:perform_sale_with_cash_check_offline_credit_card_payment"),
-          // t("new_strings:send_registration_confirmation_email"),
-          // t("new_strings:upload_offline_payment_receipt"),
-          // t('course.participants:edit_participant.download_receipt'),
-          // t("new_strings:transaction_activity"),
-        ];
-
         const router = useRouter();
         const { data: loggedInUserData }: any = useGetIdentity();
-        const actionMenu = getActionMenuItems(loggedInUserData?.userData.user_roles)
+        const actionMenu = getActionMenuItems(
+          loggedInUserData?.userData.user_roles
+        );
 
         return (
           <DropdownMenu>
@@ -761,7 +763,7 @@ export const columns = () => {
                 {actionMenu?.map((value: any, index) => (
                   <DropdownMenuItem
                     onClick={() => {
-                      handleActions(value?.order, row?.original?.id, router);
+                      handleActions(value?.order, row?.original?.id, router, row?.original?.contact_id?.email);
                     }}
                   >
                     {value?.option}
@@ -790,7 +792,8 @@ export function formatDate(date: string): string {
 export const handleActions = (
   index: number,
   participant_id: any,
-  router: any
+  router: any,
+  participant_email: string
 ) => {
   switch (index) {
     case 1: {
@@ -810,6 +813,8 @@ export const handleActions = (
       break;
     }
     case 4: {
+        const mailtoUrl = `mailto:${participant_email}`;
+        window.open(mailtoUrl)
       // TODO: Send Email, dependency on harmony API
       break;
     }
