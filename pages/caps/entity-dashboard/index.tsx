@@ -1,223 +1,232 @@
-import { Table, TableCell, TableHead, TableRow } from 'src/ui/table'
 import React, { useEffect, useState } from 'react'
-import { TableHeader } from 'src/ui/table'
-import { TableBody } from 'src/ui/table'
-import "bootstrap/dist/css/bootstrap.min.css";
-import { customFetch } from 'src/utility/custom-fetch';
+import { TableHeader, Text } from 'src/ui/TextTags'
 import { BaseTable } from '@components/course/findCourse/BaseTable';
 import { ColumnDef } from '@tanstack/react-table';
-import { useRouter } from 'next/router';
+import router from 'next/router';
 import { supabaseClient } from 'src/utility/supabaseClient';
-import { capsAdminStore } from 'src/zustandStore/CapsAdminStore';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu';
-import { Button } from 'src/ui/button';
-import { MoreVertical } from 'lucide-react';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import _ from 'lodash';
+import { Button } from 'src/ui/button';
+import { useTable } from '@refinedev/core';
 
 
-const CapsDashboard = () => {
+// Define the interface for the data structure
+interface PgEntity {
+  id: number;
+  name: string;
+  country: string;
+  org: number
+}
 
-const [data, setData] = useState([]);
+const EntityDashboard = () => {
+  const {
+    pageCount,
+    pageSize,
+    setPageSize,
+    current,
+    setCurrent,
+    tableQueryResult: { data: programData },
+  } = useTable<PgEntity>({
+    resource: 'pg_entity',
+    meta: {
+      select: '*',
+    },
+    pagination: {
+      pageSize: 10,
+    },
+  });
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState<PgEntity[]>([]);
+  const supabase = supabaseClient('caps')
+  // useEffect(() => {
+  //   if (programData?.data) {
+  //     setData(programData.data);
+  //   }
+  // }, [programData]);
 
-useEffect(() => {
+  useEffect(() => {
     const getData = async () => {
-        try {
-            const response = await customFetch("/rest/v1/pg_entity", "GET");
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const responseData = await response.json();
-            setData(responseData);
-            console.log(responseData);
-            
-        } catch (error) {
-            console.error('Error fetching data:', error);
+      setIsLoading(true)
+      try {
+        const { data: responseData, error } = await supabase
+          .from('pg_entity')
+          .select('*')
+          .order("id", { ascending: true });
+        if (error) {
+          throw error
         }
+        setData(responseData)
+        setIsLoading(false)
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
 
     getData();
-}, []);
+  }, []);
 
-    return (<>
-        <h1 className='pd-5 mb-3 text-center bg-body-tertiary'>
-            Entity DashBoard
-        </h1>
-        
-        <div className="mx-6 mb-8 bg-white">
-            <BaseTable
-              columns={pgDashboardColumns}
-              data={data || []}
-              tableStyles={{
-                table: "",
-                rowStyles: "!important border-none",
-              }}
-              columnPinning={true}
-            />
-          </div> 
-    </>
-    )
+
+  return (<>
+    <div className='px-6' >
+      <h1 className='p-2 mb-3 text-center bg-gray-100 font-bold text-4xl text-gray-800'>
+        Entity DashBoard
+      </h1>
+    </div>
+    {isLoading ? (
+      <section className="flex justify-center align-center pt-[10%]">
+        <div className="loader"></div>
+      </section>
+    ) : (
+      <div className="mx-6 mb-8 bg-white">
+        <BaseTable
+          pageCount={pageCount}
+          pageSize={pageSize}
+          pagination={true}
+          current={current}
+          setCurrent={setCurrent}
+          columns={entityDashboardColumns}
+          data={data || []}
+          setPageSize={setPageSize}
+          tableStyles={{
+            table: "",
+            rowStyles: "!important border-none",
+          }}
+          columnPinning={true}
+        />
+        <div className="mt-6 flex justify-between ">
+          <div> The above table shows list of Entity configured in CAPS</div>
+          <div className="mb-4"><Button onClick={() => router.push('/caps/add-entity')}>Add Entity</Button></div>
+        </div>
+      </div>
+    )}
+  </>
+  )
 }
 
-export default CapsDashboard
+EntityDashboard.noLayout = false;
+export default EntityDashboard
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
-const pgDashboardColumns: ExtendedColumnDef<any>[] = [
-    {
-      accessorKey: "id",
-      column_name: "pG ID",
-      enableHiding: false,
-      header: () => { 
-        return <TableHeader className="min-w-[80px]">PG ID</TableHeader>;
-      },
-      cell: ({ row }) => {
-        return (
-          <abbr className="no-underline" title={row?.original?.id}>
-            
-          </abbr>
-        );
-      },
+
+const entityDashboardColumns: ExtendedColumnDef<any>[] = [
+  {
+    accessorKey: "id",
+    column_name: "entity_id",
+    enableHiding: false,
+    header: () => {
+      return <TableHeader className="min-w-[80px]">Entity ID</TableHeader>;
     },
-    {
-      accessorKey: "type",
-      column_name: "pG Type",
-      enableHiding: false,
-      header: () => {
-        return <TableHeader className="min-w-[150px]">PG Type</TableHeader>;
-      },
-      cell: ({ row }) => {
-        return (
-          <abbr className="no-underline" title={row?.original?.type}>
-            
-          </abbr>
-        );
-      },
+    cell: ({ row }) => {
+      return (
+        <abbr className='!no-underline' title={row.original.id}>
+          <Text className="max-w-[150px] truncate">
+            {row?.original?.id}
+          </Text>
+        </abbr>
+      );
     },
-    {
-      accessorKey: "name",
-      column_name: "Name",
-      enableHiding: false,
-      header: () => {
-        return <TableHeader className="min-w-[150px]">Name</TableHeader>;
-      },
-      cell: ({ row }) => {
-        return (
-          <abbr className="no-underline" title={row?.original?.name}>
-            
-          </abbr>
-        );
-      },
+  },
+  {
+    accessorKey: "country",
+    column_name: "country_code",
+    enableHiding: false,
+    header: () => {
+      return <TableHeader className="min-w-[150px]">Country Code</TableHeader>;
     },
-    {
-      accessorKey: "description",
-      column_name: "Description",
-      enableHiding: false,
-      header: () => {
-        return <TableHeader className="min-w-[150px]">Description</TableHeader>;
-      },
-      cell: ({ row }) => {
-        return (
-          <abbr className="no-underline" title={row?.original?.description}>
-            
-          </abbr>
-        );
-      },
+    cell: ({ row }) => {
+      return (
+        <abbr className="no-underline" title={row?.original?.country}>
+          <Text className="max-w-[80px] truncate">{row?.original?.country}</Text>
+        </abbr>
+      );
     },
-  
-   
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }: any) => {
-  
-        const router = useRouter();
-  
-        const { setPaymentGatewaysData, paymentGatewaysData } = capsAdminStore()
-  
-        const menuData: {
-          label: string,
-          value: number
-        }[] = [
-            {
-              label: "Edit",
-              value: 1
-            },
-            {
-              label: "Delete",
-              value: 2
-            }
-          ]
-  
-        function checkSuccess(message: string) {
-          const regex = /deleted successfully/;
-          return (message.match(regex) ? true : false);
-        }
-  
-        const supabase = supabaseClient("caps")
-  
-        const handleDeletePaymentGateway = async () => {
-          const { data, error } = await supabase
-            .rpc('delete_gateway', { _id: row?.original?.id });
-  
-          // Construct the message based on the RPC response
-          const message = error ? JSON.stringify(error) : JSON.stringify(data);
-  
-          // Check if the response is not ok or if the checkSuccess function returns false
-          if (error || !checkSuccess(message)) {
-            // alert(JSON.stringify({ title: "Delete Error", description: "Could not delete the payment gateway: " + message }));
-            alert("Delete Error :  Could not delete the payment gateway: " + message);
-            return;
-          } else {
-            const updatedGateways = _.cloneDeep(paymentGatewaysData); // Clone the array to avoid mutating state directly
-            _.remove(updatedGateways, { id: row?.original?.id }); // Remove the gateway with the specified id
-  
-            setPaymentGatewaysData(updatedGateways); // Update the state with the new array
-          }
-        }
-  
-        const handleEditPaymentGateway = () => {
-          router.push(`/caps/edit-payment?id=${row?.original?.id}`)
-        }
-  
-        const handleSelectedValue = (value: number) => {
-          if (value == 1) {
-            handleEditPaymentGateway()
-          }
-          else if (value == 2) {
-            handleDeletePaymentGateway()
-          }
-        }
-  
-        return (
-          <div>
-            <div className="pl-[1px]">
-              <div className="flex justify-center text-primary">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0 ">
-                      <span className="sr-only">Open menu</span>
-                      <MoreVertical className="h-5 w-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <p>
-                      {menuData &&
-                        menuData.map((data: { label: string, value: number }) => (
-                          <DropdownMenuItem
-                            key={data.value}
-                            // onClick={() => {
-                            //   handleSelectedValue(data.value);
-                            // }}
-                          >
-                            {data.label}
-                          </DropdownMenuItem>
-                        ))}
-                    </p>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-          </div>
-        )
+  },
+  {
+    accessorKey: "name",
+    column_name: "module",
+    enableHiding: false,
+    header: () => {
+      return <TableHeader className="min-w-[150px]">Module</TableHeader>;
+    },
+    cell: ({ row }) => {
+      return (
+        <abbr className="no-underline" title={row?.original?.module}>
+          <Text className="max-w-[80px] truncate">{row?.original?.module}</Text>
+        </abbr>
+      );
+    },
+  },
+  {
+    accessorKey: "org",
+    column_name: "organization_id",
+    enableHiding: false,
+    header: () => {
+      return <TableHeader className="min-w-[150px]">Organization ID</TableHeader>;
+    },
+    cell: ({ row }) => {
+      return (
+        <abbr className="no-underline" title={row?.original?.org}>
+          <Text className="max-w-[80px] truncate">{row?.original?.org}</Text>
+        </abbr>
+      );
+    },
+  },
+  {
+    accessorKey: "actions",
+    column_name: "actions",
+    enableHiding: false,
+    header: () => {
+      return <TableHeader className="min-w-[150px]"></TableHeader>;
+    },
+
+    cell: ({ row }) => {
+      const supabase = supabaseClient('caps')
+
+      const handleEdit = () => {
+        router.push(`/caps/entity-configuration?id=${row?.original?.id}`)
       }
-    }
-  ]
+
+      function checkSuccess(message: string) {
+        const regex = /deleted successfully/;
+        return (message.match(regex) ? true : false);
+      }
+
+      const handleDelete = async (id: number) => {
+        console.log('Button clicked');
+
+        try {
+          const { data, error } = await supabase
+            .from('pg_entity')
+            .delete()
+            .eq('id', id);
+          console.log('step : 1');
+          const message = error ? JSON.stringify(error) : JSON.stringify(data);
+          console.log('step : 2');
+          if (error || !checkSuccess(message)) {
+            alert("Delete Error :  Could not delete the payment gateway: " + message);
+          }
+          console.log('step : 3');
+          console.log('Deleted data:', data);
+
+        } catch (error) {
+          console.error('Error deleting data:', error);
+        }
+      };
+
+      return (
+        <div className='flex px-2 space-x-4'>
+          <FaEdit className=" h-4 w-4 text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => {
+            handleEdit()
+          }} />
+          <FaTrash className="h-4 w-4 text-red-500 hover:text-red-700 cursor-pointer" onClick={() => {
+            handleDelete(row?.original?.id);
+          }} />
+        </div>
+
+      );
+
+    },
+  },
+
+]
