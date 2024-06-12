@@ -95,7 +95,7 @@ function HeaderSection() {
               <Important />
           </HoverCardTrigger>
           <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px] font-normal bg-[red]">
+            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
               {courseData?.data?.participant_count} Participants with:
               Transaction status = Confirmed / Pending Attendance status =
               Confirmed / Pending / Dropout Total participants records:

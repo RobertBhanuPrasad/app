@@ -99,8 +99,7 @@ import { Separator } from "src/ui/separator";
 import { Textarea } from "src/ui/textarea";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";4
-import {isViewCourseAccountingTabDisplay} from "../../../src/components/courseBusinessLogic";
+import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
