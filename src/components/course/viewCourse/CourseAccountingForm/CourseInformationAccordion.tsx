@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "src/ui/accordion";
 import { formatDate } from "src/utility/DateFunctions";
-import { translatedText } from 'src/common/translations'
+import { translatedText } from "src/common/translations";
 
 /**
  * CourseDetails component fetches and displays detailed information about a course.
@@ -37,9 +37,11 @@ const CourseDetails = () => {
     id: Id,
     meta: {
       select:
-        '*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,name),program_schedules(*),program_teachers(*,user_id(contact_id(*))),program_accounting_status_id(id,name),program_contact_details(*)'
-    }
-  })
+        "*,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name)),status_id(id,name),program_schedules(*),program_teachers(*,user_id(contact_id(*))),program_accounting_status_id(id,name),program_contact_details(*)",
+    },
+  });
+
+  console.log(courseData, "courseData");
 
   // Get total revenue from participant data
   const totalRevenue = courseData?.data?.revenue;
@@ -63,6 +65,8 @@ const CourseDetails = () => {
       return item?.user_id?.contact_id;
     }
   );
+
+  console.log(programTeachersAddress, "programTeachersAddress");
 
   //from programTeachersAddress we are getting the teacher contact id
   // from this id we are calling contact table and feting country, state, city names to show them in accordian
@@ -98,7 +102,9 @@ const CourseDetails = () => {
             className=" no-underline  truncate block text-[16px] text-[#666666]"
             title={translatedText(courseData?.data?.program_type_id?.name)}
           >
-            {courseData?.data?.program_type_id?.name ? translatedText(courseData?.data?.program_type_id?.name) : '-'}
+            {courseData?.data?.program_type_id?.name
+              ? translatedText(courseData?.data?.program_type_id?.name)
+              : "-"}
           </abbr>
         </div>
         <div>
@@ -117,7 +123,7 @@ const CourseDetails = () => {
           />
 
           <abbr
-            className=" no-underline  truncate block text-[16px] text-[#666666]"
+            className=" no-underline truncate block text-[16px] text-[#666666]"
             title={programTeachersAddress?.[0]?.full_name}
           >
             {programTeachersAddress?.[0]?.full_name
@@ -149,7 +155,9 @@ const CourseDetails = () => {
             className=" no-underline  truncate block text-[16px] text-[#666666]"
             title={translatedText(courseData?.data?.status_id?.name)}
           >
-            {courseData?.data?.status_id?.name ? translatedText(courseData?.data?.status_id?.name) : '-'}
+            {courseData?.data?.status_id?.name
+              ? translatedText(courseData?.data?.status_id?.name)
+              : "-"}
           </abbr>
         </div>
         <div>
@@ -160,11 +168,15 @@ const CourseDetails = () => {
 
           <abbr
             className=" no-underline  truncate block text-[16px] text-[#666666]"
-            title={translatedText(courseData?.data?.program_accounting_status_id?.name)}
+            title={translatedText(
+              courseData?.data?.program_accounting_status_id?.name
+            )}
           >
             {courseData?.data?.program_accounting_status_id?.name
-              ? translatedText(courseData?.data?.program_accounting_status_id?.name)
-              : '-'}
+              ? translatedText(
+                  courseData?.data?.program_accounting_status_id?.name
+                )
+              : "-"}
           </abbr>
         </div>
 
@@ -262,15 +274,12 @@ const CourseDetails = () => {
 
 export const CourseInformationAccordion = () => {
   return (
-    <Accordion type="single" collapsible>
-      <AccordionItem value="information" className="border rounded-[10px] ">
-        <AccordionTrigger className="text-base border-b pr-4">
-          <MainHeader
-            className="ml-4 text-[18px]"
-            children="Course Information"
-          />
+    <Accordion type="single" collapsible defaultValue="information">
+      <AccordionItem value="information" className="border rounded-[24px] ">
+        <AccordionTrigger className="text-base mx-6 ">
+          <MainHeader className="text-[18px]" children="Course Information" />
         </AccordionTrigger>
-        <AccordionContent className="ml-4 pt-4">
+        <AccordionContent className="mx-6 pt-4">
           {CourseDetails()}
         </AccordionContent>
       </AccordionItem>
