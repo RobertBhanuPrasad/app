@@ -809,17 +809,17 @@ export const handleActions = (
       break;
     }
     case 3: {
-      // TODO(Not in MVP scope): Transfer
+      // TODO(Not in PI-2 scope): Transfer
       break;
     }
     case 4: {
+        //open the default mail application witn the selected participant mail as to email address.
         const mailtoUrl = `mailto:${participant_email}`;
         window.open(mailtoUrl)
-      // TODO: Send Email, dependency on harmony API
       break;
     }
     case 5: {
-      // TODO(Not in MVP scope): Perform Sale
+      // TODO(Not in PI-2 scope): Perform Sale
       break;
     }
     case 6: {
@@ -827,11 +827,11 @@ export const handleActions = (
       break;
     }
     case 7: {
-      // TODO(Not in MVP scope): Upload offline payment receipt
+      // TODO(Not in PI-2 scope): Upload offline payment receipt
       break;
     }
     case 8: {
-      // TODO: Download Receipt, Tejaswini working on it
+      // TODO: Download Receipt
       break;
     }
     case 9: {
