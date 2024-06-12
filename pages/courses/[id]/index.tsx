@@ -46,6 +46,7 @@ import {
   handleTabsBasedOnStatus,
   isApproved,
   isCourseAccountingFormApprovalNeeded,
+  isViewCourseAccountingTabDisplay,
 } from "@components/courseBusinessLogic";
 import CopyIcon from "@public/assets/CopyIcon";
 import Cross from "@public/assets/Cross";
@@ -179,27 +180,28 @@ function ViewDetails() {
    * we have to view course accounting form tab
    * based on course status and course accounting status
    */
-  // const isViewCourseAccountingTabToDisplay = isViewCourseAccountingTabDisplay(
-  //   courseData?.data?.status_id?.id,
-  //   courseData?.data?.program_accounting_status_id
-  // );
+  const isViewCourseAccountingTabToDisplay = isViewCourseAccountingTabDisplay(
+    courseData?.data?.status_id?.id,
+    courseData?.data?.program_accounting_status_id
+  );
 
   // Check if the tab should be enabled and append the object accordingly
-  // if (isViewCourseAccountingTabToDisplay) {
-  //   tabTriggers.push({
-  //     value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
-  //     label: "View Course Accounting Form",
-  //     disabled: true,
-  //     tab_query_name: "view_course_accounting_form",
-  //   });
-  // } else {
-  //   tabTriggers.push({
-  //     value: COURSE_ACCOUNTING_FORM_TAB,
-  //     label:t('course_accounting_form_tab.course_accounting_form'),
-  //     disabled: true,
-  //     tab_query_name: "course_accounting_form",
-  //   });
-  // }
+  
+  if (isViewCourseAccountingTabToDisplay) {
+    tabTriggers.push({
+      value: VIEW_COURSE_ACCOUNTING_FORM_TAB,
+      label: "View Course Accounting Form",
+      disabled: true,
+      tab_query_name: "view_course_accounting_form",
+    });
+  } else {
+    tabTriggers.push({
+      value: COURSE_ACCOUNTING_FORM_TAB,
+      label:t('course_accounting_form_tab.course_accounting_form'),
+      disabled: true,
+      tab_query_name: "course_accounting_form",
+    });
+  }
 
   const { data: loginUserData }: any = useGetIdentity();
 

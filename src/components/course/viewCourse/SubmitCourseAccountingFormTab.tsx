@@ -5,6 +5,10 @@ import { Button } from "src/ui/button";
 function SubmitCourseAccountingFormTab() {
   const router = useRouter();
 
+  const Id: number | undefined = router?.query?.id
+    ? parseInt(router.query.id as string)
+    : undefined;
+
   /**
    * Function to handle click of continue button
    * We have to navigate to the close participants section out of 3 sections
@@ -12,7 +16,7 @@ function SubmitCourseAccountingFormTab() {
    */
   const handleClickContinue = () => {
     router.push(
-      `/courses/course-accounting-form?current_section=close_participants`
+      `/courses/${Id}/course-accounting-form?current_section=close_participants`
     );
   };
 
