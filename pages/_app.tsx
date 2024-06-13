@@ -13,9 +13,10 @@ import { useEffect } from "react";
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
 import { getCountryCodeFromLocale } from "src/utility/useGetCountryCode";
-import { getLanguageCodeFromLocale } from "src/utility/useGetLanguageCode";
+import { getLanguageCodeFromLocale, loadLanguageModule } from "src/utility/useGetLanguageCode";
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+import dayjs from 'dayjs';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -33,6 +34,14 @@ function MyApp({
 }: AppPropsWithLayout): JSX.Element {
   const countryCode = getCountryCodeFromLocale(router.locale as string);
   const languageCode = getLanguageCodeFromLocale(router.locale as string);
+
+  // this function is used for the dynamic importing of the locale of dayjs
+  loadLanguageModule(languageCode)
+
+  // we are giving the language code of ours as per the country,
+  // so it sets its locale globally and based on the locale it retrives the months week and all as per this locale
+  dayjs.locale(languageCode);
+
   const supabase: any = supabaseClient(countryCode);
 
   const renderComponent = () => {

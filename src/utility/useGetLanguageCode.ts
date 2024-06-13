@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import _ from "lodash";
-const Dayjs = require("dayjs");
+import * as loc from "date-fns/locale";
 
+const Dayjs = require("dayjs");
 const localeData = require("dayjs/plugin/localeData");
 dayjs.extend(localeData);
 
@@ -19,7 +20,7 @@ const useGetLanguageCode = () => {
   if (languageCode) {
     return languageCode;
   }
-  return "en"
+  return "en";
 };
 
 export default useGetLanguageCode;
@@ -36,24 +37,7 @@ export const getLanguageCodeFromLocale = (locale: string) => {
  * @returns string with the first letter as capitalized
  */
 export const capitalizeFirstLetter = (string: string) => {
-  loadLanguageModule(useGetLanguageCode());
   return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
-/**
- * @function getTranslatedMonth
- * @description this function is used translate the month name and return a month name by taking the date string
- * @param dateStr
- * @returns a string which is translated month name
- */
-export const getTranslatedMonth = (dateStr: string) => {
-  // for importing the particular language, which we have in the router
-  loadLanguageModule(useGetLanguageCode());
-
-  // form the day js we will get the month name as jan but we need Jan for that we are using the capitalizeFirstLetter then returning the string
-  return capitalizeFirstLetter(
-    dayjs(dateStr).locale(useGetLanguageCode()).format("MMM")
-  );
 };
 
 /**
@@ -62,12 +46,6 @@ export const getTranslatedMonth = (dateStr: string) => {
  * @returns array of strings like ['Mon','Tue','Wed','Thu','Fri','Sat'] with tralated in respective language
  */
 export const getTranslatedWeekday = () => {
-  // for importing the particular language, which we have in the router
-  loadLanguageModule(useGetLanguageCode());
-
-  // Set the language in the locale of dayjs
-  dayjs.locale(useGetLanguageCode());
-
   /**
    * @constant weekdays
    * @description this const stores the days of a week in the array,
@@ -82,32 +60,6 @@ export const getTranslatedWeekday = () => {
     capitalizeFirstLetter(day)
   );
 };
-
-/**
- * Translates a month name based on the given index.
- * @function getTranslatedMonthInProps
- * @description translating the month names in the daterange picker
- * @param {any} props - The index of the month (0 for January, 1 for February, ..., 11 for December).
- * @returns {string} - The translated month name.
- */
-export function getTranslatedMonthInProps(props: any) {
-  // for importing the particular language, which we have in the router
-  loadLanguageModule(useGetLanguageCode());
-
-  dayjs.locale(useGetLanguageCode());
-
-  // if the prop value which is the index of the month so the index of the december is 11
-  // if the value is lessthan 11 then return the translated text else return the props children
-  if (props?.value <= 11) {
-    // Create a date object with the given month index
-    const date = dayjs().month(props?.value);
-
-    // Return the translated month name with capital initial letter
-    return capitalizeFirstLetter(date.format("MMMM"));
-  } else {
-    return props?.children;
-  }
-}
 
 /**
  * @function loadLanguageModule
@@ -159,3 +111,20 @@ export function loadLanguageModule(language = "en") {
       break;
   }
 }
+
+/**
+ * @function getDateFnsLocaleByActiveLanguage
+ * @description this function will recognize the locale of the present language code and returns the locale
+ * @param languageCode
+ * @returns locale based on the language code
+ */
+export const getDateFnsLocaleByActiveLanguage = () => {
+  const languageCode = useGetLanguageCode();
+  if (languageCode === "en") {
+    return loc["enUS"];
+  } else {
+    return Object.values(loc).find(
+      (language) => language.code === languageCode
+    );
+  }
+};

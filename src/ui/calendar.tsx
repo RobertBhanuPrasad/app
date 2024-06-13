@@ -6,7 +6,8 @@ import { DayPicker } from "react-day-picker";
 
 import { cn } from "src/lib/utils";
 import { buttonVariants } from "src/ui/button";
-import { getTranslatedMonth, getTranslatedWeekday } from "src/utility/useGetLanguageCode";
+import {getTranslatedWeekday } from "src/utility/useGetLanguageCode";
+import dayjs from 'dayjs';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -18,6 +19,7 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
+      weekStartsOn={1}
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
@@ -61,11 +63,13 @@ function Calendar({
           // Extract the month from the props
           const { displayMonth } = props;
 
+          const month = dayjs(displayMonth).format("MMMM")
+
           const year = displayMonth.getFullYear();
 
           return (
             <div className="flex flex-col items-center gap-1 font-semibold">
-              <div className="text-[16px]">{getTranslatedMonth(displayMonth.toISOString())}</div>
+              <div className="text-[16px] capitalize">{month}</div>
               <div className="text-[#999999] text-[12px]">{year}</div>
             </div>
           );
@@ -74,8 +78,8 @@ function Calendar({
           const weekNames = getTranslatedWeekday();
 
           return (
-            <div className="flex flex-row gap-4 text-[#999999] items-center justify-center text-[13px]">
-              {weekNames.map((day, index) => (
+            <div className="flex flex-row gap-4 text-[#999999] items-center justify-center text-xs">
+              {weekNames.map((day: string , index: number) => (
                 <div key={index}>{day}</div>
               ))}
             </div>

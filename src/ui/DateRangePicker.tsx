@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "./select";
 import { useEffect, useState } from "react";
-import { getTranslatedMonthInProps, getTranslatedWeekday } from "src/utility/useGetLanguageCode";
+import useGetLanguageCode, { getDateFnsLocaleByActiveLanguage } from "src/utility/useGetLanguageCode";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -36,8 +36,11 @@ function DateRangePicker({
     _e(_event);
   };
 
+  const locale =   getDateFnsLocaleByActiveLanguage()
+
   return (
     <DayPicker
+      locale={locale}
       showOutsideDays={showOutsideDays}
       className={cn("", className)}
       classNames={{
@@ -81,12 +84,13 @@ function DateRangePicker({
         IconLeft: ({ ...props }) => <ChevronLeft className="h-5 w-5" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-5 w-5" />,
         HeadRow: () => {
-          const weekNames = getTranslatedWeekday();
+          const dayjs = require("dayjs");
+          const weekNames = dayjs.weekdaysShort();
 
           return (
-            <div className="flex flex-row gap-6 mr-4 text-[#999999] items-center justify-center text-[13px]">
-              {weekNames.map((day, index) => (
-                <div key={index}>{day}</div>
+            <div className="flex flex-row gap-7  text-[#999999] items-center justify-center text-xs">
+              {weekNames.map((day:string, index:number) => (
+                <div className="capitalize"key={index}>{day}</div>
               ))}
             </div>
           );
@@ -111,25 +115,25 @@ function DateRangePicker({
             >
               <SelectTrigger
                 className={cn(
-                  "font-medium w-[105px] h-9 rounded-xl [.is-between_&]:hidden [.is-end_&]:hidden [.is-start.is-end_&]:flex"
+                  "font-medium w-[105px] h-9 rounded-xl [.is-between_&]:hidden [.is-end_&]:hidden [.is-start.is-end_&]:flex capitalize"
                 )}
               >
-                <SelectValue placeholder={props?.caption}>
-                {getTranslatedMonthInProps({props})}
+                <SelectValue placeholder={props?.caption} className="capitalize">
+                {props?.caption}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="max-h-[var(--radix-popper-available-height);] h-[400px] overflow-y-auto scrollbar">
+              <SelectContent className="max-h-[var(--radix-popper-available-height);] h-[400px] overflow-y-auto scrollbar capitalize">
                 {props.children &&
                   React.Children.map(props.children, (child) => (
                     <SelectItem
                       value={(child as React.ReactElement<any>)?.props?.value}
                       className={cn({
-                        "bg-[#7677F4]/10 hover:!bg-[#7677F4]/10 text-[#7677F4]":
+                        "bg-[#7677F4]/10 hover:!bg-[#7677F4]/10 text-[#7677F4] capitalize":
                           selectedValue ===
                           (child as React.ReactElement<any>)?.props?.value,
                       })}
                     >
-                      {getTranslatedMonthInProps((child as React.ReactElement<any>)?.props)}
+                     {(child as React.ReactElement<any>)?.props?.children}
                     </SelectItem>
                   ))}
               </SelectContent>

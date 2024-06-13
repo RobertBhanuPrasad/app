@@ -83,7 +83,7 @@ import useDebounce from "src/utility/useDebounceHook";
 
 import { useTranslation } from "next-i18next";
 import { useMVPSelect } from "src/utility/useMVPSelect";
-import { getTranslatedMonth } from "src/utility/useGetLanguageCode";
+import dayjs from 'dayjs';
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -490,8 +490,8 @@ const ScheduleComponent = ({
               <div>
                 <CalenderIcon color="#999999" />
               </div>
-              <div>
-                {schedule?.date && format(new Date(schedule.date), "dd")} {schedule?.date && getTranslatedMonth(schedule.date)} {schedule?.date && format(new Date(schedule.date), "yyyy")}
+              <div className="capitalize">
+                {schedule?.date && dayjs(schedule?.date).format("DD MMM,YYYY")}
               </div>
             </Button>
           </DialogTrigger>

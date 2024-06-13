@@ -14,6 +14,7 @@ import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
 import { translatedText } from 'src/common/translations'
+import dayjs from 'dayjs';
 
 import {
   Dialog,
@@ -111,9 +112,9 @@ export const column = (
       cell: ({ row }: any) => {
         // Check if start_date exists or not
         if (row?.original?.start_date) {
-          const startDate = format(new Date(row?.original?.start_date), "dd") + " "+ getTranslatedMonth(row?.original?.start_date) + " "+ format(new Date(row?.original?.start_date), "yyyy")
+          const startDate = dayjs(row?.original?.start_date).format("DD MMM,YYYY")
           return (
-            <div className="min-w-[150px]">{startDate ? startDate : "-"} </div>
+            <div className="min-w-[150px] capitalize ">{startDate ? startDate : "-"} </div>
           );
         }
       },
