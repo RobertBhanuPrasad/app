@@ -29,6 +29,7 @@ import { RadioButtonCard } from "src/ui/radioButtonCard";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -736,6 +737,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   });
 
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // track whether the city drop down is clicked or not
   const [citySelectClicked, setCitySelectClicked] = useState(false)
@@ -760,11 +762,17 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         value,
       },
     ],
+    defaultValue : temporaryValue
   });
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("common");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
@@ -784,7 +792,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         <SelectValue placeholder={t("city_placeholder")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
