@@ -162,7 +162,7 @@
   "error_bulk_transaction_status_update":"ERROR: Bulk Transaction Status Update",
   "no_transaction_history_found":"No transaction history found for the selected participant(s)",
   "there_are_no_participants":"There are no participants",
-  "ok_button":"Ok",
+  "send_button":"Send",
   "email_confirmation_text": "Send Registration Confirmation Email to"
 }
 
