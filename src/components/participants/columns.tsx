@@ -384,7 +384,9 @@ export const columns = () => {
       },
 
       cell: ({ row }: any) => {
-        const db_date = formatDate(row?.original?.contact_id?.date_of_birth);
+        const db_date = row?.original?.contact_id?.date_of_birth
+          ? formatDate(row?.original?.contact_id?.date_of_birth)
+          : "-";
         return (
           <div className="text-left !min-w-[150px]">
             {db_date.length ? db_date : "-"}

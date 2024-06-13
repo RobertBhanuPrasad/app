@@ -291,28 +291,32 @@ function index() {
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: "id",
-      desc: true
-    }
+      desc: true,
+    },
   ]);
 
-const fieldValue = () => {
-if(!sorting.length){
-  setSorting([{
-    id: "id",
-    desc: true
-  }])
-}
-let field = sorting?.[0]?.id
-if(field === 'Name') field = "contact_id(full_name)"
-if(field === "Date of Birth") field = "contact_id(date_of_birth)"
-if(field === "Phone") field = "contact_id(mobile)"
-if(field === "Email") field = "contact_id(email)"
-if(field === "Amount") field = "total_amount"
-if(field === "Attendance Status") field = "participant_attendence_status_id(name)"
-if(field === "Fee Level")field = "price_category_id(fee_level_id(value))"
-if (field === "Fee Level") field = "price_category_id(fee_level_id(value))";
-return field
-}
+  const fieldValue = () => {
+    if (!sorting.length) {
+      setSorting([
+        {
+          id: "id",
+          desc: true,
+        },
+      ]);
+    }
+    let field = sorting?.[0]?.id;
+    if (field === "Name") field = "contact_id(full_name)";
+    if (field === "Date of Birth") field = "contact_id(date_of_birth)";
+    if (field === "Phone") field = "contact_id(mobile)";
+    if (field === "Email") field = "contact_id(email)";
+    if (field === "Amount") field = "total_amount";
+    if (field === "Attendance Status")
+      field = "participant_attendence_status_id(name)";
+    if (field === "Fee Level") field = "price_category_id(fee_level_id(value))";
+    return field;
+  };
+
+  console.log("sorting", sorting);
 
   const {
     tableQueryResult: participantData,
@@ -331,19 +335,17 @@ return field
         "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
-    sorters:{
+    sorters: {
       permanent: [
         {
           field: fieldValue(),
-          order: sorting?.[0]?.desc ? "desc" : "asc"
+          order: sorting?.[0]?.desc ? "desc" : "asc",
         },
       ],
     },
   });
 
   const supabase = supabaseClient();
- 
-
 
   console.log("Participant table data", participantData);
 
@@ -653,8 +655,6 @@ return field
   const csvOption = "CSV";
 
   const countryCode = useGetCountryCode();
-
- 
 
   return (
     <div>
