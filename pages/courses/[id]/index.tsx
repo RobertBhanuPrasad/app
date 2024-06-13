@@ -100,7 +100,6 @@ import { Textarea } from "src/ui/textarea";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
-import { isViewCourseAccountingTabDisplay } from "@components/courseBusinessLogic";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();

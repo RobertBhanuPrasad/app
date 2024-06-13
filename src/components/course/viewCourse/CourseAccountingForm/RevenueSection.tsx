@@ -55,7 +55,6 @@ function RevenueSection() {
   });
 
   const { fields, append, remove } = useFieldArray({
-    control,
     name: 'deposits',
   });
 
@@ -117,96 +116,64 @@ function RevenueSection() {
           </button>
         </div>
         {fields.length > 0 && (
-          <div onSubmit={handleSubmit(onSubmit)} className='rounded-[12px]  border border-[#D6D7D8]'>
+          <div onSubmit={handleSubmit(onSubmit)} className='rounded-[12px]  border border-[#D6D7D8] min-w-fit'>
             <div className="w-full">
               <div>
-                <div className='bg-[#7677F41A] border-b text-[18px] grid grid-cols-10'>
-                  <div className="col-span-1 p-4">#</div>
-                  <div className="col-span-2 relative right-[90px] p-4">Deposit Date</div>
-                  <div className="col-span-4 relative right-[130px] p-4">Deposit amount (EUR)</div>
-                  <div className="col-span-2 relative right-[380px] p-4">Notes</div>
-                  <div className="relative right-[100px] p-4">Actions</div>
+                <div className='bg-[#7677F41A] border-b text-[18px] flex w-full'>
+                  <div className="min-w-[64px]  p-4 ">#</div>
+                  <div className=" min-w-[274px] pt-4 pl-7 ">Deposit Date</div>
+                  <div className=" min-w-[274px] p-4 pl-16 ">Deposit amount (EUR)</div>
+                  <div className="min-w-[466px] pl-36 p-4">Notes</div>
+                  <div className="min-w-[466px] p-4 pl-52">Actions</div>
                 </div>
               </div>
               <div>
                 {fields.map((field, index) => (
-                  <div className='grid grid-cols-5 ' key={field.id}>
-                    <div className=" p-4 text-[20px]">{index + 1}</div>
-                    <div className=" p-2 relative right-[260px] text-[14px] text-[#959599]">
+                  <div className='grid grid-cols-12 min-w-fit  ' key={field.id}>
+                    <div className=" p-4 text-[20px] min-w-[64px]">{index + 1}</div>
+                    <div className=" p-2 text-[14px] text-[#959599] relative right-14  ">
                       <Controller
-                        control={control}
                         name={`deposits.${index}.depositDate`}
                         render={({ field }) => (
                           <input
                             type="date"
                             {...field}
-                            className="w-[85%] h-[44px] border rounded-[12px] pl-4 pr-5"
+                            className="min-w-[250px] h-[44px] border rounded-[12px] pl-4 pr-5"
                           />
                         )}
                       />
 
                     </div>
-                    <div className=" p-2">
+                    <div className="p-2 col-span-3 pl-[140px]">
                       <Input
                         placeholder="00.00"
-                        // {...register(`deposits.${index}.depositAmount`, { required: true })}
-                        className="w-[110%] h-[44px] rounded-[12px] relative right-[290px] text-[14px]"
+                        className="min-w-[250px]  h-[44px] rounded-[12px]  text-[14px]"
                       />
                     </div>
-                    <div className=" p-2">
+                    <div className="col-span-4 flex justify-end pl-[560px] p-2">
                       <Input
                         type="text"
                         placeholder="Lorem Epsim..."
-                        // {...register(`deposits.${index}.notes`)}
-                        className="w-[190%] h-[44px] rounded-[12px] relative right-[210px] text-[14px]"
+                        className="min-w-[457px]  h-[44px] rounded-[12px]  text-[14px]  p-2"
                       />
                     </div>
-                    <div className=" p-2 flex pl-[100px]">
+                    <div className=" p-2 flex justify-between min-w-[177px] pl-36 ">
                       {index === fields.length - 1 ? (
                         <button
                           type="button"
                           onClick={addRow}
-                          className="px-4 py-2 text-[#7677F4] font-semibold rounded text-[14px] relative top-[2px]"
+                          className="px-4 py-2 text-[#7677F4] font-semibold rounded text-[14px] flex relative top-3 right-3"
                         >
-                          <span className='text-[22px] relative top-[1px]'>+ </span>Add
+                          <span className='text-[22px] relative bottom-2'>+ </span>Add
                         </button>
                       ) : null}
-                      {/* <AlertDialog >
-                        <AlertDialogTrigger className='flex'>
-                          <div className='relative top-[22px] left-3'>
-                            <Delete />
-                          </div>
-                          <div
-                            className="px-4 py-2 text-[#7677F4] font-semibold rounded text-[14px] relative top-[12px] left-1"
-                          >
-                            Delete
-                          </div></AlertDialogTrigger>
-                        <AlertDialogContent className="flex flex-col h-[248px] w-[425px] !rounded-[15px] !p-6">
-                          <AlertDialogHeader>
-                            <div className="flex items-center w-full justify-center">
-                              <Exclamation />
-                            </div>
-                            <AlertDialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-                              Are you sure you want to approve this Accounting Form
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <div className="w-full flex justify-center items-center gap-5">
-                              <div>
-                                <AlertDialogCancel className='text-[#7677F4] border border-[#7677F4] w-[71px] h-[46px] mr-5' >No</AlertDialogCancel>
-                                <AlertDialogAction className='bg-blue-500 text-white px-4 py-2 w-[71px] h-[46px] ml-5' onClick={() => { deleteRow(index); }}>Yes</AlertDialogAction>
-                              </div>
-                            </div>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog> */}
                       <Dialog >
                         <DialogTrigger className='flex'>
-                          <div className='relative top-[22px] left-3'>
+                          <div className='relative top-[22px]'>
                             <Delete />
                           </div>
                           <div
-                            className="px-4 py-2 text-[#7677F4] font-semibold rounded text-[14px] relative top-[12px] left-1"
+                            className="px-2 text-[#7677F4] font-semibold rounded text-[14px] relative top-5 "
                           >
                             Delete
                           </div></DialogTrigger>
@@ -216,7 +183,7 @@ function RevenueSection() {
                               <Exclamation />
                             </div>
                             <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-                              Are you sure you want to approve this Accounting Form
+                            Are you sure you want to delete this record?
                             </DialogDescription>
                           </DialogHeader>
                           <DialogFooter>
@@ -229,8 +196,6 @@ function RevenueSection() {
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
-
-
                     </div>
                   </div>
                 ))}
