@@ -90,7 +90,7 @@ function RevenueSection() {
   const onSubmit = (data: any) => {
     console.log(data);
   };
-
+  
 
   return (
     <div>
@@ -110,7 +110,9 @@ function RevenueSection() {
           <button
             onClick={addInitialRow}
             disabled={isAddButtonDisabled}
-            className="text-[15px] relative bottom-[3px] pl-2 text-[#7677F4]"
+            className={`text-[15px] relative bottom-[3px] pl-2 ${
+              isAddButtonDisabled ? 'text-[#f90707]' : 'text-[#7677F4]'
+            }`}
           >
             <span className='text-[22px] relative top-[1px]'>+</span>Add
           </button>
@@ -121,10 +123,10 @@ function RevenueSection() {
               <div>
                 <div className='bg-[#7677F41A] border-b text-[18px] flex w-full'>
                   <div className="min-w-[64px]  p-4 ">#</div>
-                  <div className=" min-w-[274px] pt-4 pl-7 ">Deposit Date</div>
-                  <div className=" min-w-[274px] p-4 pl-16 ">Deposit amount (EUR)</div>
-                  <div className="min-w-[466px] pl-36 p-4">Notes</div>
-                  <div className="min-w-[466px] p-4 pl-52">Actions</div>
+                  <div className=" min-w-[274px] pt-4 pl-4 2xl:pl-[25px] ">Deposit Date</div>
+                  <div className=" min-w-[274px] p-4 pl-12 2xl:pl-[65px]">Deposit amount (EUR)</div>
+                  <div className="min-w-[466px] pl-[82px] p-4 2xl:pl-[150px]">Notes</div>
+                  <div className="min-w-[466px] p-4 pl-[165px] 2xl:pl-[235px]">Actions</div>
                 </div>
               </div>
               <div>
@@ -144,20 +146,20 @@ function RevenueSection() {
                       />
 
                     </div>
-                    <div className="p-2 col-span-3 pl-[140px]">
+                    <div className="p-2 col-span-3 pl-[130px]">
                       <Input
                         placeholder="00.00"
                         className="min-w-[250px]  h-[44px] rounded-[12px]  text-[14px]"
                       />
                     </div>
-                    <div className="col-span-4 flex justify-end pl-[560px] p-2">
+                    <div className="col-span-4 flex justify-end pl-[80px] p-2">
                       <Input
                         type="text"
                         placeholder="Lorem Epsim..."
                         className="min-w-[457px]  h-[44px] rounded-[12px]  text-[14px]  p-2"
                       />
                     </div>
-                    <div className=" p-2 flex justify-between min-w-[177px] pl-36 ">
+                    <div className=" p-2 flex justify-between min-w-[177px] pl-20 ">
                       {index === fields.length - 1 ? (
                         <button
                           type="button"
