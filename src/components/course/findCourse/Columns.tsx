@@ -117,15 +117,14 @@ export const column = (
         return <div className="min-w-[150px]">{translatedText(row?.original?.status_id?.name)}</div>
       }
     },
- 
     {
-      accessorKey: "state",
-      column_name: t("course.find_course:state"),
+      accessorKey: "center",
+      column_name: t("course.find_course:center"),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:state")}</div>;
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:center")}</div>;
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
+        return <div className="min-w-[150px]">{row?.original?.center?.name}</div>
       },
     },
     {
@@ -139,13 +138,52 @@ export const column = (
       },
     },
     {
-      accessorKey: "center",
-      column_name: t("course.find_course:center"),
+      accessorKey: "state",
+      column_name: t("course.find_course:state"),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:center")}</div>;
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:state")}</div>;
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.center?.name}</div>
+        return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
+      },
+    },
+    {
+      accessorKey: "program_teachers",
+      //These columns are default columns and shouldnt be editable
+      enableHiding: false,
+      column_name: t('course.participants:view_participant.course_information_tab.Teachers(S)'),
+      header: () => {
+        return <div className="min-w-[150px] text-sm">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
+      },
+      cell: ({ row }: any) => {
+        const teachers = row?.original?.program_teachers?.map(
+          (teacher: any) => teacher?.users?.contact_id?.full_name
+        );
+        return (
+          <div className="flex flex-wrap min-w-[150px]">
+            <div>{teachers && teachers.join(", ")}</div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "program_organizers",
+      column_name: t('program_organizer'),
+      header: () => {
+        return <div className="min-w-[150px] text-sm">{t('program_organizer')}</div>;
+      },
+      cell: ({ row }: any) => {
+        //Mapping all the programOrganizers in the comma separated name
+        const organizers = row?.original?.program_organizers?.map(
+          (Organizer: any) => Organizer?.users?.contact_id?.full_name
+        );
+
+        return (
+          <div className="flex flex-wrap min-w-[150px]">
+            {/* If organisers present them map them by comma separated other wise it will display - */}
+            <div>{organizers ? organizers.join(",  ") : "-"}</div>
+          </div>
+        );
       },
     },
     {
@@ -170,54 +208,14 @@ export const column = (
       },
     },
     {
-      accessorKey: "program_organizers",
-      column_name: t('program_organizer'),
+      accessorKey: "revenue",
+      column_name: t('course.view_course:revenue_summary_tab.revenue'),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t('program_organizer')}</div>;
+        return <div className="min-w-[150px] text-sm">{t('course.view_course:revenue_summary_tab.revenue')}</div>;
       },
       cell: ({ row }: any) => {
-        //Mapping all the programOrganizers in the comma separated name
-        const organizers = row?.original?.program_organizers?.map(
-          (Organizer: any) => Organizer?.users?.contact_id?.full_name
-        );
-
-        return (
-          <div className="flex flex-wrap min-w-[150px]">
-            {/* If organisers present them map them by comma separated other wise it will display - */}
-            <div>{organizers ? organizers.join(",  ") : "-"}</div>
-          </div>
-        );
+        return <div className="min-w-[150px]">{row?.original?.revenue}</div>;
       },
-    },
-    {
-      accessorKey: "program_teachers",
-      //These columns are default columns and shouldnt be editable
-      enableHiding: false,
-      column_name: t('course.participants:view_participant.course_information_tab.Teachers(S)'),
-      header: () => {
-        return <div className="min-w-[150px] text-sm">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
-      },
-      cell: ({ row }: any) => {
-        const teachers = row?.original?.program_teachers?.map(
-          (teacher: any) => teacher?.users?.contact_id?.full_name
-        );
-        return (
-          <div className="flex flex-wrap min-w-[150px]">
-            <div>{teachers && teachers.join(", ")}</div>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "visibility_id",
-      column_name: t('new_strings:visibility'),
-      header: () => {
-        return <div className="min-w-[150px] text-sm">{t('new_strings:visibility')}</div>;
-      },
-      cell: ({ row }: any) => {
-
-        return <div className="min-w-[150px]">{translatedText(row?.original?.visibility_id?.name)}</div>
-      }
     },
 
     //TODO : for now may-13 release it has to be hidden
@@ -252,14 +250,15 @@ export const column = (
     //   },
     // },
     {
-      accessorKey: "revenue",
-      column_name: t('course.view_course:revenue_summary_tab.revenue'),
+      accessorKey: "visibility_id",
+      column_name: t('new_strings:visibility'),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t('course.view_course:revenue_summary_tab.revenue')}</div>;
+        return <div className="min-w-[150px] text-sm">{t('new_strings:visibility')}</div>;
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.revenue}</div>;
-      },
+
+        return <div className="min-w-[150px]">{translatedText(row?.original?.visibility_id?.name)}</div>
+      }
     },
 
     {
