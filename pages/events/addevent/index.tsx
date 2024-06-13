@@ -131,6 +131,10 @@ const NewEventTabs = () => {
 
   return (
     <div>
+      <div className="flex gap-20 items-center">
+        <p className="font-semibold text-3xl">New Event </p>
+
+      </div>
       <div className="bg-[white] mt-4 shadow-2xl rounded-[24px]">
         <Tabs value={JSON.stringify(currentEventStep)}>
           <div className="flex flex-row overflow-x-hidden">
