@@ -738,7 +738,7 @@ export const columns = () => {
         const router = useRouter();
         const { data: loggedInUserData }: any = useGetIdentity();
         const actionMenu = getActionMenuItems(
-          loggedInUserData?.userData.user_roles
+          loggedInUserData?.userData?.user_roles
         );
         const [openSendEmailComfirmation, setOpenSendEmailComfirmation] =
           useState(false);
