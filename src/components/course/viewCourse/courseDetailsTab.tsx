@@ -141,7 +141,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
     VISIBILITY,
     PUBLIC
   )?.id;
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings", "course.find_course"])
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
       {/**
@@ -357,13 +357,22 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               {courseData?.data?.program_type_id?.is_online_program == true ?
               (courseData?.data?.online_url ? ( <a href= {courseData?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target="_blank">{t("new_strings:online")}</a>
             ) : ( "-"))
-          :
-          (courseData?.data?.venue_id ? (
+            :
+            (courseData?.data?.venue_id ? (
+              <ItemValue>
+                {venue}
+              </ItemValue>
+            ):("-"))}
+        </div>
+        {courseData?.data?.program_type_id?.is_online_program == false &&
+        <div>
+          <Header2>{t("course.find_course:center")}</Header2>
+          {courseData?.data?.venue_id ? (
             <ItemValue>
-              {venue}
+              {courseData?.data?.venue_id?.center_id?.name}
             </ItemValue>
-          ):( "-"))}
-            </div>
+          ) : ("-")}
+        </div>}
             <Header2>
             {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
