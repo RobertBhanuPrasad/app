@@ -83,13 +83,13 @@ const NewEventTabs = () => {
   const eventStepTitles = [
     {
       value: EVENTS_BASIC_DETAILS_STEP_NUMBER,
-      label: 'basic detaisl',
+      label: 'Basic Details',
       icon: (color: string) => <Profile color={color} />,
       component: <NewEventStep1 />
     },
     {
       value: EVENTS_DETAILS_STEP_NUMBER,
-      label: 'Event details',
+      label: 'Event Details',
       icon: (color: string) => <Group color={color} />,
       component: <NewEventStep2 />
     },
@@ -101,7 +101,7 @@ const NewEventTabs = () => {
     },
     {
       value: EVENTS_FEE_STEP_NUMBER,
-      label: 'Feeas',
+      label: 'Fees',
       icon: (color: string) => <Fees color={color} />,
       component: <NewEventStep4 />
     },
@@ -113,7 +113,7 @@ const NewEventTabs = () => {
     },
     {
       value: EVENTS_CONTACT_INFO_STEP_NUMBER,
-      label: 'contactInfo',
+      label: 'Contact Info',
       icon: (color: string) => <Info color={color} />,
       component: <NewEventStep6 />
     }
