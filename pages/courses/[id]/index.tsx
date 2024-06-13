@@ -197,7 +197,7 @@ function ViewDetails() {
   } else {
     tabTriggers.push({
       value: COURSE_ACCOUNTING_FORM_TAB,
-      label: t("course_accounting_form_tab.course_accounting_form"),
+      label: "Submit Course Accounting Form",
       disabled: true,
       tab_query_name: "course_accounting_form",
     });
