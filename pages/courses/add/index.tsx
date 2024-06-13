@@ -9,7 +9,7 @@ import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
 import Group from "@public/assets/Group";
-import Info from "@public/assets/Info";
+import ContactInfo from "@public/assets/ContactInfo";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import {
@@ -806,7 +806,7 @@ export const NewCourseTabs = () => {
     {
       value: FEE_STEP_NUMBER,
       label: t("fees"),
-      icon: (color: string) => <Venue color={color} />,
+      icon: (color: string) => <Fees color={color} />,
       component: <NewCourseStep4 />,
     },
     {
@@ -818,7 +818,7 @@ export const NewCourseTabs = () => {
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: t("new_strings:contact_info"),
-      icon: (color: string) => <Info color={color} />,
+      icon: (color: string) => <ContactInfo color={color} />,
       component: <NewCourseStep6 />,
     },
   ];
