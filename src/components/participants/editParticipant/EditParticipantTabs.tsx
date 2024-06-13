@@ -284,7 +284,7 @@ export default function EditParticipantTabs() {
     ];
 
     // Check if accommodation tab should be rendered in tabs list or not
-    if (!accommodationData) {
+    if (accommodationData) {
         tabs = tabs.filter((tab) => tab.label !== "Accommodation Details");
     }
 

@@ -84,8 +84,8 @@ export default function PaymentDetails() {
     ],
   });
   const paymentDetailData = paymentData?.data?.data[0];
-
- 
+// TODO: need to replace it woth api value of manual or online
+ const manualRegistration =true
 
 
 
@@ -116,11 +116,8 @@ export default function PaymentDetails() {
         </div>
       </div>
       <div className="flex py-[10px] gap-8">
-        <div className="">
-          {/* If the participant is registering via discount code,
-          we need to show the discount code in the special code field and it has to be disabled
-          If the participant is registering without a discount code, 
-          we won't show anything in the special code which is empty and disabled */}
+       {manualRegistration && <div className="">
+          
           <Text className="text-[#999999]  text-[14px] ">
             {t('course.participants:edit_participant.participants_information_tab.enter_special_code')}
           </Text>
@@ -129,12 +126,12 @@ export default function PaymentDetails() {
             <div>
               <Input
                 value={paymentDetailData?.participant_id?.discount_code}
-                className="w-[268px] !h-[40px] resize-none font-semibold rounded-xl border-[#E1E1E1]"
+                className="w-[268px] !h-[40px] resize-none font-semibold rounded-xl border-[#E1E1E1] cursor-not-allowed"
                 disabled={true}
               />
             </div>
           </div>
-        </div>
+        </div>}
         <div className="w-[305px]">
           <div className="flex gap-2">
             <div>

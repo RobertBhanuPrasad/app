@@ -338,7 +338,14 @@ export default function EditPayment({
                                                 )}
                                             </Text>
                                             {/* TODO: need to disable it for confirmed and failed transaction ids */}
-                                            <div>
+                                            <div
+                                                className={`${
+                                                    transaction_status_id ==
+                                                        (FAILED_ID ??
+                                                            CONFIRMED_ID) &&
+                                                    "cursor-not-allowed"
+                                                }`}
+                                            >
                                                 <DateField
                                                     value={payment_date as Date}
                                                     onChange={
@@ -347,7 +354,7 @@ export default function EditPayment({
                                                     placeholder={t(
                                                         "new_strings:select_date"
                                                     )}
-                                                    className="!w-[278px] h-[40px] rounded-[12px]"
+                                                    className={`!w-[278px] h-[40px] rounded-[12px] `}
                                                     disabled={
                                                         transaction_status_id ==
                                                         FAILED_ID
@@ -503,7 +510,7 @@ export default function EditPayment({
                                     className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] text-base"
                                     onClick={() => {
                                         onFormSubmission();
-}}
+                                    }}
                                 >
                                     {t("save_button")}
                                 </Button>
@@ -559,7 +566,7 @@ export default function EditPayment({
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
-                       
+
                         <AlertDialog open={saveChangesConfirmation}>
                             <AlertDialogContent>
                                 <div className="flex justify-end">
