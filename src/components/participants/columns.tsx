@@ -6,7 +6,12 @@ import {
 } from "@radix-ui/react-icons";
 import { useGetIdentity, useList } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  FileIcon,
+  MoreVertical,
+} from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -39,6 +44,13 @@ import {
 } from "src/ui/alert-dialog";
 import CrossIcon from "@public/assets/CrossIcon";
 import EmailConfimrationIcon from "@public/assets/EmailConfirmationIcon";
+import MemoIcon from "@public/assets/MemoIcon";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "src/ui/tooltip";
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -113,8 +125,22 @@ export const columns = () => {
 
       cell: ({ row }: any) => {
         return (
-          <div className="text-left pl-4 !min-w-[175px] capitalize">
+          <div className="text-left pl-4 !min-w-[175px] capitalize flex gap-3">
             {row?.original?.contact_id?.full_name}
+            {row?.original?.memo?.length && (
+              <div className="cursor-pointer">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <MemoIcon />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-gray-900 text-white w-52">
+                      <p>{row?.original?.memo}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            )}
           </div>
         );
       },
@@ -343,9 +369,8 @@ export const columns = () => {
                     {row?.original?.payment_status_id?.value
                       ? translatedText(row?.original?.payment_status_id?.name)
                       : "-"}
-                    {row?.original?.payment_status_id?.value == "Pending" && (
-                      <CountdownTimerIcon />
-                    )}
+                    {row?.original?.payment_status_id?.value ==
+                      pendingStatusId && <CountdownTimerIcon />}
                   </div>
                 </DialogTrigger>
                 {Object.keys(defaultValues).length > 0 && (
