@@ -1,12 +1,13 @@
-import HeaderSection from '../../../src/components/course/viewCourse/CourseAccountingForm/CourseAccountingFormHeader'
-
+import HeaderSection from '@components/course/viewCourse/CourseAccountingForm/CourseAccountingFormHeader'
 import Form from '@components/Formfield'
 import CloseParticipantsSection from '@components/course/viewCourse/CourseAccountingForm/CloseParticipantsSection'
 import ExpenseSection from '@components/course/viewCourse/CourseAccountingForm/ExpenseSection'
 import RevenueSection from '@components/course/viewCourse/CourseAccountingForm/RevenueSection'
 import { useSearchParams } from 'next/navigation'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
-// Define type for sectionComponents
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
 
 function index() {
   const params = useSearchParams()
@@ -45,9 +46,8 @@ function index() {
   const { courseAccountingFormDefaultValues } = newCourseStore()
   return (
     <div>
-      <section>
+      <section className='h-[83px] shadow-md w-full bg-[white]'>
         {/*  here we are showing header section  */}
-
         <HeaderSection />
       </section>
 
@@ -59,3 +59,37 @@ function index() {
 }
 
 export default index
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+    "course.new_course",
+    "new_strings",
+    "course.participants",
+    "course.view_course",
+    "course.find_course",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};
+
