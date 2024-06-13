@@ -5,9 +5,10 @@ import { IsShowConfirmBoxInNewCourse } from "@components/courseBusinessLogic";
 import { NewCourseContext, useNewCourseContext } from "@contexts/NewCourseContext";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { NewCourse, getSectionFromUrl } from "pages/courses/add";
+import { NewCourse, displayConfirmBoxWhenRouteChange, getSectionFromUrl } from "pages/courses/add";
 import { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
@@ -16,6 +17,8 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 const index = () => {
+  
+      const { t } = useTranslation("validations_text")
 
       const router = useRouter()
 
@@ -37,16 +40,7 @@ const index = () => {
         // if the destination url is the preview page then we don't need to show the confirm box.
         // if the data is entered and then click on newCourse again we have to show the confirm box.
         if (IsShowConfirmBoxInNewCourse(sectionFromUrl,section)) {
-          if (
-            confirm(
-              "Do you want to leave this page? Unsaved changes may be lost."
-            )
-          ) {
-            console.log("ok go ahead");
-          } else {
-            router.events.emit("routeChangeError");
-            throw "Route change aborted. User confirmation required.";
-          }
+          displayConfirmBoxWhenRouteChange(router,t)
         }
       
     };
@@ -162,6 +156,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
       "course.participants",
       "course.view_course",
       "course.find_course",
+      "validations_text"
     ]);
   
     if (!authenticated) {

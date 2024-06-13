@@ -65,7 +65,7 @@ import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
@@ -92,6 +92,8 @@ function index() {
   
   const pathname = usePathname();
 
+  const { t } = useTranslation("validations_text")
+
   const {
     query: { section },
   } = useRouter();
@@ -111,18 +113,8 @@ function index() {
 
         const sectionFromUrl = getSectionFromUrl(url,'section')
 
-
         if (IsShowConfirmBoxInNewCourse(sectionFromUrl,section)) {
-          if (
-            confirm(
-              "Do you want to leave this page? Unsaved changes may be lost."
-            )
-          ) {
-            console.log("ok go ahead");
-          } else {
-            router.events.emit("routeChangeError");
-            throw "Route change aborted. User confirmation required.";
-          }
+         displayConfirmBoxWhenRouteChange(router,t)
         }
       }
     };
@@ -1133,6 +1125,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "course.participants",
     "course.view_course",
     "course.find_course",
+    "validations_text"
   ]);
 
   if (!authenticated) {
@@ -1291,4 +1284,22 @@ interface CourseFeeBody {
 
     // Get the specific parameter value
     return params.get(paramName);
+}
+
+/**
+ * when user clicked on the yes option in confirm-box it will allow the navigation to corresponding URL.
+ * when user clicked on the no option in confirm-box it will not to navigation and display the same page.
+ * @param router 
+ */
+export const displayConfirmBoxWhenRouteChange = (router: NextRouter, t: any) => {
+  if (
+    confirm(
+      t("changes_made_will_be_lost._are_you_sure_you_want_to_navigate_to_other_page <yes/no>")
+    )
+  ) {
+    console.log("ok go ahead");
+  } else {
+    router.events.emit("routeChangeError");
+    throw "Route change aborted. User confirmation required.";
+  }
 }

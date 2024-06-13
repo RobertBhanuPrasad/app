@@ -631,6 +631,9 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
         // we have to display thank you page or success modal pop up only when the posting done successfully without any error
         if (isEdited) {
+          // after editing successfully we didn't stop the user from navigation 
+          // so we have to keep the updated data to edit course default values variable.
+          setEditCourseDefaultValues(newCourseData)
           setOnEditSuccess(true);
         } else {
           // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
@@ -649,8 +652,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
           router.replace(`${pathname}?${params}`);
 
           setViewPreviewPage(false);
-          setViewThankyouPage(true);
-          
+          setViewThankyouPage(true);          
         }
       } catch (error) {
         console.log("error in catch block", error);

@@ -1,11 +1,13 @@
 import { IsEditCourse, handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
-import _ from "lodash";
+import _, { cond } from "lodash";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
+import { displayConfirmBoxWhenRouteChange } from "pages/courses/add";
 import { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
@@ -53,6 +55,8 @@ const EditCourseReviewPage = () => {
   
   const pathname = usePathname()
 
+  const { t } = useTranslation("validations_text")
+
 
   useEffect(() => {
     const fetchDefaultValues = async () => {
@@ -90,26 +94,12 @@ const EditCourseReviewPage = () => {
       // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
       // this varaible holds the boolean value that the data is edited or not
       const condition = _.isEqual(newCourseData,editCourseDefaultValues)
-
-      // we take the id from the url
-      const Id=url.split('/').filter((x)=>x===query.id?.toString())
-
-      // we donot display the alert for the user if navigated from edited course to course details page
-      if(!(Id.length>0)){
+      
         //if user change the data we should alert the user when navigated
-        if (!condition && IsEditCourse(pathname)) {
-          if (
-            confirm(
-              "Do you want to leave this page? Unsaved changes may be lost."
-            )
-          ) {
-            console.log("ok go ahead");
-          } else {
-            router.events.emit("routeChangeError");
-            throw "Route change aborted. User confirmation required.";
-          }
+        console.log(condition,newCourseData,editCourseDefaultValues,"checkCondition")
+        if (condition===false) {
+          displayConfirmBoxWhenRouteChange(router,t)
         }
-      }
 
     }
     router.events.off('routeChangeStart', routeChange);
@@ -140,7 +130,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
   const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common","course.new_course", "new_strings", "course.participants","course.view_course"
+    "common","course.new_course", "new_strings", "course.participants","course.view_course","validations_text"
   ]);
 
   if (!authenticated) {
