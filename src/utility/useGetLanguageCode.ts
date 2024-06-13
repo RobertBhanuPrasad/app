@@ -41,6 +41,19 @@ export const capitalizeFirstLetter = (string: string) => {
 };
 
 /**
+ * @function getTranslatedMonth
+ * @description this function is used translate the month name and return a month name by taking the date string
+ * @param dateStr
+ * @returns a string which is translated month name
+ */
+export const getTranslatedMonth = (dateStr: string) => {
+  // form the day js we will get the month name as jan but we need Jan for that we are using the capitalizeFirstLetter then returning the string
+  return capitalizeFirstLetter(
+    dayjs(dateStr).locale(useGetLanguageCode()).format("MMM")
+  );
+};
+
+/**
  * @function getTranslatedWeekday
  * @description this function is used for getting the translated week abbrivated names to display in the calendar
  * @returns array of strings like ['Mon','Tue','Wed','Thu','Fri','Sat'] with tralated in respective language
