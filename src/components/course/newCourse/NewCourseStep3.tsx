@@ -1176,6 +1176,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
             onSelect={handleOnSelect}
             className="rounded-md"
             count={data?.total || 0}
+            defaultMonth={date}
           />
         </div>
         {/* Course details */}
