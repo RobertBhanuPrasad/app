@@ -47,6 +47,7 @@ import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { SortingState } from "@tanstack/react-table";
 
 function index() {
   const router = useRouter();
@@ -287,7 +288,7 @@ function index() {
       });
     }
   }
-  const [sorting, setSorting] = useState([
+  const [sorting, setSorting] = useState<SortingState>([
     {
       id: "id",
       desc: true
@@ -309,6 +310,7 @@ if(field === "Email") field = "contact_id(email)"
 if(field === "Amount") field = "total_amount"
 if(field === "Attendance Status") field = "participant_attendence_status_id(name)"
 if(field === "Fee Level")field = "price_category_id(fee_level_id(value))"
+if (field === "Fee Level") field = "price_category_id(fee_level_id(value))";
 return field
 }
 

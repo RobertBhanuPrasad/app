@@ -143,7 +143,7 @@ interface IBaseTable<TData, TValue> {
    */
   columnSelector?: boolean;
 
-  setSorting?: React.SetStateAction<SortingState>;
+  setSorting?: any;
 
   sorting?: SortingState;
 }
