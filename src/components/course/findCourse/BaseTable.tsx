@@ -143,9 +143,9 @@ interface IBaseTable<TData, TValue> {
    */
   columnSelector?: boolean;
 
-  setSorting?: any;
+  setSorting?: React.SetStateAction<SortingState>;
 
-  sorting?: any;
+  sorting?: SortingState;
 }
 
 export function BaseTable<TData, TValue>({

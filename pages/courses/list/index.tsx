@@ -14,6 +14,7 @@ import SearchIcon from "@public/assets/Search";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useList, useSelect, useTable } from "@refinedev/core";
+import { SortingState } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
@@ -246,7 +247,7 @@ function index() {
    */
 
   //State variable for the sorting functionality
-  const [sorting, setSorting] = useState([
+  const [sorting, setSorting] = useState<SortingState>([
     {
       id: "created_at",
       desc: true,
@@ -256,15 +257,17 @@ function index() {
   /**
    * This is for the second use Table sorting
    */
-  const [secondUseTableSorting, setSecondUseTableSorting] = useState([
-    {
-      id: "created_at",
-      desc: true,
-    },
-  ]);
+  const [secondUseTableSorting, setSecondUseTableSorting] =
+    useState<SortingState>([
+      {
+        id: "created_at",
+        desc: true,
+      },
+    ]);
 
   // This function fetches the field which needs to sorted in the table
   const getFieldvalue = () => {
+    // if sorting doesnt contain data then set sorting to initial state
     if (sorting.length === 0) {
       setSorting([
         {
@@ -282,7 +285,7 @@ function index() {
 
       return "created_at";
     } else {
-      let field = sorting?.[0]?.id;
+      let field = sorting?.[0].id;
       // the field which we have in column definition and the field in data base were different
       if (field === "program_code") field = "id";
       if (field === "program_schedules") field = "start_date";
