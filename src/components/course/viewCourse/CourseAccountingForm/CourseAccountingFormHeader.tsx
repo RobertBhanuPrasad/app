@@ -80,7 +80,7 @@ function HeaderSection() {
           <Line />
         </div>
             {/* participants count */}
-        <div className="flex gap-2 items-center w-[76px]">
+        <div className="flex gap-2 items-center">
           <ParticipantsIcon />
         <div
           onClick={() => {
