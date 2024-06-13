@@ -245,26 +245,51 @@ function index() {
    * Here we are maintaining 2 querys one is for filtering and one is for showing the data in the table and this is the filter query
    */
 
-  //State variable for the sorting functionality 
+  //State variable for the sorting functionality
   const [sorting, setSorting] = useState([
     {
       id: "created_at",
-      desc: true
-    }
-  ])
+      desc: true,
+    },
+  ]);
 
-// This function fetches the field which needs to sorted in the table
-const fieldvalue = () =>{
-if(!sorting.length){
-  setSorting([{
-    id: "created_at",
-    desc: true
-  }])
-}
-let field = sorting?.[0]?.id
-if(field==="program_schedules") field = "start_date"
-return field
-}
+  /**
+   * This is for the second use Table sorting
+   */
+  const [secondUseTableSorting, setSecondUseTableSorting] = useState([
+    {
+      id: "created_at",
+      desc: true,
+    },
+  ]);
+
+  // This function fetches the field which needs to sorted in the table
+  const getFieldvalue = () => {
+    if (sorting.length === 0) {
+      setSorting([
+        {
+          id: "created_at",
+          desc: true,
+        },
+      ]);
+
+      setSecondUseTableSorting([
+        {
+          id: "created_at",
+          desc: true,
+        },
+      ]);
+
+      return "created_at";
+    } else {
+      let field = sorting?.[0]?.id;
+      // the field which we have in column definition and the field in data base were different
+      if (field === "program_code") field = "id";
+      if (field === "program_schedules") field = "start_date";
+      return field;
+    }
+  };
+
   const {
     tableQueryResult: FilterProgramData,
     pageCount,
@@ -282,16 +307,39 @@ return field
     filters: filters,
     sorters: {
       permanent: [
-        { field: fieldvalue(), order: sorting?.[0]?.desc ? "desc" : "asc" },
+        { field: getFieldvalue(), order: sorting?.[0]?.desc ? "desc" : "asc" },
       ],
     },
   });
 
   /**
+   * This variable holds the filtered ids of the query
+   * This variable change only when really the data changes
+   * and not on every render
+   * Process :  We need to run second useTable only when the data changes from first query
+   */
+  const [programFilteredIds, setProgramFilteredIds] = useState<any>([]);
+
+  /**
    *This variable holds the filtered ids of the query
    */
-  const filteredIds =
+  const tempFilteredIds =
     FilterProgramData?.data?.data.map((item) => item.id) || [];
+
+  /**
+   * This useEffect runs only when the data changes
+   * and not on every render
+   * Process :  We need to run second useTable only when the data changes from first query
+   * So for that in dependency array we pass JSON.stringify(tempFilteredIds.sort((a: any, b: any) => a - b))
+   * This will run only when the data changes
+   * and not on every render
+   * So we will set both sorting and filtered IDs so then a new query will be sent to the server
+   */
+  useEffect(() => {
+    setProgramFilteredIds(tempFilteredIds.sort((a: any, b: any) => a - b));
+
+    setSecondUseTableSorting(sorting);
+  }, [JSON.stringify(tempFilteredIds.sort((a: any, b: any) => a - b))]);
 
   /**
    *This is the query to get data to show in the table
@@ -313,14 +361,17 @@ return field
           {
             field: "id",
             operator: "in",
-            value: filteredIds,
+            value: programFilteredIds,
           },
         ],
       },
       sorters: {
         permanent: [
           // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-          { field: fieldvalue(), order: sorting?.[0]?.desc ? "desc" : "asc"},
+          {
+            field: getFieldvalue(),
+            order: secondUseTableSorting?.[0]?.desc ? "desc" : "asc",
+          },
         ],
       },
     });
@@ -792,11 +843,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
-              <SelectItem
-                key={index}
-                value={option.value}
-                className="h-[44px]"
-              >
+              <SelectItem key={index} value={option.value} className="h-[44px]">
                 {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && (
