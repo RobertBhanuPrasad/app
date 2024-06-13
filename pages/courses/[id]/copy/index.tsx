@@ -1,11 +1,14 @@
 import { handleCourseDefaultValues } from "@components/course/newCourse/EditCourseUtil";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
+import { IsShowConfirmBoxInNewCourse } from "@components/courseBusinessLogic";
+import { NewCourseContext, useNewCourseContext } from "@contexts/NewCourseContext";
 import _ from "lodash";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { NewCourse } from "pages/courses/add";
+import { NewCourse, displayConfirmBoxWhenRouteChange, getSectionFromUrl } from "pages/courses/add";
 import { useEffect, useState } from "react";
 import { authProvider } from "src/authProvider";
 import { TIME_FORMAT } from "src/constants/OptionLabels";
@@ -14,9 +17,44 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 const index = () => {
-    const {
+  
+      const { t } = useTranslation("validations_text")
+
+      const router = useRouter()
+
+      const {
         query: { section },
-      } = useRouter();
+      } = router;
+
+     
+ /**
+   * This context is used to keep track of whether the copy course form is edited or not
+   * Requirement: We have to stop the user when he is changing route form one to another
+   * Implementation: To make it simple we are using useRef
+   */
+  useEffect(() => {
+    const routeChange = (url: string) => {  
+
+        const sectionFromUrl = getSectionFromUrl(url,'section')
+
+        // if the destination url is the preview page then we don't need to show the confirm box.
+        // if the data is entered and then click on newCourse again we have to show the confirm box.
+        if (IsShowConfirmBoxInNewCourse(sectionFromUrl,section)) {
+          displayConfirmBoxWhenRouteChange(router,t)
+        }
+      
+    };
+
+    router.events.off("routeChangeStart", routeChange);
+
+    router.events.on("routeChangeStart", routeChange);
+
+    return () => {
+      router.events.off("routeChangeStart", routeChange);
+    };
+    
+  }, [section]);
+
     if (section === "thank_you") {
         return (
           <div className="mb-8">
@@ -26,9 +64,9 @@ const index = () => {
       }
     
       if (section === "preview_page") {
-        return <NewCourseReviewPage />;
+        return<NewCourseReviewPage />
       } else {
-        return <CopyCoursePage />;
+        return<CopyCoursePage />
       }
 }
 
@@ -118,6 +156,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
       "course.participants",
       "course.view_course",
       "course.find_course",
+      "validations_text"
     ]);
   
     if (!authenticated) {

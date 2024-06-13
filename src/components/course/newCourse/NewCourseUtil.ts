@@ -1593,3 +1593,12 @@ export const handleDeleteProgramTables = async (
     );
   }
 };
+
+/**
+ * This function is used to determine whether the particular url contains add or not
+ * @param url
+ * @returns a boolean
+ */
+export const IsNewCourse = (url: string) => {
+  return url.includes("/add");
+};
