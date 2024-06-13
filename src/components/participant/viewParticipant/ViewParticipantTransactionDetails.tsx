@@ -1,10 +1,8 @@
 import Form from '@components/Formfield'
 import { BaseTable } from '@components/course/findCourse/BaseTable' // Importing BaseTable component for displaying table
-import TransactionActivity from '@components/participants/TransactionActivityPopover'
 import { handleEditPaymentValues } from '@components/participants/editParticipant/EditParticipantUtil'
 import EditPayment from '@components/participants/editParticipant/editPayment'
 import ViewDonationDetails from '@components/participants/editParticipant/viewDonationDetails'
-import TransactionActivityIcon from '@public/assets/TransactionActivityIcon'
 import { useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
 import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
 import { MoreVertical } from 'lucide-react' // Importing icons for UI
@@ -12,14 +10,11 @@ import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react' // Importing React
 import { translatedText } from 'src/common/translations'
-import { PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
-import { PARTICIPANT_PENDING_PAYMENT_STATUS } from 'src/constants/OptionValueOrder'
 import { TableHeader, Text } from 'src/ui/TextTags'
 import { Button } from 'src/ui/button' // Importing Button component
 import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from 'src/ui/dropdown-menu' // Importing components for dropdown menu
 import { formatDateAndTime } from 'src/utility/DateFunctions'
-import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 // Component for viewing participant transaction details
 function ViewParticipantTransactionDetails({ participantId }: any) {
   const { t } = useTranslation(['course.participants', 'course.view_course'])
@@ -50,19 +45,6 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
 
   return (
     <div>
-      <div className="flex">
-        <p className="text-[18px] font-[600] pr-[10px] !m-[0] !py-[0] !h-[0] ">
-          {t('course.participants:view_participant.transaction_details')}
-        </p>
-        <div className="cursor-pointer ">
-          <div className="text-left ">
-            <TransactionActivity
-              transactionHistory={participantTransactionDetailsData?.data?.data}
-              renderHeader={<TransactionActivityIcon />}
-            />
-          </div>
-        </div>
-      </div>
       <div className="w-full rounded-[10px] !mt-0">
         {/* BaseTable component for rendering table */}
         <BaseTable
@@ -128,20 +110,8 @@ const columns = () => {
       },
 
       cell: ({ row }) => {
-        const participantPendingPaymentStatusId = getOptionValueObjectByOptionOrder(
-          PARTICIPANT_PAYMENT_STATUS,
-          PARTICIPANT_PENDING_PAYMENT_STATUS
-        )?.id
         return (
-          <Text
-            className={`  min-w-[150px] ${
-              row?.original?.transaction_status_id == participantPendingPaymentStatusId
-                ? 'text-[#FF6D6D]'
-                : 'text-[#7677F4]'
-            }`}
-          >
-            {translatedText(row?.original?.transaction_type_id?.name as object)}
-          </Text>
+          <Text className="min-w-[150px] ">{translatedText(row?.original?.transaction_type_id?.name as object)}</Text>
         )
       }
     },
@@ -340,23 +310,14 @@ const columns = () => {
               <div className="p-[5px] cursor-pointer hover:bg-[#7677F4]/[0.1] rounded-sm">
                 <Dialog open={editPayment}>
                   <DialogTrigger asChild={editPayment}></DialogTrigger>
-                  {!defaultValues ||
-                                    Object.keys(defaultValues).length === 0 ? (
-                                        <div></div>
-                                    ) : (
-                                        <Form
-                                            onSubmit={() => {}}
-                                            defaultValues={defaultValues}
-                                        >
-                                            {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
-                                            <EditPayment
-                                                paymentId={Number(
-                                                    row?.original?.id
-                                                )}
-                                                setEditPayment={setEditPayment}
-                                            />
-                                        </Form>
-                                    )}
+                  {!defaultValues || Object.keys(defaultValues).length === 0 ? (
+                    <div></div>
+                  ) : (
+                    <Form onSubmit={() => {}} defaultValues={defaultValues}>
+                      {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
+                      <EditPayment paymentId={Number(row?.original?.id)} setEditPayment={setEditPayment} />
+                    </Form>
+                  )}
                 </Dialog>
               </div>
             </div>

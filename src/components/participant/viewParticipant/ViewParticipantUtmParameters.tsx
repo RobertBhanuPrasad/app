@@ -18,9 +18,6 @@ function ViewParticipantUtmParameters({ participantId }: any) {
   const { data: utmParametersData, isLoading, isError } = useOne(query)
 
   return (
-    <div>
-      <p className="text-[18px] font-[600] ">UTM Parameters</p>
-      <div>
         <BaseTable
           checkboxSelection={false}
           total={utmParametersData?.data?.utm_parameters_section?.length || 0}
@@ -33,8 +30,6 @@ function ViewParticipantUtmParameters({ participantId }: any) {
           data={utmParametersData?.data?.utm_parameters_section || []}
           columnPinning={false}
         />
-      </div>
-    </div>
   )
 }
 

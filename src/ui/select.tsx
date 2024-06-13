@@ -5,6 +5,8 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "src/lib/utils";
+import { useRef } from 'react'
+import { Input, InputProps } from './input'
 /**
  * Select Context interface
  */
@@ -283,14 +285,32 @@ SelectItem.displayName = SelectPrimitive.Item.displayName;
 const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator
-    ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
-    {...props}
-  />
-));
-SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
+  >(({ className, ...props }, ref) => (
+    <SelectPrimitive.Separator
+      ref={ref}
+      className={cn("-mx-1 my-1 h-px bg-muted", className)}
+      {...props}
+      />
+    ));
+    SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
+
+/**
+ * Requirement : dropdowns are loosing focus everwhere so to gain focus, we are using 
+ * SelectInput Component, designed to be used as a wrapper around an Input component
+ * 
+ * Bug no : 1149
+ * 
+ * Implementation : Initially created functional component named SelectInput that accepts props of type InputProps,
+ *  and used useRef hook to create a reference to the input element, and initially set to null, and added
+ *  onBlur event handler to the Input component, and Return an Input component with the ref attribute set to the 
+ * inputRef which triggers a function to focus on the input element when it looses focus.
+ * 
+ * @returns 
+ */
+const SelectInput = (props: InputProps) => {
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  return <Input ref={inputRef} onBlur={() => inputRef.current?.focus()} {...props} />
+}
 
 export {
   Select,
@@ -304,4 +324,5 @@ export {
   SelectScrollUpButton,
   SelectScrollDownButton,
   SelectItems,
+  SelectInput
 };

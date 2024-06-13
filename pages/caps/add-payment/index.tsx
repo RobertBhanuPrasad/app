@@ -20,6 +20,8 @@ const AddPayment = () => {
   const [dialogConfig, setDialogConfig] = useState<DialogProps>({ buttonMessage: "", message: "", onClick: () => { }, title: "" })
   const [showForm, setShowForm] = useState(true);
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const router = useRouter();
 
   const CAPS_BASE_URL: string = process.env.NEXT_PUBLIC_CAPS_BASE_URL as string;
@@ -43,7 +45,7 @@ const AddPayment = () => {
   }, [selectedType]);
 
   const postData = async (data: FormValues) => {
-    setShowForm(false);
+    setIsLoading(true)
     const { data: response, error } = await supabase
       .rpc('create_gateway', {
         _name: data.name,
@@ -65,29 +67,28 @@ const AddPayment = () => {
     const message = JSON.stringify(response);
     const { match, id } = checkSuccess(message);
     if (error || !match) {
-      console.error('Error:', error);
+      setShowForm(false)
+      setIsLoading(true)
       setDialogConfig({
         title: "Oops!",
         message: <>
-          Something went wrong while adding this Gateway.
-          <br />
-          <span className="text-red-400">{message}</span>
-          <br />
-          Please try again after some time
+          <span className="py-2 text-[14px] font-medium">Something went wrong while adding this Gateway.</span>
+          <span className="text-[#FF6D6D] text-[14px] ml-2">{message}</span>
+          <p className="py-2 text-[14px] font-medium">Please try again after some time</p>
         </>,
         onClick: () => { setShowForm(true) },
         buttonMessage: "Ok",
       })
     } else {
-      console.log('Success:', response);
+      setIsLoading(false)
+      setShowForm(false)
       setDialogConfig({
         title: "Gateway Addition Successful",
         message: <>
-          The gateway has successfully been added.
-          <br />
-          Please configure the following webhook in your payment gateway: <p><a href="#" className="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{`${CAPS_BASE_URL}/webhooks/${id}`}</a></p>
-          <br />
-          To check the same, please visit the Payment Gateways Dashboard Page.
+          <p className="text-[16px] font-medium py-2"> The gateway has successfully been added.</p>
+          <span className="py-2 text-[16px] font-medium">Please configure the following webhook in your payment gateway:</span>
+          <span className="ml-2"><a href="#" className="text-blue-400 underline">{`${CAPS_BASE_URL}/webhooks/${id}`}</a></span>
+          <p className="text-[16px] font-medium py-2"> To check the same, please visit the Payment Gateways Dashboard Page.</p>
         </>,
         onClick: () => { router.push('/caps/payment-dashboard') },
         buttonMessage: "Go to Dashboard"
@@ -120,7 +121,6 @@ const AddPayment = () => {
                     {errors.type.message}
                   </p>
                 )}
-                <p id="typeDisclaimer" className="text-[14px]">"Stripe" and "Corvuspay" implemented till now</p>
               </div>
               <div className="flex flex-col w-[360px]">
                 <label className="font-medium" htmlFor="username">Username</label>
@@ -207,9 +207,15 @@ const AddPayment = () => {
                 {errors.isTestGateway && (<p id="isTestGatewayError" className="text-[#FF6D6D] text-[14px]">{errors.isTestGateway.message}</p>)}
               </div>
             </div>
-            <div className="text-center mt-8">
+            <div className="flex items-center text-base justify-center mt-8">
+              {isLoading && (
+                <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center z-50">
+                  <div className="loader"></div>
+                </div>
+              )}
               <Button type="submit" className="w-[240px] h-[42px] ">Submit</Button>
             </div>
+
           </div>
         </Form>
       }
