@@ -88,18 +88,6 @@ export const column = (
     //   }
     // },
     {
-      accessorKey: "status",
-      column_name: t("course.find_course:course_status"),
-      //These columns are default columns and shouldnt be editable
-      enableHiding: false,
-      header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:course_status")}</div>;
-      },
-      cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{translatedText(row?.original?.status_id?.name)}</div>
-      }
-    },
-    {
       accessorKey: "program_schedules",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
@@ -117,6 +105,19 @@ export const column = (
         }
       },
     },
+    {
+      accessorKey: "status",
+      column_name: t("course.find_course:course_status"),
+      //These columns are default columns and shouldnt be editable
+      enableHiding: false,
+      header: () => {
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:course_status")}</div>;
+      },
+      cell: ({ row }: any) => {
+        return <div className="min-w-[150px]">{translatedText(row?.original?.status_id?.name)}</div>
+      }
+    },
+ 
     {
       accessorKey: "state",
       column_name: t("course.find_course:state"),
@@ -148,22 +149,24 @@ export const column = (
       },
     },
     {
-      accessorKey: "program_teachers",
+      accessorKey: "participant_registration",
+      column_name: t("course.find_course:attendees"),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-      column_name: t('course.participants:view_participant.course_information_tab.Teachers(S)'),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:attendees")}</div>;
       },
       cell: ({ row }: any) => {
-        const teachers = row?.original?.program_teachers?.map(
-          (teacher: any) => teacher?.users?.contact_id?.full_name
-        );
+        const router = useRouter()
+
         return (
-          <div className="flex flex-wrap min-w-[150px]">
-            <div>{teachers && teachers.join(", ")}</div>
+          <div 
+            className={`min-w-[150px] text-primary font-semibold ${row?.original?.participant_count === 0 ? '' : 'cursor-pointer'}`} 
+            onClick={row?.original?.participant_count !== 0 ? () => router.push(`/courses/${row.original.id}/participants/list`) : undefined}
+          >
+            {row?.original?.participant_count}
           </div>
-        );
+        );           
       },
     },
     {
@@ -187,24 +190,22 @@ export const column = (
       },
     },
     {
-      accessorKey: "participant_registration",
-      column_name: t("course.find_course:attendees"),
+      accessorKey: "program_teachers",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
+      column_name: t('course.participants:view_participant.course_information_tab.Teachers(S)'),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:attendees")}</div>;
+        return <div className="min-w-[150px] text-sm">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
       },
       cell: ({ row }: any) => {
-        const router = useRouter()
-
+        const teachers = row?.original?.program_teachers?.map(
+          (teacher: any) => teacher?.users?.contact_id?.full_name
+        );
         return (
-          <div 
-            className={`min-w-[150px] text-primary font-semibold ${row?.original?.participant_count === 0 ? '' : 'cursor-pointer'}`} 
-            onClick={row?.original?.participant_count !== 0 ? () => router.push(`/courses/${row.original.id}/participants/list`) : undefined}
-          >
-            {row?.original?.participant_count}
+          <div className="flex flex-wrap min-w-[150px]">
+            <div>{teachers && teachers.join(", ")}</div>
           </div>
-        );           
+        );
       },
     },
     {
