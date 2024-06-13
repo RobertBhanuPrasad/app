@@ -656,6 +656,18 @@ function index() {
 
   const countryCode = useGetCountryCode();
 
+  //TODO: We can uncomment this when BA accepts this one
+  //TODO: right now commenting because we are getting issues in participant home page
+  // let isFiltering = false;
+
+  // if (
+  //   participantData?.isInitialLoading === false &&
+  //   participantData?.isLoading === false &&
+  //   participantData?.isPreviousData === true
+  // ) {
+  //   isFiltering = participantData?.isFetching;
+  // }
+
   return (
     <div>
       <div className="top-[96px] z-10 sticky bg-[white] h-[83px] shadow-md w-full">
@@ -800,6 +812,7 @@ function index() {
           <BaseTable
             current={current}
             rowSelection={rowSelection}
+            // isFiltering={isFiltering}
             setRowSelection={participantsRowSelectionOnChange}
             checkboxSelection={true}
             setCurrent={setCurrent}

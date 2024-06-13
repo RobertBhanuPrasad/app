@@ -308,6 +308,9 @@ function index() {
         "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
+    queryOptions: {
+      keepPreviousData: true,
+    },
     sorters: {
       permanent: [
         { field: getFieldvalue(), order: sorting?.[0]?.desc ? "desc" : "asc" },
@@ -358,6 +361,9 @@ function index() {
       },
       pagination: {
         pageSize: pageSize,
+      },
+      queryOptions: {
+        keepPreviousData: true,
       },
       filters: {
         permanent: [
@@ -609,6 +615,20 @@ function index() {
     "course.view_course",
     "course.participants",
   ]);
+
+  //TODO: right now we are commenting because we have to useTable queries but in future if we use one useTable query then we can use this feature
+  // let isFiltering = false;
+
+  // if (
+  //   FilterProgramData.isInitialLoading === false &&
+  //   programData.isInitialLoading === false &&
+  //   FilterProgramData.isLoading === false &&
+  //   programData?.isLoading === false &&
+  //   FilterProgramData?.isPreviousData === true
+  // ) {
+  //   isFiltering = FilterProgramData?.isFetching;
+  // }
+
   return (
     <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">
@@ -620,7 +640,7 @@ function index() {
           setCurrent={setCurrent}
         />
 
-        {programData?.isLoading ? (
+        {FilterProgramData.isLoading || programData?.isLoading ? (
           <section className="flex justify-center align-center pt-[10%]">
             <div className="loader"></div>
           </section>
@@ -652,6 +672,7 @@ function index() {
               columnSelector={true}
               sorting={sorting}
               setSorting={setSorting}
+              // isFiltering={isFiltering}
             />
           </div>
         )}
