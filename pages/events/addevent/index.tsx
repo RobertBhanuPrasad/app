@@ -5,7 +5,6 @@ import { NewEventStep2 } from '@components/events/NewEventsStep2'
 import { NewEventStep3 } from '@components/events/NewEventsStep3'
 import { NewEventStep4 } from '@components/events/NewEventsStep4'
 import { NewEventStep5 } from '@components/events/NewEventsStep5'
-import { NewEventStep6 } from '@components/events/NewEventsStep6'
 import Car from '@public/assets/Car'
 import Error from '@public/assets/Error'
 import Group from '@public/assets/Group'
@@ -32,6 +31,10 @@ import {
 import { Button } from 'src/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 import { newEventStore } from 'src/zustandStore/NewEventStore'
+import NewEventStep6 from '@components/events/NewEventsStep6'
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
 
 const index = () => {
   const { data: loginUserData }: any = useGetIdentity()
@@ -215,3 +218,43 @@ const NewEventTabs = () => {
 
 
 
+/**
+ * Function to fetch server-side props.
+ * This function checks the authentication status using the auth provider and
+ * fetches translations for the current locale.
+ * If the user is not authenticated, it redirects them to the specified destination.
+ * @param context The context object containing information about the request.
+ * @returns Server-side props including translated props or redirection information.
+ */
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+    "course.new_course",
+    "new_strings",
+    "course.participants",
+    "course.view_course",
+    "course.find_course",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};
