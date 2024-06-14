@@ -80,17 +80,17 @@ const Entity = () => {
         <div className="form-group pb-3">
           <label htmlFor="country">Country</label>
           <input id="country" className="form-control w-full px-2 py-2 border border-slate-300 rounded-md" type="text" placeholder={countryCodes[38]} {...register("country")} />
-          {errors.country && <small id="countryError" className="form-text text-danger">{errors.country.message}</small>}
+          {errors.country && <small id="countryError" className="text-red-500">{errors.country.message}</small>}
         </div>
         <div className="form-group pb-3">
           <label htmlFor="org">Organization</label>
           <input id="org" className="form-control w-full px-2 py-2 border border-slate-300 rounded-md" type="number" placeholder="4 (organization id)" {...register("org", { valueAsNumber: true })} />
-          {errors.org && <small id="orgError" className="form-text text-danger">{errors.org.message}</small>}
+          {errors.org && <small id="orgError" className="text-red-500">{errors.org.message}</small>}
         </div>
         <div className="form-group pb-3">
           <label htmlFor="module">Module</label>
           <input id="module" className="form-control w-full px-2 py-2 border border-slate-300 rounded-md" type="text" placeholder="RX" {...register("module")} />
-          {errors.module && <small id="moduleError" className="form-text text-danger">{errors.module.message}</small>}
+          {errors.module && <small id="moduleError" className="text-red-500">{errors.module.message}</small>}
         </div>
         <div className="text-center">
           <Button type="submit">Continue</Button>

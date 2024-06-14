@@ -151,7 +151,9 @@ interface IBaseTable<TData, TValue> {
    * This variable is used to display the loader in middle of the page and while filtering ideally we dont need to click anything
    */
   isFiltering?: boolean;
-
+  /**
+   * This variable is used to disabled the horizontal scrolling. 
+   */
   noScroll? : boolean;
 }
 

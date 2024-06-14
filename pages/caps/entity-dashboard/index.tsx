@@ -93,9 +93,17 @@ const EntityDashboard = () => {
 EntityDashboard.noLayout = false;
 export default EntityDashboard
 
+type EntityData = {
+ id : number;
+ country : string;
+ module : string;
+ org : number;
+//  actions : any
+}
+
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 
-const entityDashboardColumns: ExtendedColumnDef<any>[] = [
+const entityDashboardColumns: ExtendedColumnDef<EntityData>[] = [
   {
     accessorKey: "id",
     column_name: "entity_id",
@@ -105,7 +113,7 @@ const entityDashboardColumns: ExtendedColumnDef<any>[] = [
     },
     cell: ({ row }) => {
       return (
-        <abbr className='!no-underline' title={row.original.id}>
+        <abbr className='!no-underline' title={row.original.id.toString()}>
           <Text className="max-w-[150px] truncate">
             {row?.original?.id}
           </Text>
@@ -129,7 +137,7 @@ const entityDashboardColumns: ExtendedColumnDef<any>[] = [
     },
   },
   {
-    accessorKey: "name",
+    accessorKey: "module",
     column_name: "module",
     enableHiding: false,
     header: () => {
@@ -152,8 +160,8 @@ const entityDashboardColumns: ExtendedColumnDef<any>[] = [
     },
     cell: ({ row }) => {
       return (
-        <abbr className="no-underline" title={row?.original?.org}>
-          <Text className="max-w-[80px] truncate">{row?.original?.org}</Text>
+        <abbr className="no-underline" title={row?.original?.org.toString()}>
+          <Text className="max-w-[80px] truncate">{row?.original?.org.toString()}</Text>
         </abbr>
       );
     },
