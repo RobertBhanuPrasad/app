@@ -366,10 +366,10 @@ export const columns = () => {
                       setEditPayment(!editPayment)
                     }
                   >
-                    {row?.original?.payment_status_id?.value
+                    {row?.original?.payment_status_id?.name
                       ? translatedText(row?.original?.payment_status_id?.name)
                       : "-"}
-                    {row?.original?.payment_status_id?.value ==
+                    {row?.original?.payment_status_id?.id ==
                       pendingStatusId && <CountdownTimerIcon />}
                   </div>
                 </DialogTrigger>
@@ -816,6 +816,8 @@ export const columns = () => {
             }
             case 9: {
               // TODO: Navigate to view participant page -> Transaction activity tab
+              const routePath = router.asPath.split("list")[0];
+              router.push(`/${routePath}/${participant_id}`);
               break;
             }
           }
@@ -834,6 +836,7 @@ export const columns = () => {
                 <div className="flex flex-col gap-2 max-h-[300px] max-w-[170px] overflow-y-auto scrollbar text-[#333333]">
                   {actionMenu?.map((value: any, index) => (
                     <DropdownMenuItem
+                      className="cursor-pointer"
                       onClick={() => {
                         handleActions(
                           value?.order,
