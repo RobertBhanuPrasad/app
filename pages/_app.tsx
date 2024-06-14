@@ -17,6 +17,7 @@ import { getLanguageCodeFromLocale, loadLanguageModule } from "src/utility/useGe
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat' 
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -41,6 +42,9 @@ function MyApp({
   // we are giving the language code of ours as per the country,
   // so it sets its locale globally and based on the locale it retrives the months week and all as per this locale
   dayjs.locale(languageCode);
+
+  // we are extending the dayjs with the plugin advancedFormat to use for the ordinals for the date and etc.
+  dayjs.extend(advancedFormat);
 
   const supabase: any = supabaseClient(countryCode);
 

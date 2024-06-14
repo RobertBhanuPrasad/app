@@ -20,6 +20,7 @@ import { formatDateTime } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import { useTranslation } from 'next-i18next';
+import { TweleveHrFormat, TwentyFourHrFormat } from '../viewCourse/courseDetailsTab'
 
 const NewCourseThankyouPage = () => {
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
@@ -180,7 +181,9 @@ useEffect(() => {
               {data?.data?.program_schedules?.map((data: any,index:any) => {
                 return (
                   <p className="font-semibold truncate text-accent-secondary" key={index}>
-                    {formatDateTime(data?.start_time, data?.end_time)}
+                    {
+                      data?.data?.hour_format_id === 50 ? (<TweleveHrFormat item={data}/>) : (<TwentyFourHrFormat item={data} />) 
+                    }
                   </p>
                 )
               })}

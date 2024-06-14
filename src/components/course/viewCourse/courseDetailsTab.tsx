@@ -13,6 +13,7 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { useTranslation } from 'next-i18next';
 import _ from "lodash";
 import { sortFeeLevels } from "../newCourse/NewCourseStep4";
+import dayjs from "dayjs";
 
 interface fullNameObject {
   user_id?: {
@@ -142,6 +143,8 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
     PUBLIC
   )?.id;
   const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+
+
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
       {/**
@@ -372,9 +375,11 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                       (item: ProgramScheduleItem, index: number) => (
                         <div key={index}>
                           <div className="flex flex-col">
-                            <div>
-                              {formatDateTime(item?.start_time, item?.end_time)}
-                            </div>
+                            {courseData?.data?.hour_format_id === 50 ? (
+                              <TweleveHrFormat item={item} />
+                            ) : (
+                              <TwentyFourHrFormat item={item} />
+                            )}
                           </div>
                         </div>
                       )
@@ -501,3 +506,26 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
 }
 
 export default CourseDetailsTab;
+
+
+export const TweleveHrFormat = ({item}:any) => {
+  return (
+  <div className="capitalize">
+    {item?.start_time &&
+      dayjs(item?.start_time).format("DD MMM, YYYY | hh:mm A")}{" "}
+    <span className="lowercase">to</span>{" "}
+    {item?.end_time && dayjs(item?.end_time).format("hh:mm A")}
+  </div>
+  )
+};
+
+export const TwentyFourHrFormat = ({item}:any) => {
+  return(
+    <div className="capitalize">
+    {item?.start_time &&
+      dayjs(item?.start_time).format("DD MMM, YYYY | HH:mm")}{" "}
+    <span className="lowercase">to</span>{" "}
+    {item?.end_time && dayjs(item?.end_time).format("HH:mm")}
+  </div>
+  )
+}
