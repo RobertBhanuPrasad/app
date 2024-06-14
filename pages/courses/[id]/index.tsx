@@ -95,6 +95,7 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger 
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
+import { getCurrencyFormate, getCurrencySymbol } from "src/utility/CurrencyFormate";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -199,6 +200,12 @@ function ViewDetails() {
 
   const { data: loginUserData }: any = useGetIdentity();
 
+  const {locale} = useRouter()
+
+  const currencySymbol = getCurrencySymbol(locale,'EUR')
+
+  const currencyFormat = getCurrencyFormate(locale,'EUR')
+
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
@@ -295,12 +302,11 @@ function ViewDetails() {
                 </TooltipContent>
               </Tooltip>
               </TooltipProvider>
-              <div>
-                <CurrencyIcon />
-              </div>
-              <Text className="text-[#7677F4] font-semibold">
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                {totalRevenue}
+              <Text className="w-4 h-4 flex items-center justify-center text-[#7677F4]">
+                {currencySymbol}
+              </Text>
+              <Text className="text-[#7677F4] font-semibold cursor-pointer">
+              {currencyFormat.format(totalRevenue)}
               </Text>
               <TooltipProvider>
               <Tooltip>

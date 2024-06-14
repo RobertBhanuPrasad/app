@@ -16,11 +16,18 @@ import {
 import { formatDate } from "src/utility/DateFunctions";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useTranslation } from 'next-i18next';
+import { getCurrencyFormate, getCurrencySymbol } from "src/utility/CurrencyFormate";
 
 
 
 export const ParticipantsListMainHeader = () => {
   const router = useRouter();
+
+  const {locale} = router
+
+  const currencySymbol = getCurrencySymbol(locale,'EUR')
+
+  const currencyFormat = getCurrencyFormate(locale,'EUR')
 
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
@@ -105,11 +112,12 @@ export const ParticipantsListMainHeader = () => {
               </HoverCard>
             </div>
             {/* Revenue */}
-            <div className="flex gap-2 items-center">
-              <CurrencyIcon />
-              <div className="cursor-pointer text-[#7677F4] font-medium">
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                {totalRevenue}
+            <div className="flex gap-2 items-center justify-center">
+              <div className="w-4 h-4 flex items-center justify-center text-[#7677F4]">
+                {currencySymbol}
+              </div>
+              <div className="text-[#7677F4] font-semibold cursor-pointer">
+              {currencyFormat.format(totalRevenue)}
               </div>
               <HoverCard>
                 <HoverCardTrigger>
