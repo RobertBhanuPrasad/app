@@ -6,12 +6,7 @@ import {
 } from "@radix-ui/react-icons";
 import { useGetIdentity, useList } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  FileIcon,
-  MoreVertical,
-} from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -51,6 +46,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "src/ui/tooltip";
+import { TableHeader } from "src/ui/TextTags";
+import { SortingArrows } from "src/ui/SortingArrows";
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -101,25 +98,16 @@ export const columns = () => {
       column_name: t("course.participants:find_participant.name"),
       enableHiding: false,
       enableSorting: true,
-      header: ({ column }) => {
+      header: ({ column }: any) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("course.participants:find_participant.name")}
-              {column.getIsSorted() === "desc" ? (
-                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : column.getIsSorted() === "asc" ? (
-                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : (
-                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+          <TableHeader className="justify-between min-w-[108px]">
+            {t("course.participants:find_participant.name")}
+
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
         );
       },
 
@@ -149,31 +137,22 @@ export const columns = () => {
       accessorKey: "Phone",
       column_name: t("course.participants:find_participant.phone"),
       enableHiding: false,
-      header: ({ column }) => {
+      header: ({ column }: any) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("course.participants:find_participant.phone")}
-              {column.getIsSorted() === "desc" ? (
-                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : column.getIsSorted() === "asc" ? (
-                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : (
-                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+          <TableHeader className="justify-between min-w-[108px]">
+            {t("course.participants:find_participant.phone")}
+
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
         );
       },
 
       cell: ({ row }: any) => {
         return (
-          <div className="text-left !min-w-[150px] pl-4">
+          <div className="text-left !min-w-[150px]">
             {row?.original?.contact_id?.mobile}
           </div>
         );
@@ -183,31 +162,22 @@ export const columns = () => {
       accessorKey: "Email",
       column_name: t("course.participants:find_participant.email"),
       enableHiding: false,
-      header: ({ column }) => {
+      header: ({ column }: any) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("course.participants:find_participant.email")}
-              {column.getIsSorted() === "desc" ? (
-                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : column.getIsSorted() === "asc" ? (
-                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : (
-                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+          <TableHeader className="justify-between min-w-[108px]">
+            {t("course.participants:find_participant.email")}
+
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
         );
       },
 
       cell: ({ row }: any) => {
         return (
-          <div className="lowercase text-left !min-w-[150px] pl-4">
+          <div className="lowercase text-left !min-w-[150px]">
             {row?.original?.contact_id?.email}
           </div>
         );
@@ -217,31 +187,21 @@ export const columns = () => {
       accessorKey: "Fee Level",
       column_name: t("course.participants:view_participant.fee_level"),
       enableHiding: false,
-      header: ({ column }) => {
+      header: ({ column }: any) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("course.participants:view_participant.fee_level")}
-              {column.getIsSorted() === "desc" ? (
-                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : column.getIsSorted() === "asc" ? (
-                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : (
-                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+          <TableHeader className="justify-between min-w-[108px]">
+            {t("course.participants:view_participant.fee_level")}
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
         );
       },
 
       cell: ({ row }: any) => {
         return (
-          <div className=" capitalize text-left !min-w-[150px] pl-4">
+          <div className=" capitalize text-left !min-w-[150px]">
             {translatedText(
               row?.original?.price_category_id?.fee_level_id?.name
             )}
@@ -255,33 +215,23 @@ export const columns = () => {
         "course.participants:edit_participant.participants_information_tab.amount"
       ),
       enableHiding: false,
-      header: ({ column }) => {
+      header: ({ column }: any) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t(
-                "course.participants:edit_participant.participants_information_tab.amount"
-              )}
-              {column.getIsSorted() === "desc" ? (
-                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : column.getIsSorted() === "asc" ? (
-                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : (
-                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+          <TableHeader className="justify-between min-w-[108px]">
+            {t(
+              "course.participants:edit_participant.participants_information_tab.amount"
+            )}
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
         );
       },
 
       cell: ({ row }: any) => {
         return (
-          <div className="text-left !min-w-[150px] pl-4">
+          <div className="text-left !min-w-[150px]">
             {row?.original?.total_amount?.toFixed(2)}
           </div>
         );
@@ -392,31 +342,21 @@ export const columns = () => {
       accessorKey: "Attendance Status",
       column_name: t("course.participants:find_participant.attendance_status"),
       enableHiding: false,
-      header: ({ column }) => {
+      header: ({ column }: any) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("course.participants:find_participant.attendance_status")}
-              {column.getIsSorted() === "desc" ? (
-                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : column.getIsSorted() === "asc" ? (
-                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : (
-                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+          <TableHeader className="justify-between min-w-[158px]">
+            {t("course.participants:find_participant.attendance_status")}
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
         );
       },
 
       cell: ({ row }: any) => {
         return (
-          <div className="text-left !min-w-[150px] pl-4">
+          <div className="text-left !min-w-[150px]">
             {row?.original?.participant_attendence_status_id?.name
               ? translatedText(
                   row?.original?.participant_attendence_status_id?.name
@@ -451,32 +391,24 @@ export const columns = () => {
     {
       accessorKey: "Date of Birth",
       column_name: t("course.participants:find_participant.date_of_birth"),
-      header: ({ column }) => {
+      header: ({ column }: any) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("course.participants:find_participant.date_of_birth")}
-              {column.getIsSorted() === "desc" ? (
-                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : column.getIsSorted() === "asc" ? (
-                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : (
-                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+          <TableHeader className="justify-between min-w-[108px]">
+            {t("course.participants:find_participant.date_of_birth")}
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
         );
       },
 
       cell: ({ row }: any) => {
-        const db_date = formatDate(row?.original?.contact_id?.date_of_birth);
+        const db_date = row?.original?.contact_id?.date_of_birth
+          ? formatDate(row?.original?.contact_id?.date_of_birth)
+          : "-";
         return (
-          <div className="text-left !min-w-[150px] pl-4">
+          <div className="text-left !min-w-[150px]">
             {db_date.length ? db_date : "-"}
           </div>
         );
@@ -485,31 +417,21 @@ export const columns = () => {
     {
       accessorKey: "created_at",
       column_name: t("course.participants:find_participant.registration_date"),
-      header: ({ column }) => {
+      header: ({ column }: any) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("course.participants:find_participant.registration_date")}
-              {column.getIsSorted() === "desc" ? (
-                <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : column.getIsSorted() === "asc" ? (
-                <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-              ) : (
-                <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+          <TableHeader className="justify-between min-w-[158px]">
+            {t("course.participants:find_participant.registration_date")}
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
         );
       },
 
       cell: ({ row }: any) => {
         const db_date = formatDate(row?.original?.created_at);
-        return <div className="text-left pl-4">{db_date}</div>;
+        return <div className="text-left">{db_date}</div>;
       },
     },
     {
