@@ -10,6 +10,7 @@ import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react' // Importing React
 import { translatedText } from 'src/common/translations'
+import { SortingArrows } from 'src/ui/SortingArrows'
 import { TableHeader, Text } from 'src/ui/TextTags'
 import { Button } from 'src/ui/button' // Importing Button component
 import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
@@ -75,10 +76,11 @@ const columns = () => {
     {
       accessorKey: 'payment_transaction_id',
       enableHiding: false,
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className="  min-w-[100px]">
             {t('course.participants:find_participant.transaction_id')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -89,9 +91,12 @@ const columns = () => {
     },
     {
       accessorKey: 'created_at',
-      header: () => {
+      header: ({ column }: any) => {
         return (
-          <TableHeader className="  min-w-[100px]">{t('course.participants:view_participant.time_stamp')}</TableHeader>
+          <TableHeader className="  min-w-[100px]">
+            {t('course.participants:view_participant.time_stamp')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
+          </TableHeader>
         )
       },
 
@@ -101,10 +106,11 @@ const columns = () => {
     },
     {
       accessorKey: 'transaction_type_id',
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className="min-w-[150px]">
-            {t('course.participants:find_participant.transaction_type')}{' '}
+            {t('course.participants:find_participant.transaction_type')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -117,10 +123,11 @@ const columns = () => {
     },
     {
       accessorKey: 'payment_method_id',
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className="min-w-[150px]">
             {t('course.participants:find_participant.payment_method')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -131,10 +138,11 @@ const columns = () => {
     },
     {
       accessorKey: 'organization_fee',
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className=" min-w-[170px]">
             {t('course.view_course:revenue_summary_tab.organization_fee')} (EUR)
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -145,10 +153,11 @@ const columns = () => {
     },
     {
       accessorKey: 'expense_fee',
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className=" min-w-[150px]">
             {t('course.view_course:revenue_summary_tab.expense_fee')} (EUR)
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -159,8 +168,13 @@ const columns = () => {
     },
     {
       accessorKey: 'tax',
-      header: () => {
-        return <TableHeader className=" min-w-[100px]">{t('new_strings:tax')} (EUR)</TableHeader>
+      header: ({ column }: any) => {
+        return (
+          <TableHeader className=" min-w-[100px]">
+            {t('new_strings:tax')} (EUR)
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
+          </TableHeader>
+        )
       },
 
       cell: ({ row }) => {
@@ -169,8 +183,13 @@ const columns = () => {
     },
     {
       accessorKey: 'discounted_amount',
-      header: () => {
-        return <TableHeader>{t('course.participants:view_participant.discount')} </TableHeader>
+      header: ({ column }: any) => {
+        return (
+          <TableHeader>
+            {t('course.participants:view_participant.discount')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />{' '}
+          </TableHeader>
+        )
       },
 
       cell: ({ row }) => {
@@ -185,10 +204,11 @@ const columns = () => {
     },
     {
       accessorKey: 'accommodation_type',
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className=" min-w-[170px]">
             {t('course.participants:view_participant.accommodation_type')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -201,10 +221,11 @@ const columns = () => {
     },
     {
       accessorKey: 'accommodation_fee',
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className=" min-w-[200px]">
             {t('course.participants:edit_participant.participants_information_tab.accommodation_fee')} (EUR)
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -215,10 +236,11 @@ const columns = () => {
     },
     {
       accessorKey: 'total_amount',
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className="min-w-[120px]">
             {t('course.view_course:revenue_summary_tab.total_fee')} (EUR)
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -228,8 +250,13 @@ const columns = () => {
     },
     {
       accessorKey: 'source',
-      header: () => {
-        return <TableHeader className="min-w-[120px]">{t('course.participants:view_participant.source')}</TableHeader>
+      header: ({ column }: any) => {
+        return (
+          <TableHeader className="min-w-[120px]">
+            {t('course.participants:view_participant.source')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
+          </TableHeader>
+        )
       },
       cell: ({ row }) => {
         return <Text>{row?.original?.source_text}</Text>
@@ -237,9 +264,12 @@ const columns = () => {
     },
     {
       accessorKey: 'transaction_fee_level_id',
-      header: () => {
+      header: ({ column }: any) => {
         return (
-          <TableHeader className="min-w-[120px]">{t('course.participants:view_participant.fee_level')}</TableHeader>
+          <TableHeader className="min-w-[120px]">
+            {t('course.participants:view_participant.fee_level')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
+          </TableHeader>
         )
       },
       cell: ({ row }) => {
@@ -250,10 +280,11 @@ const columns = () => {
     },
     {
       accessorKey: 'transaction_status_id',
-      header: () => {
+      header: ({ column }: any) => {
         return (
           <TableHeader className="min-w-[150px]">
             {t('course.participants:find_participant.transaction_status')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
           </TableHeader>
         )
       },
@@ -263,8 +294,13 @@ const columns = () => {
     },
     {
       accessorKey: 'transaction_reason',
-      header: () => {
-        return <TableHeader>{t('course.participants:view_participant.reason')}</TableHeader>
+      header: ({ column }: any) => {
+        return (
+          <TableHeader>
+            {t('course.participants:view_participant.reason')}
+            <SortingArrows sortingState={column.getIsSorted()} onSortChange={column.getToggleSortingHandler()} />
+          </TableHeader>
+        )
       },
       cell: ({ row }) => {
         return <Text>{row?.original?.transaction_reason}</Text>
