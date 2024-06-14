@@ -121,7 +121,6 @@ const AddPayment = () => {
                     {errors.type.message}
                   </p>
                 )}
-                <p id="typeDisclaimer" className="text-[14px]">"Stripe" and "Corvuspay" implemented till now</p>
               </div>
               <div className="flex flex-col w-[360px]">
                 <label className="font-medium" htmlFor="username">Username</label>

@@ -1,3 +1,4 @@
+import { useNewCourseContext } from "@contexts/NewCourseContext";
 import Tick from "@public/assets/Tick";
 import {
   useGetIdentity,
@@ -6,10 +7,12 @@ import {
   useMany,
   useOne,
 } from "@refinedev/core";
+import _ from "lodash";
 import { useTranslation } from "next-i18next";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { fetchCourseFee } from "pages/courses/add";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { translatedText } from "src/common/translations";
 import {
   NATIONAL_ADMIN,
@@ -35,6 +38,7 @@ import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { IsEditCourse } from "./EditCourseUtil";
 import { EditModalDialog } from "./NewCoursePreviewPageEditModal";
+import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 import NewCourseStep1 from "./NewCourseStep1";
 import NewCourseStep2 from "./NewCourseStep2";
 import NewCourseStep3 from "./NewCourseStep3";
@@ -42,9 +46,7 @@ import NewCourseStep4, { sortFeeLevels } from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { validationSchema } from "./NewCourseValidations";
-import { fetchCourseFee } from "pages/courses/add";
 import _ from "lodash";
-import { getRequiredFieldsForValidation } from "./NewCoursePreviewPageUtil";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
@@ -74,7 +76,7 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData, setNewCourseData } = newCourseStore();
+  const { newCourseData, setNewCourseData, setEditCourseDefaultValues, editCourseDefaultValues } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "product",
@@ -168,6 +170,9 @@ export default function NewCourseReviewPage() {
   //fetching the user's language code
   const languageCode = useGetLanguageCode();
 
+  // we should add the fee levels when it is true
+  const editCourseDefaultValuesRefToSetFeeLevels:MutableRefObject<boolean>=useRef(false);
+  
   //This function is used to fetch fee data
   const fetchFeeData = async () => {
     //Fetching the course fee based on new course data
@@ -239,6 +244,11 @@ export default function NewCourseReviewPage() {
     console.log("Temporary New Course Data", tempCourseData);
     //Updating newCourseData
     setNewCourseData(tempCourseData);
+    // add the fee data when user in preview page and should not update the fee data when user is edited
+    if(editCourseDefaultValuesRefToSetFeeLevels.current===false){
+      setEditCourseDefaultValues(tempCourseData)
+      editCourseDefaultValuesRefToSetFeeLevels.current=true;
+    }
   };
 
   useEffect(() => {
@@ -249,7 +259,16 @@ export default function NewCourseReviewPage() {
     cityId,
     centerId,
     newCourseData?.program_type_id,
-    newCourseData?.schedules,
+    /**
+     * This approach converts the schedules array into a string, 
+     * allowing a deep comparison of the array's content. 
+     * If any part of the schedules array changes, the string representation will also change then we will fetch the fee again
+     * We have changed this because we got the bug that the fee is loading when we change the date (ticket 1921)
+     * What is happening here is, it is comparing shallow comparision that is just comparing a new thing added or deleted only
+     * so it is not comparing in details, but we are changing the fee data to undefined when the schedules is changed, 
+     * but we are not udating the fee again so that we are getting the continues loading
+     */
+    JSON.stringify(newCourseData?.schedules),
     newCourseData?.is_existing_venue,
     newCourseData?.newVenue,
     newCourseData?.existingVenue,
@@ -582,6 +601,9 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
         // we have to display thank you page or success modal pop up only when the posting done successfully without any error
         if (isEdited) {
+          // after editing successfully we didn't stop the user from navigation 
+          // so we have to keep the updated data to edit course default values variable.
+          setEditCourseDefaultValues(newCourseData)
           setOnEditSuccess(true);
         } else {
           // invalidating the program list because we are doing edit course and when we save ,  we will be navigating the course listing page which contains list of programs
@@ -600,7 +622,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
           router.replace(`${pathname}?${params}`);
 
           setViewPreviewPage(false);
-          setViewThankyouPage(true);
+          setViewThankyouPage(true);          
         }
       } catch (error) {
         console.log("error in catch block", error);

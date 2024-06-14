@@ -9,7 +9,7 @@ import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
 import Group from "@public/assets/Group";
-import Info from "@public/assets/Info";
+import ContactInfo from "@public/assets/Contactinfo";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import {
@@ -54,7 +54,7 @@ import _ from "lodash";
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { authProvider } from "src/authProvider";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
@@ -62,10 +62,16 @@ import {
   IsCopyCourse,
   IsEditCourse,
 } from "@components/course/newCourse/EditCourseUtil";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+import { IsShowConfirmBoxInNewCourse } from "@components/courseBusinessLogic";
+import {
+  NewCourseContext,
+  useNewCourseContext,
+} from "@contexts/NewCourseContext";
 import { useTranslation } from "next-i18next";
 import { supabaseClient } from "src/utility";
 import useGetCountryCode from "src/utility/useGetCountryCode";
-import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+import Fees from "@public/assets/Fees";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -73,9 +79,48 @@ function index() {
   
   console.log(loginUserData, "loginUserData");
 
+  const isNewCourseEditedRef = useRef(false);
+
+  const router = useRouter();
+  
+  const pathname = usePathname();
+
+  const { t } = useTranslation("validations_text")
+
   const {
     query: { section },
   } = useRouter();
+
+
+
+  /**
+   * This context is used to keep track of whether the new course form is edited or not
+   * Requirement: We have to stop the user when he is changing route form one to another
+   * Implementation: To make it simple we are using useRef
+   */
+  useEffect(() => {
+    const routeChange = (url: string) => {
+
+      // when we fill any fields in step1 of newCourse then it will be true
+      if (isNewCourseEditedRef.current) {
+
+        const sectionFromUrl = getSectionFromUrl(url,'section')
+
+        if (IsShowConfirmBoxInNewCourse(sectionFromUrl,section)) {
+         displayConfirmBoxWhenRouteChange(router,t)
+        }
+      }
+    };
+
+    router.events.off("routeChangeStart", routeChange);
+
+    router.events.on("routeChangeStart", routeChange);
+
+    return () => {
+      router.events.off("routeChangeStart", routeChange);
+    };
+
+  }, [isNewCourseEditedRef,section]);
 
   console.log("router is ", section);
 
@@ -98,9 +143,17 @@ function index() {
   }
 
   if (section === "preview_page") {
-    return <NewCourseReviewPage />;
+    return (
+      <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
+        <NewCourseReviewPage />
+      </NewCourseContext.Provider>
+    );
   } else {
-    return <NewCourse />;
+    return (
+      <NewCourseContext.Provider value={{ isNewCourseEditedRef }}>
+        <NewCourse />
+      </NewCourseContext.Provider>
+    );
   }
 }
 export function NewCourse() {
@@ -433,7 +486,26 @@ export const NewCourseTabs = () => {
   const supabase = supabaseClient();
 
   const { watch, setValue } = useFormContext();
-  const formData: NewCourseFormFieldTypes = watch();
+  const formData: NewCourseFormFieldTypes | any = watch();
+
+  const { isNewCourseEditedRef } = useNewCourseContext();
+
+  // we need to make isNewCourseEditedRef to true when new course step 1 field change
+  // when program_created_by, is_registration_via_3rd_party, registration_via_3rd_party_url, organization_id
+  useEffect(() => {
+    // need to make true when the belowe fields have values
+    if (
+      formData[NewCourseStep1FormNames.program_created_by] ||
+      formData[NewCourseStep1FormNames.registration_via_3rd_party_url] ||
+      formData[NewCourseStep1FormNames.organization_id]
+    ) {
+      isNewCourseEditedRef.current = true;
+    }
+  }, [
+    formData[NewCourseStep1FormNames.program_created_by],
+    formData[NewCourseStep1FormNames.registration_via_3rd_party_url],
+    formData[NewCourseStep1FormNames.organization_id],
+  ]);
 
   const { data: loginUserData }: any = useGetIdentity();
   const { data: timeZoneData } = useList({ resource: "time_zones" });
@@ -724,7 +796,7 @@ export const NewCourseTabs = () => {
     {
       value: FEE_STEP_NUMBER,
       label: t("fees"),
-      icon: (color: string) => <Venue color={color} />,
+      icon: (color: string) => <Fees color={color} />,
       component: <NewCourseStep4 />,
     },
     {
@@ -736,7 +808,7 @@ export const NewCourseTabs = () => {
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: t("new_strings:contact_info"),
-      icon: (color: string) => <Info color={color} />,
+      icon: (color: string) => <ContactInfo color={color} />,
       component: <NewCourseStep6 />,
     },
   ];
@@ -791,7 +863,16 @@ export const NewCourseTabs = () => {
     handleCourseFeeData();
   }, [
     formData?.program_type_id,
-    formData?.schedules,
+    /**
+     * This approach converts the schedules array into a string, 
+     * allowing a deep comparison of the array's content. 
+     * If any part of the schedules array changes, the string representation will also change then we will fetch the fee again
+     * We have changed this because we got the bug that the fee is loading when we change the date (ticket 1921)
+     * What is happening here is, it is comparing shallow comparision that is just comparing a new thing added or deleted only
+     * so it is not comparing in details, but we are changing the fee data to undefined when the schedules is changed, 
+     * but we are not udating the fee again so that we are getting the continues loading
+     */
+    JSON.stringify(formData?.schedules),
     formData?.is_existing_venue,
     formData?.newVenue,
     formData?.existingVenue,
@@ -1040,7 +1121,8 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "course.participants",
     "course.view_course",
     "course.find_course",
-    "enum"
+    "enum",
+    "validations_text"
   ]);
 
   if (!authenticated) {
@@ -1184,4 +1266,37 @@ interface CourseFeeBody {
   city_id?: number;
   center_id?: number;
   start_date?: string;
+}
+
+  /**
+   * this function will give the query parameters present in url 
+   * @param url 
+   * @param paramName 
+   * @returns 
+   */
+  export const getSectionFromUrl = (url:string, paramName:string) => {
+    // Create a URL object
+    const urlObj = new URL(url, 'http://example.com'); // Base URL to handle relative paths
+    const params = new URLSearchParams(urlObj.search);
+
+    // Get the specific parameter value
+    return params.get(paramName);
+}
+
+/**
+ * when user clicked on the yes option in confirm-box it will allow the navigation to corresponding URL.
+ * when user clicked on the no option in confirm-box it will not to navigation and display the same page.
+ * @param router 
+ */
+export const displayConfirmBoxWhenRouteChange = (router: NextRouter, t: any) => {
+  if (
+    confirm(
+      t("changes_made_will_be_lost._are_you_sure_you_want_to_navigate_to_other_page <yes/no>")
+    )
+  ) {
+    console.log("ok go ahead");
+  } else {
+    router.events.emit("routeChangeError");
+    throw "Route change aborted. User confirmation required.";
+  }
 }

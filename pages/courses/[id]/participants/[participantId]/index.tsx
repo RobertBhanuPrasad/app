@@ -96,7 +96,7 @@ function index() {
             ),
             header: (
                 <p
-                    className={`font-semibold text-[18px] pt-[25px] ${
+                    className={`font-semibold text-[18px] pt-[20px] ${
                         activeTabId == "section1" && "text-[#7677F4]"
                     }`}
                 >
@@ -117,10 +117,10 @@ function index() {
                 </div>
             ),
             header: (
-                <div className="flex">
+                <div className="flex pt-[20px]">
                     
                     <p
-                        className={`text-[18px] font-[600] pr-[10px] !m-[0] !py-[0] !h-[0] ${
+                        className={`text-[18px] font-[600] pr-[10px]  ${
                             activeTabId == "section2" && "text-[#7677F4]"
                         }`}
                     >
@@ -150,7 +150,7 @@ function index() {
                 </div> ),
             header: (
                 <p
-                    className={` font-semibold text-[18px] pt-[25px] ${
+                    className={` font-semibold text-[18px] pt-[20px] ${
                         activeTabId == "section3" && "text-[#7677F4]"
                     }`}
                 >
@@ -170,7 +170,7 @@ function index() {
             ),
             header: (
                 <p
-                    className={`font-semibold text-[18px] pt-[25px] ${
+                    className={`font-semibold text-[18px] pt-[20px] ${
                         activeTabId == "section4" && "text-[#7677F4]"
                     }`}
                 >
@@ -188,7 +188,7 @@ function index() {
                 </div>),
             header: (
                 <p
-                    className={`font-semibold text-[18px] pt-[25px] ${
+                    className={`font-semibold text-[18px] pt-[20px] ${
                         activeTabId == "section5" && "text-[#7677F4]"
                     }`}
                 >
@@ -203,10 +203,10 @@ function index() {
     };
     return (
         <div>
-            <div className="top-[94px] sticky z-10 bg-white shadow-md w-full">
+            <div className="top-[120px] sticky z-10 bg-white shadow-md w-full">
                 <ParticipantsListMainHeader />
             </div>
-            <div className="flex p-[20px] w-full">
+            <div className="flex px-[20px] w-full">
                 <div className="w-[18%] min-w-[318px] pl-[10px] ">
                     <ViewParticipantInformation participantId={Id} />
                 </div>
