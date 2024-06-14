@@ -26,7 +26,7 @@ export default function ViewDonationDetails({
     const { data: donationData } = useList({
         resource: "participant_payment_history",
         meta: {
-            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(name),transaction_status_id(name),payment_transaction_id,program_id(organization_id(name)),created_at",
+            select: "participant_id(organisation_id(name),donation_type(value),donation_date,transaction_type(value)),total_amount,currency_code,payment_method_id(name),transaction_status_id(name),payment_transaction_id,program_id(organization_id(name)),transaction_date",
         },
         filters: [
             {
@@ -48,10 +48,9 @@ export default function ViewDonationDetails({
         resource: "participant_registration",
         id: Number(Id),
         meta: {
-            select: "contact_id(id,full_name,email,mobile,identification_num,identification_type_id,date_of_birth,street_address,state_id!inner(name),city_id!inner(name),country_id!inner(name),postal_code)",
-        },
+            select: "contact_id(id,full_name,email,mobile,identification_num,identification_type_id,date_of_birth,street_address,state_id(name),city_id(name),country_id(name),postal_code)"
+            },
     });
-
     return (
         <div>
             <div>
@@ -104,12 +103,9 @@ export default function ViewDonationDetails({
                                         "course.participants:edit_participant.participants_information_tab.donation_type"
                                     )}
                                 </Text>
-                                {/* TODO: get details of how donation details is filled */}
+                                {/* TODO:replace static values with donation type */}
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {
-                                        donationData?.data[0]?.participant_id
-                                            ?.donation_type?.value
-                                    }
+                                    One time
                                 </Text>
                             </div>
 
@@ -120,11 +116,11 @@ export default function ViewDonationDetails({
                                     )}
                                 </Text>
                                 <Text className="font-semibold text-[#666666] text-[16px]">
-                                    {/* TODO: know how donation date is getting filled*/}
+                                    {/* TODO: need to get confirmation that whether it is donation date or transaction date*/}
                                     {donationData?.data[0]?.transaction_date
                                         ? formatDateString(
                                               new Date(
-                                                  donationData?.data[0]?.participant_id?.donation_date
+                                                  donationData?.data[0]?.transaction_date
                                               )
                                           )
                                         : "-"}
@@ -368,7 +364,10 @@ export default function ViewDonationDetails({
                     </div>
                 </div>
                 <div className="flex justify-center ">
-                    <Button onClick={() => setViewDonation(false)} className="w-[91px] h-[46px] rounded-xl text-[16px]">
+                    <Button
+                        onClick={() => setViewDonation(false)}
+                        className="w-[91px] h-[46px] rounded-xl text-[16px]"
+                    >
                         {t("close")}
                     </Button>
                 </div>
