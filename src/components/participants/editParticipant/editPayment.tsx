@@ -56,27 +56,32 @@ export default function EditPayment({
         useState(false);
     let formData = watch();
     const [initialValue, setinitialValue] = useState(formData);
-    // Posting edit payment form data to payment history api
+    // Checking the chnages in form values compared to defaultvalues
     const onFormSubmission = () => {
-        mutate({
-            resource: "participant_payment_history",
-            values: {
-                send_payment_confirmation: formData?.send_payment_confirmation,
-                payment_date: formData?.payment_date,
-                payment_method_id: formData?.payment_method_id,
-                transaction_status_id: formData?.transaction_status_id,
-            },
-            id: paymentId,
-        });
+       
         const initialData = _.omitBy(initialValue, _.isUndefined);
         const formValues = _.omitBy(formData, _.isUndefined);
         if (!_.isEqual(initialData, formValues)) {
             setSaveChangesConfirmation(true);
-            setEditPayment(false);
         } else {
             setEditPayment(false);
         }
     };
+// Posting form data to payment history table
+    const formDataPost=async()=>{
+        setSaveChangesConfirmation(false);
+        setEditPayment(false);
+        await mutate({
+                resource: "participant_payment_history",
+                values: {
+                    send_payment_confirmation: formData?.send_payment_confirmation,
+                    payment_date: formData?.payment_date,
+                    payment_method_id: formData?.payment_method_id,
+                    transaction_status_id: formData?.transaction_status_id,
+                },
+                id: paymentId,
+            });
+    }
 
     // Form fileds useControllers
     const {
@@ -566,8 +571,7 @@ export default function EditPayment({
                                     <div
                                         className="cursor-pointer"
                                         onClick={() => {
-                                            setSaveChangesConfirmation(false);
-                                            setEditPayment(false);
+                                            formDataPost()
                                         }}
                                     >
                                         <CrossIcon fill="#333333" />
