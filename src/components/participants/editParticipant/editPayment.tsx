@@ -58,7 +58,6 @@ export default function EditPayment({
     const [initialValue, setinitialValue] = useState(formData);
     // Checking the chnages in form values compared to defaultvalues
     const onFormSubmission = () => {
-       
         const initialData = _.omitBy(initialValue, _.isUndefined);
         const formValues = _.omitBy(formData, _.isUndefined);
         if (!_.isEqual(initialData, formValues)) {
@@ -67,21 +66,21 @@ export default function EditPayment({
             setEditPayment(false);
         }
     };
-// Posting form data to payment history table
-    const formDataPost=async()=>{
+    // Posting form data to payment history table
+    const formDataPost = async () => {
         setSaveChangesConfirmation(false);
         setEditPayment(false);
         await mutate({
-                resource: "participant_payment_history",
-                values: {
-                    send_payment_confirmation: formData?.send_payment_confirmation,
-                    payment_date: formData?.payment_date,
-                    payment_method_id: formData?.payment_method_id,
-                    transaction_status_id: formData?.transaction_status_id,
-                },
-                id: paymentId,
-            });
-    }
+            resource: "participant_payment_history",
+            values: {
+                send_payment_confirmation: formData?.send_payment_confirmation,
+                transaction_date: formData?.payment_date,
+                payment_method_id: formData?.payment_method_id,
+                transaction_status_id: formData?.transaction_status_id,
+            },
+            id: paymentId,
+        });
+    };
 
     // Form fileds useControllers
     const {
@@ -508,7 +507,7 @@ export default function EditPayment({
                                     className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] text-base"
                                     onClick={() => {
                                         onFormSubmission();
-}}
+                                    }}
                                 >
                                     {t("save_button")}
                                 </Button>
@@ -564,14 +563,14 @@ export default function EditPayment({
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
-                       
+
                         <AlertDialog open={saveChangesConfirmation}>
                             <AlertDialogContent>
                                 <div className="flex justify-end">
                                     <div
                                         className="cursor-pointer"
                                         onClick={() => {
-                                            formDataPost()
+                                            formDataPost();
                                         }}
                                     >
                                         <CrossIcon fill="#333333" />
@@ -587,10 +586,7 @@ export default function EditPayment({
                                     <div>
                                         <Button
                                             onClick={() => {
-                                                setSaveChangesConfirmation(
-                                                    false
-                                                );
-                                                setEditPayment(false);
+                                                formDataPost();
                                             }}
                                         >
                                             {t("close")}
