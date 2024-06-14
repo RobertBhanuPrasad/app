@@ -1,9 +1,5 @@
 import Form from "@components/Formfield";
-import {
-  CaretSortIcon,
-  CountdownTimerIcon,
-  LapTimerIcon,
-} from "@radix-ui/react-icons";
+import { CountdownTimerIcon } from "@radix-ui/react-icons";
 import { useGetIdentity, useList } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreVertical } from "lucide-react";
@@ -26,18 +22,7 @@ import { getActionMenuItems } from "./ParticipantUtils";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
 import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "src/ui/alert-dialog";
-import CrossIcon from "@public/assets/CrossIcon";
+import { AlertDialog, AlertDialogContent } from "src/ui/alert-dialog";
 import EmailConfimrationIcon from "@public/assets/EmailConfirmationIcon";
 import MemoIcon from "@public/assets/MemoIcon";
 import {
