@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { TableHeader, Text } from 'src/ui/TextTags'
 import { BaseTable } from '@components/course/findCourse/BaseTable';
 import { ColumnDef } from '@tanstack/react-table';
@@ -8,12 +8,16 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import _ from 'lodash';
 import { Button } from 'src/ui/button';
 import { useTable } from '@refinedev/core';
+import { useTranslation } from "next-i18next";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { authProvider } from "src/authProvider";
 
 
 // Define the interface for the data structure
 interface PgEntity {
   id: number;
-  name: string;
+  module: string;
   country: string;
   org: number
 }
@@ -25,59 +29,39 @@ const EntityDashboard = () => {
     setPageSize,
     current,
     setCurrent,
-    tableQueryResult: { data: programData },
+    tableQueryResult:  tableData ,
   } = useTable<PgEntity>({
     resource: 'pg_entity',
     meta: {
       select: '*',
+      schema : "caps"
     },
     pagination: {
+      current: 1,
       pageSize: 10,
     },
+    sorters: {
+    permanent: [
+      // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
+      { field: "id", order: "asc" },
+    ],
+  }
   });
-  const [isLoading, setIsLoading] = useState(false)
-  const [data, setData] = useState<PgEntity[]>([]);
-  const supabase = supabaseClient('caps')
-  // useEffect(() => {
-  //   if (programData?.data) {
-  //     setData(programData.data);
-  //   }
-  // }, [programData]);
-
-  useEffect(() => {
-    const getData = async () => {
-      setIsLoading(true)
-      try {
-        const { data: responseData, error } = await supabase
-          .from('pg_entity')
-          .select('*')
-          .order("id", { ascending: true });
-        if (error) {
-          throw error
-        }
-        setData(responseData)
-        setIsLoading(false)
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    getData();
-  }, []);
-
-
+    
+  const posts = tableData?.data?.data ?? [];
+    if (tableData?.isLoading) {
+      <section className="flex justify-center align-center pt-[10%]">
+        <div className="loader"></div>
+      </section>
+  }
+ 
+ 
   return (<>
     <div className='px-6' >
       <h1 className='p-2 mb-3 text-center bg-gray-100 font-bold text-4xl text-gray-800'>
         Entity DashBoard
       </h1>
     </div>
-    {isLoading ? (
-      <section className="flex justify-center align-center pt-[10%]">
-        <div className="loader"></div>
-      </section>
-    ) : (
       <div className="mx-6 mb-8 bg-white">
         <BaseTable
           pageCount={pageCount}
@@ -86,20 +70,22 @@ const EntityDashboard = () => {
           current={current}
           setCurrent={setCurrent}
           columns={entityDashboardColumns}
-          data={data || []}
+          data={posts || []}
           setPageSize={setPageSize}
+          noScroll={true}
           tableStyles={{
             table: "",
             rowStyles: "!important border-none",
           }}
           columnPinning={true}
+          total={tableData.data?.total}
         />
         <div className="mt-6 flex justify-between ">
           <div> The above table shows list of Entity configured in CAPS</div>
           <div className="mb-4"><Button onClick={() => router.push('/caps/add-entity')}>Add Entity</Button></div>
         </div>
       </div>
-    )}
+    
   </>
   )
 }
@@ -195,23 +181,23 @@ const entityDashboardColumns: ExtendedColumnDef<any>[] = [
       const handleDelete = async (id: number) => {
         console.log('Button clicked');
 
-        try {
-          const { data, error } = await supabase
-            .from('pg_entity')
-            .delete()
-            .eq('id', id);
-          console.log('step : 1');
-          const message = error ? JSON.stringify(error) : JSON.stringify(data);
-          console.log('step : 2');
-          if (error || !checkSuccess(message)) {
-            alert("Delete Error :  Could not delete the payment gateway: " + message);
-          }
-          console.log('step : 3');
-          console.log('Deleted data:', data);
+        // try {
+        //   const { data, error } = await supabase
+        //     .from('pg_entity')
+        //     .delete()
+        //     .eq('id', id);
+        //   console.log('step : 1');
+        //   const message = error ? JSON.stringify(error) : JSON.stringify(data);
+        //   console.log('step : 2');
+        //   if (error || !checkSuccess(message)) {
+        //     alert("Delete Error :  Could not delete the payment gateway: " + message);
+        //   }
+        //   console.log('step : 3');
+        //   console.log('Deleted data:', data);
 
-        } catch (error) {
-          console.error('Error deleting data:', error);
-        }
+        // } catch (error) {
+        //   console.error('Error deleting data:', error);
+        // }
       };
 
       return (
@@ -230,3 +216,29 @@ const entityDashboardColumns: ExtendedColumnDef<any>[] = [
   },
 
 ]
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+    "new_strings",
+  ]);
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};
