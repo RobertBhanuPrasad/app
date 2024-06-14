@@ -6,15 +6,15 @@ import { useGetIdentity, useUpdate } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import _ from "lodash";
-import { MoreVertical } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, MoreVertical } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
 import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
-import { Text } from "src/ui/TextTags";
+import { TableHeader, Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
-import { translatedText } from 'src/common/translations'
 import dayjs from 'dayjs';
+import { translatedText } from "src/common/translations";
 
 import {
   Dialog,
@@ -31,7 +31,8 @@ import {
 } from "src/ui/dropdown-menu";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
-import { getTranslatedMonth } from "src/utility/useGetLanguageCode";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { SortingArrows } from "src/ui/SortingArrows";
 
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
 export const column = (
@@ -41,12 +42,22 @@ export const column = (
   const finalColumns = [
     {
       accessorKey: "program_code",
-      column_name: t('course_id'),
+      column_name: t("course_id"),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-      header: () => {
-        return <div className="w-[100px] text-sm">{t('course_id')}</div>;
+      header: ({ column }: any) => {
+        return (
+          <TableHeader className="justify-between min-w-[108px]">
+            {t("course_id")}
+
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
+        );
       },
+
       cell: ({ row }: any) => {
         const router = useRouter();
         return (
@@ -69,11 +80,19 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return <div className="w-[150px] text-sm">{t("new_strings:course_type_name")}</div>;
+        return (
+          <div className="w-[150px] text-sm">
+            {t("new_strings:course_type_name")}
+          </div>
+        );
       },
       cell: ({ row }: any) => {
-        return <div className="w-[150px]">{translatedText(row?.original?.program_types?.name)}</div>
-      }
+        return (
+          <div className="w-[150px]">
+            {translatedText(row?.original?.program_types?.name)}
+          </div>
+        );
+      },
     },
 
     //TODO : for now may-13 release it has to be hidden
@@ -95,19 +114,36 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:course_status")}</div>;
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("course.find_course:course_status")}
+          </div>
+        );
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{translatedText(row?.original?.status_id?.name)}</div>
-      }
+        return (
+          <div className="min-w-[150px]">
+            {translatedText(row?.original?.status_id?.name)}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "program_schedules",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       column_name: t("course.find_course:start_date"),
-      header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:start_date")}</div>;
+      header: ({ column }: any) => {
+        return (
+          <TableHeader className="justify-between min-w-[108px]">
+            {t("course.find_course:start_date")}
+
+            <SortingArrows
+              sortingState={column.getIsSorted()}
+              onSortChange={column.getToggleSortingHandler()}
+            />
+          </TableHeader>
+        );
       },
       cell: ({ row }: any) => {
         // Check if start_date exists or not
@@ -123,10 +159,16 @@ export const column = (
       accessorKey: "state",
       column_name: t("course.find_course:state"),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:state")}</div>;
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("course.find_course:state")}
+          </div>
+        );
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.state?.name}</div>;
+        return (
+          <div className="min-w-[150px]">{row?.original?.state?.name}</div>
+        );
       },
     },
     {
@@ -143,19 +185,33 @@ export const column = (
       accessorKey: "center",
       column_name: t("course.find_course:center"),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:center")}</div>;
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("course.find_course:center")}
+          </div>
+        );
       },
       cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.center?.name}</div>
+        return (
+          <div className="min-w-[150px]">{row?.original?.center?.name}</div>
+        );
       },
     },
     {
       accessorKey: "program_teachers",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
-      column_name: t('course.participants:view_participant.course_information_tab.Teachers(S)'),
+      column_name: t(
+        "course.participants:view_participant.course_information_tab.Teachers(S)"
+      ),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t('course.participants:view_participant.course_information_tab.Teachers(S)')}</div>;
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t(
+              "course.participants:view_participant.course_information_tab.Teachers(S)"
+            )}
+          </div>
+        );
       },
       cell: ({ row }: any) => {
         const teachers = row?.original?.program_teachers?.map(
@@ -170,9 +226,11 @@ export const column = (
     },
     {
       accessorKey: "program_organizers",
-      column_name: t('program_organizer'),
+      column_name: t("program_organizer"),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t('program_organizer')}</div>;
+        return (
+          <div className="min-w-[150px] text-sm">{t("program_organizer")}</div>
+        );
       },
       cell: ({ row }: any) => {
         //Mapping all the programOrganizers in the comma separated name
@@ -194,31 +252,49 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:attendees")}</div>;
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("course.find_course:attendees")}
+          </div>
+        );
       },
       cell: ({ row }: any) => {
-        const router = useRouter()
+        const router = useRouter();
 
         return (
-          <div 
-            className={`min-w-[150px] text-primary font-semibold ${row?.original?.participant_count === 0 ? '' : 'cursor-pointer'}`} 
-            onClick={row?.original?.participant_count !== 0 ? () => router.push(`/courses/${row.original.id}/participants/list`) : undefined}
+          <div
+            className={`min-w-[150px] text-primary font-semibold ${
+              row?.original?.participant_count === 0 ? "" : "cursor-pointer"
+            }`}
+            onClick={
+              row?.original?.participant_count !== 0
+                ? () =>
+                    router.push(`/courses/${row.original.id}/participants/list`)
+                : undefined
+            }
           >
             {row?.original?.participant_count}
           </div>
-        );           
+        );
       },
     },
     {
       accessorKey: "visibility_id",
-      column_name: t('new_strings:visibility'),
+      column_name: t("new_strings:visibility"),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t('new_strings:visibility')}</div>;
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("new_strings:visibility")}
+          </div>
+        );
       },
       cell: ({ row }: any) => {
-
-        return <div className="min-w-[150px]">{translatedText(row?.original?.visibility_id?.name)}</div>
-      }
+        return (
+          <div className="min-w-[150px]">
+            {translatedText(row?.original?.visibility_id?.name)}
+          </div>
+        );
+      },
     },
 
     //TODO : for now may-13 release it has to be hidden
@@ -254,9 +330,13 @@ export const column = (
     // },
     {
       accessorKey: "revenue",
-      column_name: t('course.view_course:revenue_summary_tab.revenue'),
+      column_name: t("course.view_course:revenue_summary_tab.revenue"),
       header: () => {
-        return <div className="min-w-[150px] text-sm">{t('course.view_course:revenue_summary_tab.revenue')}</div>;
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("course.view_course:revenue_summary_tab.revenue")}
+          </div>
+        );
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.revenue}</div>;
@@ -272,7 +352,7 @@ export const column = (
           setNewCourseData,
           setViewThankyouPage,
           setCurrentStep,
-          setProgramCreatedById
+          setProgramCreatedById,
         } = newCourseStore();
 
         const router = useRouter();
@@ -322,10 +402,12 @@ export const column = (
          */
         const handleCopyCourse = async () => {
           router.push(`/courses/${row.original.id}/copy`);
-
         };
 
-        dropDownMenuData?.unshift({ label: t('course.find_course:view_course_details'), value: 9 });
+        dropDownMenuData?.unshift({
+          label: t("course.find_course:view_course_details"),
+          value: 9,
+        });
 
         const handleSelected = (value: number) => {
           console.log("clicked on", value);
@@ -391,9 +473,9 @@ export const column = (
                   <DropdownMenuContent align="end">
                     <p>
                       {dropDownMenuData &&
-                        dropDownMenuData.map((data: any,index:number) => (
+                        dropDownMenuData.map((data: any, index: number) => (
                           <DropdownMenuItem
-                          key={index}
+                            key={index}
                             onClick={() => {
                               handleSelected(data.value);
                             }}
@@ -413,7 +495,7 @@ export const column = (
                             <Exclamation />
                           </div>
                           <DialogDescription className="font-bold text-black text-lg items-center text-center">
-                            {t('new_strings:cancel_course')}
+                            {t("new_strings:cancel_course")}
                           </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -427,7 +509,7 @@ export const column = (
                                   setIsDialogOpen(false);
                                 }}
                               >
-                                {t('no_button')}
+                                {t("no_button")}
                               </Button>
                             </div>
                             <div>
@@ -438,7 +520,7 @@ export const column = (
                                   cancelCourse();
                                 }}
                               >
-                                {t('yes')}
+                                {t("yes")}
                               </Button>
                             </div>
                           </div>
@@ -452,7 +534,7 @@ export const column = (
                             <Cross />
                           </div>
                           <div className="font-bold text-center my-5">
-                            {t('new_strings:course_cancel_successful')}
+                            {t("new_strings:course_cancel_successful")}
                           </div>
                         </div>
 
@@ -463,7 +545,7 @@ export const column = (
                               setCancelSuccessModalOpen(false);
                             }}
                           >
-                            {t('close')}
+                            {t("close")}
                           </Button>
                         </div>
                       </DialogContent>
@@ -474,11 +556,12 @@ export const column = (
             </div>
           </div>
         );
-
       },
-    }
-  ]
-  const courseNameIndex = finalColumns.findIndex(finalColumns => finalColumns.column_name === 'Course Name')
+    },
+  ];
+  const courseNameIndex = finalColumns.findIndex(
+    (finalColumns) => finalColumns.column_name === "Course Name"
+  );
   if (hasFalseAliasName && courseNameIndex !== -1) {
     finalColumns.splice(courseNameIndex, 1);
   }

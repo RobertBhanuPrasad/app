@@ -580,7 +580,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border text-[#333333] text-sm font-semibold !border-[#999999]">
+        <SelectTrigger className="w-[192px] border !text-[#333333] text-sm !font-semibold !border-[#999999]">
           <SelectValue placeholder={t("pending_approval")} />
         </SelectTrigger>
         <SelectContent>

@@ -14,6 +14,7 @@ import SearchIcon from "@public/assets/Search";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useList, useSelect, useTable } from "@refinedev/core";
+import { SortingState } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
@@ -244,6 +245,54 @@ function index() {
   /**
    * Here we are maintaining 2 querys one is for filtering and one is for showing the data in the table and this is the filter query
    */
+
+  //State variable for the sorting functionality
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: "created_at",
+      desc: true,
+    },
+  ]);
+
+  /**
+   * This is for the second use Table sorting
+   */
+  const [secondUseTableSorting, setSecondUseTableSorting] =
+    useState<SortingState>([
+      {
+        id: "created_at",
+        desc: true,
+      },
+    ]);
+
+  // This function fetches the field which needs to sorted in the table
+  const getFieldvalue = () => {
+    // if sorting doesnt contain data then set sorting to initial state
+    if (sorting.length === 0) {
+      setSorting([
+        {
+          id: "created_at",
+          desc: true,
+        },
+      ]);
+
+      setSecondUseTableSorting([
+        {
+          id: "created_at",
+          desc: true,
+        },
+      ]);
+
+      return "created_at";
+    } else {
+      let field = sorting?.[0].id;
+      // the field which we have in column definition and the field in data base were different
+      if (field === "program_code") field = "id";
+      if (field === "program_schedules") field = "start_date";
+      return field;
+    }
+  };
+
   const {
     tableQueryResult: FilterProgramData,
     pageCount,
@@ -259,19 +308,44 @@ function index() {
         "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
+    queryOptions: {
+      keepPreviousData: true,
+    },
     sorters: {
       permanent: [
-        // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-        { field: "created_at", order: "desc" },
+        { field: getFieldvalue(), order: sorting?.[0]?.desc ? "desc" : "asc" },
       ],
     },
   });
 
   /**
+   * This variable holds the filtered ids of the query
+   * This variable change only when really the data changes
+   * and not on every render
+   * Process :  We need to run second useTable only when the data changes from first query
+   */
+  const [programFilteredIds, setProgramFilteredIds] = useState<any>([]);
+
+  /**
    *This variable holds the filtered ids of the query
    */
-  const filteredIds =
+  const tempFilteredIds =
     FilterProgramData?.data?.data.map((item) => item.id) || [];
+
+  /**
+   * This useEffect runs only when the data changes
+   * and not on every render
+   * Process :  We need to run second useTable only when the data changes from first query
+   * So for that in dependency array we pass JSON.stringify(tempFilteredIds.sort((a: any, b: any) => a - b))
+   * This will run only when the data changes
+   * and not on every render
+   * So we will set both sorting and filtered IDs so then a new query will be sent to the server
+   */
+  useEffect(() => {
+    setProgramFilteredIds(tempFilteredIds.sort((a: any, b: any) => a - b));
+
+    setSecondUseTableSorting(sorting);
+  }, [JSON.stringify(tempFilteredIds.sort((a: any, b: any) => a - b))]);
 
   /**
    *This is the query to get data to show in the table
@@ -288,19 +362,25 @@ function index() {
       pagination: {
         pageSize: pageSize,
       },
+      queryOptions: {
+        keepPreviousData: true,
+      },
       filters: {
         permanent: [
           {
             field: "id",
             operator: "in",
-            value: filteredIds,
+            value: programFilteredIds,
           },
         ],
       },
       sorters: {
         permanent: [
           // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-          { field: "created_at", order: "desc" },
+          {
+            field: getFieldvalue(),
+            order: secondUseTableSorting?.[0]?.desc ? "desc" : "asc",
+          },
         ],
       },
     });
@@ -535,6 +615,20 @@ function index() {
     "course.view_course",
     "course.participants",
   ]);
+
+  //TODO: right now we are commenting because we have to useTable queries but in future if we use one useTable query then we can use this feature
+  // let isFiltering = false;
+
+  // if (
+  //   FilterProgramData.isInitialLoading === false &&
+  //   programData.isInitialLoading === false &&
+  //   FilterProgramData.isLoading === false &&
+  //   programData?.isLoading === false &&
+  //   FilterProgramData?.isPreviousData === true
+  // ) {
+  //   isFiltering = FilterProgramData?.isFetching;
+  // }
+
   return (
     <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">
@@ -546,7 +640,7 @@ function index() {
           setCurrent={setCurrent}
         />
 
-        {programData?.isLoading ? (
+        {FilterProgramData.isLoading || programData?.isLoading ? (
           <section className="flex justify-center align-center pt-[10%]">
             <div className="loader"></div>
           </section>
@@ -576,6 +670,9 @@ function index() {
               data={programData?.data?.data || []}
               columnPinning={true}
               columnSelector={true}
+              sorting={sorting}
+              setSorting={setSorting}
+              // isFiltering={isFiltering}
             />
           </div>
         )}
@@ -770,11 +867,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
-              <SelectItem
-                key={index}
-                value={option.value}
-                className="h-[44px]"
-              >
+              <SelectItem key={index} value={option.value} className="h-[44px]">
                 {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && (
