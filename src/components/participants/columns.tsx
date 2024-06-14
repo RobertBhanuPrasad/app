@@ -683,13 +683,13 @@ export const columns = () => {
         ) => {
           switch (index) {
             case 1: {
-              // TODO: Navigate to view participant page
+              // Navigate to view participant page
               const routePath = router.asPath.split("list")[0];
               router.push(`/${routePath}/${participant_id}`);
               break;
             }
             case 2: {
-              // TODO: Navigate to edit participant page
+              // Navigate to edit participant page
               const routePath = router.asPath.split("list")[0];
               router.push(`/${routePath}/${participant_id}/edit`);
               break;
@@ -699,7 +699,7 @@ export const columns = () => {
               break;
             }
             case 4: {
-              //open the default mail application witn the selected participant mail as to email address.
+              //Open the default mail application witn the selected participant mail as to email address.
               const mailtoUrl = `mailto:${participant_email}`;
               window.open(mailtoUrl);
               break;
@@ -722,7 +722,7 @@ export const columns = () => {
               break;
             }
             case 9: {
-              // TODO: Navigate to view participant page -> Transaction activity tab
+              //Navigate to view participant page -> Transaction activity tab
               const routePath = router.asPath.split("list")[0];
               router.push(`/${routePath}/${participant_id}`);
               break;
