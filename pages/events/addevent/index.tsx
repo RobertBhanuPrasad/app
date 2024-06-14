@@ -19,12 +19,7 @@ import { useRouter } from 'next/router'
 import { ItabsNextButtonClickStatus } from 'pages/courses/add'
 import { useState } from 'react'
 import {
-  EVENTS_ACCOMMODATION_STEP_NUMBER,
-  EVENTS_BASIC_DETAILS_STEP_NUMBER,
-  EVENTS_CONTACT_INFO_STEP_NUMBER,
-  EVENTS_DETAILS_STEP_NUMBER,
-  EVENTS_FEE_STEP_NUMBER,
-  EVENTS_TIME_AND_VENUE_STEP_NUMBER,
+  
   NEXT_BUTTON_CLICKED,
   NEXT_BUTTON_NOT_CLICKED,
   VALID
@@ -35,6 +30,7 @@ import { newEventStore } from 'src/zustandStore/NewEventStore'
 import { GetServerSideProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { authProvider } from 'src/authProvider'
+import { EVENTS_BASIC_DETAILS_STEP_NUMBER, EVENTS_DETAILS_STEP_NUMBER, EVENTS_TIME_AND_VENUE_STEP_NUMBER, EVENTS_FEE_STEP_NUMBER, EVENTS_ACCOMMODATION_STEP_NUMBER, EVENTS_CONTACT_INFO_STEP_NUMBER } from 'src/constants/EventConstants'
 
 const index = () => {
   const { data: loginUserData }: any = useGetIdentity()

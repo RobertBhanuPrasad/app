@@ -3,100 +3,96 @@ import { useState } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from 'src/ui/dialog'
 import { Label } from 'src/ui/label'
 import { RadioGroup, RadioGroupCircleItem } from 'src/ui/radio-group'
-import { Select, SelectContent, SelectTrigger, SelectValue } from 'src/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/ui/select'
 
 export const NewEventStep3 = () => {
   return (
     <div className="space-y-8 w-full">
-    <div >
-      <EventVenue />
-    </div>
-    <EventSchedules/>
+      <div>
+        <EventVenue />
+      </div>
+      <EventSchedules />
     </div>
   )
 }
 
 const EventSchedules = () => {
-  return(
+  return (
     <div className="flex flex-col gap-5">
-<EventSchedulesHeader/>
-<EventRepeat/>
+      <EventSchedulesHeader />
+      <EventRepeat />
     </div>
   )
 }
 
+const repeatNames = () => [
+  {
+    value: 1,
+    label: 'Never Repeate'
+    
+  },
+  {
+    value: 2,
+    label: 'Daily'
+    
+  },
+  {
+    value: 3,
+    label: 'Weekley'
+    
+  },
+  {
+    value: 4,
+    label: 'Monthly'
+    
+  }
+]
 const EventRepeat = () => {
-  return(
-    <div className='flex flex-col gap-2 text-[#333333] '>
-Repeat
-<div className="w-[257px]">
-            <Select
-              value={undefined}
-              onValueChange={() => {
-                
-              }}
-            >
-              <SelectTrigger
-                className="w-[257px]"
-              >
-                <SelectValue placeholder={"Never Repeat"}/>
-              </SelectTrigger>
-              <SelectContent>
-                Never Repeat 
-              </SelectContent>
-            </Select>
-            
-          </div>
+  const names = repeatNames();
+  return (
+    <div className="flex flex-col gap-2 text-[#333333] ">
+      Repeat
+      <div className="w-[257px]">
+        <Select value={undefined} onValueChange={() => {}}>
+          <SelectTrigger className="w-[257px]">
+            <SelectValue placeholder={'Never Repeat'} />
+          </SelectTrigger>
+          <SelectContent>
+          
+          {names.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   )
 }
 
 const EventSchedulesHeader = () => {
-  return(
-    <div className='h-9 flex'>
-      <div className="text-base text-[#333333] flex items-center">
-      Event Date and Time
-      </div>
+  return (
+    <div className="h-9 flex">
+      <div className="text-base text-[#333333] flex items-center">Event Date and Time</div>
       <div className="flex gap-4 w-[434px] ml-auto">
-      <div className='w-[161px]'>
-      <Select
-            value={undefined}
-            onValueChange={() => {
-              
-            }}
-          >
-            <SelectTrigger
-              className="w-[161px]"
-              error={ undefined}
-            >
+        <div className="w-[161px]">
+          <Select value={undefined} onValueChange={() => {}}>
+            <SelectTrigger className="w-[161px]" error={undefined}>
               <SelectValue placeholder={'SelectFormate'} />
             </SelectTrigger>
-            <SelectContent className="w-[161px]">
-             happy
-            </SelectContent>
+            <SelectContent className="w-[161px]">happy</SelectContent>
           </Select>
-
+        </div>
+        <div className="w-[257px]">
+          <Select value={undefined} onValueChange={() => {}}>
+            <SelectTrigger className="w-[257px]">
+              <SelectValue placeholder={'Select Time Zone'} />
+            </SelectTrigger>
+            <SelectContent>time zone</SelectContent>
+          </Select>
+        </div>
       </div>
-      <div className="w-[257px]">
-            <Select
-              value={undefined}
-              onValueChange={() => {
-                
-              }}
-            >
-              <SelectTrigger
-                className="w-[257px]"
-              >
-                <SelectValue placeholder={"Select Time Zone"}/>
-              </SelectTrigger>
-              <SelectContent>
-                time zone
-              </SelectContent>
-            </Select>
-            
-          </div>
-      </div>
-
     </div>
   )
 }
