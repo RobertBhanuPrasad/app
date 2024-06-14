@@ -1090,10 +1090,29 @@ export const isDisplayRegistrationCompletionLink = (isManualRegistration: boolea
 
 }
 
+/**
+ * This function compares and return the boolean
+ * We have 3 scenarios
+ * 1. we dont need to display confirm boc when user moving from add to preview page
+        *Implementation: For this we have one variable sectionFromUrl it will give section param from dest url
+        *if sectionFromUrl is previw_page then we dont need to display confirm box
+ * 2. we dont need to display confirm boc when user moving from preview page to thank_you page
+        *Implementation: For this we have one variable sectionFromUrl it will give section param from dest url
+        * if sectionFromUrl is thankyou_page then we dont need to display confirm box
+  * 3. we dont need to display confirm boc when user moving from thank_you page to any another page
+        *Implementation: For this we have one variable section it will give section param from current url
+        *if section is thankyou_page then we dont need to display confirm box
+ * @param sectionFromUrl 
+ * @param section 
+ * @returns 
+ */
+export const IsShowConfirmBoxInNewCourse = (sectionFromUrl: string|null, section: string|undefined|string[]) => {
 
-
-
-
+  if(!(sectionFromUrl==='preview_page'||sectionFromUrl==='thank_you') && section!=='thank_you'){
+    return true;
+  }
+  return false;
+}
 
 
 
