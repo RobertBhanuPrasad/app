@@ -4,7 +4,7 @@ import { handleEditPaymentValues } from '@components/participants/editParticipan
 import EditPayment from '@components/participants/editParticipant/editPayment'
 import ViewDonationDetails from '@components/participants/editParticipant/viewDonationDetails'
 import { useTable } from '@refinedev/core' // Importing useTable hook for fetching table data
-import { ColumnDef } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
+import { ColumnDef, SortingState } from '@tanstack/react-table' // Importing ColumnDef type for defining table columns
 import { MoreVertical } from 'lucide-react' // Importing icons for UI
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
@@ -19,6 +19,27 @@ import { formatDateAndTime } from 'src/utility/DateFunctions'
 // Component for viewing participant transaction details
 function ViewParticipantTransactionDetails({ participantId }: any) {
   const { t } = useTranslation(['course.participants', 'course.view_course'])
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: 'id',
+      desc: true
+    }
+  ])
+
+  const fieldValue = () => {
+    if (!sorting.length) {
+      setSorting([
+        {
+          id: 'id',
+          desc: true
+        }
+      ])
+    }
+    let field = sorting?.[0]?.id
+    if (field === 'accommodation_type') field = 'accommodation_type_id(accommodation_type_id)'
+    return field
+  }
+  console.log('sorting', sorting[0])
   // Fetching table data using useTable hook
   let {
     tableQueryResult: participantTransactionDetailsData, // Table data result
@@ -33,12 +54,11 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
       select:
         '*,transaction_type_id(*),payment_method_id(*),transaction_fee_level_id(*),transaction_status_id(*),accommodation_type_id(*,accommodation_type_id(*))' // Selecting specific fields
     },
-    filters: {
+    sorters: {
       permanent: [
         {
-          field: 'participant_id',
-          operator: 'eq',
-          value: participantId
+          field: fieldValue(),
+          order: sorting?.[0]?.desc ? 'desc' : 'asc'
         }
       ]
     }
@@ -60,6 +80,8 @@ function ViewParticipantTransactionDetails({ participantId }: any) {
           columns={columns() as any} // Table columns
           data={participantTransactionDetailsData?.data?.data || []} // Table data
           columnPinning={true} // Enable column pinning
+          sorting={sorting}
+          setSorting={setSorting}
         />
       </div>
     </div>
@@ -249,7 +271,7 @@ const columns = () => {
       }
     },
     {
-      accessorKey: 'source',
+      accessorKey: 'source_text',
       header: ({ column }: any) => {
         return (
           <TableHeader className="min-w-[120px]">
