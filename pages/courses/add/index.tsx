@@ -9,7 +9,7 @@ import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
 import Group from "@public/assets/Group";
-import ContactInfo from "@public/assets/ContactInfo";
+import ContactInfo from "@public/assets/Contactinfo";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import {
@@ -81,6 +81,7 @@ import {
 import { useTranslation } from "next-i18next";
 import { supabaseClient } from "src/utility";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import Fees from "@public/assets/Fees";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
