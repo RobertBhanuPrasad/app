@@ -32,6 +32,9 @@ import {
 import { Button } from 'src/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 import { newEventStore } from 'src/zustandStore/NewEventStore'
+import { GetServerSideProps } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { authProvider } from 'src/authProvider'
 
 const index = () => {
   const { data: loginUserData }: any = useGetIdentity()
@@ -208,6 +211,41 @@ const NewEventTabs = () => {
     </div>
   )
 }
+
+export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const { authenticated, redirectTo } = await authProvider.check(context);
+
+  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+    "common",
+    "course.new_course",
+    "new_strings",
+    "course.participants",
+    "course.view_course",
+    "course.find_course",
+  ]);
+
+  if (!authenticated) {
+    return {
+      props: {
+        ...translateProps,
+      },
+      redirect: {
+        destination: `${redirectTo}?to=${encodeURIComponent(
+          context.req.url || "/"
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ...translateProps,
+    },
+  };
+};
+
+
 
 
 
