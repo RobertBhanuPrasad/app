@@ -78,6 +78,7 @@ import useDebounce from "src/utility/useDebounceHook";
 
 import { useTranslation } from "next-i18next";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import dayjs from 'dayjs';
 import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "src/ui/tooltip";
 
 function NewCourseStep3() {
@@ -488,9 +489,8 @@ const ScheduleComponent = ({
               <div>
                 <CalenderIcon color="#999999" />
               </div>
-              <div>
-                {schedule?.date &&
-                  format(new Date(schedule.date), "dd MMM, yyyy")}
+              <div className="capitalize">
+                {schedule?.date && dayjs(schedule?.date).format("DD MMM, YYYY")}
               </div>
             </Button>
           </DialogTrigger>
@@ -852,7 +852,7 @@ const Venue = () => {
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] !rounded-[24px]">
+            <DialogContent className="!w-[636px] pt-6 px-[25px] !rounded-[24px]">
               <AddOrEditVenue
                 handleSubmit={handleAddNewVenue}
                 message={warningmessage}
@@ -1176,6 +1176,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
             onSelect={handleOnSelect}
             className="rounded-md"
             count={data?.total || 0}
+            defaultMonth={date}
           />
         </div>
         {/* Course details */}
