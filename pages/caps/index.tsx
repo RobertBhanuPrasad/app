@@ -38,7 +38,9 @@ const Home = () => {
 
           <CustomCard title="Payment Gateways Dashboard" description="Configure the exisiting payment gateways (edit/enable/disable/delete)" content={<Button variant={"default"} onClick={()=>router.push('/caps/payment-dashboard')}> Click Here</Button>} />
 
-          <CustomCard title="Entity Configuration" description="Register your module/country/organization with CAPS (or edit the configuration if it's already registered)" content={<Button variant={"default"} onClick={()=>router.push('/caps/add-entity')}> Click Here</Button>} />
+          <CustomCard title="Add Entity" description="Register your module/country/organization with CAPS (or edit the configuration if it's already registered)" content={<Button variant={"default"} onClick={()=>router.push('/caps/add-entity')}> Click Here</Button>} />
+
+          <CustomCard title="Entity Dashboard" description="Configure the exisiting entities (edit/delete)" content={<Button variant={"default"} onClick={()=>router.push('/caps/entity-dashboard')}> Click Here</Button>} />
       </>
   )
 }

@@ -151,6 +151,10 @@ interface IBaseTable<TData, TValue> {
    * This variable is used to display the loader in middle of the page and while filtering ideally we dont need to click anything
    */
   isFiltering?: boolean;
+  /**
+   * This variable is used to disabled the horizontal scrolling. 
+   */
+  noScroll? : boolean;
 }
 
 export function BaseTable<TData, TValue>({
@@ -174,6 +178,7 @@ export function BaseTable<TData, TValue>({
   setSorting,
   noRecordsPlaceholder = "No results",
   isFiltering = false,
+  noScroll
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
@@ -509,7 +514,7 @@ export function BaseTable<TData, TValue>({
                                 checkboxSelection ? "left-10" : "left-0"
                               }  bg-[#F1F1FE] drop-shadow-right`
                             } ${
-                              columnPinning &&
+                              !noScroll && columnPinning &&
                               index === headerGroup.headers.length - 1 &&
                               `sticky right-0 bg-[#F1F1FE] drop-shadow-left w-[50px]`
                             } text-[#333333] `}
@@ -522,7 +527,7 @@ export function BaseTable<TData, TValue>({
                                   header?.getContext()
                                 )}
 
-                            {index === headerGroup.headers.length - 1 &&
+                            {!noScroll && index === headerGroup.headers.length - 1 &&
                               columnPinning && (
                                 <div className="flex flex-row gap-2">
                                   <ChevronLeft
@@ -577,7 +582,7 @@ export function BaseTable<TData, TValue>({
                               checkboxSelection ? "left-10" : "left-0"
                             }  top-0 bg-[#FFFFFF] drop-shadow-right`
                           } ${
-                            columnPinning &&
+                            !noScroll && columnPinning &&
                             index === row.getVisibleCells().length - 1 &&
                             `sticky right-0 top-0 bg-[#FFFFFF] w-[50px] drop-shadow-left`
                           } text-[#333333]`}
