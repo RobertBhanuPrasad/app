@@ -852,7 +852,7 @@ const Venue = () => {
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] !rounded-[24px]">
+            <DialogContent className="!w-[636px] pt-6 px-[25px] !rounded-[24px]">
               <AddOrEditVenue
                 handleSubmit={handleAddNewVenue}
                 message={warningmessage}
@@ -1176,6 +1176,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
             onSelect={handleOnSelect}
             className="rounded-md"
             count={data?.total || 0}
+            defaultMonth={date}
           />
         </div>
         {/* Course details */}

@@ -10,7 +10,9 @@ const TooltipProvider = TooltipPrimitive.Provider
 
 const Tooltip = TooltipPrimitive.Root
 
-const TooltipTrigger = TooltipPrimitive.Trigger
+const TooltipTrigger = (props: TooltipPrimitive.TooltipTriggerProps) => (
+  <TooltipPrimitive.Trigger {...props} type="button" />
+)
 
 const TooltipPortal = TooltipPrimitive.Portal
 
@@ -32,4 +34,4 @@ const TooltipArrow = TooltipPrimitive.Arrow
 
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
-export { Tooltip, TooltipArrow,TooltipPortal, TooltipContent, TooltipProvider, TooltipTrigger }
+export { Tooltip, TooltipArrow, TooltipPortal, TooltipContent, TooltipProvider, TooltipTrigger }
