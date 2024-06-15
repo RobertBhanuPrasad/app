@@ -92,7 +92,7 @@ export const DateField = ({
 
           {value ? (
             <div className="capitalize">
-              {value && dayjs(value).format("DD MMM,YYYY")}
+              {value && dayjs(value).format("DD MMM, YYYY")}
             </div>
           ) : (
             <span>{placeholder ? placeholder : "Pick a date"}</span>

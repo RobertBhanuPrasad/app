@@ -148,7 +148,7 @@ export const column = (
       cell: ({ row }: any) => {
         // Check if start_date exists or not
         if (row?.original?.start_date) {
-          const startDate = dayjs(row?.original?.start_date).format("DD MMM,YYYY")
+          const startDate = dayjs(row?.original?.start_date).format("DD MMM, YYYY")
           return (
             <div className="min-w-[150px] capitalize ">{startDate ? startDate : "-"} </div>
           );

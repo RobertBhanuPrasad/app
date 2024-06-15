@@ -490,7 +490,7 @@ const ScheduleComponent = ({
                 <CalenderIcon color="#999999" />
               </div>
               <div className="capitalize">
-                {schedule?.date && dayjs(schedule?.date).format("DD MMM,YYYY")}
+                {schedule?.date && dayjs(schedule?.date).format("DD MMM, YYYY")}
               </div>
             </Button>
           </DialogTrigger>
