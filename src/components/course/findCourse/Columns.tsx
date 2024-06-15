@@ -109,26 +109,6 @@ export const column = (
     //   }
     // },
     {
-      accessorKey: "status",
-      column_name: t("course.find_course:course_status"),
-      //These columns are default columns and shouldnt be editable
-      enableHiding: false,
-      header: () => {
-        return (
-          <div className="min-w-[150px] text-sm">
-            {t("course.find_course:course_status")}
-          </div>
-        );
-      },
-      cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">
-            {translatedText(row?.original?.status_id?.name)}
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: "program_schedules",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
@@ -156,18 +136,39 @@ export const column = (
       },
     },
     {
-      accessorKey: "state",
-      column_name: t("course.find_course:state"),
+      accessorKey: "status",
+      column_name: t("course.find_course:course_status"),
+      //These columns are default columns and shouldnt be editable
+      enableHiding: false,
       header: () => {
         return (
           <div className="min-w-[150px] text-sm">
-            {t("course.find_course:state")}
+            {t("course.find_course:course_status")}
           </div>
         );
       },
       cell: ({ row }: any) => {
         return (
-          <div className="min-w-[150px]">{row?.original?.state?.name}</div>
+          <div className="min-w-[150px]">
+            {translatedText(row?.original?.status_id?.name)}
+          </div>
+        );
+      },
+    },
+    
+    {
+      accessorKey: "center",
+      column_name: t("course.find_course:center"),
+      header: () => {
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("course.find_course:center")}
+          </div>
+        );
+      },
+      cell: ({ row }: any) => {
+        return (
+          <div className="min-w-[150px]">{row?.original?.center?.name}</div>
         );
       },
     },
@@ -182,18 +183,18 @@ export const column = (
       },
     },
     {
-      accessorKey: "center",
-      column_name: t("course.find_course:center"),
+      accessorKey: "state",
+      column_name: t("course.find_course:state"),
       header: () => {
         return (
           <div className="min-w-[150px] text-sm">
-            {t("course.find_course:center")}
+            {t("course.find_course:state")}
           </div>
         );
       },
       cell: ({ row }: any) => {
         return (
-          <div className="min-w-[150px]">{row?.original?.center?.name}</div>
+          <div className="min-w-[150px]">{row?.original?.state?.name}</div>
         );
       },
     },
@@ -278,24 +279,6 @@ export const column = (
         );
       },
     },
-    {
-      accessorKey: "visibility_id",
-      column_name: t("new_strings:visibility"),
-      header: () => {
-        return (
-          <div className="min-w-[150px] text-sm">
-            {t("new_strings:visibility")}
-          </div>
-        );
-      },
-      cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">
-            {translatedText(row?.original?.visibility_id?.name)}
-          </div>
-        );
-      },
-    },
 
     //TODO : for now may-13 release it has to be hidden
     // {
@@ -340,6 +323,24 @@ export const column = (
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.revenue}</div>;
+      },
+    },
+    {
+      accessorKey: "visibility_id",
+      column_name: t("new_strings:visibility"),
+      header: () => {
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("new_strings:visibility")}
+          </div>
+        );
+      },
+      cell: ({ row }: any) => {
+        return (
+          <div className="min-w-[150px]">
+            {translatedText(row?.original?.visibility_id?.name)}
+          </div>
+        );
       },
     },
 
