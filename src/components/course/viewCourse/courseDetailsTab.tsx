@@ -368,20 +368,19 @@ const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
             ) : ( "-"))
             :
             (courseData?.data?.venue_id ? (
+              <div className="flex flex-col gap-4">
               <ItemValue>
                 {venue}
-              </ItemValue>
+              </ItemValue> 
+              <div className="flex flex-col gap-1">
+                <Header2>{t("course.find_course:center")}</Header2>
+                  <ItemValue>
+                    {courseData?.data?.venue_id?.center_id?.name}
+                  </ItemValue>
+              </div>
+              </div>
             ):("-"))}
         </div>
-        {courseData?.data?.program_type_id?.is_online_program == false &&
-        <div>
-          <Header2>{t("course.find_course:center")}</Header2>
-          {courseData?.data?.venue_id ? (
-            <ItemValue>
-              {courseData?.data?.venue_id?.center_id?.name}
-            </ItemValue>
-          ) : ("-")}
-        </div>}
             <Header2>
             {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
