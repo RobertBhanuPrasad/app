@@ -40,7 +40,7 @@ function DateCalendar({
         nav_button_previous: "absolute left-2",
         nav_button_next: "absolute right-2",
         table: "w-full border-collapse ",
-        head_row: "flex capitalize w-full gap-[14px] text-lg",
+        head_row: "flex capitalize w-full gap-[12px] m-[6px] text-sm",
         head_cell:
           "text-muted-foreground !rounded-full w-10 font-normal text-sm",
         row: "flex w-full ",
