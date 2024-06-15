@@ -13,6 +13,7 @@ import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
 import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { TableHeader, Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
+import dayjs from 'dayjs';
 import { translatedText } from "src/common/translations";
 
 import {
@@ -147,9 +148,9 @@ export const column = (
       cell: ({ row }: any) => {
         // Check if start_date exists or not
         if (row?.original?.start_date) {
-          const startDate = format(row?.original?.start_date, "dd MMM, yyyy");
+          const startDate = dayjs(row?.original?.start_date).format("DD MMM, YYYY")
           return (
-            <div className="min-w-[150px]">{startDate ? startDate : "-"} </div>
+            <div className="min-w-[150px] capitalize ">{startDate ? startDate : "-"} </div>
           );
         }
       },

@@ -5,14 +5,15 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { translatedText } from "src/common/translations";
 import { Header2, ItemValue } from "src/commonComponents";
-import { VISIBILITY } from "src/constants/OptionLabels";
-import { PUBLIC } from "src/constants/OptionValueOrder";
+import { PARTICIPANT_PAYMENT_STATUS, TIME_FORMAT, VISIBILITY } from "src/constants/OptionLabels";
+import { PUBLIC, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { formatDateTime } from "src/utility/DateFunctions";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { getOptionValueObjectByOptionOrder, getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from 'next-i18next';
 import _ from "lodash";
 import { sortFeeLevels } from "../newCourse/NewCourseStep4";
+import dayjs from "dayjs";
 
 interface fullNameObject {
   user_id?: {
@@ -142,6 +143,14 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
     PUBLIC
   )?.id;
   const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+
+// getting twelve Hr Time Format id to check whether the particular course time format.
+const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
+  TIME_FORMAT,
+  TIME_FORMAT_12_HOURS
+)?.id;
+
+
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
       {/**
@@ -372,9 +381,12 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                       (item: ProgramScheduleItem, index: number) => (
                         <div key={index}>
                           <div className="flex flex-col">
-                            <div>
-                              {formatDateTime(item?.start_time, item?.end_time)}
-                            </div>
+                            { // TODO we need to change the twelveHrTimeFormat to the enum
+                            courseData?.data?.hour_format_id === twelveHrTimeFormat ? (
+                              <TwelveHrFormat item={item as Schedule} />
+                            ) : (
+                              <TwentyFourHrFormat item={item as Schedule} />
+                            )}
                           </div>
                         </div>
                       )
@@ -501,3 +513,52 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
 }
 
 export default CourseDetailsTab;
+
+interface Schedule {
+  id: number;
+  order: number;
+  hx_pkey: string | null;
+  end_time: string;
+  created_at: string;
+  program_id: number;
+  start_time: string;
+  schedule_type: string | null;
+  program_schedule_name: string;
+}
+
+/**
+ * @function TwelveHrFormat
+ * @description this function is used to format the date with the help of dayjs in the 12 hr format
+ * @param {item} 
+ * @returns date in 12 hr format
+ */
+export const TwelveHrFormat = ({item}:{item:Schedule}) => {
+  const {t} = useTranslation("course.new_course")
+  return (
+  <div className="capitalize">
+    {item?.start_time &&
+      dayjs(item?.start_time).format("DD MMM, YYYY | hh:mm A")}{" "}
+    <span className="lowercase">{t("time_and_venue_tab.to")}</span>{" "}
+    {item?.end_time && dayjs(item?.end_time).format("hh:mm A")}
+  </div>
+  )
+};
+
+/**
+ * @function TwentyFourHrFormat
+ * @description this function is used to format the date with the help of dayjs in the 24 hr format
+ * @param {item} 
+ * @returns date in 24 hr format
+ */
+export const TwentyFourHrFormat = ({item}:{item:Schedule}) => {
+  const {t} = useTranslation("course.new_course")
+
+  return(
+    <div className="capitalize">
+    {item?.start_time &&
+      dayjs(item?.start_time).format("DD MMM, YYYY | HH:mm")}{" "}
+    <span className="lowercase">{t("time_and_venue_tab.to")}</span>{" "}
+    {item?.end_time && dayjs(item?.end_time).format("HH:mm")}
+  </div>
+  )
+}
