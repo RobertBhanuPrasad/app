@@ -152,7 +152,7 @@ function ViewDetails() {
   // TODO we need to change the twelveHrTimeFormat to the enum
   const endDate =
     courseData?.data?.hour_format_id === twelveHrTimeFormat
-      ? dayjs(endTime).format("Do MMM hh:mm a")
+      ? dayjs(endTime).format("Do MMM hh:mm A")
       : dayjs(endTime).format("Do MMM HH:mm");
 
   const countryName = `${courseData?.data?.venue_id?.state_id?.country_id?.name}`;
