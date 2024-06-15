@@ -235,6 +235,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
             "new_strings",
             "course.find_course",
             "course.view_course",
+            "enum",
         ]
     );
 

@@ -24,12 +24,15 @@ function ViewParticipantInformation({ participantId }: any) {
     id: participantId,
     meta: {
       select:
-        '*,contact_id(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id(id,registration_link)'
+        '*,contact_id(*,city_id(name),country_id(name),state_id(name)),program_id(id,registration_link)'
     }
   }
 
   // Fetching participant data using useOne hook
   const { data: participantData, isLoading, isError } = useOne(query)
+
+  console.log(participantData,'partiicipantsidedata');
+  
 
   // Extracting contact data from participantData
   const contactData = participantData?.data?.contact_id

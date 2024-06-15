@@ -13,13 +13,15 @@ function ViewParticipantCourseInformation({ participantId }: any) {
     id: participantId,
     meta: {
       select:
-        '*,contact_id!inner(*,gender_id(value),city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_alias_name_id(*),program_type_id(id,name),program_teachers!inner(*,user_id(*,contact_id(full_name)))),participant_attendence_status_id(*))' // Selecting specific fields
+        '*,contact_id!inner(*,city_id(name),country_id(name),state_id(name)),program_id!inner(*,program_type_id(id,name))' // Selecting specific fields
     }
     
   }
   const {t} = useTranslation(["common", "course.participants", "new_strings"])
   // Fetching participant course data
   const { data: participantCourseData, isLoading, isError } = useOne(query)
+  console.log(participantCourseData,'participantCourseData');
+  
 
   // Extracting teacher full names
   const teacherFullNames = participantCourseData?.data?.program_id?.program_teachers
@@ -36,9 +38,10 @@ function ViewParticipantCourseInformation({ participantId }: any) {
         : '-'
     },
     { key: t('course.participants:view_participant.course_information_tab.Teachers(S)'), value: teacherFullNames },
-    { key: t('course.participants:view_participant.course_information_tab.attendance_status'), value: participantCourseData?.data?.participant_attendence_status_id?.value },
+    { key: t('course.participants:view_participant.course_information_tab.attendance_status'), value: t(`enum:${participantCourseData?.data?.attendance_type}`)},
     { key: t('course.participants:view_participant.course_information_tab.discount_amount'), value: participantCourseData?.data?.discounted_amount }
   ]
+console.log(coursePaticipantInformation,'coursePaticipantInformation');
 
   return (
     <div>
