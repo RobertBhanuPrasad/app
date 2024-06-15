@@ -9,7 +9,8 @@ interface NewCourseStore {
   viewCourseAccountingSuccessModal: boolean;
   viewCourseAccountingRejectedDescriptionModal: boolean;
   viewCourseAccountingRejectedModal: boolean;
-
+  viewLogoutModal: boolean;
+  setViewLogoutModal: (by: boolean) => void;
   setViewRejectedModal: (by: boolean) => void;
   setEditCourseDefaultValues: (by: any) => void;
   setViewPreviewPage: (by: boolean) => void;
@@ -60,6 +61,7 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   programId: 1,
   viewSuccessModal: false,
   viewRejectedModal: false,
+  viewLogoutModal: false,
 
 
   viewCourseAccountingSuccessModal: false,
@@ -147,6 +149,11 @@ export const newCourseStore = create<NewCourseStore>((set) => ({
   setProgramCreatedById : (data: any) => {
     set(() => ({
       programCreatedById:data,
+    }))
+  },
+  setViewLogoutModal : (data: boolean) => {
+    set(()=> ({
+      viewLogoutModal: data,
     }))
   }
 }));
