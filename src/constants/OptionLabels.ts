@@ -6,9 +6,9 @@ export const GENDER = "GENDER";
 
 // export const FEE_LEVEL = "FEE_LEVEL";
 
-export const PARTICIPANT_PAYMENT_STATUS = "PARTICIPANT_PAYMENT_STATUS";
+// export const PARTICIPANT_PAYMENT_STATUS = "PARTICIPANT_PAYMENT_STATUS";
 
-export const PARTICIPANT_ATTENDANCE_STATUS = "PARTICIPANT_ATTENDANCE_STATUS";
+// export const PARTICIPANT_ATTENDANCE_STATUS = "PARTICIPANT_ATTENDANCE_STATUS";
 
 export const USER_ROLE = "USER_ROLE";
 
@@ -24,7 +24,7 @@ export const VISIBILITY = "VISIBILITY";
 
 export const PAYMENT_MODE = "PAYMENT_MODE";
 
-export const TRANSACTION_TYPE = "TRANSACTION_TYPE";
+// export const TRANSACTION_TYPE = "TRANSACTION_TYPE";
 
 export const PAYMENT_METHOD = "PAYMENT_METHOD";
 
@@ -38,3 +38,9 @@ export const PROGRAM_STATUS="program_status"
 export const COURSE_ACCOUNTING_STATUS="program_accounting_status"
 
 export const FEE_LEVEL="program_fee_level"
+
+export const PARTICIPANT_ATTENDANCE_STATUS="participant_attendance_status"
+
+export const PARTICIPANT_PAYMENT_STATUS="participant_payment_status"
+
+export const TRANSACTION_TYPE="participant_payment_type"

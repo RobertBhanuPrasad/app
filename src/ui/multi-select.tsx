@@ -120,7 +120,7 @@ export function MultiSelect({
   const selectables = filteredData.filter(
     (obj) => !selected.includes(obj.value)
   );
-  const {t} = useTranslation('common')
+  const {t} = useTranslation('common','enum')
 
   return (
     <div className={`grid w-full items-center ${headerStyles}`}>
@@ -153,9 +153,9 @@ export function MultiSelect({
                   <div className="max-w-[60px] truncate">
                     <abbr
                       className="no-underline font-semibold text-[14px] leading-[20px]"
-                      title={findObjectById(item)?.label}
+                      title={findObjectById(item)?.value}
                     >
-                      {findObjectById(item)?.label}
+                      {t(`enum:${findObjectById(item)?.value}`)}
                     </abbr>
                   </div>
 
@@ -254,7 +254,7 @@ export function MultiSelect({
                   <div key={item}>
                     <div className="flex flex-row justify-between items-center pr-3">
                       <div className="cursor-pointer p-2 text-[12px]">
-                        {findObjectById(item)?.label}
+                        {findObjectById(item)?.value}
                       </div>
                       {!noIcon && (
                         <X
@@ -306,7 +306,7 @@ export function MultiSelect({
                         key={option?.value}
                         onSelect={() => handleOnSelect(option.value)}
                       >
-                        {option.label}
+                        {t(`enum:${option.value}`)}
                       </CommandItem>
                       {/* Add a horizontal line for all items except the last one */}
                       {index < selectables?.length - 1 && (

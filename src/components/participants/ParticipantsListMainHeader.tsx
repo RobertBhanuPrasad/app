@@ -31,7 +31,7 @@ export const ParticipantsListMainHeader = () => {
     id: Id,
     meta: {
       select:
-        "*,program_type_id(name,is_approval_required),program_alias_name_id(id,alias_name),program_schedules!inner(*)",
+        "*,program_type_id(name,is_approval_required),program_schedules!inner(*)",
     },
   });
 

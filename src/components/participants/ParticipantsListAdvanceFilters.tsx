@@ -30,9 +30,10 @@ import {
   SheetHeader,
   SheetTrigger,
 } from "src/ui/sheet";
-import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+import { getEnumsWithLabel, getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 import { useTranslation } from "next-i18next";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export function ParticipantsAdvanceFilter() {
   const { t } = useTranslation([
@@ -41,6 +42,7 @@ export function ParticipantsAdvanceFilter() {
     "course.participants",
     "course.find_course",
     "course.view_course",
+    "enum",
   ]);
   const {
     setParticpantFiltersData,
@@ -51,6 +53,7 @@ export function ParticipantsAdvanceFilter() {
   const formData = watch();
   const [openAdvFilter, setOpenAdvFilter] = useState(false);
   const [count, setCount] = useState(0);
+
 
   const filterCount = () => {
     const { advanceFilter } = getValues();
@@ -199,7 +202,7 @@ export function ParticipantsAdvanceFilter() {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <PaymentMethod />
+                  {/* <PaymentMethod /> */}
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -418,14 +421,14 @@ export const ContactDetails = () => {
 };
 
 export const TransactionType = () => {
+  const { t } = useTranslation("enum");
   const {
     field: { value: transactionTypes = [], onChange: onStatusChange },
   } = useController({
     name: "tempFilters.transaction_type",
   });
 
-  const transactionTypeOptions =
-    getOptionValuesByOptionLabel(TRANSACTION_TYPE)?.[0]?.option_values;
+  const transactionTypeOptions =getEnumsWithLabel({label:TRANSACTION_TYPE});
 
   const toggleTransactionStatus = (id: number) => {
     const selectedValues = transactionTypes?.includes(id)
@@ -441,54 +444,54 @@ export const TransactionType = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              transactionTypes?.includes(status?.id)
+              transactionTypes?.includes(status?.value)
                 ? "bg-primary text-white"
                 : "bg-white border border-[#D6D7D8]"
             }`}
             variant="outline"
-            onClick={() => toggleTransactionStatus(status?.id)}
-          >
-            {translatedText(status?.name)}
+            onClick={() => toggleTransactionStatus(status?.value)}
+         >
+            {t(`enum:${status?.label}`)}
           </Button>
         </div>
       ))}
     </div>
   );
 };
+// TODO: need to do after having clarification on payment_method
+// export const PaymentMethod = () => {
+//   const { t } = useTranslation("new_strings");
+//   const {
+//     field: { value: paymentMethods, onChange: onSelectChange },
+//   } = useController({
+//     name: "tempFilters.payment_method",
+//   });
+//   const {optionLabelValue}=optionLabelValueStore()
+// // TODO: need to do after having clarification on payment_method
+//   // const paymentMethodOptions = getOptionValuesByOptionLabel(PAYMENT_METHOD)?.[0]?.option_values;
 
-export const PaymentMethod = () => {
-  const { t } = useTranslation("new_strings");
-  const {
-    field: { value: paymentMethods, onChange: onSelectChange },
-  } = useController({
-    name: "tempFilters.payment_method",
-  });
+//   const paymentMethodValues = paymentMethodOptions.map((record: any) => {
+//     return {
+//       label: translatedText(record?.name),
+//       value: record?.id,
+//     };
+//   });
 
-  const paymentMethodOptions =
-    getOptionValuesByOptionLabel(PAYMENT_METHOD)?.[0]?.option_values;
-
-  const paymentMethodValues = paymentMethodOptions.map((record: any) => {
-    return {
-      label: translatedText(record?.name),
-      value: record?.id,
-    };
-  });
-
-  return (
-    <div>
-      <MultiSelect
-        value={paymentMethods}
-        placeholder={t("new_strings:select_payment_method")}
-        data={paymentMethodValues}
-        onBottomReached={() => {}}
-        onSearch={() => {}}
-        onChange={onSelectChange}
-        searchBar={false}
-        variant="basic"
-      />
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <MultiSelect
+//         value={paymentMethods}
+//         placeholder={t("new_strings:select_payment_method")}
+//         data={paymentMethodValues}
+//         onBottomReached={() => {}}
+//         onSearch={() => {}}
+//         onChange={onSelectChange}
+//         searchBar={false}
+//         variant="basic"
+//       />
+//     </div>
+//   );
+// };
 
 export const FeeLevel = () => {
   const { t } = useTranslation("course.participant");
@@ -498,15 +501,15 @@ export const FeeLevel = () => {
     name: "tempFilters.fee_level",
   });
 
-  const feeLevelOptions =
-    getOptionValuesByOptionLabel(FEE_LEVEL)?.[0]?.option_values;
+  const feeLevelOptions = getEnumsWithLabel({label:FEE_LEVEL})
 
   const feeLevelValues = feeLevelOptions.map((record: any) => {
     return {
-      label: translatedText(record?.name),
-      value: record?.id,
+      label: translatedText(record?.label),
+      value: record?.value,
     };
   });
+console.log(feeLevelValues,'feeLevelValues');
 
   return (
     <div>
@@ -529,6 +532,7 @@ export const FeeLevel = () => {
 export const AttendanceStatus = () => {
   const { getValues } = useFormContext();
   const formData = getValues();
+  const { t } = useTranslation("enum");
 
   const {
     field: { value: attendanceValues = [], onChange: onStatusChange },
@@ -536,9 +540,7 @@ export const AttendanceStatus = () => {
     name: "tempFilters.attendance_status",
   });
 
-  const attendanceStatusOptions = getOptionValuesByOptionLabel(
-    PARTICIPANT_ATTENDANCE_STATUS
-  )?.[0]?.option_values;
+  const attendanceStatusOptions = getEnumsWithLabel({label:PARTICIPANT_ATTENDANCE_STATUS});
 
   const toggleTransactionStatus = (id: number) => {
     const selectedValues = attendanceValues?.includes(id)
@@ -554,14 +556,14 @@ export const AttendanceStatus = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              attendanceValues?.includes(status?.id)
+              attendanceValues?.includes(status?.value)
                 ? "bg-primary text-white"
                 : "bg-white border border-[#D6D7D8]"
             }`}
             variant="outline"
-            onClick={() => toggleTransactionStatus(status?.id)}
+            onClick={() => toggleTransactionStatus(status?.value)}
           >
-            {translatedText(status?.name)}
+            {t(`enum:${status?.label}`)}
           </Button>
         </div>
       ))}

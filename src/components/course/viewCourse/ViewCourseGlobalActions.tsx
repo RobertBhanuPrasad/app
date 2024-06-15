@@ -11,9 +11,6 @@ import { handleCourseDefaultValues } from "../newCourse/EditCourseUtil";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { useTranslation } from "next-i18next";
 import _ from "lodash";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import { TIME_FORMAT } from "src/constants/OptionLabels";
-import { TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 
 export const ViewCourseGlobalActions = () => {
   const router = useRouter();
@@ -56,11 +53,6 @@ export const ViewCourseGlobalActions = () => {
   const handleEditCourse = async () => {
     router.push(`/courses/${ID}/edit`);
   };
-
-  const timeFormat12HoursId = getOptionValueObjectByOptionOrder(
-    TIME_FORMAT,
-    TIME_FORMAT_12_HOURS
-  )?.id as number;
 
   /**
    * when we click on copy course we change the route with particular course id and with copy in the route link

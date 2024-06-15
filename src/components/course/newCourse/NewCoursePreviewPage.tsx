@@ -7,7 +7,6 @@ import {
   useMany,
   useOne,
 } from "@refinedev/core";
-import _ from "lodash";
 import { useTranslation } from "next-i18next";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";

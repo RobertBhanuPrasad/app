@@ -295,10 +295,10 @@ export const columns = () => {
                       setEditPayment(!editPayment)
                     }
                   >
-                    {row?.original?.payment_status_id?.value
-                      ? translatedText(row?.original?.payment_status_id?.name)
+                    {row?.original?.payment_status
+                      ? t(`enum:${row?.original?.payment_status}`)
                       : "-"}
-                    {row?.original?.payment_status_id?.value == "Pending" && (
+                    {t(`enum:${row?.original?.payment_status}`) == "Pending" && (
                       <CountdownTimerIcon />
                     )}
                   </div>
@@ -335,13 +335,10 @@ export const columns = () => {
       },
 
       cell: ({ row }: any) => {
+        console.log(row,'row123');
         return (
           <div className="text-left !min-w-[150px]">
-            {row?.original?.participant_attendence_status_id?.name
-              ? translatedText(
-                  row?.original?.participant_attendence_status_id?.name
-                )
-              : "-"}
+            {row?.original?.attendance_type? t(`enum:${row?.original?.attendance_type}`): "-"}
           </div>
         );
       },
@@ -415,80 +412,98 @@ export const columns = () => {
       },
     },
     {
-      accessorKey: "Transaction Type",
-      column_name: t("course.participants:view_participant.transaction_type"),
-      header: ({ column }) => {
-        return (
-          <div className="min-w-[150px] text-left">
-            {t("course.participants:view_participant.transaction_type")}
-          </div>
-        );
-      },
+        accessorKey: "Transaction Type",
+        column_name: t(
+            "course.participants:view_participant.transaction_type"
+        ),
+        header: ({ column }) => {
+            return (
+                <div className="min-w-[150px] text-left">
+                    {t(
+                        "course.participants:view_participant.transaction_type"
+                    )}
+                </div>
+            );
+        },
 
-      // This any will be removed after internal dataStructure implementation
+        // This any will be removed after internal dataStructure implementation
 
-      cell: ({ row }: any) => {
-        return (
-          <div className="text-left">
-            {row?.original?.participant_payment_history?.length > 0 ? (
-              <TransactionActivity
-                transactionHistory={row?.original?.participant_payment_history}
-              />
-            ) : (
-              "-"
-            )}
-          </div>
-        );
-      },
+        cell: ({ row }: any) => {
+            return (
+                <div className="text-left">
+                    {row?.original?.participant_payment_history?.length >
+                        0 ? (
+                        <TransactionActivity
+                            transactionHistory={
+                                row?.original?.participant_payment_history
+                            }
+                        />
+                    ) : (
+                        "-"
+                    )}
+                </div>
+            );
+        },
     },
     {
-      accessorKey: "Transaction ID",
-      column_name: t("course.participants:view_participant.transaction_id"),
-      header: ({ column }) => {
-        return (
-          <div className=" min-w-[200px] text-left">
-            {t("course.participants:view_participant.transaction_id")}
-          </div>
-        );
-      },
+        accessorKey: "Transaction ID",
+        column_name: t(
+            "course.participants:view_participant.transaction_id"
+        ),
+        header: ({ column }) => {
+            return (
+                <div className=" min-w-[200px] text-left">
+                    {t(
+                        "course.participants:view_participant.transaction_id"
+                    )}
+                </div>
+            );
+        },
 
-      // This any will be removed after internal dataStructure implementation
+        // This any will be removed after internal dataStructure implementation
 
-      cell: ({ row }: any) => {
-        const sortedRows = row?.original?.participant_payment_history.sort(
-          (a: any, b: any) => b?.id - a?.id
-        );
-        return (
-          <div className="text-left">
-            {row?.original?.participant_payment_history?.length
-              ? sortedRows[0]?.payment_transaction_id
-              : "-"}
-          </div>
-        );
-      },
+        cell: ({ row }: any) => {
+            const sortedRows =
+                row?.original?.participant_payment_history.sort(
+                    (a: any, b: any) => b?.id - a?.id
+                );
+            return (
+                <div className="text-left">
+                    {row?.original?.participant_payment_history?.length
+                        ? sortedRows[0]?.payment_transaction_id
+                        : "-"}
+                </div>
+            );
+        },
     },
     {
-      accessorKey: "Payment Method",
-      column_name: t("course.participants:view_participant.payment_method"),
-      header: ({ column }) => {
-        return (
-          <div className="min-w-[200px] text-left">
-            {t("course.participants:view_participant.payment_method")}
-          </div>
-        );
-      },
+        accessorKey: "Payment Method",
+        column_name: t(
+            "course.participants:view_participant.payment_method"
+        ),
+        header: ({ column }) => {
+            return (
+                <div className="min-w-[200px] text-left">
+                    {t(
+                        "course.participants:view_participant.payment_method"
+                    )}
+                </div>
+            );
+        },
 
-      // This any will be removed after internal dataStructure implementation
+        // This any will be removed after internal dataStructure implementation
 
-      cell: ({ row }: any) => {
-        return (
-          <div className="text-left">
-            {row?.original?.payment_method?.name
-              ? translatedText(row?.original?.payment_method?.name)
-              : "-"}
-          </div>
-        );
-      },
+        cell: ({ row }: any) => {
+            return (
+                <div className="text-left">
+                    {row?.original?.payment_method?.name
+                        ? translatedText(
+                            row?.original?.payment_method?.name
+                        )
+                        : "-"}
+                </div>
+            );
+        },
     },
     {
       accessorKey: "Balance",
@@ -537,38 +552,37 @@ export const columns = () => {
       },
     },
     {
-      accessorKey: "Program Agreement Status",
-      column_name: t(
-        "course.participants:find_participant.program_agreement_status"
-      ),
-      header: ({ column }) => {
-        return (
-          <div className="min-w-[150px] text-left">
-            {t("course.participants:find_participant.program_agreement_status")}
-          </div>
-        );
-      },
+        accessorKey: "Program Agreement Status",
+        column_name: t(
+            "course.participants:find_participant.program_agreement_status"
+        ),
+        header: ({ column }) => {
+            return (
+                <div className="min-w-[150px] text-left">
+                    {t(
+                        "course.participants:find_participant.program_agreement_status"
+                    )}
+                </div>
+            );
+        },
 
-      // This any will be removed after internal dataStructure implementation
+        // This any will be removed after internal dataStructure implementation
 
-      // cell: ({ row }: any) => {
-      //   const toggle =
-      //     row?.original?.is_program_agreement_checked === true
-      //       ? "Completed"
-      //       : row?.original?.is_program_agreement_checked === false
-      //       ? "Pending"
-      //       : "-";
-      //   return <div className="min-w-[150px] text-left">{toggle}</div>;
-      // },
-      cell: ({ row }: any) => {
-        const toggle =
-          row?.original?.is_program_agreement_checked === true
-            ? t("course.find_course:completed")
-            : row?.original?.is_program_agreement_checked === false
-            ? t("course.participants:edit_participant.pending")
-            : "-";
-        return <div className="min-w-[150px] text-left">{toggle}</div>;
-      },
+        // cell: ({ row }: any) => {
+        //   const toggle =
+        //     row?.original?.is_program_agreement_checked === true
+        //       ? "Completed"
+        //       : row?.original?.is_program_agreement_checked === false
+        //       ? "Pending"
+        //       : "-";
+        //   return <div className="min-w-[150px] text-left">{toggle}</div>;
+        // },
+        cell: ({ row }: any) => {
+
+        return <div className="min-w-[150px] text-left">
+            {row?.original?.program_aggrement_status?t(`enum:${row?.original?.program_aggrement_status}`):"-"}
+        </div>;
+        },
     },
     {
       accessorKey: "Program Agreement Date",
@@ -595,40 +609,36 @@ export const columns = () => {
       },
     },
     {
-      accessorKey: "Health Declaration Status",
-      column_name: t(
-        "course.participants:find_participant.health_declaration_status"
-      ),
-      header: ({ column }) => {
-        return (
-          <div className="min-w-[150px] text-left">
-            {t(
-              "course.participants:find_participant.health_declaration_status"
-            )}
-          </div>
-        );
-      },
+        accessorKey: "Health Declaration Status",
+        column_name: t(
+            "course.participants:find_participant.health_declaration_status"
+        ),
+        header: ({ column }) => {
+            return (
+                <div className="min-w-[150px] text-left">
+                    {t(
+                        "course.participants:find_participant.health_declaration_status"
+                    )}
+                </div>
+            );
+        },
 
-      // This any will be removed after internal dataStructure implementation
+                // This any will be removed after internal dataStructure implementation
 
-      // cell: ({ row }: any) => {
-      //   const toggle =
-      //     row?.original?.is_health_declaration_checked === true
-      //       ? "Completed"
-      //       : row?.original?.is_health_declaration_checked === false
-      //       ? "Pending"
-      //       : "-";
-      //   return <div className="min-w-[150px] text-left">{toggle}</div>;
-      // },
-      cell: ({ row }: any) => {
-        const toggle =
-          row?.original?.is_health_declaration_checked === true
-            ? t("course.find_course:completed")
-            : row?.original?.is_health_declaration_checked === false
-            ? t("course.participants:edit_participant.pending")
-            : "-";
-        return <div className="min-w-[150px] text-left">{toggle}</div>;
-      },
+                // cell: ({ row }: any) => {
+                //   const toggle =
+                //     row?.original?.is_health_declaration_checked === true
+                //       ? "Completed"
+                //       : row?.original?.is_health_declaration_checked === false
+                //       ? "Pending"
+                //       : "-";
+                //   return <div className="min-w-[150px] text-left">{toggle}</div>;
+                // },
+        cell: ({ row }: any) => {
+        return <div className="min-w-[150px] text-left">
+            {row?.original?.health_declaration_status?t(`enum:${row?.original?.health_declaration_status}`):"-"}
+            </div>;
+        },
     },
     {
       accessorKey: "Health Declaration Consent Date",
@@ -664,9 +674,13 @@ export const columns = () => {
       cell: ({ row }) => {
         const router = useRouter();
         const { data: loggedInUserData }: any = useGetIdentity();
+        console.log( loggedInUserData?.userData?.user_roles,'loggedInUserData');
+        
         const actionMenu = getActionMenuItems(
           loggedInUserData?.userData?.user_roles
         );
+        console.log(actionMenu,'actionMenuactionMenu');
+        
         const [openSendEmailComfirmation, setOpenSendEmailComfirmation] =
           useState(false);
 
@@ -745,12 +759,13 @@ export const columns = () => {
                         );
                       }}
                     >
-                      {value?.option}
+                                 {value?.option}
                     </DropdownMenuItem>
                   ))}
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
+
             {openSendEmailComfirmation && (
               <AlertDialog open={openSendEmailComfirmation}>
                 <AlertDialogContent>
@@ -760,7 +775,7 @@ export const columns = () => {
                       {t("new_strings:email_confirmation_text")}
                       <br></br>
                       <span className="font-medium">
-                        {row?.original?.contact_id?.email}
+                      {row?.original?.contact_id?.email}
                       </span>
                     </div>
                     <div className="flex gap-4">
@@ -781,12 +796,13 @@ export const columns = () => {
                         {t("new_strings:ok_button")}
                       </Button>
                     </div>
-                  </div>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-          </div>
-        );
+                    </div>
+                    </AlertDialogContent>
+                    </AlertDialog>
+                        
+                 
+        )}
+        </div>)
       },
     },
   ];

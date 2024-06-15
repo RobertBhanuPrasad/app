@@ -9,34 +9,22 @@ import {
   TEACHER,
 } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export const getActionMenuItems = (loggedInUserRoles: any) => {
   const { t } = useTranslation(["common", "new_strings", "course.view_course"]);
+  const { optionLabelValue } = optionLabelValueStore()
 
-  const teacherRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    TEACHER
-  )?.id;
+  const teacherRoleId = 42
 
-  const programOrganizerRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    PROGRAM_ORGANIZER
-  )?.id;
 
-  const superAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    SUPER_ADMIN
-  )?.id;
+  const programOrganizerRoleId = 43
 
-  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    NATIONAL_ADMIN
-  )?.id;
+  const superAdminRoleId = 45
 
-  const financeAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    FINANCE_ADMIN
-  )?.id;
+  const nationalAdminRoleId = 44
+
+  const financeAdminRoleId = 70
 
   const loggedInUserRoleIds = loggedInUserRoles?.map(
     (record: any) => record?.role_id?.id

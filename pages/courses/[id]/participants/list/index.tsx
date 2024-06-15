@@ -1,40 +1,33 @@
-import Form from "@components/Formfield";
-import { BaseTable } from "@components/course/findCourse/BaseTable";
-import { ParticipantsAdvanceFilter } from "@components/participants/ParticipantsListAdvanceFilters";
-import { ParticipantsListMainHeader } from "@components/participants/ParticipantsListMainHeader";
-import { columns } from "@components/participants/columns";
-import CalenderIcon from "@public/assets/CalenderIcon";
-import ClearAll from "@public/assets/ClearAll";
-import CrossIcon from "@public/assets/CrossIcon";
-import DropDown from "@public/assets/DropDown";
-import Tick from "@public/assets/Tick";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { CrudFilters, useTable } from "@refinedev/core";
-import { format } from "date-fns";
-import { SearchIcon } from "lucide-react";
-import { useRouter } from "next/router";
-import { CountComponent } from "pages/courses/list";
-import React, { useEffect, useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
-import { translatedText } from "src/common/translations";
+import Form from '@components/Formfield'
+import { BaseTable } from '@components/course/findCourse/BaseTable'
+import { ParticipantsAdvanceFilter } from '@components/participants/ParticipantsListAdvanceFilters'
+import { ParticipantsListMainHeader } from '@components/participants/ParticipantsListMainHeader'
+import { columns } from '@components/participants/columns'
+import CalenderIcon from '@public/assets/CalenderIcon'
+import ClearAll from '@public/assets/ClearAll'
+import CrossIcon from '@public/assets/CrossIcon'
+import DropDown from '@public/assets/DropDown'
+import Tick from '@public/assets/Tick'
+import { ChevronDownIcon } from '@radix-ui/react-icons'
+import { CrudFilters, useTable } from '@refinedev/core'
+import { format } from 'date-fns'
+import { SearchIcon } from 'lucide-react'
+import { useRouter } from 'next/router'
+import { CountComponent } from 'pages/courses/list'
+import React, { useEffect, useState } from 'react'
+import { useController, useFormContext } from 'react-hook-form'
+import { translatedText } from 'src/common/translations'
+import { PARTICIPANT_ATTENDANCE_STATUS, PARTICIPANT_PAYMENT_STATUS } from 'src/constants/OptionLabels'
+import { DateRangePicker } from 'src/ui/DateRangePicker'
+import { AlertDialog, AlertDialogContent } from 'src/ui/alert-dialog'
+import { Button } from 'src/ui/button'
+import { Checkbox } from 'src/ui/checkbox'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'src/ui/dropdown-menu'
+import { Input } from 'src/ui/input'
+import { MultiSelect } from 'src/ui/multi-select'
+import { Popover, PopoverContent, PopoverTrigger } from 'src/ui/popover'
 import {
-  PARTICIPANT_ATTENDANCE_STATUS,
-  PARTICIPANT_PAYMENT_STATUS,
-} from "src/constants/OptionLabels";
-import { DateRangePicker } from "src/ui/DateRangePicker";
-import { AlertDialog, AlertDialogContent } from "src/ui/alert-dialog";
-import { Button } from "src/ui/button";
-import { Checkbox } from "src/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "src/ui/dropdown-menu";
-import { Input } from "src/ui/input";
-import { MultiSelect } from "src/ui/multi-select";
-import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
-import {
+  getEnumsWithLabel,
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
@@ -48,12 +41,17 @@ import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import { SortingState } from "@tanstack/react-table";
-
+import { optionLabelValueStore } from 'src/zustandStore/OptionLabelValueStore'
 function index() {
-  const router = useRouter();
-  const programID: number | undefined = router?.query?.id
-    ? parseInt(router.query.id as string)
-    : undefined;
+  const { optionLabelValue } = optionLabelValueStore()
+  if (!optionLabelValue) {
+    return <div className="flex justify-center align-center pt-[10%]"><div className="loader"></div></div>
+  }
+  return <ParticipantListingPage />
+}
+function ParticipantListingPage() {
+  const router = useRouter()
+  const programID: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
   const {
     ParticpantFiltersData,
@@ -73,12 +71,12 @@ function index() {
     /**
      * Initial filter state
      */
-    initial?: CrudFilters;
+    initial?: CrudFilters
     /**
      * Default and unchangeable filter state
      *  @default `[]`
      */
-    permanent: CrudFilters;
+    permanent: CrudFilters
     /**
      * Default behavior of the `setFilters` function
      * @default `"merge"`
@@ -87,17 +85,17 @@ function index() {
      * Whether to use server side filter or not.
      * @default "server"
      */
-    mode?: "server" | "off";
+    mode?: 'server' | 'off'
   } = {
-    permanent: [{ field: "program_id", operator: "eq", value: programID }],
-  };
+    permanent: [{ field: 'program_id', operator: 'eq', value: programID }]
+  }
 
   if (ParticpantFiltersData?.participant_code) {
     filters.permanent.push({
-      field: "participant_code",
-      operator: "contains",
-      value: ParticpantFiltersData?.participant_code,
-    });
+      field: 'participant_code',
+      operator: 'contains',
+      value: ParticpantFiltersData?.participant_code
+    })
   }
 
   //If we select date range for registration date then we have to write filter to fetch the participants based on the range
@@ -125,167 +123,144 @@ function index() {
               24 * 60 * 60 * 1000
           )
             ?.toISOString()
-            ?.replace("T", " ")
-            ?.slice(0, -5) + "+00",
+            ?.replace('T', ' ')
+            ?.slice(0, -5) + '+00'
       },
       {
-        field: "created_at",
-        operator: "lte",
+        field: 'created_at',
+        operator: 'lte',
         value:
           ParticpantFiltersData?.registration_date?.to &&
           new Date(
-            new Date(
-              ParticpantFiltersData?.registration_date?.to?.setUTCHours(
-                23,
-                59,
-                0,
-                0
-              )
-            )?.getTime() +
+            new Date(ParticpantFiltersData?.registration_date?.to?.setUTCHours(23, 59, 0, 0))?.getTime() +
               24 * 60 * 60 * 1000
           )
             ?.toISOString()
-            ?.replace("T", " ")
-            ?.slice(0, -5) + "+00",
+            ?.replace('T', ' ')
+            ?.slice(0, -5) + '+00'
       }
-    );
+    )
   }
 
   if (ParticpantFiltersData?.transaction_status?.length) {
     filters.permanent.push({
-      field: "payment_status_id",
-      operator: "in",
-      value: ParticpantFiltersData?.transaction_status,
-    });
+      field: 'payment_status',
+      operator: 'in',
+      value: ParticpantFiltersData?.transaction_status
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.full_name?.length) {
     filters.permanent.push({
-      field: "contact_id.full_name",
-      operator: "contains",
-      value: ParticpantFiltersData?.advanceFilter?.full_name,
-    });
+      field: 'contact_id.full_name',
+      operator: 'contains',
+      value: ParticpantFiltersData?.advanceFilter?.full_name
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.email?.length) {
     filters.permanent.push({
-      field: "contact_id.email",
-      operator: "contains",
-      value: ParticpantFiltersData?.advanceFilter?.email,
-    });
+      field: 'contact_id.email',
+      operator: 'contains',
+      value: ParticpantFiltersData?.advanceFilter?.email
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.mobile?.length) {
     filters.permanent.push({
-      field: "contact_id.mobile",
-      operator: "contains",
-      value: ParticpantFiltersData?.advanceFilter?.mobile,
-    });
+      field: 'contact_id.mobile',
+      operator: 'contains',
+      value: ParticpantFiltersData?.advanceFilter?.mobile
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.transaction_status?.length) {
     filters.permanent.push({
-      field: "payment_status_id",
-      operator: "in",
-      value: ParticpantFiltersData?.advanceFilter?.transaction_status,
-    });
+      field: 'payment_status',
+      operator: 'in',
+      value: ParticpantFiltersData?.advanceFilter?.transaction_status
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.transaction_type?.length) {
     filters.permanent.push({
-      field: "transaction_type",
-      operator: "in",
-      value: ParticpantFiltersData?.advanceFilter?.transaction_type,
-    });
+      field: 'payment_type',
+      operator: 'in',
+      value: ParticpantFiltersData?.advanceFilter?.transaction_type
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.payment_method?.length) {
     filters.permanent.push({
-      field: "payment_method",
-      operator: "in",
-      value: ParticpantFiltersData?.advanceFilter?.payment_method,
-    });
+      field: 'sub_payment_method',
+      operator: 'in',
+      value: ParticpantFiltersData?.advanceFilter?.payment_method
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.fee_level?.length) {
     filters.permanent.push({
-      field: "price_category_id.fee_level_id",
-      operator: "in",
-      value: ParticpantFiltersData?.advanceFilter?.fee_level,
-    });
+      field: 'price_category_id.fee_level_id',
+      operator: 'in',
+      value: ParticpantFiltersData?.advanceFilter?.fee_level
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.attendance_status?.length) {
     filters.permanent.push({
-      field: "participant_attendence_status_id",
-      operator: "in",
-      value: ParticpantFiltersData?.advanceFilter?.attendance_status,
-    });
+      field: 'attendance_type',
+      operator: 'in',
+      value: ParticpantFiltersData?.advanceFilter?.attendance_status
+    })
   }
 
   if (ParticpantFiltersData?.advanceFilter?.health_consent_status) {
     if (
-      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ==
-        true &&
-      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ==
-        true
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed == true &&
+      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending == true
     ) {
       filters.permanent.push({
-        field: "is_health_declaration_checked",
-        operator: "in",
-        value: [true, false],
-      });
-    } else if (
-      ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed ==
-      true
-    ) {
+        field: 'is_health_declaration_checked',
+        operator: 'in',
+        value: [true, false]
+      })
+    } else if (ParticpantFiltersData?.advanceFilter?.health_consent_status?.completed == true) {
       filters.permanent.push({
-        field: "is_health_declaration_checked",
-        operator: "eq",
-        value: true,
-      });
-    } else if (
-      ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending ==
-      true
-    ) {
+        field: 'is_health_declaration_checked',
+        operator: 'eq',
+        value: true
+      })
+    } else if (ParticpantFiltersData?.advanceFilter?.health_consent_status?.pending == true) {
       filters.permanent.push({
-        field: "is_health_declaration_checked",
-        operator: "eq",
-        value: false,
-      });
+        field: 'is_health_declaration_checked',
+        operator: 'eq',
+        value: false
+      })
     }
   }
 
   if (ParticpantFiltersData?.advanceFilter?.program_agreement_status) {
     if (
-      ParticpantFiltersData?.advanceFilter?.program_agreement_status
-        ?.completed == true &&
-      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ==
-        true
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.completed == true &&
+      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending == true
     ) {
       filters.permanent.push({
-        field: "is_program_agreement_checked",
-        operator: "in",
-        value: [true, false],
-      });
-    } else if (
-      ParticpantFiltersData?.advanceFilter?.program_agreement_status
-        ?.completed == true
-    ) {
+        field: 'is_program_agreement_checked',
+        operator: 'in',
+        value: [true, false]
+      })
+    } else if (ParticpantFiltersData?.advanceFilter?.program_agreement_status?.completed == true) {
       filters.permanent.push({
-        field: "is_program_agreement_checked",
-        operator: "eq",
-        value: true,
-      });
-    } else if (
-      ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending ==
-      true
-    ) {
+        field: 'is_program_agreement_checked',
+        operator: 'eq',
+        value: true
+      })
+    } else if (ParticpantFiltersData?.advanceFilter?.program_agreement_status?.pending == true) {
       filters.permanent.push({
-        field: "is_program_agreement_checked",
-        operator: "eq",
-        value: false,
-      });
+        field: 'is_program_agreement_checked',
+        operator: 'eq',
+        value: false
+      })
     }
   }
   const [sorting, setSorting] = useState<SortingState>([
@@ -324,15 +299,15 @@ function index() {
     pageSize,
     setPageSize,
     current,
-    setCurrent,
+    setCurrent
   } = useTable({
-    resource: "participant_registration",
+    resource: 'participant_registration',
     pagination: {
-      pageSize: 25, //pageSize is set to 25
+      pageSize: 25 //pageSize is set to 25
     },
     meta: {
       select:
-        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+        '*,contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code),participant_payment_history(*)'
     },
     filters: filters,
     sorters: {
@@ -345,202 +320,170 @@ function index() {
     },
   });
 
-  const supabase = supabaseClient();
+  const supabase = supabaseClient()
 
-  console.log("Participant table data", participantData);
+  console.log('Participant table data', participantData)
+  console.log(participantData?.isLoading, 'loadingg')
 
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [allSelected, setAllSelected] = useState<boolean>();
-  const [
-    displayTransactionStatusBulkActionError,
-    setDisplayTransactionStatusBulkActionError,
-  ] = useState(false);
-  const [bulkActionsErrorMessage, setBulkActionsErrorMessage] = useState("");
-  const [bulkActionsErrorTitle, setBulkActionsErrorTitle] = useState("");
-  const [bulkActionsSuccessIcon, setbulkActionsSuccessIcon] = useState(false);
+  const [rowSelection, setRowSelection] = React.useState({})
+  const [allSelected, setAllSelected] = useState<boolean>()
+  const [displayTransactionStatusBulkActionError, setDisplayTransactionStatusBulkActionError] = useState(false)
+  const [bulkActionsErrorMessage, setBulkActionsErrorMessage] = useState('')
+  const [bulkActionsErrorTitle, setBulkActionsErrorTitle] = useState('')
+  const [bulkActionsSuccessIcon, setbulkActionsSuccessIcon] = useState(false)
 
   useEffect(() => {
-    if (!participantData?.data?.data) return;
-    const allRowSelection: any = {};
+    if (!participantData?.data?.data) return
+    const allRowSelection: any = {}
     //If allSelected is true then only i need check rows when i navigate to other pages
     if (allSelected) {
       participantData?.data?.data?.forEach((row: any) => {
-        allRowSelection[row?.id] = allSelected;
-      });
-      setRowSelection(allRowSelection);
+        allRowSelection[row?.id] = allSelected
+      })
+      setRowSelection(allRowSelection)
     }
-  }, [allSelected, participantData?.data?.data]);
+  }, [allSelected, participantData?.data?.data])
 
   useEffect(() => {
-    const tempCount = Object.values(rowSelection).filter(
-      (value) => value === true
-    ).length;
-    setSelectedTableRows(tempCount);
-    setSelectedRowObjects(rowSelection);
-    tempCount == 0 && setBulkActionSelectedValue(t("new_strings:bulk_actions"));
-    tempCount == 0 && setEnableBulkOptions(true);
-  }, [rowSelection]);
+    const tempCount = Object.values(rowSelection).filter(value => value === true).length
+    setSelectedTableRows(tempCount)
+    setSelectedRowObjects(rowSelection)
+    tempCount == 0 && setBulkActionSelectedValue(t('new_strings:bulk_actions'))
+    tempCount == 0 && setEnableBulkOptions(true)
+  }, [rowSelection])
 
   /**
    *Here whenever i check select all then i need to check and unchekc all row selection also
    */
   const handleSelectAll = (val: boolean) => {
-    const allRowSelection: any = {};
+    const allRowSelection: any = {}
 
     participantData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = val;
-    });
-    setRowSelection(allRowSelection);
+      allRowSelection[row?.id] = val
+    })
+    setRowSelection(allRowSelection)
 
-    setAllSelected(val);
-  };
+    setAllSelected(val)
+  }
 
   /**
    *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
    */
   const participantsRowSelectionOnChange = (row: any) => {
-    const selectedRow = row();
-    setRowSelection(row);
+    const selectedRow = row()
+    setRowSelection(row)
     if (Object.values(selectedRow).length === 0) {
-      setAllSelected(false);
+      setAllSelected(false)
     }
-  };
+  }
 
-  const rowCount = Object.values(rowSelection).filter(
-    (value) => value === true
-  ).length;
+  const rowCount = Object.values(rowSelection).filter(value => value === true).length
 
-  const [open, setOpen] = useState(false);
-  const [disableBulkOptions, setEnableBulkOptions] = useState(true);
-  const [bulkActions, setBulkAction] = useState("");
-  const [loading, setLoading] = useState(false);
-  const attendanceOptions = getOptionValuesByOptionLabel(
-    PARTICIPANT_ATTENDANCE_STATUS
-  )?.[0]?.option_values;
+  const [open, setOpen] = useState(false)
+  const [disableBulkOptions, setEnableBulkOptions] = useState(true)
+  const [bulkActions, setBulkAction] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { optionLabelValue } = optionLabelValueStore()
 
-  const paymentStatusOptions = getOptionValuesByOptionLabel(
-    PARTICIPANT_PAYMENT_STATUS
-  )?.[0]?.option_values;
+  const attendanceOptions = getEnumsWithLabel({ label: PARTICIPANT_ATTENDANCE_STATUS })
 
-  const transactionStatusPendingObject = getOptionValueObjectByOptionOrder(
-    "PARTICIPANT_PAYMENT_STATUS",
-    2
-  );
+  const paymentStatusOptions = getEnumsWithLabel({ label: PARTICIPANT_PAYMENT_STATUS })
+
+  const transactionStatusPendingObject = optionLabelValue?.participant_payment_status?.PENDING
 
   const handleUpdateAttendanceStatus = async (attendance_status_id: number) => {
     const participantIds: number[] = Object.keys(selectedRowObjects)
       .filter((key: any) => selectedRowObjects[key] === true)
-      .map(Number);
+      .map(Number)
 
     const { error } = await supabase
-      .from("participant_registration")
-      .update({ participant_attendence_status_id: attendance_status_id })
-      .in("id", participantIds);
+      .from('participant_registration')
+      .update({ attendance_type: attendance_status_id })
+      .in('id', participantIds)
 
     if (!error) {
-      setDisplayTransactionStatusBulkActionError(true);
-      setbulkActionsSuccessIcon(true);
+      setDisplayTransactionStatusBulkActionError(true)
+      setbulkActionsSuccessIcon(true)
       // setBulkActionsErrorTitle(
       //   `${participantIds?.length} Records Successfully Updated`
       // );
-      setBulkActionsErrorTitle(
-        `${participantIds?.length} ${t(
-          "new_strings:records_successfully_updated"
-        )}`
-      );
+      setBulkActionsErrorTitle(`${participantIds?.length} ${t('new_strings:records_successfully_updated')}`)
       // setBulkActionsErrorMessage(
       //   `The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.`
       // );
-      setBulkActionsErrorMessage(t("new_strings:bulk_action_saved_message"));
+      setBulkActionsErrorMessage(t('new_strings:bulk_action_saved_message'))
     }
-  };
+  }
 
-  const handleBulkUpdateTransactionStatus = async (
-    transaction_status_id: number
-  ) => {
-    const programID: number | undefined = router?.query?.id
-      ? parseInt(router.query.id as string)
-      : undefined;
+  const handleBulkUpdateTransactionStatus = async (transaction_status: string) => {
+    const programID: number | undefined = router?.query?.id ? parseInt(router.query.id as string) : undefined
 
     const participantIds: number[] = Object.keys(selectedRowObjects)
       .filter((key: any) => selectedRowObjects[key] === true)
-      .map(Number);
+      .map(Number)
 
-    const transactionPendingStatusID = transactionStatusPendingObject?.id;
+    const transactionPendingStatus = transactionStatusPendingObject
 
     const { data: selectedTransactionStatusValues } = await supabase
-      .from("participant_payment_history")
-      .select("transaction_status_id")
+      .from('participant_payment_history')
+      .select('payment_status')
       .match({ program_id: programID })
-      .in("participant_id", participantIds)
-      .order("transaction_date", { ascending: false })
-      .limit(1);
+      .in('participant_id', participantIds)
+      .order('transaction_date', { ascending: false })
+      .limit(1)
 
-    const selectTransactionStatusIds = selectedTransactionStatusValues?.map(
-      (record) => record?.transaction_status_id
-    );
+    const selectTransactionStatusIds = selectedTransactionStatusValues?.map(record => record?.payment_status)
 
-    const allValuesSame = (arr: any): boolean =>
-      arr.every((val: any) => val === transactionPendingStatusID);
+    const allValuesSame = (arr: any): boolean => arr.every((val: any) => val === transactionPendingStatus)
 
     if (selectTransactionStatusIds?.length) {
       if (allValuesSame(selectTransactionStatusIds)) {
         const { error } = await supabase
-          .from("participant_payment_history")
-          .update({ transaction_status_id: transaction_status_id })
+          .from('participant_payment_history')
+          .update({ payment_status: transaction_status })
           .match({
             program_id: programID,
-            transaction_status_id: transactionPendingStatusID,
+            payment_status: transactionPendingStatus
           })
-          .in("participant_id", participantIds)
-          .order("transaction_date", { ascending: false })
-          .limit(1);
+          .in('participant_id', participantIds)
+          .order('transaction_date', { ascending: false })
+          .limit(1)
 
         if (!error) {
-          setDisplayTransactionStatusBulkActionError(true);
-          setbulkActionsSuccessIcon(true);
+          setDisplayTransactionStatusBulkActionError(true)
+          setbulkActionsSuccessIcon(true)
           // setBulkActionsErrorTitle("Bulk Transaction Status Update");
-          setBulkActionsErrorTitle(
-            t("new_strings:bulk_transaction_status_update")
-          );
+          setBulkActionsErrorTitle(t('new_strings:bulk_transaction_status_update'))
           // setBulkActionsErrorMessage(
           //   `${participantIds?.length} Records Successfully Updated`
           // );
-          setBulkActionsErrorMessage(
-            `${participantIds?.length} ${t(
-              "new_strings:records_successfully_updated"
-            )}`
-          );
+          setBulkActionsErrorMessage(`${participantIds?.length} ${t('new_strings:records_successfully_updated')}`)
         }
       } else {
-        setDisplayTransactionStatusBulkActionError(true);
-        setbulkActionsSuccessIcon(false);
+        setDisplayTransactionStatusBulkActionError(true)
+        setbulkActionsSuccessIcon(false)
         // setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
-        setBulkActionsErrorTitle(
-          t("new_strings:error_bulk_transaction_status_update")
-        );
+        setBulkActionsErrorTitle(t('new_strings:error_bulk_transaction_status_update'))
         // setBulkActionsErrorMessage(`Bulk update can only be done for payments with “Pending” status.
         // Please select records whose transaction status value is only
         // “Pending”. To update the payments with status other than
         // “Pending”, please visit the Registration details for that
         // participant.`);
-        setBulkActionsErrorMessage(t("new_strings:bulk_action_error_message"));
+        setBulkActionsErrorMessage(t('new_strings:bulk_action_error_message'))
       }
     } else {
-      setDisplayTransactionStatusBulkActionError(true);
-      setbulkActionsSuccessIcon(false);
+      setDisplayTransactionStatusBulkActionError(true)
+      setbulkActionsSuccessIcon(false)
       // setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
-      setBulkActionsErrorTitle(
-        t("new_strings:error_bulk_transaction_status_update")
-      );
+      setBulkActionsErrorTitle(t('new_strings:error_bulk_transaction_status_update'))
       // setBulkActionsErrorMessage(
       //   "No transaction history found for the selected participant(s)"
       // );
-      setBulkActionsErrorMessage(t("new_strings:no_transaction_history_found"));
+      setBulkActionsErrorMessage(t('new_strings:no_transaction_history_found'))
     }
-  };
+  }
 
-  const languageCode = useGetLanguageCode();
+  const languageCode = useGetLanguageCode()
 
   const bulk_actions = t("new_strings:bulk_actions");
   const [bulkActionSelectedValue, setBulkActionSelectedValue] =
@@ -548,113 +491,107 @@ function index() {
 
   const excelColumns = [
     {
-      column_name: t("course.participants:find_participant.registration_id"),
-      path: ["participant_code"],
+      column_name: t('course.participants:find_participant.registration_id'),
+      path: ['participant_code']
     },
     {
-      column_name: t("course.participants:find_participant.registration_date"),
-      path: ["created_at"],
+      column_name: t('course.participants:find_participant.registration_date'),
+      path: ['created_at']
     },
     {
-      column_name: t("course.participants:find_participant.name"),
-      path: ["contact_id", "full_name"],
+      column_name: t('course.participants:find_participant.name'),
+      path: ['contact_id', 'full_name']
     },
     {
-      column_name: t("course.participants:find_participant.nif"),
-      path: ["contact_id", "nif"],
+      column_name: t('course.participants:find_participant.nif'),
+      path: ['contact_id', 'nif']
     },
     {
-      column_name: t("course.participants:find_participant.date_of_birth"),
-      path: ["contact_id", "date_of_birth"],
+      column_name: t('course.participants:find_participant.date_of_birth'),
+      path: ['contact_id', 'date_of_birth']
     },
     {
-      column_name: t("course.participants:find_participant.phone"),
-      path: ["contact_id", "mobile"],
+      column_name: t('course.participants:find_participant.phone'),
+      path: ['contact_id', 'mobile']
     },
     {
-      column_name: t("course.participants:find_participant.email"),
-      path: ["contact_id", "email"],
+      column_name: t('course.participants:find_participant.email'),
+      path: ['contact_id', 'email']
+    },
+    // {
+    //   column_name: t("course.participants:view_participant.fee_level"),
+    //   path: ["price_category_id", "fee_level_id", "name", languageCode],
+    // },
+    // {
+    //   column_name: t(
+    //     "course.participants:edit_participant.participants_information_tab.amount"
+    //   ),
+    //   path: ["price_category_id", "total"],
+    // },
+    // {
+    //   column_name: t("course.participants:view_participant.transaction_type"),
+    //   path: [
+    //     "participant_payment_history[0]",
+    //     "payment_type",
+    //     "name",
+    //     languageCode,
+    //   ],
+    // },
+    // {
+    //   column_name: t(
+    //     "course.participants:edit_participant.participants_information_tab.transaction_id"
+    //   ),
+    //   path: ["participant_payment_history[0]", "payment_transaction_id"],
+    // },
+    // {
+    //   column_name: t("course.participants:view_participant.payment_method"),
+    //   path: [
+    //     "participant_payment_history[0]",
+    //     "payment_method_id",
+    //     "name",
+    //     languageCode,
+    //   ],
+    // },
+    // {
+    //   column_name: t('course.participants:view_participant.transaction_status'),
+    //   path: ['payment_status', 'name', languageCode]
+    // },
+    // {
+    //   column_name: t('course.participants:view_participant.course_information_tab.attendance_status'),
+    //   path: ['attendance_type', 'name', languageCode]
+    // },
+    {
+      column_name: t('course.participants:find_participant.program_agreement_version'),
+      path: ['legal_agreement_version']
     },
     {
-      column_name: t("course.participants:view_participant.fee_level"),
-      path: ["price_category_id", "fee_level_id", "name", languageCode],
+      column_name: t('course.participants:find_participant.program_agreement_status'),
+      path: ['program_agreement_status']
     },
     {
       column_name: t(
         "course.participants:edit_participant.participants_information_tab.amount"
       ),
-      path: ["total_amount"],
+      path: ["total_amount"]
     },
     {
-      column_name: t("course.participants:view_participant.transaction_type"),
-      path: [
-        "participant_payment_history[0]",
-        "transaction_type_id",
-        "name",
-        languageCode,
-      ],
+      column_name: t('course.participants:find_participant.program_agreement_date'),
+      path: ['program_agreement_date']
     },
     {
-      column_name: t(
-        "course.participants:edit_participant.participants_information_tab.transaction_id"
-      ),
-      path: ["participant_payment_history[0]", "payment_transaction_id"],
+      column_name: t('course.participants:find_participant.health_declaration_status'),
+      path: ['is_health_declaration_checked']
     },
     {
-      column_name: t("course.participants:view_participant.payment_method"),
-      path: [
-        "participant_payment_history[0]",
-        "payment_method_id",
-        "name",
-        languageCode,
-      ],
-    },
-    {
-      column_name: t("course.participants:view_participant.transaction_status"),
-      path: ["payment_status_id", "name", languageCode],
-    },
-    {
-      column_name: t(
-        "course.participants:view_participant.course_information_tab.attendance_status"
-      ),
-      path: ["participant_attendence_status_id", "name", languageCode],
-    },
-    {
-      column_name: t(
-        "course.participants:find_participant.program_agreement_version"
-      ),
-      path: ["legal_agreement_version"],
-    },
-    {
-      column_name: t(
-        "course.participants:find_participant.program_agreement_status"
-      ),
-      path: ["program_agreement_status"],
-    },
-    {
-      column_name: t(
-        "course.participants:find_participant.program_agreement_date"
-      ),
-      path: ["program_agreement_date"],
-    },
-    {
-      column_name: t(
-        "course.participants:find_participant.health_declaration_status"
-      ),
-      path: ["is_health_declaration_checked"],
-    },
-    {
-      column_name: t(
-        "course.participants:find_participant.health_declaration_consent_date"
-      ),
-      path: ["health_declaration_consent_date"],
-    },
-  ];
+      column_name: t('course.participants:find_participant.health_declaration_consent_date'),
+      path: ['health_declaration_consent_date']
+    }
+  ]
 
-  const excelOption = "excel";
-  const csvOption = "CSV";
+  const excelOption = 'excel'
+  const csvOption = 'CSV'
 
-  const countryCode = useGetCountryCode();
+  const countryCode = useGetCountryCode()
 
   //TODO: We can uncomment this when BA accepts this one
   //TODO: right now commenting because we are getting issues in participant home page
@@ -681,7 +618,7 @@ function index() {
               <div
                 className="cursor-pointer"
                 onClick={() => {
-                  setDisplayTransactionStatusBulkActionError(false);
+                  setDisplayTransactionStatusBulkActionError(false)
                 }}
               >
                 <CrossIcon fill="#333333" />
@@ -689,20 +626,18 @@ function index() {
             </div>
             <div className="w-full flex flex-col text-center items-center gap-4">
               {bulkActionsSuccessIcon && <Tick />}
-              <div className="font-bold text-[20px]">
-                {bulkActionsErrorTitle}
-              </div>
+              <div className="font-bold text-[20px]">{bulkActionsErrorTitle}</div>
               <div className="w-full px-4">{bulkActionsErrorMessage}</div>
               <div>
                 <Button
                   onClick={() => {
-                    setDisplayTransactionStatusBulkActionError(false);
-                    setBulkActionsErrorTitle("");
-                    setBulkActionsErrorMessage("");
-                    setbulkActionsSuccessIcon(false);
+                    setDisplayTransactionStatusBulkActionError(false)
+                    setBulkActionsErrorTitle('')
+                    setBulkActionsErrorMessage('')
+                    setbulkActionsSuccessIcon(false)
                   }}
                 >
-                  {t("close")}
+                  {t('close')}
                 </Button>
               </div>
             </div>
@@ -735,32 +670,28 @@ function index() {
                   {/* TODO (Not in MVP Scope): Print Registration Form */}
                   <DropdownMenuItem
                     onClick={() => {
-                      setEnableBulkOptions(true);
+                      setEnableBulkOptions(true)
                     }}
                   >
                     Print Registration Form
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
-                      setBulkActionSelectedValue(
-                        t("new_strings:update_attendance_status")
-                      );
-                      setEnableBulkOptions(false);
-                      setBulkAction("attendance");
+                      setBulkActionSelectedValue(t('new_strings:update_attendance_status'))
+                      setEnableBulkOptions(false)
+                      setBulkAction('attendance')
                     }}
                   >
-                    {t("new_strings:update_attendance_status")}
+                    {t('new_strings:update_attendance_status')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
-                      setBulkActionSelectedValue(
-                        t("new_strings:update_transaction_status")
-                      );
-                      setEnableBulkOptions(false);
-                      setBulkAction("transaction");
+                      setBulkActionSelectedValue(t('new_strings:update_transaction_status'))
+                      setEnableBulkOptions(false)
+                      setBulkAction('transaction')
                     }}
                   >
-                    {t("new_strings:update_transaction_status")}
+                    {t('new_strings:update_transaction_status')}
                   </DropdownMenuItem>
                 </div>
               </DropdownMenuContent>
@@ -776,31 +707,24 @@ function index() {
                   className="flex flex-row justify-between w-[152px] h-10"
                   disabled={selectedTableRows > 0 ? disableBulkOptions : true}
                 >
-                  {t("course.participants:find_participant.select_status")}
+                  {t('course.participants:find_participant.select_status')}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-[150px]">
                 <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333] w-full">
-                  {bulkActions == "attendance"
+                  {bulkActions == 'attendance'
                     ? attendanceOptions?.map((record: any) => (
-                        <DropdownMenuItem
-                          key={record.id}
-                          onClick={() =>
-                            handleUpdateAttendanceStatus(record.id)
-                          }
-                        >
-                          {translatedText(record.name)}
+                        <DropdownMenuItem key={record.value} onClick={() => handleUpdateAttendanceStatus(record.value)}>
+                         {t(`enum:${record.label}`)}
                         </DropdownMenuItem>
                       ))
                     : paymentStatusOptions?.map((record: any) => (
                         <DropdownMenuItem
-                          key={record.id}
-                          onClick={() =>
-                            handleBulkUpdateTransactionStatus(record.id)
-                          }
+                          key={record.value}
+                          onClick={() => handleBulkUpdateTransactionStatus(record.value)}
                         >
-                          {translatedText(record.name)}
+                           {t(`enum:${record.label}`)}
                         </DropdownMenuItem>
                       ))}
                 </div>
@@ -824,14 +748,14 @@ function index() {
             setSorting={setSorting}
             pagination={true}
             tableStyles={{
-              table: "",
-              rowStyles: "",
+              table: '',
+              rowStyles: ''
             }}
             columns={columns()}
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
-            noRecordsPlaceholder={t("new_strings:there_are_no_participants")}
+            noRecordsPlaceholder={t('new_strings:there_are_no_participants')}
           />
         </div>
       </div>
@@ -843,23 +767,17 @@ function index() {
               onCheckedChange={handleSelectAll}
               className="w-6 h-6 border-[1px] border-[#D0D5DD] rounded-lg"
             />
-            <div>{t("course.find_course:select_all")}</div>
-            <div className="font-semibold">
-              {participantData?.data?.total || 0}
-            </div>
+            <div>{t('course.find_course:select_all')}</div>
+            <div className="font-semibold">{participantData?.data?.total || 0}</div>
           </div>
           <div>|</div>
           <div className="flex flex-row gap-2">
-            {t("course.find_course:selected")}{" "}
-            {allSelected ? participantData?.data?.total : rowCount}{" "}
-            {t("course.find_course:out_of")}{" "}
-            <div className="font-semibold">
-              {participantData?.data?.total || 0}
-            </div>{" "}
+            {t('course.find_course:selected')} {allSelected ? participantData?.data?.total : rowCount}{' '}
+            {t('course.find_course:out_of')} <div className="font-semibold">{participantData?.data?.total || 0}</div>{' '}
           </div>
         </div>
         <div>
-          {" "}
+          {' '}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -867,139 +785,115 @@ function index() {
                 className="flex flex-row gap-2 text-sm text-[#7677F4] border  border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
-                {loading ? (
-                  <div className="loader !w-[25px]"></div>
-                ) : (
-                  t("course.find_course:export")
-                )}{" "}
+                {loading ? <div className="loader !w-[25px]"></div> : t('course.find_course:export')}{' '}
                 <ChevronDownIcon className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full focus:outline-none font-sans font-medium">
               <DropdownMenuItem
                 onClick={() => {
-                  handleExportExcel(
-                    excelColumns,
-                    filters,
-                    excelOption,
-                    setLoading,
-                    countryCode
-                  );
+                  handleExportExcel(excelColumns, filters, excelOption, setLoading, countryCode)
                 }}
                 className="p-1 focus:outline-none cursor-pointer"
               >
-                {t("new_strings:excel")}
+                {t('new_strings:excel')}
               </DropdownMenuItem>
               {/*TODO  */}
               <DropdownMenuItem
                 className="p-1  focus:outline-none cursor-pointer"
                 onClick={() => {
-                  handleExportExcel(
-                    excelColumns,
-                    filters,
-                    csvOption,
-                    setLoading,
-                    countryCode
-                  );
+                  handleExportExcel(excelColumns, filters, csvOption, setLoading, countryCode)
                 }}
               >
-                {t("course.find_course:CSV")}
+                {t('course.find_course:CSV')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default index;
+export default index
 
 const HeaderSection = () => {
-  const { t } = useTranslation([
-    "common",
-    "course.participants",
-    "new_strings",
-  ]);
+  const { t } = useTranslation(['common', 'course.participants', 'new_strings'])
   const {
     ParticpantFiltersData,
     setParticpantFiltersData,
     selectedTableRows,
     selectedRowObjects,
-    setAdvanceFilterCount,
-  } = ParticipantStore();
-  const [open, setOpen] = useState(false);
-  const { watch, setValue } = useFormContext();
-  const formData = watch();
-  const router = useRouter();
+    setAdvanceFilterCount
+  } = ParticipantStore()
+  const [open, setOpen] = useState(false)
+  const { watch, setValue } = useFormContext()
+  const formData = watch()
+  const router = useRouter()
 
   const {
-    field: { value: Searchvalue, onChange: onSearch },
+    field: { value: Searchvalue, onChange: onSearch }
   } = useController({
-    name: "participant_code",
-  });
+    name: 'participant_code'
+  })
 
   const handleSearchChange = (event: any) => {
-    const { value } = event.target;
-    const sanitizedValue = value.replace(/[^a-zA-Z0-9]/g, ""); // Regex to allow only alphabets and numbers
+    const { value } = event.target
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9]/g, '') // Regex to allow only alphabets and numbers
 
-    onSearch({ target: { value: sanitizedValue } });
-  };
-
-  const {
-    field: { value: RegistrationDate, onChange: RegistrationDateChange },
-  } = useController({
-    name: "registration_date",
-  });
+    onSearch({ target: { value: sanitizedValue } })
+  }
 
   const {
-    field: { value: transactionStatus, onChange: onSelectChange },
+    field: { value: RegistrationDate, onChange: RegistrationDateChange }
   } = useController({
-    name: "transaction_status",
-  });
+    name: 'registration_date'
+  })
 
-  const transactionStatusOptions = getOptionValuesByOptionLabel(
-    PARTICIPANT_PAYMENT_STATUS
-  )?.[0]?.option_values;
+  const {
+    field: { value: transactionStatus, onChange: onSelectChange }
+  } = useController({
+    name: 'transaction_status'
+  })
 
-  const transactionStatusValues = transactionStatusOptions?.map(
-    (record: any) => {
-      return {
-        label: translatedText(record?.name),
-        value: record?.id,
-      };
+  const transactionStatusOptions = getEnumsWithLabel({ label: PARTICIPANT_PAYMENT_STATUS })
+
+  const transactionStatusValues = transactionStatusOptions?.map((record: any) => {
+    return {
+      label: translatedText(record?.label),
+      value: record?.value
     }
-  );
+  })
 
   const handleClearAll = () => {
-    setValue("participant_code", "");
-    setValue("registration_date", { from: "", to: "" });
-    setValue("transaction_status", []);
+    setValue('participant_code', '')
+    setValue('registration_date', { from: '', to: '' })
+    setValue('transaction_status', [])
 
-    setValue("advanceFilter.full_name", "");
-    setValue("advanceFilter.email", "");
-    setValue("advanceFilter.mobile", "");
-    setValue("advanceFilter.transaction_type", []);
-    setValue("advanceFilter.payment_method", []);
-    setValue("advanceFilter.fee_level", []);
-    setValue("advanceFilter.attendance_status", "");
-    setValue("advanceFilter.health_consent_status", {
+    setValue('advanceFilter.full_name', '')
+    setValue('advanceFilter.email', '')
+    setValue('advanceFilter.mobile', '')
+    setValue('advanceFilter.transaction_type', [])
+    setValue('advanceFilter.payment_method', [])
+    setValue('advanceFilter.fee_level', [])
+    setValue('advanceFilter.attendance_status', '')
+    setValue('advanceFilter.health_consent_status', {
       completed: false,
-      pending: false,
-    });
-    setValue("advanceFilter.program_agreement_status", {
+      pending: false
+    })
+    setValue('advanceFilter.program_agreement_status', {
       completed: false,
-      pending: false,
-    });
+      pending: false
+    })
 
-    setAdvanceFilterCount(0);
-  };
+    setAdvanceFilterCount(0)
+  }
 
   return (
     <div className="flex flex-row justify-between items-center rounded-3xl bg-[#FFFFFF] shadow-md px-8 py-4 flex-wrap gap-y-4">
       {/* Advance Filter Seciton */}
       <div>
-        {" "}
+        {' '}
         <ParticipantsAdvanceFilter />
       </div>
       {/* Search Section */}
@@ -1013,15 +907,13 @@ const HeaderSection = () => {
             onChange={handleSearchChange}
             type="text"
             className="border-0 outline-none w-[190px]"
-            placeholder={t(
-              "course.participants:find_participant.search_registration"
-            )}
+            placeholder={t('course.participants:find_participant.search_registration')}
           ></Input>
         </div>
       </div>
       {/* Registration Date Filter Section */}
       <div>
-        {" "}
+        {' '}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
@@ -1037,13 +929,12 @@ const HeaderSection = () => {
                 {RegistrationDate?.from ? (
                   RegistrationDate.to ? (
                     <>
-                      {format(RegistrationDate.from, "MM/dd/yyyy")} -{" "}
-                      {format(RegistrationDate.to, "MM/dd/yyyy")}
+                      {format(RegistrationDate.from, 'MM/dd/yyyy')} - {format(RegistrationDate.to, 'MM/dd/yyyy')}
                       <div
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={e => {
+                          e.stopPropagation()
                           //when we click on cross icon we need to clear the date
-                          RegistrationDateChange(undefined);
+                          RegistrationDateChange(undefined)
                         }}
                         id="cross-icon"
                         className="ml-auto"
@@ -1053,12 +944,12 @@ const HeaderSection = () => {
                     </>
                   ) : (
                     <div className="flex justify-between items-center w-full">
-                      {format(RegistrationDate.from, "MM/dd/yyyy")}
+                      {format(RegistrationDate.from, 'MM/dd/yyyy')}
                       <div
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={e => {
+                          e.stopPropagation()
                           //when we click on cross icon we need to clear the date
-                          RegistrationDateChange(undefined);
+                          RegistrationDateChange(undefined)
                         }}
                         id="cross-icon"
                         className="ml-auto"
@@ -1068,9 +959,7 @@ const HeaderSection = () => {
                     </div>
                   )
                 ) : (
-                  <span className="font-normal text-[#999999]">
-                    {t("new_strings:search_by_registration_date")}
-                  </span>
+                  <span className="font-normal text-[#999999]">{t('new_strings:search_by_registration_date')}</span>
                 )}
               </div>
             </Button>
@@ -1079,11 +968,7 @@ const HeaderSection = () => {
             closeIcon={true}
             className="!w-[850px] !h-[470px] bg-[#FFFFFF] !rounded-3xl justify-center !p-8"
           >
-            <DateRangePickerComponent
-              setOpen={setOpen}
-              value={RegistrationDate}
-              onSelect={RegistrationDateChange}
-            />
+            <DateRangePickerComponent setOpen={setOpen} value={RegistrationDate} onSelect={RegistrationDateChange} />
           </DialogContent>
         </Dialog>
       </div>
@@ -1091,9 +976,7 @@ const HeaderSection = () => {
       <div>
         <MultiSelect
           value={transactionStatus}
-          placeholder={t(
-            "course.participants:find_participant.transaction_status"
-          )}
+          placeholder={t('course.participants:find_participant.transaction_status')}
           data={transactionStatusValues}
           onBottomReached={() => {}}
           onSearch={() => {}}
@@ -1110,24 +993,24 @@ const HeaderSection = () => {
             className=" cursor-pointer flex gap-2 items-center text-sm font-semibold text-[#7677F4]"
           >
             <ClearAll />
-            <div>{t("clear_all")}</div>
+            <div>{t('clear_all')}</div>
           </div>
         </div>
         <Button
           className="h-9 w-18 rounded-xl"
           onClick={() => {
-            setParticpantFiltersData(formData);
+            setParticpantFiltersData(formData)
           }}
         >
-          {t("apply_button")}
+          {t('apply_button')}
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
-  const { t } = useTranslation(["common", "new_strings"]);
+  const { t } = useTranslation(['common', 'new_strings'])
   return (
     <div className="relative mr-[8px] mt-[2px]">
       <DateRangePicker
@@ -1142,21 +1025,18 @@ const DateRangePickerComponent = ({ setOpen, value, onSelect }: any) => {
       />
       <div className="flex flex-row gap-4 justify-center items-center fixed p-2 rounded-b-3xl bottom-0 left-0 w-full shadow-[rgba(0,_0,_0,_0.24)_0px_2px_8px]">
         <Button
-          onClick={() => onSelect({ from: "", to: "" })}
+          onClick={() => onSelect({ from: '', to: '' })}
           className="border rounded-xl border-[#7677F4] bg-[white] w-[94px] h-10 text-[#7677F4] font-semibold"
         >
-          {t("new_strings:reset_button")}
+          {t('new_strings:reset_button')}
         </Button>
-        <Button
-          onClick={() => setOpen(false)}
-          className=" w-[94px] h-10 rounded-xl"
-        >
-          {t("apply_button")}
+        <Button onClick={() => setOpen(false)} className=" w-[94px] h-10 rounded-xl">
+          {t('apply_button')}
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const handleExportExcel = async (
   excelColumns: any,
@@ -1165,80 +1045,76 @@ const handleExportExcel = async (
   setLoading: (by: boolean) => void,
   countryCode: string
 ) => {
-  setLoading(true);
-  const supabase = supabaseClient();
+  setLoading(true)
+  const supabase = supabaseClient()
   try {
     const params = new URLSearchParams({
-      table_name: "participant_registration",
+      table_name: 'participant_registration',
       select:
-        "*,payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
-      columns: JSON.stringify(excelColumns),
+        // TODO: need to add price_category_id
+        '*, contact_id(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code),participant_payment_history(*)',
       filters: JSON.stringify(filters?.permanent),
-      sorters: JSON.stringify([{ field: "id", order: { ascending: true } }]),
-      file_type: selectOption,
-    });
-
+      sorters: JSON.stringify([{ field: 'id', order: { ascending: true } }]),
+      file_type: selectOption
+    })
+    console.log('params', params)
     //invoking the export_to_file function
-    const { data, error } = await supabase.functions.invoke(
-      `export_to_file?${params}`,
-      {
-        headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-          "country-code": countryCode,
-        },
+    const { data, error } = await supabase.functions.invoke(`export_to_file?${params}`, {
+      headers: {
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
+        'country-code': countryCode
       }
-    );
+    })
 
     if (error) {
-      console.error("Error invoking export_to_file function:", error);
-      return;
+      console.error('Error invoking export_to_file function:', error)
+      return
     }
+    console.log(data, 'dataaa')
 
     if (data?.fileUrl?.data?.publicUrl) {
       //getting file name from the url
-      const fileUrl = data.fileUrl.data.publicUrl;
-      const fileName = fileUrl.split("/").pop();
+      const fileUrl = data.fileUrl.data.publicUrl
+      const fileName = fileUrl.split('/').pop()
 
       // passing the file name to download
-      const result = await supabase.storage
-        .from("export_to_file")
-        .download(fileName);
-      setLoading(false);
+      const result = await supabase.storage.from('export_to_file').download(fileName)
+      setLoading(false)
 
       if (result.error) {
-        console.error("Error downloading file:", result.error);
-        return; // Exit the function early if there's an error
+        console.error('Error downloading file:', result.error)
+        return // Exit the function early if there's an error
       }
 
       if (result.data) {
         // Create a Blob object from the downloaded data
-        const blob = new Blob([result.data]);
+        const blob = new Blob([result.data])
 
         // Create a URL for the Blob object
-        const url = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob)
 
         // Create a temporary anchor element
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName; // Specify the filename for the download
-        document.body.appendChild(link);
+        const link = document.createElement('a')
+        link.href = url
+        link.download = fileName // Specify the filename for the download
+        document.body.appendChild(link)
 
         // Trigger the download by simulating a click event on the anchor element
-        link.click();
+        link.click()
 
         // Clean up by revoking the URL
-        URL.revokeObjectURL(url);
+        URL.revokeObjectURL(url)
       } else {
-        console.error("No data returned when downloading file");
+        console.error('No data returned when downloading file')
       }
     } else {
-      console.error("File URL not found in the response.");
+      console.error('File URL not found in the response.')
     }
   } catch (error) {
-    console.error("Error handling export:", error);
+    console.error('Error handling export:', error)
   }
-};
+}
 
 /**
  * Function to fetch server-side props.
@@ -1248,35 +1124,34 @@ const handleExportExcel = async (
  * @param context The context object containing information about the request.
  * @returns Server-side props including translated props or redirection information.
  */
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const { authenticated, redirectTo } = await authProvider.check(context);
+export const getServerSideProps: GetServerSideProps<{}> = async context => {
+  const { authenticated, redirectTo } = await authProvider.check(context)
 
-  const translateProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-    "course.participants",
-    "new_strings",
-    "course.find_course",
-    "course.view_course",
-    "course.new_course",
-  ]);
+  const translateProps = await serverSideTranslations(context.locale ?? 'en', [
+    'common',
+    'course.participants',
+    'new_strings',
+    'course.find_course',
+    'course.view_course',
+    'course.new_course',
+    'enum'
+  ])
 
   if (!authenticated) {
     return {
       props: {
-        ...translateProps,
+        ...translateProps
       },
       redirect: {
-        destination: `${redirectTo}?to=${encodeURIComponent(
-          context.req.url || "/"
-        )}`,
-        permanent: false,
-      },
-    };
+        destination: `${redirectTo}?to=${encodeURIComponent(context.req.url || '/')}`,
+        permanent: false
+      }
+    }
   }
 
   return {
     props: {
-      ...translateProps,
-    },
-  };
-};
+      ...translateProps
+    }
+  }
+}
