@@ -1,11 +1,4 @@
 import { useRouter } from "next/router";
-import dayjs from "dayjs";
-import _ from "lodash";
-import * as loc from "date-fns/locale";
-
-const Dayjs = require("dayjs");
-const localeData = require("dayjs/plugin/localeData");
-dayjs.extend(localeData);
 
 /**
  * A custom hook to get the language code based on the current locale.
@@ -20,7 +13,7 @@ const useGetLanguageCode = () => {
   if (languageCode) {
     return languageCode;
   }
-  return "en";
+  return "en"
 };
 
 export default useGetLanguageCode;
