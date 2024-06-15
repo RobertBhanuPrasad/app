@@ -95,7 +95,9 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger 
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
-import { getCurrencyFormate, getCurrencySymbol } from "src/utility/CurrencyFormate";
+import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormate";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -200,11 +202,20 @@ function ViewDetails() {
 
   const { data: loginUserData }: any = useGetIdentity();
 
-  const {locale} = useRouter()
 
-  const currencySymbol = getCurrencySymbol(locale,'EUR')
+  const countryCode = useGetCountryCode()
 
-  const currencyFormat = getCurrencyFormate(locale,'EUR')
+  const languageCode = useGetLanguageCode()
+
+  // to join the language code and country code  inorder to get as locale format
+  const locale = languageCode.concat("-",countryCode)
+
+  //TODO: we need to pass the  currency code as the second argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(locale as string,'EUR')
+
+
+  const currencyFormat = getCurrencyFormat(locale as string)
+
 
   const { data: countryConfigData } = useList({
     resource: "country_config",
@@ -302,11 +313,14 @@ function ViewDetails() {
                 </TooltipContent>
               </Tooltip>
               </TooltipProvider>
-              <Text className="w-4 h-4 flex items-center justify-center text-[#7677F4]">
+              <Text className="text-[15px] flex items-center justify-center text-[#7677F4]">
                 {currencySymbol}
               </Text>
               <Text className="text-[#7677F4] font-semibold cursor-pointer">
-              {currencyFormat.format(totalRevenue)}
+              {/**
+               * TODO: we need to show the currency code before the amount that is taken from country_config table
+               */}
+              EUR {currencyFormat.format(totalRevenue)}
               </Text>
               <TooltipProvider>
               <Tooltip>

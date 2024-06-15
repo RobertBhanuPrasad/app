@@ -1,16 +1,12 @@
 
 /**
- * By providing the locale and currencyCode it will set the input in corresponding country format along with currency code
+ * By providing the locale  it will set the input in corresponding country format
  * @param locale 
  * @param currencyCode 
  * @returns 
  */
-export const getCurrencyFormate = (locale: string, currencyCode: string) => {
-   return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currencyCode,
-    currencyDisplay: 'code'
-  });
+export const getCurrencyFormat = (locale: string) => {
+   return new Intl.NumberFormat(locale);
 }
 
 /**

@@ -16,18 +16,26 @@ import {
 import { formatDate } from "src/utility/DateFunctions";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useTranslation } from 'next-i18next';
-import { getCurrencyFormate, getCurrencySymbol } from "src/utility/CurrencyFormate";
+import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormate";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 
 
 export const ParticipantsListMainHeader = () => {
   const router = useRouter();
 
-  const {locale} = router
+  const countryCode = useGetCountryCode()
 
-  const currencySymbol = getCurrencySymbol(locale,'EUR')
+  const languageCode = useGetLanguageCode()
 
-  const currencyFormat = getCurrencyFormate(locale,'EUR')
+  // to join the language code and country code inorder to get as locale format
+  const locale = languageCode.concat("-",countryCode)
+
+  //TODO: we need to pass the  currency code as the second argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(locale as string,'EUR')
+
+  const currencyFormat = getCurrencyFormat(locale as string)
 
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
@@ -113,11 +121,14 @@ export const ParticipantsListMainHeader = () => {
             </div>
             {/* Revenue */}
             <div className="flex gap-2 items-center justify-center">
-              <div className="w-4 h-4 flex items-center justify-center text-[#7677F4]">
+              <div className="text-[15px] flex items-center justify-center text-[#7677F4]">
                 {currencySymbol}
               </div>
               <div className="text-[#7677F4] font-semibold cursor-pointer">
-              {currencyFormat.format(totalRevenue)}
+              {/**
+                * TODO: we need to show the currency code before the amount that is taken from country_config table
+                */}
+              EUR {currencyFormat.format(totalRevenue)}
               </div>
               <HoverCard>
                 <HoverCardTrigger>
