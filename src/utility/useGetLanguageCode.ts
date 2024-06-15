@@ -30,37 +30,6 @@ export const getLanguageCodeFromLocale = (locale: string) => {
 
   return languageCode;
 };
-/**
- * @function capitalizeFirstLetter
- * @description this function is used to change the first letter as capital in the string
- * @param string
- * @returns string with the first letter as capitalized
- */
-export const capitalizeFirstLetter = (string: string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
-
-/**
- * @function getTranslatedWeekday
- * @description this function is used for getting the translated week abbrivated names to display in the calendar
- * @returns array of strings like ['Mon','Tue','Wed','Thu','Fri','Sat'] with tralated in respective language
- */
-export const getTranslatedWeekday = () => {
-  /**
-   * @constant weekdays
-   * @description this const stores the days of a week in the array,
-   * which will come from the dayjs in the translated language
-   */
-  const weekdays = Dayjs.weekdaysShort();
-
-  //here we are manupulating the array because from the dayjs we will get as ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-  // but we want as ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] for this we are manupulating the retrning fo the array
-  return _.concat(_.slice(weekdays, 1), _.first(weekdays)).map((day: any) =>
-    // We need the first letter as the capitalized but the day js is not supporting us so that we are manupulating the string
-    capitalizeFirstLetter(day)
-  );
-};
 
 /**
  * @function loadLanguageModule
@@ -112,20 +81,3 @@ export function loadLanguageModule(language = "en") {
       break;
   }
 }
-
-/**
- * @function getDateFnsLocaleByActiveLanguage
- * @description this function will recognize the locale of the present language code and returns the locale
- * @param languageCode
- * @returns locale based on the language code
- */
-export const getDateFnsLocaleByActiveLanguage = () => {
-  const languageCode = useGetLanguageCode();
-  if (languageCode === "en") {
-    return loc["enUS"];
-  } else {
-    return Object.values(loc).find(
-      (language) => language.code === languageCode
-    );
-  }
-};

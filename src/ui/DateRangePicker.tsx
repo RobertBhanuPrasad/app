@@ -14,7 +14,9 @@ import {
   SelectValue,
 } from "./select";
 import { useEffect, useState } from "react";
-import useGetLanguageCode, { getDateFnsLocaleByActiveLanguage } from "src/utility/useGetLanguageCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import dayjs from "dayjs";
+import * as loc from "date-fns/locale";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -36,11 +38,21 @@ function DateRangePicker({
     _e(_event);
   };
 
-  const locale =   getDateFnsLocaleByActiveLanguage()
+  const languageCode = useGetLanguageCode();
+
+  const locale =
+    languageCode === "en"
+      ? loc["enUS"]
+      : Object.values(loc).find((language) => language.code === languageCode);
 
   return (
     <DayPicker
       locale={locale}
+      formatters={{
+        formatWeekdayName: (date, options) => {
+          return dayjs(date).format("ddd");
+        },
+      }}
       showOutsideDays={showOutsideDays}
       className={cn("", className)}
       classNames={{
@@ -59,7 +71,8 @@ function DateRangePicker({
         nav_button_previous: "absolute left-5",
         nav_button_next: "absolute right-5",
         table: "w-full border-collapse space-y-2",
-        head_row: "flex",
+        head_row:
+          "flex capitalize gap-6  text-[#999999] items-center justify-center text-xs",
         head_cell:
           "text-muted-foreground rounded-md w-6 font-normal text-[0.8rem]",
         row: "flex flex-row w-full px-4",
@@ -83,18 +96,6 @@ function DateRangePicker({
       components={{
         IconLeft: ({ ...props }) => <ChevronLeft className="h-5 w-5" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-5 w-5" />,
-        HeadRow: () => {
-          const dayjs = require("dayjs");
-          const weekNames = dayjs.weekdaysShort();
-
-          return (
-            <div className="flex flex-row gap-7  text-[#999999] items-center justify-center text-xs">
-              {weekNames.map((day:string, index:number) => (
-                <div className="capitalize"key={index}>{day}</div>
-              ))}
-            </div>
-          );
-        },
         Dropdown: ({ ...props }) => {
           const [selectedValue, setSelectedValue] = useState<string | null>(
             props.value as string
@@ -118,8 +119,11 @@ function DateRangePicker({
                   "font-medium w-[105px] h-9 rounded-xl [.is-between_&]:hidden [.is-end_&]:hidden [.is-start.is-end_&]:flex capitalize"
                 )}
               >
-                <SelectValue placeholder={props?.caption} className="capitalize">
-                {props?.caption}
+                <SelectValue
+                  placeholder={props?.caption}
+                  className="capitalize"
+                >
+                  {props?.caption}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="max-h-[var(--radix-popper-available-height);] h-[400px] overflow-y-auto scrollbar capitalize">
@@ -133,7 +137,7 @@ function DateRangePicker({
                           (child as React.ReactElement<any>)?.props?.value,
                       })}
                     >
-                     {(child as React.ReactElement<any>)?.props?.children}
+                      {(child as React.ReactElement<any>)?.props?.children}
                     </SelectItem>
                   ))}
               </SelectContent>

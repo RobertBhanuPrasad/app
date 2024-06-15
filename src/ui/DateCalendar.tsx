@@ -4,7 +4,6 @@ import { DayPicker } from "react-day-picker";
 
 import { cn } from "src/lib/utils";
 import { buttonVariants } from "src/ui/button";
-import { getTranslatedWeekday } from "src/utility/useGetLanguageCode";
 import dayjs from 'dayjs';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
@@ -20,6 +19,12 @@ function DateCalendar({
   return (
     <DayPicker
       weekStartsOn={1}
+      formatters={{
+        formatWeekdayName:(date,options)=>{
+
+          return dayjs(date).format("ddd")
+        }
+      }}
       showOutsideDays={showOutsideDays}
       className={cn("", className)}
       classNames={{
@@ -35,7 +40,7 @@ function DateCalendar({
         nav_button_previous: "absolute left-2",
         nav_button_next: "absolute right-2",
         table: "w-full border-collapse ",
-        head_row: "flex",
+        head_row: "flex capitalize w-full gap-[14px] text-lg",
         head_cell:
           "text-muted-foreground !rounded-full w-10 font-normal text-sm",
         row: "flex w-full ",
@@ -71,17 +76,6 @@ function DateCalendar({
             <div className="flex flex-col items-center gap-1 font-semibold">
               <div className="text-[20px] capitalize">{month}</div>
               <div className="text-[#999999] text-[12px]">{year}</div>
-            </div>
-          );
-        },
-        HeadRow: () => {
-          const weekNames = getTranslatedWeekday();
-
-          return (
-            <div className="flex flex-row gap-7 text-[#999999] items-center justify-center text-xs">
-              {weekNames.map((day:string, index:number) => (
-                <div key={index}>{day}</div>
-              ))}
             </div>
           );
         },
