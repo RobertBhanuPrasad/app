@@ -315,7 +315,7 @@ export const scheduleValidationSchema=(t:any) =>{
           return parseInt(endHour) > parseInt(startHour);
         },
         {
-          message: (t("session_start_time_cannot_be_later_than_end_time")),
+          message: (t("validations_text:session_start_time_cannot_be_later_than_end_time")),
         }
       )
       .refine(
@@ -326,7 +326,7 @@ export const scheduleValidationSchema=(t:any) =>{
           }
           return true;
         },
-        { message: (t("session_start_time_cannot_be_later_than_end_time")) }
+        { message: (t("validations_text:session_start_time_cannot_be_later_than_end_time")) }
       )
   )
   // now we will need to validations for array of objects.
