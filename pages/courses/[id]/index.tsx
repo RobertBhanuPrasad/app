@@ -98,6 +98,7 @@ import CourseAccountingFormTab from "../../../src/components/course/viewCourse/S
 import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormate";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import dayjs from "dayjs";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -131,15 +132,32 @@ function ViewDetails() {
 
   const totalRevenue = courseData?.data?.revenue;
 
-  const startDate = formatDate(
-    courseData?.data?.program_schedules[0]?.start_time
-  );
+  // getting twelve Hr Time Format id to check whether the particular course time format.
+  const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id;
 
-  const endDate = formatDate(
+  const startTime = courseData?.data?.program_schedules[0]?.start_time;
+
+  const endTime =
     courseData?.data?.program_schedules[
       courseData?.data?.program_schedules?.length - 1
-    ]?.end_time
-  );
+    ]?.end_time;
+
+  
+  // TODO we need to change the twelveHrTimeFormat to the enum
+  const startDate =
+    courseData?.data?.hour_format_id === twelveHrTimeFormat
+      ? dayjs(startTime).format("Do MMM hh:mm A")
+      : dayjs(startTime).format("Do MMM HH:mm");
+
+  // TODO we need to change the twelveHrTimeFormat to the enum
+  const endDate =
+    courseData?.data?.hour_format_id === twelveHrTimeFormat
+      ? dayjs(endTime).format("Do MMM hh:mm A")
+      : dayjs(endTime).format("Do MMM HH:mm");
+
   const countryName = `${courseData?.data?.venue_id?.state_id?.country_id?.name}`;
   const { t } = useTranslation([
     "course.view_course",
@@ -277,7 +295,9 @@ function ViewDetails() {
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
           <CalenderIcon color="#7677F4" />
-          {startDate} to {endDate}
+          <span className="capitalize">
+            {startDate} <span className="lowercase">{t("course.new_course:time_and_venue_tab.to")}</span> {endDate}
+            </span>
           {/* Here we shouldnt show participants and revenue when course is in pending review status  */}
           {courseData?.data?.status_id?.id !== coursePendingReviewStatusId && (
             <div className="flex flex-row gap-2 items-center">

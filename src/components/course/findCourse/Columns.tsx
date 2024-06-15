@@ -13,6 +13,7 @@ import { PROGRAM_STATUS, TIME_FORMAT } from "src/constants/OptionLabels";
 import { CANCELED, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { TableHeader, Text } from "src/ui/TextTags";
 import { Button } from "src/ui/button";
+import dayjs from 'dayjs';
 import { translatedText } from "src/common/translations";
 
 import {
@@ -108,26 +109,6 @@ export const column = (
     //   }
     // },
     {
-      accessorKey: "status",
-      column_name: t("course.find_course:course_status"),
-      //These columns are default columns and shouldnt be editable
-      enableHiding: false,
-      header: () => {
-        return (
-          <div className="min-w-[150px] text-sm">
-            {t("course.find_course:course_status")}
-          </div>
-        );
-      },
-      cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">
-            {translatedText(row?.original?.status_id?.name)}
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: "program_schedules",
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
@@ -147,11 +128,58 @@ export const column = (
       cell: ({ row }: any) => {
         // Check if start_date exists or not
         if (row?.original?.start_date) {
-          const startDate = format(row?.original?.start_date, "dd MMM, yyyy");
+          const startDate = dayjs(row?.original?.start_date).format("DD MMM, YYYY")
           return (
-            <div className="min-w-[150px]">{startDate ? startDate : "-"} </div>
+            <div className="min-w-[150px] capitalize ">{startDate ? startDate : "-"} </div>
           );
         }
+      },
+    },
+    {
+      accessorKey: "status",
+      column_name: t("course.find_course:course_status"),
+      //These columns are default columns and shouldnt be editable
+      enableHiding: false,
+      header: () => {
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("course.find_course:course_status")}
+          </div>
+        );
+      },
+      cell: ({ row }: any) => {
+        return (
+          <div className="min-w-[150px]">
+            {translatedText(row?.original?.status_id?.name)}
+          </div>
+        );
+      },
+    },
+    
+    {
+      accessorKey: "center",
+      column_name: t("course.find_course:center"),
+      header: () => {
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("course.find_course:center")}
+          </div>
+        );
+      },
+      cell: ({ row }: any) => {
+        return (
+          <div className="min-w-[150px]">{row?.original?.center?.name}</div>
+        );
+      },
+    },
+    {
+      accessorKey: "city",
+      column_name: t("city"),
+      header: () => {
+        return <div className="min-w-[150px] text-sm">{t("city")}</div>;
+      },
+      cell: ({ row }: any) => {
+        return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
       },
     },
     {
@@ -167,32 +195,6 @@ export const column = (
       cell: ({ row }: any) => {
         return (
           <div className="min-w-[150px]">{row?.original?.state?.name}</div>
-        );
-      },
-    },
-    {
-      accessorKey: "city",
-      column_name: t("city"),
-      header: () => {
-        return <div className="min-w-[150px] text-sm">{t("city")}</div>;
-      },
-      cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{row?.original?.city?.name}</div>;
-      },
-    },
-    {
-      accessorKey: "center",
-      column_name: t("course.find_course:center"),
-      header: () => {
-        return (
-          <div className="min-w-[150px] text-sm">
-            {t("course.find_course:center")}
-          </div>
-        );
-      },
-      cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">{row?.original?.center?.name}</div>
         );
       },
     },
@@ -277,24 +279,6 @@ export const column = (
         );
       },
     },
-    {
-      accessorKey: "visibility_id",
-      column_name: t("new_strings:visibility"),
-      header: () => {
-        return (
-          <div className="min-w-[150px] text-sm">
-            {t("new_strings:visibility")}
-          </div>
-        );
-      },
-      cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">
-            {translatedText(row?.original?.visibility_id?.name)}
-          </div>
-        );
-      },
-    },
 
     //TODO : for now may-13 release it has to be hidden
     // {
@@ -339,6 +323,24 @@ export const column = (
       },
       cell: ({ row }: any) => {
         return <div className="min-w-[150px]">{row?.original?.revenue}</div>;
+      },
+    },
+    {
+      accessorKey: "visibility_id",
+      column_name: t("new_strings:visibility"),
+      header: () => {
+        return (
+          <div className="min-w-[150px] text-sm">
+            {t("new_strings:visibility")}
+          </div>
+        );
+      },
+      cell: ({ row }: any) => {
+        return (
+          <div className="min-w-[150px]">
+            {translatedText(row?.original?.visibility_id?.name)}
+          </div>
+        );
       },
     },
 
