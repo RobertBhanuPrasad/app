@@ -167,6 +167,7 @@ export function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
 
   const loggedUserData = loginUserData?.userData?.id;
+  const { t } = useTranslation("validations_text");
 
   console.log("heyy logged user data", loggedUserData);
 
@@ -356,7 +357,7 @@ export function NewCourse() {
         <Form
           onSubmit={onSubmit}
           defaultValues={defaultValues}
-          schema={validationSchema(iAmCoTeachingId as number)}
+          schema={validationSchema(iAmCoTeachingId as number,t)}
         >
           <NewCourseTabs />
         </Form>
@@ -487,7 +488,7 @@ export type ItabsNextButtonClickStatus = nextButtonClicks[];
 export type ItabsValidationStatus = ("valid" | "invalid" | "neutral")[];
 
 export const NewCourseTabs = () => {
-  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
+  const { t } = useTranslation(["common", "course.new_course", "new_strings", "validations_text"]);
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -913,7 +914,7 @@ export const NewCourseTabs = () => {
     //!important right now we will do this for only where tabs next button clicked
     validationFieldsStepWise.forEach((fields, index) => {
       if (tabsNextButtonClickStatus[index] === NEXT_BUTTON_CLICKED) {
-        const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+        const newCourseZodSchema = validationSchema(iAmCoTeachingId as number,t);
 
         let modifiedFields: any = {};
         fields.forEach((field) => {

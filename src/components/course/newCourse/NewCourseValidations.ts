@@ -1,7 +1,6 @@
-import { start } from "repl";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { z } from "zod";
-export const validationSchema = (iAmCoTeachingId: number) => {
+export const validationSchema = (iAmCoTeachingId: number, t?:any) => {
   return z.object({
     // Step 1 Schema
     organization_id: z.number({
@@ -129,7 +128,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     time_zone_id: z.number({
       required_error: "Time zone is a required field",
     }),
-    schedules: scheduleValidationSchema,
+    schedules: scheduleValidationSchema(t),
     // name: z.string().optional(),
     // address: z
     //   .string({ required_error: "Address is a required field." })
@@ -246,7 +245,8 @@ const accommodationValidationSchema = z.array(
   })
 );
 
-const scheduleValidationSchema = z
+export const scheduleValidationSchema=(t:any) =>{
+  return  z
   .array(
     z
       .object({
@@ -315,7 +315,7 @@ const scheduleValidationSchema = z
           return parseInt(endHour) > parseInt(startHour);
         },
         {
-          message: "Session start time must be greater than end time",
+          message: (t("session_start_time_cannot_be_later_than_end_time")),
         }
       )
       .refine(
@@ -326,7 +326,7 @@ const scheduleValidationSchema = z
           }
           return true;
         },
-        { message: "Session start time must be greater than end time" }
+        { message: (t("session_start_time_cannot_be_later_than_end_time")) }
       )
   )
   // now we will need to validations for array of objects.
@@ -393,3 +393,4 @@ const scheduleValidationSchema = z
     },
     { message: "A session cannot start before ending another session" }
   );
+};

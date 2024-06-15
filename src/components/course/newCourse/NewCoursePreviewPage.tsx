@@ -67,6 +67,7 @@ export default function NewCourseReviewPage() {
     "course.new_course",
     "course.view_course",
     "new_strings",
+    "validations_text",
   ]);
   const supabase = supabaseClient();
 
@@ -533,7 +534,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
       countryCode
     );
 
-    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number, t);
 
     let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 
