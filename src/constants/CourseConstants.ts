@@ -67,8 +67,8 @@ export const NewCourseStep3FormNames = {
 
 export const NewCourseStep4FormNames = {
   is_early_bird_enabled: "is_early_bird_enabled",
-  program_fee_level_settings: "program_fee_level_settings",
-  feeLevels: "feeLevels"
+  program_fee: "program_fee",
+  product_fee_settings: "product_fee_settings"
 };
 
 export const NewCourseStep5FormNames = {

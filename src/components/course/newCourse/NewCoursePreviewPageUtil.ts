@@ -82,36 +82,8 @@ export const getRequiredFieldsForValidation = async (
     RequiredNewCourseStep3FormNames.push("time_zone_id");
   }
 
-  //Checking Weather login user is Super Admin or Not
-  let isUserNationAdminOrSuperAdmin = false;
+  let RequiredNewCourseStep4FormNames: string[] = ["product_fee_settings","program_fee"];
 
-  //Fetching login user roles
-  const user_roles: any[] = loginUserData?.userData?.user_roles || [];
-
-  if (
-    user_roles.some(
-      (role) =>
-        role.role_id.order === NATIONAL_ADMIN ||
-        role.role_id.order === SUPER_ADMIN
-    )
-  ) {
-    isUserNationAdminOrSuperAdmin = true;
-  }
-
-  const feeData = await fetchCourseFee({ formData, countryCode: countryCode });
-
-  //Checking Weather a fee is editable or not
-  const isFeeEditable =
-    isUserNationAdminOrSuperAdmin || feeData?.[0]?.is_program_fee_editable
-      ? true
-      : false;
-
-  let RequiredNewCourseStep4FormNames: string[] = ["feeLevels"];
-
-  //If it is a Editable fee need to validate
-  if (isFeeEditable) {
-    RequiredNewCourseStep4FormNames = [...RequiredNewCourseStep4FormNames,"is_early_bird_enabled","program_fee_level_settings"];
-  }
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false

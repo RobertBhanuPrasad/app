@@ -11,13 +11,14 @@ import _ from "lodash";
 import { useTranslation } from "next-i18next";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { fetchCourseFee } from "pages/courses/add";
+import {
+  calculateSubTotalFee,
+  calculateTax,
+  fetchCourseFee,
+} from "pages/courses/add";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { translatedText } from "src/common/translations";
-import {
-  NATIONAL_ADMIN,
-  SUPER_ADMIN,
-} from "src/constants/OptionValueOrder";
+import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import { CardLabel, CardValue } from "src/ui/TextTags";
 import {
@@ -55,12 +56,12 @@ export default function NewCourseReviewPage() {
     "course.new_course",
     "course.view_course",
     "new_strings",
-    "enums"
+    "enums",
   ]);
   const supabase = supabaseClient();
 
   const { data: loginUserData }: any = useGetIdentity();
-  const {optionLabelValue}=optionLabelValueStore()
+  const { optionLabelValue } = optionLabelValueStore();
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,7 +76,12 @@ export default function NewCourseReviewPage() {
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
-  const { newCourseData, setNewCourseData, setEditCourseDefaultValues, editCourseDefaultValues } = newCourseStore();
+  const {
+    newCourseData,
+    setNewCourseData,
+    setEditCourseDefaultValues,
+    editCourseDefaultValues,
+  } = newCourseStore();
 
   const { data: programTypeData } = useOne({
     resource: "product",
@@ -170,8 +176,13 @@ export default function NewCourseReviewPage() {
   const languageCode = useGetLanguageCode();
 
   // we should add the fee levels when it is true
-  const editCourseDefaultValuesRefToSetFeeLevels:MutableRefObject<boolean>=useRef(false);
-  
+  const editCourseDefaultValuesRefToSetFeeLevels: MutableRefObject<boolean> =
+    useRef(false);
+
+  //TODO: It will be coming from organization Data
+  const taxRate = 10;
+  const is_tax_enable = true;
+
   //This function is used to fetch fee data
   const fetchFeeData = async () => {
     //Fetching the course fee based on new course data
@@ -182,8 +193,8 @@ export default function NewCourseReviewPage() {
 
     console.log("Fee Data from API is", data);
 
-    /**@variable tempCourseData is used to store the updated course fee data (feeLevels,early_bird_cut_off_period,is_early_bird_enabled and program_fee_level_settings) */
-    let tempCourseData = { ...newCourseData, feeLevels: data };
+    /**@variable tempCourseData is used to store the updated course fee data (feeLevels,early_bird_cut_off_period,is_early_bird_enabled and program_fee) */
+    let tempCourseData = { ...newCourseData, product_fee_settings: data?.[0] };
 
     //Updating early_bird_cut_off_period
     if (newCourseData?.early_bird_cut_off_period == undefined) {
@@ -203,50 +214,85 @@ export default function NewCourseReviewPage() {
         is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
       };
     }
-    //Fetching login user roles
-    const user_roles: any[] = loginUserData?.userData?.user_roles || [];
 
-    //Checking Weather login user is Super Admin or Not
-    let isUserNationAdminOrSuperAdmin = false;
+    //Updating program_fees
+    const modifiedProductFee = data?.[0]?.product_fee_level_settings.map(
+      (feeLevel: {
+        total: number;
+        is_enable: boolean;
+        fee_level: string;
+        early_bird_total: number;
+        is_custom_fee: boolean;
+        custom_fee_label: any;
+      }) => {
+        let modifiedFeeLevel: any = {
+          total: feeLevel?.total,
+          sub_total: calculateSubTotalFee(feeLevel?.total, taxRate),
+          is_enable: feeLevel?.is_enable,
+          fee_level: feeLevel?.fee_level,
+          is_custom_fee:feeLevel?.is_custom_fee
+        };
+        //If early bird is enabled need to store the early bird fee also
+        if (data?.[0]?.is_early_bird_fee_enabled) {
+          modifiedFeeLevel = {
+            ...modifiedFeeLevel,
+            early_bird_total: feeLevel?.early_bird_total,
+            early_bird_sub_total: calculateSubTotalFee(
+              feeLevel?.early_bird_total,
+              taxRate
+            ),
+          };
+        }
 
-    if (
-      user_roles.some(
-        (role) =>
-          role.role_id.order === NATIONAL_ADMIN ||
-          role.role_id.order === SUPER_ADMIN
-      )
-    ) {
-      isUserNationAdminOrSuperAdmin = true;
-    }
+        //if tax is enabled need to store the tax also
+        if (is_tax_enable) {
+          modifiedFeeLevel = {
+            ...modifiedFeeLevel,
+            tax: calculateTax(feeLevel?.total, taxRate),
+          };
 
-    //Checking Weather a fee is editable or not
-    const isFeeEditable =
-      isUserNationAdminOrSuperAdmin || data?.[0]?.is_program_fee_editable
-        ? true
-        : false;
+          if (data?.[0]?.is_early_bird_fee_enabled) {
+            modifiedFeeLevel = {
+              ...modifiedFeeLevel,
+              early_bird_tax: calculateTax(feeLevel?.early_bird_total, taxRate),
+            };
+          }
+        }
 
-    //Inserting data into program_fee_level_settings variable. If it is undefined
-    //This code will execute when user changes program_type or location details or course start date.
-    //when above felids are changes then we are clearing program_fee_level_settings variable.
-    //So we are manually inserting data in program_fee_level_settings variable.
-    if (
-      isFeeEditable &&
-      newCourseData?.program_fee_level_settings == undefined
-    ) {
+        //if fee level is a custom fee level then need to store custom fee level also
+        if (feeLevel?.is_custom_fee==true) {
+          modifiedFeeLevel = {
+            ...modifiedFeeLevel,
+            custom_fee_label: feeLevel?.custom_fee_label,
+          };
+        }
+
+        return modifiedFeeLevel;
+      }
+    );
+
+    //Updating program_fee
+    if (newCourseData?.program_fee == undefined) {
       tempCourseData = {
         ...tempCourseData,
-        program_fee_level_settings: data?.[0]?.product_fee_level_settings,
-        is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
-        early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
+        program_fee: modifiedProductFee
       };
     }
+
+    //If fee is editable then it will be a custom fee else it will be a default fee
+    if(data?.[0]?.is_program_fee_editable==true){
+      tempCourseData={...tempCourseData,use_default_fee:false}
+    }else{
+      tempCourseData={...tempCourseData,use_default_fee:true}
+    }
+
     console.log("Temporary New Course Data", tempCourseData);
     //Updating newCourseData
     setNewCourseData(tempCourseData);
     // add the fee data when user in preview page and should not update the fee data when user is edited
-    if(editCourseDefaultValuesRefToSetFeeLevels.current===false){
-      setEditCourseDefaultValues(tempCourseData)
-      editCourseDefaultValuesRefToSetFeeLevels.current=true;
+    if (editCourseDefaultValuesRefToSetFeeLevels.current === false) {
+      setEditCourseDefaultValues(tempCourseData);
+      editCourseDefaultValuesRefToSetFeeLevels.current = true;
     }
   };
 
@@ -259,12 +305,12 @@ export default function NewCourseReviewPage() {
     centerId,
     newCourseData?.program_type_id,
     /**
-     * This approach converts the schedules array into a string, 
-     * allowing a deep comparison of the array's content. 
+     * This approach converts the schedules array into a string,
+     * allowing a deep comparison of the array's content.
      * If any part of the schedules array changes, the string representation will also change then we will fetch the fee again
      * We have changed this because we got the bug that the fee is loading when we change the date (ticket 1921)
      * What is happening here is, it is comparing shallow comparision that is just comparing a new thing added or deleted only
-     * so it is not comparing in details, but we are changing the fee data to undefined when the schedules is changed, 
+     * so it is not comparing in details, but we are changing the fee data to undefined when the schedules is changed,
      * but we are not udating the fee again so that we are getting the continues loading
      */
     JSON.stringify(newCourseData?.schedules),
@@ -405,45 +451,14 @@ export default function NewCourseReviewPage() {
     resource: "time_zones",
   });
 
-  const user_roles: any[] = data?.userData?.user_roles || [];
-
-  //Checking Weather a user is Super Admin or Not
-  let isUserNationAdminOrSuperAdmin = false;
-
-  if (
-    user_roles.some(
-      (role) =>
-        role.role_id.order === NATIONAL_ADMIN ||
-        role.role_id.order === SUPER_ADMIN
-    )
-  ) {
-    isUserNationAdminOrSuperAdmin = true;
-  }
-
-  //Checking Weather a fee is editable or not
-  const isFeeEditable =
-    isUserNationAdminOrSuperAdmin ||
-    newCourseData?.feeLevels?.[0]?.is_program_fee_editable
-      ? true
-      : false;
-  // console.log(isFeeEditable, "isFeeEditable isFeeEditable");
-  //Exacting default Fee Levels from settings.In this Data we will have entire object in fee_level_id but we need only fee_level_id.
-  const defaultFeeLevels =
-    newCourseData?.feeLevels?.length == 0
-      ? []
-      : newCourseData?.feeLevels?.[0]?.product_fee_level_settings
-
-  // If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
-  const feeLevels = isFeeEditable
-    ? newCourseData?.program_fee_level_settings
-    : defaultFeeLevels;
+  //fetching fee levels
+  const feeLevels = newCourseData?.program_fee
 
   //Requirement: Need to show only enabled fee levels.
   const enabledFeeLevelData = feeLevels?.filter(
     (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
   );
 
-const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
   const [openVenueDetails, setOpenVenueDetails] = useState(false);
@@ -477,8 +492,6 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
   const [errors, setErrors] = useState<any>({});
 
-  
- 
   /**
    * This is a function where we are calling to display error messages in preview page also
    * current state : in preview page there is no Form declaration so we have to validate the current data with zod safe parse
@@ -534,27 +547,19 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
     if (errors.success === false) {
       console.log(errors.error.issues, "issuessss");
     } else {
-
-  /**
-   * @constant schedulesData
-   * @description this schedulesData is stores the preprocessed schedules data and 
-   * we will use that to send to the edge function and in posting the schedules data
-   */
-  const schedulesData = preprocessSchedules()
-
-/**
- * @constant feeData
- * @description feeData stores the preprocessed fee data we are using order to sort the fee levels as per requirement in Newcourse step 4
- * so that while posting we have to remove this order from program_fee_level_settings as there was no order in the db
- */
-  const feeData = preprocessFee()
+      /**
+       * @constant schedulesData
+       * @description this schedulesData is stores the preprocessed schedules data and
+       * we will use that to send to the edge function and in posting the schedules data
+       */
+      const schedulesData = preprocessSchedules();
 
   /**
    * @constant programBody
    * @description we are using this to store the preprocessed schedules data and the newCourseData and feeData and
    * We will send to the edge function where it directly post to the program tables and the remaining tables
    */
-  let programBody={...newCourseData,schedules:schedulesData,program_fee_level_settings:feeData}
+  let programBody={...newCourseData,schedules:schedulesData}
 
   // In edge function we need to give the methods if we are coming from the edit page then we need to update the program of respective id
   // if we are coming from the new then we need to post the data
@@ -895,7 +900,6 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                     ? translatedText(courseType?.data?.name)
                     : "-"
                 }
-                
               >
                 {courseType?.data?.name && newCourseData?.program_type_id !== ""
                   ? translatedText(courseType?.data?.name)
@@ -1279,27 +1283,20 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
           </div>
           {/* body */}
           <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
-            {sortEnabledFeeLevelData?.map((feeLevel: any, index: number) => {
-              return(
-              <>
-              <Fees feeLevelSettingsData={feeLevel} />
-              {newCourseData?.is_early_bird_enabled &&
-          (
-            <EarlyBirdFees feeLevelSettingsData={feeLevel} />
-          )}
-              </>
-              )
+            {enabledFeeLevelData?.map((feeLevel: any, index: number) => {
+              return (
+                <>
+                  <Fees feeLevelSettingsData={feeLevel} t={t} />
+                  {newCourseData?.is_early_bird_enabled && (
+                    <EarlyBirdFees feeLevelSettingsData={feeLevel} t={t} />
+                  )}
+                </>
+              );
             })}
 
-            {/* Requirment: Show the early bird calender when 
-      1.Super or National Admin is logged in 
-      2.Early bird fee enabled in settings
-      3.Early bird fee enabled by user
-      4.Early bird cut off editable in settings */}
-            {isFeeEditable &&
-              newCourseData?.is_early_bird_enabled &&
-              newCourseData?.feeLevels?.[0]?.is_early_bird_fee_enabled &&
-              newCourseData?.feeLevels?.[0]?.is_early_bird_cut_off_editable && (
+            {/* Requirment: Show the early bird calender when Early bird fee enabled in settings*/}
+            {
+              newCourseData?.is_early_bird_enabled  && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999] ">
                     {t("new_strings:Early_bird_cutoff_period")}
@@ -1327,14 +1324,16 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
             </div> */}
           </div>
           {/* If No data present in enabledFeeLevelData means fee is not present for the current course data  */}
-          {newCourseData?.feeLevels?.length == 0 ? (
+          {newCourseData?.product_fee_settings && Object.keys(newCourseData?.product_fee_settings)?.length == 0 ||
+          newCourseData?.product_fee_settings?.product_fee_level_settings
+            ?.length == 0 ? (
             <span className="text-[#FF6D6D] text-[12px]">
               There is no price set for current settings. Select course type and
               city/center.
             </span>
           ) : (
             //If enabledFeeLevelData is undefined while fetching data, So loading is shown
-            sortEnabledFeeLevelData == undefined && <div className="loader"></div>
+            enabledFeeLevelData == undefined && <div className="loader"></div>
           )}
         </section>
         {/* Accommodation Information */}
@@ -1562,10 +1561,11 @@ const Accommodation = ({
  */
 const Fees = ({
   feeLevelSettingsData,
+  t
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
+  t:any
 }) => {
-  const { t } = useTranslation(["enum"]);
 
   /**
    * @constant countryConfigData
@@ -1636,8 +1636,10 @@ const Fees = ({
  */
 const EarlyBirdFees = ({
   feeLevelSettingsData,
+  t
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
+  t:any
 }) => {
   /**
    * @constant countryConfigData
@@ -1680,7 +1682,6 @@ const EarlyBirdFees = ({
     );
   }
 
-  const { t } = useTranslation(["new_strings","enum"]);
   //If custom fee is false show fee level label.
 
   return (
