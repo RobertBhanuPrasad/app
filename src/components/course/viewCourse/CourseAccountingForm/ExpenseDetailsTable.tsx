@@ -40,8 +40,6 @@ export const ExpenseDetails = () => {
   // formData is a constant we can store the form data which is getting from the watch() from useFormContext
   const formData = watch();
 
-  console.log(formData, "formData");
-
   useEffect(() => {
     // If there is no data for the program_expenses in form then we will append fields with undefined
     if (!formData?.program_expenses || formData?.program_expenses.length <= 0) {
