@@ -111,7 +111,7 @@ export const ExpenseDetails = () => {
     },
     {
       field_name: "Payment_method",
-      component: "-",
+      component: <PaymentMethod index={0} />,
       className: "min-w-[226px] px-6",
     },
     {
@@ -218,7 +218,6 @@ export const ExpenseDetails = () => {
         </div>
       </div>
       {/* Reimbursement Summary Table */}
-      <p className="font-semibold mt-4">Reimbursement Summary</p>
     </div>
   );
 };
@@ -399,72 +398,73 @@ const Amount = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-// const PaymentMethod = ({ index }: { index: number }) => {
-//   const {
-//     field: { value, onChange },
-//     fieldState: { error },
-// We give the type here because we will get the name as per the types we have in the form
-//   } = useController<CourseAccountingFormFieldTypes>({
-//     name: `program_expenses.${index}.payment_method`,
-//   });
+const PaymentMethod = ({ index }: { index: number }) => {
+  const {
+    field: { value, onChange },
+    fieldState: { error },
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.payment_method`,
+  });
 
-//   const { data } = useList<any>({
-//     resource: "option_labels",
-//     filters: [
-//       {
-//         field: "name",
-//         operator: "eq",
-//         value: "Payment Method",
-//       },
-//     ],
-//   });
+  const { data } = useList<any>({
+    resource: "option_labels",
+    filters: [
+      {
+        field: "name",
+        operator: "eq",
+        value: "Payment Method",
+      },
+    ],
+  });
 
-//   const { options } = useSelect({
-//     resource: "option_values",
-//     optionLabel: "name",
-//     optionValue: "id",
-//     filters: [
-//       {
-//         field: "option_label_id",
-//         operator: "eq",
-//         value: data?.data[0]?.id,
-//       },
-//     ],
-//   });
+  const { options } = useSelect({
+    resource: "option_values",
+    optionLabel: "name",
+    optionValue: "id",
+    filters: [
+      {
+        field: "option_label_id",
+        operator: "eq",
+        value: data?.data[0]?.id,
+      },
+    ],
+  });
 
-//   return (
-//     <div className="">
-//       <Select
-//         value={value}
-//         onValueChange={(val: any) => {
-//           onChange(val);
-//         }}
-//       >
-//         <SelectTrigger>
-//           <SelectValue placeholder="Select" />
-//         </SelectTrigger>
-//         <SelectContent>
-//           <SelectItems>
-//             {options.map((option: any, index: number) => (
-//               <>
-//                 <SelectItem
-//                   key={option.value}
-//                   value={option.value}
-//                   className="h-[44px]"
-//                 >
-//                   {optionValue(option.label)}
-//                 </SelectItem>
-//                 {index < options?.length - 1 && (
-//                   <hr className="border-[#D6D7D8]" />
-//                 )}
-//               </>
-//             ))}
-//           </SelectItems>
-//         </SelectContent>
-//       </Select>
-//     </div>
-//   );
-// };
+  // console.log(options, "options");
+  return (
+    <div className="">
+      <Select
+        value={value}
+        onValueChange={(val: any) => {
+          onChange(val);
+        }}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItems>
+            {options.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label.en}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 /**
  * @function VatCondition
