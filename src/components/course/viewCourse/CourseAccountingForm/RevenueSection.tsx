@@ -1,10 +1,9 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { MainHeader } from 'src/ui/TextTags'
-import { Button } from 'src/ui/button'
 import { CourseInformationAccordion } from './CourseInformationAccordion'
 import { QuestionInstructionModal } from './CourseQuestionAndInstruction'
 import { useState } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray, Controller, useController, useFormContext } from 'react-hook-form';
 import { format } from 'date-fns'; // For formatting the date
 import { Input } from "src/ui/input";
 import React from 'react'
@@ -19,19 +18,19 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-  
+
 } from "src/ui/dialog"
+import { Calendar as CalendarIcon } from "lucide-react"
+
+import { cn } from "src/lib/utils"
+import { Button } from "src/ui/button"
+import { Calendar } from "src/ui/calendar"
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "src/ui/alert-dialog"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "src/ui/popover"
+
 
 
 function RevenueSection() {
@@ -48,36 +47,24 @@ function RevenueSection() {
 
 
 
-  const { control, register, handleSubmit } = useForm({
-    defaultValues: {
-      deposits: [],
-    },
-  });
+
 
   const { fields, append, remove } = useFieldArray({
-    name: 'deposits',
+    name: 'revenue',
   });
 
   const [isAddButtonDisabled, setAddButtonDisabled] = useState(false);
 
-  const addInitialRow = () => {
-    const systemDate = new Date();
-    const formattedDate = format(systemDate, 'yyyy-MM-dd'); // Format as per your requirement
 
+
+  const addInitialRow = () => {
     append({
-      depositDate: formattedDate,
-      depositAmount: '',
-      notes: '',
     });
     setAddButtonDisabled(true);
   };
 
   const addRow = () => {
-    append({
-      depositDate: '',
-      depositAmount: '',
-      notes: '',
-    });
+    append({});
   };
 
   const deleteRow = (index: number) => {
@@ -86,11 +73,11 @@ function RevenueSection() {
       setAddButtonDisabled(false);
     }
   };
+  const { watch } = useFormContext();
+  const formData = watch();
+  console.log("result is:", formData)
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
-  
+
 
   return (
     <div>
@@ -110,15 +97,14 @@ function RevenueSection() {
           <button
             onClick={addInitialRow}
             disabled={isAddButtonDisabled}
-            className={`text-[15px] relative bottom-[3px] pl-2 ${
-              isAddButtonDisabled ? 'text-[#f90707]' : 'text-[#7677F4]'
-            }`}
+            className={`text-[15px] relative bottom-[3px] pl-2 ${isAddButtonDisabled ? 'text-[#AFB0FF]' : 'text-[#7677F4]'
+              }`}
           >
             <span className='text-[22px] relative top-[1px]'>+</span>Add
           </button>
         </div>
         {fields.length > 0 && (
-          <div onSubmit={handleSubmit(onSubmit)} className='rounded-[12px]  border border-[#D6D7D8] min-w-fit'>
+          <div className='rounded-[12px]  border border-[#D6D7D8] min-w-fit'>
             <div className="w-full">
               <div>
                 <div className='bg-[#7677F41A] border-b text-[18px] flex w-full'>
@@ -132,32 +118,15 @@ function RevenueSection() {
               <div>
                 {fields.map((field, index) => (
                   <div className='grid grid-cols-12 min-w-fit  ' key={field.id}>
-                    <div className=" p-4 text-[20px] min-w-[64px]">{index + 1}</div>
-                    <div className=" p-2 text-[14px] text-[#959599] relative right-14  ">
-                      <Controller
-                        name={`deposits.${index}.depositDate`}
-                        render={({ field }) => (
-                          <input
-                            type="date"
-                            {...field}
-                            className="min-w-[250px] h-[44px] border rounded-[12px] pl-4 pr-5"
-                          />
-                        )}
-                      />
-
+                    <div className=" p-4 text-[14px] min-w-[64px] text-[#333333]">{index + 1}</div>
+                    <div className='p-2 text-[14px]  relative right-14'>
+                      <DepositeDate index={index} />
                     </div>
                     <div className="p-2 col-span-3 pl-[130px]">
-                      <Input
-                        placeholder="00.00"
-                        className="min-w-[250px]  h-[44px] rounded-[12px]  text-[14px]"
-                      />
+                      <DepositeAmount index={index} />
                     </div>
                     <div className="col-span-4 flex justify-end pl-[80px] p-2">
-                      <Input
-                        type="text"
-                        placeholder="Lorem Epsim..."
-                        className="min-w-[457px]  h-[44px] rounded-[12px]  text-[14px]  p-2"
-                      />
+                      <Notes index={index} />
                     </div>
                     <div className=" p-2 flex justify-between min-w-[177px] pl-20 ">
                       {index === fields.length - 1 ? (
@@ -185,15 +154,15 @@ function RevenueSection() {
                               <Exclamation />
                             </div>
                             <DialogDescription className="font-semibold text-[20px] text-[#333333] items-center text-center">
-                            Are you sure you want to delete this record?
+                              Are you sure you want to delete this record?
                             </DialogDescription>
                           </DialogHeader>
                           <DialogFooter>
                             <div className="w-full flex justify-center items-center gap-5">
-                            
-                                <DialogClose className='text-[#7677F4] border rounded-lg border-[#7677F4] w-[71px] h-[46px] mr-5' >No</DialogClose>
-                                <DialogFooter className='bg-blue-500 border rounded-lg text-white px-6 py-2 w-[71px] h-[46px] ' onClick={() => { deleteRow(index); }}>Yes</DialogFooter>
-                              
+
+                              <DialogClose className='text-[#7677F4] border rounded-lg border-[#7677F4] w-[71px] h-[46px] mr-5' >No</DialogClose>
+                              <DialogFooter className='bg-blue-500 border rounded-lg text-white px-6 py-2 w-[71px] h-[46px] ' onClick={() => { deleteRow(index); }}>Yes</DialogFooter>
+
                             </div>
                           </DialogFooter>
                         </DialogContent>
@@ -230,3 +199,83 @@ function RevenueSection() {
 }
 
 export default RevenueSection
+
+const DepositeAmount = ({ index }: { index: number }) => {
+  const { field: { value, onChange }, fieldState: { error } } = useController({ name: `revenue.${index}.depositeAmount` })
+
+  return (
+    <div>
+      <Input
+        value={value as number}
+        onChange={onChange}
+        error={error ? true : false}
+        placeholder="00.00"
+        className="min-w-[250px]  h-[44px] rounded-[12px]  text-[14px] placeholder:text-[#333333]"
+      />
+    </div>
+  )
+}
+const DepositeDate = ({ index }: { index: number }) => {
+  const { field: { value ,onChange }, fieldState: { error } } = useController({ name: `revenue.${index}.depositeDate` })
+  const [date, setDate] = useState(value || new Date());
+
+  const today = new Date();
+  return (
+    <div>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+
+            variant={"outline"}
+            className={cn(
+              "min-w-[250px] h-[44px] border rounded-[12px] pl-4 pr-5 flex justify-between text-[#333333]",
+              !date && "text-muted-foreground"
+            )}
+          >
+            {date ? format(date, "dd MMM yyyy") : <span>Pick a date</span>}
+            <CalendarIcon className="mr-2 h-5 w-5 relative left-3 text-[#959599]" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            value={date}
+            onChange={onChange}
+            error={error ? true : false}
+
+            mode="single"
+            selected={date}
+            onSelect={(newDate) => {
+              if (newDate && newDate <= today) {
+                setDate(newDate);
+                onChange(newDate)
+              }
+            }}
+            initialFocus
+            disabled={[{ after: today }]}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  )
+}
+
+
+const Notes = ({ index }: { index: number }) => {
+  const { field: { value, onChange }, fieldState: { error } } = useController({ name: `revenue.${index}.notes` })
+
+  return (
+    <div>
+      <Input
+        value={value as string}
+        onChange={onChange}
+        error={error ? true : false}
+        type="text"
+        placeholder="Lorem Epsim..."
+        className="min-w-[457px]  h-[44px] rounded-[12px]  text-[14px]  p-2 placeholder:text-[#333333] "
+      />
+
+    </div>
+  )
+}
+
+
