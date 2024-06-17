@@ -244,6 +244,8 @@ export const CourseTypeDropDown = () => {
     meta: {
       select: "*,program_type_teachers!inner(user_id)",
     },
+    optionLabel: `name.${languageCode}`,
+    optionValue: 'id',
     onSearch: (value: any) => [
       {
         field: `name->>${languageCode}`,
@@ -263,15 +265,7 @@ export const CourseTypeDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { onSearch, queryResult } = useMVPSelect(selectQuery);
-
-  const options: { label: string; value: number }[] =
-    queryResult?.data?.data?.map((programType) => {
-    return {
-      label: translatedText(programType?.name),
-        value: programType?.id,
-      };
-    }) as any as { label: string; value: number }[];
+  const { onSearch, queryResult, options } = useMVPSelect(selectQuery);
 
   const {
     field: { value: courseSettings, onChange: setCourseTypeSettings },
@@ -740,7 +734,7 @@ const TeachersDropDown = () => {
 
 const AssistantTeachersDropDown = () => {
   const {
-    field: { value: temporaryValue, value, onChange },
+    field: {  value, onChange },
     fieldState: { error: assistantTeachersErrors }
   } = useController({
     name: NewCourseStep2FormNames?.assistant_teacher_ids
@@ -791,6 +785,7 @@ const AssistantTeachersDropDown = () => {
       pageSize: pageSize,
       mode: "server",
     },
+    defaultValue : value,
   });
 
   // Handler for bottom reached to load more options
@@ -857,11 +852,11 @@ const Visibility = () => {
           {t("program_visibility")}
         </Text>
         <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Important />
-          </TooltipTrigger>
-          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
+          <Tooltip>
+            <TooltipTrigger>
+              <Important />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
               {/* <div className="flex flex-row gap-1 items-center">
                 <Globe />
                 {t("public")}
@@ -879,8 +874,8 @@ const Visibility = () => {
               {t("new_strings:program_visibility_info_icon_text")}
               </Text>
           <TooltipArrow height={15} width={17} fill="#333333"/>
-          </TooltipContent>
-        </Tooltip>
+            </TooltipContent>
+          </Tooltip>
         </TooltipProvider>
       </div>
 
@@ -961,17 +956,17 @@ const GeoRestriction = () => {
         {t("is_geo_restriction")}
         <div className="text-[#7677F4]">*</div>
         <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Important />
-          </TooltipTrigger>
-          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+          <Tooltip>
+            <TooltipTrigger>
+              <Important />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
             <div className="text-wrap">
               {t("new_strings:text_entered_in_the_email_notes")}
             </div>
             <TooltipArrow height={15} width={17} fill="#333333"/>
-          </TooltipContent>
-        </Tooltip>
+            </TooltipContent>
+          </Tooltip>
         </TooltipProvider>
       </div>
 
@@ -1081,7 +1076,7 @@ const LanguageDropDown = () => {
 
 const LanguageTranslationDropDown = () => {
   const {
-    field: { value: temporarayvalue, value, onChange },
+    field: {  value, onChange },
     fieldState: { error: languageTranslationError }
   } = useController({
     name: NewCourseStep2FormNames?.translation_language_ids
@@ -1218,18 +1213,18 @@ const MaximumCapacity = () => {
         <Text className="text-xs ">{t("max_capacity")}</Text>
         {/* popover to show the note to maximum capacity */}
         <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Important />
-          </TooltipTrigger>
-          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
+          <Tooltip>
+            <TooltipTrigger>
+              <Important />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
             <Text className="text-[#FFFFFF] text-wrap text-xs">
               {t("new_strings:if_this_field_is_blank")}
             </Text>
             <TooltipArrow height={15} width={17} fill="#333333"/>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <Input
         placeholder={t(

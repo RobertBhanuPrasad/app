@@ -1,7 +1,7 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAllIcon from "@public/assets/ClearAllIcon";
 import CrossIcon from "@public/assets/CrossIcon";
-import { CrudFilter, useList, useSelect } from "@refinedev/core";
+import { CrudFilter, useList } from "@refinedev/core";
 import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { CountComponent, DateRangePickerComponent } from "pages/courses/list";
@@ -1205,8 +1205,10 @@ export const TeacherDropdown = () => {
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
+        "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name, full_name)",
     },
+    optionLabel: "contact_id.full_name",
+    optionValue: "id",
     onSearch: (value : any) => [
       {
         field: "contact_id.full_name",
@@ -1221,12 +1223,6 @@ export const TeacherDropdown = () => {
     defaultValue : temporaryValue
   });
 
-  const teachers: any = queryResult.data?.data?.map((val) => {
-    return {
-      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
-      value: val?.id,
-    };
-  });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
@@ -1250,7 +1246,7 @@ export const TeacherDropdown = () => {
       <SelectContent>
       <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {teachers?.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}

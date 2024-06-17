@@ -330,8 +330,8 @@ export const AccommodationType = ({
   // Hook to fetch and manage options for a select input
   const { options, onSearch } = useMVPSelect({
     resource: "accomdation_types",
-    optionLabel: "name",
-    optionValue: "id",
+    optionLabel: `name.${languageCode}` as any,
+    optionValue: 'id',
     onSearch: (value) => [
       {
         field: `name->>${languageCode}`,
@@ -339,6 +339,7 @@ export const AccommodationType = ({
         value,
       },
     ],
+    defaultValue : value,
   });
 
   const filteredOptions = options?.filter(
@@ -406,7 +407,7 @@ export const AccommodationType = ({
                     value={option.value}
                     className="h-[44px]"
                   >
-                    {translatedText(option.label)}
+                    {option.label}
                   </SelectItem>
                   {index < options?.length - 1 && (
                     <hr className="border-[#D6D7D8]" />
