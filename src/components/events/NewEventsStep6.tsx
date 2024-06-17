@@ -4,28 +4,28 @@ import React, { useState } from "react";
 import { useTranslation } from 'next-i18next';
 import { useEffect } from "react";
 import { useController, useFieldArray, useFormContext } from "react-hook-form";
-import { NewCourseStep6FormNames } from "src/constants/CourseConstants";
 import { Text } from "src/ui/TextTags";
 import { Button } from 'src/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from 'src/ui/dialog'
 import { Input } from "src/ui/input";
 import { Textarea } from "src/ui/textarea";
+import { NewEventsStep6FormNames } from "src/constants/EventConstants";
 
 function NewEventStep6() {
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   // Destructuring the necessary functions from react-hook-form
   const { append, fields, remove } = useFieldArray({
-    name: NewCourseStep6FormNames.contact,
+    name: NewEventsStep6FormNames.contact,
   });
   const { getValues } = useFormContext();
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [indexToDelete, setIndexToDelete] = useState(0);
+  const [indexToDelete, setIndexToDelete] = useState<any>(null);
 
   const {
     field: { value: courseEmails, onChange: courseEmailOnChange },
     fieldState: { error },
   } = useController({
-    name: NewCourseStep6FormNames?.bcc_registration_confirmation_email,
+    name: NewEventsStep6FormNames?.bcc_registration_confirmation_email,
   });
 
   const formData = getValues();
@@ -43,11 +43,21 @@ function NewEventStep6() {
   };
 
   // Function to handle deleting a contact item based on index
-  const handleDeleteItem = (index: number) => {
-    remove(index);
+  const handleDeleteItem = () => {
+    remove(indexToDelete);
   };
 
-  console.log("fielsd",fields)
+
+  const handleOpenDeleteDialog = (index: number) => {
+    setIndexToDelete(index);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setIndexToDelete(null);
+  };
+
 
   return (
     <div className="p-2 w-[1016px]">
@@ -81,8 +91,7 @@ function NewEventStep6() {
 
           {/* Add/Delete buttons for each contact item */}
           <div className="w-58 h-20 flex flex-row justify-center items-center gap-4">
-            {/* For first row we need to show add and after adding additional rows then it should also disappear */}
-            {(index === 0 || index === 1) && fields.length - 1 == index && (
+            {(index === 0 || index === 1) && fields.length - 1 === index && (
               <div
                 onClick={handleAddItem}
                 className="text-[#7677F4] flex flex-row gap-1 justify-center items-center cursor-pointer"
@@ -91,47 +100,15 @@ function NewEventStep6() {
                 {t("add_button")}
               </div>
             )}
-            {/* Except for first row we need to show delete icon */}
             {index !== 0 && (
-           <Dialog open={isDeleteDialogOpen} onOpenChange={ setDeleteDialogOpen}>
-             <DialogTrigger
-             onClick={() => {
-              setDeleteDialogOpen(true)
-              console.log("jcacj",index)
-              setIndexToDelete(index);
-             }}
-             className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
-             >
-             <Delete />
-             {t('delete_button')}
-             </DialogTrigger>
-             <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
-             <DialogHeader>
-             <DialogTitle className="flex justify-center">{t('delete_button')}</DialogTitle>
-             <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-               {t('new_strings:are_you_sure_you_want_to_delete_the_contact')}
-             </DialogDescription>
-             </DialogHeader>
-             <DialogFooter className="w-full flex !justify-center gap-6">
-             <DialogClose>
-             <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-                {t('no_button')}
-             </Button>
-             </DialogClose>
-             <DialogClose>
-             <Button
-              className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
-              onClick={() => {
-                handleDeleteItem(indexToDelete)
-              }}
-             >
-             {t('yes')}
-             </Button>
-             </DialogClose>
-             </DialogFooter>
-             </DialogContent>
-           </Dialog>
-          )}
+              <div
+                onClick={() => handleOpenDeleteDialog(index)}
+                className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
+              >
+                <Delete />
+                {t('delete_button')}
+              </div>
+            )}
           </div>
         </div>
       ))}
@@ -148,7 +125,7 @@ function NewEventStep6() {
           }}
           placeholder={t("course.new_course:contact_info_tab.select_course")}
           className="!w-58 placeholder:text-[#999999] font-normal"
-          error={error ? true : false} // TODO need to change after integrating the form names
+          error={error ? true : false}
         />
         {error && (
           <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
@@ -160,6 +137,36 @@ function NewEventStep6() {
           </div>
         </div>
       </div>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
+          <DialogHeader>
+            <DialogTitle className="flex justify-center">{t('delete_button')}</DialogTitle>
+            <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
+              {t('new_strings:are_you_sure_you_want_to_delete_the_contact')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="w-full flex !justify-center gap-6">
+            <DialogClose>
+              <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
+                {t('no_button')}
+              </Button>
+            </DialogClose>
+            <DialogClose>
+              <Button
+                className="bg-[#7677F4] w-[71px] h-[46px] rounded-[12px] font-semibold"
+                onClick={() => {
+                  handleDeleteItem();
+                  handleCloseDeleteDialog();
+                }}
+              >
+                {t('yes')}
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
