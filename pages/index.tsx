@@ -1,8 +1,5 @@
 import { useState } from "react";
-// import Editor from "src/ui/QuillEditor";
-import QuillToolbar from "src/ui/QuillToolbar";
-import Tiptap from "src/ui/TiptapEditor";
-// import Tiptap from "src/ui/TiptapEditor";
+import TipTapEditor from "src/ui/TiptapEditor";
 import { Button } from "src/ui/button";
 
 export default function Index() {
@@ -11,15 +8,15 @@ export default function Index() {
     setContent(reason);
   };
 
+  console.log("content is ", content);
+
   return (
     <div className="text-3xl">
       <Button>Hello</Button>
-      {/* <Tiptap
+      <TipTapEditor
         content={content}
         onChange={(newContent: string) => handleContentChange(newContent)}
-      /> */}
-      <QuillToolbar />
-      {/* <Editor placeholder="Write something..." /> */}
+      />
     </div>
   );
 }

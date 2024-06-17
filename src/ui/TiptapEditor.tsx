@@ -1,45 +1,74 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Image from "@tiptap/extension-image";
-import Toolbar from "./TipTapToolbar";
+import TextStyle from "@tiptap/extension-text-style";
+import Heading from "@tiptap/extension-heading";
+import Text from "@tiptap/extension-text";
+import Paragraph from "@tiptap/extension-paragraph";
+import TextAlign from "@tiptap/extension-text-align";
+import Document from "@tiptap/extension-document";
+import Color from "@tiptap/extension-color";
+import Link from "@tiptap/extension-link";
+import { TipTapToolbar } from "./TipTapToolbar";
 
-const Tiptap = ({ onChange, content }) => {
-  const handleChange = (newContent) => {
+interface ITipTapEditorProps {
+  onChange: (content: string) => void;
+  content: string;
+}
+
+const TipTapEditor = ({ onChange, content }: ITipTapEditorProps) => {
+  const handleChange = (newContent: string) => {
     onChange(newContent);
   };
 
   const editor = useEditor({
-    extensions: [StarterKit, Underline, Image],
+    extensions: [
+      Document,
+      Paragraph,
+      Text,
+      Heading,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      StarterKit,
+      Underline,
+      Image,
+      TextStyle,
+      Color.configure({
+        types: ["textStyle"],
+      }),
+      Link.configure({
+        openOnClick: false,
+      }),
+    ],
     editorProps: {
       attributes: {
         class:
-          "flex flex-col px-4 py-3 justify-start border-b border-r border-l border-gray-700 text-gray-400 items-start w-full gap-3 font-medium text-[16px] pt-4 rounded-bl-md rounded-br-md outline-none",
+          "px-4 py-3 border-b border-r border-l border-gray-700 text-[18px] w-full gap-3 pt-4 rounded-bl-md rounded-br-md outline-none",
       },
     },
     onUpdate: ({ editor }) => {
+      // console.log(
+      //   "editor is ",
+      //   editor,
+      //   editor.getHTML(),
+      //   editor.getJSON(),
+      //   editor.getText()
+      // );
       handleChange(editor.getHTML());
     },
-    content,
+    content: content,
   });
 
-  const uploadImage = async (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target.result;
-      editor.chain().focus().setImage({ src: base64 }).run();
-    };
-    reader.readAsDataURL(file);
-  };
-
   return (
-    <div className="w-full px-4 space-y-5 bg-[green]">
-      <Toolbar editor={editor} uploadImage={uploadImage} />
-      <EditorContent style={{ whiteSpace: "pre-line" }} editor={editor} />
+    <div className="px-4 bg-[white] space-y-5 w-full">
+      <TipTapToolbar editor={editor as Editor} />
+      <EditorContent editor={editor} />
     </div>
   );
 };
 
-export default Tiptap;
+export default TipTapEditor;

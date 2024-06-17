@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 ::-webkit-scrollbar {
   width: 4px;
   height: 6px;
@@ -239,9 +235,11 @@
 
 .ProseMirror {
   padding: 10px;
-  background: white;
   border-radius: 16px;
+  border-width: 1px;
   min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
   border-color: #d6d7d8;
 }
 
@@ -274,6 +272,35 @@
   font-size: 0.8rem;
 }
 
+/* Unvisited link within .ProseMirror */
+.ProseMirror a:link {
+  color: #0000ee; /* Blue */
+  text-decoration: underline;
+}
+
+/* Visited link within .ProseMirror */
+.ProseMirror a:visited {
+  color: #551a8b; /* Purple */
+  text-decoration: underline;
+}
+
+/* Mouse over link within .ProseMirror */
+.ProseMirror a:hover {
+  color: #0000ee; /* Blue */
+  text-decoration: underline;
+}
+
+/* Selected link within .ProseMirror */
+.ProseMirror a:active {
+  color: #ff0000; /* Red */
+  text-decoration: underline;
+}
+
+/* Focused link within .ProseMirror */
+.ProseMirror a:focus {
+  outline: 1px dotted; /* or another outline style */
+}
+
 .ProseMirror blockquote {
   padding-left: 1rem;
   border-left: 3px solid #999999;
@@ -283,4 +310,27 @@
   border: none;
   border-top: 3px solid #999999;
   margin: 2rem 0;
+}
+
+/* Heading styles */
+.ProseMirror h1,
+h2,
+h3 {
+  line-height: 1.1;
+  text-wrap: pretty;
+}
+
+.ProseMirror h1 {
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.ProseMirror h2 {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.ProseMirror h3 {
+  font-size: 26px;
+  font-weight: bold;
 }
