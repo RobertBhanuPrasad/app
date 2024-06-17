@@ -201,10 +201,44 @@ function ExpenseSection() {
     setIsSubmitting(false);
   };
 
+  const fields = [
+    {
+    name:"bhargavi",
+    timestamp:"245793890",
+    action:"submitted"
+    },{
+    name:"Madhuri",
+    timestamp:"245793890",
+    action:"Approved"
+  }
+]
+
   return (
     <div>
-      <div>
+      <div className="flex flex-col gap-4 px-4">
         <ExpenseDetails />
+
+        <div>
+          <div className="rounded-[12px] overflow-x-scroll border border-[#D6D7D8]">
+            <div className="flex h-[48px]">
+              <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">
+                Username
+              </div>
+              <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">
+                Timestamp
+              </div>
+              <div className="p-4  bg-[#7677F41A] min-w-[288px] w-full">
+                Action
+              </div>
+            </div>
+
+            <div className="my-[10px]">
+              {/* {fields.map((text: any, index: number) => (
+                
+              ))} */}
+            </div>
+          </div>
+        </div>
 
         <section className="space-x-4 p-2 w-full flex justify-center">
           <Button
