@@ -121,12 +121,12 @@ const OnlineProgram = () => {
 
   //Requirement: Fee is fetch based on program_type,location and course start date.So when ever state_id,city_id and center_id is changed need to remove existing fee levels.
   const handleRemoveFeeLevels=()=>{
-    setValue("program_fee_level_settings",undefined)
-    setValue("feeLevels",undefined );
+    setValue("program_fee",undefined)
+    setValue("product_fee_settings",undefined );
     setValue("is_early_bird_enabled",undefined)
     setValue("early_bird_cut_off_period",undefined)
     setTimeout(() => {
-      clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+      clearErrors(["program_fee","is_early_bird_enabled","early_bird_cut_off_period"]);
     }, 10);
   }
   return (
@@ -644,12 +644,12 @@ const Venue = () => {
         }
         //Requirement: Fee is fetch based on program_type,location and course start date.So when ever New Venue's state_id,city_id and center_id is changed need to remove existing fee levels.
         if(!(formData?.newVenue?.state_id==newVenueData?.state_id && formData?.newVenue?.city_id==newVenueData?.city_id && formData?.newVenue?.center_id==newVenueData?.center_id)){
-          setValue("program_fee_level_settings",undefined)
-          setValue("feeLevels",undefined );
+          setValue("program_fee",undefined)
+          setValue("product_fee_settings",undefined );
           setValue("is_early_bird_enabled",undefined)
           setValue("early_bird_cut_off_period",undefined)
           setTimeout(() => {
-            clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+            clearErrors(["program_fee","is_early_bird_enabled","early_bird_cut_off_period"]);
           }, 10);
         }
         setValue("newVenue", newVenueData);
@@ -691,13 +691,13 @@ const Venue = () => {
 
   const handleRemoveFeeLevel=()=>{
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings", undefined);
-    setValue("feeLevels",undefined );
+    setValue("program_fee", undefined);
+    setValue("product_fee_settings",undefined );
     setValue("is_early_bird_enabled", undefined);
     setValue("early_bird_cut_off_period", undefined);
     setTimeout(() => {
       clearErrors([
-        "program_fee_level_settings",
+        "program_fee",
         "is_early_bird_enabled",
         "early_bird_cut_off_period"
       ]);
@@ -1141,12 +1141,12 @@ const CalenderComponent = ({ index, setOpen }: any) => {
   //After sorting if first schedule is different for both original and temporary schedule then user as changed start date of course (start date is first schedule)
   if(sortedOriginalSchedules?.[0]?.date.getTime()!=sortedTempSchedules?.[0]?.date.getTime()){
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever start date of schedule is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings",undefined)
-    setValue("feeLevels",undefined );
+    setValue("program_fee",undefined)
+    setValue("product_fee_settings",undefined );
     setValue("is_early_bird_enabled",undefined)
     setValue("early_bird_cut_off_period",undefined)
     setTimeout(() => {
-      clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+      clearErrors(["program_fee","is_early_bird_enabled","early_bird_cut_off_period"]);
     }, 10);
   }
 
@@ -1353,12 +1353,12 @@ const {
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever venue is changed need to remove existing fee levels.
     if(existingVenue?.id!=existingVenueObject?.[0]){
-      setValue("program_fee_level_settings",undefined)
-      setValue("feeLevels",undefined );
+      setValue("program_fee",undefined)
+      setValue("product_fee_settings",undefined );
       setValue("is_early_bird_enabled",undefined)
       setValue("early_bird_cut_off_period",undefined)
       setTimeout(() => {
-        clearErrors(["program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+        clearErrors(["program_fee","is_early_bird_enabled","early_bird_cut_off_period"]);
       }, 10);
     }
 

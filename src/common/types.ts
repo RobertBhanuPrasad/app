@@ -752,7 +752,7 @@ interface NewCourseFormFieldTypes {
     is_enable?: boolean;
     fee_level_id?: number;
   }[];
-  feeLevels?:any[] 
+  product_fee_settings?:any//Object consisting of fee_settings
 
   // Step 5
   accommodation?: any[];
