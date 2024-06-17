@@ -810,8 +810,6 @@ function index() {
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
-        {/* Bulk actions section
-        <BulkActionsSection /> */}
         <div className="w-full pb-4">
           <BaseTable
             current={current}
