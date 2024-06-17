@@ -5,9 +5,10 @@ import { NewEventStep2 } from '@components/events/NewEventsStep2'
 import { NewEventStep3 } from '@components/events/NewEventsStep3'
 import { NewEventStep4 } from '@components/events/NewEventsStep4'
 import { NewEventStep5 } from '@components/events/NewEventsStep5'
-import Car from '@public/assets/Car'
+import NewEventStep6 from '@components/events/NewEventsStep6'
 import Error from '@public/assets/Error'
 import Group from '@public/assets/Group'
+import Car from '@public/assets/Car'
 import Info from '@public/assets/Info'
 import Fees from "@public/assets/Fees";
 import Profile from '@public/assets/Profile'
@@ -18,12 +19,7 @@ import { useRouter } from 'next/router'
 import { ItabsNextButtonClickStatus } from 'pages/courses/add'
 import { useState } from 'react'
 import {
-  EVENTS_ACCOMMODATION_STEP_NUMBER,
-  EVENTS_BASIC_DETAILS_STEP_NUMBER,
-  EVENTS_CONTACT_INFO_STEP_NUMBER,
-  EVENTS_DETAILS_STEP_NUMBER,
-  EVENTS_FEE_STEP_NUMBER,
-  EVENTS_TIME_AND_VENUE_STEP_NUMBER,
+  
   NEXT_BUTTON_CLICKED,
   NEXT_BUTTON_NOT_CLICKED,
   VALID
@@ -31,10 +27,10 @@ import {
 import { Button } from 'src/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/ui/tabs'
 import { newEventStore } from 'src/zustandStore/NewEventStore'
-import NewEventStep6 from '@components/events/NewEventsStep6'
-import { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { authProvider } from "src/authProvider";
+import { GetServerSideProps } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { authProvider } from 'src/authProvider'
+import { EVENTS_BASIC_DETAILS_STEP_NUMBER, EVENTS_DETAILS_STEP_NUMBER, EVENTS_TIME_AND_VENUE_STEP_NUMBER, EVENTS_FEE_STEP_NUMBER, EVENTS_ACCOMMODATION_STEP_NUMBER, EVENTS_CONTACT_INFO_STEP_NUMBER } from 'src/constants/EventConstants'
 
 const index = () => {
   const { data: loginUserData }: any = useGetIdentity()
@@ -212,20 +208,6 @@ const NewEventTabs = () => {
   )
 }
 
-
-
-
-
-
-
-/**
- * Function to fetch server-side props.
- * This function checks the authentication status using the auth provider and
- * fetches translations for the current locale.
- * If the user is not authenticated, it redirects them to the specified destination.
- * @param context The context object containing information about the request.
- * @returns Server-side props including translated props or redirection information.
- */
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const { authenticated, redirectTo } = await authProvider.check(context);
 
