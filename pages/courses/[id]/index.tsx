@@ -95,6 +95,9 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger 
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
+import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormat";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import dayjs from "dayjs";
 
 function index() {
@@ -217,6 +220,18 @@ function ViewDetails() {
 
   const { data: loginUserData }: any = useGetIdentity();
 
+
+  const countryCode = useGetCountryCode()
+
+  const languageCode = useGetLanguageCode()
+
+
+  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(countryCode, languageCode, 'EUR')
+
+  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
+
+
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
@@ -315,12 +330,12 @@ function ViewDetails() {
                 </TooltipContent>
               </Tooltip>
               </TooltipProvider>
-              <div>
-                <CurrencyIcon />
-              </div>
-              <Text className="text-[#7677F4] font-semibold">
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                {totalRevenue}
+              <Text className="text-[15px] flex items-center justify-center text-[#7677F4]">
+                {currencySymbol}
+              </Text>
+              <Text className="text-[#7677F4] font-semibold cursor-pointer">
+              {countryConfigData?.data?.[0]?.default_currency_code} {" "}
+              {currencyFormat.format(totalRevenue)}
               </Text>
               <TooltipProvider>
               <Tooltip>

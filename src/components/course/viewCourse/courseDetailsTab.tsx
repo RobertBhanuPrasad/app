@@ -142,7 +142,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
     VISIBILITY,
     PUBLIC
   )?.id;
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings", "course.find_course"])
 
 // getting twelve Hr Time Format id to check whether the particular course time format.
 const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
@@ -366,13 +366,21 @@ const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
               {courseData?.data?.program_type_id?.is_online_program == true ?
               (courseData?.data?.online_url ? ( <a href= {courseData?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target="_blank">{t("new_strings:online")}</a>
             ) : ( "-"))
-          :
-          (courseData?.data?.venue_id ? (
-            <ItemValue>
-              {venue}
-            </ItemValue>
-          ):( "-"))}
-            </div>
+            :
+            (courseData?.data?.venue_id ? (
+              <div className="flex flex-col gap-4">
+              <ItemValue>
+                {venue}
+              </ItemValue> 
+              <div className="flex flex-col gap-1">
+                <Header2>{t("course.find_course:center")}</Header2>
+                  <ItemValue>
+                    {courseData?.data?.venue_id?.center_id?.name}
+                  </ItemValue>
+              </div>
+              </div>
+            ):("-"))}
+        </div>
             <Header2>
             {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">

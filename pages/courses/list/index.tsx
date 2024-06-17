@@ -244,6 +244,30 @@ function index() {
   const [rowSelection, setRowSelection] = React.useState({});
 
   /**
+   * @constant selectedCourseIds
+   * @description extratcting the check box selected ids, stores the data of course ids
+   * 
+   */
+  const selectedCourseIds = Object.keys(rowSelection)
+  
+  /**
+   * @constant exportXlsFilters
+   * @description this const stores the filters which we do on the find courses 
+   * if the filters are present in then destructre and store in the const else store the empty array to avoid errors
+   */
+  let exportXlsFilters = filters.permanent?.length > 0 ? [...filters.permanent] : []
+
+  // REQUIRMENT we need to export the courses, what we are selecting using the checkboxes
+  // If selected courses are there then add filter for that ids for the export xls filter
+  if(selectedCourseIds.length > 0) {
+    exportXlsFilters.push({
+      field: "id",
+      operator: "in",
+      value: selectedCourseIds,
+    });
+  }    
+
+  /**
    * Here we are maintaining 2 querys one is for filtering and one is for showing the data in the table and this is the filter query
    */
 
@@ -510,7 +534,7 @@ function index() {
         select:
           "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
-        filters: JSON.stringify(filters?.permanent),
+        filters: JSON.stringify(exportXlsFilters),
         sorters: JSON.stringify([
           { field: "created_at", order: { ascending: false } },
         ]),
@@ -709,7 +733,7 @@ function index() {
                 variant="outline"
                 className="flex flex-row gap-2 text-sm text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
                 //if select all is false or row count less than equal to 0 then it should be true
-                disabled={allSelected === false || rowCount <= 0}
+                disabled={rowCount <= 0}
               >
                 {loading ? (
                   <div className="loader !w-[25px]"></div>
