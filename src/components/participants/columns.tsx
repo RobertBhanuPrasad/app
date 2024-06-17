@@ -1,9 +1,5 @@
 import Form from "@components/Formfield";
-import {
-  CaretSortIcon,
-  CountdownTimerIcon,
-  LapTimerIcon,
-} from "@radix-ui/react-icons";
+import { CountdownTimerIcon } from "@radix-ui/react-icons";
 import { useGetIdentity, useList } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreVertical } from "lucide-react";
@@ -26,19 +22,15 @@ import { getActionMenuItems } from "./ParticipantUtils";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
 import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "src/ui/alert-dialog";
-import CrossIcon from "@public/assets/CrossIcon";
+import { AlertDialog, AlertDialogContent } from "src/ui/alert-dialog";
 import EmailConfimrationIcon from "@public/assets/EmailConfirmationIcon";
+import MemoIcon from "@public/assets/MemoIcon";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "src/ui/tooltip";
 import { TableHeader } from "src/ui/TextTags";
 import { SortingArrows } from "src/ui/SortingArrows";
 
@@ -106,8 +98,22 @@ export const columns = () => {
 
       cell: ({ row }: any) => {
         return (
-          <div className="text-left !min-w-[175px]">
+          <div className="text-left !min-w-[175px] capitalize flex gap-3">
             {row?.original?.contact_id?.full_name}
+            {row?.original?.memo?.length && (
+              <div className="cursor-pointer">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <MemoIcon />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-gray-900 text-white w-52">
+                      <p>{row?.original?.memo}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            )}
           </div>
         );
       },
@@ -692,13 +698,13 @@ export const columns = () => {
         ) => {
           switch (index) {
             case 1: {
-              // TODO: Navigate to view participant page
+              // Navigate to view participant page
               const routePath = router.asPath.split("list")[0];
               router.push(`/${routePath}/${participant_id}`);
               break;
             }
             case 2: {
-              // TODO: Navigate to edit participant page
+              // Navigate to edit participant page
               const routePath = router.asPath.split("list")[0];
               router.push(`/${routePath}/${participant_id}/edit`);
               break;
@@ -708,7 +714,7 @@ export const columns = () => {
               break;
             }
             case 4: {
-              //open the default mail application witn the selected participant mail as to email address.
+              //Open the default mail application witn the selected participant mail as to email address.
               const mailtoUrl = `mailto:${participant_email}`;
               window.open(mailtoUrl);
               break;
@@ -731,7 +737,9 @@ export const columns = () => {
               break;
             }
             case 9: {
-              // TODO: Navigate to view participant page -> Transaction activity tab
+              //Navigate to view participant page -> Transaction activity tab
+              const routePath = router.asPath.split("list")[0];
+              router.push(`/${routePath}/${participant_id}`);
               break;
             }
           }
@@ -750,6 +758,7 @@ export const columns = () => {
                 <div className="flex flex-col gap-2 max-h-[300px] max-w-[170px] overflow-y-auto scrollbar text-[#333333]">
                   {actionMenu?.map((value: any, index) => (
                     <DropdownMenuItem
+                      className="cursor-pointer"
                       onClick={() => {
                         handleActions(
                           value?.order,

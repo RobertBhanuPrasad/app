@@ -45,7 +45,6 @@ import NewCourseStep4, { sortFeeLevels } from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { validationSchema } from "./NewCourseValidations";
-import _ from "lodash";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
