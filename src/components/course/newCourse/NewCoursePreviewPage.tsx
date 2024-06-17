@@ -410,7 +410,7 @@ export default function NewCourseReviewPage() {
             <div>
               <abbr
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666] capitalize"
-                title={`${scheduleDate} ${scheduleStartTime} ${t("time_and_venue_tab.to")} ${scheduleEndTime}`}
+                title={`${scheduleDate} ${scheduleStartTime} ${t("course.new_course:time_and_venue_tab.to")} ${scheduleEndTime}`}
               >
                 <div>
                   {scheduleDate}
