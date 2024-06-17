@@ -635,6 +635,7 @@ export const State = ({
   });
 
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
   
   /**
    * Getting country code from route using useGetCountryCode function
@@ -683,12 +684,18 @@ export const State = ({
         value,
       },
     ],
+    defaultValue : temporaryValue
   });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("common");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
@@ -707,7 +714,7 @@ export const State = ({
         <SelectValue placeholder={t("select_state")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
@@ -824,6 +831,7 @@ export const Center = ({
     name: "temporaryadvancefilter.center",
   });
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // track whether the center drop down is clicked or not
   const [centerSelectClicked, setCenterSelectClicked] = useState(false)
@@ -847,12 +855,18 @@ export const Center = ({
         value,
       },
     ],
+    defaultValue : temporaryValue
   });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("new_strings");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
@@ -872,7 +886,7 @@ export const Center = ({
         <SelectValue placeholder={t("select_center")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
@@ -1151,6 +1165,7 @@ export const ProgramOrganiser = () => {
       pageSize: pageSize,
       mode: "server",
     },
+    defaultValue : temporaryValue
   });
   const handleOnBottomReached = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
@@ -1184,6 +1199,7 @@ export const TeacherDropdown = () => {
   });
 
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { options, onSearch, queryResult } = useMVPSelect({
     resource: "users",
@@ -1202,6 +1218,7 @@ export const TeacherDropdown = () => {
       pageSize: pageSize,
       mode: "server",
     },
+    defaultValue : temporaryValue
   });
 
   const teachers: any = queryResult.data?.data?.map((val) => {
@@ -1215,6 +1232,11 @@ export const TeacherDropdown = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("new_strings");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
@@ -1226,7 +1248,7 @@ export const TeacherDropdown = () => {
         <SelectValue placeholder={t("select_teacher")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {teachers?.map((option: any, index: number) => (
             <>
