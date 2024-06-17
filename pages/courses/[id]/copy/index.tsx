@@ -45,11 +45,20 @@ const index = () => {
       
     };
 
+    const routeRefresh = (e:any) => {
+      // if in the thank_you page while refreshing we don't alert the user
+      if(section!=='thank_you') e.preventDefault()
+    }
+
+
     router.events.off("routeChangeStart", routeChange);
 
     router.events.on("routeChangeStart", routeChange);
 
+    window.addEventListener('beforeunload', routeRefresh);
+
     return () => {
+      window.removeEventListener('beforeunload', routeRefresh);
       router.events.off("routeChangeStart", routeChange);
     };
     

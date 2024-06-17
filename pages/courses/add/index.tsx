@@ -119,12 +119,23 @@ function index() {
         }
       }
     };
+    const routeRefresh = (e:any) => {
+
+      // when we fill any fields in step1 of newCourse then isNewCourseEditedRef.current will be true
+      // if in the thank_you page while refreshing we don't alert the user
+      if(isNewCourseEditedRef.current && section!=='thank_you'){
+       e.preventDefault()
+      }
+    }
 
     router.events.off("routeChangeStart", routeChange);
 
     router.events.on("routeChangeStart", routeChange);
 
+    window.addEventListener('beforeunload', routeRefresh);
+
     return () => {
+      window.removeEventListener('beforeunload', routeRefresh);
       router.events.off("routeChangeStart", routeChange);
     };
 

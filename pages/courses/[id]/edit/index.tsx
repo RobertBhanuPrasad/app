@@ -89,25 +89,35 @@ const EditCourseReviewPage = () => {
    */
   
   useEffect(() => {
+    
+    // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
+    // this varaible holds the boolean value that the data is edited or not
+    const condition = _.isEqual(newCourseData,editCourseDefaultValues)
     const routeChange = (url:string) => {
 
-      // to check whether we edited the any field value in the form and if we edited the  fields and try to navigate to another page it show the alert 
-      // this varaible holds the boolean value that the data is edited or not
-      const condition = _.isEqual(newCourseData,editCourseDefaultValues)
-      
-        //if user change the data we should alert the user when navigated
-        console.log(condition,newCourseData,editCourseDefaultValues,"checkCondition")
-        if (condition===false) {
-          displayConfirmBoxWhenRouteChange(router,t)
-        }
+      //if user change the data we should alert the user when navigated
+      if (condition===false) {
+        displayConfirmBoxWhenRouteChange(router,t)
+      }
 
     }
-    router.events.off('routeChangeStart', routeChange);
+    const routeRefresh = (e:any) => {
 
-    router.events.on('routeChangeStart', routeChange);
+      //if user change the data we should alert the user when navigated
+      if(condition===false){
+       e.preventDefault()
+      }
+    }
+
+    router.events.off("routeChangeStart", routeChange);
+
+    router.events.on("routeChangeStart", routeChange);
+
+    window.addEventListener('beforeunload', routeRefresh);
 
     return () => {
-        router.events.off('routeChangeStart', routeChange);
+      window.removeEventListener('beforeunload', routeRefresh);
+      router.events.off("routeChangeStart", routeChange);
     };
 
 }, [newCourseData,editCourseDefaultValues]);
