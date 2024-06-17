@@ -232,7 +232,6 @@ const LogoutAlterModal = () => {
               <Button type='button' variant="outline"
                 className="text-[#7677F4] w-[100px] h-[45px] border border-[#7677F4] rounded-[12px] hover:bg-blue-500 hover:text-white "
                 onClick={() => setViewLogoutModal(false)}
-                tabIndex={0}
               >
                 No
               </Button>
@@ -241,7 +240,6 @@ const LogoutAlterModal = () => {
               <Button type='button' variant="outline"
                 className="text-[#7677F4] w-[100px] h-[45px] border border-[#7677F4] rounded-[12px] hover:bg-blue-500 hover:text-white "
                 onClick={handleLogout}
-                tabIndex={1}
 
               >
                 Yes
