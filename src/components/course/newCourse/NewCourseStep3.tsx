@@ -1618,7 +1618,7 @@ export const ExistingVenueListSection = ({
                 </DialogTrigger>
             </TooltipTrigger>
             {!isVenueSelected && (  
-            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+            <TooltipContent className="max-w-auto py-3 bg-[#333333] text-white border-none">
               <div className="text-wrap">
               Select the checkbox to start editing
               </div>
