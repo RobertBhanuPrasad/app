@@ -1,28 +1,13 @@
 import { isTeacherShownInTeacherField } from "@components/courseBusinessLogic";
-import Globe from "@public/assets/Globe";
 import Important from "@public/assets/Important";
-import LockIcon from "@public/assets/Lock";
-import { CrudFilter, useGetIdentity, useSelect } from "@refinedev/core";
+import { CrudFilter, useGetIdentity } from "@refinedev/core";
 import _ from "lodash";
-import { usePathname, useSearchParams } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useController, useFormContext, useFormState } from "react-hook-form";
+import { usePathname } from "next/navigation";
+import { ChangeEvent, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import { NewCourseStep2FormNames, NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
-  CERTIFICATION_TYPE,
-  PROGRAM_CATEGORY,
-  PROGRAM_ORGANIZER_TYPE,
-  VISIBILITY,
-} from "src/constants/OptionLabels";
-import {
-  ASSIST,
-  CERTIFIED,
-  COURSE,
-  CO_TEACH,
-  I_AM_ORGANIZER,
-  PRIVATE,
-  PUBLIC,
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
@@ -40,10 +25,10 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { Switch } from "src/ui/switch";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "./EditCourseUtil";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "src/ui/tooltip";
 
 export default function NewCourseStep2() {
@@ -57,12 +42,14 @@ export default function NewCourseStep2() {
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
+  const {optionLabelValue}=optionLabelValueStore()
+  
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
     <div className="pt-2 w-auto h-auto ">
       <div className="flex flex-wrap gap-x-7 gap-y-3">
         <div className="w-80 h-20">
-          <CourseTypeDropDown />
+          <CourseTypeDropDown/>
         </div>
         {/* Course Name drop will come from settings */}
         {/* //TODO: Need to BussinessLayer for this with proper code */}
@@ -164,6 +151,7 @@ export default function NewCourseStep2() {
 
 export const CourseTypeDropDown = () => {
   const { watch, setValue, clearErrors } = useFormContext();
+  const {optionLabelValue}=optionLabelValueStore()
 
   /**
    * This variable holds the path of the url
@@ -181,10 +169,8 @@ export const CourseTypeDropDown = () => {
 
   const formData = watch();
 
-  const courseCategoryId = getOptionValueObjectByOptionOrder(
-    PROGRAM_CATEGORY,
-    COURSE
-  )?.id;
+  const courseCategoryType = optionLabelValue?.program_category?.COURSE
+
 
   //Requirement: Fetch only the course types of organization selected in Step-1
   let filter: Array<CrudFilter> = [
@@ -194,9 +180,9 @@ export const CourseTypeDropDown = () => {
       value: formData?.organization_id,
     },
     {
-      field: "program_category_id",
+      field: "program_category",
       operator: "eq",
-      value: courseCategoryId,
+      value: courseCategoryType,
     },
   ];
 
@@ -236,7 +222,7 @@ export const CourseTypeDropDown = () => {
   });
 
   const selectQuery: any = {
-    resource: "program_types",
+    resource: "product",
     meta: {
       select: "*,program_type_teachers!inner(user_id)",
     },
@@ -338,10 +324,10 @@ export const CourseTypeDropDown = () => {
   };
 
   /**
-   * @description this function is used to get all the fields in the program_types and assign to the setCourseTypeSettings
+   * @description this function is used to get all the fields in the product and assign to the setCourseTypeSettings
    * @function getCourseTypeSettings
    * @param val
-   * This functions sets the data which is came from program_types table usign the id we have  in the setCourseTypeSettings redux variable
+   * This functions sets the data which is came from product table usign the id we have  in the setCourseTypeSettings redux variable
    */
   const getCourseTypeSettings = async (val: any) => {
     const courseSettings = queryResult?.data?.data.filter(
@@ -556,6 +542,7 @@ const CourseNameDropDown = () => {
 
 const TeachersDropDown = () => {
   const { data: loginUserData }: any = useGetIdentity();
+  const {optionLabelValue}=optionLabelValueStore()
 
   const { watch } = useFormContext();
 
@@ -568,35 +555,30 @@ const TeachersDropDown = () => {
     name: NewCourseStep2FormNames?.teacher_ids,
   });
 
-  const iAmOrganizerId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_ORGANIZER
-  )?.id;
+
+  const iAmOrganizer = optionLabelValue?.program_manage_type?.I_AM_ORGANIZING
+
 
   /**
    * This holds the certification certified level id
    */
-  const certificationCeritifiedLevelId = getOptionValueObjectByOptionOrder(
-    CERTIFICATION_TYPE,
-    CERTIFIED
-  )?.id;
+  const certificationCeritifiedLevel = optionLabelValue?.program_certification_level?.CERTIFIED
+
 
   /**
    * This holds the certification co teach level id
    */
-  const certificationCoTeachLevelId = getOptionValueObjectByOptionOrder(
-    CERTIFICATION_TYPE,
-    CO_TEACH
-  )?.id;
+  const certificationCoTeachLevel = optionLabelValue?.program_certification_level?.CO_TEACH
+
 
   /**
    * Initiall filter array holds the certification level for teachers and it fetch only those whose certification levl is co teach and cerified
    */
   let filter: Array<CrudFilter> = [
     {
-      field: "program_type_teachers.certification_level_id",
+      field: "program_type_teachers.certification_level",
       operator: "in",
-      value: [certificationCeritifiedLevelId, certificationCoTeachLevelId],
+      value: [certificationCeritifiedLevel, certificationCoTeachLevel],
     },
   ];
 
@@ -616,13 +598,14 @@ const TeachersDropDown = () => {
       value: formData?.organization_id,
     });
   }
+console.log(formData?.program_created_by,'formData?.program_created_by');
 
   /* This condition checks if the program was created by the currently logged-in user as only the iam the organizer for another teacher */
   /* If the program was created by the organizer, it proceeds to add a filter */
   /* The filter excludes the currently logged-in user from the list of teachers */
   /* This ensures that the organizer is not included in the list of teachers */
   /* The filter is applied to the 'program_type_teachers.user_id' field */
-  if (formData?.program_created_by == iAmOrganizerId) {
+  if (formData?.program_created_by == iAmOrganizer) {
     filter.push({
       field: "program_type_teachers.user_id",
       operator: "ne",
@@ -636,12 +619,12 @@ const TeachersDropDown = () => {
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(certification_level_id,program_type_id!inner(organization_id)),contact_id!inner(full_name))",
+        "*,program_type_teachers!inner(certification_level,program_type_id!inner(organization_id)),full_name)",
     },
     filters: filter,
     onSearch: (value: any) => [
       {
-        field: "contact_id.full_name",
+        field: "full_name",
         operator: "contains",
         value,
       },
@@ -650,7 +633,7 @@ const TeachersDropDown = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    optionLabel: "contact_id.full_name",
+    optionLabel: "full_name",
     optionValue: "id",
   };
 
@@ -659,6 +642,8 @@ const TeachersDropDown = () => {
   }
 
   const { options, queryResult, onSearch } = useMVPSelect(selectQuery);
+
+  
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
@@ -684,7 +669,7 @@ const TeachersDropDown = () => {
       */}
       {isTeacherShownInTeacherField(formData?.program_created_by) ? (
         <Input
-          value={loginUserData?.userData?.contact_id?.full_name}
+          value={loginUserData?.userData?.full_name}
           disabled={true}
           className="rounded-[12px] text-[14px] font-normal"
         />
@@ -704,7 +689,7 @@ const TeachersDropDown = () => {
             //If program is created by teacher or co-teacher then we need to prefill the teacher drop-down and can't deselect
             if (
               option === loginUserData?.userData?.id &&
-              formData?.program_created_by != iAmOrganizerId
+              formData?.program_created_by != iAmOrganizer
             ) {
               return {
                 disable: true,
@@ -729,22 +714,21 @@ const TeachersDropDown = () => {
 
 const AssistantTeachersDropDown = () => {
   const { watch } = useFormContext();
+  const {optionLabelValue}=optionLabelValueStore()
 
   const [pageSize, setPageSize] = useState(10);
 
   const formData = watch();
 
   //Finding program Organizer role id
-  const certificationLevelId = getOptionValueObjectByOptionOrder(
-    CERTIFICATION_TYPE,
-    ASSIST
-  )?.id;
+  const certificationLevel = optionLabelValue?.program_certification_level?.ASSIST
+
 
   let filter: Array<CrudFilter> = [
     {
-      field: "program_type_teachers.certification_level_id",
+      field: "program_type_teachers.certification_level",
       operator: "eq",
-      value: certificationLevelId,
+      value: certificationLevel,
     },
   ];
 
@@ -760,12 +744,12 @@ const AssistantTeachersDropDown = () => {
     resource: "users",
     meta: {
       select:
-        "*,contact_id!inner(first_name,last_name),program_type_teachers!inner(program_type_id,certification_level_id)",
+        "*,first_name,last_name,program_type_teachers!inner(program_type_id,certification_level)",
     },
     filters: filter,
     onSearch: (value) => [
       {
-        field: "contact_id.full_name",
+        field: "full_name",
         operator: "contains",
         value,
       },
@@ -784,7 +768,7 @@ const AssistantTeachersDropDown = () => {
 
   const teachers: any = queryResult.data?.data?.map((val) => {
     return {
-      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
+      label: val?.first_name + " " + val?.last_name,
       value: val?.id,
     };
   });
@@ -827,17 +811,13 @@ const Visibility = () => {
   } = useController({
     name: NewCourseStep2FormNames?.visibility_id,
   });
-
+  const {optionLabelValue}=optionLabelValueStore()
   //Finding program Organizer role id
-  const publicVisibilityId = getOptionValueObjectByOptionOrder(
-    VISIBILITY,
-    PUBLIC
-  )?.id;
+  const publicVisibility = optionLabelValue?.program_visibility?.PUBLIC
 
-  const privateVisibilityId = getOptionValueObjectByOptionOrder(
-    VISIBILITY,
-    PRIVATE
-  )?.id;
+
+  const privateVisibility = optionLabelValue?.program_visibility?.PRIVATE
+
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
   return (
     <div className="flex gap-1 flex-col">
@@ -875,20 +855,20 @@ const Visibility = () => {
 
       <RadioGroup
         onValueChange={(val: string) => {
-          onChange(parseInt(val));
+          onChange(val);
         }}
-        value={JSON.stringify(value)}
+        value={value}
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value={JSON.stringify(publicVisibilityId)}
-            selectedRadioValue={JSON.stringify(value)}
+            value={publicVisibility}
+            selectedRadioValue={value}
             label={t("public")}
-            className="w-[112px] h-[40px] rounded-[12px] "
+            className="w-[112px] h-[40px] rounded-[12px]"
           />
           <RadioButtonCard
-            value={JSON.stringify(privateVisibilityId)}
-            selectedRadioValue={JSON.stringify(value)}
+            value={privateVisibility}
+            selectedRadioValue={value}
             label={t("private")}
             className="w-[112px] h-[40px] rounded-[12px]"
           />
@@ -1003,7 +983,7 @@ const LanguageDropDown = () => {
   });
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "languages",
+    resource: "product_languages",
     optionLabel: "language_name",
     optionValue: "id",
     defaultValue: value,
@@ -1076,7 +1056,7 @@ const LanguageTranslationDropDown = () => {
   const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "languages",
+    resource: "product_languages",
     optionLabel: "language_name",
     optionValue: "id",
     filters: [

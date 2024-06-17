@@ -14,18 +14,8 @@ import { useRouter } from "next/router";
 import { fetchCourseFee } from "pages/courses/add";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { translatedText } from "src/common/translations";
-import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import {
-  COURSE_ACCOUNTING_STATUS,
-  PAYMENT_MODE,
-  PROGRAM_ORGANIZER_TYPE,
-  TIME_FORMAT,
-  VISIBILITY,
-} from "src/constants/OptionLabels";
-import {
-  I_AM_CO_TEACHING,
   NATIONAL_ADMIN,
-  NOT_SUBMITTED,
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
@@ -43,10 +33,6 @@ import {
   formatDateString,
   subtractDaysAndFormat,
 } from "src/utility/DateFunctions";
-import {
-  getOptionValueObjectById,
-  getOptionValueObjectByOptionOrder,
-} from "src/utility/GetOptionValuesByOptionLabel";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
@@ -61,6 +47,8 @@ import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { validationSchema } from "./NewCourseValidations";
 import dayjs from "dayjs";
+import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -69,10 +57,12 @@ export default function NewCourseReviewPage() {
     "course.view_course",
     "new_strings",
     "validations_text",
+    "enums"
   ]);
   const supabase = supabaseClient();
 
   const { data: loginUserData }: any = useGetIdentity();
+  const {optionLabelValue}=optionLabelValueStore()
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -90,7 +80,7 @@ export default function NewCourseReviewPage() {
   const { newCourseData, setNewCourseData, setEditCourseDefaultValues, editCourseDefaultValues } = newCourseStore();
 
   const { data: programTypeData } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: newCourseData?.program_type_id,
   });
 
@@ -247,17 +237,7 @@ export default function NewCourseReviewPage() {
     ) {
       tempCourseData = {
         ...tempCourseData,
-        program_fee_level_settings: data?.[0]?.program_fee_level_settings?.map(
-          (feeLevel: any) => {
-            //Removing Id and program_fee_setting_id
-            const { id, program_fee_setting_id, program_id, ...rest } =
-              feeLevel;
-            return {
-              ...rest,
-              fee_level_id: feeLevel?.fee_level_id?.id,
-            };
-          }
-        ),
+        program_fee_level_settings: data?.[0]?.product_fee_level_settings,
         is_early_bird_enabled: data?.[0]?.is_early_bird_fee_enabled,
         early_bird_cut_off_period: data?.[0]?.early_bird_cut_off_period,
       };
@@ -300,44 +280,33 @@ export default function NewCourseReviewPage() {
   ]);
 
   const creator =
-    newCourseData?.program_created_by &&
-    getOptionValueObjectById(
-      PROGRAM_ORGANIZER_TYPE,
-      newCourseData?.program_created_by
-    );
+    newCourseData?.program_created_by 
 
-  const paymentMethod = getOptionValueObjectById(
-    PAYMENT_MODE,
-    newCourseData?.accommodation_fee_payment_mode
-  );
 
-  const timeFormat =
-    newCourseData?.hour_format_id &&
-    getOptionValueObjectById(TIME_FORMAT, newCourseData?.hour_format_id);
+  const paymentMethod = newCourseData?.accommodation_fee_payment_mode 
+  const timeFormat = newCourseData?.hour_format_id;
 
-  const visibility =
-    newCourseData?.visibility_id &&
-    getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id);
+  const visibility = newCourseData?.visibility_id 
+
 
   const { data: organizationName } = useOne({
     resource: "organizations",
     id: newCourseData?.organization_id,
   });
-
   const { data: ProgramOrganizer } = useMany({
     resource: "users",
     ids: newCourseData?.organizer_ids || [],
-    meta: { select: "contact_id(full_name)" },
+    meta: { select: "full_name" },
   });
 
   const programOrganizersNames = ProgramOrganizer?.data
     ?.map((user_id) => {
-      if (user_id?.contact_id?.full_name) return user_id?.contact_id?.full_name;
+      if (user_id?.full_name) return user_id?.full_name;
     })
     .join(", ");
 
   const { data: CourseLanguages } = useMany({
-    resource: "languages",
+    resource: "product_languages",
     ids: newCourseData?.language_ids || [],
     meta: { select: "language_name" },
   });
@@ -349,7 +318,7 @@ export default function NewCourseReviewPage() {
     .join(", ");
 
   const { data: CourseTranslation } = useMany({
-    resource: "languages",
+    resource: "product_languages",
     ids: newCourseData?.translation_language_ids || [],
     meta: { select: "language_name" },
   });
@@ -363,18 +332,18 @@ export default function NewCourseReviewPage() {
   const { data: CourseTeachers } = useMany({
     resource: "users",
     ids: newCourseData?.teacher_ids || [],
-    meta: { select: "contact_id(full_name)" },
+    meta: { select: "full_name" },
   });
 
   const CourseTeachersNames: any = CourseTeachers?.data
     ?.map((teacher_id) => {
-      if (teacher_id?.contact_id?.full_name)
-        return teacher_id?.contact_id?.full_name;
+      if (teacher_id?.full_name)
+        return teacher_id?.full_name;
     })
     .join(", ");
 
   const { data: courseType } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: newCourseData?.program_type_id,
   });
 
@@ -468,14 +437,7 @@ export default function NewCourseReviewPage() {
   const defaultFeeLevels =
     newCourseData?.feeLevels?.length == 0
       ? []
-      : newCourseData?.feeLevels?.[0]?.program_fee_level_settings?.map(
-          (feeLevel: any) => {
-            return {
-              ...feeLevel,
-              fee_level_id: feeLevel?.fee_level_id?.id,
-            };
-          }
-        );
+      : newCourseData?.feeLevels?.[0]?.product_fee_level_settings
 
   // If fee Levels is editable then need to show edited fee i.e; fee entered by user (form data) else we need to show fee levels coming from settings.
   const feeLevels = isFeeEditable
@@ -486,6 +448,7 @@ export default function NewCourseReviewPage() {
   const enabledFeeLevelData = feeLevels?.filter(
     (feeLevel: { is_enable: boolean }) => feeLevel.is_enable === true
   );
+
 const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   const [openBasicDetails, setOpenBasicDetails] = useState(false);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
@@ -508,18 +471,15 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
   /**
    * The variable holds the course accounting status not submitted id
    */
-  const accountingNotSubmittedStatusId =
-    getOptionValueObjectByOptionOrder(COURSE_ACCOUNTING_STATUS, NOT_SUBMITTED)
-      ?.id ?? 0;
-
+  const accountingNotSubmittedStatus=optionLabelValue?.program_accounting_status?.NOT_SUBMITTED
+   
   /**
    * @constant iAmCoTeachingId
    * @description thid const stores the id of the i am co teaching
    */
-  const iAmCoTeachingId = getOptionValueObjectByOptionOrder(
-    PROGRAM_ORGANIZER_TYPE,
-    I_AM_CO_TEACHING
-  )?.id;
+
+
+  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING
 
   const [errors, setErrors] = useState<any>({});
 
@@ -539,7 +499,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
       countryCode
     );
 
-    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number, t);
+    const newCourseZodSchema = validationSchema(iAmCoTeaching as string, t);
 
     let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 
@@ -614,7 +574,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
 
       try {
         const { data: upsertCourseData, error } =
-          await supabase.functions.invoke("upsert-course", {
+          await supabase.functions.invoke("upsert-courses", {
             headers: {
               Authorization:
                 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
@@ -625,7 +585,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
               program_data: programBody,
               loggedin_user_id: data?.userData?.id,
               accounting_not_submitted_status_id:
-                accountingNotSubmittedStatusId,
+                accountingNotSubmittedStatus,
               language_code: languageCode,
               rx_base_url:RX_BASE_URL,
               cx_base_url:CX_BASE_URL,
@@ -847,7 +807,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                 className="font-semibold no-underline  truncate block   text-accent-secondary text-[#666666]"
                 title={translatedText(creator?.name)}
               >
-                {creator?.name ? translatedText(creator?.name) : "-"}
+                {creator ? t(`enum:${creator}`) : "-"}
               </abbr>
             </div>
             <div className="w-[291px]">
@@ -941,6 +901,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                     ? translatedText(courseType?.data?.name)
                     : "-"
                 }
+                
               >
                 {courseType?.data?.name && newCourseData?.program_type_id !== ""
                   ? translatedText(courseType?.data?.name)
@@ -1045,7 +1006,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                 className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
                 title={translatedText(visibility?.name)}
               >
-                {visibility ? translatedText(visibility?.name) : "-"}
+                {visibility ? t(`enum:${visibility}`) : "-"}
               </abbr>
             </div>
             {/* This should be shown when the logged in user has superadmin role and is_geo_restriction_applicable is set to true */}
@@ -1267,10 +1228,10 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={timeFormat?.value}
                 >
-                  {timeFormat?.value
-                    ? timeFormat?.value.split(" ")[0] +
+                  {t(`enum:${timeFormat}`)
+                    ? t(`enum:${timeFormat}`).split(" ")[0] +
                       " " +
-                      timeFormat?.value.split(" ")[1] +
+                      t(`enum:${timeFormat}`).split(" ")[1] +
                       "s"
                     : "-"}
                 </abbr>
@@ -1412,6 +1373,8 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
           {newCourseData?.is_residential_program && (
             <div className="flex flex-wrap gap-x-[50px] gap-y-[24px] mt-4">
               {newCourseData?.accommodation?.map((data: any) => {
+   
+                
                 return (
                   <Accommodation
                     accomdationData={data}
@@ -1430,7 +1393,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                   className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
                   title={translatedText(paymentMethod?.name)}
                 >
-                  {translatedText(paymentMethod?.name)}
+                   {t(`enum:${paymentMethod}`)}
                 </abbr>
               </div>
             </div>
@@ -1608,6 +1571,8 @@ const Fees = ({
 }: {
   feeLevelSettingsData: ProgramFeeLevelSettingsDataBaseType;
 }) => {
+  const { t } = useTranslation(["enum"]);
+
   /**
    * @constant countryConfigData
    * @description this constant stores the country config data based on the organization
@@ -1645,29 +1610,15 @@ const Fees = ({
       </div>
     );
   }
-
-  /**
-   * @constant feeLevelData
-   * REQUIRMENT we need to show the both fee level type and total of the fee level
-   * we have the fee_level_id and we need the fee level type
-   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
-   * @description this data const is used to store the fee level type data with respective to the fee level type id
-   *
-   */
-  const { data: feeLevelData } = useOne({
-    resource: "option_values",
-    id: feeLevelSettingsData?.fee_level_id as number,
-  });
-
   //If custom label is false then show only fee_level label.
   return (
     <div className="w-[291px]">
       <abbr
-        title={translatedText(feeLevelData?.data?.name)}
+        title={t(`enum:${feeLevelSettingsData?.fee_level}`)}
         className="no-underline"
       >
         <CardLabel className="truncate">
-          {translatedText(feeLevelData?.data?.name)}
+          {t(`enum:${feeLevelSettingsData?.fee_level}`)}
         </CardLabel>
       </abbr>
       <abbr
@@ -1735,30 +1686,19 @@ const EarlyBirdFees = ({
     );
   }
 
-  /**
-   * @constant feeLevelData
-   * REQUIRMENT we need to show the both fee level type and early bird total of the fee level
-   * we have the fee_level_id and we need the fee level type
-   * For that we are doing appi call for the option_values table and we are getting the data in that data we have the fee level type
-   * @description this data const is used to store the fee level type data with respective to the fee level type id
-   *
-   */
-  const { data: feeLevelData } = useOne({
-    resource: "option_values",
-    id: feeLevelSettingsData?.fee_level_id as number,
-  });
-  const { t } = useTranslation("new_strings");
+  const { t } = useTranslation(["new_strings","enum"]);
   //If custom fee is false show fee level label.
+
   return (
     <div className="w-[291px]">
       {/* We have the same fee level types for normal fee and the early bird fee, for differentiating we keep the Early Bird for the Early Bird fees  */}
       <abbr
-        title={`Early Bird ${translatedText(feeLevelData?.data?.name)}`}
+        title={`Early Bird ${t(`enum:${feeLevelSettingsData.fee_level}`)}`}
         className="no-underline"
       >
         <CardLabel className="truncate">
           {t("new_strings:early_bird")}{" "}
-          {translatedText(feeLevelData?.data?.name)}
+          {t(`enum:${feeLevelSettingsData.fee_level}`)}
         </CardLabel>
       </abbr>
       <abbr

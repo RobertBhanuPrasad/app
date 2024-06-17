@@ -242,7 +242,7 @@ interface ProgramFeeLevelSettingsDataBaseType {
   early_bird_sub_total?: number;
   early_bird_tax?: number;
   early_bird_total?: number;
-  fee_level_id?: number | OptionValuesDataBaseType;
+  fee_level?: string;
   is_custom_fee?: boolean;
   program_id?: number | ProgramDataBaseType;
 }

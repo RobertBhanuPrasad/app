@@ -39,6 +39,7 @@ import {
   TEACHER,
 } from "src/constants/OptionValueOrder";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 /**
  * Is course approved
@@ -795,23 +796,20 @@ export const handleTabsBasedOnStatus = (courseStatusId: any, tabIndex: any) => {
  * @param statusId The status ID to determine the color for.
  * @returns An object containing the color code and styles for the status.
  */
-export const getCourseStatusColorBasedOnStatusId = (statusId: number) => {
-  const courseActiveStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    ACTIVE
-  )?.id;
-  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    PENDING_REVIEW
-  )?.id;
+export const getCourseStatusColorBasedOnStatusId = (status: string) => {
+  const {optionLabelValue}=optionLabelValueStore()
+  const courseActiveStatus = optionLabelValue?.program_status?.ACTIVE
+
+  const coursePendingReviewStatus =optionLabelValue?.program_status?.PENDING_REVIEW
+
 
   // Check if the status ID matches the active status ID
-  if (statusId === courseActiveStatusId) {
+  if (status === courseActiveStatus) {
     // Return color code and styles for active status
     return { colorCode: "#15AF53", styles: "text-[#15AF53] bg-[#15AF53]/10" };
   }
   // Check if the status ID matches the pending review status ID
-  if (statusId === coursePendingReviewStatusId) {
+  if (status === coursePendingReviewStatus) {
     // Return color code and styles for pending review status
     return { colorCode: "#FFB900", styles: "text-[#FFB900] bg-[#FFB900]/10" };
   }

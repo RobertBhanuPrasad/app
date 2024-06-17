@@ -3,7 +3,6 @@ import { fetchCourseFee } from "pages/courses/add";
 import {
   NewCourseStep1FormNames,
   NewCourseStep2FormNames,
-  NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
 } from "src/constants/CourseConstants";
@@ -35,10 +34,10 @@ export const getRequiredFieldsForValidation = async (
   if (formData?.program_type_id) {
     /**
      * @constant programTypesData
-     * @description this constant stores the data which came from the program_types table using the program type id which is there in the formData
+     * @description this constant stores the data which came from the product table using the program type id which is there in the formData
      */
     const { data: programTypesDataObjects } = await supabase
-      .from("program_types")
+      .from("product")
       .select("*")
       .eq("id", formData?.program_type_id);
 

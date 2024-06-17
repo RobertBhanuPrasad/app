@@ -2,11 +2,9 @@ import { DataTable } from "../../DataTable";
 import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "src/ui/checkbox";
-import { supabaseClient } from "src/utility";
 import { useGetIdentity, useList, useOne } from "@refinedev/core";
 import {
   NATIONAL_ADMIN,
-  REGULAR,
   SUPER_ADMIN,
 } from "src/constants/OptionValueOrder";
 import {
@@ -17,19 +15,12 @@ import {
 } from "react-hook-form";
 import { Input } from "src/ui/input";
 import { NewCourseStep4FormNames } from "src/constants/CourseConstants";
-import { DateCalendar } from "src/ui/DateCalendar";
-import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
-import { Button } from "src/ui/button";
-import CalenderIcon from "@public/assets/CalenderIcon";
-import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { translatedText } from "src/common/translations";
-import useGetCountryCode from "src/utility/useGetCountryCode";
 import { DateField } from "src/ui/DateField";
 import { Text } from "src/ui/TextTags";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
-import { FEE_LEVEL } from "src/constants/OptionLabels";
 import _ from "lodash";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 // Define CourseTable component
 
@@ -39,11 +30,6 @@ export default function CourseTable() {
   const { watch } = useFormContext();
 
   const formData = watch();
-
-  const { data: programTypeData } = useOne({
-    resource: "program_types",
-    id: formData?.program_type_id,
-  });
 
   const { data: organizationData, isLoading } = useOne({
     resource: "organizations",
@@ -86,7 +72,7 @@ export const sortFeeLevels = (feeLevels: any) => {
 };
 
 function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
-  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
+  const { t } = useTranslation(["common", "course.new_course", "new_strings","enum"]);
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -133,12 +119,12 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   // Data for the table
   const courseFeeData: FeeLevelType[] =
-    courseFeeSettings?.[0]?.program_fee_level_settings?.map((val: any) => {
+    courseFeeSettings?.[0]?.product_fee_level_settings?.map((val: any) => {
       let modifiedFeeLevels: any = {
-        feeLevelId: val?.fee_level_id?.id,
+        feeLevel: val?.fee_level,
         feeLevelLabel: val?.is_custom_fee
           ? translatedText(val?.custom_fee_label)
-          : translatedText(val?.fee_level_id?.name),
+          : t(`enum:${val?.fee_level}`),
         is_enable: val?.is_enable,
         order: val?.fee_level_id?.order,
         subTotal: (val?.total - val?.total * taxRate)?.toFixed(2),
@@ -179,7 +165,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
           is_enable: fee?.is_enable,
           total: fee?.total,
           early_bird_total: fee?.earlyBirdTotal || 0,
-          fee_level_id: fee?.feeLevelId,
+          fee_level: fee?.feeLevel,
           is_custom_fee: fee?.is_custom_fee,
           custom_fee_label: fee?.custom_fee_label,
           order: fee?.order,
@@ -455,15 +441,12 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
             name: `program_fee_level_settings[${row?.index}][is_enable]`,
           });
 
+          const {optionLabelValue}=optionLabelValueStore()
           /**
-           * @constant regularFeeLevelId
+           * @constant regularFeeLevel
            * REQUIRMENT we need to disable the check box of regular fee type
-           * @description this constant stores the regular fee level id using the getOptionValueObjectByOptionOrder function
            */
-          const regularFeeLevelId = getOptionValueObjectByOptionOrder(
-            FEE_LEVEL,
-            REGULAR
-          )?.id;
+          const regularFeeLevel = optionLabelValue?.program_fee_level.REGULAR
 
           return (
             <Checkbox
@@ -477,7 +460,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
               value={value}
               // REQUIRMENT we need to disable the checkbox when the fee level id regular and not for custom fee
               disabled={
-                row?.original.feeLevelId == regularFeeLevelId &&
+                row?.original.feeLevel == regularFeeLevel &&
                 row?.original?.is_custom_fee == false
                   ? true
                   : false
@@ -630,7 +613,7 @@ type FeeLevelType = {
   earlyBirdSubTotal: number;
   earlyBirdTax: number;
   earlyBirdTotal: number;
-  feeLevelId: number;
+  feeLevel: string;
   feeLevelLabel: string;
   is_enable: boolean;
   subTotal: number;

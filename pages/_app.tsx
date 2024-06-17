@@ -54,11 +54,18 @@ function MyApp({
     const { setCountryCode, setLanguageCode } = ConfigStore();
 
     const fetchOptionLabelOptionValueData = async () => {
-      const { data } = await supabase
-        .from("option_labels")
-        .select("*,option_values(*)");
-      console.log("Option Label Value Data", data);
-      setOptionLabelValue(data as any[]);
+      const {data: enumData}=await supabase.rpc('get_enums_for_schema', { schema_name: 'public' })
+
+      const result = enumData.reduce((acc:any, { enum_name, enum_value }:{enum_name: string,enum_value:string}) => {
+        if (!acc[enum_name]) {
+          acc[enum_name] = {};
+        }
+        acc[enum_name][enum_value] = enum_value;
+        return acc;
+      }, {});
+
+      console.log("Enums Values are:",result)
+      setOptionLabelValue(result);
     };
 
     useEffect(() => {

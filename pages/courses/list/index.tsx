@@ -329,7 +329,7 @@ function index() {
     resource: "program",
     meta: {
       select:
-        "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+        "*,product(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
     queryOptions: {
@@ -381,7 +381,7 @@ function index() {
       syncWithLocation: false,
       meta: {
         select:
-          "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+          "*,product(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
       },
       pagination: {
         pageSize: pageSize,
@@ -477,7 +477,7 @@ function index() {
         },
         {
           column_name: t("new_strings:course_type_name"),
-          path: ["program_types", "name", languageCode],
+          path: ["product", "name", languageCode],
         },
         {
           column_name: t("course.find_course:course_status"),
@@ -531,7 +531,7 @@ function index() {
       const params = new URLSearchParams({
         table_name: "program",
         select:
-          "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
+          "id,created_at,program_code,product(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
         filters: JSON.stringify(exportXlsFilters),
         sorters: JSON.stringify([
@@ -623,7 +623,7 @@ function index() {
   // so that the course_type and course_name is not visible in advance filter and for the columns course_name should be visible if and only if course_alias_name is true
   // for the ticket MVP-1054
   const { data } = useList<any>({
-    resource: "program_types",
+    resource: "product",
     filters: [
       {
         field: "has_alias_name",
@@ -848,7 +848,7 @@ export const CourseTypeComponent = ({ name }: any) => {
 
   const [pageSize, setPageSize] = useState(10);
   const { options, onSearch } = useMVPSelect({
-    resource: "program_types",
+    resource: "product",
     optionLabel: "name",
     optionValue: "id",
     //If there is a value which is selected in basic filters it need to be prefilled defaultly
@@ -1216,6 +1216,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "new_strings",
     "course.find_course",
     "course.participants",
+    "enum"
   ]);
   if (!authenticated) {
     return {

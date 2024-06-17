@@ -10,6 +10,7 @@ import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import {
   COURSE_ACCOUNTING_STATUS,
+  PROGRAM_CATEGORY,
   PROGRAM_STATUS,
   VISIBILITY,
 } from "src/constants/OptionLabels";
@@ -37,12 +38,12 @@ import {
 } from "src/ui/select";
 import { Separator } from "src/ui/separator";
 import {
-  getOptionValueObjectByOptionOrder,
-  getOptionValuesByOptionLabel,
+  getEnumsWithLabel
 } from "src/utility/GetOptionValuesByOptionLabel";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import { useMVPSelect } from "src/utility/useMVPSelect";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 
 // Entity implies City,Center,State,...
 export type Entity = {
@@ -894,10 +895,10 @@ export const Center = ({
   );
 };
 export const CourseStatus = () => {
+  const { t } = useTranslation("enum");
   const { getValues } = useFormContext();
 
-  let courseStatusData =
-    getOptionValuesByOptionLabel(PROGRAM_STATUS)?.[0]?.option_values;
+  const courseStatusData =getEnumsWithLabel({label:PROGRAM_STATUS})
 
   const {
     field: { value: temporaryValue = [], onChange: temporaryOnChange },
@@ -921,14 +922,14 @@ export const CourseStatus = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              temporaryValue?.includes(status?.id)
+              temporaryValue?.includes(status?.label)
                 ? "bg-primary text-white  hover:bg-[#5E5FC3]"
                 : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             }`}
             variant="outline"
-            onClick={() => toggleCourseStatus(status?.id)}
+            onClick={() => toggleCourseStatus(status?.label)}
           >
-            {translatedText(status?.name)}
+            {t(`enum:${status?.value}`)}
           </Button>
         </div>
       ))}
@@ -937,9 +938,9 @@ export const CourseStatus = () => {
 };
 
 export const CourseAccordingStatus = () => {
-  const courseAccountingStatusData = getOptionValuesByOptionLabel(
-    COURSE_ACCOUNTING_STATUS
-  )?.[0]?.option_values;
+  const { t } = useTranslation("enum");
+
+  const courseAccountingStatusData = getEnumsWithLabel({label:COURSE_ACCOUNTING_STATUS})
 
   const {
     field: { value: temporaryValue = [], onChange: temporaryOnChange },
@@ -959,14 +960,14 @@ export const CourseAccordingStatus = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              temporaryValue?.includes(status?.id)
+              temporaryValue?.includes(status?.label)
                 ? "bg-primary text-white hover:bg-[#5E5FC3]"
                 : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             }`}
             variant="outline"
-            onClick={() => toggleCourseStatus(status?.id)}
+            onClick={() => toggleCourseStatus(status?.label)}
           >
-            {translatedText(status?.name)}
+            {t(`enum:${status?.value}`)}
           </Button>
         </div>
       ))}
@@ -1026,37 +1027,32 @@ export const Visibility = () => {
   } = useController({
     name: "temporaryadvancefilter.visibility",
   });
+  const {optionLabelValue}=optionLabelValueStore()
+  
+  const publicVisibility = optionLabelValue?.program_visibility?.PUBLIC
 
-  const publicVisibilityId = getOptionValueObjectByOptionOrder(
-    VISIBILITY,
-    PUBLIC
-  )?.id;
-
-  const privateVisibilityId = getOptionValueObjectByOptionOrder(
-    VISIBILITY,
-    PRIVATE
-  )?.id;
+  const privateVisibility = optionLabelValue?.program_visibility?.PRIVATE
 
   const { t } = useTranslation("common");
 
   return (
     <div>
       <RadioGroup
-        value={JSON.stringify(temporaryValue)}
+        value={temporaryValue}
         onValueChange={(val: string) => {
-          temporaryOnChange(parseInt(val));
+          temporaryOnChange(val);
         }}
       >
         <div className="flex flex-row gap-6 ">
           <RadioButtonCard
-            value={JSON.stringify(publicVisibilityId)}
-            selectedRadioValue={JSON.stringify(temporaryValue)}
+            value={publicVisibility}
+            selectedRadioValue={temporaryValue}
             label={t("public")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />
           <RadioButtonCard
-            value={JSON.stringify(privateVisibilityId)}
-            selectedRadioValue={JSON.stringify(temporaryValue)}
+            value={privateVisibility}
+            selectedRadioValue={temporaryValue}
             label={t("private")}
             className="w-[112px] h-[40px] rounded-[12px]  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           />

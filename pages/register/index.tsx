@@ -48,22 +48,23 @@ const Signup = () => {
 
     console.log("heyy register data", data, error);
 
-    const { data: contactData } = await supabase
-      .from("contact")
-      .insert([{ first_name: firstName, last_name: lastName, email: email }])
-      .select();
-
+    const fullName=firstName+ " "+ lastName
+    
     const { data: userData } = await supabase
       .from("users")
       .insert([
-        { user_identifier: data?.user?.id, contact_id: contactData?.[0]?.id },
+        { user_identifier: data?.user?.id,first_name:firstName,last_name:lastName,email:email,full_name:fullName }
       ])
       .select();
 
+    console.log("Created User is",userData)
+    
     const { data: roleData } = await supabase
       .from("user_roles")
       .insert([{ user_id: userData?.[0]?.id, role_id: roleValue }])
       .select();
+
+    console.log("Created User Role",roleData)
 
     router.push("/login");
   };

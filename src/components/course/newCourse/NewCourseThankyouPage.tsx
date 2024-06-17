@@ -21,12 +21,14 @@ import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesBy
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import { useTranslation } from 'next-i18next';
 import { TwelveHrFormat, TwentyFourHrFormat } from '../viewCourse/courseDetailsTab'
+import { optionLabelValueStore } from 'src/zustandStore/OptionLabelValueStore'
 
 const NewCourseThankyouPage = () => {
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false)
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false)
   const { programId,setNewCourseData } = newCourseStore()
+  const {optionLabelValue}=optionLabelValueStore()
 
   const router = useRouter()
 
@@ -75,14 +77,14 @@ useEffect(() => {
     id: programId,
     meta: {
       select:
-        'hour_format_id,online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,name),registration_link,details_page_link'
+        'online_url,visibility,program_code,program_type_id,status,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_users(users(full_name)),program_schedules(start_time,end_time),registration_link,details_page_link'
     }
   })
 
   // Formatting teacher string
-  const teachers = data?.data?.program_teachers
+  const teachers = data?.data?.program_users
     ?.map((teacher: any) => {
-      return teacher?.users?.contact_id?.full_name
+      return teacher?.users?.full_name
     })
     .join(',')
 
@@ -111,11 +113,18 @@ useEffect(() => {
 
   }
 
-  const statusColorCode = getCourseStatusColorBasedOnStatusId(data?.data?.status_id?.id)?.colorCode
-  const statusStyles = getCourseStatusColorBasedOnStatusId(data?.data?.status_id?.id)?.styles
-  const courseActiveStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, ACTIVE)?.id
+  const statusColorCode = getCourseStatusColorBasedOnStatusId(data?.data?.status)?.colorCode
+  const statusStyles = getCourseStatusColorBasedOnStatusId(data?.data?.status)?.styles
+  
+  const courseActiveStatus = optionLabelValue?.program_status?.ACTIVE
+
+  const courseStatus=optionLabelValue?.program_status
+
+  
+
   // getting public visibility id to check whether the particular course is public or private.
-  const publicVisibilityId = getOptionValueObjectByOptionOrder(VISIBILITY, PUBLIC)?.id
+  const publicVisibility =optionLabelValue?.program_visibility?.PUBLIC
+
 
   // getting twelve Hr Time Format id to check whether the particular course time format.
   const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
@@ -135,7 +144,7 @@ useEffect(() => {
           <div className="absolute flex items-center gap-4 right-6 top-4 rid-cols-2">
             <Button className={`width-[135px] rounded-[25px]  h-[25px] gap-2 ${statusStyles}`}>
               <Circle color={statusColorCode} fill={statusColorCode} size={5} className="text-[#FFB900]" />
-              {translatedText(data?.data?.status_id?.name)}
+              {t(`enum:${data?.data?.status}`)}
             </Button>
           
               <Button variant="outline" className="text-indigo-600 border-indigo-600 text-base" onClick={() => {router.replace('/courses/list')}}>
@@ -198,7 +207,7 @@ useEffect(() => {
           </div>
 
           {/* Thank you page footer  */}
-          {data?.data?.status_id?.id === courseActiveStatusId && (
+          {data?.data?.status === courseActiveStatus && (
             <section>
               {/* TODO  : for now may-13 release it has to be hidden */}
               {/* <div className="">
@@ -244,7 +253,7 @@ useEffect(() => {
                 {/* TODO  for now scope this cx url is to be hidden */}
                 {/* we are writing this conditions beacuse if the course is public then only we have to show the details page link */}
                 {/* for the MVP-904 */}
-                {/* {data?.data?.visibility_id?.id == publicVisibilityId && (
+                {/* {data?.data?.visibility_id?.id == publicVisibility && (
                   <div className="relative ">
                     <p className="absolute text-xs bg-white text-accent-secondary -top-[10px] left-4 ">
                       {t("details_page_link")}
