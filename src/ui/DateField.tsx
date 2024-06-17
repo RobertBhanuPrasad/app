@@ -5,6 +5,7 @@ import { cn } from "src/lib/utils";
 import { Button } from "src/ui/button";
 import { Calendar } from "src/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
+import dayjs from 'dayjs';
 
 interface DateFieldProps {
   /**
@@ -90,7 +91,9 @@ export const DateField = ({
           {/* Render the formatted date if date is selected, otherwise render the placeholder */}
 
           {value ? (
-            format(value, "dd MMM, yyyy")
+            <div className="capitalize">
+              {value && dayjs(value).format("DD MMM, YYYY")}
+            </div>
           ) : (
             <span>{placeholder ? placeholder : "Pick a date"}</span>
           )}

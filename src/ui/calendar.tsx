@@ -6,6 +6,7 @@ import { DayPicker } from "react-day-picker";
 
 import { cn } from "src/lib/utils";
 import { buttonVariants } from "src/ui/button";
+import dayjs from 'dayjs';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -17,6 +18,13 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
+      weekStartsOn={1}
+      formatters={{
+        formatWeekdayName:(date,options)=>{
+
+          return dayjs(date).format("ddd")
+        }
+      }}
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
@@ -32,7 +40,7 @@ function Calendar({
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-y-1",
-        head_row: "flex",
+        head_row: "flex capitalize w-full text-sm",
         head_cell:
           "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",
@@ -60,26 +68,14 @@ function Calendar({
           // Extract the month from the props
           const { displayMonth } = props;
 
-          const month = displayMonth.toLocaleString("default", {
-            month: "long",
-          });
+          const month = dayjs(displayMonth).format("MMMM")
+
           const year = displayMonth.getFullYear();
 
           return (
             <div className="flex flex-col items-center gap-1 font-semibold">
-              <div className="text-[16px]">{month}</div>
+              <div className="text-[16px] capitalize">{month}</div>
               <div className="text-[#999999] text-[12px]">{year}</div>
-            </div>
-          );
-        },
-        HeadRow: () => {
-          const weekNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-          return (
-            <div className="flex flex-row gap-4 text-[#999999] items-center justify-center text-[13px]">
-              {weekNames.map((day, index) => (
-                <div key={index}>{day}</div>
-              ))}
             </div>
           );
         },

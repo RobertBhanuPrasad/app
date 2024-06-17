@@ -47,6 +47,7 @@ import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { SortingState } from "@tanstack/react-table";
 
 function index() {
   const router = useRouter();
@@ -67,6 +68,7 @@ function index() {
     "new_strings",
     "course.find_course",
   ]);
+
   const filters: {
     /**
      * Initial filter state
@@ -286,6 +288,35 @@ function index() {
       });
     }
   }
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: "id",
+      desc: true,
+    },
+  ]);
+
+  const fieldValue = () => {
+    if (!sorting.length) {
+      setSorting([
+        {
+          id: "id",
+          desc: true,
+        },
+      ]);
+    }
+    let field = sorting?.[0]?.id;
+    if (field === "Name") field = "contact_id(full_name)";
+    if (field === "Date of Birth") field = "contact_id(date_of_birth)";
+    if (field === "Phone") field = "contact_id(mobile)";
+    if (field === "Email") field = "contact_id(email)";
+    if (field === "Amount") field = "total_amount";
+    if (field === "Attendance Status")
+      field = "participant_attendence_status_id(name)";
+    if (field === "Fee Level") field = "price_category_id(fee_level_id(value))";
+    return field;
+  };
+
+  console.log("sorting", sorting);
 
   const {
     tableQueryResult: participantData,
@@ -307,8 +338,8 @@ function index() {
     sorters: {
       permanent: [
         {
-          field: "id",
-          order: "asc",
+          field: fieldValue(),
+          order: sorting?.[0]?.desc ? "desc" : "asc",
         },
       ],
     },
@@ -514,6 +545,7 @@ function index() {
   const bulk_actions = t("new_strings:bulk_actions");
   const [bulkActionSelectedValue, setBulkActionSelectedValue] =
     useState(bulk_actions);
+
   const excelColumns = [
     {
       column_name: t("course.participants:find_participant.registration_id"),
@@ -551,7 +583,7 @@ function index() {
       column_name: t(
         "course.participants:edit_participant.participants_information_tab.amount"
       ),
-      path: ["price_category_id", "total"],
+      path: ["total_amount"],
     },
     {
       column_name: t("course.participants:view_participant.transaction_type"),
@@ -623,6 +655,18 @@ function index() {
   const csvOption = "CSV";
 
   const countryCode = useGetCountryCode();
+
+  //TODO: We can uncomment this when BA accepts this one
+  //TODO: right now commenting because we are getting issues in participant home page
+  // let isFiltering = false;
+
+  // if (
+  //   participantData?.isInitialLoading === false &&
+  //   participantData?.isLoading === false &&
+  //   participantData?.isPreviousData === true
+  // ) {
+  //   isFiltering = participantData?.isFetching;
+  // }
 
   return (
     <div>
@@ -768,6 +812,7 @@ function index() {
           <BaseTable
             current={current}
             rowSelection={rowSelection}
+            // isFiltering={isFiltering}
             setRowSelection={participantsRowSelectionOnChange}
             checkboxSelection={true}
             setCurrent={setCurrent}
@@ -775,6 +820,8 @@ function index() {
             total={participantData?.data?.total || 0}
             pageSize={pageSize}
             setPageSize={setPageSize}
+            sorting={sorting}
+            setSorting={setSorting}
             pagination={true}
             tableStyles={{
               table: "",

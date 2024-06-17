@@ -27,11 +27,6 @@ import {
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import { Text } from "src/ui/TextTags";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "src/ui/hover-card";
 import { Input } from "src/ui/input";
 import { DataItem, MultiSelect } from "src/ui/multi-select";
 import { RadioGroup } from "src/ui/radio-group";
@@ -51,6 +46,7 @@ import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "./EditCourseUtil";
 import { useMVPSelect } from "src/utility/useMVPSelect";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "src/ui/tooltip";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -860,12 +856,12 @@ const Visibility = () => {
         <Text className="text-xs font-normal text-[#333333]">
           {t("program_visibility")}
         </Text>
-        <HoverCard>
-          <HoverCardTrigger>
+        <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
             <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px]">
+          </TooltipTrigger>
+          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
               {/* <div className="flex flex-row gap-1 items-center">
                 <Globe />
                 {t("public")}
@@ -879,12 +875,13 @@ const Visibility = () => {
                 {t("private")}
               </div>
               <div>{t("new_strings:there_are_a_lot_of_things")}</div> */}
-              <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
+              <Text className="text-[#FFFFFF] text-wrap text-xs">
               {t("new_strings:program_visibility_info_icon_text")}
               </Text>
-            </div>
-          </HoverCardContent>
-        </HoverCard>
+          <TooltipArrow height={15} width={17} fill="#333333"/>
+          </TooltipContent>
+        </Tooltip>
+        </TooltipProvider>
       </div>
 
       <RadioGroup
@@ -963,16 +960,19 @@ const GeoRestriction = () => {
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
         {t("is_geo_restriction")}
         <div className="text-[#7677F4]">*</div>
-        <HoverCard>
-          <HoverCardTrigger>
+        <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
             <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+          </TooltipTrigger>
+          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+            <div className="text-wrap">
               {t("new_strings:text_entered_in_the_email_notes")}
             </div>
-          </HoverCardContent>
-        </HoverCard>
+            <TooltipArrow height={15} width={17} fill="#333333"/>
+          </TooltipContent>
+        </Tooltip>
+        </TooltipProvider>
       </div>
 
       <RadioGroup
@@ -1217,16 +1217,19 @@ const MaximumCapacity = () => {
       <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
         <Text className="text-xs ">{t("max_capacity")}</Text>
         {/* popover to show the note to maximum capacity */}
-        <HoverCard>
-          <HoverCardTrigger>
+        <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
             <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
+          </TooltipTrigger>
+          <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
+            <Text className="text-[#FFFFFF] text-wrap text-xs">
               {t("new_strings:if_this_field_is_blank")}
             </Text>
-          </HoverCardContent>
-        </HoverCard>
+            <TooltipArrow height={15} width={17} fill="#333333"/>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       </div>
       <Input
         placeholder={t(
