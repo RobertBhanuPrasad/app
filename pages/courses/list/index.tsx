@@ -254,7 +254,7 @@ function index() {
    * @description this const stores the filters which we do on the find courses 
    * if the filters are present in then destructre and store in the const else store the empty array to avoid errors
    */
-  const exportXlsFilters = filters.permanent?.length > 0 ? [...filters.permanent] : []
+  let exportXlsFilters = filters.permanent?.length > 0 ? [...filters.permanent] : []
 
   // REQUIRMENT we need to export the courses, what we are selecting using the checkboxes
   // If selected courses are there then add filter for that ids for the export xls filter
