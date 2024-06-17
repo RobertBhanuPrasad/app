@@ -75,73 +75,74 @@ export const ExpenseDetails = () => {
     {
       field_name: "Expense_category",
       component: <ExpenseCategory index={0} />,
-      className: "min-w-[250px] px-[12px]",
+      className: "min-w-[226px] pr-6",
     },
     {
       field_name: "Details",
       component: <Details index={0} />,
-      className: "min-w-[250px] px-[12px]",
+      className: "min-w-[226px] pr-6",
     },
     {
       field_name: "Receipt_Id",
       component: <ReceiptId index={0} />,
-      className: "min-w-[130px] max-w-[130px] px-[12px]",
+      className: "min-w-[120px] pr-6",
     },
     {
       field_name: "Purchase_date",
       component: <PurchaseDate index={0} />,
-      className: "min-w-[180px] px-[12px]",
+      className: "min-w-[120px]",
     },
     {
       field_name: "Amount",
       component: <Amount index={0} />,
-      className: "min-w-[130px] max-w-[130px] px-[12px]",
+      className: "min-w-[220px] px-12",
     },
     {
       field_name: "Reimbursable",
       component: <IsReimbursable index={0} />,
-      className: "min-w-[120px] px-[12px]",
-    },
-    {
-      field_name: "Payment_method",
-      component: "-",
-      className: "min-w-[220px] px-[12px]",
-    },
-    {
-      field_name: "Vat_condition",
-      component: "-",
-      className: "min-w-[220px] px-[12px]",
-    },
-    {
-      field_name: "Vendor_tax_id",
-      component: <VendorTaxId index={0} />,
-      className: "min-w-[220px] px-[12px]",
-    },
-    {
-      field_name: "Vendor_name",
-      component: <VendorName index={0} />,
-      className: "min-w-[220px] px-[12px]",
-    },
-    {
-      field_name: "Vat_rate",
-      component: "-",
-      className: "min-w-[220px] px-[12px]",
+      className: "min-w-[120px]",
     },
     {
       field_name: "Name_of_person_to_reimburse",
       component: <NameOfPersonToReimburse index={0} />,
-      className: "min-w-[250px] px-[12px]",
+      className: "min-w-[220px]",
     },
+    {
+      field_name: "Payment_method",
+      component: <PaymentMethod index={0} />,
+      className: "min-w-[226px] px-6",
+    },
+    {
+      field_name: "Vat_condition",
+      component: "-",
+      className: "min-w-[226px] pr-6",
+    },
+    {
+      field_name: "Vendor_tax_id",
+      component: <VendorTaxId index={0} />,
+      className: "min-w-[150px] pr-6",
+    },
+    {
+      field_name: "Vendor_name",
+      component: <VendorName index={0} />,
+      className: "min-w-[226px] pr-6",
+    },
+    {
+      field_name: "Vat_rate",
+      component: "-",
+      className: "min-w-[226px] pr-6",
+    },
+
     {
       field_name: "Receipt_image",
       component: "upload",
-      className: "min-w-[130px] px-[12px]",
+      className: "min-w-[76px] pr-12",
     },
   ];
 
   // expense_details_fields_list is the list coming from the course_accounting_config table
-  const expense_details_fields_list =
-    settingsData?.data?.[0]?.expense_details_fields_list;
+  const expense_details_fields_list = columns;
+  // settingsData?.data?.[0]?.expense_details_fields_list;
 
   // filteredColumns are the filtered columns
   // we need to filter the colums because as per the requirement we need to display the columns which are coming from the course_accounting_config table based on the settings
@@ -166,14 +167,14 @@ export const ExpenseDetails = () => {
   const program_expenses = formData.program_expenses || [];
 
   return (
-    <div>
+    <div className="px-[30px]">
       <Header className="py-4" children={"Expense Details"} />
       <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
         <div className="flex h-[48px] w-fit bg-[#7677F41A]">
           <TableHeader className="min-w-[50px] px-[12px]">#</TableHeader>
           {filteredColumns?.map((field: any) => (
             <TableHeader className={field?.className}>
-              {field?.field_label}
+              {field?.field_name}
             </TableHeader>
           ))}
           <TableHeader className="min-w-[220px] px-[12px]">Actions</TableHeader>
@@ -190,13 +191,31 @@ export const ExpenseDetails = () => {
                 </div>
               ))}
 
-              <div className="w-[180px] px-[12px]">
+              <div className="w-[180px] pl-24 ">
                 <Action index={index} remove={remove} append={append} />
               </div>
             </div>
           ))}
         </div>
       </div>
+      {/* Expense Total Calculations */}
+      <div className="border flex mt-4 rounded-xl ">
+        <div className="flex-1 flex border-r py-2 px-4">
+          <TableHeader className="flex-[0.8]">Reimbursable Total:</TableHeader>
+          <p className="flex-[0.2]">0.00</p>
+        </div>
+        <div className="flex-1 flex border-r p-2">
+          <TableHeader className="flex-[0.8]">
+            Non-reimbursable Total:
+          </TableHeader>
+          <p className="flex-[0.2]">0.00</p>
+        </div>
+        <div className="flex-1 flex  p-2">
+          <TableHeader className="flex-[0.8]">Reimbursable Total:</TableHeader>
+          <p className="flex-[0.2]">0.00</p>
+        </div>
+      </div>
+      {/* Reimbursement Summary Table */}
     </div>
   );
 };
@@ -377,72 +396,73 @@ const Amount = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-// const PaymentMethod = ({ index }: { index: number }) => {
-//   const {
-//     field: { value, onChange },
-//     fieldState: { error },
-// We give the type here because we will get the name as per the types we have in the form
-//   } = useController<CourseAccountingFormFieldTypes>({
-//     name: `program_expenses.${index}.payment_method`,
-//   });
+const PaymentMethod = ({ index }: { index: number }) => {
+  const {
+    field: { value, onChange },
+    fieldState: { error },
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.payment_method`,
+  });
 
-//   const { data } = useList<any>({
-//     resource: "option_labels",
-//     filters: [
-//       {
-//         field: "name",
-//         operator: "eq",
-//         value: "Payment Method",
-//       },
-//     ],
-//   });
+  const { data } = useList<any>({
+    resource: "option_labels",
+    filters: [
+      {
+        field: "name",
+        operator: "eq",
+        value: "Payment Method",
+      },
+    ],
+  });
 
-//   const { options } = useSelect({
-//     resource: "option_values",
-//     optionLabel: "name",
-//     optionValue: "id",
-//     filters: [
-//       {
-//         field: "option_label_id",
-//         operator: "eq",
-//         value: data?.data[0]?.id,
-//       },
-//     ],
-//   });
+  const { options } = useSelect({
+    resource: "option_values",
+    optionLabel: "name",
+    optionValue: "id",
+    filters: [
+      {
+        field: "option_label_id",
+        operator: "eq",
+        value: data?.data[0]?.id,
+      },
+    ],
+  });
 
-//   return (
-//     <div className="">
-//       <Select
-//         value={value}
-//         onValueChange={(val: any) => {
-//           onChange(val);
-//         }}
-//       >
-//         <SelectTrigger>
-//           <SelectValue placeholder="Select" />
-//         </SelectTrigger>
-//         <SelectContent>
-//           <SelectItems>
-//             {options.map((option: any, index: number) => (
-//               <>
-//                 <SelectItem
-//                   key={option.value}
-//                   value={option.value}
-//                   className="h-[44px]"
-//                 >
-//                   {optionValue(option.label)}
-//                 </SelectItem>
-//                 {index < options?.length - 1 && (
-//                   <hr className="border-[#D6D7D8]" />
-//                 )}
-//               </>
-//             ))}
-//           </SelectItems>
-//         </SelectContent>
-//       </Select>
-//     </div>
-//   );
-// };
+  // console.log(options, "options");
+  return (
+    <div className="">
+      <Select
+        value={value}
+        onValueChange={(val: any) => {
+          onChange(val);
+        }}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItems>
+            {options.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label.en}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 /**
  * @function VatCondition
