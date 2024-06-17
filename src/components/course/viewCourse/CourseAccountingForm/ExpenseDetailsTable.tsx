@@ -167,7 +167,7 @@ export const ExpenseDetails = () => {
   const program_expenses = formData.program_expenses || [];
 
   return (
-    <div className="px-[30px]">
+    <div>
       <Header className="py-4" children={"Expense Details"} />
       <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
         <div className="flex h-[48px] w-fit bg-[#7677F41A]">
@@ -182,7 +182,7 @@ export const ExpenseDetails = () => {
 
         <div className="space-y-[12px] my-[12px]">
           {fields.map((field: any, index: number) => (
-            <div key={field.id} className="flex items-center w-full h-auto  ">
+            <div key={field.id} className="flex items-center w-full h-auto">
               <div className="min-w-[50px] px-[12px]">{index + 1}</div>
 
               {filteredColumns?.map((field: any) => (

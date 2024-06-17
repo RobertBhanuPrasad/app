@@ -42,6 +42,7 @@ import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
 import { ACCOUNTING_PENDING_REVIEW } from "src/constants/OptionValueOrder";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CardValue, TableHeader, Text } from "src/ui/TextTags";
 
 function ExpenseSection() {
   const searchParams = useSearchParams();
@@ -203,43 +204,88 @@ function ExpenseSection() {
 
   const fields = [
     {
-    name:"bhargavi",
-    timestamp:"245793890",
-    action:"submitted"
-    },{
-    name:"Madhuri",
-    timestamp:"245793890",
-    action:"Approved"
-  }
-]
+      name: "bhargavi",
+      timestamp: "245793890",
+      action: "Submitted",
+    },
+    {
+      name: "Madhuri",
+      timestamp: "245793890",
+      action: "Approved",
+    },
+  ];
 
   return (
-    <div>
-      <div className="flex flex-col gap-4 px-4">
+    <div className="px-8">
+      <div className="flex flex-col gap-8">
         <ExpenseDetails />
 
-        <div>
-          <div className="rounded-[12px] overflow-x-scroll border border-[#D6D7D8]">
-            <div className="flex h-[48px]">
-              <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">
-                Username
-              </div>
-              <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">
-                Timestamp
-              </div>
-              <div className="p-4  bg-[#7677F41A] min-w-[288px] w-full">
-                Action
-              </div>
+        {/*Expense summary details */}
+        <div className="">
+          <Text className="text-[18px] font-semibold">
+            Expense Summary and Details
+          </Text>
+          <div className="border rounded-lg px-4 py-6 mt-2">
+            <TableHeader className="text-[18px] font-semibold">
+              Expense Summary{" "}
+            </TableHeader>
+            <div className="flex border-b py-2 mt-4">
+              <Text className="flex-[0.4]">Expense category</Text>
+              <Text className="text-[#898989] flex-[0.4]">Amount (EUR)</Text>
             </div>
-
-            <div className="my-[10px]">
-              {/* {fields.map((text: any, index: number) => (
-                
-              ))} */}
+            {[1, 2].map(() => {
+              return (
+                <div className="flex border-b py-2">
+                  <Text className="flex-[0.4]">key</Text>
+                  <Text className="text-[#898989] flex-[0.4]">value</Text>
+                </div>
+              );
+            })}
+            <div className="flex border-b py-2">
+              <TableHeader className="flex-[0.4]">Total</TableHeader>
+              <CardValue className="flex-[0.4]">123</CardValue>
+            </div>
+            <div className="flex py-2">
+              <Text className="flex-[0.4]">Current Expense:</Text>
+              <Text className="text-[#898989] flex-[0.4]">60.00 (10.00%)</Text>
+            </div>
+            <div className="flex  py-2">
+              <Text className="flex-[0.4]">Allowed Expense Limit</Text>
+              <Text className="text-[#898989] flex-[0.4]">180.00 (30.00%)</Text>
             </div>
           </div>
         </div>
 
+        {/* Log table */}
+        <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
+          <div className="flex h-[48px] min-w-fit bg-[#7677F41A]">
+            <TableHeader className="px-[12px] min-w-[435px] w-full">
+              Username
+            </TableHeader>
+            <TableHeader className="px-[12px] min-w-[524px] w-full">
+              Timestamp
+            </TableHeader>
+            <TableHeader className="px-[12px] min-w-[288px] w-full">
+              Action
+            </TableHeader>
+          </div>
+
+          <div className="space-y-[12px] my-[12px]">
+            {fields?.map((field: any) => (
+              <div className="flex items-center w-full h-auto">
+                <div className="px-[12px] min-w-[435px] w-full">
+                  {field?.name}
+                </div>
+                <div className="px-[12px] min-w-[524px] w-full">
+                  {field?.timestamp}
+                </div>
+                <div className="px-[12px] min-w-[288px] w-full">
+                  {field?.action}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
         <section className="space-x-4 p-2 w-full flex justify-center">
           <Button
             className="w-[118px] h-[46px] border border-[#7677F4] rounded-[12px] bg-[white] text-[#7677F4]"
