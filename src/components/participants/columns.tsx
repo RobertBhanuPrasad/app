@@ -571,7 +571,7 @@ export const columns = () => {
           row?.original?.is_program_agreement_checked === true
             ? t("course.find_course:completed")
             : row?.original?.is_program_agreement_checked === false
-            ? t("course.participants:edit_participant.pending")
+            ? t("course.participants:edit_participant.participants_information_tab.pending")
             : "-";
         return <div className="min-w-[150px] text-left">{toggle}</div>;
       },
@@ -631,7 +631,7 @@ export const columns = () => {
           row?.original?.is_health_declaration_checked === true
             ? t("course.find_course:completed")
             : row?.original?.is_health_declaration_checked === false
-            ? t("course.participants:edit_participant.pending")
+            ? t("course.participants:edit_participant.participants_information_tab.pending")
             : "-";
         return <div className="min-w-[150px] text-left">{toggle}</div>;
       },
