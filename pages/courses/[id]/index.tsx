@@ -225,16 +225,15 @@ function ViewDetails() {
 
   const languageCode = useGetLanguageCode()
 
-
-  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
-  const currencySymbol = getCurrencySymbol(countryCode, languageCode, 'EUR')
-
-  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
-
-
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+
+      
+  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(countryCode, languageCode, countryConfigData?.data?.[0]?.default_currency_code)
+  
+  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
 
   /**
    * When we change the tab, we need to retrieve the corresponding tab data to update the query name.
@@ -351,7 +350,7 @@ function ViewDetails() {
                       "course.view_course:basic_details_tab.participants_revenue"
                       )}
                     :{countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                    {totalRevenue}
+                    {currencyFormat.format(totalRevenue)}
                   </div>
                   <TooltipArrow height={15} width={17} fill="#333333"/>
                 </TooltipContent>
