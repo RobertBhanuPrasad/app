@@ -668,6 +668,103 @@ function index() {
   //   isFiltering = participantData?.isFetching;
   // }
 
+  const BulkActionsSection = () => {
+    return (
+      <div className="flex gap-4 w-full">
+        {/* Bulk Actions Dropdown */}
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                onClick={() => setOpen(true)}
+                variant="outline"
+                className="flex flex-row justify-between w-auto h-10 gap-2"
+                disabled={selectedTableRows > 0 ? false : true}
+              >
+                {bulkActionSelectedValue}
+                <CountComponent count={selectedTableRows} />
+                <DropDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
+                {/* TODO (Not in MVP Scope): Print Registration Form */}
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEnableBulkOptions(true);
+                  }}
+                >
+                  Print Registration Form
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setBulkActionSelectedValue(
+                      t("new_strings:update_attendance_status")
+                    );
+                    setEnableBulkOptions(false);
+                    setBulkAction("attendance");
+                  }}
+                >
+                  {t("new_strings:update_attendance_status")}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setBulkActionSelectedValue(
+                      t("new_strings:update_transaction_status")
+                    );
+                    setEnableBulkOptions(false);
+                    setBulkAction("transaction");
+                  }}
+                >
+                  {t("new_strings:update_transaction_status")}
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {/* Bulk actions options dropdown */}
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                onClick={() => setOpen(true)}
+                variant="outline"
+                className="flex flex-row justify-between w-[152px] h-10"
+                disabled={selectedTableRows > 0 ? disableBulkOptions : true}
+              >
+                {t("course.participants:find_participant.select_status")}
+                <DropDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[150px]">
+              <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333] w-full">
+                {bulkActions == "attendance"
+                  ? attendanceOptions?.map((record: any) => (
+                      <DropdownMenuItem
+                        key={record.id}
+                        onClick={() => handleUpdateAttendanceStatus(record.id)}
+                      >
+                        {translatedText(record.name)}
+                      </DropdownMenuItem>
+                    ))
+                  : paymentStatusOptions?.map((record: any) => (
+                      <DropdownMenuItem
+                        key={record.id}
+                        onClick={() =>
+                          handleBulkUpdateTransactionStatus(record.id)
+                        }
+                      >
+                        {translatedText(record.name)}
+                      </DropdownMenuItem>
+                    ))}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="top-[96px] z-10 sticky bg-[white] h-[83px] shadow-md w-full">
@@ -713,102 +810,9 @@ function index() {
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
-        {/* Bulk actions section */}
-        <div className="flex gap-10 justify-end w-full">
-          {/* Bulk Actions Dropdown */}
-          <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  onClick={() => setOpen(true)}
-                  variant="outline"
-                  className="flex flex-row justify-between w-auto h-10 gap-2"
-                  disabled={selectedTableRows > 0 ? false : true}
-                >
-                  {bulkActionSelectedValue}
-                  <CountComponent count={selectedTableRows} />
-                  <DropDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
-                  {/* TODO (Not in MVP Scope): Print Registration Form */}
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setEnableBulkOptions(true);
-                    }}
-                  >
-                    Print Registration Form
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setBulkActionSelectedValue(
-                        t("new_strings:update_attendance_status")
-                      );
-                      setEnableBulkOptions(false);
-                      setBulkAction("attendance");
-                    }}
-                  >
-                    {t("new_strings:update_attendance_status")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setBulkActionSelectedValue(
-                        t("new_strings:update_transaction_status")
-                      );
-                      setEnableBulkOptions(false);
-                      setBulkAction("transaction");
-                    }}
-                  >
-                    {t("new_strings:update_transaction_status")}
-                  </DropdownMenuItem>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          {/* Bulk actions options dropdown */}
-          <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  onClick={() => setOpen(true)}
-                  variant="outline"
-                  className="flex flex-row justify-between w-[152px] h-10"
-                  disabled={selectedTableRows > 0 ? disableBulkOptions : true}
-                >
-                  {t("course.participants:find_participant.select_status")}
-                  <DropDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[150px]">
-                <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333] w-full">
-                  {bulkActions == "attendance"
-                    ? attendanceOptions?.map((record: any) => (
-                        <DropdownMenuItem
-                          key={record.id}
-                          onClick={() =>
-                            handleUpdateAttendanceStatus(record.id)
-                          }
-                        >
-                          {translatedText(record.name)}
-                        </DropdownMenuItem>
-                      ))
-                    : paymentStatusOptions?.map((record: any) => (
-                        <DropdownMenuItem
-                          key={record.id}
-                          onClick={() =>
-                            handleBulkUpdateTransactionStatus(record.id)
-                          }
-                        >
-                          {translatedText(record.name)}
-                        </DropdownMenuItem>
-                      ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-        <div className="w-full">
+        {/* Bulk actions section
+        <BulkActionsSection /> */}
+        <div className="w-full pb-4">
           <BaseTable
             current={current}
             rowSelection={rowSelection}
@@ -832,6 +836,7 @@ function index() {
             columnPinning={true}
             columnSelector={true}
             noRecordsPlaceholder={t("new_strings:there_are_no_participants")}
+            actionComponent = {<BulkActionsSection />}
           />
         </div>
       </div>
