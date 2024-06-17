@@ -33,6 +33,7 @@ import {
 } from "src/ui/tooltip";
 import { TableHeader } from "src/ui/TextTags";
 import { SortingArrows } from "src/ui/SortingArrows";
+import dayjs from "dayjs";
 
 // Use an intersection type to combine with ColumnDef
 type ExtendedColumnDef<T> = ColumnDef<T> & { column_name?: string };
@@ -390,13 +391,11 @@ export const columns = () => {
 
       cell: ({ row }: any) => {
         const db_date = row?.original?.contact_id?.date_of_birth
-          ? formatDate(row?.original?.contact_id?.date_of_birth)
+          ? dayjs(row?.original?.contact_id?.date_of_birth).format(
+              "MMM DD, YYYY"
+            )
           : "-";
-        return (
-          <div className="text-left !min-w-[150px]">
-            {db_date.length ? db_date : "-"}
-          </div>
-        );
+        return <div className="text-left !min-w-[150px]">{db_date}</div>;
       },
     },
     {
@@ -415,7 +414,9 @@ export const columns = () => {
       },
 
       cell: ({ row }: any) => {
-        const db_date = formatDate(row?.original?.created_at);
+        const db_date = row?.original?.created_at
+          ? dayjs(row?.original?.created_at).format("MMM DD, YYYY")
+          : "-";
         return <div className="text-left">{db_date}</div>;
       },
     },
@@ -570,7 +571,7 @@ export const columns = () => {
           row?.original?.is_program_agreement_checked === true
             ? t("course.find_course:completed")
             : row?.original?.is_program_agreement_checked === false
-            ? t("course.participants:edit_participant.pending")
+            ? t("course.participants:edit_participant.participants_information_tab.pending")
             : "-";
         return <div className="min-w-[150px] text-left">{toggle}</div>;
       },
@@ -630,7 +631,7 @@ export const columns = () => {
           row?.original?.is_health_declaration_checked === true
             ? t("course.find_course:completed")
             : row?.original?.is_health_declaration_checked === false
-            ? t("course.participants:edit_participant.pending")
+            ? t("course.participants:edit_participant.participants_information_tab.pending")
             : "-";
         return <div className="min-w-[150px] text-left">{toggle}</div>;
       },
