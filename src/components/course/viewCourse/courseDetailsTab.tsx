@@ -69,7 +69,7 @@ function CourseDetailsTab() {
     id: Id,
     meta: {
       select:
-        "*,online_url,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),max_capacity,visibility,program_type_id(*),organization_id(id,name)",
+        "*,online_url,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),max_capacity,visibility,program_type_id(*),organization_id(id,name),program_fee_settings_id(is_early_bird_fee_enabled,product_fee_level_settings(*,fee_level))",
     },
   });
 
@@ -104,8 +104,9 @@ function CourseDetailsTab() {
 
   // If the course fee is editable then we can use custom fees otherwise we can use default fees
   const programFeeLevels = courseData?.data?.program_fee_settings_id
-    ? courseData?.data?.program_fee_settings_id?.program_fee_level_settings
-    : courseData?.data?.program_fee_level_settings;
+    ? courseData?.data?.program_fee_settings_id?.product_fee_level_settings
+    : courseData?.data?.product_fee_level_settings;
+    
 
   //Need to show only the fee level enabled by the user at the time of course creation.
   const programFees=programFeeLevels?.filter((feeLevel: { is_enable: boolean; })=>feeLevel.is_enable);
