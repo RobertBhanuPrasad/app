@@ -123,10 +123,8 @@ export const ParticipantsListMainHeader = () => {
                 {currencySymbol}
               </div>
               <div className="text-[#7677F4] font-semibold cursor-pointer">
-              {/**
-                * TODO: we need to show the currency code before the amount that is taken from country_config table
-                */}
-              EUR {currencyFormat.format(totalRevenue)}
+              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+              {currencyFormat.format(totalRevenue)}
               </div>
               <HoverCard>
                 <HoverCardTrigger>
