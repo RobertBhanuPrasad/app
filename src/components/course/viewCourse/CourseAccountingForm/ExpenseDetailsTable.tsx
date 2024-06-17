@@ -114,7 +114,7 @@ export const ExpenseDetails = () => {
     },
     {
       field_name: "Vat_condition",
-      component: "-",
+      component: <VatCondition index={0} />,
       className: "min-w-[226px] pr-6",
     },
     {
@@ -129,7 +129,7 @@ export const ExpenseDetails = () => {
     },
     {
       field_name: "Vat_rate",
-      component: "-",
+      component: <VatRate index={0} />,
       className: "min-w-[226px] pr-6",
     },
 
@@ -470,48 +470,52 @@ const PaymentMethod = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-// const VatCondition = ({ index }: { index: number }) => {
-//   const {
-//     field: { value, onChange },
-//     fieldState: { error },
-// We give the type here because we will get the name as per the types we have in the form
-//   } = useController<CourseAccountingFormFieldTypes>({
-//     name: `program_expenses.${index}.vat_condition`,
-//   });
-//   const options = [];
-//   return (
-//     <div className="">
-//       <Select
-//         value={value}
-//         onValueChange={(val: any) => {
-//           onChange(val);
-//         }}
-//       >
-//         <SelectTrigger className="">
-//           <SelectValue placeholder="Select" />
-//         </SelectTrigger>
-//         <SelectContent>
-//           <SelectItems>
-//             {options.map((option: any, index: number) => (
-//               <>
-//                 <SelectItem
-//                   key={option.value}
-//                   value={option.value}
-//                   className="h-[44px]"
-//                 >
-//                   {option.label}
-//                 </SelectItem>
-//                 {index < options?.length - 1 && (
-//                   <hr className="border-[#D6D7D8]" />
-//                 )}
-//               </>
-//             ))}
-//           </SelectItems>
-//         </SelectContent>
-//       </Select>
-//     </div>
-//   );
-// };
+const VatCondition = ({ index }: { index: number }) => {
+  const {
+    field: { value, onChange },
+    fieldState: { error },
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.vat_condition`,
+  });
+  const options = [
+    { label: "Final", value: 1 },
+    { label: "Exempt", value: 2 },
+    { label: "Registered payer", value: 3 },
+  ];
+  return (
+    <div className="">
+      <Select
+        value={value}
+        onValueChange={(val: any) => {
+          onChange(val);
+        }}
+      >
+        <SelectTrigger className="">
+          <SelectValue placeholder="Select" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItems>
+            {options.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 /**
  * @function VendorTaxId
@@ -569,48 +573,52 @@ const VendorName = ({ index }: { index: number }) => {
  * @param index
  * @returns
  */
-// const VatRate = ({ index }: { index: number }) => {
-//   const {
-//     field: { value, onChange },
-//     fieldState: { error },
-// We give the type here because we will get the name as per the types we have in the form
-//   } = useController<CourseAccountingFormFieldTypes>({
-//     name: `program_expenses.${index}.vat_rate`,
-//   });
-//   const options = [ ];
-//   return (
-//     <div className="">
-//       <Select
-//         value={value}
-//         onValueChange={(val: any) => {
-//           onChange(val);
-//         }}
-//       >
-//         <SelectTrigger className="">
-//           <SelectValue placeholder="Select" />
-//         </SelectTrigger>
-//         <SelectContent>
-//           <SelectItems>
-//             {options.map((option: any, index: number) => (
-//               <>
-//                 <SelectItem
-//                   key={option.value}
-//                   value={option.value}
-//                   className="h-[44px]"
-//                 >
-//                   {option.label}
-//                 </SelectItem>
-//                 {index < options?.length - 1 && (
-//                   <hr className="border-[#D6D7D8]" />
-//                 )}
-//               </>
-//             ))}
-//           </SelectItems>
-//         </SelectContent>
-//       </Select>
-//     </div>
-//   );
-// };
+const VatRate = ({ index }: { index: number }) => {
+  const {
+    field: { value, onChange },
+    fieldState: { error },
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<CourseAccountingFormFieldTypes>({
+    name: `program_expenses.${index}.vat_rate`,
+  });
+  const options = [
+    { label: "10.0%", value: 1 },
+    { label: "20.0%", value: 2 },
+    { label: "27.0%", value: 3 },
+  ];
+  return (
+    <div className="">
+      <Select
+        value={value}
+        onValueChange={(val: any) => {
+          onChange(val);
+        }}
+      >
+        <SelectTrigger className="">
+          <SelectValue placeholder="Select" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItems>
+            {options.map((option: any, index: number) => (
+              <>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="h-[44px]"
+                >
+                  {option.label}
+                </SelectItem>
+                {index < options?.length - 1 && (
+                  <hr className="border-[#D6D7D8]" />
+                )}
+              </>
+            ))}
+          </SelectItems>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 /**
  * @function Action
