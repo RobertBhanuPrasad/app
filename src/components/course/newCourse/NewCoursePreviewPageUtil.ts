@@ -82,7 +82,7 @@ export const getRequiredFieldsForValidation = async (
     RequiredNewCourseStep3FormNames.push("time_zone_id");
   }
 
-  let RequiredNewCourseStep4FormNames: string[] = ["product_fee_settings","program_fee"];
+  let RequiredNewCourseStep4FormNames: string[] = ["program_fee"];
 
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [

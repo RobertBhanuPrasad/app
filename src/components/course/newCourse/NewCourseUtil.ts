@@ -38,6 +38,10 @@ export const handlePostProgramData = async (
   const programBody: ProgramDataBaseType = {
     last_modified_by_user_id: loggedInUserId,
     modified_at: new Date(),
+    program_fee: undefined,
+    language_type: undefined,
+    manage_type: undefined,
+    program_users: undefined
   };
 
   // if body contains id pls insert if it does not contain id then record will create if it contains id just it will update table
@@ -61,7 +65,7 @@ export const handlePostProgramData = async (
   }
 
   if (body[NewCourseStep2FormNames.visibility_id]) {
-    programBody.visibility_id = body[NewCourseStep2FormNames.visibility_id];
+    programBody.visibility = body[NewCourseStep2FormNames.visibility_id];
   }
 
   if (body[NewCourseStep1FormNames.is_registration_via_3rd_party]) {
@@ -165,7 +169,7 @@ export const handlePostProgramData = async (
 
   //hour_format_id
   if (body[NewCourseStep3FormNames.hour_format_id]) {
-    programBody.hour_format_id = body[NewCourseStep3FormNames.hour_format_id];
+    programBody.hour_format = body[NewCourseStep3FormNames.hour_format_id];
   }
 
   //time_zone_id
@@ -251,8 +255,8 @@ export const handlePostProgramData = async (
   }
 
   if (
-    body[NewCourseStep4FormNames?.program_fee_level_settings]?.length == 0 ||
-    body[NewCourseStep4FormNames?.program_fee_level_settings] == undefined
+    body[NewCourseStep4FormNames?.program_fee]?.length == 0 ||
+    body[NewCourseStep4FormNames?.program_fee] == undefined
   ) {
     programBody.program_fee_settings_id = feeData?.[0]?.id;
   } else {
@@ -1293,19 +1297,19 @@ export const handleProgramFeeLevelSettingsData = async (
   const supabase = supabaseClient();
 
   if (
-    body?.program_fee_level_settings?.length == 0 ||
-    !body?.program_fee_level_settings
+    body?.program_fee?.length == 0 ||
+    !body?.program_fee
   ) {
     return true;
   }
   // Fetching the existing fee level settings data
   const { data: existingFeeLevelSettingsData } = await supabase
-    .from("program_fee_level_settings")
+    .from("program_fee")
     .select("id")
     .eq("program_id", programId);
 
   //Inserting ids of program fee level settings already exist
-  const modifiedProgramFeeLevel = body?.program_fee_level_settings?.map(
+  const modifiedProgramFeeLevel = body?.program_fee?.map(
     (feeLevel: any, index: number) => {
       if (existingFeeLevelSettingsData?.[index]?.id) {
         return {
@@ -1320,7 +1324,7 @@ export const handleProgramFeeLevelSettingsData = async (
 
   //upsert operation for program feeLevel settings data
   const { data, error } = await supabase
-    .from("program_fee_level_settings")
+    .from("program_fee")
     .upsert(modifiedProgramFeeLevel)
     .select();
 
@@ -1540,9 +1544,9 @@ export const handleDeleteProgramTables = async (
       programSchedules,
       error
     );
-    // 7. delete program_fee_level_settings records where programId matches
+    // 7. delete program_fee records where programId matches
     const { data: programFeeLevelSettings } = await supabase
-      .from("program_fee_level_settings")
+      .from("program_fee")
       .delete()
       .eq("program_id", programId)
       .select();

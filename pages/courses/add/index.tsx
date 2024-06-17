@@ -415,7 +415,7 @@ export const requiredValidationFields = (
     isUserNationAdminOrSuperAdmin = true;
   }
 
-  let RequiredNewCourseStep4FormNames: string[] = ["product_fee_settings","program_fee"];
+  let RequiredNewCourseStep4FormNames: string[] = ["program_fee"];
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false

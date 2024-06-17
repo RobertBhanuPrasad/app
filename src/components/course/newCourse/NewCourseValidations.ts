@@ -194,7 +194,7 @@ const feelLevelsValidationSchema = z.array(
   z.object({
     is_enable: z.boolean(),
     total: z.number().min(0),//fee should be greater the zero
-    early_bird_total: z.number().min(0).optional(),//fee should be greater the zero
+    early_bird_total: z.number().min(0).nullable().optional(),//fee should be greater the zero
   })
 );
 

@@ -13,8 +13,7 @@ export const handleCourseDefaultValues = async (
   const { data, error } = await supabase
     .from("program")
     .select(
-      // Todo: need to add fee level settings
-      "*,program_users(*),program_languages(*),program_schedules(*),program_accommodations(*),program_contact_details(*)"
+      "*,program_users(*),program_languages(*),program_schedules(*),program_accommodations(*),program_contact_details(*),program_fee(*)"
     )
     .eq("id", programId);
 
@@ -273,11 +272,10 @@ export const getDefaultValues = async (
   if (data.is_early_bird_enabled != null)
     defaultValues.is_early_bird_enabled = data.is_early_bird_enabled;
 
-  //If program_fee_settings_id is null then program as it's own fee levels
-  if (data.program_fee_settings_id == null) {
-    defaultValues.program_fee_level_settings =
-      data.program_fee_level_settings as any;
+  defaultValues.program_fee =
+    data.program_fee as any;
 
+  if (data.early_bird_cut_off_period) {
     defaultValues.early_bird_cut_off_period = data.early_bird_cut_off_period;
   }
 

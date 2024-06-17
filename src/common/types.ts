@@ -642,6 +642,7 @@ interface ProgramOfflineRevenueDatabaseType {
 }
 
 interface ProgramDataBaseType {
+  program_fee: any;
   language_type: any;
   manage_type: any;
   program_users: any;
@@ -744,7 +745,7 @@ interface NewCourseFormFieldTypes {
   // Step 4
   is_early_bird_enabled?: boolean;
   early_bird_cut_off_period?: number;
-  program_fee_level_settings?: {
+  program_fee?: {
     program_id?: number;
     id?: number;
     total?: number;

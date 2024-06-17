@@ -618,7 +618,7 @@ function index() {
   ]);
   const router = useRouter();
   const handleEditCourse = async () => {
-    router.push(`/courses/1019/edit`);
+    router.push(`/courses/1053/edit`);
   };
   const handleSelected=()=>{
     handleEditCourse()
