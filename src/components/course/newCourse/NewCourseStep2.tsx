@@ -166,7 +166,7 @@ export default function NewCourseStep2() {
 
 export const CourseTypeDropDown = () => {
   const {
-    field: { value, onChange, value: temporaryvalue },
+    field: { value, onChange },
     fieldState: { error: courseTypeError }
   } = useController({
     name: NewCourseStep2FormNames?.program_type_id
@@ -258,7 +258,7 @@ export const CourseTypeDropDown = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    defaultValue: temporaryvalue
+    defaultValue: value
   };
 
   if (value) {
@@ -1098,6 +1098,7 @@ const LanguageTranslationDropDown = () => {
         value: formData?.organization_id,
       },
     ],
+    defaultValue  : value,
     onSearch: (value) => [
       {
         field: "language_name",
