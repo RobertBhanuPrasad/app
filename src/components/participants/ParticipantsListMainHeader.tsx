@@ -16,7 +16,7 @@ import {
 import { formatDate } from "src/utility/DateFunctions";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useTranslation } from 'next-i18next';
-import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormate";
+import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormat";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
@@ -29,13 +29,11 @@ export const ParticipantsListMainHeader = () => {
 
   const languageCode = useGetLanguageCode()
 
-  // to join the language code and country code inorder to get as locale format
-  const locale = languageCode.concat("-",countryCode)
 
-  //TODO: we need to pass the  currency code as the second argument that is taken from country_config table
-  const currencySymbol = getCurrencySymbol(locale as string,'EUR')
+  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(countryCode, languageCode, 'EUR')
 
-  const currencyFormat = getCurrencyFormat(locale as string)
+  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
 
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
