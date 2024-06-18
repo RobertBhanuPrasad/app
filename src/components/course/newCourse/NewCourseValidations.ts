@@ -147,9 +147,9 @@ export const validationSchema = (iAmCoTeaching: string) => {
     //   })
     //   .optional(),
     // Step 4 Schema
-    feeLevels:z.array(z.any()).min(1),
+    product_fee_settings:z.object({}).catchall(z.any()),
     is_early_bird_enabled: z.boolean().optional(),
-    program_fee_level_settings: feelLevelsValidationSchema,
+    program_fee: feelLevelsValidationSchema,
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
@@ -193,8 +193,8 @@ export const validationSchema = (iAmCoTeaching: string) => {
 const feelLevelsValidationSchema = z.array(
   z.object({
     is_enable: z.boolean(),
-    total: z.union([z.string().regex(/^\d+(\.\d+)?$/), z.number()]),
-    early_bird_total: z.union([z.string().regex(/^\d+(\.\d+)?$/), z.number()]),
+    total: z.number().min(0),//fee should be greater the zero
+    early_bird_total: z.number().min(0).optional(),//fee should be greater the zero
   })
 );
 
@@ -226,7 +226,7 @@ const accommodationValidationSchema = z.array(
     accommodation_type_id: z.number({
       required_error: "Accommodation type is required field.",
     }),
-    fee_per_person: z
+    total: z
       .string({
         required_error: "Fee per person is a required field.",
       })

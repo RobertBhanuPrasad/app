@@ -42,7 +42,7 @@ interface AccommodationItem {
   accommodation_type_id?: {
     name?: string;
   };
-  fee_per_person?: number;
+  total?: number;
 }
 
 interface ContactDetailsItem {
@@ -332,7 +332,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                         </Header2>
                         <ItemValue>
                           {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                          {item?.fee_per_person}
+                          {item?.total}
                         </ItemValue>
                       </div>
                     );

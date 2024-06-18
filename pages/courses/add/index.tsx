@@ -17,7 +17,7 @@ import {
   HttpError,
   UseLoadingOvertimeReturnType,
   useGetIdentity,
-  useList
+  useList,
 } from "@refinedev/core";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -39,10 +39,7 @@ import {
   TIME_AND_VENUE_STEP_NUMBER,
   VALID,
 } from "src/constants/CourseConstants";
-import {
-  NATIONAL_ADMIN,
-  SUPER_ADMIN
-} from "src/constants/OptionValueOrder";
+import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
 import { Button } from "src/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
@@ -75,23 +72,21 @@ import Fees from "@public/assets/Fees";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
-  const {optionLabelValue}=optionLabelValueStore()
-  
+  const { optionLabelValue } = optionLabelValueStore();
+
   console.log(loginUserData, "loginUserData");
 
   const isNewCourseEditedRef = useRef(false);
 
   const router = useRouter();
-  
+
   const pathname = usePathname();
 
-  const { t } = useTranslation("validations_text")
+  const { t } = useTranslation("validations_text");
 
   const {
     query: { section },
   } = useRouter();
-
-
 
   /**
    * This context is used to keep track of whether the new course form is edited or not
@@ -100,14 +95,12 @@ function index() {
    */
   useEffect(() => {
     const routeChange = (url: string) => {
-
       // when we fill any fields in step1 of newCourse then it will be true
       if (isNewCourseEditedRef.current) {
+        const sectionFromUrl = getSectionFromUrl(url, "section");
 
-        const sectionFromUrl = getSectionFromUrl(url,'section')
-
-        if (IsShowConfirmBoxInNewCourse(sectionFromUrl,section)) {
-         displayConfirmBoxWhenRouteChange(router,t)
+        if (IsShowConfirmBoxInNewCourse(sectionFromUrl, section)) {
+          displayConfirmBoxWhenRouteChange(router, t);
         }
       }
     };
@@ -119,17 +112,14 @@ function index() {
     return () => {
       router.events.off("routeChangeStart", routeChange);
     };
-
-  }, [isNewCourseEditedRef,section]);
+  }, [isNewCourseEditedRef, section]);
 
   console.log("router is ", section);
 
   if (!loginUserData?.userData || !optionLabelValue) {
     return (
-      <div  className="flex justify-center align-center pt-[15%]">
-      <section className="loader">
-        {" "}
-      </section>
+      <div className="flex justify-center align-center pt-[15%]">
+        <section className="loader"> </section>
       </div>
     );
   }
@@ -161,9 +151,8 @@ export function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
 
   const loggedUserData = loginUserData?.userData?.id;
-  const {optionLabelValue}=optionLabelValueStore()
-  console.log(optionLabelValue,'trail');
-  
+  const { optionLabelValue } = optionLabelValueStore();
+  console.log(optionLabelValue, "trail");
 
   console.log("heyy logged user data", loggedUserData);
 
@@ -185,20 +174,18 @@ export function NewCourse() {
   }, []);
 
   //Finding program Organizer role id
-  const publicVisibility = optionLabelValue?.program_visibility?.PUBLIC
+  const publicVisibility = optionLabelValue?.program_visibility?.PUBLIC;
 
+  const payOnline = optionLabelValue?.payment_mode?.ONLINE;
 
-  const payOnline = optionLabelValue?.payment_mode?.ONLINE
-
-  const timeFormat24Hours = optionLabelValue?.hour_format?.HOURS_24
-  console.log(timeFormat24Hours,'asd');
-  
+  const timeFormat24Hours = optionLabelValue?.hour_format?.HOURS_24;
+  console.log(timeFormat24Hours, "asd");
 
   /**
    * @constant iAmCoTeaching
    * @description thid const stores the id of the i am co teaching
    */
-  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING
+  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING;
 
   console.log("hehehe", timeFormat24Hours, payOnline, publicVisibility);
 
@@ -273,7 +260,7 @@ export function NewCourse() {
     defaultValues[NewCourseStep2FormNames?.is_geo_restriction_applicable] =
       false;
     defaultValues[NewCourseStep5FormNames?.accommodation_fee_payment_mode] =
-    payOnline;
+      payOnline;
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
   }
 
@@ -318,7 +305,7 @@ export function NewCourse() {
         data?.data[0]?.hour_format_id;
     } else {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
-      timeFormat24Hours;
+        timeFormat24Hours;
     }
   }
 
@@ -331,12 +318,12 @@ export function NewCourse() {
   //   isLoading ||
   //   timeZoneLoading
   // ) {
-    // return (
-    //   <section className="flex justify-center align-center pt-[15%]">
-    //     {" "}
-    //     <div className="loader"></div>
-    //   </section>
-    // );
+  // return (
+  //   <section className="flex justify-center align-center pt-[15%]">
+  //     {" "}
+  //     <div className="loader"></div>
+  //   </section>
+  // );
   // }
 
   return (
@@ -427,29 +414,13 @@ export const requiredValidationFields = (
     isUserNationAdminOrSuperAdmin = true;
   }
 
-  //Checking Weather a fee is editable or not
-  const isFeeEditable =
-    isUserNationAdminOrSuperAdmin ||
-    formData?.feeLevels?.[0]?.is_program_fee_editable
-      ? true
-      : false;
-
-  let RequiredNewCourseStep4FormNames: string[] = ["feeLevels"];
-
-  //If it is a Editable fee need to validate
-  if (isFeeEditable) {
-    RequiredNewCourseStep4FormNames = [
-      ...RequiredNewCourseStep4FormNames,
-      "is_early_bird_enabled",
-      "program_fee_level_settings",
-    ];
-  }
+  let RequiredNewCourseStep4FormNames: string[] = ["product_fee_settings","program_fee"];
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false
       ? [
           "accommodation",
-          "fee_per_person",
+          "total",
           "no_of_residential_spots",
           "accommodation_type_id",
           "accommodation_fee_payment_mode",
@@ -481,7 +452,7 @@ export const NewCourseTabs = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { setNewCourseData, currentStep, setCurrentStep } = newCourseStore();
-  const {optionLabelValue}=optionLabelValueStore()
+  const { optionLabelValue } = optionLabelValueStore();
 
   const supabase = supabaseClient();
 
@@ -817,7 +788,7 @@ export const NewCourseTabs = () => {
    * @constant iAmCoTeaching
    * @description thid const stores the id of the i am co teaching
    */
-  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING
+  const iAmCoTeaching = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING;
 
   /**
    * Validate every time with the form data to display tabs success or error messages
@@ -837,26 +808,81 @@ export const NewCourseTabs = () => {
     const handleCourseFeeData = async () => {
       const courseFees = await fetchCourseFee({ formData, countryCode });
 
-      //Updating course fee
-      setValue("feeLevels", courseFees);
+      //If product_fee_settings is present then need to load data in form
+      if (courseFees?.length > 0) {
+        //Updating course fee
+        setValue("product_fee_settings", courseFees?.[0]);
 
-      //Updating early_bird_cut_off_period
-      if (formData?.early_bird_cut_off_period == undefined) {
-        setValue(
-          "early_bird_cut_off_period",
-          courseFees?.[0]?.early_bird_cut_off_period
-        );
-      }
-
-      //Updating is_early_bird_enabled
-      if (
-        formData?.is_early_bird_enabled == undefined &&
-        courseFees?.[0]?.is_early_bird_fee_enabled != null
-      ) {
+        //Updating is_early_bird_enabled
         setValue(
           "is_early_bird_enabled",
           courseFees?.[0]?.is_early_bird_fee_enabled
         );
+
+        // early_bird_cut_off_period will exist only for fee settings consisting of early bird fee
+        if (courseFees?.[0]?.is_early_bird_fee_enabled) {
+          //Updating early_bird_cut_off_period
+          setValue(
+            "early_bird_cut_off_period",
+            courseFees?.[0]?.early_bird_cut_off_period
+          );
+        }
+
+        //TODO: It will be coming from organization Data
+        const taxRate=10
+        const is_tax_enable=true
+        //Updating product_fee_level_settings in form
+        const modifiedProductFee=courseFees?.[0]?.product_fee_level_settings.map((feeLevel: { total: number; is_enable: boolean; fee_level: string; early_bird_total: number; is_custom_fee: boolean; custom_fee_label: any; })=>{
+          let modifiedFeeLevel:any= {
+            total: feeLevel?.total,
+            sub_total:calculateSubTotalFee(feeLevel?.total,taxRate),
+            is_enable: feeLevel?.is_enable,
+            fee_level: feeLevel?.fee_level,
+            is_custom_fee:feeLevel?.is_custom_fee,
+          }
+          //If early bird is enabled need to store the early bird fee also
+          if(courseFees?.[0]?.is_early_bird_fee_enabled){
+            modifiedFeeLevel={
+              ...modifiedFeeLevel,
+              early_bird_total:feeLevel?.early_bird_total,
+              early_bird_sub_total:calculateSubTotalFee(feeLevel?.early_bird_total,taxRate)
+            }
+          }
+
+          //if tax is enabled need to store the tax also
+          if(is_tax_enable){
+            modifiedFeeLevel={
+              ...modifiedFeeLevel,
+              tax:calculateTax(feeLevel?.total,taxRate)
+            }
+
+            if(courseFees?.[0]?.is_early_bird_fee_enabled){
+              modifiedFeeLevel={
+                ...modifiedFeeLevel,
+                early_bird_tax: calculateTax(feeLevel?.early_bird_total,taxRate)
+              }
+            }
+          }
+
+          //if fee level is a custom fee level then need to store custom fee level also
+          if(feeLevel?.is_custom_fee){
+            modifiedFeeLevel={
+              ...modifiedFeeLevel,
+              custom_fee_label:feeLevel?.custom_fee_label
+            }
+          }
+
+          return modifiedFeeLevel
+        })
+
+        setValue('program_fee',modifiedProductFee);
+
+        //If fee is editable then it will be a custom fee else it will be a default fee
+        if(courseFees?.[0]?.is_program_fee_editable==true){
+          setValue('use_default_fee',false)
+        }else{
+          setValue('use_default_fee',true)
+        }
       }
     };
 
@@ -864,12 +890,12 @@ export const NewCourseTabs = () => {
   }, [
     formData?.program_type_id,
     /**
-     * This approach converts the schedules array into a string, 
-     * allowing a deep comparison of the array's content. 
+     * This approach converts the schedules array into a string,
+     * allowing a deep comparison of the array's content.
      * If any part of the schedules array changes, the string representation will also change then we will fetch the fee again
      * We have changed this because we got the bug that the fee is loading when we change the date (ticket 1921)
      * What is happening here is, it is comparing shallow comparision that is just comparing a new thing added or deleted only
-     * so it is not comparing in details, but we are changing the fee data to undefined when the schedules is changed, 
+     * so it is not comparing in details, but we are changing the fee data to undefined when the schedules is changed,
      * but we are not udating the fee again so that we are getting the continues loading
      */
     JSON.stringify(formData?.schedules),
@@ -952,7 +978,7 @@ export const NewCourseTabs = () => {
         </p>
 
         {/* REQUIRMENT : If the fields in the fee step  are not filled or the fees are not present then we need to show this error message */}
-        {errors?.program_fee_level_settings && (
+        {errors?.program_fee && (
           <div className="flex gap-2">
             <Error />
             <p className="font-semibold text-[red] text-l -mt-1">
@@ -1122,7 +1148,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "course.view_course",
     "course.find_course",
     "enum",
-    "validations_text"
+    "validations_text",
   ]);
 
   if (!authenticated) {
@@ -1268,30 +1294,35 @@ interface CourseFeeBody {
   start_date?: string;
 }
 
-  /**
-   * this function will give the query parameters present in url 
-   * @param url 
-   * @param paramName 
-   * @returns 
-   */
-  export const getSectionFromUrl = (url:string, paramName:string) => {
-    // Create a URL object
-    const urlObj = new URL(url, 'http://example.com'); // Base URL to handle relative paths
-    const params = new URLSearchParams(urlObj.search);
+/**
+ * this function will give the query parameters present in url
+ * @param url
+ * @param paramName
+ * @returns
+ */
+export const getSectionFromUrl = (url: string, paramName: string) => {
+  // Create a URL object
+  const urlObj = new URL(url, "http://example.com"); // Base URL to handle relative paths
+  const params = new URLSearchParams(urlObj.search);
 
-    // Get the specific parameter value
-    return params.get(paramName);
-}
+  // Get the specific parameter value
+  return params.get(paramName);
+};
 
 /**
  * when user clicked on the yes option in confirm-box it will allow the navigation to corresponding URL.
  * when user clicked on the no option in confirm-box it will not to navigation and display the same page.
- * @param router 
+ * @param router
  */
-export const displayConfirmBoxWhenRouteChange = (router: NextRouter, t: any) => {
+export const displayConfirmBoxWhenRouteChange = (
+  router: NextRouter,
+  t: any
+) => {
   if (
     confirm(
-      t("changes_made_will_be_lost._are_you_sure_you_want_to_navigate_to_other_page <yes/no>")
+      t(
+        "changes_made_will_be_lost._are_you_sure_you_want_to_navigate_to_other_page <yes/no>"
+      )
     )
   ) {
     console.log("ok go ahead");
@@ -1299,4 +1330,34 @@ export const displayConfirmBoxWhenRouteChange = (router: NextRouter, t: any) => 
     router.events.emit("routeChangeError");
     throw "Route change aborted. User confirmation required.";
   }
+};
+
+
+/** 
+ * @function calculateSubTotalFee used to calculate the sub total fee from total fee and tax_rate
+ * @param {number} totalFee - The total fee including tax.
+ * @param {number} taxPercentage - The percentage of tax applied.
+ * @returns {number} - The normal fee rounded to two decimal places.
+ */
+export function calculateSubTotalFee(totalFee: number, taxPercentage: number): number {
+  /** Calculate normal fee using the given formula */
+  const normalFee = (totalFee * 100) / (100 + taxPercentage);
+  /** Round the normal fee to 2 decimal places */
+  return Math.round(normalFee * 100) / 100;
+}
+
+/** 
+* @function calculateTax is used to calculate the tax 
+* @param {number} totalFee - The total fee including tax.
+* @param {number} taxPercentage - The percentage of tax applied.
+* @returns {number} - The calculated tax.
+*/
+export function calculateTax(totalFee: number, taxPercentage: number): number {
+  /** Calculate the normal fee by calling calculateSubTotalFee */
+  const normalFee = calculateSubTotalFee(totalFee, taxPercentage);
+  /** Calculate the tax as the difference between total fee and normal fee */
+  let tax = totalFee - normalFee;
+
+  tax=Math.round(tax * 100) / 100
+  return tax;
 }

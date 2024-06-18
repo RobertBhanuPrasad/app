@@ -179,7 +179,9 @@ interface ProgramAccommodationsDataBaseType {
   id?: number;
   created_at?: Date;
   accommodation_type_id?: AccommodationTypesDataBaseType;
-  fee_per_person?: number;
+  total?: number;
+  sub_total?: number;
+  tax?: number;
   no_of_residential_spots?: number;
   program_id?: number;
 }
@@ -749,12 +751,12 @@ interface NewCourseFormFieldTypes {
     is_enable?: boolean;
     fee_level_id?: number;
   }[];
-  feeLevels?:any[] 
+  product_fee_settings?:any//Object consisting of fee_settings
 
   // Step 5
   accommodation?: any[];
   is_residential_program?: boolean;
-  fee_per_person?: number;
+  total?: number;
   no_of_residential_spots?: number;
   accommodation_type_id?: number;
   accommodation_fee_payment_mode?: number;

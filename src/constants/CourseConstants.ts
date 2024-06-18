@@ -67,14 +67,14 @@ export const NewCourseStep3FormNames = {
 
 export const NewCourseStep4FormNames = {
   is_early_bird_enabled: "is_early_bird_enabled",
-  program_fee_level_settings: "program_fee_level_settings",
-  feeLevels: "feeLevels"
+  program_fee: "program_fee",
+  product_fee_settings: "product_fee_settings"
 };
 
 export const NewCourseStep5FormNames = {
   accommodation: "accommodation",
   is_residential_program: "is_residential_program",
-  fee_per_person: "fee_per_person",
+  total: "total",
   no_of_residential_spots: "no_of_residential_spots",
   accommodation_type_id: "accommodation_type_id",
   accommodation_fee_payment_mode: "accommodation_fee_payment_mode",
