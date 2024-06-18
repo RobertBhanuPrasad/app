@@ -8,7 +8,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
-import { NewCourseStep2FormNames } from "src/constants/CourseConstants";
+import { NewCourseStep2FormNames, NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
   CERTIFICATION_TYPE,
   PROGRAM_CATEGORY,
@@ -27,11 +27,6 @@ import {
 } from "src/constants/OptionValueOrder";
 import countryCodes from "src/data/CountryCodes";
 import { Text } from "src/ui/TextTags";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "src/ui/hover-card";
 import { Input } from "src/ui/input";
 import { DataItem, MultiSelect } from "src/ui/multi-select";
 import { RadioGroup } from "src/ui/radio-group";
@@ -39,6 +34,7 @@ import { RadioButtonCard } from "src/ui/radioButtonCard";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -48,6 +44,9 @@ import { Switch } from "src/ui/switch";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from "next-i18next";
 import { IsEditCourse } from "./EditCourseUtil";
+import { useMVPSelect } from "src/utility/useMVPSelect";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "src/ui/tooltip";
 
 export default function NewCourseStep2() {
   const { watch } = useFormContext();
@@ -166,6 +165,13 @@ export default function NewCourseStep2() {
 }
 
 export const CourseTypeDropDown = () => {
+  const {
+    field: { value, onChange },
+    fieldState: { error: courseTypeError }
+  } = useController({
+    name: NewCourseStep2FormNames?.program_type_id
+  })
+  console.log(NewCourseStep2FormNames, 'NewCourseStep2FormNames')
   const { watch, setValue, clearErrors } = useFormContext();
 
   /**
@@ -177,6 +183,8 @@ export const CourseTypeDropDown = () => {
    * Checking whether the url contains the edit or not
    */
   const isEditCourse = IsEditCourse(pathname);
+
+  const languageCode = useGetLanguageCode()
 
   const [pageSize, setPageSize] = useState(10);
 
@@ -226,10 +234,9 @@ export const CourseTypeDropDown = () => {
   }
 
   const {
-    field: { value, onChange },
-    fieldState: { error: courseTypeError },
+    field: { onChange: isResidentialProgramOchange },
   } = useController({
-    name: NewCourseStep2FormNames?.program_type_id,
+    name: NewCourseStep5FormNames?.is_residential_program,
   });
 
   const selectQuery: any = {
@@ -237,9 +244,11 @@ export const CourseTypeDropDown = () => {
     meta: {
       select: "*,program_type_teachers!inner(user_id)",
     },
+    optionLabel: `name.${languageCode}`,
+    optionValue: 'id',
     onSearch: (value: any) => [
       {
-        field: "name",
+        field: `name->>${languageCode}`,
         operator: "contains",
         value,
       },
@@ -249,21 +258,14 @@ export const CourseTypeDropDown = () => {
       pageSize: pageSize,
       mode: "server",
     },
+    defaultValue: value
   };
 
   if (value) {
     selectQuery.defaultValue = value;
   }
 
-  const { onSearch, queryResult } = useSelect(selectQuery);
-
-  const options: { label: string; value: number }[] =
-    queryResult?.data?.data?.map((programType) => {
-      return {
-        label: translatedText(programType?.name),
-        value: programType?.id,
-      };
-    }) as any as { label: string; value: number }[];
+  const { onSearch, queryResult, options } = useMVPSelect(selectQuery);
 
   const {
     field: { value: courseSettings, onChange: setCourseTypeSettings },
@@ -277,14 +279,60 @@ export const CourseTypeDropDown = () => {
     name: NewCourseStep2FormNames?.max_capacity,
   });
 
-  const clearCourseTypeDependentValues = () => {
+  /**
+   * @function clearCourseTypeDependentValues will clear the all dependent variables
+   * @param previousCourseTypeId is the previous course type id
+   * @param newCourseTypeId is the new course type id
+   */
+  const clearCourseTypeDependentValues = (
+    previousCourseTypeId: number,
+    newCourseTypeId: number
+  ) => {
+
+    //TODO: When the new Select is implemented need to changed the code.
+    const previousCourseSettings = queryResult?.data?.data.filter(
+      (data) => data.id == previousCourseTypeId
+    );
+
+    //TODO: When the new Select is implemented need to changed the code.
+    const newCourseTypeSettings = queryResult?.data?.data.filter(
+      (data) => data.id == newCourseTypeId
+    );
+
+    //If course type is changed form offline to online or online to office need to clear venue details.
+    if (
+      previousCourseSettings?.[0]?.is_online_program !==
+      newCourseTypeSettings?.[0]?.is_online_program
+    ) {
+      setValue("existingVenue", undefined);
+      setValue("newVenue", undefined);
+      setValue("state_id", "");
+      setValue("city_id", "");
+      setValue("center_id", "");
+      setValue("is_existing_venue","")
+      setValue("online_url","")
+    }
+
     setValue("program_alias_name_id", "");
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever program_type is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings",undefined)
-    setValue("is_early_bird_enabled",undefined)
-    setValue("early_bird_cut_off_period",undefined)
+    setValue("program_fee_level_settings", undefined);
+    setValue("feeLevels", undefined);
+    setValue("is_early_bird_enabled", undefined);
+    setValue("early_bird_cut_off_period", undefined);
     setTimeout(() => {
-      clearErrors(["program_alias_name_id","program_fee_level_settings","is_early_bird_enabled","early_bird_cut_off_period"]);
+      clearErrors([
+        "program_alias_name_id",
+        "program_fee_level_settings",
+        "is_early_bird_enabled",
+        "early_bird_cut_off_period",
+        "existingVenue",
+        "newVenue",
+        "state_id",
+        "city_id",
+        "center_id",
+        "is_existing_venue",
+        "online_url"
+      ]);
     }, 10);
   };
 
@@ -302,6 +350,13 @@ export const CourseTypeDropDown = () => {
     const maxAttendes = courseSettings?.[0].maximum_capacity
       ? courseSettings?.[0].maximum_capacity.toString()
       : undefined;
+
+    const isOnlineProgram = courseSettings?.[0]?.is_online_program
+
+    // If the course type is online then isOnlineProgram is true then the is residential program is false
+    // so because of that we are assigning residential variable with negotiation of isOnlineProgram
+    isResidentialProgramOchange(!isOnlineProgram)
+
 
     // when we change the course type and we get new settings we need to set the max capacity from the course type settings otherwise it should be empty
     if (maxAttendes) {
@@ -329,9 +384,9 @@ export const CourseTypeDropDown = () => {
       <Select
         value={value}
         onValueChange={(val: any) => {
+          clearCourseTypeDependentValues(value, val);
           onChange(val);
           getCourseTypeSettings(val);
-          clearCourseTypeDependentValues();
         }}
         disabled={isEditCourse}
       >
@@ -342,7 +397,7 @@ export const CourseTypeDropDown = () => {
           <SelectValue placeholder={t("select_course_type")} />
         </SelectTrigger>
         <SelectContent>
-          <Input
+          <SelectInput
             value={searchValue}
             onChange={(value: ChangeEvent<HTMLInputElement>) => {
               searchOnChange(value.target.value);
@@ -353,7 +408,7 @@ export const CourseTypeDropDown = () => {
             {options?.map((option: any, index: number) => (
               <>
                 <SelectItem
-                  key={option.value}
+                  key={index}
                   value={option.value}
                   className="h-[44px]"
                 >
@@ -403,14 +458,24 @@ const RegistrationGateway = () => {
 };
 
 const CourseNameDropDown = () => {
+  const {
+    field: { value: temporaryvalue, onChange, value },
+    fieldState: { error }
+  } = useController({
+    name: NewCourseStep2FormNames?.program_alias_name_id
+  })
+
   const { t } = useTranslation("new_strings");
+
   const [pageSize, setPageSize] = useState(10);
+
+  const [searchTerm, setSearchTerm] = useState('')
 
   const { watch } = useFormContext();
 
   const formData = watch();
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -433,13 +498,7 @@ const CourseNameDropDown = () => {
       pageSize,
       mode: "server",
     },
-  });
-
-  const {
-    field: { value, onChange },
-    fieldState: { error },
-  } = useController({
-    name: NewCourseStep2FormNames?.program_alias_name_id,
+    defaultValue: temporaryvalue
   });
 
   // Handler for bottom reached to load more options
@@ -448,6 +507,11 @@ const CourseNameDropDown = () => {
       setPageSize((previousLimit: number) => previousLimit + 10);
     }
   };
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchTerm(value)
+    onSearch(value)
+  }
 
   return (
     <div className="flex gap-1 flex-col">
@@ -467,13 +531,9 @@ const CourseNameDropDown = () => {
           />
         </SelectTrigger>
         <SelectContent>
-          <Input
-            onChange={(value: ChangeEvent<HTMLInputElement>) =>
-              onSearch(value.target.value)
-            }
-          />
+          <SelectInput value={searchTerm} onChange={handleSearchChange} />
           <SelectItems onBottomReached={handleOnBottomReached}>
-            {options.map((option: any, index: number) => (
+            {options?.map((option: any, index: number) => (
               <>
                 <SelectItem
                   key={option.value}
@@ -499,7 +559,7 @@ const CourseNameDropDown = () => {
 };
 
 const TeachersDropDown = () => {
-  const { data: loginUserData }: any = useGetIdentity();
+  const { value: temporaryvalue, data: loginUserData }: any = useGetIdentity();
 
   const { watch } = useFormContext();
 
@@ -583,6 +643,7 @@ const TeachersDropDown = () => {
         "*,program_type_teachers!inner(certification_level_id,program_type_id!inner(organization_id)),contact_id!inner(full_name))",
     },
     filters: filter,
+    defaultvalue: temporaryvalue,
     onSearch: (value: any) => [
       {
         field: "contact_id.full_name",
@@ -602,7 +663,7 @@ const TeachersDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { options, queryResult, onSearch } = useSelect(selectQuery);
+  const { options, queryResult, onSearch } = useMVPSelect(selectQuery);
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
@@ -672,6 +733,12 @@ const TeachersDropDown = () => {
 };
 
 const AssistantTeachersDropDown = () => {
+  const {
+    field: {  value, onChange },
+    fieldState: { error: assistantTeachersErrors }
+  } = useController({
+    name: NewCourseStep2FormNames?.assistant_teacher_ids
+  })
   const { watch } = useFormContext();
 
   const [pageSize, setPageSize] = useState(10);
@@ -700,7 +767,7 @@ const AssistantTeachersDropDown = () => {
     });
   }
 
-  const { queryResult, onSearch } = useSelect({
+  const { queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select:
@@ -718,6 +785,7 @@ const AssistantTeachersDropDown = () => {
       pageSize: pageSize,
       mode: "server",
     },
+    defaultValue : value,
   });
 
   // Handler for bottom reached to load more options
@@ -733,12 +801,6 @@ const AssistantTeachersDropDown = () => {
     };
   });
 
-  const {
-    field: { value, onChange },
-    fieldState: { error: assistantTeachersErrors },
-  } = useController({
-    name: NewCourseStep2FormNames?.assistant_teacher_ids,
-  });
   const { t } = useTranslation("course.new_course");
   return (
     <div className="flex gap-1 flex-col">
@@ -789,12 +851,12 @@ const Visibility = () => {
         <Text className="text-xs font-normal text-[#333333]">
           {t("program_visibility")}
         </Text>
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px]">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Important />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
               {/* <div className="flex flex-row gap-1 items-center">
                 <Globe />
                 {t("public")}
@@ -808,10 +870,13 @@ const Visibility = () => {
                 {t("private")}
               </div>
               <div>{t("new_strings:there_are_a_lot_of_things")}</div> */}
+              <Text className="text-[#FFFFFF] text-wrap text-xs">
               {t("new_strings:program_visibility_info_icon_text")}
-            </div>
-          </HoverCardContent>
-        </HoverCard>
+              </Text>
+          <TooltipArrow height={15} width={17} fill="#333333"/>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <RadioGroup
@@ -890,16 +955,19 @@ const GeoRestriction = () => {
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
         {t("is_geo_restriction")}
         <div className="text-[#7677F4]">*</div>
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Important />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+            <div className="text-wrap">
               {t("new_strings:text_entered_in_the_email_notes")}
             </div>
-          </HoverCardContent>
-        </HoverCard>
+            <TooltipArrow height={15} width={17} fill="#333333"/>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <RadioGroup
@@ -940,7 +1008,7 @@ const LanguageDropDown = () => {
     name: NewCourseStep2FormNames?.language_ids,
   });
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
@@ -1007,13 +1075,19 @@ const LanguageDropDown = () => {
 };
 
 const LanguageTranslationDropDown = () => {
+  const {
+    field: {  value, onChange },
+    fieldState: { error: languageTranslationError }
+  } = useController({
+    name: NewCourseStep2FormNames?.translation_language_ids
+  })
   const { watch } = useFormContext();
 
   const formData = watch();
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "languages",
     optionLabel: "language_name",
     optionValue: "id",
@@ -1024,6 +1098,7 @@ const LanguageTranslationDropDown = () => {
         value: formData?.organization_id,
       },
     ],
+    defaultValue  : value,
     onSearch: (value) => [
       {
         field: "language_name",
@@ -1037,7 +1112,7 @@ const LanguageTranslationDropDown = () => {
     },
   });
 
-  const filteredOptions = options?.filter((val) => {
+  const filteredOptions = options?.filter((val : any) => {
     if (formData?.language_ids?.includes(val.value)) return false;
 
     return true;
@@ -1048,13 +1123,6 @@ const LanguageTranslationDropDown = () => {
     if (options && (queryResult?.data?.total as number) >= pageSize)
       setPageSize((previousLimit: number) => previousLimit + 10);
   };
-
-  const {
-    field: { value, onChange },
-    fieldState: { error: languageTranslationError },
-  } = useController({
-    name: NewCourseStep2FormNames?.translation_language_ids,
-  });
 
   const handleOnSearch = (value: any) => {
     onSearch(value);
@@ -1088,7 +1156,7 @@ const AllowedCountriesDropDown = () => {
 
   const countryArray: DataItem[] = Object.entries(countryCodes).map(
     ([countryCode, countryName]) => ({
-      label: countryName,
+    label: countryName,
       value: countryCode,
     })
   );
@@ -1145,16 +1213,19 @@ const MaximumCapacity = () => {
       <div className="flex flex-row gap-1 items-center font-normal text-[#333333]">
         <Text className="text-xs ">{t("max_capacity")}</Text>
         {/* popover to show the note to maximum capacity */}
-        <HoverCard>
-          <HoverCardTrigger>
-            <Important />
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <Text className="text-[#FFFFFF] text-wrap text-xs font-normal">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Important />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] border-none">
+            <Text className="text-[#FFFFFF] text-wrap text-xs">
               {t("new_strings:if_this_field_is_blank")}
             </Text>
-          </HoverCardContent>
-        </HoverCard>
+            <TooltipArrow height={15} width={17} fill="#333333"/>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <Input
         placeholder={t(

@@ -5,12 +5,15 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { translatedText } from "src/common/translations";
 import { Header2, ItemValue } from "src/commonComponents";
-import { VISIBILITY } from "src/constants/OptionLabels";
-import { PUBLIC } from "src/constants/OptionValueOrder";
+import { PARTICIPANT_PAYMENT_STATUS, TIME_FORMAT, VISIBILITY } from "src/constants/OptionLabels";
+import { PUBLIC, TIME_FORMAT_12_HOURS } from "src/constants/OptionValueOrder";
 import { Card, CardContent, CardHeader, CardTitle } from "src/ui/card";
 import { formatDateTime } from "src/utility/DateFunctions";
-import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { getOptionValueObjectByOptionOrder, getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 import { useTranslation } from 'next-i18next';
+import _ from "lodash";
+import { sortFeeLevels } from "../newCourse/NewCourseStep4";
+import dayjs from "dayjs";
 
 interface fullNameObject {
   user_id?: {
@@ -98,10 +101,13 @@ function CourseDetailsTab() {
   });
 
   // If the course fee is editable then we can use custom fees otherwise we can use default fees
-  const programFees = courseData?.data?.program_fee_settings_id
+  const programFeeLevels = courseData?.data?.program_fee_settings_id
     ? courseData?.data?.program_fee_settings_id?.program_fee_level_settings
     : courseData?.data?.program_fee_level_settings;
 
+  //Need to show only the fee level enabled by the user at the time of course creation.
+  const programFees=programFeeLevels?.filter((feeLevel: { is_enable: boolean; })=>feeLevel.is_enable);
+  const sortProgramFees= sortFeeLevels(programFees);
   const [copiedDetailsPageLink, setCopiedDetailsPageLink] = useState(false);
   const [copiedRegistrationLink, setCopiedRegistrationLink] = useState(false);
 
@@ -136,7 +142,15 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
     VISIBILITY,
     PUBLIC
   )?.id;
-  const {t} = useTranslation(["common", "course.view_course", "new_strings"])
+  const {t} = useTranslation(["common", "course.view_course", "new_strings", "course.find_course"])
+
+// getting twelve Hr Time Format id to check whether the particular course time format.
+const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
+  TIME_FORMAT,
+  TIME_FORMAT_12_HOURS
+)?.id;
+
+
   return (
     <div className="flex flex-row gap-[41px] mt-[30px]">
       {/**
@@ -277,10 +291,11 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
             <hr></hr>
           </CardHeader>
           <CardContent className="gap-[23px] flex flex-col">
-            {programFees?.length > 0
-              ? programFees?.map((item: ProgramFeeItem) => {
+            {sortProgramFees?.length > 0
+              ? sortProgramFees?.map((item: ProgramFeeItem,index:number) => {
                   return (
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-4" key={index}>
+                      <div className="flex flex-col gap-1">
                       <Header2>
                         {translatedText(
                   item?.is_custom_fee
@@ -293,30 +308,27 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                         {(item?.total)?.toFixed(2)}
                       </ItemValue>
                     </div>
+                     {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
+                     {IsEarlyBirdFeeEnable && (
+                      <div className="flex flex-col gap-1">
+                        <Header2>
+                          {t("new_strings:early_bird")}{" "}
+                          {translatedText(
+                            item?.is_custom_fee
+                              ? item?.custom_fee_label
+                              : item?.fee_level_id?.name as object
+                          )}
+                        </Header2>
+                        <ItemValue>
+                          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                          {(item?.early_bird_total as unknown as number)?.toFixed(2)}
+                        </ItemValue>
+                      </div>
+                    )}
+                    </div>
                   );
                 })
               : ""}
-              {/* This IsEarlyBirdFeeEnable variable checks if only program_fee_settings_id is not null than we have to show early bird fee in program_fee_settings_id otherwise checks is_early_bird_enabled present in program */}
-             {IsEarlyBirdFeeEnable
-               && programFees?.map((item: ProgramFeeItem) => {
-              return (
-              <div className="flex flex-col gap-1">
-              <Header2>
-                {t("new_strings:early_bird")}{" "}
-                {translatedText(
-                item?.is_custom_fee
-                 ? item?.custom_fee_label
-                  : item?.fee_level_id?.name as object
-                )}
-              </Header2>
-              <ItemValue>
-              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-              {(item?.early_bird_total as unknown as number)?.toFixed(2)}
-              </ItemValue>
-              </div>
-            );
-            })
-            }
             {courseData?.data?.program_accommodations?.length > 0
               ? courseData?.data?.program_accommodations?.map(
                   (item: AccommodationItem) => {
@@ -354,13 +366,21 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               {courseData?.data?.program_type_id?.is_online_program == true ?
               (courseData?.data?.online_url ? ( <a href= {courseData?.data?.online_url} className="text-indigo-600 hover:text-indigo-800" target="_blank">{t("new_strings:online")}</a>
             ) : ( "-"))
-          :
-          (courseData?.data?.venue_id ? (
-            <ItemValue>
-              {venue}
-            </ItemValue>
-          ):( "-"))}
-            </div>
+            :
+            (courseData?.data?.venue_id ? (
+              <div className="flex flex-col gap-4">
+              <ItemValue>
+                {venue}
+              </ItemValue> 
+              <div className="flex flex-col gap-1">
+                <Header2>{t("course.find_course:center")}</Header2>
+                  <ItemValue>
+                    {courseData?.data?.venue_id?.center_id?.name}
+                  </ItemValue>
+              </div>
+              </div>
+            ):("-"))}
+        </div>
             <Header2>
             {t('sessions')}
               <div className="text-[16px] font-semibold text-[#666666] gap-1">
@@ -369,9 +389,12 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                       (item: ProgramScheduleItem, index: number) => (
                         <div key={index}>
                           <div className="flex flex-col">
-                            <div>
-                              {formatDateTime(item?.start_time, item?.end_time)}
-                            </div>
+                            { // TODO we need to change the twelveHrTimeFormat to the enum
+                            courseData?.data?.hour_format_id === twelveHrTimeFormat ? (
+                              <TwelveHrFormat item={item as Schedule} />
+                            ) : (
+                              <TwentyFourHrFormat item={item as Schedule} />
+                            )}
                           </div>
                         </div>
                       )
@@ -429,17 +452,17 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
               <div>
                 <Header2>{t('course.view_course:basic_details_tab.registration_url')}</Header2>
                 <div className="flex flex-row gap-4 ">
-                  <div className="text-[16px] font-semibold w-[90%] break-words">
-                    {courseData?.data?.registration_link
-                      ? courseData?.data?.registration_link
-                      : "-"}
-                  </div>
+                  {courseData?.data?.registration_link
+                    ? <a className="text-[16px] font-semibold w-[90%] break-words" href={courseData?.data?.registration_link} target="_blank"> 
+                      {courseData?.data?.registration_link}
+                    </a>
+                    : "-"}
                   {courseData?.data?.registration_link && (
                     <div
                       onClick={() => {
                         handleCopyRegistrationLink();
                       }}
-                      className="relative mt-1"
+                      className="relative mt-1 cursor-pointer"
                     >
                       <CopyIcon />
                       {copiedRegistrationLink ? (
@@ -498,3 +521,52 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
 }
 
 export default CourseDetailsTab;
+
+interface Schedule {
+  id: number;
+  order: number;
+  hx_pkey: string | null;
+  end_time: string;
+  created_at: string;
+  program_id: number;
+  start_time: string;
+  schedule_type: string | null;
+  program_schedule_name: string;
+}
+
+/**
+ * @function TwelveHrFormat
+ * @description this function is used to format the date with the help of dayjs in the 12 hr format
+ * @param {item} 
+ * @returns date in 12 hr format
+ */
+export const TwelveHrFormat = ({item}:{item:Schedule}) => {
+  const {t} = useTranslation("course.new_course")
+  return (
+  <div className="capitalize">
+    {item?.start_time &&
+      dayjs(item?.start_time).format("DD MMM, YYYY | hh:mm A")}{" "}
+    <span className="lowercase">{t("time_and_venue_tab.to")}</span>{" "}
+    {item?.end_time && dayjs(item?.end_time).format("hh:mm A")}
+  </div>
+  )
+};
+
+/**
+ * @function TwentyFourHrFormat
+ * @description this function is used to format the date with the help of dayjs in the 24 hr format
+ * @param {item} 
+ * @returns date in 24 hr format
+ */
+export const TwentyFourHrFormat = ({item}:{item:Schedule}) => {
+  const {t} = useTranslation("course.new_course")
+
+  return(
+    <div className="capitalize">
+    {item?.start_time &&
+      dayjs(item?.start_time).format("DD MMM, YYYY | HH:mm")}{" "}
+    <span className="lowercase">{t("time_and_venue_tab.to")}</span>{" "}
+    {item?.end_time && dayjs(item?.end_time).format("HH:mm")}
+  </div>
+  )
+}

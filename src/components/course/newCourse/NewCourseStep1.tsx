@@ -4,7 +4,7 @@ import Teacher from "@public/assets/Teacher";
 import { useGetIdentity, useList, useOne, useSelect } from "@refinedev/core";
 import _ from "lodash";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { useController, useFormContext, useFormState } from "react-hook-form";
 import { translatedText } from "src/common/translations";
 import {
@@ -29,6 +29,7 @@ import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -42,6 +43,8 @@ import { useTranslation } from "next-i18next";
 import { Text } from "src/ui/TextTags";
 import { useRouter } from "next/router";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+import { useMVPSelect } from "src/utility/useMVPSelect";
+import { getDefaultValues } from "@components/participants/editParticipant/EditParticipantUtil";
 
 function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -57,7 +60,7 @@ function NewCourseStep1() {
       val.role_id?.order == NATIONAL_ADMIN
   );
   return (
-    <div>
+    <div className="w-full" >
       <RadioCards />
       <div className="mt-8 flex flex-row gap-7 ">
         <div className="flex gap-1 flex-col">
@@ -96,14 +99,14 @@ const RegistrationGateway = () => {
 
   return (
     <div className="flex flex-row gap-6 mt-[60px]">
-      <div className="text-[14px] font-normal">
+      <div className="text-sm font-normal">
         {t("registration_via_3rd_party_gateway")}
       </div>
       <Switch
         id="registration"
         className="!w-[57px] !h-[24px]"
         onCheckedChange={onChange}
-        checked={registrationSieUrl}
+        checked={value}
       />
       {value && (
         <div className="flex gap-1 flex-col -mt-7 ml-8">
@@ -118,11 +121,11 @@ const RegistrationGateway = () => {
               placeholder={t("new_strings:enter_url")}
               value={registrationSieUrl}
               onChange={RegistrationUrlOnchange}
-              className="placeholder:text-[#999999]"
+              className="placeholder:text-[#999999] rounded-[12px] text-[14px] text-[#333333]"
               error={error ? true : false}
             />
             {error && (
-              <span className="text-[#FF6D6D] text-[12px]">
+              <span className="text-[#FF6D6D] text-xs font-semibold">
                 {error?.message}
               </span>
             )}
@@ -229,31 +232,17 @@ const RadioCards = () => {
   };
 
   /**
-   * @constant data is the data from the option_labels table of Program Organizer Type name
-   * @description this const is used store the data from the option_labels table giving the name as Program Organizer Type
-   */
-  const { data } = useList({
-    resource: "option_labels",
-    filters: [
-      {
-        field: "name",
-        operator: "eq",
-        value: "Program Organizer Type",
-      },
-    ],
-  });
-
-  /**
    * @constant programOrganizerTypeData is the data from the option_values
    * @description this const is used to store the data from the option_values which option_label_id is Program Organizer Type
    */
   const { data: programOrganizerTypeData } = useList({
     resource: "option_values",
+    meta:{select:"*,option_label_id!inner(*)"},
     filters: [
       {
-        field: "option_label_id",
+        field: "option_label_id.key",
         operator: "eq",
-        value: data?.data?.[0]?.id,
+        value: PROGRAM_ORGANIZER_TYPE,
       },
     ],
   });
@@ -283,20 +272,22 @@ const RadioCards = () => {
   );
 
   return (
-    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange}>
-      <div className="flex items-center flex-row gap-7">
+    <RadioGroup value={JSON.stringify(value)} onValueChange={handleOnChange} className="w-full" >
+      <div className="flex items-center flex-row gap-7 w-full">
         {hasTeacherRole && (
           //Added cursor not allowed to all cards if this is disabled
           <Label
             htmlFor={JSON.stringify(iAmTeachingId)}
-            className={`text-[#999999] font-normal ${
+            className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+            
+            ${
               value === iAmTeachingId ? "text-[#7677F4]" : ""
             }`}
           >
             <Card
-              className={` p-2 w-72 h-[106px] flex flex-row ${
+              className={` p-2  h-[106px] flex flex-row ${
                 value === iAmTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450]  "
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4] "
                   : ""
               }`}
             >
@@ -324,14 +315,16 @@ const RadioCards = () => {
         {hasTeacherRole && (
           <Label
             htmlFor={JSON.stringify(iAmCoTeachingId)}
-            className={`text-[#999999] font-normal ${
+            className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+            
+            ${
               value === iAmCoTeachingId ? "text-[#7677F4]" : ""
             } `}
           >
             <Card
-              className={` p-2 gap-2 w-72 h-[106px] flex flex-row ${
+              className={` p-2 gap-2 h-[106px] flex flex-row ${
                 value === iAmCoTeachingId
-                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                  ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                   : ""
               }`}
             >
@@ -357,14 +350,16 @@ const RadioCards = () => {
         )}
         <Label
           htmlFor={JSON.stringify(iAmOrganizerId)}
-          className={`text-[#999999] font-normal ${
+          className={`text-[#999999] font-normal  min-w-[288px] w-full max-w-[320px]
+          
+          ${
             value === iAmOrganizerId ? "text-[#7677F4]" : ""
           }`}
         >
           <Card
-            className={`p-2 gap-2 w-72 h-[106px] flex flex-row ${
+            className={`p-2 gap-2 h-[106px] flex flex-row  ${
               value === iAmOrganizerId
-                ? "border-[#7677F4] shadow-md shadow-[#7677F450] "
+                ? "border-[#7677F4] shadow-md shadow-[#7677F450] text-[#7677F4]"
                 : ""
             }`}
           >
@@ -381,7 +376,7 @@ const RadioCards = () => {
               <Organizer
                 color={` ${value === iAmOrganizerId ? "#7677F4" : "#999999"}`}
               />
-              <div className="w-[240px] text-wrap text-center justify-center">
+              <div className="w-[240px] text-wrap text-center justify-center text-sm">
                 {iAmOrganisingCourse}
               </div>
             </div>
@@ -389,7 +384,7 @@ const RadioCards = () => {
         </Label>
       </div>
       {radioError && (
-        <span className="text-[#FF6D6D] text-[14px]">
+        <span className="text-[#FF6D6D] text-xs font-semibold">
           {radioError?.message}
         </span>
       )}
@@ -398,6 +393,13 @@ const RadioCards = () => {
 };
 
 const OrganizationDropDown = () => {
+
+  const {
+    field: { value : temporaryvalue , value, onChange },
+    fieldState: { error: organizationError },
+  } = useController({
+    name: NewCourseStep1FormNames?.organization_id,
+  });
   /**
    * This variable holds the path of the url
    */
@@ -417,7 +419,7 @@ const OrganizationDropDown = () => {
 
   const { setValue } = useFormContext();
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "organizations",
     optionLabel: "name",
     optionValue: "id",
@@ -428,13 +430,7 @@ const OrganizationDropDown = () => {
         value,
       },
     ],
-  });
-
-  const {
-    field: { value, onChange },
-    fieldState: { error: organizationError },
-  } = useController({
-    name: NewCourseStep1FormNames?.organization_id,
+    defaultValue : temporaryvalue
   });
 
   const {
@@ -456,7 +452,7 @@ const OrganizationDropDown = () => {
     setValue("program_type_id", "");
     setValue("program_type", "");
     setValue("program_alias_name_id", "");
-    setValue("teachers", []);
+    setValue("teacher_ids", []);
 
     //Handling teachers drop down
     if (formData?.program_created_by != iAmOrganizerId) {
@@ -477,10 +473,11 @@ const OrganizationDropDown = () => {
     setValue("state_id", "");
     setValue("city_id", "");
     setValue("center_id", "");
-    setValue("is_resedential_program", false);
+    setValue("is_residential_program", undefined);
 
     //Requirement: Fee is fetch based on program_type,location and course start date.So when ever organization is changed need to remove existing fee levels.
-    setValue("program_fee_level_settings", undefined);
+    setValue("program_fee_level_settings",undefined );
+    setValue("feeLevels",undefined );
     setValue("is_early_bird_enabled", undefined);
     setValue("early_bird_cut_off_period", undefined);
 
@@ -523,7 +520,7 @@ const OrganizationDropDown = () => {
   const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
 
   return (
-    <div className="w-80 h-20">
+    <div className="h-20">
       <div className="flex gap-1 flex-col">
         <div className="flex flex-row gap-1 items-center">
           <Text className="text-xs font-normal text-[#333333]">
@@ -551,11 +548,11 @@ const OrganizationDropDown = () => {
             />
           </SelectTrigger>
           <SelectContent>
-            <Input value={searchValue} onChange={handleSearch} />
+             <SelectInput value={searchValue} onChange={handleSearch} />
             <SelectItems onBottomReached={handleOnBottomReached}>
-              {options?.map((option, index) => {
+              {options?.map((option : any, index : any) => {
                 return (
-                  <div>
+                  <div key={index}>
                     <SelectItem
                       key={option.value}
                       value={option.value}
@@ -574,7 +571,7 @@ const OrganizationDropDown = () => {
         </Select>
 
         {organizationError && (
-          <span className="text-[#FF6D6D] text-[12px]">
+          <span className="text-[#FF6D6D] text-xs font-semibold">
             {organizationError?.message}
           </span>
         )}
@@ -591,7 +588,7 @@ const ProgramOrganizerDropDown = () => {
   const router = useRouter();
 
   const {
-    field: { value, onChange },
+    field: {value, onChange },
     fieldState: { error: programOrganizerError },
   } = useController({
     name: NewCourseStep1FormNames?.organizer_ids,
@@ -603,7 +600,7 @@ const ProgramOrganizerDropDown = () => {
     PROGRAM_ORGANIZER
   )?.id;
 
-  const { options, queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
@@ -631,6 +628,7 @@ const ProgramOrganizerDropDown = () => {
       mode: "server",
     },
   });
+
 
   const { watch } = useFormContext();
 
@@ -682,7 +680,7 @@ const ProgramOrganizerDropDown = () => {
         error={programOrganizerError}
       />
       {programOrganizerError && (
-        <span className="text-[#FF6D6D] text-[12px]">
+        <span className="text-[#FF6D6D] text-xs font-semibold">
           {programOrganizerError?.message}
         </span>
       )}

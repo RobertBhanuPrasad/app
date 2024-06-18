@@ -1,14 +1,10 @@
 import CalenderIcon from "@public/assets/CalenderIcon";
 import ClearAllIcon from "@public/assets/ClearAllIcon";
 import CrossIcon from "@public/assets/CrossIcon";
-import { useSelect } from "@refinedev/core";
+import { CrudFilter, useList } from "@refinedev/core";
 import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
-import {
-  CountComponent,
-  CourseTypeComponent,
-  DateRangePickerComponent,
-} from "pages/courses/list";
+import { CountComponent, DateRangePickerComponent } from "pages/courses/list";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";
@@ -33,6 +29,7 @@ import { RadioButtonCard } from "src/ui/radioButtonCard";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -43,20 +40,81 @@ import {
   getOptionValueObjectByOptionOrder,
   getOptionValuesByOptionLabel,
 } from "src/utility/GetOptionValuesByOptionLabel";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
+
+// Entity implies City,Center,State,...
+export type Entity = {
+  name: string;
+  id: number;
+};
+
+// Preferences are a collection of different entities which need to be saved in db
+export type Preferences = {
+  state: Entity[];
+  city: Entity[];
+  center: Entity[];
+};
+
+// emptyPreferences to use where needed
+export const emptyPreferences: Preferences = {
+  state: [],
+  city: [],
+  center: [],
+};
+
+// All Entity-Specific Components like <State>, <Center>, <City> need these props
+interface EntityProps {
+  // setSelectedEntity is to set the selected entity in suggested-chips
+  setSelectedEntity: React.Dispatch<React.SetStateAction<number>>;
+  // setNewPreferences is for updating the parent newPreferences state variable which will be used to update DB on Filter Sheet close
+  setNewPreferences: React.Dispatch<React.SetStateAction<Preferences>>;
+}
+
+interface FiltersProps {
+  setAdvanceFilterOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  hasAliasNameFalse: boolean;
+  setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  // preferences is to show the loaded preferences from DB
+  preferences: Preferences;
+  // setNewPreferences is for updating the chosen preferences
+  setNewPreferences: React.Dispatch<React.SetStateAction<Preferences>>;
+}
+
+const ITEM_CHOSEN_FROM_DROPDOWN = -2,
+  NOTHING_CHOSEN_YET = -1;
 
 const Filters = ({
   setAdvanceFilterOpen,
   hasAliasNameFalse,
   setCurrent,
-}: any) => {
+  preferences,
+  setNewPreferences,
+}: FiltersProps) => {
   console.log(hasAliasNameFalse, "FalseAliasNamefilter");
 
   const { watch, setValue } = useFormContext();
-
   const formData = watch();
 
-  const { setAllFilterData } = newCourseStore();
+  // selectedEntities are present to decide if any suggested-chip is chosen
+  const [selectedState, setSelectedState] = useState(
+    formData?.temporaryadvancefilter?.state
+      ? ITEM_CHOSEN_FROM_DROPDOWN
+      : NOTHING_CHOSEN_YET
+  );
+  const [selectedCenter, setSelectedCenter] = useState(
+    formData?.temporaryadvancefilter?.center
+      ? ITEM_CHOSEN_FROM_DROPDOWN
+      : NOTHING_CHOSEN_YET
+  );
+  const [selectedCity, setSelectedCity] = useState(
+    formData?.temporaryadvancefilter?.city
+      ? ITEM_CHOSEN_FROM_DROPDOWN
+      : NOTHING_CHOSEN_YET
+  );
+
+  const { setAllFilterData, AllFilterData } = newCourseStore();
   const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
     <div className="flex flex-col gap-5">
@@ -139,13 +197,14 @@ const Filters = ({
           )} */}
           {/* Course Status Accordion */}
           <AccordionItem value="item-2" className="border-none ">
-            <AccordionTrigger className="text-base font-semibold pr-3">
+            <AccordionTrigger className="text-lg font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:course_status")}</div>
-                {formData?.temporaryadvancefilter.course_status?.length > 0 && (
+                {formData?.temporaryadvancefilter?.course_status?.length >
+                  0 && (
                   <CountComponent
                     count={
-                      formData?.temporaryadvancefilter.course_status?.length
+                      formData?.temporaryadvancefilter?.course_status?.length
                     }
                   />
                 )}
@@ -157,7 +216,7 @@ const Filters = ({
           </AccordionItem>
           <Separator />
 
-          {/* TODO  : for now may-13 release it has to be hidden */} 
+          {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Course Accounting Status Accordion */}
           {/* <AccordionItem value="item-3" className=" border-none">
             <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
@@ -179,7 +238,7 @@ const Filters = ({
             </AccordionContent>
           </AccordionItem>
           <Separator /> */}
-          
+
           {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Course Accounting Closure Date  Accordion */}
           {/* <AccordionItem value="item-4" className=" border-none">
@@ -202,10 +261,10 @@ const Filters = ({
 
           {/* Course Visibility Accordion */}
           <AccordionItem value="item-5" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div> {t("course.find_course:course_visibility")}</div>
-                {formData?.temporaryadvancefilter.visibility && (
+                {formData?.temporaryadvancefilter?.visibility && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -218,58 +277,142 @@ const Filters = ({
 
           {/* State Accordion */}
           <AccordionItem value="item-6" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:state")}</div>
-                {formData?.temporaryadvancefilter.state && (
+                {formData?.temporaryadvancefilter?.state && (
                   <CountComponent count={1} />
                 )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <State />
+              <State
+                setSelectedEntity={setSelectedState}
+                setNewPreferences={setNewPreferences}
+              />
+              {/* suggestion chips fetched from DB are displayed here */}
+              {/* if item is already chosen from dropdown, don't display suggestions */}
+              {selectedState !== ITEM_CHOSEN_FROM_DROPDOWN &&
+                preferences.state.map(({ id, name }) => (
+                  <Button
+                    className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
+                      selectedState === id
+                        ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                        : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+                    }`}
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedState(id);
+                      // update the form field to choose the same item in dropdown
+                      setValue("temporaryadvancefilter.state", id);
+                      // update the newPreferences to send to db later
+                      setNewPreferences((oldPreferences) => ({
+                        ...oldPreferences,
+                        state: [{ id, name }],
+                      }));
+                    }}
+                  >
+                    {name}
+                  </Button>
+                ))}
             </AccordionContent>
           </AccordionItem>
           <Separator />
 
           {/* City Accordion */}
           <AccordionItem value="item-7" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("city")}</div>
-                {formData?.temporaryadvancefilter.city && (
+                {formData?.temporaryadvancefilter?.city && (
                   <CountComponent count={1} />
                 )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <City />
+              <City
+                setSelectedEntity={setSelectedCity}
+                setNewPreferences={setNewPreferences}
+              />
+              {/* suggestion chips fetched from DB are displayed here */}
+              {/* if item is already chosen from dropdown, don't display suggestions */}
+              {selectedCity !== ITEM_CHOSEN_FROM_DROPDOWN &&
+                preferences.city.map(({ id, name }) => (
+                  <Button
+                    className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
+                      selectedCity === id
+                        ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                        : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+                    }`}
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedCity(id);
+                      // update the form field to choose the same item in dropdown
+                      setValue("temporaryadvancefilter.city", id);
+                      // update the newPreferences to send to db later
+                      setNewPreferences((oldPreferences) => ({
+                        ...oldPreferences,
+                        city: [{ id, name }],
+                      }));
+                    }}
+                  >
+                    {name}
+                  </Button>
+                ))}
             </AccordionContent>
           </AccordionItem>
           <Separator />
 
           {/* Center Accordion */}
           <AccordionItem value="item-8" className="border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:center")}</div>
-                {formData?.temporaryadvancefilter.center && (
+                {formData?.temporaryadvancefilter?.center && (
                   <CountComponent count={1} />
                 )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
-              <Center />
+              <Center
+                setSelectedEntity={setSelectedCenter}
+                setNewPreferences={setNewPreferences}
+              />
+              {/* suggestion chips fetched from DB are displayed here */}
+              {/* if item is already chosen from dropdown, don't display suggestions */}
+              {selectedCenter !== ITEM_CHOSEN_FROM_DROPDOWN &&
+                preferences.center.map(({ id, name }) => (
+                  <Button
+                    className={`rounded-full h-[28px] text-sm font-normal mt-2 mr-2 ${
+                      selectedCenter === id
+                        ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                        : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+                    }`}
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedCenter(id);
+                      // update the form field to choose the same item in dropdown
+                      setValue("temporaryadvancefilter.center", id);
+                      // update the newPreferences to send to db later
+                      setNewPreferences((oldPreferences) => ({
+                        ...oldPreferences,
+                        center: [{ id, name }],
+                      }));
+                    }}
+                  >
+                    {name}
+                  </Button>
+                ))}
             </AccordionContent>
           </AccordionItem>
           <Separator />
 
           {/* Residential Course Accordion */}
           <AccordionItem value="item-9" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("residential_course")}</div>
-                {formData?.temporaryadvancefilter.is_residential_course && (
+                {formData?.temporaryadvancefilter?.is_residential_course && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -282,17 +425,18 @@ const Filters = ({
 
           {/* Program Organizer Accordion */}
           <AccordionItem value="item-10" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("program_organizer")}</div>
-                {formData?.temporaryadvancefilter.program_organiser?.length >
+                {formData?.temporaryadvancefilter?.program_organiser?.length >
                   0 && (
-                    <CountComponent
-                      count={
-                        formData?.temporaryadvancefilter.program_organiser?.length
-                      }
-                    />
-                  )}
+                  <CountComponent
+                    count={
+                      formData?.temporaryadvancefilter?.program_organiser
+                        ?.length
+                    }
+                  />
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-5 pr-3">
@@ -305,10 +449,10 @@ const Filters = ({
 
           {/* Teacher Name Accordion */}
           <AccordionItem value="item-11" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("course.find_course:teacher_name")}</div>
-                {formData?.temporaryadvancefilter.course_teacher && (
+                {formData?.temporaryadvancefilter?.course_teacher && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -323,10 +467,10 @@ const Filters = ({
 
           {/* Course Fees Accordion */}
           <AccordionItem value="item-12" className=" border-none">
-            <AccordionTrigger className="text-base pb-4 pt-5 font-semibold pr-3">
+            <AccordionTrigger className="text-lg pb-4 pt-5 font-semibold pr-3">
               <div className="flex flex-row gap-2 items-center">
                 <div>{t("new_strings:course_fees")}</div>
-                {formData?.temporaryadvancefilter.is_course_fee && (
+                {formData?.temporaryadvancefilter?.is_course_fee && (
                   <CountComponent count={1} />
                 )}
               </div>
@@ -337,7 +481,7 @@ const Filters = ({
           </AccordionItem>
 
           <Separator />
-          
+
           {/* TODO  : for now may-13 release it has to be hidden */}
           {/* Reconciliation Status Accordion */}
           {/* <AccordionItem value="item-13" className=" border-none">
@@ -360,22 +504,27 @@ const Filters = ({
               ""
             );
             setValue("temporaryadvancefilter.state", "");
+            setSelectedState(-1);
             setValue("temporaryadvancefilter.city", "");
+            setSelectedCity(-1);
             setValue("temporaryadvancefilter.center", "");
+            setSelectedCenter(-1);
             setValue("temporaryadvancefilter.visibility", "");
             setValue("temporaryadvancefilter.is_residential_course", "");
             setValue("temporaryadvancefilter.is_course_fee", "");
             setValue("temporaryadvancefilter.course_teacher", "");
             setValue("temporaryadvancefilter.program_organiser", []);
-            //we need to empty the course type in basic filters also because the filter applies when we clear all in advance filter
-            setValue("course_type", "");
-            setAllFilterData({ advanceFilter: {} });
+            //Here we need to clear only the advance filter data
+            setAllFilterData({
+              ...AllFilterData,
+              advanceFilter: {},
+            });
             setValue("advanceFilter", {}); //clearing all the advancefilter form Data
           }}
           className="flex gap-1 items-center cursor-pointer"
         >
           <ClearAllIcon />
-          <p className="text-primary hover:text-[#5E5FC3]">{t("clear_all")}</p>
+          <p className="text-primary hover:text-[#5E5FC3] text-sm font-semibold">{t("clear_all")}</p>
         </div>
         <Button
           className="hover:bg-[#5E5FC3]"
@@ -383,10 +532,6 @@ const Filters = ({
             const temporaryData = { ...formData };
 
             setValue("advanceFilter", temporaryData?.temporaryadvancefilter);
-            setValue(
-              "course_type",
-              temporaryData?.temporaryadvancefilter.course_type
-            );
             setAllFilterData({
               ...formData,
               advanceFilter: temporaryData?.temporaryadvancefilter,
@@ -417,7 +562,7 @@ export const CourseName = () => {
 
   const [pageSize, setPageSize] = useState(10);
 
-  const { options, onSearch } = useSelect({
+  const { options, onSearch } = useMVPSelect({
     resource: "program_type_alias_names",
     optionLabel: "alias_name",
     optionValue: "id",
@@ -425,7 +570,7 @@ export const CourseName = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "alias_name",
         operator: "contains",
@@ -459,7 +604,7 @@ export const CourseName = () => {
       <SelectContent>
         <Input onChange={(val) => onSearch(val.target.value)} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -479,7 +624,10 @@ export const CourseName = () => {
   );
 };
 
-export const State = () => {
+export const State = ({
+  setSelectedEntity,
+  setNewPreferences,
+}: EntityProps) => {
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
@@ -487,8 +635,40 @@ export const State = () => {
   });
 
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  /**
+   * Getting country code from route using useGetCountryCode function
+   */
+  const countryCode = useGetCountryCode();
 
-  const { options, onSearch } = useSelect({
+  /**
+   * Getting country data based on country code
+   */
+  const { data } = useList<any>({
+    resource: "country",
+    filters: [
+      {
+        field: "abbr",
+        operator: "contains",
+        value: countryCode,
+      },
+    ],
+  });
+
+  
+  let filter: Array<CrudFilter> = [];
+
+  //If the country code is public then dont make the filter for country
+  if (countryCode !== "public") {
+    filter.push({
+      field: "country_id",
+      operator: "eq",
+      value: data?.data?.[0]?.id,
+    });
+  }
+
+  const { options, onSearch } = useMVPSelect({
     resource: "state",
     optionLabel: "name",
     optionValue: "id",
@@ -496,23 +676,37 @@ export const State = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    filters:filter,
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
         value,
       },
     ],
+    defaultValue : temporaryValue
   });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("common");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
+        // updated to make corresponding suggestion-chips disappear
+        setSelectedEntity(ITEM_CHOSEN_FROM_DROPDOWN);
+        // update newPreferences to send to db later
+        setNewPreferences((oldPreferences) => ({
+          ...oldPreferences,
+          state: [{ id: val, name: "dummyname" }],
+        }));
         temporaryOnChange(val);
       }}
     >
@@ -520,9 +714,9 @@ export const State = () => {
         <SelectValue placeholder={t("select_state")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -542,7 +736,7 @@ export const State = () => {
   );
 };
 
-export const City = () => {
+export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
@@ -550,8 +744,17 @@ export const City = () => {
   });
 
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const { options, onSearch } = useSelect({
+  // track whether the city drop down is clicked or not
+  const [citySelectClicked, setCitySelectClicked] = useState(false)
+
+  const { watch } = useFormContext();
+
+  const formData = watch();
+  
+  // fetch all the cities from the city table 
+  const { options, onSearch } = useMVPSelect({
     resource: "city",
     optionLabel: "name",
     optionValue: "id",
@@ -559,32 +762,46 @@ export const City = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
         value,
       },
     ],
+    defaultValue : temporaryValue
   });
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("common");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
+        // updated to make corresponding suggestion-chips disappear
+        setSelectedEntity(ITEM_CHOSEN_FROM_DROPDOWN);
+        // update newPreferences to send to db later
+        setNewPreferences((oldPreferences) => ({
+          ...oldPreferences,
+          city: [{ id: val, name: "dummyname" }],
+        }));
         temporaryOnChange(val);
       }}
+      onOpenChange={()=>setCitySelectClicked(true)}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t("city_placeholder")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -604,15 +821,26 @@ export const City = () => {
   );
 };
 
-export const Center = () => {
+export const Center = ({
+  setSelectedEntity,
+  setNewPreferences,
+}: EntityProps) => {
   const {
     field: { value: temporaryValue, onChange: temporaryOnChange },
   } = useController({
     name: "temporaryadvancefilter.center",
   });
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const { options, onSearch } = useSelect({
+  // track whether the center drop down is clicked or not
+  const [centerSelectClicked, setCenterSelectClicked] = useState(false)
+
+  const { watch } = useFormContext();
+  const formData = watch();
+
+  //fetch all the centers from the center table
+  const { options, onSearch } = useMVPSelect({
     resource: "center",
     optionLabel: "name",
     optionValue: "id",
@@ -620,33 +848,47 @@ export const Center = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "name",
         operator: "contains",
         value,
       },
     ],
+    defaultValue : temporaryValue
   });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("new_strings");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
       onValueChange={(val: any) => {
+        // updated to make corresponding suggestion-chips disappear
+        setSelectedEntity(ITEM_CHOSEN_FROM_DROPDOWN);
+        // update newPreferences to send to db later
+        setNewPreferences((oldPreferences) => ({
+          ...oldPreferences,
+          center: [{ id: val, name: "dummyname" }],
+        }));
         temporaryOnChange(val);
       }}
+      onOpenChange={()=>setCenterSelectClicked(true)}
     >
       <SelectTrigger className="w-80  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]">
         <SelectValue placeholder={t("select_center")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
@@ -665,7 +907,6 @@ export const Center = () => {
     </Select>
   );
 };
-
 export const CourseStatus = () => {
   const { getValues } = useFormContext();
 
@@ -695,9 +936,9 @@ export const CourseStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-              ? "bg-primary text-white  hover:bg-[#5E5FC3]"
-              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-              }`}
+                ? "bg-primary text-white  hover:bg-[#5E5FC3]"
+                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+            }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -733,9 +974,9 @@ export const CourseAccordingStatus = () => {
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
               temporaryValue?.includes(status?.id)
-              ? "bg-primary text-white hover:bg-[#5E5FC3]"
-              : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
-              }`}
+                ? "bg-primary text-white hover:bg-[#5E5FC3]"
+                : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
+            }`}
             variant="outline"
             onClick={() => toggleCourseStatus(status?.id)}
           >
@@ -906,14 +1147,14 @@ export const ProgramOrganiser = () => {
 
   const [pageSize, setPageSize] = useState(20);
 
-  const { options, queryResult, onSearch } = useSelect({
+  const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
       select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
     },
     optionLabel: "contact_id.full_name",
     optionValue: "id",
-    onSearch: (value) => [
+    onSearch: (value : any) => [
       {
         field: "contact_id.full_name",
         operator: "contains",
@@ -924,6 +1165,7 @@ export const ProgramOrganiser = () => {
       pageSize: pageSize,
       mode: "server",
     },
+    defaultValue : temporaryValue
   });
   const handleOnBottomReached = () => {
     if (queryResult?.data?.data && queryResult?.data?.total >= pageSize)
@@ -957,14 +1199,17 @@ export const TeacherDropdown = () => {
   });
 
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const { options, onSearch, queryResult } = useSelect({
+  const { options, onSearch, queryResult } = useMVPSelect({
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name))",
+        "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name, full_name)",
     },
-    onSearch: (value) => [
+    optionLabel: "contact_id.full_name",
+    optionValue: "id",
+    onSearch: (value : any) => [
       {
         field: "contact_id.full_name",
         operator: "contains",
@@ -975,19 +1220,19 @@ export const TeacherDropdown = () => {
       pageSize: pageSize,
       mode: "server",
     },
+    defaultValue : temporaryValue
   });
 
-  const teachers: any = queryResult.data?.data?.map((val) => {
-    return {
-      label: val?.contact_id?.first_name + " " + val?.contact_id?.last_name,
-      value: val?.id,
-    };
-  });
 
   const handleOnBottomReached = () => {
     setPageSize((previousLimit: number) => previousLimit + 10);
   };
   const { t } = useTranslation("new_strings");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={temporaryValue}
@@ -999,9 +1244,9 @@ export const TeacherDropdown = () => {
         <SelectValue placeholder={t("select_teacher")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {teachers?.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}

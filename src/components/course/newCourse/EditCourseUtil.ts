@@ -35,7 +35,9 @@ export const getDefaultValues = async (
   const defaultValues: NewCourseFormFieldTypes = {};
 
   if (data.id) defaultValues.id = data.id;
-  
+
+  if(data?.program_code) defaultValues.program_code = data?.program_code
+
 
   // Step 1
 
@@ -308,3 +310,13 @@ export const getDefaultValues = async (
 export const IsEditCourse = (url: string) => {
   return url.includes("/edit");
 };
+
+/**
+ * This function is used to determine whether the particular url contains copy or not
+ * @param url
+ * @returns a boolean
+ */
+export const IsCopyCourse = (url: string) => {
+  return url.includes("/copy");
+};
+

@@ -1,6 +1,9 @@
 import Form from "@components/Formfield";
 import { BaseTable } from "@components/course/findCourse/BaseTable";
-import Filters from "@components/course/findCourse/Filters";
+import Filters, {
+  Preferences,
+  emptyPreferences,
+} from "@components/course/findCourse/Filters";
 import NewCourseReviewPage from "@components/course/newCourse/NewCoursePreviewPage";
 import { hasAliasNameFalse } from "@components/courseBusinessLogic";
 import CalenderIcon from "@public/assets/CalenderIcon";
@@ -11,6 +14,7 @@ import SearchIcon from "@public/assets/Search";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useList, useSelect, useTable } from "@refinedev/core";
+import { SortingState } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
@@ -34,14 +38,17 @@ import { Input } from "src/ui/input";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
   SelectValue,
 } from "src/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "src/ui/sheet";
-import { supabaseClient } from "src/utility/supabaseClient";
+import { SupabaseClient, supabaseClient } from "src/utility/supabaseClient";
+import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import { useMVPSelect } from "src/utility/useMVPSelect";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 
 function index() {
@@ -53,6 +60,7 @@ function index() {
   const { viewPreviewPage, AllFilterData } = newCourseStore();
 
   const languageCode = useGetLanguageCode();
+  const countryCode = useGetCountryCode();
 
   console.log("viewPreviewPage", viewPreviewPage);
   // If user click on edit course in menu option we have to open review page instead of table
@@ -160,7 +168,8 @@ function index() {
     filters.permanent.push({
       field: "program_code",
       operator: "contains",
-      value: AllFilterData?.course_id,
+      //If white spaces are there trim them and then apply search
+      value: AllFilterData?.course_id && AllFilterData?.course_id.trim(),
     });
   }
 
@@ -235,8 +244,80 @@ function index() {
   const [rowSelection, setRowSelection] = React.useState({});
 
   /**
+   * @constant selectedCourseIds
+   * @description extratcting the check box selected ids, stores the data of course ids
+   * 
+   */
+  const selectedCourseIds = Object.keys(rowSelection)
+  
+  /**
+   * @constant exportXlsFilters
+   * @description this const stores the filters which we do on the find courses 
+   * if the filters are present in then destructre and store in the const else store the empty array to avoid errors
+   */
+  let exportXlsFilters = filters.permanent?.length > 0 ? [...filters.permanent] : []
+
+  // REQUIRMENT we need to export the courses, what we are selecting using the checkboxes
+  // If selected courses are there then add filter for that ids for the export xls filter
+  if(selectedCourseIds.length > 0) {
+    exportXlsFilters.push({
+      field: "id",
+      operator: "in",
+      value: selectedCourseIds,
+    });
+  }    
+
+  /**
    * Here we are maintaining 2 querys one is for filtering and one is for showing the data in the table and this is the filter query
    */
+
+  //State variable for the sorting functionality
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: "created_at",
+      desc: true,
+    },
+  ]);
+
+  /**
+   * This is for the second use Table sorting
+   */
+  const [secondUseTableSorting, setSecondUseTableSorting] =
+    useState<SortingState>([
+      {
+        id: "created_at",
+        desc: true,
+      },
+    ]);
+
+  // This function fetches the field which needs to sorted in the table
+  const getFieldvalue = () => {
+    // if sorting doesnt contain data then set sorting to initial state
+    if (sorting.length === 0) {
+      setSorting([
+        {
+          id: "created_at",
+          desc: true,
+        },
+      ]);
+
+      setSecondUseTableSorting([
+        {
+          id: "created_at",
+          desc: true,
+        },
+      ]);
+
+      return "created_at";
+    } else {
+      let field = sorting?.[0].id;
+      // the field which we have in column definition and the field in data base were different
+      if (field === "program_code") field = "id";
+      if (field === "program_schedules") field = "start_date";
+      return field;
+    }
+  };
+
   const {
     tableQueryResult: FilterProgramData,
     pageCount,
@@ -252,19 +333,44 @@ function index() {
         "*,program_types(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
     },
     filters: filters,
+    queryOptions: {
+      keepPreviousData: true,
+    },
     sorters: {
       permanent: [
-        // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-        { field: "created_at", order: "desc" },
+        { field: getFieldvalue(), order: sorting?.[0]?.desc ? "desc" : "asc" },
       ],
     },
   });
 
   /**
+   * This variable holds the filtered ids of the query
+   * This variable change only when really the data changes
+   * and not on every render
+   * Process :  We need to run second useTable only when the data changes from first query
+   */
+  const [programFilteredIds, setProgramFilteredIds] = useState<any>([]);
+
+  /**
    *This variable holds the filtered ids of the query
    */
-  const filteredIds =
+  const tempFilteredIds =
     FilterProgramData?.data?.data.map((item) => item.id) || [];
+
+  /**
+   * This useEffect runs only when the data changes
+   * and not on every render
+   * Process :  We need to run second useTable only when the data changes from first query
+   * So for that in dependency array we pass JSON.stringify(tempFilteredIds.sort((a: any, b: any) => a - b))
+   * This will run only when the data changes
+   * and not on every render
+   * So we will set both sorting and filtered IDs so then a new query will be sent to the server
+   */
+  useEffect(() => {
+    setProgramFilteredIds(tempFilteredIds.sort((a: any, b: any) => a - b));
+
+    setSecondUseTableSorting(sorting);
+  }, [JSON.stringify(tempFilteredIds.sort((a: any, b: any) => a - b))]);
 
   /**
    *This is the query to get data to show in the table
@@ -281,24 +387,30 @@ function index() {
       pagination: {
         pageSize: pageSize,
       },
+      queryOptions: {
+        keepPreviousData: true,
+      },
       filters: {
         permanent: [
           {
             field: "id",
             operator: "in",
-            value: filteredIds,
+            value: programFilteredIds,
           },
         ],
       },
       sorters: {
         permanent: [
           // Sorting the program data based on their created date in descending order so that new created program wil be displayed on top
-          { field: "created_at", order: "desc" },
+          {
+            field: getFieldvalue(),
+            order: secondUseTableSorting?.[0]?.desc ? "desc" : "asc",
+          },
         ],
       },
     });
 
-  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook 
+  //whenever the filters data is changed then we need to set the filters using setFilters from use table hook
   //Because when we move to another route and comeback Filters are not setting properly that why we have written this
   useEffect(() => {
     setFilters(filters.permanent, "replace");
@@ -422,7 +534,7 @@ function index() {
         select:
           "id,created_at,program_code,program_types(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
         columns: JSON.stringify(excelColumns),
-        filters: JSON.stringify(filters?.permanent),
+        filters: JSON.stringify(exportXlsFilters),
         sorters: JSON.stringify([
           { field: "created_at", order: { ascending: false } },
         ]),
@@ -438,10 +550,10 @@ function index() {
           headers: {
             Authorization:
               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+            "country-code": countryCode,
           },
         }
       );
-
       if (error) {
         console.error("Error invoking export_to_file function:", error);
         return;
@@ -528,6 +640,20 @@ function index() {
     "course.view_course",
     "course.participants",
   ]);
+
+  //TODO: right now we are commenting because we have to useTable queries but in future if we use one useTable query then we can use this feature
+  // let isFiltering = false;
+
+  // if (
+  //   FilterProgramData.isInitialLoading === false &&
+  //   programData.isInitialLoading === false &&
+  //   FilterProgramData.isLoading === false &&
+  //   programData?.isLoading === false &&
+  //   FilterProgramData?.isPreviousData === true
+  // ) {
+  //   isFiltering = FilterProgramData?.isFetching;
+  // }
+
   return (
     <div className="flex flex-col justify-between relative">
       <p className="font-semibold text-2xl ml-8">
@@ -539,7 +665,7 @@ function index() {
           setCurrent={setCurrent}
         />
 
-        {programData?.isLoading ? (
+        {FilterProgramData.isLoading || programData?.isLoading ? (
           <section className="flex justify-center align-center pt-[10%]">
             <div className="loader"></div>
           </section>
@@ -569,6 +695,9 @@ function index() {
               data={programData?.data?.data || []}
               columnPinning={true}
               columnSelector={true}
+              sorting={sorting}
+              setSorting={setSorting}
+              // isFiltering={isFiltering}
             />
           </div>
         )}
@@ -602,9 +731,9 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
+                className="flex flex-row gap-2 text-sm text-[#7677F4] border border-[#7677F4] rounded-xl h-[36px] w-[106px]"
                 //if select all is false or row count less than equal to 0 then it should be true
-                disabled={allSelected === false || rowCount <= 0}
+                disabled={rowCount <= 0}
               >
                 {loading ? (
                   <div className="loader !w-[25px]"></div>
@@ -707,6 +836,7 @@ export const CountComponent = ({ count }: any) => {
 };
 
 export const CourseTypeComponent = ({ name }: any) => {
+  const [searchTerm, setSearchTerm] = useState("");
   const {
     field: { value, onChange },
   } = useController({
@@ -719,7 +849,10 @@ export const CourseTypeComponent = ({ name }: any) => {
   });
 
   const [pageSize, setPageSize] = useState(10);
-  const { options, onSearch } = useSelect({
+  
+  const languageCode = useGetLanguageCode()
+  
+  const { options, onSearch } = useMVPSelect({
     resource: "program_types",
     optionLabel: "name",
     optionValue: "id",
@@ -727,7 +860,7 @@ export const CourseTypeComponent = ({ name }: any) => {
     defaultValue: value && value,
     onSearch: (value: any) => [
       {
-        field: "name",
+        field: `name->>${languageCode}`,
         operator: "contains",
         value,
       },
@@ -744,6 +877,11 @@ export const CourseTypeComponent = ({ name }: any) => {
   };
 
   const { t } = useTranslation("common");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={value}
@@ -759,15 +897,11 @@ export const CourseTypeComponent = ({ name }: any) => {
         <SelectValue placeholder={t("select_course_type")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
-          {options.map((option: any, index: number) => (
+          {options?.map((option: any, index: number) => (
             <>
-              <SelectItem
-                key={option.value}
-                value={option.value}
-                className="h-[44px]"
-              >
+              <SelectItem key={index} value={option.value} className="h-[44px]">
                 {translatedText(option.label)}
               </SelectItem>
               {index < options?.length - 1 && (
@@ -921,7 +1055,27 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
   const { setValue, watch } = useFormContext();
   const formData = watch();
   const [advanceFilterOpen, setAdvanceFilterOpen] = useState(false);
+  // preferences : fetched user preferences from db
+  // newPreferences : latest user preferences to send to db
+  const [preferences, setPreferences] = useState<Preferences>(emptyPreferences);
+  const [newPreferences, setNewPreferences] =
+    useState<Preferences>(emptyPreferences);
+  const supabase = supabaseClient();
 
+  useEffect(() => {
+    // whenever the filter sheet is opened, need to do following:
+    if (advanceFilterOpen) {
+      //  1) set newPreferences as empty [from opened session]
+      setNewPreferences(emptyPreferences);
+      //  2) load and set the preferences from db
+      loadPreferences(supabase).then((loadedPreferences) =>
+        setPreferences(loadedPreferences)
+      );
+    } else {
+      // whenever the filter is closed, need to send the newPreferences to db
+      savePreferences(supabase, newPreferences);
+    }
+  }, [advanceFilterOpen]);
   /**
    *This holds the applied filters count in advance filter
    */
@@ -942,10 +1096,6 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           onClick={() => {
             setAdvanceFilterOpen(true);
             setValue("temporaryadvancefilter", formData.advanceFilter);
-            setValue(
-              "temporaryadvancefilter.course_type",
-              formData?.course_type
-            );
           }}
           className="flex flex-row gap-2 !rounded-xl hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
           variant="outline"
@@ -960,10 +1110,111 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
           setAdvanceFilterOpen={setAdvanceFilterOpen}
           hasAliasNameFalse={hasAliasNameFalse}
           setCurrent={setCurrent}
+          preferences={preferences}
+          setNewPreferences={setNewPreferences}
         />
+        {/* loaded preferences are sent for displaying and setNewPreferences is sent as a callback to update the latest choices */}
       </SheetContent>
     </Sheet>
   );
+};
+
+/*
+  loadPreferences
+  ================
+  fetch the latest user preferences from db
+  at present, only fetching at max. top 3 states, cities and centers
+*/
+const loadPreferences = async (
+  supabase: SupabaseClient
+): Promise<Preferences> => {
+  // accessToken is needed because the /preferences edge function only allows reading our own preferences
+  const accessToken = (await supabase.auth.getSession()).data.session
+    ?.access_token;
+
+  const { data, error } = await supabase.functions.invoke("preferences", {
+    method: "POST",
+    body: {
+      operation: "get",
+      items: [
+        { key: "state", maxCount: 3 },
+        { key: "city", maxCount: 3 },
+        { key: "center", maxCount: 3 },
+      ],
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (error) {
+    console.log("Could not fetch preferences for this user");
+  }
+
+  // fetches entity-names for ids (state,city,center...) from db
+  const getEntities = async (key: string) => {
+    // if something went wrong or data was not available, return []
+    if (error || !data[key] || data[key].length === 0) {
+      return [];
+    }
+
+    // sorting is important to ensure the order because supabase returns in ascending order of ids
+    return (
+      (
+        await supabase.from(key).select("id,name").in("id", data[key])
+      ).data?.sort(
+        (a, b) => data[key].indexOf(a.id) - data[key].indexOf(b.id)
+      ) || []
+    );
+  };
+
+  return {
+    state: await getEntities("state"),
+    city: await getEntities("city"),
+    center: await getEntities("center"),
+  };
+};
+
+/*
+  savePreferences
+  ===============
+  - updates the db with latest preferences
+  - called whenever the filter sheet is closed
+*/
+const savePreferences = async (
+  supabase: SupabaseClient,
+  preferences: Preferences
+) => {
+  const items = [];
+  let key: keyof Preferences;
+
+  // load items to update if there has been any selection
+  for (key in preferences) {
+    if (preferences[key].length > 0) {
+      items.push({ key, value: preferences[key][0].id });
+    }
+  }
+
+  // if there is nothing to update, return
+  if (items.length === 0) return;
+
+  // accessToken is needed because the /preferences edge function only allows updating our own preferences
+  const accessToken = (await supabase.auth.getSession()).data.session
+    ?.access_token;
+  const { error } = await supabase.functions.invoke("preferences", {
+    method: "POST",
+    body: {
+      operation: "set",
+      items,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (error) {
+    console.log("Could not save preferences for this user");
+  }
 };
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {

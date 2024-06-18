@@ -16,11 +16,18 @@ import {
 import { formatDate } from "src/utility/DateFunctions";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useTranslation } from 'next-i18next';
+import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormat";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 
 
 export const ParticipantsListMainHeader = () => {
   const router = useRouter();
+
+  const countryCode = useGetCountryCode()
+
+  const languageCode = useGetLanguageCode()
 
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
@@ -50,9 +57,16 @@ export const ParticipantsListMainHeader = () => {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+
+      
+  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(countryCode, languageCode, countryConfigData?.data?.[0]?.default_currency_code)
+  
+  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
+
   const {t} = useTranslation(["course.view_course", "course.new_course", "new_strings", "common"])
   return (
-    <div className="flex justify-between w-full px-8 h-auto ">
+    <div className="flex justify-between w-full px-8 h-auto">
       {/* Course Details Section */}
       <div className="flex gap-2">
         <ChevronLeftIcon
@@ -66,7 +80,7 @@ export const ParticipantsListMainHeader = () => {
         />
         <div>
           {/* Course Name */}
-          <div className="text-[24px] font-medium">
+          <div className="text-[24px] font-medium ">
             {courseData?.data?.program_alias_name_id
               ? translatedText(
                   courseData?.data?.program_alias_name_id?.alias_name
@@ -84,12 +98,12 @@ export const ParticipantsListMainHeader = () => {
             {/* Course Schedule */}
             <div className="flex gap-2 items-center border-x-2 px-6">
               <CalenderIcon color="#7677F4" />
-              {startDate} {t('course.new_course:time_and_venue_tab.to')} {endDate}
+             {startDate} {t('course.new_course:time_and_venue_tab.to')} {endDate}
             </div>
             {/* Participant Count */}
             <div className="flex gap-2 items-center">
               <ParticipantsIcon />
-              <div className="cursor-pointer text-[#7677F4] font-medium">
+              <div className="text-[#7677F4] font-medium">
                 {courseData?.data?.participant_count}
               </div>
               <HoverCard>
@@ -105,11 +119,13 @@ export const ParticipantsListMainHeader = () => {
               </HoverCard>
             </div>
             {/* Revenue */}
-            <div className="flex gap-2 items-center">
-              <CurrencyIcon />
-              <div className="cursor-pointer text-[#7677F4] font-medium">
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                {totalRevenue}
+            <div className="flex gap-2 items-center justify-center">
+              <div className="text-[15px] flex items-center justify-center text-[#7677F4]">
+                {currencySymbol}
+              </div>
+              <div className="text-[#7677F4] font-semibold cursor-pointer">
+              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+              {currencyFormat.format(totalRevenue)}
               </div>
               <HoverCard>
                 <HoverCardTrigger>
@@ -119,7 +135,7 @@ export const ParticipantsListMainHeader = () => {
                 <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                     {t("new_strings:revenue_from_confirmed_pending_transaction_participants_revenue")}
                     {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                    {totalRevenue}
+                    {currencyFormat.format(totalRevenue)}
                   </div>
                 </HoverCardContent>
               </HoverCard>

@@ -8,11 +8,11 @@ export const handleEditParticipantValues = async (participantId: number) => {
   const { data, error } = await supabase
     .from("participant_payment_history")
     .select(
-      "id,payment_method_id,transaction_status_id!inner(id,value),payment_date,send_payment_confirmation,transaction_status,participant_id!inner(id,memo,roommate_snore,accommodation_snore,participant_code,participant_attendence_status_id,discount_code, payment_method)"
+      "id,payment_method_id,transaction_status_id!inner(id,value),transaction_date,send_payment_confirmation,transaction_status,participant_id!inner(id,memo,roommate_snore,accommodation_snore,participant_code,participant_attendence_status_id,discount_code, payment_method)"
     )
     .order("created_at", { ascending: false })
     .eq("participant_id", participantId);
-  if (!error) {
+    if (!error) {
     const defaultValues = await getDefaultValues(
       data[0] as unknown as ParticipantPaymentHistoryDataBaseType
     );
@@ -29,14 +29,13 @@ export const handleEditPaymentValues = async (paymentHistoryId: number) => {
   const { data, error } = await supabase
     .from("participant_payment_history")
     .select(
-      "id,payment_method_id(id,name),transaction_status_id!inner(id,name),payment_date,send_payment_confirmation"
+      "id,payment_method_id(id,name),transaction_status_id!inner(id,name),transaction_date,send_payment_confirmation,participant_id!inner(memo,participant_attendence_status_id)"
     )
     .eq("id", paymentHistoryId);
   if (!error) {
     const defaultValues = await getDefaultValues(
       data[0] as unknown as ParticipantPaymentHistoryDataBaseType
     );
-
     return defaultValues;
   }
   return {};
@@ -105,7 +104,7 @@ export const getDefaultValues = async (
     defaultValues.payment_method_value = translatedText(data.payment_method_id?.name);
 
   // payment_date
-  if (data.payment_date) defaultValues.payment_date = data.payment_date;
+  if (data.transaction_date) defaultValues.payment_date = data.transaction_date;
 
   // send_payment_confirmation
   if (data.send_payment_confirmation)

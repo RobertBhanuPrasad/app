@@ -10,7 +10,7 @@ function Exclamation() {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g clip-path="url(#clip0_3690_12048)">
+        <g clipPath="url(#clip0_3690_12048)">
           <path
             d="M30.5 60C47.0685 60 60.5 46.5685 60.5 30C60.5 13.4315 47.0685 0 30.5 0C13.9315 0 0.5 13.4315 0.5 30C0.5 46.5685 13.9315 60 30.5 60Z"
             fill="#FFD369"

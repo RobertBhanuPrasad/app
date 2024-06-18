@@ -50,7 +50,7 @@ function ParticipantsTab() {
             {t('register_participant')}
           </Button> */}
           <Button
-            className="w-[188px] h-[46px] rounded-[12px]"
+            className="w-[188px] h-[46px]  text-base rounded-[12px]"
             onClick={() => router.push(`/courses/${id}/participants/list`)}
           >
             {t('view_participants')}
@@ -89,7 +89,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.fee_level_breakup')}</div>
+          <div className="text-[16px] font-semibold">{t('course.view_course:participants_tab.fee_level_breakup')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -116,7 +116,7 @@ const FeeLevelPieChart = ({ participantData }: any) => {
           <div className="">
             {feeLevelData?.map((item: any, index: number) => {
               return (
-                <div className="flex flex-row items-center justify-center justify-between">
+                <div className="flex flex-row items-center justify-center justify-between" key={index}>
                   <div className="flex items-center gap-2 py-[2px]">
                     <Circle size={6} fill={item?.color} color={item?.color} />
                     <div className="text-[#999999]">{item?.title}</div>
@@ -161,6 +161,7 @@ const AttendancePieChart = ({ participantData }: any) => {
 
   const attendanceData = attendanceDataArray?.map((item: any, index: any) => {
     return {
+      
       title: item.label,
       value: item.value,
       color: getColorWithDecreasedOpacity(
@@ -168,16 +169,20 @@ const AttendancePieChart = ({ participantData }: any) => {
         index + 1,
         attendanceDataArray?.length
       ),
+      
     };
   });
+  
+
   console.log("attendence data", attendanceData);
   
 
   return (
+    
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6 ">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.attendance_status')}</div>
+          <div className="text-[16px] font-semibold">{t('course.view_course:participants_tab.attendance_status')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -194,6 +199,7 @@ const AttendancePieChart = ({ participantData }: any) => {
             totalValue={participantData?.total_participant_count}
             startAngle={0}
           />
+        
           <div className="chart-inner-text flex flex-col">
             <p className="text-[10px]">{t('new_strings:total_participants')}</p>
             <p className="chart-inner-value">
@@ -201,7 +207,7 @@ const AttendancePieChart = ({ participantData }: any) => {
             </p>
           </div>
         </div>
-        <div className="flex flex-col mt-6">
+        <div className="flex flex-col mt-6 text-xs">
           {attendanceData?.map((item: any, index: number) => {
             return (
               <div className="flex flex-row items-center justify-center justify-between">
@@ -241,7 +247,7 @@ const GenderPieChart = ({ participantData }: any) => {
     <Card className="w-[303px] rounded-[15px] border border-[#D9D9D9] drop-shadow-[0_0px_10px_rgba(0,0,0,0.1)] mb-6">
       <CardHeader>
         <CardTitle>
-          <div className="text-[18px] font-semibold">{t('course.view_course:participants_tab.gender_breakdown')}</div>
+          <div className="text-[16px] font-semibold">{t('course.view_course:participants_tab.gender_breakdown')}</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="px-6">
@@ -275,6 +281,8 @@ const GenderPieChart = ({ participantData }: any) => {
                     <div className="text-[#999999]">{item?.title}</div>
                   </div>
                   <div className="font-semibold">{item?.value}</div>
+                  
+
                 </div>
               );
             })}

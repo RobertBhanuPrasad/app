@@ -34,7 +34,10 @@ import {
 import { Input } from "src/ui/input";
 import { MultiSelect } from "src/ui/multi-select";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
-import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
+import {
+  getOptionValueObjectByOptionOrder,
+  getOptionValuesByOptionLabel,
+} from "src/utility/GetOptionValuesByOptionLabel";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 import { GetServerSideProps } from "next";
@@ -43,6 +46,8 @@ import { authProvider } from "src/authProvider";
 import { useTranslation } from "next-i18next";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import { Dialog, DialogContent, DialogTrigger } from "src/ui/dialog";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import { SortingState } from "@tanstack/react-table";
 
 function index() {
   const router = useRouter();
@@ -63,6 +68,7 @@ function index() {
     "new_strings",
     "course.find_course",
   ]);
+
   const filters: {
     /**
      * Initial filter state
@@ -282,6 +288,35 @@ function index() {
       });
     }
   }
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: "id",
+      desc: true,
+    },
+  ]);
+
+  const fieldValue = () => {
+    if (!sorting.length) {
+      setSorting([
+        {
+          id: "id",
+          desc: true,
+        },
+      ]);
+    }
+    let field = sorting?.[0]?.id;
+    if (field === "Name") field = "contact_id(full_name)";
+    if (field === "Date of Birth") field = "contact_id(date_of_birth)";
+    if (field === "Phone") field = "contact_id(mobile)";
+    if (field === "Email") field = "contact_id(email)";
+    if (field === "Amount") field = "total_amount";
+    if (field === "Attendance Status")
+      field = "participant_attendence_status_id(name)";
+    if (field === "Fee Level") field = "price_category_id(fee_level_id(value))";
+    return field;
+  };
+
+  console.log("sorting", sorting);
 
   const {
     tableQueryResult: participantData,
@@ -297,14 +332,14 @@ function index() {
     },
     meta: {
       select:
-        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id(fee_level_id(value), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
+        "*, payment_method(*), transaction_type(*), contact_id!inner(full_name, date_of_birth, nif, email, country_id, mobile, mobile_country_code), price_category_id!inner(fee_level_id(name), total), participant_attendence_status_id(*), payment_status_id(*), participant_payment_history(*, transaction_type_id(*), payment_method_id(*), transaction_status_id(*)))",
     },
     filters: filters,
     sorters: {
       permanent: [
         {
-          field: "id",
-          order: "asc",
+          field: fieldValue(),
+          order: sorting?.[0]?.desc ? "desc" : "asc",
         },
       ],
     },
@@ -315,7 +350,7 @@ function index() {
   console.log("Participant table data", participantData);
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [allSelected, setAllSelected] = useState();
+  const [allSelected, setAllSelected] = useState<boolean>();
   const [
     displayTransactionStatusBulkActionError,
     setDisplayTransactionStatusBulkActionError,
@@ -327,10 +362,13 @@ function index() {
   useEffect(() => {
     if (!participantData?.data?.data) return;
     const allRowSelection: any = {};
-    participantData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = allSelected;
-    });
-    setRowSelection(allRowSelection);
+    //If allSelected is true then only i need check rows when i navigate to other pages
+    if (allSelected) {
+      participantData?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = allSelected;
+      });
+      setRowSelection(allRowSelection);
+    }
   }, [allSelected, participantData?.data?.data]);
 
   useEffect(() => {
@@ -340,10 +378,32 @@ function index() {
     setSelectedTableRows(tempCount);
     setSelectedRowObjects(rowSelection);
     tempCount == 0 && setBulkActionSelectedValue(t("new_strings:bulk_actions"));
+    tempCount == 0 && setEnableBulkOptions(true);
   }, [rowSelection]);
 
-  const handleSelectAll = (val: any) => {
+  /**
+   *Here whenever i check select all then i need to check and unchekc all row selection also
+   */
+  const handleSelectAll = (val: boolean) => {
+    const allRowSelection: any = {};
+
+    participantData?.data?.data?.forEach((row: any) => {
+      allRowSelection[row?.id] = val;
+    });
+    setRowSelection(allRowSelection);
+
     setAllSelected(val);
+  };
+
+  /**
+   *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
+   */
+  const participantsRowSelectionOnChange = (row: any) => {
+    const selectedRow = row();
+    setRowSelection(row);
+    if (Object.values(selectedRow).length === 0) {
+      setAllSelected(false);
+    }
   };
 
   const rowCount = Object.values(rowSelection).filter(
@@ -362,6 +422,11 @@ function index() {
     PARTICIPANT_PAYMENT_STATUS
   )?.[0]?.option_values;
 
+  const transactionStatusPendingObject = getOptionValueObjectByOptionOrder(
+    "PARTICIPANT_PAYMENT_STATUS",
+    2
+  );
+
   const handleUpdateAttendanceStatus = async (attendance_status_id: number) => {
     const participantIds: number[] = Object.keys(selectedRowObjects)
       .filter((key: any) => selectedRowObjects[key] === true)
@@ -375,12 +440,18 @@ function index() {
     if (!error) {
       setDisplayTransactionStatusBulkActionError(true);
       setbulkActionsSuccessIcon(true);
+      // setBulkActionsErrorTitle(
+      //   `${participantIds?.length} Records Successfully Updated`
+      // );
       setBulkActionsErrorTitle(
-        `${participantIds?.length} Records Successfully Updated`
+        `${participantIds?.length} ${t(
+          "new_strings:records_successfully_updated"
+        )}`
       );
-      setBulkActionsErrorMessage(
-        `The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.`
-      );
+      // setBulkActionsErrorMessage(
+      //   `The updates have been saved. Attendance status for participants with pending transfer request cannot be changed.`
+      // );
+      setBulkActionsErrorMessage(t("new_strings:bulk_action_saved_message"));
     }
   };
 
@@ -395,15 +466,15 @@ function index() {
       .filter((key: any) => selectedRowObjects[key] === true)
       .map(Number);
 
-    const transactionPendingStatusID = paymentStatusOptions.find(
-      (record: any) => record.value == "Pending"
-    )?.id;
+    const transactionPendingStatusID = transactionStatusPendingObject?.id;
 
     const { data: selectedTransactionStatusValues } = await supabase
       .from("participant_payment_history")
       .select("transaction_status_id")
       .match({ program_id: programID })
-      .in("participant_id", participantIds);
+      .in("participant_id", participantIds)
+      .order("transaction_date", { ascending: false })
+      .limit(1);
 
     const selectTransactionStatusIds = selectedTransactionStatusValues?.map(
       (record) => record?.transaction_status_id
@@ -421,33 +492,51 @@ function index() {
             program_id: programID,
             transaction_status_id: transactionPendingStatusID,
           })
-          .in("participant_id", participantIds);
+          .in("participant_id", participantIds)
+          .order("transaction_date", { ascending: false })
+          .limit(1);
 
         if (!error) {
           setDisplayTransactionStatusBulkActionError(true);
           setbulkActionsSuccessIcon(true);
-          setBulkActionsErrorTitle("Bulk Transaction Status Update");
+          // setBulkActionsErrorTitle("Bulk Transaction Status Update");
+          setBulkActionsErrorTitle(
+            t("new_strings:bulk_transaction_status_update")
+          );
+          // setBulkActionsErrorMessage(
+          //   `${participantIds?.length} Records Successfully Updated`
+          // );
           setBulkActionsErrorMessage(
-            `${participantIds?.length} Records Successfully Updated`
+            `${participantIds?.length} ${t(
+              "new_strings:records_successfully_updated"
+            )}`
           );
         }
       } else {
         setDisplayTransactionStatusBulkActionError(true);
         setbulkActionsSuccessIcon(false);
-        setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
-        setBulkActionsErrorMessage(`Bulk update can only be done for payments with “Pending” status.
-        Please select records whose transaction status value is only
-        “Pending”. To update the payments with status other than
-        “Pending”, please visit the Registration details for that
-        participant.`);
+        // setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
+        setBulkActionsErrorTitle(
+          t("new_strings:error_bulk_transaction_status_update")
+        );
+        // setBulkActionsErrorMessage(`Bulk update can only be done for payments with “Pending” status.
+        // Please select records whose transaction status value is only
+        // “Pending”. To update the payments with status other than
+        // “Pending”, please visit the Registration details for that
+        // participant.`);
+        setBulkActionsErrorMessage(t("new_strings:bulk_action_error_message"));
       }
     } else {
       setDisplayTransactionStatusBulkActionError(true);
       setbulkActionsSuccessIcon(false);
-      setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
-      setBulkActionsErrorMessage(
-        "No transaction history found for the selected participant(s)"
+      // setBulkActionsErrorTitle("ERROR: Bulk Transaction Status Update");
+      setBulkActionsErrorTitle(
+        t("new_strings:error_bulk_transaction_status_update")
       );
+      // setBulkActionsErrorMessage(
+      //   "No transaction history found for the selected participant(s)"
+      // );
+      setBulkActionsErrorMessage(t("new_strings:no_transaction_history_found"));
     }
   };
 
@@ -456,6 +545,7 @@ function index() {
   const bulk_actions = t("new_strings:bulk_actions");
   const [bulkActionSelectedValue, setBulkActionSelectedValue] =
     useState(bulk_actions);
+
   const excelColumns = [
     {
       column_name: t("course.participants:find_participant.registration_id"),
@@ -493,7 +583,7 @@ function index() {
       column_name: t(
         "course.participants:edit_participant.participants_information_tab.amount"
       ),
-      path: ["price_category_id", "total"],
+      path: ["total_amount"],
     },
     {
       column_name: t("course.participants:view_participant.transaction_type"),
@@ -564,6 +654,117 @@ function index() {
   const excelOption = "excel";
   const csvOption = "CSV";
 
+  const countryCode = useGetCountryCode();
+
+  //TODO: We can uncomment this when BA accepts this one
+  //TODO: right now commenting because we are getting issues in participant home page
+  // let isFiltering = false;
+
+  // if (
+  //   participantData?.isInitialLoading === false &&
+  //   participantData?.isLoading === false &&
+  //   participantData?.isPreviousData === true
+  // ) {
+  //   isFiltering = participantData?.isFetching;
+  // }
+
+  const BulkActionsSection = () => {
+    return (
+      <div className="flex gap-4 w-full">
+        {/* Bulk Actions Dropdown */}
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                onClick={() => setOpen(true)}
+                variant="outline"
+                className="flex flex-row justify-between w-auto h-10 gap-2"
+                disabled={selectedTableRows > 0 ? false : true}
+              >
+                {bulkActionSelectedValue}
+                <CountComponent count={selectedTableRows} />
+                <DropDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]">
+                {/* TODO (Not in MVP Scope): Print Registration Form */}
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEnableBulkOptions(true);
+                  }}
+                >
+                  Print Registration Form
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setBulkActionSelectedValue(
+                      t("new_strings:update_attendance_status")
+                    );
+                    setEnableBulkOptions(false);
+                    setBulkAction("attendance");
+                  }}
+                >
+                  {t("new_strings:update_attendance_status")}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setBulkActionSelectedValue(
+                      t("new_strings:update_transaction_status")
+                    );
+                    setEnableBulkOptions(false);
+                    setBulkAction("transaction");
+                  }}
+                >
+                  {t("new_strings:update_transaction_status")}
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {/* Bulk actions options dropdown */}
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                onClick={() => setOpen(true)}
+                variant="outline"
+                className="flex flex-row justify-between w-[152px] h-10"
+                disabled={selectedTableRows > 0 ? disableBulkOptions : true}
+              >
+                {t("course.participants:find_participant.select_status")}
+                <DropDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[150px]">
+              <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333] w-full">
+                {bulkActions == "attendance"
+                  ? attendanceOptions?.map((record: any) => (
+                      <DropdownMenuItem
+                        key={record.id}
+                        onClick={() => handleUpdateAttendanceStatus(record.id)}
+                      >
+                        {translatedText(record.name)}
+                      </DropdownMenuItem>
+                    ))
+                  : paymentStatusOptions?.map((record: any) => (
+                      <DropdownMenuItem
+                        key={record.id}
+                        onClick={() =>
+                          handleBulkUpdateTransactionStatus(record.id)
+                        }
+                      >
+                        {translatedText(record.name)}
+                      </DropdownMenuItem>
+                    ))}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="top-[96px] z-10 sticky bg-[white] h-[83px] shadow-md w-full">
@@ -609,109 +810,20 @@ function index() {
         <Form onSubmit={() => {}} defaultValues={[]}>
           <HeaderSection />
         </Form>
-        {/* TODO  : for now may-13 release it has to be hidden */}
-        {/* Bulk actions section */}
-        {/* <div className="flex gap-10 justify-end w-full"> */}
-        {/* Bulk Actions Dropdown */}
-        {/* <div> */}
-        {/* <DropdownMenu> */}
-        {/* <DropdownMenuTrigger asChild>
-                <Button
-                  onClick={() => setOpen(true)}
-                  variant="outline"
-                  className="flex flex-row justify-between w-auto h-10 gap-2"
-                  disabled={selectedTableRows > 0 ? false : true}
-                >
-                  {bulkActionSelectedValue}
-                  <CountComponent count={selectedTableRows} />
-                  <DropDown />
-                </Button>
-              </DropdownMenuTrigger> */}
-        {/* <DropdownMenuContent align="end"> */}
-        {/* <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333]"> */}
-        {/* TODO (Not in MVP Scope): Print Registration Form */}
-        {/* <DropdownMenuItem
-                    onClick={() => {
-                      setEnableBulkOptions(true);
-                    }}
-                  >
-                    Print Registration Form
-                  </DropdownMenuItem> */}
-        {/* <DropdownMenuItem
-                    onClick={() => {
-                      setBulkActionSelectedValue(t('new_strings:update_attendance_status'));
-                      setEnableBulkOptions(false);
-                      setBulkAction("attendance");
-                    }}
-                  > */}
-        {/* {t('new_strings:update_attendance_status')} */}
-        {/* </DropdownMenuItem> */}
-        {/* <DropdownMenuItem
-                    onClick={() => {
-                      setBulkActionSelectedValue(t('new_strings:update_transaction_status'));
-                      setEnableBulkOptions(false);
-                      setBulkAction("transaction");
-                    }}
-                  >
-                    {t('new_strings:update_transaction_status')}
-                  </DropdownMenuItem> */}
-        {/* </div> */}
-        {/* </DropdownMenuContent> */}
-        {/* </DropdownMenu> */}
-        {/* </div> */}
-        {/* Bulk actions options dropdown */}
-        {/* <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  onClick={() => setOpen(true)}
-                  variant="outline"
-                  className="flex flex-row justify-between w-[152px] h-10"
-                  disabled={selectedTableRows > 0 ? disableBulkOptions : true}
-                >
-                  {t('course.participants:find_participant.select_status')}
-                  <DropDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[150px]">
-                <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto scrollbar text-[#333333] w-full">
-                  {bulkActions == "attendance"
-                    ? attendanceOptions?.map((record: any) => (
-                        <DropdownMenuItem
-                          key={record.id}
-                          onClick={() =>
-                            handleUpdateAttendanceStatus(record.id)
-                          }
-                        >
-                          {translatedText(record.name)}
-                        </DropdownMenuItem>
-                      ))
-                    : paymentStatusOptions?.map((record: any) => (
-                        <DropdownMenuItem
-                          key={record.id}
-                          onClick={() =>
-                            handleBulkUpdateTransactionStatus(record.id)
-                          }
-                        >
-                          {translatedText(record.name)}
-                        </DropdownMenuItem>
-                      ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div> */}
-        {/* </div> */}
-        <div className="w-full">
+        <div className="w-full pb-4">
           <BaseTable
             current={current}
             rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
+            // isFiltering={isFiltering}
+            setRowSelection={participantsRowSelectionOnChange}
             checkboxSelection={true}
             setCurrent={setCurrent}
             pageCount={pageCount}
             total={participantData?.data?.total || 0}
             pageSize={pageSize}
             setPageSize={setPageSize}
+            sorting={sorting}
+            setSorting={setSorting}
             pagination={true}
             tableStyles={{
               table: "",
@@ -721,7 +833,8 @@ function index() {
             data={participantData?.data?.data || []}
             columnPinning={true}
             columnSelector={true}
-            noRecordsPlaceholder="There are no participants"
+            noRecordsPlaceholder={t("new_strings:there_are_no_participants")}
+            actionComponent = {<BulkActionsSection />}
           />
         </div>
       </div>
@@ -754,7 +867,7 @@ function index() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="flex flex-row gap-2 text-[#7677F4] border border-[#7677F4] rounded-xl font-bold"
+                className="flex flex-row gap-2 text-sm text-[#7677F4] border  border-[#7677F4] rounded-xl font-bold"
                 disabled={!allSelected}
               >
                 {loading ? (
@@ -772,7 +885,8 @@ function index() {
                     excelColumns,
                     filters,
                     excelOption,
-                    setLoading
+                    setLoading,
+                    countryCode
                   );
                 }}
                 className="p-1 focus:outline-none cursor-pointer"
@@ -787,7 +901,8 @@ function index() {
                     excelColumns,
                     filters,
                     csvOption,
-                    setLoading
+                    setLoading,
+                    countryCode
                   );
                 }}
               >
@@ -891,7 +1006,7 @@ const HeaderSection = () => {
         <ParticipantsAdvanceFilter />
       </div>
       {/* Search Section */}
-      <div className="flex flex-row items-center border-2 px-3 rounded-lg">
+      <div className="flex flex-row items-center border-2 px-2 rounded-lg">
         <div>
           <SearchIcon className="text-[#7677F4]" />
         </div>
@@ -900,7 +1015,7 @@ const HeaderSection = () => {
             value={Searchvalue}
             onChange={handleSearchChange}
             type="text"
-            className=" border-0 outline-none"
+            className="border-0 outline-none w-[190px]"
             placeholder={t(
               "course.participants:find_participant.search_registration"
             )}
@@ -956,7 +1071,7 @@ const HeaderSection = () => {
                     </div>
                   )
                 ) : (
-                  <span className="font-thin text-[#999999]">
+                  <span className="font-normal text-[#999999]">
                     {t("new_strings:search_by_registration_date")}
                   </span>
                 )}
@@ -987,6 +1102,7 @@ const HeaderSection = () => {
           onSearch={() => {}}
           onChange={onSelectChange}
           searchBar={false}
+          variant="basic"
         />
       </div>
       {/* Clear, Apply Filters Section */}
@@ -1049,7 +1165,8 @@ const handleExportExcel = async (
   excelColumns: any,
   filters: any,
   selectOption: string,
-  setLoading: (by: boolean) => void
+  setLoading: (by: boolean) => void,
+  countryCode: string
 ) => {
   setLoading(true);
   const supabase = supabaseClient();
@@ -1071,6 +1188,7 @@ const handleExportExcel = async (
         headers: {
           Authorization:
             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+          "country-code": countryCode,
         },
       }
     );

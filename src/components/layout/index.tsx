@@ -3,10 +3,16 @@ import background from "@public/images/background.png";
 import Image from "next/image";
 import { PropsWithChildren } from "react";
 import { Breadcrumb } from "../breadcrumb";
+import { Open_Sans } from 'next/font/google'
+
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  variable: '--font-open-sans',
+})
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="layout relative w-full h-full overflow-x-hidden">
+    <div className={`${openSans.variable} font-sans layout relative w-full h-full`}>
       <div className="fixed top-0 left-0 w-full h-[96px] bg-[white] z-20">
         <Navbar />
         <Breadcrumb />

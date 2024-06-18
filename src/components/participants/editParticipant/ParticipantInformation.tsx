@@ -32,9 +32,7 @@ export default function ParticipantInformation() {
 
     return (
         <div id="participants">
-            <Text className="font-semibold text-[18px] pt-[25px] ">
-                {t('edit_participant.participants_information_tab.participants_details')}
-            </Text>
+            
             <div className="flex py-[20px]">
                 <div className="w-[303px]">
                     <Text className="text-[#999999] text-[14px] ">
@@ -77,7 +75,7 @@ export default function ParticipantInformation() {
                     </div>
                 </div>
             </div>
-            <hr />
+            <div className='pt-[10px] border-b-2'></div>
         </div>
     );
 }

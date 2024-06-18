@@ -13,16 +13,16 @@ function TableMenu() {
         <path
           d="M3.33301 6.66699H16.6663"
           stroke="#999999"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M3.33301 13.333H16.6663"
           stroke="#999999"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     </div>

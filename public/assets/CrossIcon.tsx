@@ -17,9 +17,9 @@ const CrossIcon = ({width=20, height=19, fill='#7677F4'}:IconComponentPropType) 
       <path
         d="M18 1.5L2 17.5M2 1.5L18 17.5"
         stroke={fill}
-        stroke-width="3"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         fill={fill}
       />
     </svg>

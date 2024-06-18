@@ -1,7 +1,6 @@
-import { start } from "repl";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { z } from "zod";
-export const validationSchema = (iAmCoTeachingId: number) => {
+export const validationSchema = (iAmCoTeachingId: number, t?:any) => {
   return z.object({
     // Step 1 Schema
     organization_id: z.number({
@@ -129,30 +128,31 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     time_zone_id: z.number({
       required_error: "Time zone is a required field",
     }),
-    schedules: scheduleValidationSchema,
-    name: z.string().optional(),
-    address: z
-      .string({ required_error: "Address is a required field." })
-      .optional(),
-    postal_code: z
-      .string({
-        required_error: "Postal Code is a required field.",
-      })
-      //here we need validate the postal code of different countries
-      //for example in India we have only 6 digit postal code
-      //but in canada they have combination of alphabets and digits (M5A 1A1)
-      //for this we need to allow both alphabets and digits in the postal code for general validation.
-      .regex(/^[0-9a-zA-Z\s-]{3,10}$/, {
-        message: "Please provide a valid Postal Code",
-      })
-      .optional(),
+    schedules: scheduleValidationSchema(t),
+    // name: z.string().optional(),
+    // address: z
+    //   .string({ required_error: "Address is a required field." })
+    //   .optional(),
+    // postal_code: z
+    //   .string({
+    //     required_error: "Postal Code is a required field.",
+    //   })
+    //   //here we need validate the postal code of different countries
+    //   //for example in India we have only 6 digit postal code
+    //   //but in canada they have combination of alphabets and digits (M5A 1A1)
+    //   //for this we need to allow both alphabets and digits in the postal code for general validation.
+    //   .regex(/^[0-9a-zA-Z\s-]{3,10}$/, {
+    //     message: "Please provide a valid Postal Code",
+    //   })
+    //   .optional(),
     // Step 4 Schema
+    feeLevels:z.array(z.any()).min(1),
     is_early_bird_enabled: z.boolean().optional(),
     program_fee_level_settings: feelLevelsValidationSchema,
 
     // Step 5 Schema
     accommodation: accommodationValidationSchema,
-    is_residential_program: z.boolean().optional(),
+    is_residential_program: z.boolean(),
     accommodation_fee_payment_mode: z.number({
       required_error: "Fee payment method is required fields",
     }),
@@ -161,8 +161,15 @@ export const validationSchema = (iAmCoTeachingId: number) => {
     contact: contactValidationSchema,
     bcc_registration_confirmation_email: z
       .string()
+      /**
+       * In the regression expression we are allowing the spaces and the commas after the email for that tailing spaces we are adding the \s
+       * As i am allowing 0, one or many spaces so i am giving \s*
+       * as they are can be or cannot be present so we are adding the ?
+       * as per the bug 1505 we have added ,? after the email expression, then this was solved 
+       *  */ 
+
       .regex(
-        /^(?:[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})?(?:,[ ]*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})*$/,
+        /^(?:\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)?(?:,\s*[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)*,?\s*?$/,
         {
           message: "One of the Bcc email you entered is not in correct format",
         }
@@ -170,7 +177,7 @@ export const validationSchema = (iAmCoTeachingId: number) => {
       .refine(
         (value) => {
           //Requirement: Duplicate emails are not allowed
-          const emails = value.split(",").map((email) => email.trim());
+          const emails = value.split(",").map((email) => email.trim()).filter(email => email !== "");
           const uniqueEmails = new Set(emails);
           return emails.length === uniqueEmails.size;
         },
@@ -194,7 +201,7 @@ const contactValidationSchema = z.array(
   z.object({
     contact_name: z
       .string()
-      .regex(/^[a-zA-Z\s]*$/, { message: "only alphabets are allowed" })
+      .regex(/^[a-zA-Z\s]*$/, { message: "Only Alaphabets are allowed" })
       .nullable()
       .optional(),
     contact_email: z
@@ -238,7 +245,8 @@ const accommodationValidationSchema = z.array(
   })
 );
 
-const scheduleValidationSchema = z
+export const scheduleValidationSchema=(t:any) =>{
+  return  z
   .array(
     z
       .object({
@@ -307,7 +315,7 @@ const scheduleValidationSchema = z
           return parseInt(endHour) > parseInt(startHour);
         },
         {
-          message: "Session start time must be greater than end time",
+          message: (t("validations_text:session_start_time_cannot_be_later_than_end_time")),
         }
       )
       .refine(
@@ -318,7 +326,7 @@ const scheduleValidationSchema = z
           }
           return true;
         },
-        { message: "Session start time must be greater than end time" }
+        { message: (t("validations_text:session_start_time_cannot_be_later_than_end_time")) }
       )
   )
   // now we will need to validations for array of objects.
@@ -385,3 +393,4 @@ const scheduleValidationSchema = z
     },
     { message: "A session cannot start before ending another session" }
   );
+};
