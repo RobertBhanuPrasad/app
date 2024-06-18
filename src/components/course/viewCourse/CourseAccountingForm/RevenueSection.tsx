@@ -75,7 +75,6 @@ function RevenueSection() {
   };
   const { watch } = useFormContext();
   const formData = watch();
-  console.log("result is:", formData)
 
 
 
@@ -93,7 +92,7 @@ function RevenueSection() {
           <CourseInformationAccordion />
         </div>
         <div className='flex pt-10 pb-5'>
-          <MainHeader className="text-[18pxl]" children="Deposit of Offline Revenue" />
+          <MainHeader className="text-[18px]" children="Deposit of Offline Revenue" />
           <button
             onClick={addInitialRow}
             disabled={isAddButtonDisabled}

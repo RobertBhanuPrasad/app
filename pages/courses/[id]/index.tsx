@@ -181,12 +181,12 @@ function ViewDetails() {
     },
 
     // TODO : it has to hidden for may 13 release
-    {
-      value: REVENUE_SUMMARY_TAB,
-      label:t('course.view_course:revenue_summary_tab.revenue_summary'),
-      disabled: false,
-      tab_query_name: "revenue_summary",
-    },
+    // {
+    //   value: REVENUE_SUMMARY_TAB,
+    //   label:t('course.view_course:revenue_summary_tab.revenue_summary'),
+    //   disabled: false,
+    //   tab_query_name: "revenue_summary",
+    // },
   ];
 
   /**
