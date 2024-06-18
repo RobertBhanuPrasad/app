@@ -723,7 +723,7 @@ const DataPagination = ({
           onClick={() => setCurrent(current - 1)}
           disabled={current <= 1}
         >
-          <div className="text-[#D6D7D8] font-semibold">
+          <div className="font-semibold">
             {t("new_strings:prev")}
           </div>
         </Button>
@@ -761,7 +761,7 @@ const DataPagination = ({
           onClick={() => setCurrent(current + 1)}
           disabled={current >= pageCount}
         >
-          <div>{t("next")}</div>
+          <div  className="font-semibold">{t("next")}</div>
         </Button>
       )}
     </div>
