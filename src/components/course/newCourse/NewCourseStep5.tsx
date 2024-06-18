@@ -21,6 +21,7 @@ import { NewCourseStep5FormNames } from "src/constants/CourseConstants";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -40,6 +41,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Button } from "src/ui/button";
 import { useMVPSelect } from "src/utility/useMVPSelect";
 import { staticDataStore } from "src/zustandStore/StaticDataStore";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -305,6 +307,9 @@ export const AccommodationType = ({
 
   const {t} = useTranslation("course.participants")
 
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  const languageCode = useGetLanguageCode();
   const { watch } = useFormContext();
 
   const formData = watch().accommodation || [];
@@ -329,15 +334,16 @@ export const AccommodationType = ({
   // Hook to fetch and manage options for a select input
   const { options, onSearch } = useMVPSelect({
     resource: "accomdation_types",
-    optionLabel: "name",
-    optionValue: "id",
+    optionLabel: `name.${languageCode}` as any,
+    optionValue: 'id',
     onSearch: (value) => [
       {
-        field: "name",
+        field: `name->>${languageCode}`,
         operator: "contains",
         value,
       },
     ],
+    defaultValue : value,
   });
 
   const filteredOptions = options?.filter(
@@ -376,6 +382,12 @@ export const AccommodationType = ({
     }
   }, []);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
+
   return (
     <div className='h-[40px] w-full'>
       <Select
@@ -389,7 +401,7 @@ export const AccommodationType = ({
           <SelectValue placeholder={t("course.participants:assisted_registration.accommodation_placeholder")} />
         </SelectTrigger>
         <SelectContent>
-          <Input onChange={(val) => onSearch(val.target.value)} />
+          <SelectInput  value={searchTerm} onChange={handleSearchChange} />
           <SelectItems onBottomReached={() => {}}>
             {filteredOptions?.map((option : any, index: any) => {
               return (
@@ -399,7 +411,7 @@ export const AccommodationType = ({
                     value={option.value}
                     className="h-[44px]"
                   >
-                    {translatedText(option.label)}
+                    {option.label}
                   </SelectItem>
                   {index < options?.length - 1 && (
                     <hr className="border-[#D6D7D8]" />

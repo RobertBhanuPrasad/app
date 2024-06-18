@@ -17,11 +17,18 @@ import { formatDate } from "src/utility/DateFunctions";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useTranslation } from 'next-i18next';
 import { staticDataStore } from "src/zustandStore/StaticDataStore";
+import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormat";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
 
 
 
 export const ParticipantsListMainHeader = () => {
   const router = useRouter();
+
+  const countryCode = useGetCountryCode()
+
+  const languageCode = useGetLanguageCode()
 
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
@@ -50,6 +57,13 @@ export const ParticipantsListMainHeader = () => {
 
   const { staticData } = staticDataStore()
   const countryConfigData =staticData?.countryConfigData
+
+
+      
+  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(countryCode, languageCode, countryConfigData?.default_currency_code)
+  
+  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
 
   const {t} = useTranslation(["course.view_course", "course.new_course", "new_strings", "common"])
   return (
@@ -106,11 +120,13 @@ export const ParticipantsListMainHeader = () => {
               </HoverCard>
             </div>
             {/* Revenue */}
-            <div className="flex gap-2 items-center">
-              <CurrencyIcon />
-              <div className="cursor-pointer text-[#7677F4] font-medium">
-                {countryConfigData?.default_currency_code}{" "}
-                {totalRevenue}
+            <div className="flex gap-2 items-center justify-center">
+              <div className="text-[15px] flex items-center justify-center text-[#7677F4]">
+                {currencySymbol}
+              </div>
+              <div className="text-[#7677F4] font-semibold cursor-pointer">
+              {countryConfigData?.default_currency_code}{" "}
+              {currencyFormat.format(totalRevenue)}
               </div>
               <HoverCard>
                 <HoverCardTrigger>
@@ -120,7 +136,7 @@ export const ParticipantsListMainHeader = () => {
                 <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                     {t("new_strings:revenue_from_confirmed_pending_transaction_participants_revenue")}
                     {countryConfigData?.default_currency_code}{" "}
-                    {totalRevenue}
+                    {currencyFormat.format(totalRevenue)}
                   </div>
                 </HoverCardContent>
               </HoverCard>

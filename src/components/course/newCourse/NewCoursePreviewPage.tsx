@@ -61,6 +61,7 @@ import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { validationSchema } from "./NewCourseValidations";
 import { staticDataStore } from "src/zustandStore/StaticDataStore";
+import dayjs from "dayjs";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -68,6 +69,7 @@ export default function NewCourseReviewPage() {
     "course.new_course",
     "course.view_course",
     "new_strings",
+    "validations_text",
   ]);
   const supabase = supabaseClient();
 
@@ -398,21 +400,25 @@ export default function NewCourseReviewPage() {
           {t("sessions")}
         </p>
         {newCourseData?.schedules?.map((data: any) => {
-          const schedule = `${formatDateString(data.date)} | ${
-            data?.startHour || "00"
-          }:${data?.startMinute || "00"}  ${
-            data?.startTimeFormat ? data?.startTimeFormat : ""
-          } to ${data?.endHour || "00"}:${data?.endMinute || "00"}  ${
-            data?.endTimeFormat ? data?.endTimeFormat : ""
-          }`;
+
+          const scheduleDate = dayjs(data.date).format("DD MMM, YYYY | ");
+
+          const scheduleStartTime = `${data?.startHour || "00"}:${data?.startMinute || "00"} ${data?.startTimeFormat || ""}`.trim();
+          
+          const scheduleEndTime = `${data?.endHour || "00"}:${data?.endMinute || "00"} ${data?.endTimeFormat || ""}`.trim();
 
           return (
             <div>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={schedule}
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666] capitalize"
+                title={`${scheduleDate} ${scheduleStartTime} ${t("course.new_course:time_and_venue_tab.to").toLowerCase()} ${scheduleEndTime}`}
               >
-                {schedule}
+                <div>
+                  {scheduleDate}
+                  {scheduleStartTime}
+                  <span className="lowercase"> {t("course.new_course:time_and_venue_tab.to")} </span>
+                  {scheduleEndTime}
+                </div>
               </abbr>
             </div>
           );
@@ -533,7 +539,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
       staticData
     );
 
-    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+    const newCourseZodSchema = validationSchema(iAmCoTeachingId as number, t);
 
     let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 

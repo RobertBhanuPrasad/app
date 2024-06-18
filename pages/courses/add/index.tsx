@@ -9,7 +9,7 @@ import NewCourseStep6 from "@components/course/newCourse/NewCourseStep6";
 import NewCourseThankyouPage from "@components/course/newCourse/NewCourseThankyouPage";
 import Car from "@public/assets/Car";
 import Group from "@public/assets/Group";
-import Info from "@public/assets/Info";
+import ContactInfo from "@public/assets/Contactinfo";
 import Profile from "@public/assets/Profile";
 import Venue from "@public/assets/Venue";
 import {
@@ -82,6 +82,7 @@ import { useTranslation } from "next-i18next";
 import { supabaseClient } from "src/utility";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import { staticDataStore } from "src/zustandStore/StaticDataStore";
+import Fees from "@public/assets/Fees";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -119,12 +120,26 @@ function index() {
         }
       }
     };
+    const routeRefresh = (e:any) => {
 
+      // when we fill any fields in step1 of newCourse then isNewCourseEditedRef.current will be true
+      // if in the thank_you page while refreshing we don't alert the user
+      if(isNewCourseEditedRef.current && section!=='thank_you'){
+       e.preventDefault()
+      }
+    }
+
+    // Initially we remove the any listeners in the dom
     router.events.off("routeChangeStart", routeChange);
+
+    window.removeEventListener('beforeunload', routeRefresh);
 
     router.events.on("routeChangeStart", routeChange);
 
+    window.addEventListener('beforeunload', routeRefresh);
+
     return () => {
+      window.removeEventListener('beforeunload', routeRefresh);
       router.events.off("routeChangeStart", routeChange);
     };
 
@@ -168,6 +183,7 @@ export function NewCourse() {
   const { data: loginUserData }: any = useGetIdentity();
 
   const loggedUserData = loginUserData?.userData?.id;
+  const { t } = useTranslation("validations_text");
 
   console.log("heyy logged user data", loggedUserData);
 
@@ -342,7 +358,7 @@ export function NewCourse() {
         <Form
           onSubmit={onSubmit}
           defaultValues={defaultValues}
-          schema={validationSchema(iAmCoTeachingId as number)}
+          schema={validationSchema(iAmCoTeachingId as number,t)}
         >
           <NewCourseTabs />
         </Form>
@@ -473,7 +489,7 @@ export type ItabsNextButtonClickStatus = nextButtonClicks[];
 export type ItabsValidationStatus = ("valid" | "invalid" | "neutral")[];
 
 export const NewCourseTabs = () => {
-  const { t } = useTranslation(["common", "course.new_course", "new_strings"]);
+  const { t } = useTranslation(["common", "course.new_course", "new_strings", "validations_text"]);
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -792,7 +808,7 @@ export const NewCourseTabs = () => {
     {
       value: FEE_STEP_NUMBER,
       label: t("fees"),
-      icon: (color: string) => <Venue color={color} />,
+      icon: (color: string) => <Fees color={color} />,
       component: <NewCourseStep4 />,
     },
     {
@@ -804,7 +820,7 @@ export const NewCourseTabs = () => {
     {
       value: CONTACT_INFO_STEP_NUMBER,
       label: t("new_strings:contact_info"),
-      icon: (color: string) => <Info color={color} />,
+      icon: (color: string) => <ContactInfo color={color} />,
       component: <NewCourseStep6 />,
     },
   ];
@@ -899,7 +915,7 @@ export const NewCourseTabs = () => {
     //!important right now we will do this for only where tabs next button clicked
     validationFieldsStepWise.forEach((fields, index) => {
       if (tabsNextButtonClickStatus[index] === NEXT_BUTTON_CLICKED) {
-        const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
+        const newCourseZodSchema = validationSchema(iAmCoTeachingId as number,t);
 
         let modifiedFields: any = {};
         fields.forEach((field) => {

@@ -41,7 +41,6 @@ import {
 
 import DropDown from "@public/assets/DropDown";
 import { useTranslation } from "next-i18next";
-
 interface IBaseTable<TData, TValue> {
   /**
    * Columns defined for the table
@@ -143,6 +142,24 @@ interface IBaseTable<TData, TValue> {
    * Flag to indicate whether the column selector need to be displayed or not
    */
   columnSelector?: boolean;
+
+  setSorting?: any;
+
+  sorting?: SortingState;
+
+  /**
+   * This variable is used to display the loader in middle of the page and while filtering ideally we dont need to click anything
+   */
+  isFiltering?: boolean;
+  /**
+   * This variable is used to disabled the horizontal scrolling.
+   */
+  noScroll?: boolean;
+
+  /**
+   * This variable is used pass action component if any. E.g: Bulk Actions in participant listing home page.
+   */
+  actionComponent?: React.ReactNode;
 }
 
 export function BaseTable<TData, TValue>({
@@ -150,11 +167,11 @@ export function BaseTable<TData, TValue>({
   data,
   tableStyles,
   current,
-  setCurrent= () => {},
+  setCurrent = () => {},
   pageCount,
   total = 0,
   setPageSize = () => {},
-  pageSize=0,
+  pageSize = 0,
   pagination = false,
   checkboxSelection,
   columnPinning = false,
@@ -162,7 +179,12 @@ export function BaseTable<TData, TValue>({
   rowSelection,
   setRowSelection,
   columnSelector,
+  sorting,
+  setSorting,
   noRecordsPlaceholder = "No results",
+  isFiltering = false,
+  noScroll,
+  actionComponent,
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
@@ -213,16 +235,21 @@ export function BaseTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns: columns,
+    enableSortingRemoval: true,
+    sortDescFirst: false,
     getCoreRowModel: getCoreRowModel(),
     // getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     getRowId,
+    manualSorting: true,
     state: {
       columnVisibility,
       rowSelection,
+      sorting,
     },
+    onSortingChange: setSorting,
   });
 
   /**
@@ -322,10 +349,10 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
-  const {t} = useTranslation(['common', "course.find_course", "new_strings"])
+  const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center max-h-[50px]">
+      <div className="flex flex-row justify-between items-center max-h-[50px] gap-4">
         {columnSelector && (
           <div>
             <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -335,7 +362,7 @@ export function BaseTable<TData, TValue>({
                   variant="outline"
                   className="flex flex-row justify-between w-[192px] h-10  hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
                 >
-                  {t('course.find_course:columns')}
+                  {t("course.find_course:columns")}
                   <DropDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -348,17 +375,22 @@ export function BaseTable<TData, TValue>({
                         checked={selectAll}
                         onCheckedChange={handleSelectAllChange}
                       />
-                      <div className="font-bold text-[14px]">{t('course.find_course:select_all')}</div>
+                      <div className="font-bold text-[14px]">
+                        {t("course.find_course:select_all")}
+                      </div>
                     </div>
                     {table
                       .getAllColumns()
                       .filter((column) => column?.accessorFn)
                       // Here we are filtering the columns which have accessorKey
-                      .map((column: any,index:number) => {
+                      .map((column: any, index: number) => {
                         if (!column.getCanHide()) {
                           //display the disabled options
                           return (
-                            <div className="flex flex-row gap-4 items-center" key={index}>
+                            <div
+                              className="flex flex-row gap-4 items-center"
+                              key={index}
+                            >
                               <Checkbox
                                 key={column.id}
                                 disabled={!column.getCanHide()}
@@ -407,13 +439,15 @@ export function BaseTable<TData, TValue>({
                       className="flex flex-row gap-2 items-center cursor-pointer text-sm font-semibold text-[#7677F4]"
                     >
                       <ClearAll />
-                      <div className="hover:text-[#5E5FC3]">{t('clear_all')}</div>
+                      <div className="hover:text-[#5E5FC3]">
+                        {t("clear_all")}
+                      </div>
                     </div>
                     <Button
                       onClick={applyColumnVisibilityChanges}
                       className="h-9 w-18 rounded-xl hover:bg-[#5E5FC3]"
                     >
-                      {t('apply_button')}
+                      {t("apply_button")}
                     </Button>
                   </div>
                 </div>
@@ -423,9 +457,11 @@ export function BaseTable<TData, TValue>({
         )}
         {/* column selector  */}
 
+        {actionComponent && actionComponent}
+
         {/* If pagination set true then we have to show pagination  */}
         <div>
-          {pagination &&total > pageSize  &&(
+          {pagination && total > pageSize && (
             <DataPagination
               setCurrent={setCurrent}
               current={current}
@@ -441,8 +477,13 @@ export function BaseTable<TData, TValue>({
         <div className="border border-[1px] overflow-hidden rounded-xl">
           <div
             ref={tableRef}
-            className={`w-full ${tableStyles?.tableContainer} overflow-auto scrollbar`}
+            className={`w-full ${tableStyles?.tableContainer} overflow-auto scrollbar relative`}
           >
+            {isFiltering && (
+              <div className="fixed inset-0 bg-[white]/50 opacity-100 flex items-center justify-center  z-50">
+                <div className="loader"></div>
+              </div>
+            )}
             <Table className={`${tableStyles?.table}`}>
               <TableHeader
                 className={`bg-[#7677F41B] w-full ${tableStyles?.tableHeader}`}
@@ -481,6 +522,7 @@ export function BaseTable<TData, TValue>({
                                 checkboxSelection ? "left-10" : "left-0"
                               }  bg-[#F1F1FE] drop-shadow-right`
                             } ${
+                              !noScroll &&
                               columnPinning &&
                               index === headerGroup.headers.length - 1 &&
                               `sticky right-0 bg-[#F1F1FE] drop-shadow-left w-[50px]`
@@ -494,7 +536,8 @@ export function BaseTable<TData, TValue>({
                                   header?.getContext()
                                 )}
 
-                            {index === headerGroup.headers.length - 1 &&
+                            {!noScroll &&
+                              index === headerGroup.headers.length - 1 &&
                               columnPinning && (
                                 <div className="flex flex-row gap-2">
                                   <ChevronLeft
@@ -549,6 +592,7 @@ export function BaseTable<TData, TValue>({
                               checkboxSelection ? "left-10" : "left-0"
                             }  top-0 bg-[#FFFFFF] drop-shadow-right`
                           } ${
+                            !noScroll &&
                             columnPinning &&
                             index === row.getVisibleCells().length - 1 &&
                             `sticky right-0 top-0 bg-[#FFFFFF] w-[50px] drop-shadow-left`
@@ -586,35 +630,40 @@ export function BaseTable<TData, TValue>({
               total={total}
               pageSize={pageSize}
             />
-            {total>=10 &&  
-            <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto  flex-row self-center">
-              <Select
-                value={pageSize}
-                onValueChange={(value) => {
-                  setCurrent(1)
-                  setPageSize(Number(value));
-                  table?.setPageSize(Number(value));
-                }}
-              >
-              <SelectTrigger className="h-8 w-[131px]">
-                  <div className="text-[#666666]">{t('course.find_course:showing')}</div>
-                  <SelectValue/>
-              </SelectTrigger>
-                <SelectContent side="top">
-                 {/* Updated pageSize options to include [10, 25, 50, 100]. */}
-                  {[10, 25, 50, 100].map(
-                    (
-                      pageSize // Till now there is no limit will change after confirming TODO
-                    ) => (
-                      <SelectItem key={pageSize} value={`${pageSize}`}>
-                        {pageSize}
-                      </SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
-              <div className="text-[14px] font-normal">{t('course.find_course:of')} {total}</div>
-            </div>}
+            {total >= 10 && (
+              <div className="absolute mt-3 mr-6 right-0 to flex items-center space-x-2 ml-auto  flex-row self-center">
+                <Select
+                  value={pageSize}
+                  onValueChange={(value) => {
+                    setCurrent(1);
+                    setPageSize(Number(value));
+                    table?.setPageSize(Number(value));
+                  }}
+                >
+                  <SelectTrigger className="h-8 w-[131px]">
+                    <div className="text-[#666666]">
+                      {t("course.find_course:showing")}
+                    </div>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent side="top">
+                    {/* Updated pageSize options to include [10, 25, 50, 100]. */}
+                    {[10, 25, 50, 100].map(
+                      (
+                        pageSize // Till now there is no limit will change after confirming TODO
+                      ) => (
+                        <SelectItem key={pageSize} value={`${pageSize}`}>
+                          {pageSize}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+                <div className="text-[14px] font-normal">
+                  {t("course.find_course:of")} {total}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -627,7 +676,7 @@ interface DataPaginationProps {
   current?: number;
   pageCount?: number;
   total?: number;
-  pageSize?:number
+  pageSize?: number;
 }
 
 const DataPagination = ({
@@ -635,7 +684,7 @@ const DataPagination = ({
   total = 0,
   current = 1,
   pageCount = 1,
-  pageSize=0
+  pageSize = 0,
 }: DataPaginationProps) => {
   const PagesArray = [];
   const DOTS = ". . .";
@@ -672,7 +721,7 @@ const DataPagination = ({
     }
   }
 
-const {t} = useTranslation(["common", "new_strings"])
+  const { t } = useTranslation(["common", "new_strings"]);
 
   return (
     <div className="flex flex-row self-center items-center text-[13px] space-x-2 p-2">
@@ -685,7 +734,9 @@ const {t} = useTranslation(["common", "new_strings"])
           onClick={() => setCurrent(current - 1)}
           disabled={current <= 1}
         >
-          <div className="text-[#D6D7D8] font-semibold">{t('new_strings:prev')}</div>
+          <div className="text-[#D6D7D8] font-semibold">
+            {t("new_strings:prev")}
+          </div>
         </Button>
       )}
       {/* pages buttons */}
@@ -701,7 +752,11 @@ const {t} = useTranslation(["common", "new_strings"])
                 onClick={() => {
                   setCurrent(page);
                 }}
-                className={`h-8 w-8 text-[13px] p-0 ${page === current ? 'hover:bg-[#5E5FC3]' : 'hover:border-solid hover:border-[1px] hover:border-[#7677F4]'}`}
+                className={`h-8 w-8 text-[13px] p-0 ${
+                  page === current
+                    ? "hover:bg-[#5E5FC3]"
+                    : "hover:border-solid hover:border-[1px] hover:border-[#7677F4]"
+                }`}
               >
                 {page}
               </Button>
@@ -717,7 +772,7 @@ const {t} = useTranslation(["common", "new_strings"])
           onClick={() => setCurrent(current + 1)}
           disabled={current >= pageCount}
         >
-          <div>{t('next')}</div>
+          <div>{t("next")}</div>
         </Button>
       )}
     </div>
