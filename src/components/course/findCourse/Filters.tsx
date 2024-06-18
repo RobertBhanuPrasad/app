@@ -752,7 +752,7 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
   const { watch } = useFormContext();
 
   const formData = watch();
-  
+
   // fetch all the cities from the city table 
   const { options, onSearch } = useMVPSelect({
     resource: "city",
@@ -799,14 +799,17 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         <SelectValue placeholder={t("city_placeholder")} />
       </SelectTrigger>
       <SelectContent>
-      <SelectInput value={searchTerm} onChange={handleSearchChange} />
+        <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
               <SelectItem
                 key={option.value}
                 value={option.value}
-                className="h-[44px]"
+                className={
+                  'h-[44px] ' +
+                  ((option.value === temporaryValue && (!searchTerm || !option.label.toLowerCase().includes(searchTerm.toLowerCase()))) ? 'hidden' : '')
+                }
               >
                 {option.label}
               </SelectItem>
