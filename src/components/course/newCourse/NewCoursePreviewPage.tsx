@@ -414,8 +414,8 @@ export default function NewCourseReviewPage() {
               >
                 <div>
                   {scheduleDate}
-                  {scheduleStartTime}{" "}
-                  {t("course.new_course:time_and_venue_tab.to").toLowerCase()} {" "}
+                  {scheduleStartTime}
+                  <span className="lowercase"> {t("course.new_course:time_and_venue_tab.to")} </span>
                   {scheduleEndTime}
                 </div>
               </abbr>
