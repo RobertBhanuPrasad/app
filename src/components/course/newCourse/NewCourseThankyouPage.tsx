@@ -13,13 +13,14 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { translatedText } from 'src/common/translations'
-import { PROGRAM_STATUS, VISIBILITY } from 'src/constants/OptionLabels'
-import { ACTIVE, PUBLIC } from 'src/constants/OptionValueOrder'
+import { PROGRAM_STATUS, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
+import { ACTIVE, PUBLIC, TIME_FORMAT_12_HOURS } from 'src/constants/OptionValueOrder'
 import { Button } from 'src/ui/button'
 import { formatDateTime } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
 import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import { useTranslation } from 'next-i18next';
+import { TwelveHrFormat, TwentyFourHrFormat } from '../viewCourse/courseDetailsTab'
 
 const NewCourseThankyouPage = () => {
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
@@ -74,7 +75,7 @@ useEffect(() => {
     id: programId,
     meta: {
       select:
-        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,name),registration_link,details_page_link'
+        'hour_format_id,online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,name),registration_link,details_page_link'
     }
   })
 
@@ -115,6 +116,12 @@ useEffect(() => {
   const courseActiveStatusId = getOptionValueObjectByOptionOrder(PROGRAM_STATUS, ACTIVE)?.id
   // getting public visibility id to check whether the particular course is public or private.
   const publicVisibilityId = getOptionValueObjectByOptionOrder(VISIBILITY, PUBLIC)?.id
+
+  // getting twelve Hr Time Format id to check whether the particular course time format.
+  const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id;
 
   return (
     <div>
@@ -177,10 +184,13 @@ useEffect(() => {
           }
             <div className="flex-[2.5] p-4 ">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.course_date")} (UTC 05:00)</p>
-              {data?.data?.program_schedules?.map((data: any,index:any) => {
+              {data?.data?.program_schedules?.map((schedulesData: any,index:any) => {
                 return (
                   <p className="font-semibold truncate text-accent-secondary" key={index}>
-                    {formatDateTime(data?.start_time, data?.end_time)}
+                    {
+                      // TODO we need to change the twelveHrTimeFormat to the enum
+                      data?.data?.hour_format_id === twelveHrTimeFormat ? (<TwelveHrFormat item={schedulesData}/>) : (<TwentyFourHrFormat item={schedulesData} />)
+                    }
                   </p>
                 )
               })}
