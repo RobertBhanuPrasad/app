@@ -93,7 +93,7 @@ function RevenueSection() {
           <CourseInformationAccordion />
         </div>
         <div className='flex pt-10 pb-5'>
-          <MainHeader className="text-xl" children="Deposit of Offline Revenue" />
+          <MainHeader className="text-[18pxl]" children="Deposit of Offline Revenue" />
           <button
             onClick={addInitialRow}
             disabled={isAddButtonDisabled}
@@ -104,31 +104,30 @@ function RevenueSection() {
           </button>
         </div>
         {fields.length > 0 && (
-          <div className='rounded-[12px]  border border-[#D6D7D8] min-w-fit'>
-            <div className="w-full">
-              <div>
-                <div className='bg-[#7677F41A] border-b text-[18px] flex w-full'>
-                  <div className="min-w-[64px]  p-4 ">#</div>
-                  <div className=" min-w-[274px] pt-4 pl-4 2xl:pl-[25px] ">Deposit Date</div>
-                  <div className=" min-w-[274px] p-4 pl-12 2xl:pl-[65px]">Deposit amount (EUR)</div>
-                  <div className="min-w-[466px] pl-[82px] p-4 2xl:pl-[150px]">Notes</div>
-                  <div className="min-w-[466px] p-4 pl-[165px] 2xl:pl-[235px]">Actions</div>
-                </div>
+          <div className='rounded-[12px] overflow-x-scroll overflow-y-hidden	w-full border border-[#D6D7D8]'>
+              
+                <div className='flex text-[14px] h-[48px]'>
+                  <div className=" bg-[#7677F41A] min-w-[64px] p-4">#</div>
+                  <div className=" bg-[#7677F41A] min-w-[274px]  p-4 w-full ">Deposit Date</div>
+                  <div className=" bg-[#7677F41A]  min-w-[274px] p-4 w-full pl-10 ">Deposit amount (EUR)</div>
+                  <div className="bg-[#7677F41A] min-w-[466px]   p-4 w-full pl-20  ">Notes</div>
+                  <div className=" bg-[#7677F41A] min-w-[466px]  p-4 w-full  pl-[250px] ">Actions</div>
+                
               </div>
               <div>
                 {fields.map((field, index) => (
-                  <div className='grid grid-cols-12 min-w-fit  ' key={field.id}>
-                    <div className=" p-4 text-[14px] min-w-[64px] text-[#333333]">{index + 1}</div>
-                    <div className='p-2 text-[14px]  relative right-14'>
+                  <div className='flex items-center w-full' key={field.id}>
+                    <div className=" p-4 text-[14px] text-[#333333]">{index + 1}</div>
+                    <div className='w-full p-4 pl-10'>
                       <DepositeDate index={index} />
                     </div>
-                    <div className="p-2 col-span-3 pl-[130px]">
+                    <div className="w-full p-4 pl-8   ">
                       <DepositeAmount index={index} />
                     </div>
-                    <div className="col-span-4 flex justify-end pl-[80px] p-2">
+                    <div className=" p-4 pl-8">
                       <Notes index={index} />
                     </div>
-                    <div className=" p-2 flex justify-between min-w-[177px] pl-20 ">
+                    <div className="w-full flex ml-[180px]">
                       {index === fields.length - 1 ? (
                         <button
                           type="button"
@@ -168,10 +167,9 @@ function RevenueSection() {
                         </DialogContent>
                       </Dialog>
                     </div>
-                  </div>
+                    </div>
                 ))}
               </div>
-            </div>
           </div>
         )}
 
@@ -185,7 +183,7 @@ function RevenueSection() {
             Previous
           </Button>
           <Button
-            className="w-[87px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white]"
+            className=" w-[87px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white]"
             onClick={() => {
               setParamValue('expense')
             }}
@@ -210,7 +208,7 @@ const DepositeAmount = ({ index }: { index: number }) => {
         onChange={onChange}
         error={error ? true : false}
         placeholder="00.00"
-        className="min-w-[250px]  h-[44px] rounded-[12px]  text-[14px] placeholder:text-[#333333]"
+        className="min-w-[250px] rounded-[12px]  text-[14px] placeholder:text-[#333333]"
       />
     </div>
   )
@@ -228,7 +226,7 @@ const DepositeDate = ({ index }: { index: number }) => {
 
             variant={"outline"}
             className={cn(
-              "min-w-[250px] h-[44px] border rounded-[12px] pl-4 pr-5 flex justify-between text-[#333333]",
+              "min-w-[250px]  border rounded-[12px] pl-4 pr-5 flex justify-between text-[#333333]",
               !date && "text-muted-foreground"
             )}
           >
@@ -271,7 +269,7 @@ const Notes = ({ index }: { index: number }) => {
         error={error ? true : false}
         type="text"
         placeholder="Lorem Epsim..."
-        className="min-w-[457px]  h-[44px] rounded-[12px]  text-[14px]  p-2 placeholder:text-[#333333] "
+        className="min-w-[457px]  w-full relative left-[20px] rounded-[12px]  text-[14px] placeholder:text-[#333333] "
       />
 
     </div>
