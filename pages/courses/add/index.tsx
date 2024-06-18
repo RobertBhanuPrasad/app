@@ -128,7 +128,10 @@ function index() {
       }
     }
 
+    // Initially we remove the any listeners in the dom
     router.events.off("routeChangeStart", routeChange);
+
+    window.removeEventListener('beforeunload', routeRefresh);
 
     router.events.on("routeChangeStart", routeChange);
 
