@@ -47,17 +47,7 @@ function CloseParticipantsSection() {
     id: query?.id as string,
   });
 
-  //TODO settings in progress
-  const { data: courseAccountingSettingsData } = useList({
-    resource: "course_accounting_config",
-    filters: [
-      {
-        field: "organization_id",
-        operator: "eq",
-        value: programData?.data?.organization_id,
-      },
-    ],
-  });
+  
 
   const { setValue } = useFormContext();
 

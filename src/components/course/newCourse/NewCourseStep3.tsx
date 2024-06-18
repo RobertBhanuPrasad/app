@@ -58,11 +58,6 @@ import {
   SUPER_ADMIN,
   TIME_FORMAT_12_HOURS,
 } from "src/constants/OptionValueOrder";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "src/ui/hover-card";
 import { Label } from "src/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
 import { RadioGroup, RadioGroupCircleItem } from "src/ui/radio-group";
@@ -83,6 +78,8 @@ import useDebounce from "src/utility/useDebounceHook";
 
 import { useTranslation } from "next-i18next";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import dayjs from 'dayjs';
+import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "src/ui/tooltip";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -141,16 +138,19 @@ const OnlineProgram = () => {
         <div className="flex flex-row gap-1 items-center text-xs">
           {t("course.new_course:time_and_venue_tab.online_meeting_url")}{" "}
           <div className="text-[#7677F4]"> *</div>
-          <HoverCard>
-            <HoverCardTrigger>
+          <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
               <Important />
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="w-[231px] text-wrap !rounded-[15px]">
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+              <div className="text-wrap">
                 {t("new_strings:online_course_hovered_text")}
               </div>
-            </HoverCardContent>
-          </HoverCard>
+              <TooltipArrow height={15} width={17} fill="#333333"/>
+            </TooltipContent>
+          </Tooltip>
+          </TooltipProvider>
         </div>
 
         <div className="w-80">
@@ -164,7 +164,7 @@ const OnlineProgram = () => {
           />
           {error && (
             <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
-          )}
+            )}
           <div className="text-xs font-normal text-[#666666] italic w-[320px] overflow-hidden">
             <div>{t("new_strings:note_participants")}</div>
             <div>{t("new_strings:virtual_venue")}</div>
@@ -489,9 +489,8 @@ const ScheduleComponent = ({
               <div>
                 <CalenderIcon color="#999999" />
               </div>
-              <div>
-                {schedule?.date &&
-                  format(new Date(schedule.date), "dd MMM, yyyy")}
+              <div className="capitalize">
+                {schedule?.date && dayjs(schedule?.date).format("DD MMM, YYYY")}
               </div>
             </Button>
           </DialogTrigger>
@@ -853,7 +852,7 @@ const Venue = () => {
                 + {t("course.new_course:time_and_venue_tab.add_new_venue")}
               </div>
             </DialogTrigger>
-            <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] !rounded-[24px]">
+            <DialogContent className="!w-[636px] pt-6 px-[25px] !rounded-[24px]">
               <AddOrEditVenue
                 handleSubmit={handleAddNewVenue}
                 message={warningmessage}
@@ -1177,6 +1176,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
             onSelect={handleOnSelect}
             className="rounded-md"
             count={data?.total || 0}
+            defaultMonth={date}
           />
         </div>
         {/* Course details */}
