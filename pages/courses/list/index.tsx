@@ -38,6 +38,7 @@ import { Input } from "src/ui/input";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -835,6 +836,7 @@ export const CountComponent = ({ count }: any) => {
 };
 
 export const CourseTypeComponent = ({ name }: any) => {
+  const [searchTerm, setSearchTerm] = useState("");
   const {
     field: { value, onChange },
   } = useController({
@@ -847,6 +849,9 @@ export const CourseTypeComponent = ({ name }: any) => {
   });
 
   const [pageSize, setPageSize] = useState(10);
+  
+  const languageCode = useGetLanguageCode()
+  
   const { options, onSearch } = useMVPSelect({
     resource: "program_types",
     optionLabel: "name",
@@ -855,7 +860,7 @@ export const CourseTypeComponent = ({ name }: any) => {
     defaultValue: value && value,
     onSearch: (value: any) => [
       {
-        field: "name",
+        field: `name->>${languageCode}`,
         operator: "contains",
         value,
       },
@@ -872,6 +877,11 @@ export const CourseTypeComponent = ({ name }: any) => {
   };
 
   const { t } = useTranslation("common");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
   return (
     <Select
       value={value}
@@ -887,7 +897,7 @@ export const CourseTypeComponent = ({ name }: any) => {
         <SelectValue placeholder={t("select_course_type")} />
       </SelectTrigger>
       <SelectContent>
-        <Input onChange={(val) => onSearch(val.target.value)} />
+      <SelectInput value={searchTerm} onChange={handleSearchChange} />
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
