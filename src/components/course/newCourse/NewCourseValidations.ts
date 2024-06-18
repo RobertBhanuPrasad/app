@@ -226,7 +226,7 @@ const accommodationValidationSchema = z.array(
     accommodation_type_id: z.number({
       required_error: "Accommodation type is required field.",
     }),
-    fee_per_person: z
+    total: z
       .string({
         required_error: "Fee per person is a required field.",
       })

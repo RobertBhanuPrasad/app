@@ -987,7 +987,7 @@ export const handlePostAccommodations = async (
     const dataObject: ProgramAccommodationsDataBaseType = {
       program_id: programId,
       accommodation_type_id: accommodationData.accommodation_type_id,
-      fee_per_person: accommodationData.fee_per_person,
+      total: accommodationData.total,
       no_of_residential_spots: accommodationData.no_of_residential_spots,
     };
 

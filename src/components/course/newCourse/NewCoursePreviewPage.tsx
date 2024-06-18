@@ -1512,7 +1512,7 @@ const Accommodation = ({
   accomdationData,
   currencyCode,
 }: {
-  accomdationData: { accommodation_type_id: number; fee_per_person: number };
+  accomdationData: { accommodation_type_id: number; total: number };
   currencyCode: string;
 }) => {
   /**
@@ -1539,13 +1539,13 @@ const Accommodation = ({
         // If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined
         // we need to display the currency code when the code is present for the organization
         title={`${currencyCode ? currencyCode : ""} ${
-          accomdationData?.fee_per_person
+          accomdationData?.total
         }`}
         className="no-underline"
       >
         <CardValue className="truncate">
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
-          {currencyCode ? currencyCode : ""} {accomdationData?.fee_per_person}
+          {currencyCode ? currencyCode : ""} {accomdationData?.total}
         </CardValue>
       </abbr>
     </div>
