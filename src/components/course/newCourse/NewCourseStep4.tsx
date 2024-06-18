@@ -30,6 +30,7 @@ import { Text } from "src/ui/TextTags";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 import { FEE_LEVEL } from "src/constants/OptionLabels";
 import _ from "lodash";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 // Define CourseTable component
 
@@ -90,9 +91,8 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
 
   const { data: loginUserData }: any = useGetIdentity();
 
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
+  const { staticData } = staticDataStore() 
+  const countryConfigData =   staticData?.countryConfigData
 
   const { watch } = useFormContext();
 
@@ -209,7 +209,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.normal_fee")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
     //No need to show tax column if tax is not enabled for selected organization
@@ -220,7 +220,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.vat reg")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
     {
@@ -230,7 +230,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.fee")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
   ];
@@ -261,7 +261,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.normal_fee")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
     organizationData?.tax_enabled && {
@@ -278,7 +278,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.vat reg")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
     {
@@ -312,7 +312,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.fee")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
   ];
@@ -326,7 +326,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.early_bird")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
     organizationData?.tax_enabled && {
@@ -336,7 +336,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("new_strings:vat_reg")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
     {
@@ -346,7 +346,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.total early")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
   ];
@@ -369,7 +369,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.early_bird")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
     //No need to show tax column if tax is not enabled for selected organization
@@ -387,7 +387,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.vat reg")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
     {
@@ -421,7 +421,7 @@ const sortCourseFeeData= sortFeeLevels(courseFeeData);
       enableSorting: false,
       enableHiding: false,
       header: `${t("course.new_course:fees_tab.total early")} (${
-        countryConfigData?.data?.[0]?.default_currency_code
+        countryConfigData?.default_currency_code
       })`,
     },
   ];

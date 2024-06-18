@@ -50,6 +50,7 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { PROGRAM_ORGANIZER_TYPE } from "src/constants/OptionLabels";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "src/utility";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 export const EditModalDialog = ({
   title,
@@ -123,7 +124,9 @@ const ButtonsDialog = ({
 
 
   const { data: loginUserData }: any = useGetIdentity();  
-  const { data: timeZoneData } = useList({ resource: "time_zones" });
+  const {staticData} = staticDataStore()
+
+  const timeZoneData = staticData?.timeZoneData
 
     /**
    * In new course setp 2 we have program type dropdown select component
@@ -173,7 +176,7 @@ const ButtonsDialog = ({
   let validationFieldsStepWise = requiredValidationFields(
     formData,
     loginUserData,
-    timeZoneData?.data,
+    timeZoneData,
     selectedProgramTypeData
   );
 

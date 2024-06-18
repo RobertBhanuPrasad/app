@@ -1,3 +1,4 @@
+import { fetchStaticDBData } from "@components/PreFetchStaticApi";
 import { useRouter } from "next/navigation";
 import nookies from "nookies";
 import { useState } from "react";
@@ -12,6 +13,10 @@ const Login = () => {
   const supabase = supabaseClient();
 
   const handleLogin = async () => {
+  // storing static db data in local storage 
+    const staticDataFromDB = await fetchStaticDBData()
+    localStorage.setItem("staticDataFromDB",JSON.stringify(staticDataFromDB))
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,

@@ -81,6 +81,7 @@ import {
 import { useTranslation } from "next-i18next";
 import { supabaseClient } from "src/utility";
 import useGetCountryCode from "src/utility/useGetCountryCode";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 function index() {
   const { data: loginUserData }: any = useGetIdentity();
@@ -289,45 +290,32 @@ export function NewCourse() {
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
   }
 
-  // fetch data from country_config table for time format
-  const {
-    data,
-    isLoading,
-  }: QueryObserverResult<
-    GetListResponse<CountryConfigDataBaseType>,
-    HttpError
-  > &
-    UseLoadingOvertimeReturnType = useList({
-    resource: "country_config",
-  });
+  // Get staticData from zustand store
+  // staticData contains country config data and time zone data
+  const {staticData} = staticDataStore()
 
-  console.log("country config data is", data?.data[0]);
+  const countryConfigData = staticData?.countryConfigData
 
   // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
-  const {
-    data: timeZonesData,
-    isLoading: timeZoneLoading,
-  }: QueryObserverResult<GetListResponse<TimeZoneDataBaseType>, HttpError> &
-    UseLoadingOvertimeReturnType = useList({
-    resource: "time_zones",
-  });
+  const timeZonesData = staticData?.timeZoneData
+  
 
   // check how many records are there in time_zones table
   // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
   if (
-    timeZonesData?.data?.length === 1 &&
+    timeZonesData?.length === 1 &&
     (IsEditCourse(pathname) === false || IsCopyCourse(pathname) === false)
   ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
-      timeZonesData?.data[0]?.id;
+      timeZonesData?.[0]?.id;
   }
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
   // and same we need to set only if it is not edit and copy
   if (IsEditCourse(pathname) === false && IsCopyCourse(pathname) === false) {
-    if (data?.data[0]?.hour_format_id) {
+    if (countryConfigData?.hour_format_id) {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
-        data?.data[0]?.hour_format_id;
+        countryConfigData?.hour_format_id;
     } else {
       defaultValues[NewCourseStep3FormNames?.hour_format_id] =
         timeFormat24HoursId;
@@ -338,9 +326,7 @@ export function NewCourse() {
   // we have to display loading icon until the below variables will be get from database
   // isLoading also we need becuase we need to set the data right
   if (
-    (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId) ||
-    isLoading ||
-    timeZoneLoading
+    (!publicVisibilityId && !payOnlineId && !timeFormat24HoursId)
   ) {
     return (
       <section className="flex justify-center align-center pt-[15%]">
@@ -518,8 +504,8 @@ export const NewCourseTabs = () => {
   ]);
 
   const { data: loginUserData }: any = useGetIdentity();
-  const { data: timeZoneData } = useList({ resource: "time_zones" });
-
+  const {staticData} = staticDataStore()
+  const timeZoneData = staticData?.timeZoneData
   const [tabsNextButtonClickStatus, setTabsNextButtonClickStatus] =
     useState<ItabsNextButtonClickStatus>(
       new Array(6).fill(NEXT_BUTTON_NOT_CLICKED)
@@ -990,7 +976,7 @@ export const NewCourseTabs = () => {
                         let validationFieldsStepWise = requiredValidationFields(
                           formData,
                           loginUserData,
-                          timeZoneData?.data,
+                          timeZoneData,
                           selectedProgramTypeData
                         );
 
@@ -1075,7 +1061,7 @@ export const NewCourseTabs = () => {
                       let validationFieldsStepWise = requiredValidationFields(
                         formData,
                         loginUserData,
-                        timeZoneData?.data,
+                        timeZoneData,
                         selectedProgramTypeData
                       );
 
@@ -1095,7 +1081,7 @@ export const NewCourseTabs = () => {
                       let validationFieldsStepWise = requiredValidationFields(
                         formData,
                         loginUserData,
-                        timeZoneData?.data,
+                        timeZoneData,
                         selectedProgramTypeData
                       );
 

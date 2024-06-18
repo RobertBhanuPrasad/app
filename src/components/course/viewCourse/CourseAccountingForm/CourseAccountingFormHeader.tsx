@@ -15,6 +15,7 @@ import {
 import { formatDate } from "src/utility/DateFunctions";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import { translatedText } from 'src/common/translations'
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 
 function HeaderSection() {
@@ -39,9 +40,9 @@ function HeaderSection() {
       courseData?.data?.program_schedules?.length - 1
     ]?.end_time
   );
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
+  
+  const { staticData } = staticDataStore()  
+  const countryConfigData = staticData?.countryConfigData
   const totalRevenue = courseData?.data?.revenue;
   const { replace } = useRouter();
   const { programId } = newCourseStore();
@@ -116,7 +117,7 @@ function HeaderSection() {
           }}
           className="cursor-pointer text-[#7677F4] "
         >
-          {countryConfigData?.data?.[0]?.default_currency_code} {totalRevenue}
+          {countryConfigData?.default_currency_code} {totalRevenue}
         </div>
         <HoverCard>
           <HoverCardTrigger>
@@ -127,7 +128,7 @@ function HeaderSection() {
           <HoverCardContent>
             <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
               Revenue from confirmed pending transaction participants revenue:
-              {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+              {countryConfigData?.default_currency_code}{" "}
               {totalRevenue}
             </div>
           </HoverCardContent>

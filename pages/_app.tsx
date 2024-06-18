@@ -16,6 +16,9 @@ import { getCountryCodeFromLocale } from "src/utility/useGetCountryCode";
 import { getLanguageCodeFromLocale } from "src/utility/useGetLanguageCode";
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
+import { fetchStaticDBData } from "@components/PreFetchStaticApi";
+import _ from "lodash";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -39,6 +42,7 @@ function MyApp({
     const { setOptionLabelValue } = optionLabelValueStore();
 
     const { setCountryCode, setLanguageCode } = ConfigStore();
+    const { setStaticData } = staticDataStore();
 
     const fetchOptionLabelOptionValueData = async () => {
       const { data } = await supabase
@@ -54,6 +58,32 @@ function MyApp({
       // set coutry code and language code in zustand store
       setCountryCode(countryCode);
       setLanguageCode(languageCode);
+
+      // set country config data and time zone data in zustand store
+      const fetchData= async ()=>{
+
+        // Getting staticData stored in local storage
+        const localStorageDataStr = localStorage.getItem("staticDataFromDB");
+        let localStorageData = localStorageDataStr ? JSON.parse(localStorageDataStr) : {};       
+        setStaticData(localStorageData)
+        
+        const data = await fetchStaticDBData()
+
+        // if local storage data and data from api calls are equal then set the data in zustand store
+        if(_.isEqual(localStorageData,data)){
+           setStaticData(localStorageData)    
+        }
+
+        // if local storage data and data from api calls are not equal then store the updated final data in local storage and zustand store
+        else{
+          const finalStaticData = {...localStorageData, ...data}
+          localStorage.setItem("staticDataFromDB",JSON.stringify(finalStaticData))
+          setStaticData(finalStaticData)
+        }     
+      }
+
+      fetchData()
+      
     }, []);
 
     const renderContent = () => <Component {...pageProps} />;

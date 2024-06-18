@@ -39,6 +39,7 @@ import { supabaseClient } from "src/utility";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "src/ui/dialog";
 import { Button } from "src/ui/button";
 import { useMVPSelect } from "src/utility/useMVPSelect";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 export default function CourseTable() {
   // const formData = useWatch({ name: "accommodation" });
@@ -72,6 +73,9 @@ export const AccomdationComponent = () => {
 
   const formData = watch();
 
+  const { staticData } = staticDataStore()
+  const countryConfigData = staticData?.countryConfigData
+
   // Effect to add initial data if no fees are present
   useEffect(() => {
     if (!formData?.accommodation || formData?.accommodation.length <= 0) {
@@ -86,7 +90,7 @@ export const AccomdationComponent = () => {
       <div className="flex h-[48px]">
         <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">{t("course.new_course:accommodation_tab.accommodation_type")}</div>
         <div className="p-4 bg-[#7677F41A] min-w-[288px] w-full">
-          {t("new_strings:fee_per_person")} (MYR) {t("new_strings:inc_vat")}
+          {t("new_strings:fee_per_person")} ({countryConfigData?.default_currency_code}) {t("new_strings:inc_vat")}
         </div>
         <div className="p-4  bg-[#7677F41A] min-w-[288px] w-full">
         {t("course.new_course:accommodation_tab.number_of_spots")}

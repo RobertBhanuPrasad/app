@@ -16,6 +16,7 @@ import {
 import { formatDate } from "src/utility/DateFunctions";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { useTranslation } from 'next-i18next';
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 
 
@@ -47,9 +48,9 @@ export const ParticipantsListMainHeader = () => {
     ]?.end_time
   );
 
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
+  const { staticData } = staticDataStore()
+  const countryConfigData =staticData?.countryConfigData
+
   const {t} = useTranslation(["course.view_course", "course.new_course", "new_strings", "common"])
   return (
     <div className="flex justify-between w-full px-8 h-auto">
@@ -108,7 +109,7 @@ export const ParticipantsListMainHeader = () => {
             <div className="flex gap-2 items-center">
               <CurrencyIcon />
               <div className="cursor-pointer text-[#7677F4] font-medium">
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                {countryConfigData?.default_currency_code}{" "}
                 {totalRevenue}
               </div>
               <HoverCard>
@@ -118,7 +119,7 @@ export const ParticipantsListMainHeader = () => {
                 <HoverCardContent>
                 <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                     {t("new_strings:revenue_from_confirmed_pending_transaction_participants_revenue")}
-                    {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                    {countryConfigData?.default_currency_code}{" "}
                     {totalRevenue}
                   </div>
                 </HoverCardContent>

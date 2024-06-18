@@ -6,18 +6,20 @@ import {
   NewCourseStep4FormNames,
   NewCourseStep5FormNames,
   NewCourseStep6FormNames,
-} from "src/constants/CourseConstants";
-import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder";
-import { supabaseClient } from "src/utility";
+} from "src/constants/CourseConstants"
+import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder"
+import { supabaseClient } from "src/utility"
+import { StaticData } from "src/zustandStore/StaticDataStore"
 
 export const getRequiredFieldsForValidation = async (
   formData: any,
   loginUserData: any,
-  countryCode: any
+  countryCode: any,
+  staticData: {countryConfigData:CountryConfigDataBaseType | null,timeZoneData: TimeZoneDataBaseType | null}
 ) => {
   const supabase = supabaseClient();
 
-  const { data: timeZoneData } = await supabase.from("time_zones").select("*");
+  const timeZoneData = staticData?.timeZoneData
 
   const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN

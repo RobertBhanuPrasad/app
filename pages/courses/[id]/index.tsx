@@ -95,6 +95,7 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger 
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -198,10 +199,9 @@ function ViewDetails() {
   // }
 
   const { data: loginUserData }: any = useGetIdentity();
+  const { staticData } = staticDataStore()   
 
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
+  const countryConfigData = staticData?.countryConfigData
 
   /**
    * When we change the tab, we need to retrieve the corresponding tab data to update the query name.
@@ -299,7 +299,7 @@ function ViewDetails() {
                 <CurrencyIcon />
               </div>
               <Text className="text-[#7677F4] font-semibold">
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                {countryConfigData?.default_currency_code}{" "}
                 {totalRevenue}
               </Text>
               <TooltipProvider>
@@ -315,7 +315,7 @@ function ViewDetails() {
                     {t(
                       "course.view_course:basic_details_tab.participants_revenue"
                       )}
-                    :{countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                    :{countryConfigData?.default_currency_code}{" "}
                     {totalRevenue}
                   </div>
                   <TooltipArrow height={15} width={17} fill="#333333"/>

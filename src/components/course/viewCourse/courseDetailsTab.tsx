@@ -13,6 +13,7 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 import { useTranslation } from 'next-i18next';
 import _ from "lodash";
 import { sortFeeLevels } from "../newCourse/NewCourseStep4";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 interface fullNameObject {
   user_id?: {
@@ -95,9 +96,10 @@ function CourseDetailsTab() {
     venue=venue+", "+courseData?.data?.venue_id?.postal_code
 
   }
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
+  
+  const { staticData } = staticDataStore()     
+
+  const countryConfigData = staticData?.countryConfigData
 
   // If the course fee is editable then we can use custom fees otherwise we can use default fees
   const programFeeLevels = courseData?.data?.program_fee_settings_id
@@ -295,7 +297,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                 )}
                       </Header2>
                       <ItemValue>
-                        {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                        {countryConfigData?.default_currency_code}{" "}
                         {(item?.total)?.toFixed(2)}
                       </ItemValue>
                     </div>
@@ -311,7 +313,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                           )}
                         </Header2>
                         <ItemValue>
-                          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                          {countryConfigData?.default_currency_code}{" "}
                           {(item?.early_bird_total as unknown as number)?.toFixed(2)}
                         </ItemValue>
                       </div>
@@ -331,7 +333,7 @@ const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? cou
                           )}
                         </Header2>
                         <ItemValue>
-                          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+                          {countryConfigData?.default_currency_code}{" "}
                           {item?.fee_per_person}
                         </ItemValue>
                       </div>

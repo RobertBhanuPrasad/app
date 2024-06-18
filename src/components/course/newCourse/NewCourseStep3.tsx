@@ -79,6 +79,7 @@ import useDebounce from "src/utility/useDebounceHook";
 import { useTranslation } from "next-i18next";
 import { useMVPSelect } from "src/utility/useMVPSelect";
 import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "src/ui/tooltip";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 function NewCourseStep3() {
   const { watch } = useFormContext();
@@ -232,18 +233,9 @@ const SchedulesHeader = () => {
     }
   );
 
-  const { options } = useMVPSelect({
-    resource: "time_zones",
-    optionLabel: "name",
-    optionValue: "id",
-    onSearch: (value) => [
-      {
-        field: "name",
-        operator: "contains",
-        value,
-      },
-    ],
-  });
+  const {staticData} = staticDataStore()
+
+  const timeZoneData = staticData?.timeZoneData
 
   return (
     <div className="h-9 flex">
@@ -251,7 +243,7 @@ const SchedulesHeader = () => {
         {t("course.new_course:time_and_venue_tab.event_date_and_time")}
       </div>
       <div className="flex gap-4 w-[434px] ml-auto">
-        <div className={`w-[161px]   ${options && options.length <= 1 ? 'ml-auto' : ''}`}>
+        <div className={`w-[161px]   ${timeZoneData && timeZoneData.length <= 1 ? 'ml-auto' : ''}`}>
           <Select
             value={hoursFormat}
             onValueChange={(val: any) => {
@@ -283,7 +275,7 @@ const SchedulesHeader = () => {
         So if a coutry have time zone as India then we need to store it in time_zones table
         here we need to display the time zone dropdown only when it have more than one time zone
         */}
-        {options?.length > 1 && (
+        {timeZoneData && timeZoneData?.length > 1 && (
           <div className="w-[257px]">
             <Select
               value={timeZones}
@@ -299,17 +291,17 @@ const SchedulesHeader = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
-                  {options?.map((option : any, index : any) => {
+                  {timeZoneData?.map((option : TimeZoneDataBaseType, index : any) => {
                     return (
                       <div key={index}>
                         <SelectItem
-                          key={option.value}
-                          value={option.value}
+                          key={option.id}
+                          value={option.id}
                           className="h-[44px]"
                         >
-                          {option.label}
+                          {option.name}
                         </SelectItem>
-                        {index < options?.length - 1 && (
+                        {index < timeZoneData?.length - 1 && (
                           <hr className="border-[#D6D7D8]" />
                         )}
                       </div>

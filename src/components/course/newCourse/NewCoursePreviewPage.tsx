@@ -60,6 +60,7 @@ import NewCourseStep4, { sortFeeLevels } from "./NewCourseStep4";
 import NewCourseStep5 from "./NewCourseStep5";
 import NewCourseStep6 from "./NewCourseStep6";
 import { validationSchema } from "./NewCourseValidations";
+import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -426,15 +427,13 @@ export default function NewCourseReviewPage() {
     })
     .join(", ");
 
-  const { data: timeZone } = useOne({
-    resource: "time_zones",
-    id: newCourseData?.time_zone_id,
-  });
 
   // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
-  const { data: timeZonesData }: any = useList({
-    resource: "time_zones",
-  });
+  const {staticData} = staticDataStore()
+
+  const timeZoneData = staticData?.timeZoneData
+
+  const timeZone = timeZoneData?.find(item => item.id === newCourseData?.time_zone_id);
 
   const user_roles: any[] = data?.userData?.user_roles || [];
 
@@ -530,7 +529,8 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
     const requiredFieldsForValidation = await getRequiredFieldsForValidation(
       formData,
       loginUserData,
-      countryCode
+      countryCode,
+      staticData
     );
 
     const newCourseZodSchema = validationSchema(iAmCoTeachingId as number);
@@ -677,16 +677,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
    * we will get the currency code in the country config
    *
    */
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-    filters: [
-      {
-        field: "organization_id",
-        operator: "eq",
-        value: newCourseData?.organization_id,
-      },
-    ],
-  });
+    const countryConfigData = staticData?.countryConfigData
 
   /**
    * @function schedulesPreprocessing
@@ -1270,16 +1261,16 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                 </abbr>
               </div>
 
-              {timeZonesData && timeZonesData?.data?.length > 1 && (
+              {timeZoneData && timeZoneData?.length > 1 && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999]">
                     {t("course.new_course:review_post_details.time_zone")}
                   </p>
                   <abbr
                     className="font-semibold truncate block no-underline text-accent-secondary text-[#666666]"
-                    title={`${timeZone?.data?.name} - ${timeZone?.data?.utc_off_set}`}
+                    title={`${timeZone?.name} - ${timeZone?.utc_off_set}`}
                   >
-                    {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
+                    {timeZone?.name} - {timeZone?.utc_off_set}
                   </abbr>
                 </div>
               )}
@@ -1410,7 +1401,7 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
                   <Accommodation
                     accomdationData={data}
                     currencyCode={
-                      countryConfigData?.data?.[0]?.default_currency_code
+                      countryConfigData?.default_currency_code as string
                     }
                   />
                 );
@@ -1609,9 +1600,10 @@ const Fees = ({
    * we will get the currency code in the country config
    *
    */
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
+  const { staticData } = staticDataStore()   
+
+  const countryConfigData = staticData?.countryConfigData
+
 
   //If custom fee is enabled Need to show custom label.
   if (feeLevelSettingsData?.is_custom_fee == true) {
@@ -1632,7 +1624,7 @@ const Fees = ({
           className="no-underline"
         >
           <CardValue className="truncate">
-            {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+            {countryConfigData?.default_currency_code}{" "}
             {feeLevelSettingsData?.total}
           </CardValue>
         </abbr>
@@ -1669,7 +1661,7 @@ const Fees = ({
         className="no-underline"
       >
         <CardValue className="truncate">
-          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+          {countryConfigData?.default_currency_code}{" "}
           {feeLevelSettingsData?.total}
         </CardValue>
       </abbr>
@@ -1696,9 +1688,9 @@ const EarlyBirdFees = ({
    *
    */
 
-  const { data: countryConfigData } = useList({
-    resource: "country_config",
-  });
+  const { staticData } = staticDataStore()  
+  const countryConfigData = staticData?.countryConfigData
+
 
   //If custom fee is enabled Need to show custom label.
   if (feeLevelSettingsData?.is_custom_fee == true) {
@@ -1721,7 +1713,7 @@ const EarlyBirdFees = ({
           className="no-underline"
         >
           <CardValue className="truncate">
-            {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+            {countryConfigData?.default_currency_code}{" "}
             {feeLevelSettingsData?.early_bird_total}
           </CardValue>
         </abbr>
@@ -1760,7 +1752,7 @@ const EarlyBirdFees = ({
         className="no-underline"
       >
         <CardValue className="truncate">
-          {countryConfigData?.data?.[0]?.default_currency_code}{" "}
+          {countryConfigData?.default_currency_code}{" "}
           {feeLevelSettingsData?.early_bird_total}
         </CardValue>
       </abbr>
