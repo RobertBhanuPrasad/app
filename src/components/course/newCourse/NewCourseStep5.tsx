@@ -254,7 +254,7 @@ const FeePerPerson = ({ index }: any) => {
     field: { value, onChange },
     fieldState: { error },
   } = useController({
-    name: `accommodation[${index}].fee_per_person`,
+    name: `accommodation[${index}].total`,
   });
 
   return (

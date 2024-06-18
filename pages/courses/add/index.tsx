@@ -420,7 +420,7 @@ export const requiredValidationFields = (
     ...(formData?.is_residential_program == false
       ? [
           "accommodation",
-          "fee_per_person",
+          "total",
           "no_of_residential_spots",
           "accommodation_type_id",
           "accommodation_fee_payment_mode",
