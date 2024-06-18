@@ -24,7 +24,7 @@ export const getCurrencyFormat = (countryCode: string, languageCode: string) => 
  * @param currencyCode 
  * @returns 
  */
-export const getCurrencySymbol = (countryCode: string, languageCode: string, currencyCode: string) => {
+export const getCurrencySymbol = (countryCode: string, languageCode: string, currencyCode='EUR') => {
   // to join the language code and country code  inorder to get as locale format
   // from url we get the countryCode-langugeCode[ex:ca-en] format but for locale format we need langugeCode-countryCode[ex:en-ca]
   const locale = languageCode.concat('-', countryCode)

@@ -29,12 +29,6 @@ export const ParticipantsListMainHeader = () => {
 
   const languageCode = useGetLanguageCode()
 
-
-  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
-  const currencySymbol = getCurrencySymbol(countryCode, languageCode, 'EUR')
-
-  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
-
   const Id: number | undefined = router?.query?.id
     ? parseInt(router.query.id as string)
     : undefined;
@@ -63,6 +57,13 @@ export const ParticipantsListMainHeader = () => {
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+
+      
+  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(countryCode, languageCode, countryConfigData?.data?.[0]?.default_currency_code)
+  
+  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
+
   const {t} = useTranslation(["course.view_course", "course.new_course", "new_strings", "common"])
   return (
     <div className="flex justify-between w-full px-8 h-auto">
@@ -134,7 +135,7 @@ export const ParticipantsListMainHeader = () => {
                 <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
                     {t("new_strings:revenue_from_confirmed_pending_transaction_participants_revenue")}
                     {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                    {totalRevenue}
+                    {currencyFormat.format(totalRevenue)}
                   </div>
                 </HoverCardContent>
               </HoverCard>
