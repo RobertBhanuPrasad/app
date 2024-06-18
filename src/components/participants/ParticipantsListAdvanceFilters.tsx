@@ -378,9 +378,8 @@ export const ContactDetails = () => {
     }
   };
 
-  const handlePhoneChange = (event: any) => {
-    const { value } = event.target;
-    const updatedPhone = value.replace(/\D/g, ""); // Regex to allow only numeric characters
+  const handlePhoneChange = (value: any) => {
+   const updatedPhone = value.replace(/\D/g, ""); // Regex to allow only numeric characters
 
     onPhoneChange({ target: { value: updatedPhone } });
   };
@@ -408,7 +407,7 @@ export const ContactDetails = () => {
       </div>
       <div className="flex flex-col gap-2 w-[auto]">
         <Label>{t("course.participants:find_participant.phone")}</Label>
-        <PhoneNumberInput/>
+        <PhoneNumberInput  onChange={(val)=>handlePhoneChange(val)} value={contactPhone}/>
         {/* <Input
           onChange={handlePhoneChange}
           value={contactPhone}
