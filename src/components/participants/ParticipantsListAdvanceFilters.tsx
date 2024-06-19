@@ -1,7 +1,7 @@
 import ClearAllIcon from "@public/assets/ClearAllIcon";
 import CrossIcon from "@public/assets/CrossIcon";
 import FilterIcon from "@public/assets/FilterIcon";
-import { CountComponent } from "pages/courses/list";
+import { CountComponent } from "pages/Courses/list";
 import { useEffect, useRef, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import { translatedText } from "src/common/translations";

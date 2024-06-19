@@ -67,6 +67,7 @@ export default function EditParticipantTabs() {
     const { mutate } = useUpdate();
     const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
     const onFormSubmission = async (formData: any) => {
+        
         let isAllFieldsFilled;
         if (accommodationData) {
             isAllFieldsFilled = await ValidateCurrentStepFields(
@@ -89,6 +90,7 @@ export default function EditParticipantTabs() {
                     roommate_snore: formData?.roommate_snore,
                     accommodation_snore: formData?.accommodation_snore,
                     participant_code: formData?.participant_code,
+                    discount_code: formData?.discount_code,
                     participant_attendence_status_id:
                         formData?.participant_attendence_status_id,
                 },
@@ -102,7 +104,7 @@ export default function EditParticipantTabs() {
                 },
                 id: Number(Id),
             });
-        router.back();
+        // router.back();
     };
     let {
         tableQueryResult: participantTransactionDetailsData, // Table data result
@@ -236,7 +238,6 @@ export default function EditParticipantTabs() {
             ),
             header: (
                 <div className="flex pt-[20px]">
-                    
                     <p
                         className={`text-[18px] font-[600] pr-[10px] !m-[0] !py-[0] !h-[0] ${
                             activeTabId == "section5" && "text-[#7677F4]"
@@ -261,26 +262,27 @@ export default function EditParticipantTabs() {
             ),
         },
         {
-            id:"section6",
-            label:t("view_participant.utm_parameters"),
-            content:(
+            id: "section6",
+            label: t("view_participant.utm_parameters"),
+            content: (
                 <div>
-                      <ViewParticipantUtmParameters participantId={Id} />
+                    <ViewParticipantUtmParameters participantId={Id} />
                 </div>
             ),
-            header:
-            (
+            header: (
                 <div>
-                <p
-                    className={`font-semibold text-[18px] pt-[20px]  ${
-                        activeTabId == "section6" && "text-[#7677F4]"
-                    }`}
-                >
-                    {t("course.participants:view_participant.utm_parameters")}
-                </p>
-            </div>  
-            )
-        }
+                    <p
+                        className={`font-semibold text-[18px] pt-[20px]  ${
+                            activeTabId == "section6" && "text-[#7677F4]"
+                        }`}
+                    >
+                        {t(
+                            "course.participants:view_participant.utm_parameters"
+                        )}
+                    </p>
+                </div>
+            ),
+        },
     ];
 
     // Check if accommodation tab should be rendered in tabs list or not
