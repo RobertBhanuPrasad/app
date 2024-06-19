@@ -9,7 +9,7 @@ const httpStatus = {
 
 const extractKeycloakToken = (token: string) => {
   const publicKey = `-----BEGIN PUBLIC KEY-----\n${process.env.KEYCLOAK_PUBLIC_KEY}\n-----END PUBLIC KEY-----`;
-  const clientId = process.env.KEYCLOAK_CLIENT_ID;
+  const clientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID;
 
   if (!publicKey || !clientId) {
     return {
@@ -51,6 +51,8 @@ const generateSupabaseToken = (token: JwtPayload) => {
   const payload: { [key: string]: any } = {
     sub: token.sub,
     aud: "authenticated",
+    role: "authenticated",
+    aal: "aal1",
   };
 
   if (token.email) payload.email = token.email;

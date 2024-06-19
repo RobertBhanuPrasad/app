@@ -2,12 +2,10 @@
 import LoadingIcon from '@public/assets/LoadingIcon'
 import Logo from '@public/assets/Logo'
 import LogoutIcon from '@public/assets/LogoutIcon'
-import TableMenu from '@public/assets/TableMenu'
-import { useGetIdentity, useOne } from '@refinedev/core'
+import { useGetIdentity } from '@refinedev/core'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { destroyCookie } from 'nookies'
-import { useState } from 'react'
+import nookies from "nookies"
 import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar'
 import {
   DropdownMenu,
@@ -22,8 +20,7 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle
+  NavigationMenuTrigger
 } from 'src/ui/navigation-menu'
 import { supabaseClient } from 'src/utility'
 
@@ -64,11 +61,9 @@ function Navbar() {
   // to logged out the current user
   const handleLogOut = async () => {
     const { error } = await supabase.auth.signOut()
-    if (!error) {
-      destroyCookie(null, 'token') // Remove the token cookie
-      router.replace('/login') // Redirect to the login page
-    }
-    console.log('error is', error)
+     if (error) {
+      console.log('error is', error)
+     }
   }
 
   return (
