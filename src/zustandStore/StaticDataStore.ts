@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 export interface StaticData {
-    staticData: {countryConfigData:CountryConfigDataBaseType | null, timeZoneData: TimeZoneDataBaseType[] | null}
-    setStaticData: (data:{countryConfigData:CountryConfigDataBaseType | null, timeZoneData: TimeZoneDataBaseType[] | null}) => void;
+    staticData: {countryConfigData:CountryConfigDataBaseType | null, timeZoneData: TimeZoneDataBaseType[] | null, organizationsData: OrganizationsDataBaseType[] | null}
+    setStaticData: (data:{countryConfigData:CountryConfigDataBaseType | null, timeZoneData: TimeZoneDataBaseType[] | null, organizationsData: OrganizationsDataBaseType[] | null}) => void;
 }
 
 /**
@@ -22,6 +22,7 @@ export const staticDataStore = create<StaticData>((set)=>({
     staticData: {
         countryConfigData: null,
         timeZoneData: null,
+        organizationsData: null
     },
 
     /**

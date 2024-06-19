@@ -15,7 +15,7 @@ export const getRequiredFieldsForValidation = async (
   formData: any,
   loginUserData: any,
   countryCode: any,
-  staticData: {countryConfigData:CountryConfigDataBaseType | null,timeZoneData: TimeZoneDataBaseType | null}
+  staticData: {countryConfigData:CountryConfigDataBaseType | null,timeZoneData: TimeZoneDataBaseType | null,organizationsData: OrganizationsDataBaseType[] | null}
 ) => {
   const supabase = supabaseClient();
 

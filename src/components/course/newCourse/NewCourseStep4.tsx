@@ -36,6 +36,7 @@ import { staticDataStore } from "src/zustandStore/StaticDataStore";
 
 export default function CourseTable() {
   const { t } = useTranslation("common");
+  const { staticData } = staticDataStore()
 
   const { watch } = useFormContext();
 
@@ -46,14 +47,13 @@ export default function CourseTable() {
     id: formData?.program_type_id,
   });
 
-  const { data: organizationData, isLoading } = useOne({
-    resource: "organizations",
-    id: formData?.organization_id,
-  });
+  
+  const organizationsData = staticData?.organizationsData
+  const organization = organizationsData?.find(organization=>organization?.id === formData?.organization_id)
 
   return (
     <>
-      {formData?.feeLevels == undefined || isLoading ? (
+      {formData?.feeLevels == undefined? (
         <section className="flex flex-row w-full h-[400px] justify-center items-center">
           <div className="loader"></div>
         </section>
@@ -72,7 +72,7 @@ export default function CourseTable() {
             ) : (
               <CourseFeeTable
                 courseFeeSettings={formData?.feeLevels}
-                organizationData={organizationData?.data}
+                organizationData={organization}
               />
             )
           }

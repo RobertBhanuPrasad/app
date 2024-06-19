@@ -70,8 +70,9 @@ export default function NewCourseReviewPage() {
     "course.view_course",
     "new_strings",
     "validations_text",
-  ]);
-  const supabase = supabaseClient();
+    ]);
+    const supabase = supabaseClient();
+    const {staticData} = staticDataStore()
 
   const { data: loginUserData }: any = useGetIdentity();
 
@@ -320,10 +321,8 @@ export default function NewCourseReviewPage() {
     newCourseData?.visibility_id &&
     getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id);
 
-  const { data: organizationName } = useOne({
-    resource: "organizations",
-    id: newCourseData?.organization_id,
-  });
+  const organizationsData = staticData?.organizationsData
+  const organization = organizationsData?.find(organization=>organization?.id === newCourseData?.organization_id)
 
   const { data: ProgramOrganizer } = useMany({
     resource: "users",
@@ -435,7 +434,6 @@ export default function NewCourseReviewPage() {
 
 
   // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
-  const {staticData} = staticDataStore()
 
   const timeZoneData = staticData?.timeZoneData
 
@@ -847,9 +845,9 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
               </p>
               <abbr
                 className="font-semibold no-underline truncate block text-accent-secondary text-[#666666]"
-                title={organizationName?.data?.name}
+                title={organization?.name}
               >
-                {organizationName?.data?.name}
+                {organization?.name}
               </abbr>
             </div>
             <div className="w-[291px]">

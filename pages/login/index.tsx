@@ -1,8 +1,8 @@
-import { fetchStaticDBData } from "@components/PreFetchStaticApi";
 import { useRouter } from "next/navigation";
 import nookies from "nookies";
 import { useState } from "react";
 import { supabaseClient } from "src/utility";
+import { fetchStaticDBData } from "src/utility/PreFetchStaticApi";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,9 +13,6 @@ const Login = () => {
   const supabase = supabaseClient();
 
   const handleLogin = async () => {
-  // storing static db data in local storage 
-    const staticDataFromDB = await fetchStaticDBData()
-    localStorage.setItem("staticDataFromDB",JSON.stringify(staticDataFromDB))
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -37,7 +34,10 @@ const Login = () => {
       console.log(count);
       if (count === 1) {
         router.replace("/change-password");
-      } else {
+      } else {  
+        // storing static db data in local storage 
+        const staticDataFromDB = await fetchStaticDBData()
+        localStorage.setItem("staticDataFromDB",JSON.stringify(staticDataFromDB))
         router.replace("/courses/list");
       }
     }

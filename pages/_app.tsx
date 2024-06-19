@@ -17,7 +17,6 @@ import { getLanguageCodeFromLocale, loadLanguageModule } from "src/utility/useGe
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { staticDataStore } from "src/zustandStore/StaticDataStore";
-import { fetchStaticDBData } from "@components/PreFetchStaticApi";
 import _ from "lodash";
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat' 
@@ -79,20 +78,6 @@ function MyApp({
         const localStorageDataStr = localStorage.getItem("staticDataFromDB");
         let localStorageData = localStorageDataStr ? JSON.parse(localStorageDataStr) : {};       
         setStaticData(localStorageData)
-        
-        const data = await fetchStaticDBData()
-
-        // if local storage data and data from api calls are equal then set the data in zustand store
-        if(_.isEqual(localStorageData,data)){
-           setStaticData(localStorageData)    
-        }
-
-        // if local storage data and data from api calls are not equal then store the updated final data in local storage and zustand store
-        else{
-          const finalStaticData = {...localStorageData, ...data}
-          localStorage.setItem("staticDataFromDB",JSON.stringify(finalStaticData))
-          setStaticData(finalStaticData)
-        }     
       }
 
       fetchData()
