@@ -10,11 +10,11 @@ export const accountingValidationSchema = () => {
 const revenueValidationSchema = z.array(
   z.object({
     deposit_date: z.date({
-      required_error: "depoist date is required field.",
+      required_error: "deposit date is required field.",
     }),
     deposit_amount: z
       .string({
-        required_error: "Amount is required field",
+        required_error: "Deposit Amount is required field",
       })
       .nonempty({ message: "Amount is required field" })
       .regex(/^\d+(\.\d+)?$/, "Please enter a valid money value.")

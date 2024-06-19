@@ -42,12 +42,12 @@ function RevenueSection() {
   const [isAddButtonDisabled, setAddButtonDisabled] = useState(false);
 
   const addInitialRow = () => {
-    append({});
+    append({ deposit_date: new Date() });
     setAddButtonDisabled(true);
   };
 
   const addRow = () => {
-    append({});
+    append({ deposit_date: new Date() });
   };
 
   const deleteRow = (index: number) => {
@@ -69,23 +69,22 @@ function RevenueSection() {
     }
   };
 
-  console.log("heyy disable truee", fields?.length > 0);
 
   return (
-    <div>
+    <div className="bg-[white]">
       {" "}
-      <div className="m-8 text-[#333333] text-[23px] font-semibold	">
+      <div className="m-8 text-[#333333] flex flex-col gap-6 text-[23px] font-semibold">
         <div className="flex flex-row justify-between">
           <p>Revenue</p>
           <div className="text-[#7677F4] text-[16px] flex flex-row ">
             <QuestionInstructionModal />
           </div>
         </div>
-        <div className="pt-5">
+        <div>
           <CourseInformationAccordion />
         </div>
 
-        <div className="flex pt-10 pb-5">
+        <div className="flex">
           <MainHeader
             className="text-[18px]"
             children="Deposit of Offline Revenue"
@@ -180,12 +179,13 @@ function RevenueSection() {
           </div>
         )}
 
-        <div className="flex self-end justify-center gap-2 pt-10 pb-7">
+        <div className="flex flex-row gap-2 justify-center">
           <Button
             className="w-[118px] h-[46px] border border-[#7677F4] rounded-[12px] bg-[white] text-[#7677F4]"
             onClick={() => {
               setParamValue("close_participants");
             }}
+            type="button"
           >
             Previous
           </Button>
@@ -222,7 +222,7 @@ const DepositeAmount = ({ index }: { index: number }) => {
         }}
         placeholder="Enter amount"
         error={error ? true : false}
-        className="min-w-[250px] w-full rounded-[12px] text-[14px] placeholder:text-[#333333]"
+        className="min-w-[250px] w-full rounded-[12px] text-[14px] placeholder:text-[#999999]"
       />
       {error && (
         <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
@@ -269,8 +269,8 @@ const Notes = ({ index }: { index: number }) => {
         onChange={onChange}
         error={error ? true : false}
         type="text"
-        placeholder="Lorem Epsim..."
-        className="min-w-[457px] rounded-[12px] text-[14px] placeholder:text-[#333333] "
+        placeholder="Enter Notes here..."
+        className="min-w-[457px] rounded-[12px] text-[14px] placeholder:text-[#999999]"
       />
       {error && (
         <span className="text-[#FF6D6D] text-[12px]">{error?.message}</span>
