@@ -33,6 +33,7 @@ import {
 import { getOptionValuesByOptionLabel } from "src/utility/GetOptionValuesByOptionLabel";
 import { ParticipantStore } from "src/zustandStore/ParticipantStore";
 import { useTranslation } from "next-i18next";
+import { PhoneNumberInput } from "@components/PhoneNumberInput";
 
 export function ParticipantsAdvanceFilter() {
   const { t } = useTranslation([
@@ -396,7 +397,7 @@ export const ContactDetails = () => {
         ></Input>
         {contactName?.length >= 50 && (
           <div className=" text-red-600">
-            Reached maximum character limit: 50
+            {t("new_strings:reached_maximum_character_limit_50")}
           </div>
         )}
       </div>
@@ -412,12 +413,15 @@ export const ContactDetails = () => {
             ""
           ) : (
             <div className="text-red-600">
-              Enter valid email id and Enter only one email at a time
+              {t(
+                "new_strings:enter_valid_email_id_and_enter_only_one_email_at_a_time"
+              )}
             </div>
           ))}
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 w-[auto]">
         <Label>{t("course.participants:find_participant.phone")}</Label>
+        {/* <PhoneNumberInput  onChange={(val)=>handlePhoneChange(val)} value={contactPhone}/> */}
         <Input
           onChange={handlePhoneChange}
           value={contactPhone}

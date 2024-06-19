@@ -5,8 +5,9 @@ import LogoutIcon from '@public/assets/LogoutIcon'
 import { useGetIdentity } from '@refinedev/core'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import nookies from "nookies"
 import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar'
+import { Button } from 'src/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from 'src/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,11 +24,14 @@ import {
   NavigationMenuTrigger
 } from 'src/ui/navigation-menu'
 import { supabaseClient } from 'src/utility'
+import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 
 
 function Navbar() {
 
   const { data: loginUserData }: any = useGetIdentity()
+
+  const { setViewLogoutModal } = newCourseStore()
 
   const router = useRouter()
 
@@ -47,7 +51,7 @@ function Navbar() {
     // }
   ]
 
-  const supabase = supabaseClient()
+
 
   // Get the current pathname using the useRouter hook
   const { pathname } = router
@@ -59,11 +63,8 @@ function Navbar() {
   const firstRouteName = pathSegments.find(segment => segment !== '')
 
   // to logged out the current user
-  const handleLogOut = async () => {
-    const { error } = await supabase.auth.signOut()
-     if (error) {
-      console.log('error is', error)
-     }
+  const handleLogOut = () => {
+    setViewLogoutModal(true)
   }
 
   return (
@@ -172,6 +173,7 @@ function Navbar() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <LogoutAlterModal />
       </div>
     </div>
   )
@@ -189,5 +191,60 @@ const MenuList = ({ Name, route }: any) => {
         </NavigationMenuLink>
       </Link>
     </div>
+  )
+}
+
+
+const LogoutAlterModal = () => {
+  const { viewLogoutModal, setViewLogoutModal } = newCourseStore()
+
+  const supabase = supabaseClient()
+
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.log('error is', error)
+    }
+    setViewLogoutModal(false)
+  }
+  return (
+    <Dialog open={viewLogoutModal}>
+      <DialogContent className="w-[414px] h-[279px]" handleClickCloseButton={() => { setViewLogoutModal(false) }}>
+        <DialogHeader className="text-center">
+          <div className="flex items-center w-full justify-center">
+            <Logo />
+          </div>
+          <DialogTitle className="font-semibold text-[20px] text-center">
+            Logging out
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            Are you sure you want to log out?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <div className='flex flex-row gap-5 justify-center  w-full'>
+            <div>
+              <Button type='button' variant="outline"
+                className="text-[#7677F4] w-[100px] h-[45px] border border-[#7677F4] rounded-[12px] hover:bg-blue-500 hover:text-white "
+                onClick={() => setViewLogoutModal(false)}
+              >
+                No
+              </Button>
+            </div>
+            <div>
+              <Button type='button' variant="outline"
+                className="text-[#7677F4] w-[100px] h-[45px] border border-[#7677F4] rounded-[12px] hover:bg-blue-500 hover:text-white "
+                onClick={handleLogout}
+
+              >
+                Yes
+              </Button>
+            </div>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

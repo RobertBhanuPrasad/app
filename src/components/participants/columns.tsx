@@ -1,12 +1,20 @@
 import Form from "@components/Formfield";
-import { CaretSortIcon, CountdownTimerIcon, LapTimerIcon } from "@radix-ui/react-icons";
-import { useList } from "@refinedev/core";
+import EmailConfimrationIcon from "@public/assets/EmailConfirmationIcon";
+import MemoIcon from "@public/assets/MemoIcon";
+import { CountdownTimerIcon } from "@radix-ui/react-icons";
+import { useGetIdentity, useList } from "@refinedev/core";
 import { ColumnDef } from "@tanstack/react-table";
-import { AlarmClock, ArrowDownIcon, ArrowUpIcon, CalendarClockIcon, Clock10Icon, ClockIcon, LucideClock, LucideFileClock, LucideTimer, MoreVertical, TimerIcon, TimerOff, TimerReset } from "lucide-react";
+import dayjs from "dayjs";
+import { MoreVertical } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { translatedText } from "src/common/translations";
+import { PARTICIPANT_PAYMENT_STATUS } from "src/constants/OptionLabels";
+import { PARTICIPANT_PENDING_PAYMENT_STATUS } from "src/constants/OptionValueOrder";
+import { SortingArrows } from "src/ui/SortingArrows";
+import { TableHeader } from "src/ui/TextTags";
+import { AlertDialog, AlertDialogContent } from "src/ui/alert-dialog";
 import { Button } from "src/ui/button";
 import { Dialog, DialogTrigger } from "src/ui/dialog";
 import {
@@ -15,6 +23,14 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "src/ui/dropdown-menu";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "src/ui/tooltip";
+import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
+import { getActionMenuItems } from "./ParticipantUtils";
 import TransactionActivity from "./TransactionActivityPopover";
 import { handleEditPaymentValues } from "./editParticipant/EditParticipantUtil";
 import EditPayment from "./editParticipant/editPayment";
@@ -28,6 +44,7 @@ export const columns = () => {
         "course.participants",
         "new_strings",
         "course.view_course",
+        "course.find_course",
     ]);
     const columns: ExtendedColumnDef<any>[] = [
         {
@@ -67,92 +84,297 @@ export const columns = () => {
             },
         },
         {
-            accessorKey: "created_at",
-            column_name: t(
-                "course.participants:find_participant.registration_date"
-            ),
-            header: ({ column }) => {
-                return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t(
-                                "course.participants:find_participant.registration_date"
-                            )}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
-                );
-            },
-
-            cell: ({ row }: any) => {
-                const db_date = formatDate(row?.original?.created_at);
-                return <div className="text-left pl-4">{db_date}</div>;
-            },
-        },
-        {
             accessorKey: "Name",
             column_name: t("course.participants:find_participant.name"),
             enableHiding: false,
             enableSorting: true,
-            header: ({ column }) => {
+            header: ({ column }: any) => {
                 return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t("course.participants:find_participant.name")}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
+                    <TableHeader className="justify-between min-w-[108px]">
+                        {t("course.participants:find_participant.name")}
+
+                        <SortingArrows
+                            sortingState={column.getIsSorted()}
+                            onSortChange={column.getToggleSortingHandler()}
+                        />
+                    </TableHeader>
                 );
             },
 
             cell: ({ row }: any) => {
                 return (
-                    <div className="text-left pl-4 !min-w-[175px] capitalize">
+                    <div className="text-left !min-w-[175px] capitalize flex gap-3">
                         {row?.original?.contact_id?.full_name}
+                        {row?.original?.memo?.length && (
+                            <div className="cursor-pointer">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <MemoIcon />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="bg-gray-900 text-white w-52">
+                                            <p>{row?.original?.memo}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
+                        )}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Phone",
+            column_name: t("course.participants:find_participant.phone"),
+            enableHiding: false,
+            header: ({ column }: any) => {
+                return (
+                    <TableHeader className="justify-between min-w-[108px]">
+                        {t("course.participants:find_participant.phone")}
+
+                        <SortingArrows
+                            sortingState={column.getIsSorted()}
+                            onSortChange={column.getToggleSortingHandler()}
+                        />
+                    </TableHeader>
+                );
+            },
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className="text-left !min-w-[150px]">
+                        {row?.original?.contact_id?.mobile}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Email",
+            column_name: t("course.participants:find_participant.email"),
+            enableHiding: false,
+            header: ({ column }: any) => {
+                return (
+                    <TableHeader className="justify-between min-w-[108px]">
+                        {t("course.participants:find_participant.email")}
+
+                        <SortingArrows
+                            sortingState={column.getIsSorted()}
+                            onSortChange={column.getToggleSortingHandler()}
+                        />
+                    </TableHeader>
+                );
+            },
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className="lowercase text-left !min-w-[150px]">
+                        {row?.original?.contact_id?.email}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Fee Level",
+            column_name: t("course.participants:view_participant.fee_level"),
+            enableHiding: false,
+            header: ({ column }: any) => {
+                return (
+                    <TableHeader className="justify-between min-w-[108px]">
+                        {t("course.participants:view_participant.fee_level")}
+                        <SortingArrows
+                            sortingState={column.getIsSorted()}
+                            onSortChange={column.getToggleSortingHandler()}
+                        />
+                    </TableHeader>
+                );
+            },
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className=" capitalize text-left !min-w-[150px]">
+                        {translatedText(
+                            row?.original?.price_category_id?.fee_level_id?.name
+                        )}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Amount",
+            column_name: t(
+                "course.participants:edit_participant.participants_information_tab.amount"
+            ),
+            enableHiding: false,
+            header: ({ column }: any) => {
+                return (
+                    <TableHeader className="justify-between min-w-[108px]">
+                        {t(
+                            "course.participants:edit_participant.participants_information_tab.amount"
+                        )}
+                        <SortingArrows
+                            sortingState={column.getIsSorted()}
+                            onSortChange={column.getToggleSortingHandler()}
+                        />
+                    </TableHeader>
+                );
+            },
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className="text-left !min-w-[150px]">
+                        {row?.original?.total_amount?.toFixed(2)}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Transaction Status",
+            column_name: t(
+                "course.participants:find_participant.transaction_status"
+            ),
+            enableHiding: false,
+            header: ({ column }) => {
+                return (
+                    <div className="min-w-[150px] text-left">
+                        {t(
+                            "course.participants:find_participant.transaction_status"
+                        )}
+                    </div>
+                );
+            },
+
+            // This any will be removed after internal dataStructure implementation
+
+            cell: ({ row }: any) => {
+                const pendingStatusId = getOptionValueObjectByOptionOrder(
+                    PARTICIPANT_PAYMENT_STATUS,
+                    PARTICIPANT_PENDING_PAYMENT_STATUS
+                )?.id;
+                const [editPayment, setEditPayment] = useState(false);
+
+                const [defaultValues, setDefaultValues] = useState({});
+                const payment = useList({
+                    resource: "participant_payment_history",
+                    meta: {
+                        select: "id",
+                    },
+                    filters: [
+                        {
+                            field: "participant_id",
+                            operator: "eq",
+                            value: row?.original?.id,
+                        },
+                        {
+                            field: "program_id",
+                            operator: "eq",
+                            value: row?.original?.program_id,
+                        },
+                    ],
+                    sorters: [
+                        {
+                            field: "created_at",
+                            order: "desc",
+                        },
+                    ],
+                });
+                const paymentHistoryId = payment?.data?.data[0]?.id;
+                useEffect(() => {
+                    async function fetchData() {
+                        try {
+                            const values = await handleEditPaymentValues(
+                                Number(paymentHistoryId)
+                            );
+                            setDefaultValues(values);
+                        } catch (error) {
+                            console.error("An error occurred:", error);
+                        }
+                    }
+
+                    if (paymentHistoryId) {
+                        fetchData();
+                    }
+                }, [paymentHistoryId]);
+                return (
+                    <div>
+                        <div className="p-[5px] cursor-pointer rounded-sm">
+                            <Dialog open={editPayment}>
+                                <DialogTrigger asChild={editPayment}>
+                                    <div
+                                        className={
+                                            row?.original?.payment_status_id
+                                                ?.id == pendingStatusId
+                                                ? `text-left flex items-center gap-3 text-red-500 font-bold`
+                                                : `text-left flex items-center gap-3`
+                                        }
+                                        onClick={() =>
+                                            row?.original?.payment_status_id
+                                                ?.id == pendingStatusId
+                                                ? setEditPayment(true)
+                                                : setEditPayment(false)
+                                        }
+                                    >
+                                        {row?.original?.payment_status_id?.name
+                                            ? translatedText(
+                                                  row?.original
+                                                      ?.payment_status_id?.name
+                                              )
+                                            : "-"}
+                                        {row?.original?.payment_status_id?.id ==
+                                            pendingStatusId && (
+                                            <CountdownTimerIcon />
+                                        )}
+                                    </div>
+                                </DialogTrigger>
+                                {Object.keys(defaultValues).length > 0 && (
+                                    <Form
+                                        onSubmit={() => {}}
+                                        defaultValues={defaultValues}
+                                    >
+                                        {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
+                                        <EditPayment
+                                            paymentId={Number(paymentHistoryId)}
+                                            setEditPayment={setEditPayment}
+                                            contactId={
+                                                row?.original?.id
+                                            }
+                                        />
+                                    </Form>
+                                )}
+                            </Dialog>
+                        </div>
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "Attendance Status",
+            column_name: t(
+                "course.participants:find_participant.attendance_status"
+            ),
+            enableHiding: false,
+            header: ({ column }: any) => {
+                return (
+                    <TableHeader className="justify-between min-w-[158px]">
+                        {t(
+                            "course.participants:find_participant.attendance_status"
+                        )}
+                        <SortingArrows
+                            sortingState={column.getIsSorted()}
+                            onSortChange={column.getToggleSortingHandler()}
+                        />
+                    </TableHeader>
+                );
+            },
+
+            cell: ({ row }: any) => {
+                return (
+                    <div className="text-left !min-w-[150px]">
+                        {row?.original?.participant_attendence_status_id?.name
+                            ? translatedText(
+                                  row?.original
+                                      ?.participant_attendence_status_id?.name
+                              )
+                            : "-"}
                     </div>
                 );
             },
@@ -184,238 +406,55 @@ export const columns = () => {
             column_name: t(
                 "course.participants:find_participant.date_of_birth"
             ),
-            header: ({ column }) => {
+            header: ({ column }: any) => {
                 return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t(
-                                "course.participants:find_participant.date_of_birth"
-                            )}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
-                );
-            },
-
-            cell: ({ row }: any) => {
-                const db_date = formatDate(
-                    row?.original?.contact_id?.date_of_birth
-                );
-                return (
-                    <div className="text-left !min-w-[150px] pl-4">
-                        {db_date.length ? db_date : "-"}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Phone",
-            column_name: t("course.participants:find_participant.phone"),
-            enableHiding: false,
-            header: ({ column }) => {
-                return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t("course.participants:find_participant.phone")}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
-                );
-            },
-
-            cell: ({ row }: any) => {
-                return (
-                    <div className="text-left !min-w-[150px] pl-4">
-                        {row?.original?.contact_id?.mobile}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Email",
-            column_name: t("course.participants:find_participant.email"),
-            enableHiding: false,
-            header: ({ column }) => {
-                return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t("course.participants:find_participant.email")}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
-                );
-            },
-
-            cell: ({ row }: any) => {
-                return (
-                    <div className="lowercase text-left !min-w-[150px] pl-4">
-                        {row?.original?.contact_id?.email}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Fee Level",
-            column_name: t("course.participants:view_participant.fee_level"),
-            enableHiding: false,
-            header: ({ column }) => {
-                return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t(
-                                "course.participants:view_participant.fee_level"
-                            )}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
-                );
-            },
-
-            cell: ({ row }: any) => {
-                return (
-                    <div className=" capitalize text-left !min-w-[150px] pl-4">
-                        {translatedText(
-                            row?.original?.price_category_id?.fee_level_id?.name
+                    <TableHeader className="justify-between min-w-[108px]">
+                        {t(
+                            "course.participants:find_participant.date_of_birth"
                         )}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Amount",
-            column_name: t(
-                "course.participants:edit_participant.participants_information_tab.amount"
-            ),
-            enableHiding: false,
-            header: ({ column }) => {
-                return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t(
-                                "course.participants:edit_participant.participants_information_tab.amount"
-                            )}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
+                        <SortingArrows
+                            sortingState={column.getIsSorted()}
+                            onSortChange={column.getToggleSortingHandler()}
+                        />
+                    </TableHeader>
                 );
             },
 
             cell: ({ row }: any) => {
+                const db_date = row?.original?.contact_id?.date_of_birth
+                    ? dayjs(row?.original?.contact_id?.date_of_birth).format(
+                          "MMM DD, YYYY"
+                      )
+                    : "-";
                 return (
-                    <div className="text-left !min-w-[150px] pl-4">
-                        {row?.original?.total_amount?.toFixed(2)}
-                    </div>
+                    <div className="text-left !min-w-[150px]">{db_date}</div>
                 );
+            },
+        },
+        {
+            accessorKey: "created_at",
+            column_name: t(
+                "course.participants:find_participant.registration_date"
+            ),
+            header: ({ column }: any) => {
+                return (
+                    <TableHeader className="justify-between min-w-[158px]">
+                        {t(
+                            "course.participants:find_participant.registration_date"
+                        )}
+                        <SortingArrows
+                            sortingState={column.getIsSorted()}
+                            onSortChange={column.getToggleSortingHandler()}
+                        />
+                    </TableHeader>
+                );
+            },
+
+            cell: ({ row }: any) => {
+                const db_date = row?.original?.created_at
+                    ? dayjs(row?.original?.created_at).format("MMM DD, YYYY")
+                    : "-";
+                return <div className="text-left">{db_date}</div>;
             },
         },
         {
@@ -439,7 +478,7 @@ export const columns = () => {
                 return (
                     <div className="text-left">
                         {row?.original?.participant_payment_history?.length >
-                            0 ? (
+                        0 ? (
                             <TransactionActivity
                                 transactionHistory={
                                     row?.original?.participant_payment_history
@@ -505,8 +544,8 @@ export const columns = () => {
                     <div className="text-left">
                         {row?.original?.payment_method?.name
                             ? translatedText(
-                                row?.original?.payment_method?.name
-                            )
+                                  row?.original?.payment_method?.name
+                              )
                             : "-"}
                     </div>
                 );
@@ -530,160 +569,6 @@ export const columns = () => {
                     <div className="text-left">
                         {row?.original?.balance_due
                             ? row?.original?.balance_due?.toFixed(2)
-                            : "-"}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Transaction Status",
-            column_name: t(
-                "course.participants:find_participant.transaction_status"
-            ),
-            enableHiding: false,
-            header: ({ column }) => {
-                return (
-                    <div className="min-w-[150px] text-left">
-                        {t(
-                            "course.participants:find_participant.transaction_status"
-                        )}
-                    </div>
-                );
-            },
-
-            // This any will be removed after internal dataStructure implementation
-
-            cell: ({ row }: any) => {
-                const [editPayment, setEditPayment] = useState(false);
-
-                const [defaultValues, setDefaultValues] = useState({});
-                const payment = useList({
-                    resource: "participant_payment_history",
-                    meta: {
-                        select: "id",
-                    },
-                    filters: [
-                        {
-                            field: "participant_id",
-                            operator: "eq",
-                            value: row?.original?.id,
-                        },
-                        {
-                            field: "program_id",
-                            operator: "eq",
-                            value: row?.original?.program_id,
-                        },
-                    ],
-                    sorters: [
-                        {
-                            field: "created_at",
-                            order: "desc",
-                        },
-                    ],
-                });
-                const paymentHistoryId = payment?.data?.data[0];
-                useEffect(() => {
-                    async function fetchData() {
-                        try {
-                            const values = await handleEditPaymentValues(
-                                Number(paymentHistoryId?.id)
-                            );
-                            setDefaultValues(values);
-                        } catch (error) {
-                            console.error("An error occurred:", error);
-                        }
-                    }
-
-                    if (paymentHistoryId) {
-                        fetchData();
-                    }
-                }, [paymentHistoryId]);
-                return (
-                    <div>
-                        <div className="p-[5px] cursor-pointer rounded-sm">
-                            <Dialog open={editPayment}>
-                                <DialogTrigger asChild={editPayment}>
-                                    <div
-                                        className={row?.original?.payment_status_id?.value == 'Pending' ? `text-left flex items-center gap-3 text-red-500 font-bold` : `text-left flex items-center gap-3`}
-                                        onClick={() =>
-                                            setEditPayment(!editPayment)
-                                        }
-                                    >
-                                        {row?.original?.payment_status_id?.value
-                                            ? translatedText(
-                                                row?.original
-                                                    ?.payment_status_id?.name
-                                            )
-                                            : "-"}
-                                        {row?.original?.payment_status_id?.value == 'Pending' && <CountdownTimerIcon />}
-                                    </div>
-                                </DialogTrigger>
-                                {Object.keys(defaultValues).length > 0 &&
-                                    <Form
-                                        onSubmit={() => { }}
-                                        defaultValues={defaultValues}
-                                    >
-                                        {/* Edit payment component accepts payment history id as paymentID and setEditPayment function to handle open or close state */}
-                                        <EditPayment
-                                            paymentId={Number(paymentHistoryId)}
-                                            setEditPayment={setEditPayment}
-                                        />
-                                    </Form>}
-                            </Dialog>
-                        </div>
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: "Attendance Status",
-            column_name: t(
-                "course.participants:find_participant.attendance_status"
-            ),
-            enableHiding: false,
-            header: ({ column }) => {
-                return (
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() =>
-                                column.toggleSorting(
-                                    column.getIsSorted() === "asc"
-                                )
-                            }
-                        >
-                            {t(
-                                "course.participants:find_participant.attendance_status"
-                            )}
-                            {column.getIsSorted() === "desc" ? (
-                                <ArrowDownIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : column.getIsSorted() === "asc" ? (
-                                <ArrowUpIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            ) : (
-                                <CaretSortIcon
-                                    className="ml-2 size-4"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </Button>
-                    </div>
-                );
-            },
-
-            cell: ({ row }: any) => {
-                return (
-                    <div className="text-left !min-w-[150px] pl-4">
-                        {row?.original?.participant_attendence_status_id?.name
-                            ? translatedText(
-                                row?.original
-                                    ?.participant_attendence_status_id?.name
-                            )
                             : "-"}
                     </div>
                 );
@@ -733,13 +618,24 @@ export const columns = () => {
 
             // This any will be removed after internal dataStructure implementation
 
+            // cell: ({ row }: any) => {
+            //   const toggle =
+            //     row?.original?.is_program_agreement_checked === true
+            //       ? "Completed"
+            //       : row?.original?.is_program_agreement_checked === false
+            //       ? "Pending"
+            //       : "-";
+            //   return <div className="min-w-[150px] text-left">{toggle}</div>;
+            // },
             cell: ({ row }: any) => {
                 const toggle =
                     row?.original?.is_program_agreement_checked === true
-                        ? "Completed"
+                        ? t("course.find_course:completed")
                         : row?.original?.is_program_agreement_checked === false
-                            ? "Pending"
-                            : "-";
+                        ? t(
+                              "course.participants:edit_participant.participants_information_tab.pending"
+                          )
+                        : "-";
                 return <div className="min-w-[150px] text-left">{toggle}</div>;
             },
         },
@@ -788,13 +684,24 @@ export const columns = () => {
 
             // This any will be removed after internal dataStructure implementation
 
+            // cell: ({ row }: any) => {
+            //   const toggle =
+            //     row?.original?.is_health_declaration_checked === true
+            //       ? "Completed"
+            //       : row?.original?.is_health_declaration_checked === false
+            //       ? "Pending"
+            //       : "-";
+            //   return <div className="min-w-[150px] text-left">{toggle}</div>;
+            // },
             cell: ({ row }: any) => {
                 const toggle =
                     row?.original?.is_health_declaration_checked === true
-                        ? "Completed"
+                        ? t("course.find_course:completed")
                         : row?.original?.is_health_declaration_checked === false
-                            ? "Pending"
-                            : "-";
+                        ? t(
+                              "course.participants:edit_participant.participants_information_tab.pending"
+                          )
+                        : "-";
                 return <div className="min-w-[150px] text-left">{toggle}</div>;
             },
         },
@@ -832,49 +739,148 @@ export const columns = () => {
             id: "actions",
             enableHiding: false,
             cell: ({ row }) => {
-                const optionsValues = [
-                    t("course.view_course:participants_tab.view_participant"),
-                    t("new_strings:edit_participant"),
-                    // TODO(Not in MVP scope): Integrate these actions later
-                    // "Transfer",
-                    // "Send Email",
-                    // "Perform sale with cash, check offline credit card payment",
-                    // "Send registration confirmation email",
-                    // "Upload offline payment receipt",
-                    // "Download receipt",
-                    // "Transaction Activity",
-                ];
-
                 const router = useRouter();
+                const { data: loggedInUserData }: any = useGetIdentity();
+                const actionMenu = getActionMenuItems(
+                    loggedInUserData?.userData?.user_roles
+                );
+                const [
+                    openSendEmailComfirmation,
+                    setOpenSendEmailComfirmation,
+                ] = useState(false);
+
+                const handleActions = (
+                    index: number,
+                    participant_id: any,
+                    router: any,
+                    participant_email: string
+                ) => {
+                    switch (index) {
+                        case 1: {
+                            // Navigate to view participant page
+                            const routePath = router.asPath.split("list")[0];
+                            router.push(`/${routePath}/${participant_id}`);
+                            break;
+                        }
+                        case 2: {
+                            // Navigate to edit participant page
+                            const routePath = router.asPath.split("list")[0];
+                            router.push(`/${routePath}/${participant_id}/edit`);
+                            break;
+                        }
+                        case 3: {
+                            // TODO(Not in PI-2 scope): Transfer
+                            break;
+                        }
+                        case 4: {
+                            //Open the default mail application witn the selected participant mail as to email address.
+                            const mailtoUrl = `mailto:${participant_email}`;
+                            window.open(mailtoUrl);
+                            break;
+                        }
+                        case 5: {
+                            // TODO(Not in PI-2 scope): Perform Sale
+                            break;
+                        }
+                        case 6: {
+                            // TODO: Send Registration confirmation email, dependency on Harmony API
+                            setOpenSendEmailComfirmation(true);
+                            break;
+                        }
+                        case 7: {
+                            // TODO(Not in PI-2 scope): Upload offline payment receipt
+                            break;
+                        }
+                        case 8: {
+                            // TODO: Download Receipt
+                            break;
+                        }
+                        case 9: {
+                            //Navigate to view participant page -> Transaction activity tab
+                            const routePath = router.asPath.split("list")[0];
+                            router.push(`/${routePath}/${participant_id}`);
+                            break;
+                        }
+                    }
+                };
+
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                className="h-8 w-8 p-0 text-[#7677F4]"
-                            >
-                                <span className="sr-only">Open menu</span>
-                                <MoreVertical className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <div className="flex flex-col gap-2 max-h-[300px] max-w-[200px] overflow-y-auto scrollbar text-[#333333]">
-                                {optionsValues.map((value, index) => (
-                                    <DropdownMenuItem
-                                        onClick={() => {
-                                            handleActions(
-                                                index,
-                                                row?.original?.id,
-                                                router
-                                            );
-                                        }}
-                                    >
-                                        {value}
-                                    </DropdownMenuItem>
-                                ))}
-                            </div>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0 text-[#7677F4]"
+                                >
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreVertical className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <div className="flex flex-col gap-2 max-h-[300px] max-w-[170px] overflow-y-auto scrollbar text-[#333333]">
+                                    {actionMenu?.map((value: any, index) => (
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                            onClick={() => {
+                                                handleActions(
+                                                    value?.order,
+                                                    row?.original?.id,
+                                                    router,
+                                                    row?.original?.contact_id
+                                                        ?.email
+                                                );
+                                            }}
+                                        >
+                                            {value?.option}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        {openSendEmailComfirmation && (
+                            <AlertDialog open={openSendEmailComfirmation}>
+                                <AlertDialogContent>
+                                    <div className="w-full flex flex-col text-center items-center gap-4">
+                                        <EmailConfimrationIcon />
+                                        <div className="font-thin text-[16px]">
+                                            {t(
+                                                "new_strings:email_confirmation_text"
+                                            )}
+                                            <br></br>
+                                            <span className="font-medium">
+                                                {
+                                                    row?.original?.contact_id
+                                                        ?.email
+                                                }
+                                            </span>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <Button
+                                                variant={"outline"}
+                                                className="border-primary text-primary"
+                                                onClick={() => {
+                                                    setOpenSendEmailComfirmation(
+                                                        false
+                                                    );
+                                                }}
+                                            >
+                                                {t("cancel_button")}
+                                            </Button>
+                                            <Button
+                                                onClick={() => {
+                                                    setOpenSendEmailComfirmation(
+                                                        false
+                                                    );
+                                                }}
+                                            >
+                                                {t("new_strings:ok_button")}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        )}
+                    </div>
                 );
             },
         },
@@ -891,52 +897,3 @@ export function formatDate(date: string): string {
     };
     return new Date(date).toLocaleDateString("en-US", options);
 }
-
-export const handleActions = (
-    index: number,
-    participant_id: any,
-    router: any
-) => {
-    switch (index) {
-        case 0: {
-            // TODO: Navigate to view participant page
-            const routePath = router.asPath.split("list")[0];
-            router.push(`/${routePath}/${participant_id}`);
-            break;
-        }
-        case 1: {
-            // TODO: Navigate to edit participant page
-            const routePath = router.asPath.split("list")[0];
-            router.push(`/${routePath}/${participant_id}/edit`);
-            break;
-        }
-        case 2: {
-            // TODO(Not in MVP scope): Transfer
-            break;
-        }
-        case 3: {
-            // TODO: Send Email, dependency on harmony API
-            break;
-        }
-        case 4: {
-            // TODO(Not in MVP scope): Perform Sale
-            break;
-        }
-        case 5: {
-            // TODO: Send Registration confirmation email, dependency on Harmony API
-            break;
-        }
-        case 6: {
-            // TODO(Not in MVP scope): Upload offline payment receipt
-            break;
-        }
-        case 7: {
-            // TODO: Download Receipt, Tejaswini working on it
-            break;
-        }
-        case 8: {
-            // TODO: Navigate to view participant page -> Transaction activity tab
-            break;
-        }
-    }
-};

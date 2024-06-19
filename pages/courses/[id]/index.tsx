@@ -26,11 +26,6 @@ import {
   REJECTED,
   TIME_FORMAT_12_HOURS,
 } from "src/constants/OptionValueOrder";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "src/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/ui/tabs";
 import { formatDate, formatDateString } from "src/utility/DateFunctions";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
@@ -96,9 +91,14 @@ import {
 } from "src/ui/select";
 import { Separator } from "src/ui/separator";
 import { Textarea } from "src/ui/textarea";
+import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "src/ui/tooltip";
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
+import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormat";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import dayjs from "dayjs";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -132,15 +132,32 @@ function ViewDetails() {
 
   const totalRevenue = courseData?.data?.revenue;
 
-  const startDate = formatDate(
-    courseData?.data?.program_schedules[0]?.start_time
-  );
+  // getting twelve Hr Time Format id to check whether the particular course time format.
+  const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id;
 
-  const endDate = formatDate(
+  const startTime = courseData?.data?.program_schedules[0]?.start_time;
+
+  const endTime =
     courseData?.data?.program_schedules[
       courseData?.data?.program_schedules?.length - 1
-    ]?.end_time
-  );
+    ]?.end_time;
+
+  
+  // TODO we need to change the twelveHrTimeFormat to the enum
+  const startDate =
+    courseData?.data?.hour_format_id === twelveHrTimeFormat
+      ? dayjs(startTime).format("Do MMM hh:mm A")
+      : dayjs(startTime).format("Do MMM HH:mm");
+
+  // TODO we need to change the twelveHrTimeFormat to the enum
+  const endDate =
+    courseData?.data?.hour_format_id === twelveHrTimeFormat
+      ? dayjs(endTime).format("Do MMM hh:mm A")
+      : dayjs(endTime).format("Do MMM HH:mm");
+
   const countryName = `${courseData?.data?.venue_id?.state_id?.country_id?.name}`;
   const { t } = useTranslation([
     "course.view_course",
@@ -203,9 +220,20 @@ function ViewDetails() {
 
   const { data: loginUserData }: any = useGetIdentity();
 
+
+  const countryCode = useGetCountryCode()
+
+  const languageCode = useGetLanguageCode()
+
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+
+      
+  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(countryCode, languageCode, countryConfigData?.data?.[0]?.default_currency_code)
+  
+  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
 
   /**
    * When we change the tab, we need to retrieve the corresponding tab data to update the query name.
@@ -263,7 +291,9 @@ function ViewDetails() {
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
           <CalenderIcon color="#7677F4" />
-          {startDate} to {endDate}
+          <span className="capitalize">
+            {startDate} <span className="lowercase">{t("course.new_course:time_and_venue_tab.to")}</span> {endDate}
+            </span>
           {/* Here we shouldnt show participants and revenue when course is in pending review status  */}
           {courseData?.data?.status_id?.id !== coursePendingReviewStatusId && (
             <div className="flex flex-row gap-2 items-center">
@@ -284,42 +314,48 @@ function ViewDetails() {
               >
                 {courseData?.data?.participant_count}
               </Text>
-              <HoverCard>
-                <HoverCardTrigger>
+              <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
                   <Important />
-                </HoverCardTrigger>
-                <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[312px] py-3 bg-[#333333] text-white border-none">
+                  <div className="text-wrap">
                     {courseData?.data?.participant_count}{" "}
                     {t("new_strings:participants_header_hover_text")}
                     {courseData?.data?.total_participant_count}
                   </div>
-                </HoverCardContent>
-              </HoverCard>
-              <div>
-                <CurrencyIcon />
-              </div>
-              <Text className="text-[#7677F4] font-semibold">
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                {totalRevenue}
+                  <TooltipArrow height={15} width={17} fill="#333333"/>
+                </TooltipContent>
+              </Tooltip>
+              </TooltipProvider>
+              <Text className="text-[15px] flex items-center justify-center text-[#7677F4]">
+                {currencySymbol}
               </Text>
-              <HoverCard>
-                <HoverCardTrigger>
+              <Text className="text-[#7677F4] font-semibold cursor-pointer">
+              {countryConfigData?.data?.[0]?.default_currency_code} {" "}
+              {currencyFormat.format(totalRevenue)}
+              </Text>
+              <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
                   <Important />
-                </HoverCardTrigger>
-                <HoverCardContent>
-                  <div className="w-[231px] text-wrap !rounded-[15px] font-normal">
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[331px] py-3 bg-[#333333] text-white border-none">
+                  <div className="text-wrap">
                     {t(
                       "course.view_course:basic_details_tab.revenue_from_confirmed_pending_transaction"
                     )}{" "}
                     {t(
                       "course.view_course:basic_details_tab.participants_revenue"
-                    )}
+                      )}
                     :{countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                    {totalRevenue}
+                    {currencyFormat.format(totalRevenue)}
                   </div>
-                </HoverCardContent>
-              </HoverCard>
+                  <TooltipArrow height={15} width={17} fill="#333333"/>
+                </TooltipContent>
+              </Tooltip>
+              </TooltipProvider>
             </div>
           )}
         </div>
@@ -353,12 +389,13 @@ function ViewDetails() {
         <div className="flex flex-row items-center gap-2 w-full justify-end text-xs text-[#999999]">
           {t("new_strings:announced_by")}:{" "}
           {courseData?.data?.created_by_user_id?.contact_id?.full_name}
-          <HoverCard>
-            <HoverCardTrigger>
+          <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
               <Important />
-            </HoverCardTrigger>
-            <HoverCardContent className="min-w-[300px] min-h-[104px] !w-full">
-              <div className="!rounded-[15px] font-normal flex flex-col">
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[231px] py-3 bg-[#333333] text-white border-none">
+              <div className="flex flex-col mb-[-1px]">
                 <p>{t("course.view_course:basic_details_tab.approved_by")}:</p>
                 <p>
                   {courseData?.data?.approved_by_user_id &&
@@ -387,8 +424,10 @@ function ViewDetails() {
                     : "-"}
                 </p>
               </div>
-            </HoverCardContent>
-          </HoverCard>
+              <TooltipArrow height={15} width={17} fill="#333333"/>
+            </TooltipContent>
+          </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       <div className="w-full mt-6 ">
@@ -557,7 +596,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border text-[#333333] text-sm font-semibold !border-[#999999]">
+        <SelectTrigger className="w-[192px] border !text-[#333333] text-sm !font-semibold !border-[#999999]">
           <SelectValue placeholder={t("pending_approval")} />
         </SelectTrigger>
         <SelectContent>

@@ -70,7 +70,7 @@ export const EditModalDialog = ({
     PROGRAM_ORGANIZER_TYPE,
     I_AM_CO_TEACHING
   )?.id;
-
+  const { t } = useTranslation("validations_text");
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -86,7 +86,7 @@ export const EditModalDialog = ({
           onSubmit={function (data: any): void {
             throw new Error("Function not implemented.");
           }}
-          schema={validationSchema(iAmCoTeachingId as number)}
+          schema={validationSchema(iAmCoTeachingId as number,t)}
         >
           {content}
           {/* From now we can call this a new component instead of keeping it inside the form to avoid rerendering */}
