@@ -23,6 +23,7 @@ import { RadioGroup, RadioGroupCheckItem } from "src/ui/radio-group";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -363,6 +364,13 @@ const RadioCards = () => {
 
 const OrganizationDropDown = () => {
   const {optionLabelValue}=optionLabelValueStore()
+
+  const {
+    field: { value : temporaryvalue , value, onChange },
+    fieldState: { error: organizationError },
+  } = useController({
+    name: NewCourseStep1FormNames?.organization_id,
+  });
   /**
    * This variable holds the path of the url
    */
@@ -393,13 +401,7 @@ const OrganizationDropDown = () => {
         value,
       },
     ],
-  });
-
-  const {
-    field: { value, onChange },
-    fieldState: { error: organizationError },
-  } = useController({
-    name: NewCourseStep1FormNames?.organization_id,
+    defaultValue : temporaryvalue
   });
 
   const {
@@ -515,7 +517,7 @@ const OrganizationDropDown = () => {
             />
           </SelectTrigger>
           <SelectContent>
-            <Input value={searchValue} onChange={handleSearch} />
+             <SelectInput value={searchValue} onChange={handleSearch} />
             <SelectItems onBottomReached={handleOnBottomReached}>
               {options?.map((option : any, index : any) => {
                 return (
@@ -555,7 +557,7 @@ const ProgramOrganizerDropDown = () => {
   const router = useRouter();
 
   const {
-    field: { value, onChange },
+    field: {value, onChange },
     fieldState: { error: programOrganizerError },
   } = useController({
     name: NewCourseStep1FormNames?.organizer_ids,

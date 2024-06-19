@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "src/ui/button";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useRouter } from "next/router";
 import ErrorAlerts from "@components/ErrorAlert";
 import { supabaseClient } from "src/utility";
@@ -75,23 +74,23 @@ const Entity = () => {
     <>
       {alert2 && <AlertDestructive {...alert2} />}
       <form className="px-4" autoComplete="off" onSubmit={handleSubmit(createEntity)}>
-        <div className="pd-5 text-center bg-body-tertiary">
-          <h1 className="mb-3">Add Entity</h1>
+        <div className="text-center">
+          <h1 className=" mb-3 text-4xl font-extrabold">Add Entity</h1>
         </div>
         <div className="form-group pb-3">
           <label htmlFor="country">Country</label>
-          <input id="country" className="form-control" type="text" placeholder={countryCodes[38]} {...register("country")} />
-          {errors.country && <small id="countryError" className="form-text text-danger">{errors.country.message}</small>}
+          <input id="country" className="form-control w-full px-2 py-2 border border-slate-300 rounded-md" type="text" placeholder={countryCodes[38]} {...register("country")} />
+          {errors.country && <small id="countryError" className="text-red-500">{errors.country.message}</small>}
         </div>
         <div className="form-group pb-3">
           <label htmlFor="org">Organization</label>
-          <input id="org" className="form-control" type="number" placeholder="4 (organization id)" {...register("org", { valueAsNumber: true })} />
-          {errors.org && <small id="orgError" className="form-text text-danger">{errors.org.message}</small>}
+          <input id="org" className="form-control w-full px-2 py-2 border border-slate-300 rounded-md" type="number" placeholder="4 (organization id)" {...register("org", { valueAsNumber: true })} />
+          {errors.org && <small id="orgError" className="text-red-500">{errors.org.message}</small>}
         </div>
         <div className="form-group pb-3">
           <label htmlFor="module">Module</label>
-          <input id="module" className="form-control" type="text" placeholder="RX" {...register("module")} />
-          {errors.module && <small id="moduleError" className="form-text text-danger">{errors.module.message}</small>}
+          <input id="module" className="form-control w-full px-2 py-2 border border-slate-300 rounded-md" type="text" placeholder="RX" {...register("module")} />
+          {errors.module && <small id="moduleError" className="text-red-500">{errors.module.message}</small>}
         </div>
         <div className="text-center">
           <Button type="submit">Continue</Button>

@@ -49,6 +49,7 @@ import NewCourseStep6 from "./NewCourseStep6";
 import { validationSchema } from "./NewCourseValidations";
 import { NewCourseStep3FormNames } from "src/constants/CourseConstants";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
+import dayjs from "dayjs";
 
 export default function NewCourseReviewPage() {
   const { t } = useTranslation([
@@ -57,6 +58,7 @@ export default function NewCourseReviewPage() {
     "course.view_course",
     "new_strings",
     "enums",
+    "validations_text"
   ]);
   const supabase = supabaseClient();
 
@@ -412,21 +414,25 @@ export default function NewCourseReviewPage() {
           {t("sessions")}
         </p>
         {newCourseData?.schedules?.map((data: any) => {
-          const schedule = `${formatDateString(data.date)} | ${
-            data?.startHour || "00"
-          }:${data?.startMinute || "00"}  ${
-            data?.startTimeFormat ? data?.startTimeFormat : ""
-          } to ${data?.endHour || "00"}:${data?.endMinute || "00"}  ${
-            data?.endTimeFormat ? data?.endTimeFormat : ""
-          }`;
+
+          const scheduleDate = dayjs(data.date).format("DD MMM, YYYY | ");
+
+          const scheduleStartTime = `${data?.startHour || "00"}:${data?.startMinute || "00"} ${data?.startTimeFormat || ""}`.trim();
+          
+          const scheduleEndTime = `${data?.endHour || "00"}:${data?.endMinute || "00"} ${data?.endTimeFormat || ""}`.trim();
 
           return (
             <div>
               <abbr
-                className="font-semibold truncate no-underline text-accent-secondary text-[#666666]"
-                title={schedule}
+                className="font-semibold truncate no-underline text-accent-secondary text-[#666666] capitalize"
+                title={`${scheduleDate} ${scheduleStartTime} ${t("course.new_course:time_and_venue_tab.to").toLowerCase()} ${scheduleEndTime}`}
               >
-                {schedule}
+                <div>
+                  {scheduleDate}
+                  {scheduleStartTime}
+                  <span className="lowercase"> {t("course.new_course:time_and_venue_tab.to")} </span>
+                  {scheduleEndTime}
+                </div>
               </abbr>
             </div>
           );
@@ -506,7 +512,7 @@ export default function NewCourseReviewPage() {
       countryCode
     );
 
-    const newCourseZodSchema = validationSchema(iAmCoTeaching as string);
+    const newCourseZodSchema = validationSchema(iAmCoTeaching as string,t);
 
     let requiredFeilds: any = _.concat(...requiredFieldsForValidation);
 
@@ -1513,7 +1519,7 @@ const Accommodation = ({
   accomdationData,
   currencyCode,
 }: {
-  accomdationData: { accommodation_type_id: number; fee_per_person: number };
+  accomdationData: { accommodation_type_id: number; total: number };
   currencyCode: string;
 }) => {
   /**
@@ -1540,13 +1546,13 @@ const Accommodation = ({
         // If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined
         // we need to display the currency code when the code is present for the organization
         title={`${currencyCode ? currencyCode : ""} ${
-          accomdationData?.fee_per_person
+          accomdationData?.total
         }`}
         className="no-underline"
       >
         <CardValue className="truncate">
           {/* If currencyCode undefined and the currencyCode is not present then we will display empty string else there will be chance of displaying the undefined */}
-          {currencyCode ? currencyCode : ""} {accomdationData?.fee_per_person}
+          {currencyCode ? currencyCode : ""} {accomdationData?.total}
         </CardValue>
       </abbr>
     </div>
