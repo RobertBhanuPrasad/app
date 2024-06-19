@@ -1600,10 +1600,13 @@ export const ExistingVenueListSection = ({
                 open={openExistingVenue}
                 onOpenChange={setOpenExistingVenue}
               >
-                <DialogTrigger
+                <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+            <DialogTrigger
                   className={
                     !isVenueSelected
-                      ? "cursor-not-allowed  opacity-50"
+                      ? " cursor-pointer opacity-50"
                       : "opacity-none"
                   }
                   disabled={!isVenueSelected}
@@ -1613,6 +1616,17 @@ export const ExistingVenueListSection = ({
                 >
                   <EditIcon />
                 </DialogTrigger>
+            </TooltipTrigger>
+            {!isVenueSelected && (  
+            <TooltipContent className="max-w-auto py-3 bg-[#333333] text-white border-none">
+              <div className="text-wrap">
+              Select the checkbox to start editing
+              </div>
+              <TooltipArrow height={15} width={17} fill="#333333"/>  
+            </TooltipContent>
+            )}
+          </Tooltip>
+          </TooltipProvider>
                 <DialogContent className="!w-[636px] !h-[430px] pt-6 px-[25px] rounded-6">
                   <AddOrEditVenue
                     handleSubmit={() => {
