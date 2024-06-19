@@ -13,6 +13,7 @@ import { Input } from "src/ui/input";
 import {
   Select,
   SelectContent,
+  SelectInput,
   SelectItem,
   SelectItems,
   SelectTrigger,
@@ -143,6 +144,7 @@ export const CityDropDown = ({
 }) => {
   const { t } = useTranslation("common");
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // track whether the city drop down is clicked or not
   const [citySelectClicked, setCitySelectClicked] = useState(false)
@@ -235,10 +237,11 @@ export const CityDropDown = ({
           <SelectValue placeholder={t("city_placeholder")} />
         </SelectTrigger>          
         <SelectContent>
-          <Input
+          <SelectInput value={searchTerm}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const value = event.target.value;
               onSearch(value);
+              setSearchTerm(value);
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
@@ -282,6 +285,7 @@ export const StateDropDown = ({
   const [pageSize, setPageSize] = useState(10);
   const { setValue } = useFormContext();
   const [selectOptions, setSelectOptions] = useState<any>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   /**
    * Getting country code from route using useGetCountryCode function
@@ -320,7 +324,7 @@ export const StateDropDown = ({
     });
   }
 
-  const { options, onSearch: stateOnsearch } = useMVPSelect({
+  const { options, onSearch: stateOnsearch } = useMVPSelect({ 
     resource: "state",
     meta: { select: "*" },
     optionLabel: "name",
@@ -369,7 +373,7 @@ export const StateDropDown = ({
         <Text className="text-[#7677F4]">*</Text>
       </div>
 
-      <Select value={stateValue} onValueChange={handleStateValueChange}>
+      <Select value={stateValue} onValueChange={handleStateValueChange} > 
         <SelectTrigger
           className="w-full font-semibold text-sm"
           error={stateValueError ? true : false}
@@ -377,10 +381,11 @@ export const StateDropDown = ({
           <SelectValue placeholder={t("select_state")} />
         </SelectTrigger>
         <SelectContent>
-          <Input
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          <SelectInput value={searchTerm}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => { 
               const value = event.target.value;
               stateOnsearch(value);
+              setSearchTerm(value);
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
@@ -419,6 +424,7 @@ export const CenterDropDown = ({
 }) => {
   const { t } = useTranslation(["common", "course.new_course"]);
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // track whether the center drop down is clicked or not
   const [centerSelectClicked, setCenterSelectClicked] = useState(false)
@@ -523,10 +529,12 @@ export const CenterDropDown = ({
           />
         </SelectTrigger>
         <SelectContent>
-          <Input
+          <SelectInput value={searchTerm}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const value = event.target.value;
               centerOnSearch(value);
+              setSearchTerm(value);
+
             }}
           />
           <SelectItems onBottomReached={handleOnBottomReached}>
