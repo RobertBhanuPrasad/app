@@ -75,7 +75,7 @@ useEffect(() => {
     id: programId,
     meta: {
       select:
-        'online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,name),registration_link,details_page_link'
+        'hour_format_id,online_url,visibility_id(*),program_code,program_type_id,status_id,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_teachers(users(contact_id!inner(full_name))),program_schedules(start_time,end_time),status_id(id,name),registration_link,details_page_link'
     }
   })
 
@@ -184,12 +184,12 @@ useEffect(() => {
           }
             <div className="flex-[2.5] p-4 ">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.course_date")} (UTC 05:00)</p>
-              {data?.data?.program_schedules?.map((data: any,index:any) => {
+              {data?.data?.program_schedules?.map((schedulesData: any,index:any) => {
                 return (
                   <p className="font-semibold truncate text-accent-secondary" key={index}>
                     {
                       // TODO we need to change the twelveHrTimeFormat to the enum
-                      data?.data?.hour_format_id === twelveHrTimeFormat ? (<TwelveHrFormat item={data}/>) : (<TwentyFourHrFormat item={data} />)
+                      data?.data?.hour_format_id === twelveHrTimeFormat ? (<TwelveHrFormat item={schedulesData}/>) : (<TwentyFourHrFormat item={schedulesData} />)
                     }
                   </p>
                 )
