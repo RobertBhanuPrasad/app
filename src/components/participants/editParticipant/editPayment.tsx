@@ -38,10 +38,12 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 interface EditPaymentProps {
     setEditPayment: React.Dispatch<React.SetStateAction<any>>;
     paymentId: number;
+    contactId?: number;
 }
 export default function EditPayment({
     setEditPayment,
     paymentId,
+    contactId,
 }: EditPaymentProps) {
     const { t } = useTranslation([
         "common",
@@ -176,7 +178,7 @@ export default function EditPayment({
         : undefined;
     const { data } = useOne({
         resource: "participant_registration",
-        id: Number(Id),
+        id: contactId ? contactId : Number(Id),
         meta: {
             select: "contact_id(full_name)",
         },
@@ -207,7 +209,6 @@ export default function EditPayment({
         setEditPayment(false);
         reset();
     };
-
     return (
         <DialogContent
             handleClickCloseButton={() => {
