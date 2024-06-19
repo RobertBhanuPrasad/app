@@ -105,7 +105,7 @@ function HeaderSection() {
         </HoverCard>
         </div>
         {/* revenue */}
-        <div className="flex gap-2 items-center w-[135px]">
+        <div className="flex gap-2 items-center">
           <Currency />
         <div
           onClick={() => {

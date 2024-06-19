@@ -168,7 +168,6 @@ export const ExpenseDetails = () => {
 
   return (
     <div>
-      <Header className="py-4" children={"Expense Details"} />
       <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
         <div className="flex h-[48px] w-fit bg-[#7677F41A]">
           <TableHeader className="min-w-[50px] px-[12px]">#</TableHeader>
