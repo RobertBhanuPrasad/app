@@ -14,6 +14,12 @@ export const NewEventStep2FormNames = {
 
 }
 export const NewEventStep3FormNames = {
+  hour_format_id: "hour_format_id",
+  time_zone_id: "time_zone_id",
+  schedules: "schedules",
+  occurrences: "occurrences"
+
+
 
 }
 export const NewEventStep4FormNames = {
