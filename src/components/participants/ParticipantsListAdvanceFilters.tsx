@@ -378,8 +378,9 @@ export const ContactDetails = () => {
     }
   };
 
-  const handlePhoneChange = (value: any) => {
-   const updatedPhone = value.replace(/\D/g, ""); // Regex to allow only numeric characters
+  const handlePhoneChange = (event: any) => {
+    const { value } = event.target;
+    const updatedPhone = value.replace(/\D/g, ""); // Regex to allow only numeric characters
 
     onPhoneChange({ target: { value: updatedPhone } });
   };
@@ -388,8 +389,17 @@ export const ContactDetails = () => {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label>{t("course.participants:find_participant.name")}</Label>
-        <Input onChange={handleNameChange} value={contactName} type="text" maxLength={50}></Input>
-        {contactName?.length >= 50 && <div className=" text-red-600">{t("new_strings:reached_maximum_character_limit_50")}</div>}
+        <Input
+          onChange={handleNameChange}
+          value={contactName}
+          type="text"
+          maxLength={50}
+        ></Input>
+        {contactName?.length >= 50 && (
+          <div className=" text-red-600">
+            {t("new_strings:reached_maximum_character_limit_50")}
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <Label>{t("course.participants:find_participant.email")}</Label>
@@ -402,17 +412,21 @@ export const ContactDetails = () => {
           (emailRegex.test(contactEmail) ? (
             ""
           ) : (
-            <div className="text-red-600">{t("new_strings:enter_valid_email_id_and_enter_only_one_email_at_a_time")}</div>
+            <div className="text-red-600">
+              {t(
+                "new_strings:enter_valid_email_id_and_enter_only_one_email_at_a_time"
+              )}
+            </div>
           ))}
       </div>
       <div className="flex flex-col gap-2 w-[auto]">
         <Label>{t("course.participants:find_participant.phone")}</Label>
-        <PhoneNumberInput  onChange={(val)=>handlePhoneChange(val)} value={contactPhone}/>
-        {/* <Input
+        {/* <PhoneNumberInput  onChange={(val)=>handlePhoneChange(val)} value={contactPhone}/> */}
+        <Input
           onChange={handlePhoneChange}
           value={contactPhone}
           type="tel"
-        ></Input> */}
+        ></Input>
       </div>
     </div>
   );
