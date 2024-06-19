@@ -829,6 +829,10 @@ export type ActionProps = {
    * The ID representing transaction status.
    */
   transactionStatusId: number;
+  /**
+   * The ID representing balnce due.
+   */
+  balanceDue: number;
 
   /**
    * Boolean indicating whether the health declaration is checked.
@@ -854,6 +858,7 @@ export const getActions = ({
   transactionStatusId,
   isPPAConsentChecked,
   isHealthDeclarationChecked,
+  balanceDue,
 }: ActionProps) => {
   // Get the ID for pending attendance status
   const pendingAttendenceStatusId = getOptionValueObjectByOptionOrder(
@@ -880,6 +885,12 @@ export const getActions = ({
     {
       condition: transactionStatusId === pendingTransactionStatusId,
       action: "Update transaction status",
+    },
+
+    // If the balance due is greater than zero then i need an action Update transaction status
+    {
+      condition: balanceDue > 0,
+      action: "Update balane due",
     },
 
     // If the PPA consent is unchecked then i need an action Pending PPA consent
