@@ -767,7 +767,7 @@ function index() {
 
   return (
     <div>
-      <div className="top-[96px] z-10 sticky bg-[white] h-[83px] shadow-md w-full">
+      <div className="top-[92px] z-10 sticky bg-[white] h-[83px] shadow-md w-full">
         <ParticipantsListMainHeader />
       </div>
       <span>

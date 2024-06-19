@@ -47,7 +47,7 @@ function index() {
   const { courseAccountingFormDefaultValues } = newCourseStore()
   return (
     <div>
-      <section className="h-[83px] top-[96px] z-10 sticky shadow-md w-full bg-[white]">
+      <section className="h-[83px] top-[92px] z-10 sticky shadow-md w-full bg-[#FFFFFF]">
         {/*  here we are showing header section  */}
         <HeaderSection />
       </section>

@@ -335,7 +335,7 @@ function CloseParticipantsSection() {
               table: "",
               rowStyles: "!important border-none",
               tableContainer: "!h-[350px] !rounded-xl",
-              tableHeader: "bg-[#F1F1FE] sticky top-0 z-10",
+              tableHeader: "bg-[#F1F1FE] sticky top-0 z-1",
             }}
             columns={participantsColumns}
             data={participantData?.data?.data || []}
