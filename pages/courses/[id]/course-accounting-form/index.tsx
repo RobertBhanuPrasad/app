@@ -8,6 +8,7 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { authProvider } from "src/authProvider";
+import { accountingValidationSchema } from '@components/course/viewCourse/CourseAccountingForm/CourseAccountingValidations'
 
 function index() {
   const params = useSearchParams()
@@ -46,16 +47,20 @@ function index() {
   const { courseAccountingFormDefaultValues } = newCourseStore()
   return (
     <div>
-      <section className='h-[83px] shadow-md w-full bg-[white]'>
+      <section className="h-[83px] shadow-md w-full bg-[white]">
         {/*  here we are showing header section  */}
         <HeaderSection />
       </section>
 
-      <Form defaultValues={courseAccountingFormDefaultValues} onSubmit={onSubmit}>
+      <Form
+        defaultValues={courseAccountingFormDefaultValues}
+        schema={accountingValidationSchema()}
+        onSubmit={onSubmit}
+      >
         <section>{componentToRender?.component}</section>
       </Form>
     </div>
-  )
+  );
 }
 
 export default index

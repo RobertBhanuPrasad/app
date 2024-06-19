@@ -357,6 +357,7 @@ function CloseParticipantsSection() {
         <Button
           className="w-[87px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white]"
           onClick={handleNextClick}
+          type="button"
         >
           Next
         </Button>
