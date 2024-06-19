@@ -320,6 +320,7 @@ export function ParticipantsAdvanceFilter() {
                   pending: false,
                 });
                 setValue("advanceFilter", {});
+                setAdvanceFilterCount(0)
               }}
               className="flex gap-1 items-center cursor-pointer"
             >
