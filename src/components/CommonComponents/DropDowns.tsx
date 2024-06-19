@@ -85,7 +85,7 @@ export const PostalCodeComponent = () => {
   }, [postalCodeValue]);
   return (
     <div className="flex gap-1 flex-col min-h-[80px]">
-      <div className="text-xs pt-1 font-normal text-[#333333]">
+      <div className="text-xs font-normal text-[#333333]">
         {t("course.new_course:time_and_venue_tab.postal_code")}
       </div>
       <div className="w-[278px] h-[40px] rounded-[1px]  font-semibold text-sm">
@@ -226,7 +226,7 @@ export const CityDropDown = ({
   return (
     <div className="flex gap-1 flex-col min-h-[80px]">
       <div className="flex flex-row items-center gap-1">
-        <Text className="text-xs pt-2.5 font-normal text-[#333333]">{t("city")}</Text>
+        <Text className="text-xs font-normal text-[#333333]">{t("city")}</Text>
         <Text className="text-[#7677F4]">*</Text>
       </div>
       <Select value={cityValue} onValueChange={handleCityValueChange}  onOpenChange={()=>setCitySelectClicked(true)}>
