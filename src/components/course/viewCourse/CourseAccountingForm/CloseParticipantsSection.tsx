@@ -389,8 +389,7 @@ export const participantsColumns: ColumnDef<any>[] = [
           className="min-w-[150px] text-[#7677F4] font-semibold cursor-pointer"
         >
           <Text className="!text-[#7677F4] font-semibold" onClick={() => {
-                            const basePath = router.asPath.split("course-accounting-form?current_section=close_participants")[0];
-                            router.push(`/${basePath}/participants/${row?.original?.id}`);
+                            router.push(`/courses/${row.original.program_id}/participants/${row?.original?.id}`);
                             }}>
             {/* getting the participant_code from the row data */}
             {row?.original?.participant_code}
