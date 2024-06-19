@@ -1,4 +1,5 @@
 import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
 import { useFormContext, useFormState } from "react-hook-form";
 import { FormControl, FormField, FormItem } from "src/ui/form";
 import { Input } from "src/ui/input";
@@ -13,9 +14,9 @@ import { useMaskedPhoneNumber } from "src/utility/PhoneNumberCodes";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 
-/**Phone NumberInput to provide the select dropdown contains country code, a phone number input */
+/** Phone NumberInput to provide the select dropdown contains country code, a phone number input */
 interface PhoneNumberInputProps {
-    value?: unknown;
+    value?: string;
     onChange?: (value: unknown) => void;
 }
 interface SelectCountryDate {
@@ -32,91 +33,113 @@ export const PhoneNumberInput = ({
     const { countries } = useMaskedPhoneNumber({
         enforceInternational: false,
     });
-    const errorMessage: any =
-        formState?.errors?.[
-            "phoneNumber"
-            // personalInformationFieldNames.phoneNumber
-        ];
-
+    const errorMessage: any = formState?.errors?.["phoneNumber"];
     const form = useFormContext();
-    const countryCode = useGetCountryCode();
+    const initialCountryCode = useGetCountryCode();
     const selectClasses =
         "bg-[#EBEBEB] rounded-l-[10px] rounded-r-none justify-center border-none";
-    var selectedCountryDatax: SelectCountryDate = {};
+
+    const [selectedCountryData, setSelectedCountryData] = useState<
+        SelectCountryDate | undefined
+    >(
+        countries?.find(
+            (country: any) => country.code === initialCountryCode.toUpperCase()
+        )
+    );
+    const [phoneNumber, setPhoneNumber] = useState<string>(value || "");
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const initialCountryData = countries?.find(
+            (country: any) => country.code === initialCountryCode.toUpperCase()
+        );
+        setSelectedCountryData(initialCountryData);
+        setLoading(false);
+    }, [initialCountryCode, countries]);
     return (
         <div className="flex flex-col">
             <div
                 className={`flex ${
                     errorMessage
-                        ? "border rounded-[10px] !border-[#FF0000] "
+                        ? "border rounded-[10px] !border-[#FF0000]"
                         : "border-none"
                 }`}
             >
                 <FormField
                     control={form.control}
-                    name={
-                        "country code"
-                        // personalInformationFieldNames.countryCode
-                    }
+                    name={"countryCode"}
                     render={({ field }) => {
-                        const selectedCountryData = countries?.find(
-                            (country: any) => country.code === field.value
-                        );
-                        selectedCountryDatax = selectedCountryData;
+                        const handleCountryChange = (value: unknown) => {
+                            field.onChange(value);
+                            const countryData = countries?.find(
+                                (country: any) => country.code === value
+                            );
+                            setSelectedCountryData(countryData);
+                        };
                         return (
-                            <FormItem className=" ">
+                            <FormItem className="">
                                 <FormControl>
-                                    <Select
-                                        {...field}
-                                        onValueChange={(value) => {
-                                            field.onChange(value);
-                                        }}
-                                    >
-                                        <SelectTrigger
-                                            className={selectClasses}
-                                            // IconClassName="size-[22px]"
-                                        >
-                                            {/* {selectedCountryData && */}
-                                            <SelectValue>
-                                                <div className="flex items-center gap-1">
-                                                    <span
-                                                        className={`fi fi-${selectedCountryData?.code?.toLowerCase()} w-[26px] h-[19px] mt-[3px]`}
-                                                    />
-                                                    +
-                                                    {
-                                                        selectedCountryData?.callingCode
-                                                    }
-                                                </div>
-                                            </SelectValue>
-                                            {/* } */}
-                                        </SelectTrigger>
-                                        <SelectContent
-                                            position="popper"
-                                            className=""
-                                        >
-                                            {countries?.map(
-                                                (
-                                                    country: any,
-                                                    index: number
-                                                ) => (
-                                                    <SelectItem
-                                                        key={index}
-                                                        value={country?.code}
-                                                    >
-                                                        <div className="flex flex-row gap-2">
-                                                            <span
-                                                                className={`fi fi-${country.code.toLowerCase()} `}
-                                                            />
-                                                            {country.name} +
-                                                            {
-                                                                country.callingCode
-                                                            }
+                                    {loading == false &&
+                                        selectedCountryData && (
+                                            <Select
+                                                {...field}
+                                                onValueChange={
+                                                    handleCountryChange
+                                                }
+                                            >
+                                                <SelectTrigger
+                                                    className={selectClasses}
+                                                >
+                                                    <SelectValue>
+                                                        <div className="flex items-center gap-1">
+                                                            <>
+                                                                <span
+                                                                    className={`fi fi-${
+                                                                        selectedCountryData
+                                                                            ? selectedCountryData?.code?.toLowerCase()
+                                                                            : initialCountryCode.toUpperCase()
+                                                                    } w-[26px] h-[19px] mt-[3px]`}
+                                                                />
+                                                                +
+                                                                {
+                                                                    selectedCountryData?.callingCode
+                                                                }
+                                                            </>
                                                         </div>
-                                                    </SelectItem>
-                                                )
-                                            )}
-                                        </SelectContent>
-                                    </Select>
+                                                    </SelectValue>
+                                                </SelectTrigger>
+                                                <SelectContent
+                                                    position="popper"
+                                                    className=""
+                                                >
+                                                    {countries?.map(
+                                                        (
+                                                            country: any,
+                                                            index: number
+                                                        ) => (
+                                                            <SelectItem
+                                                                key={index}
+                                                                value={
+                                                                    country?.code
+                                                                }
+                                                            >
+                                                                <div className="flex flex-row gap-2">
+                                                                    <span
+                                                                        className={`fi fi-${country.code.toLowerCase()}`}
+                                                                    />
+                                                                    {
+                                                                        country.name
+                                                                    }{" "}
+                                                                    +
+                                                                    {
+                                                                        country.callingCode
+                                                                    }
+                                                                </div>
+                                                            </SelectItem>
+                                                        )
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        )}
                                 </FormControl>
                             </FormItem>
                         );
@@ -124,16 +147,8 @@ export const PhoneNumberInput = ({
                 />
                 <FormField
                     control={form.control}
-                    name={
-                        "phone"
-                        // personalInformationFieldNames.phoneNumber
-                    }
+                    name={"phoneNumber"}
                     render={({ field }) => {
-                       
-                        console.log(
-                            selectedCountryDatax,
-                            "selectedCountryData"
-                        );
                         return (
                             <FormItem className="w-full">
                                 <FormControl>
@@ -141,13 +156,13 @@ export const PhoneNumberInput = ({
                                         placeholder={"Mobile Number"}
                                         className="!rounded-l-none"
                                         {...field}
-                                        onChange={(event) =>
-                                            onChange &&
-                                            onChange(
-                                                selectedCountryDatax?.callingCode +
-                                                    event.target.value
-                                            )
-                                        }
+                                        value={phoneNumber}
+                                        onChange={(event) => {
+                                            setPhoneNumber(event.target.value);
+                                            if (onChange) {
+                                                onChange(event.target.value);
+                                            }
+                                        }}
                                     />
                                 </FormControl>
                             </FormItem>
