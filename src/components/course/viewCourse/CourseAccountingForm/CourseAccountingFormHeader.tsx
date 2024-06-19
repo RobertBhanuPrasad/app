@@ -47,9 +47,9 @@ function HeaderSection() {
   const { programId } = newCourseStore();
 
   return (
-    <div className="flex justify-between w-full px-8 h-auto">
+    <div className="flex justify-between w-full px-8 h-auto bg-[white]">
       {/* course accounting section */}
-      <div className="flex gap-2 pb-3 pt-3">
+      <div className="flex gap-2 pb-3 pt-3 ">
         <div
           className="text-[#7677F4] pt-3 cursor-pointer w-8 h-8"
           onClick={() => {

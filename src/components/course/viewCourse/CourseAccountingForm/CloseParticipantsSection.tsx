@@ -23,7 +23,10 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   PARTICIPANT_PENDING_PAYMENT_STATUS,
   PENDING_ATTENDANCE_STATUS,
+  PARTICIPANT_CONFIRMED_PAYMENT_STATUS,
+  COMPLETED_ATTENDANCE_STATUS,
   UPDATE_ATTENDENCE_STATUS,
+  UPDATE_TRANSACTION_STATUS,
 } from "src/constants/OptionValueOrder";
 import { useController, useFormContext } from "react-hook-form";
 import { getActions } from "@components/courseBusinessLogic";
@@ -33,14 +36,22 @@ import { Dialog, DialogContent } from "src/ui/dialog";
 import { useRouter as useNextRouter } from "next/router";
 import Tick from "@public/assets/Tick.png";
 import { translatedText } from "src/common/translations";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 
 function CloseParticipantsSection() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const router = useNextRouter();
   const { replace } = useRouter();
   const { query } = useNextRouter();
 
+  const Id : number | undefined = router?.query?.id
+    ? parseInt(router.query.id as string)
+    : undefined;
+    
   //Getting the program Data using the id from the url
   const { data: programData } = useOne({
     resource: "program",
@@ -81,6 +92,12 @@ function CloseParticipantsSection() {
     PENDING_ATTENDANCE_STATUS
   )?.id;
 
+  console.log(pendingAttendenceStatusId, "pendingAttendenceStatusId");
+  const confirmAttendenceStatusId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_ATTENDANCE_STATUS,
+    COMPLETED_ATTENDANCE_STATUS
+  )?.id;
+  console.log(confirmAttendenceStatusId, "confirmAttendenceStatusId");
   /**
    * variable for getting the pending transaction status id
    */
@@ -88,7 +105,12 @@ function CloseParticipantsSection() {
     PARTICIPANT_PAYMENT_STATUS,
     PARTICIPANT_PENDING_PAYMENT_STATUS
   )?.id;
-
+  console.log(pendingTransactionStatusId, "pendingTransactionStatusId");
+  const confirmTransactionStatusId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_PAYMENT_STATUS,
+    PARTICIPANT_CONFIRMED_PAYMENT_STATUS
+  )?.id;
+  console.log(confirmTransactionStatusId, "confirmTransactionStatusId");
   // Retrieving participant data from the 'participant_registration' table
   const { tableQueryResult: participantData } = useTable({
     resource: "participant_registration",
@@ -147,14 +169,26 @@ function CloseParticipantsSection() {
       ],
     },
   });
-
+  console.log(participantData, "participantData")
+  
+ 
+  console.log(participantData?.data, "participantData..")
+  const innerData = participantData?.data?.data;
+  if (innerData) {
+    const idArray = Object.values(innerData)
+    .map((item) => item.id)
+    // .filter((id): id is number => typeof id === 'number');
+  console.log(idArray, "idArray");
+  } else {
+    console.error('innerData is undefined');
+  }
+  
   // useController hook  for action dropdown to get value and onChange
   const {
     field: { value: actionValue, onChange: actionOnChange },
   } = useController({
     name: "action_id",
   });
-
   // useController hook  for status dropdown to get value and onChange
   const {
     field: { value: statusValue, onChange: statusOnChange },
@@ -168,7 +202,6 @@ function CloseParticipantsSection() {
   const attendanceStatusData = getOptionValuesByOptionLabel(
     PARTICIPANT_ATTENDANCE_STATUS
   )?.[0]?.option_values;
-
   /**
    * variable for getting the payment status data
    */
@@ -229,13 +262,102 @@ function CloseParticipantsSection() {
     }
 
     //Opening the dialog that shows that we have successfully updated the records
-    setOpen(true);
-  };
+    // setOpen(true);
+    // toast("Attendance status is updated Successfully", {
+    //   position: "top-right",
+    //   autoClose: 3000,
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    //   theme: "light",
+    //   transition: Bounce,
+    // });
+    // const confirm = isConfirm()
+    // if(attendanceStatusId == 62){
+    //   toast("Attendance status is updated Successfully", {
+    //     position: "top-right",
+    //     autoClose: 3000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "light",
+    //     transition: Bounce,
+    //   });
+    // }
+  // };
+  interface Participant {
+    id: number;
+    participant_attendence_status_id: number;
+    payment_status_id: number;
+  }
 
+  const participants: Participant[] = (participantData?.data?.data || []).map(obj => ({
+    id: (obj.id, -1),
+    participant_attendence_status_id: (obj.participant_attendence_status_id, -1),
+    payment_status_id: (obj.payment_status_id, -1) 
+  }));
+  console.log(participants, "participants");
+  
+  function findAttendanceAndPaymentStatusById(participants: Participant[], id: number): [ number | null, number | null ] {
+    const participant = participants.find(p => p.id === id);
+    if (participant) {
+      return [
+        participant.participant_attendence_status_id ?? null,
+        participant.payment_status_id ?? null
+      ];
+    } else {
+      return [null, null];
+    }
+  }
+
+  if (participants && participants.length > 0) {
+    participantIds.forEach((selectedId: number) => {
+      const [ attendanceStatusId, paymentStatusId ] = findAttendanceAndPaymentStatusById(participants, selectedId);
+    console.log(`Participant ID: ${selectedId}, Attendance Status ID: ${attendanceStatusId}, Payment Status ID: ${paymentStatusId}`);
+    if(attendanceStatusId === confirmAttendenceStatusId && actionValue == UPDATE_ATTENDENCE_STATUS){
+      console.log("if condition is true")
+      toast("Error because the attendance status is already updated", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+    else if(paymentStatusId === confirmTransactionStatusId && actionValue == UPDATE_TRANSACTION_STATUS){
+      console.log("else if condition is true");
+      toast("Error because the transaction status status is already updated", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+    else{
+      console.log("there are nothing to update")
+    }
+    });
+  }
+};
+console.log(statusData, "statusData")
   return (
     <div>
-      <div className="m-6 flex flex-col gap-4 bg-[white]">
-        <div className="ml-auto flex flex-row gap-4">
+      <div className="flex flex-row justify-between items-center gap-4 mt-8 w-full bg-[white] px-9">
+        <div className="font-semibold text-[20px] ">Close Registrations</div>
+        <div className="flex justify-end gap-4 ">
           <div>
             {/* select dropdown for displaying actions */}
             <Select
@@ -244,7 +366,7 @@ function CloseParticipantsSection() {
               value={actionValue}
               onValueChange={actionOnChange}
             >
-              <SelectTrigger className="w-[254px]">
+              <SelectTrigger className="w-[254px] border !text-[#333333] !font-semibold text-sm !border-[#999999]">
                 <SelectValue placeholder="Select Action" />
                 {Object.keys(rowSelection).length > 0 && actionValue && (
                   <Text className="text-[#7677F4] font-semibold">
@@ -274,8 +396,8 @@ function CloseParticipantsSection() {
                 handleStatusChange(val);
               }}
             >
-              <SelectTrigger className="w-[254px]">
-                <SelectValue placeholder="Select Status" />
+              <SelectTrigger className={`w-[254px] border !text-[#333333] !font-semibold text-sm ${statusValue ? "border-[#999999]" : actionValue ? "border-[#7677F4]" : "border-[#999999]"}`}>
+                <SelectValue placeholder="Select Status"/>
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
@@ -295,7 +417,7 @@ function CloseParticipantsSection() {
                 </SelectItems>
               </SelectContent>
             </Select>
-
+            
             {/* Dialog definition when we have updated the records it should open */}
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogContent className="w-[414px] h-[325px] !p-4 !rounded-xl">
@@ -332,10 +454,144 @@ function CloseParticipantsSection() {
                 </div>
               </DialogContent>
             </Dialog>
+
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+              />
           </div>
         </div>
+        </div>
 
-        <div>
+
+      <div className="m-9 flex flex-col">
+        {/* <div className="flex flex-row justify-between items-center gap-4 w-full rounded-3xl bg-[red]"> */}
+        {/* <div className="font-semibold text-[20px]">Close Registrations</div> */}
+        {/* <div className="flex justify-end gap-4"> */}
+          {/* <div> */}
+            {/* select dropdown for displaying actions */}
+            {/* <Select
+              //Disabled when i havent select any row from the table
+              disabled={Object.keys(rowSelection).length === 0}
+              value={actionValue}
+              onValueChange={actionOnChange}
+            >
+              <SelectTrigger className="w-[254px] border !text-[#333333] !font-semibold text-sm !border-[#999999]">
+                <SelectValue placeholder="Select Action" />
+                {Object.keys(rowSelection).length > 0 && actionValue && (
+                  <Text className="text-[#7677F4] font-semibold">
+                    ({Object.keys(rowSelection).length})
+                  </Text>
+                )}
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItems onBottomReached={() => {}}>
+                  <SelectItem className="h-[44px]" value={1}>
+                    Update Attendance Status
+                  </SelectItem>
+                  <SelectItem className="h-[44px]" value={2}>
+                    Update Transaction Status
+                  </SelectItem>
+                </SelectItems>
+              </SelectContent>
+            </Select> */}
+          {/* </div> */}
+          {/* <div> */}
+            {/* select dropdown for displaying status */}
+            {/* <Select
+              //disabled when no action is selected
+              disabled={actionValue == undefined || actionValue == ""}
+              value={statusValue}
+              onValueChange={(val: any) => {
+                handleStatusChange(val);
+              }}
+            >
+              <SelectTrigger className="w-[254px] border !text-[#333333] !font-semibold text-sm !border-[#7677F4]">
+                <SelectValue placeholder="Select Status"/>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItems onBottomReached={() => {}}>
+                  {statusData?.map(
+                    (status: OptionValuesDataBaseType, index: number) => {
+                      return (
+                        <SelectItem
+                          key={index}
+                          value={status.id}
+                          className="h-[44px]"
+                        >
+                          {translatedText(status.name as object)}
+                        </SelectItem>
+                      );
+                    }
+                  )}
+                </SelectItems>
+              </SelectContent>
+            </Select> */}
+
+            {/* Dialog definition when we have updated the records it should open */}
+            {/* <Dialog open={open} onOpenChange={setOpen}>
+              <DialogContent className="w-[414px] h-[325px] !p-4 !rounded-xl">
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-center">
+                    <Image src={Tick} alt="tick" />
+                  </div>
+                  <Text className="font-semibold text-center text-[20px]">
+                    {Object.keys(rowSelection).length} Records Successfully
+                    Updated{" "}
+                  </Text>
+                  <Text className="text-center text-[17px]">
+                    The updates have been saved. Attendance status <br />
+                    for participants with pending transfer request <br />
+                    cannot be changed.
+                  </Text>
+                  <div className="flex flex-row justify-center">
+                    <Button
+                      onClick={() => {
+                        //closing the dialog when we click on close
+                        setOpen(false);
+                        //clearing all the fields because we have updated the selected rows status
+                        setValue("action_id", "");
+                        //clearing the selected status field if no rows are selected then it should be disabled and to be in default state
+                        setValue("status_id", "");
+                        //setting the row selcection empty beause we have updated the status for seleted rows now it should be empty
+                        setRowSelection({});
+                      }}
+                      className="w-[91px] h-[46px] rounded-[12px]"
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog> */}
+
+            {/* <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+              /> */}
+          {/* </div> */}
+        {/* </div> */}
+        {/* </div> */}
+
+        <div className="w-full">
           <BaseTable
             checkboxSelection={true}
             pagination={false}
@@ -372,6 +628,7 @@ function CloseParticipantsSection() {
         </Button>
       </div>
     </div>
+    
   );
 }
 
@@ -389,12 +646,17 @@ export const participantsColumns: ColumnDef<any>[] = [
       );
     },
     cell: ({ row }) => {
+      // console.log(row, "row")
+      const router = useNextRouter();
       return (
         <div
           onClick={() => {}}
           className="min-w-[150px] text-[#7677F4] font-semibold cursor-pointer"
         >
-          <Text className="!text-[#7677F4] font-semibold">
+          <Text className="!text-[#7677F4] font-semibold" onClick={() => {
+                            const basePath = router.asPath.split("course-accounting-form?current_section=close_participants")[0];
+                            router.push(`/${basePath}/participants/${row?.original?.id}`);
+                            }}>
             {/* getting the participant_code from the row data */}
             {row?.original?.participant_code}
           </Text>
@@ -475,7 +737,11 @@ export const participantsColumns: ColumnDef<any>[] = [
         transactionStatusId: row.original.payment_status_id,
         isPPAConsentChecked: row.original.is_program_agreement_checked,
         isHealthDeclarationChecked: row.original.is_health_declaration_checked,
+        balanceDue : row.original.balance_due,
       });
+      // console.log(row, "row")
+      // console.log(row.original.balance_due, "row.original.balance_due");
+      
       return (
         <div className="min-w-[150px]">
           {actions.map((action, index) => (
@@ -486,3 +752,4 @@ export const participantsColumns: ColumnDef<any>[] = [
     },
   },
 ];
+

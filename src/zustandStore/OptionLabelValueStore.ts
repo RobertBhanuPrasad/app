@@ -13,3 +13,4 @@ export const optionLabelValueStore = create<OptionLabelValueStore>((set) => ({
     }));
   },
 }));
+console.log("OptionLabelValueStore", optionLabelValueStore.getState())

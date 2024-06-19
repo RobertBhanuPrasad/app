@@ -33,8 +33,8 @@ export const PARTICIPANT_NOT_RECEIVED_PAYMENT_STATUS=4;
 
 //Participant Attendance Status
 export const PENDING_ATTENDANCE_STATUS = 1;
-export const COMPLETED_ATTENDANCE_STATUS = 2;
-export const DROPOUT_ATTENDANCE_STATUS = 3;
+export const DROPOUT_ATTENDANCE_STATUS = 2;
+export const COMPLETED_ATTENDANCE_STATUS = 3;
 export const CANCELED_ATTENDANCE_STATUS = 4;
 
 //Program Categories

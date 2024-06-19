@@ -32,6 +32,7 @@ import {
   PARTICIPANT_FAILED_PAYMENT_STATUS,
   PARTICIPANT_PENDING_PAYMENT_STATUS,
   PENDING_ATTENDANCE_STATUS,
+  COMPLETED_ATTENDANCE_STATUS,
   PENDING_REVIEW,
   PROGRAM_ORGANIZER,
   REJECTED,
@@ -829,6 +830,7 @@ export type ActionProps = {
    * The ID representing transaction status.
    */
   transactionStatusId: number;
+  balanceDue: number;
 
   /**
    * Boolean indicating whether the health declaration is checked.
@@ -854,12 +856,24 @@ export const getActions = ({
   transactionStatusId,
   isPPAConsentChecked,
   isHealthDeclarationChecked,
+  balanceDue
 }: ActionProps) => {
   // Get the ID for pending attendance status
   const pendingAttendenceStatusId = getOptionValueObjectByOptionOrder(
     PARTICIPANT_ATTENDANCE_STATUS,
     PENDING_ATTENDANCE_STATUS
   )?.id;
+
+  const confirmedAttendanceStatusId = getOptionValueObjectByOptionOrder(
+    PARTICIPANT_ATTENDANCE_STATUS, 
+    COMPLETED_ATTENDANCE_STATUS
+  )?.id;
+  // console.log("pendingAttendenceStatusId", pendingAttendenceStatusId, PARTICIPANT_ATTENDANCE_STATUS, PENDING_ATTENDANCE_STATUS);
+  // console.log(attendenceStatusId, "attendenceStatusIdabc")
+  // const confirmStatus = confirmedAttendanceStatusId;
+  // console.log(confirmStatus, "confirmStatus")
+  // console.log("confirmedAttendanceStatusId", confirmedAttendanceStatusId, PARTICIPANT_ATTENDANCE_STATUS, COMPLETED_ATTENDANCE_STATUS);
+  // console.log("pendingAttendenceStatusId", pendingAttendenceStatusId, PARTICIPANT_ATTENDANCE_STATUS, PENDING_ATTENDANCE_STATUS);
 
   // Get the ID for pending transaction status
   const pendingTransactionStatusId = getOptionValueObjectByOptionOrder(
@@ -882,6 +896,12 @@ export const getActions = ({
       action: "Update transaction status",
     },
 
+    // If the balance due is greater than 0 then i need an action Balance Due
+    {
+      condition: balanceDue > 0,
+      action: "Balance Due",
+    },
+
     // If the PPA consent is unchecked then i need an action Pending PPA consent
     {
       condition: !isPPAConsentChecked,
@@ -894,11 +914,26 @@ export const getActions = ({
       action: "Pending Health consent",
     },
   ];
-
+  // console.log(attendenceStatusId, "attendenceStatusId");
+  // console.log(transactionStatusId, "transactionStatusId");
+  // console.log(pendingAttendenceStatusId, "pendingAttendenceStatusId");
+  // console.log(pendingTransactionStatusId, "pendingTransactionStatusId");
   // Filter conditions and map actions
   return _.filter(conditions, "condition").map(({ action }) => action);
 };
-
+export const isConfirm = () => {
+  if(attendenceStatusId == confirmedAttendanceStatusId){toast("Error", {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    transition: Bounce,
+  })};
+}
 /**
  * Function to determine whether to display course accounting form or view course accounting form.
  * @param {number} courseStatusId - The ID representing the course status.

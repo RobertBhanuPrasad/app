@@ -9,9 +9,11 @@ import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
  */
 export const getOptionValuesByOptionLabel = (optionLabelKey: string): any[] => {
   const { optionLabelValue } = optionLabelValueStore();
-
+  // console.log(optionLabelValue, "optionLabelValue");
+  // console.log(optionLabelKey, "optionLabelKey");
   return optionLabelValue.filter(
     (val: { key: string }) => val.key == optionLabelKey
+    // console.log(val.key, "val.key");
   );
 };
 
@@ -31,7 +33,11 @@ export const getOptionValueObjectByOptionOrder = (
     optionLabelValue,
     (val) => val?.key === optionLabel
   );
-
+  // console.log("OptionValueObjectByOptionOrder", optionLabel, optionOrder);
+  // console.log("foundOptionValue", foundOptionValue);
+  // console.log("foundOptionValue?.option_values", foundOptionValue?.option_values);
+  // console.log("optiolabels", optionLabelValue);
+  // console.log("foundOptionValue?.option_values, { order: optionOrder }", { order: optionOrder });
   return foundOptionValue
     ? _.find(foundOptionValue?.option_values, { order: optionOrder })
     : undefined;
