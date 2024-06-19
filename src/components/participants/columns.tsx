@@ -309,8 +309,8 @@ export const columns = () => {
                                         onClick={() =>
                                             row?.original?.payment_status_id
                                                 ?.id == pendingStatusId
-                                                ? setEditPayment(false)
-                                                : setEditPayment(true)
+                                                ? setEditPayment(true)
+                                                : setEditPayment(false)
                                         }
                                     >
                                         {row?.original?.payment_status_id?.name
