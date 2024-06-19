@@ -803,17 +803,21 @@ export const City = ({ setSelectedEntity, setNewPreferences }: EntityProps) => {
         <SelectItems onBottomReached={handleOnBottomReached}>
           {options?.map((option: any, index: number) => (
             <>
-              <SelectItem
-                key={option.value}
+                 <SelectItem
                 value={option.value}
                 className={
                   'h-[44px] ' +
-                  ((option.value === temporaryValue && (!searchTerm || !option.label.toLowerCase().includes(searchTerm.toLowerCase()))) ? 'hidden' : '')
+                  (option.value === temporaryValue
+                    &&
+                     '') +
+                  ((!searchTerm || option.label.toLowerCase().includes(searchTerm.toLowerCase()))
+                    ? ''
+                    : 'hidden')
                 }
               >
                 {option.label}
               </SelectItem>
-              {index < options?.length - 1 && (
+              {index < options?.length - 2 && (
                 <hr className="border-[#D6D7D8]" />
               )}
             </>
