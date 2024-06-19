@@ -23,14 +23,14 @@ export const supabaseClient = (schema?: string) => {
    * but we cant call hook inside this file becuase there was no component or hooks here
    * so we need to store in zustand we need to get the data with getState it will helpful for that
    */
-if (schema === "caps") {
-  return createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-    db : { schema},
-    auth : {
-      persistSession : false
-    }
-  })
-}
+// if (schema === "caps") {
+//   return createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+//     db : { schema},
+//     auth : {
+//       persistSession : false
+//     }
+//   })
+// }
 
   const { countryCode } = ConfigStore.getState();
 

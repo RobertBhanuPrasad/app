@@ -95,6 +95,10 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger 
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
+import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormat";
+import useGetCountryCode from "src/utility/useGetCountryCode";
+import useGetLanguageCode from "src/utility/useGetLanguageCode";
+import dayjs from "dayjs";
 
 function index() {
   const { viewPreviewPage } = newCourseStore();
@@ -128,15 +132,32 @@ function ViewDetails() {
 
   const totalRevenue = courseData?.data?.revenue;
 
-  const startDate = formatDate(
-    courseData?.data?.program_schedules[0]?.start_time
-  );
+  // getting twelve Hr Time Format id to check whether the particular course time format.
+  const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
+    TIME_FORMAT,
+    TIME_FORMAT_12_HOURS
+  )?.id;
 
-  const endDate = formatDate(
+  const startTime = courseData?.data?.program_schedules[0]?.start_time;
+
+  const endTime =
     courseData?.data?.program_schedules[
       courseData?.data?.program_schedules?.length - 1
-    ]?.end_time
-  );
+    ]?.end_time;
+
+  
+  // TODO we need to change the twelveHrTimeFormat to the enum
+  const startDate =
+    courseData?.data?.hour_format_id === twelveHrTimeFormat
+      ? dayjs(startTime).format("Do MMM hh:mm A")
+      : dayjs(startTime).format("Do MMM HH:mm");
+
+  // TODO we need to change the twelveHrTimeFormat to the enum
+  const endDate =
+    courseData?.data?.hour_format_id === twelveHrTimeFormat
+      ? dayjs(endTime).format("Do MMM hh:mm A")
+      : dayjs(endTime).format("Do MMM HH:mm");
+
   const countryName = `${courseData?.data?.venue_id?.state_id?.country_id?.name}`;
   const { t } = useTranslation([
     "course.view_course",
@@ -199,9 +220,20 @@ function ViewDetails() {
 
   const { data: loginUserData }: any = useGetIdentity();
 
+
+  const countryCode = useGetCountryCode()
+
+  const languageCode = useGetLanguageCode()
+
   const { data: countryConfigData } = useList({
     resource: "country_config",
   });
+
+      
+  //TODO: we need to pass the  currency code as the argument that is taken from country_config table
+  const currencySymbol = getCurrencySymbol(countryCode, languageCode, countryConfigData?.data?.[0]?.default_currency_code)
+  
+  const currencyFormat = getCurrencyFormat(countryCode, languageCode)
 
   /**
    * When we change the tab, we need to retrieve the corresponding tab data to update the query name.
@@ -259,7 +291,9 @@ function ViewDetails() {
         </div>
         <div className="flex flex-row gap-2 items-center mt-3">
           <CalenderIcon color="#7677F4" />
-          {startDate} to {endDate}
+          <span className="capitalize">
+            {startDate} <span className="lowercase">{t("course.new_course:time_and_venue_tab.to")}</span> {endDate}
+            </span>
           {/* Here we shouldnt show participants and revenue when course is in pending review status  */}
           {courseData?.data?.status_id?.id !== coursePendingReviewStatusId && (
             <div className="flex flex-row gap-2 items-center">
@@ -295,12 +329,12 @@ function ViewDetails() {
                 </TooltipContent>
               </Tooltip>
               </TooltipProvider>
-              <div>
-                <CurrencyIcon />
-              </div>
-              <Text className="text-[#7677F4] font-semibold">
-                {countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                {totalRevenue}
+              <Text className="text-[15px] flex items-center justify-center text-[#7677F4]">
+                {currencySymbol}
+              </Text>
+              <Text className="text-[#7677F4] font-semibold cursor-pointer">
+              {countryConfigData?.data?.[0]?.default_currency_code} {" "}
+              {currencyFormat.format(totalRevenue)}
               </Text>
               <TooltipProvider>
               <Tooltip>
@@ -316,7 +350,7 @@ function ViewDetails() {
                       "course.view_course:basic_details_tab.participants_revenue"
                       )}
                     :{countryConfigData?.data?.[0]?.default_currency_code}{" "}
-                    {totalRevenue}
+                    {currencyFormat.format(totalRevenue)}
                   </div>
                   <TooltipArrow height={15} width={17} fill="#333333"/>
                 </TooltipContent>
@@ -562,7 +596,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
           }
         }}
       >
-        <SelectTrigger className="w-[192px] border text-[#333333] text-sm font-semibold !border-[#999999]">
+        <SelectTrigger className="w-[192px] border !text-[#333333] text-sm !font-semibold !border-[#999999]">
           <SelectValue placeholder={t("pending_approval")} />
         </SelectTrigger>
         <SelectContent>
