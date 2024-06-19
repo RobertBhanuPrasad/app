@@ -23,6 +23,7 @@ import { TIME_FORMAT_12_HOURS } from 'src/constants/OptionValueOrder'
 import { format } from 'date-fns'
 import Add from '@public/assets/Add'
 import Delete from '@public/assets/Delete'
+import _ from 'lodash'
 
 export const NewEventStep3 = () => {
   return (
@@ -299,7 +300,6 @@ const Sessions = () => {
   const { append, remove, fields } = useFieldArray({
     name: "schedules",
   });
-  console.log(fields,'ah')
 
   const { watch } = useFormContext();
 
@@ -371,6 +371,11 @@ const Sessions = () => {
   const handleRemoveSession = (index: number) => {
     remove(index);
   };
+  useEffect(() => {
+    if (schedules?.length <= 0 || !schedules) {
+      handleAddSession();
+    }
+  }, []);
 
   return(
     <div className="flex flex-col gap-4">
@@ -413,6 +418,8 @@ const EventScheduleComponent = ({
     TIME_FORMAT,
     TIME_FORMAT_12_HOURS
   )?.id;
+  const { t } = useTranslation(["common", "course.new_course","new_strings"]);
+
   return(
 <div className="h-15 flex flex-col gap-1 justify-between">
       <div className="h-4 font-[#333333] font-normal flex text-xs">
@@ -441,7 +448,7 @@ const EventScheduleComponent = ({
             </Button>
           </DialogTrigger>
           <DialogContent className="!w-[810px] !h-[511px] bg-[#FFFFFF]">
-            <EventCalendarComponent />
+            <EventCalendarComponent index={index} setOpen={setOpen} />
           </DialogContent>
         </Dialog>
         <EventTimePicker
@@ -458,7 +465,7 @@ const EventScheduleComponent = ({
               }}
               className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
             >
-              <Add /> Add
+              <Add /> {t("add_button")}
             </div>
           )}
           {formData?.schedules?.length > 1 && (
@@ -470,19 +477,20 @@ const EventScheduleComponent = ({
              className="text-[#7677F4] font-normal cursor-pointer flex items-center gap-[6px]"
              >
              <Delete />
-             Delete
+             {t('delete_button')}
+
              </DialogTrigger>
              <DialogContent className="w-[414px] h-[189px] !py-6 !px-6 !rounded-[24px]">
              <DialogHeader>
              <DialogTitle className="flex justify-center">Delete</DialogTitle>
              <DialogDescription className="flex justify-center !pt-[14px] text-[16px] text-[#333333]">
-              Are you sure want to delete the Session 
+             {t('new_strings:are_you_sure_you_want_to_delete_the_session')}
              </DialogDescription>
              </DialogHeader>
              <DialogFooter className="w-full flex !justify-center gap-6">
              <DialogClose>
              <Button className="border border-[#7677F4] bg-[white] w-[71px] h-[46px] text-[#7677F4] font-semibold">
-              sdjn
+             {t('no_button')}
              </Button>
              </DialogClose>
              <DialogClose>
@@ -492,7 +500,7 @@ const EventScheduleComponent = ({
               handleRemoveSession(index)
               }}
              >
-              Yes
+             {t('yes')}
              </Button>
              </DialogClose>
              </DialogFooter>
@@ -1025,7 +1033,7 @@ const EventDaysCheckBox = () => {
   )
 }
 
-const EventCalendarComponent = () => {
+const EventCalendarComponent = ({ index, setOpen }: any) => {
   const { t } = useTranslation(['common', 'course.new_course'])
 
   const {
@@ -1038,6 +1046,51 @@ const EventCalendarComponent = () => {
   const handleOnSelect = (selected: Date | undefined) => {
     setDate(selected)
   }
+  const { trigger, watch,getValues,setValue,clearErrors } = useFormContext();
+
+  const handleRemoveFeeLevel=(date:any)=>{
+    const {schedules}=getValues()
+    //In order to check weather changed date is course start date or not.
+    //Taking two variables sort them and compare first object.if first object is changed then start date is changed. 
+    let originalSchedule=_.cloneDeep(schedules)
+    let tempSchedule=_.cloneDeep(schedules)
+    
+    //Updating temporary variable
+    tempSchedule[index].date=date
+  
+    //sorting original schedule
+    let sortedOriginalSchedules = originalSchedule?.sort(
+      (a: any, b: any) => {
+        let aDate = new Date(a.date);
+        aDate.setHours(a?.startHour, a?.startMinute);
+  
+        let bDate = new Date(b.date);
+        bDate.setHours(b?.startHour, b?.startMinute);
+  
+        return aDate.getTime() - bDate.getTime();
+      }
+    );
+  
+    //sorting temporary schedule
+    let sortedTempSchedules = tempSchedule?.sort(
+      (a: any, b: any) => {
+        let aDate = new Date(a.date);
+        aDate.setHours(a?.startHour, a?.startMinute);
+  
+        let bDate = new Date(b.date);
+        bDate.setHours(b?.startHour, b?.startMinute);
+  
+        return aDate.getTime() - bDate.getTime();
+      }
+    );
+  
+    //After sorting if first schedule is different for both original and temporary schedule then user as changed start date of course (start date is first schedule)
+    
+    
+  
+    }
+  
+
   return (
     <div className="flex flex-col gap-4">
       <div className="h-[401px] flex flex-row gap-4">
@@ -1051,6 +1104,21 @@ const EventCalendarComponent = () => {
             {/* Close button */}
           </div>
         </div>
+      </div>
+      <div className="flex self-center">
+        <Button
+          onClick={() => {
+            handleRemoveFeeLevel(date)
+            onChange(date);
+            setOpen(false);
+
+            // we need to validate schedules after date changes to get instant errors
+            trigger("schedules");
+          }}
+          className="w-24 rounded-[12px] text-base"
+        >
+          {t("save_button")}
+        </Button>
       </div>
     </div>
   )
