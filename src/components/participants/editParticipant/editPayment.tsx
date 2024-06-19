@@ -38,10 +38,12 @@ import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesBy
 interface EditPaymentProps {
     setEditPayment: React.Dispatch<React.SetStateAction<any>>;
     paymentId: number;
+    contactId?: number;
 }
 export default function EditPayment({
     setEditPayment,
     paymentId,
+    contactId,
 }: EditPaymentProps) {
     const { t } = useTranslation([
         "common",
@@ -56,26 +58,30 @@ export default function EditPayment({
         useState(false);
     let formData = watch();
     const [initialValue, setinitialValue] = useState(formData);
-    // Posting edit payment form data to payment history api
+    // Checking the chnages in form values compared to defaultvalues
     const onFormSubmission = () => {
-        mutate({
+        const initialData = _.omitBy(initialValue, _.isUndefined);
+        const formValues = _.omitBy(formData, _.isUndefined);
+        if (!_.isEqual(initialData, formValues)) {
+            setSaveChangesConfirmation(true);
+        } else {
+            setEditPayment(false);
+        }
+    };
+    // Posting form data to payment history table
+    const formDataPost = async () => {
+        setSaveChangesConfirmation(false);
+        setEditPayment(false);
+        await mutate({
             resource: "participant_payment_history",
             values: {
                 send_payment_confirmation: formData?.send_payment_confirmation,
-                payment_date: formData?.payment_date,
+                transaction_date: formData?.payment_date,
                 payment_method_id: formData?.payment_method_id,
                 transaction_status_id: formData?.transaction_status_id,
             },
             id: paymentId,
         });
-        const initialData = _.omitBy(initialValue, _.isUndefined);
-        const formValues = _.omitBy(formData, _.isUndefined);
-        if (!_.isEqual(initialData, formValues)) {
-            setSaveChangesConfirmation(true);
-            setEditPayment(false);
-        } else {
-            setEditPayment(false);
-        }
     };
 
     // Form fileds useControllers
@@ -172,7 +178,7 @@ export default function EditPayment({
         : undefined;
     const { data } = useOne({
         resource: "participant_registration",
-        id: Number(Id),
+        id: contactId ? contactId : Number(Id),
         meta: {
             select: "contact_id(full_name)",
         },
@@ -203,7 +209,6 @@ export default function EditPayment({
         setEditPayment(false);
         reset();
     };
-
     return (
         <DialogContent
             handleClickCloseButton={() => {
@@ -503,7 +508,7 @@ export default function EditPayment({
                                     className="bg-[#7677F4] w-[87px] h-[46px] rounded-[12px] text-base"
                                     onClick={() => {
                                         onFormSubmission();
-}}
+                                    }}
                                 >
                                     {t("save_button")}
                                 </Button>
@@ -559,15 +564,14 @@ export default function EditPayment({
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
-                       
+
                         <AlertDialog open={saveChangesConfirmation}>
                             <AlertDialogContent>
                                 <div className="flex justify-end">
                                     <div
                                         className="cursor-pointer"
                                         onClick={() => {
-                                            setSaveChangesConfirmation(false);
-                                            setEditPayment(false);
+                                            formDataPost();
                                         }}
                                     >
                                         <CrossIcon fill="#333333" />
@@ -583,10 +587,7 @@ export default function EditPayment({
                                     <div>
                                         <Button
                                             onClick={() => {
-                                                setSaveChangesConfirmation(
-                                                    false
-                                                );
-                                                setEditPayment(false);
+                                                formDataPost();
                                             }}
                                         >
                                             {t("close")}
