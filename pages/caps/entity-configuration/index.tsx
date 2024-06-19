@@ -13,7 +13,6 @@ import {
     TableRow
 } from "src/ui/table";
 import { zodResolver } from "@hookform/resolvers/zod";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -174,7 +173,7 @@ const EntityConfig = () => {
             // fetch external enpoints config for this entity
             const fetchExternalEndpoints = async (_entity: any) => {
                 try {
-                    const {data, error} = await supabase
+                    const { data, error } = await supabase
                         .from('pg_external_endpoints')
                         .select('id,internal_status,external_endpoint,headers')
                         .eq('entity', _entity)
@@ -187,11 +186,11 @@ const EntityConfig = () => {
                         ...endpoint,
                         compressedHeaders: endpoint.headers ? compress(endpoint.headers) : null
                     }));
-            
+
                     setExternalEndpoints(_endpoints);
                 } catch (err: any) {
                     let errorMessage = "Something went wrong while fetching external endpoints config";
-            
+
                     // Extracting the error message
                     if (err instanceof Error) {
                         errorMessage += ": " + err.message;
@@ -200,11 +199,11 @@ const EntityConfig = () => {
                     } else {
                         errorMessage += ": An unknown error occurred.";
                     }
-            
+
                     setAlert({ title: "Oops!", description: errorMessage });
                 }
-           }
-           fetchExternalEndpoints(_entity)
+            }
+            fetchExternalEndpoints(_entity)
 
         };
 
@@ -220,6 +219,7 @@ const EntityConfig = () => {
     const [selectedValue, setSelectedValue] = useState<number>(-1);
     const [externalEndpoints, setExternalEndpoints] = useState<EndPoint[]>();
     const [alert, setAlert] = useState<CustomAlert>();
+    const [buttonLoading, setButtonLoading] = useState(false);
 
     const AlertDestructive = (props: CustomAlert) => {
         return (
@@ -249,19 +249,20 @@ const EntityConfig = () => {
     }
 
     const updateConfig = async () => {
+        // setButtonLoading(true);
         if (!selectedIds || !externalEndpoints) return;
-    
+
         try {
             // Delete previous mappings
             const deleteMappingResponse = await supabase
                 .from('pg_mapping')
                 .delete()
                 .eq('entity_id', entity);
-    
+
             if (!deleteMappingResponse) {
                 throw new Error("Could not delete entries for payment_gateways configuration. Please try again after some time.");
             }
-    
+
             // Insert new mappings
             const insertMappingResponse = await supabase
                 .from('pg_mapping')
@@ -270,11 +271,11 @@ const EntityConfig = () => {
                     pg_id,
                     sort_order: index + 1
                 })));
-    
+
             if (!insertMappingResponse) {
                 throw new Error("Could not create entries for payment_gateways configuration. Please try again after some time.");
             }
-    
+
             // Update pg_external_endpoints
             const updateEndpointsResponse = await supabase
                 .from('pg_external_endpoints')
@@ -284,7 +285,7 @@ const EntityConfig = () => {
                             endpoint.headers = expand(endpoint.compressedHeaders);
                         } catch { }
                     }
-    
+
                     return {
                         id: endpoint.id,
                         entity: entity,
@@ -292,18 +293,18 @@ const EntityConfig = () => {
                         external_endpoint: endpoint.external_endpoint,
                         headers: endpoint.headers
                     };
-                }), { onConflict: 'id'});
-    
+                }), { onConflict: 'id' });
+
             if (!updateEndpointsResponse) {
                 throw new Error("Could not update entries for external_endpoints configuration. Please try again after some time.");
             }
-    
-            window.location.reload();
+
+            router.push("/caps/entity-dashboard")
         } catch (error: any) {
             setAlert({ title: "Error", description: error.message });
         }
     };
-    
+
 
     if (isLoading) {
         return <section className="flex justify-center align-center pt-[10%]"> <div className="loader"></div> </section>
@@ -312,48 +313,49 @@ const EntityConfig = () => {
     return (
 
         <form className="px-4 pb-4" autoComplete="off" onSubmit={(e) => {
+            setButtonLoading(true);
             e.preventDefault();
-            updateConfig()
+            updateConfig();
         }}>
-            <div style={{ display: "flex" }}>
-                <div className="pd-5 text-center bg-body-tertiary" style={{ marginLeft: "30em" }}>
-                    <h1 className="mb-3">Entity Configuration</h1>
-                </div>
-                <Alert id="entity-alert" className="alert alert-success py-1 text-center" style={{ width: "9em", marginLeft: "auto" }}>
+
+            <div className="flex justify-between items-center pb-1.5">
+                <h1 className=" mb-3 text-4xl font-extrabold text-center flex-grow">Entity Configuration</h1>
+                <Alert id="entity-alert" className="bg-green-100 border  items-center border-green-400 text-green-700 py-1 px-4 rounded mx-auto w-1/8 ">
                     <AlertTitle>Entity ID</AlertTitle>
-                    <AlertDescription>#{entity}</AlertDescription>
+                    <AlertDescription className="pl-4">#{entity}</AlertDescription>
                 </Alert>
             </div>
-            <div className="pd-5 bg-body-tertiary">
-                <h5 className="mb-3">Payment Gateways Configuration</h5>
+
+            <div className="pb-4">
+                <h5 className="font-bold px-2 py-2 bg-gray-200">Payment Gateways Configuration</h5>
             </div>
 
             {alert && <AlertDestructive {...alert} />}
             {allGateways && selectedIds && <>
-                {selectedIds.length > 0 && (<Table className="table-bordered centered-content">
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead>PG Type</TableHead>
-                            <TableHead>Test/Live</TableHead>
-                            <TableHead>Gateway Purpose</TableHead>
-                            <TableHead></TableHead>
+                {selectedIds.length > 0 && (<Table className="table-auto border border-slate-500 border-collapse">
+                    <TableHeader className="border border-slate-600">
+                        <TableRow className="border border-slate-600">
+                            <TableHead className="border border-slate-600">Name</TableHead>
+                            <TableHead className="border border-slate-600">Description</TableHead>
+                            <TableHead className="border border-slate-600">PG Type</TableHead>
+                            <TableHead className="border border-slate-600">Test/Live</TableHead>
+                            <TableHead className="border border-slate-600">Gateway Purpose</TableHead>
+                            <TableHead className="border border-slate-600"></TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody>
+                    <TableBody className="border border-slate-600">
                         {selectedIds.map((pgId, index) => {
                             const gateway = allGateways.find(g => g.id === pgId.pg_id);
                             if (!gateway) return null;
                             return (
-                                <TableRow>
-                                    <TableCell>{gateway.name}</TableCell>
-                                    <TableCell>{gateway.description}</TableCell>
-                                    <TableCell>{gateway.type}</TableCell>
-                                    <TableCell>{gateway.test}</TableCell>
-                                    <TableCell>{gateway.purpose}</TableCell>
+                                <TableRow className="border border-slate-600">
+                                    <TableCell className="border border-slate-600">{gateway.name}</TableCell>
+                                    <TableCell className="border border-slate-600">{gateway.description}</TableCell>
+                                    <TableCell className="border border-slate-600">{gateway.type}</TableCell>
+                                    <TableCell className="border border-slate-600">{gateway.test}</TableCell>
+                                    <TableCell className="border border-slate-600">{gateway.purpose}</TableCell>
                                     <TableCell className="text-center ">
-                                        <button type="button" className="btn btn-btn-outline-primary " onClick={() => unselectPG(index)}>❌</button>
+                                        <button disabled={buttonLoading} type="button" className="btn btn-btn-outline-primary " onClick={() => unselectPG(index)}>❌</button>
                                     </TableCell>
                                 </TableRow>);
                         })
@@ -361,11 +363,11 @@ const EntityConfig = () => {
                     </TableBody>
                 </Table>)}
 
-                <div className="form-group pb-3 pt-3">
-                    <select className="form-select border-dark " onChange={(e) => { selectPG(e.target.value); setSelectedValue(-1) }} value={selectedValue} style={{ fontFamily: "monospace" }}>
+                <div className="form-group pb-4 pt-4">
+                    <select className="form-select border border-slate-600 py-2 w-full " onChange={(e) => { selectPG(e.target.value); setSelectedValue(-1) }} value={selectedValue} style={{ fontFamily: "monospace" }} disabled={buttonLoading} >
                         <option value={-1} disabled>--- choose which gateways to allow for this entity ---</option>
-                            {allGateways.map((gateway, index) => {
-                            if (!selectedIds.find(pg => pg.pg_id === gateway.id)) {                             
+                        {allGateways.map((gateway, index) => {
+                            if (!selectedIds.find(pg => pg.pg_id === gateway.id)) {
                                 return <option value={index}>
                                     {shorten(gateway.name)} | {shorten(gateway.description, 30)} | {shorten(gateway.type, 10)} | {gateway.test} | {shorten(gateway.purpose, 10)}
                                 </option>
@@ -377,31 +379,34 @@ const EntityConfig = () => {
             </>
             }
 
-            <div className="pt-4 pd-5 bg-body-tertiary">
-                <h5 className="mb-3">External Endpoints Configuration</h5>
+            <div className="pb-4">
+                <h5 className="font-bold px-2 py-2 bg-gray-200">External Endpoints Configuration</h5>
             </div>
 
 
-            < Table className="table-bordered centered-content" >
-                <TableHeader>
-                    <TableRow>
-                        <TableHead style={{ width: "13em" }}>Status</TableHead>
-                        <TableHead style={{ width: "30em" }}>URL</TableHead>
-                        <TableHead style={{ width: "40em" }}>Headers</TableHead>
+            < Table className="table-auto border border-slate-500 border-collapse" >
+                <TableHeader className="border border-slate-600">
+                    <TableRow className="border border-slate-600">
+                        <TableHead className="border border-slate-600" style={{ width: "13em" }}>Status</TableHead>
+                        <TableHead className="border border-slate-600" style={{ width: "30em" }}>URL</TableHead>
+                        <TableHead className="border border-slate-600" style={{ width: "40em" }}>Headers</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody className="">
-                    {externalEndpoints && externalEndpoints.map((endpoint, index) => (<TableRow>
-                        <TableCell>{endpoint.internal_status}</TableCell>
-                        <TableCell><input className="form-control" type="text" value={endpoint.external_endpoint || undefined} placeholder={`https://www.example.com/${endpoint.internal_status}`} onChange={(e) => updateEndpoint(index, { ...endpoint, external_endpoint: e.target.value })} /></TableCell>
-                        <TableCell><input className="form-control" type="text" value={endpoint.compressedHeaders || undefined} placeholder='"apikey":"1a54fxx";"content-type":"application/json";"user-agent":"caps-be"' onChange={(e) => updateEndpoint(index, { ...endpoint, compressedHeaders: e.target.value })} /></TableCell>
+                <TableBody className="border border-slate-600">
+                    {externalEndpoints && externalEndpoints.map((endpoint, index) => (<TableRow className="border border-slate-600">
+                        <TableCell className="border border-slate-600">{endpoint.internal_status}</TableCell>
+                        <TableCell className="border border-slate-600"><input disabled={buttonLoading} className="form-control w-full py-2 px-2" type="text" value={endpoint.external_endpoint || undefined} placeholder={`https://www.example.com/${endpoint.internal_status}`} onChange={(e) => updateEndpoint(index, { ...endpoint, external_endpoint: e.target.value })} /></TableCell>
+                        <TableCell className="border border-slate-600"><input disabled={buttonLoading} className="form-control w-full py-2 px-2" type="text" value={endpoint.compressedHeaders || undefined} placeholder='"apikey":"1a54fxx";"content-type":"application/json";"user-agent":"caps-be"' onChange={(e) => updateEndpoint(index, { ...endpoint, compressedHeaders: e.target.value })} /></TableCell>
                     </TableRow>))}
                 </TableBody>
             </Table >
 
             <div className="pt-4 text-center">
                 <div className="pt-4 text-center">
-                    <Button type="submit">Submit</Button>
+                    {!buttonLoading ?
+                        <Button type="submit" disabled={buttonLoading}>Submit</Button> : <section className="flex justify-center bg-white">
+                            <div className="loader"></div>
+                        </section>}
                 </div>
             </div>
 
