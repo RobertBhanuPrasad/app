@@ -209,7 +209,7 @@ export function NewCourse() {
   /**
    *variable that holds whether the logged in user has super admin role or not
    */
-  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+  const hasSuperAdminRole = loginUserData?.userData?.user_role.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
@@ -365,7 +365,7 @@ export const requiredValidationFields = (
   timeZoneData: any = [],
   programTypeData: ProgramTypesDataBaseType
 ) => {
-  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+  const hasSuperAdminRole = loginUserData?.userData?.user_role.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
@@ -414,7 +414,7 @@ export const requiredValidationFields = (
   }
 
   //fetching user_roles of login user data
-  const user_roles: any[] = loginUserData?.userData?.user_roles;
+  const user_roles: any[] = loginUserData?.userData?.user_role;
 
   //Checking Weather a user is Super Admin or Not
   let isUserNationAdminOrSuperAdmin = false;
@@ -429,7 +429,7 @@ export const requiredValidationFields = (
     isUserNationAdminOrSuperAdmin = true;
   }
 
-  let RequiredNewCourseStep4FormNames: string[] = ["product_fee_settings","program_fee"];
+  let RequiredNewCourseStep4FormNames: string[] = ["product_fee_setting","program_fee"];
 
   let RequiredNewCourseStep5FormNames = _.omit(NewCourseStep5FormNames, [
     ...(formData?.is_residential_program == false
@@ -821,7 +821,12 @@ export const NewCourseTabs = () => {
   useEffect(() => {
     // This function handleCourseFeeData is used to fetch course-fee
     const handleCourseFeeData = async () => {
+      console.log(formData,countryCode,'1234');
+      
       const courseFees = await fetchCourseFee({ formData, countryCode });
+
+      console.log(courseFees,'courseFees123');
+      
 
       //If product_fee_settings is present then need to load data in form
       if (courseFees?.length > 0) {
@@ -847,7 +852,7 @@ export const NewCourseTabs = () => {
         const taxRate=10
         const is_tax_enable=true
         //Updating product_fee_level_settings in form
-        const modifiedProductFee=courseFees?.[0]?.product_fee_level_settings.map((feeLevel: { total: number; is_enable: boolean; fee_level: string; early_bird_total: number; is_custom_fee: boolean; custom_fee_label: any; })=>{
+        const modifiedProductFee=courseFees?.[0]?.product_fee_level_setting.map((feeLevel: { total: number; is_enable: boolean; fee_level: string; early_bird_total: number; is_custom_fee: boolean; custom_fee_label: any; })=>{
           let modifiedFeeLevel:any= {
             total: feeLevel?.total,
             sub_total:calculateSubTotalFee(feeLevel?.total,taxRate),
@@ -1256,7 +1261,8 @@ export const fetchCourseFee = async ({
     const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
 
     const courseFeeBody: CourseFeeBody = {
-      program_type_id: formData?.program_type_id as number,
+      // TODO: need to change after organization_id is kept in product_fee_level_settings
+      program_type_id: 10 as number,
     };
 
     if (stateId) {

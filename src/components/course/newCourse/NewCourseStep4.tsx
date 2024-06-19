@@ -28,6 +28,9 @@ export default function CourseTable() {
 
   const formData = watch();
 
+  console.log(formData,'formData123');
+  
+
   return (
     <>
       {formData?.product_fee_settings == undefined ? (
@@ -39,7 +42,7 @@ export default function CourseTable() {
           {
             //If Fee is not found based on users selection then need to show this
             Object.keys(formData?.product_fee_settings)?.length == 0 ||
-            formData?.product_fee_settings?.product_fee_level_settings
+            formData?.product_fee_settings?.product_fee_level_setting
               ?.length == 0 ? (
               <div className="w-[1016px] h-[280px] flex items-center justify-center border border-1 rounded-xl">
                 {t(
@@ -85,7 +88,7 @@ function CourseFeeTable({ courseFeeSettings }: any) {
     ? organizationData?.tax_rate
     : 0;
 
-  const user_roles: any[] = loginUserData?.userData?.user_roles;
+  const user_roles: any[] = loginUserData?.userData?.user_role;
 
   //Checking Weather a user is Super Admin or Not
   let isUserNationAdminOrSuperAdmin = false;

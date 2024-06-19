@@ -299,12 +299,23 @@ export const StateDropDown = ({
     resource: "country",
     filters: [
       {
-        field: "abbr",
-        operator: "contains",
-        value: countryCode,
+        operator: "or",
+        value: [
+          {
+            field: "alpha2_code",
+            operator: "contains",
+            value: countryCode,
+          },
+          {
+            field: "alpha3_code",
+            operator: "contains",
+            value: countryCode,
+          },
+        ],
       },
-    ],
+    ]
   });
+  
 
   const {
     field: { value: stateValue, onChange: stateValueOnchange },

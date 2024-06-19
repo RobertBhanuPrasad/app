@@ -63,6 +63,9 @@ export const AccomdationComponent = () => {
     name: "accommodation",
   });
 
+  console.log(fields,'fields123');
+  
+
   const { watch } = useFormContext();
 
   const formData = watch();
@@ -170,7 +173,7 @@ export const ResidentialCourse = () => {
   const { program_type_id } = watch();
 
   const { data: programTypeData } = useOne({
-    resource: "program_types",
+    resource: "product",
     id: program_type_id,
   });
 
@@ -315,7 +318,7 @@ export const AccommodationType = ({
 
   // Hook to fetch and manage options for a select input
   const { options, onSearch } = useMVPSelect({
-    resource: "accomdation_types",
+    resource: "accommodation_type",
     optionLabel: `name.${languageCode}` as any,
     optionValue: 'id',
     onSearch: (value) => [

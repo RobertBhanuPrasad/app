@@ -69,12 +69,12 @@ export default function NewCourseReviewPage() {
   const searchParams = useSearchParams();
 
   // Checking weather login user is super admin or not
-  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+  const hasSuperAdminRole = loginUserData?.userData?.user_role.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
   // Checking weather login user is National admin or not
-  const hasNationalAdminRole = loginUserData?.userData?.user_roles.find(
+  const hasNationalAdminRole = loginUserData?.userData?.user_role.find(
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
@@ -218,7 +218,7 @@ export default function NewCourseReviewPage() {
     }
 
     //Updating program_fees
-    const modifiedProductFee = data?.[0]?.product_fee_level_settings.map(
+    const modifiedProductFee = data?.[0]?.product_fee_level_setting.map(
       (feeLevel: {
         total: number;
         is_enable: boolean;
@@ -336,11 +336,11 @@ export default function NewCourseReviewPage() {
 
 
   const { data: organizationName } = useOne({
-    resource: "organizations",
+    resource: "organization",
     id: newCourseData?.organization_id,
   });
   const { data: ProgramOrganizer } = useMany({
-    resource: "users",
+    resource: "user",
     ids: newCourseData?.organizer_ids || [],
     meta: { select: "full_name" },
   });
@@ -352,7 +352,7 @@ export default function NewCourseReviewPage() {
     .join(", ");
 
   const { data: CourseLanguages } = useMany({
-    resource: "product_languages",
+    resource: "organization_language",
     ids: newCourseData?.language_ids || [],
     meta: { select: "language_name" },
   });
@@ -364,7 +364,7 @@ export default function NewCourseReviewPage() {
     .join(", ");
 
   const { data: CourseTranslation } = useMany({
-    resource: "product_languages",
+    resource: "organization_language",
     ids: newCourseData?.translation_language_ids || [],
     meta: { select: "language_name" },
   });
@@ -376,7 +376,7 @@ export default function NewCourseReviewPage() {
     .join(", ");
 
   const { data: CourseTeachers } = useMany({
-    resource: "users",
+    resource: "user",
     ids: newCourseData?.teacher_ids || [],
     meta: { select: "full_name" },
   });
@@ -446,16 +446,16 @@ export default function NewCourseReviewPage() {
       return countryCodes[countryCode];
     })
     .join(", ");
-
-  const { data: timeZone } = useOne({
-    resource: "time_zones",
-    id: newCourseData?.time_zone_id,
-  });
-
+// TODO: need to undo comment after keycloak
+  // const { data: timeZone } = useOne({
+  //   resource: "time_zones",
+  //   id: newCourseData?.time_zone_id,
+  // });
+// 
   // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
-  const { data: timeZonesData }: any = useList({
-    resource: "time_zones",
-  });
+  // const { data: timeZonesData }: any = useList({
+  //   resource: "time_zones",
+  // });
 
   //fetching fee levels
   const feeLevels = newCourseData?.program_fee
@@ -1240,8 +1240,8 @@ export default function NewCourseReviewPage() {
                     : "-"}
                 </abbr>
               </div>
-
-              {timeZonesData && timeZonesData?.data?.length > 1 && (
+{/* need to remove after keycloak */}
+              {/* {timeZonesData && timeZonesData?.data?.length > 1 && (
                 <div className="w-[291px]">
                   <p className="text-sm font-normal text-accent-light text-[#999999]">
                     {t("course.new_course:review_post_details.time_zone")}
@@ -1253,7 +1253,7 @@ export default function NewCourseReviewPage() {
                     {timeZone?.data?.name} - {timeZone?.data?.utc_off_set}
                   </abbr>
                 </div>
-              )}
+              )} */}
 
               <div>{venueSessions()}</div>
             </div>
@@ -1531,7 +1531,7 @@ const Accommodation = ({
    *
    */
   const { data } = useOne({
-    resource: "accomdation_types",
+    resource: "accommodation_type",
     id: accomdationData?.accommodation_type_id,
   });
 

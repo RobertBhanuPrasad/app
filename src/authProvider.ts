@@ -134,12 +134,14 @@ export const authProvider: AuthBindings = {
 
     const { data } = await supabase.auth.getUser();
     const { data: userData, error } = await supabase
-      .from("users")
+      .from("user")
       .select(
-        "*,user_roles(*,role_id(*)),program_type_teachers(program_type_id)"
+        "*,user_role(*,role_id(*))"
       )
       .eq("user_identifier", data?.user?.id);
 
+    console.log(userData,'userData123');
+    
     if (error) {
       console.error("Error while fetching login user data", error);
     }

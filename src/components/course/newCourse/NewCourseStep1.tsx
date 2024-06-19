@@ -43,12 +43,12 @@ function NewCourseStep1() {
   const { data: loginUserData }: any = useGetIdentity();
 
   // Checking weather login user is super admin or not
-  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+  const hasSuperAdminRole = loginUserData?.userData?.user_role.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 
   // Checking weather login user is National admin or not
-  const hasNationalAdminRole = loginUserData?.userData?.user_roles.find(
+  const hasNationalAdminRole = loginUserData?.userData?.user_role.find(
     (val: { role_id: { order: number } }) =>
       val.role_id?.order == NATIONAL_ADMIN
   );
@@ -142,12 +142,13 @@ const RadioCards = () => {
   } = useController({
     name: NewCourseStep1FormNames?.program_created_by,
   });
+console.log(value,'valueradio');
 
-  const iAmTeachingType = optionLabelValue?.program_manage_type.I_AM_TEACHING as string 
-  const iAmCoTeachingType = optionLabelValue?.program_manage_type.I_AM_CO_TEACHING as string 
-  const iAmOrganizerType = optionLabelValue?.program_manage_type.I_AM_ORGANIZING as string 
+  const iAmTeachingType = optionLabelValue?.program_manage_type?.I_AM_TEACHING as string 
+  const iAmCoTeachingType = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING as string 
+  const iAmOrganizerType = optionLabelValue?.program_manage_type?.I_AM_ORGANIZING as string 
     const { data: loginUserData }: any = useGetIdentity();
-  const user_roles: any[] = loginUserData?.userData?.user_roles;
+  const user_roles: any[] = loginUserData?.userData?.user_role;
   const hasTeacherRole =
     user_roles && user_roles.some((role) => role.role_id.order === TEACHER);
 
@@ -240,7 +241,7 @@ const RadioCards = () => {
    * @description this const stores the data of the order 3 which is i am organizing the course
    */
   const iAmOrganisingCourse =   t("enum:I_AM_ORGANIZING")
-
+  console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",value,iAmOrganizerType)
   return (
     <RadioGroup value={value} onValueChange={handleOnChange} className="w-full" >
       <div className="flex items-center flex-row gap-7 w-full">
@@ -391,7 +392,7 @@ const OrganizationDropDown = () => {
   const { setValue } = useFormContext();
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "organizations",
+    resource: "organization",
     optionLabel: "name",
     optionValue: "id",
     onSearch: (value) => [     
@@ -519,7 +520,7 @@ const OrganizationDropDown = () => {
           <SelectContent>
              <SelectInput value={searchValue} onChange={handleSearch} />
             <SelectItems onBottomReached={handleOnBottomReached}>
-              {options?.map((option : any, index : any) => {
+              {options?.map((option : any, index : any) => {            
                 return (
                   <div key={index}>
                     <SelectItem
@@ -564,19 +565,19 @@ const ProgramOrganizerDropDown = () => {
   });
 
   const { options, queryResult, onSearch } = useMVPSelect({
-    resource: "users",
+    resource: "user",
     meta: {
-      select: "*,user_roles!inner(role_id)",
+      select: "*,user_role!inner(role_id)",
     }, 
     optionLabel: "full_name",
     optionValue: "id",
     filters: [
       //Fetch the users with Program Organizer role
       {
-        field: "user_roles.role_id",
+        field: "user_role.role_id",
         operator: "eq",
         //TODO need to change after completion of role managment
-        value: 43,
+        value: 1,
       },
     ],
     defaultValue: value,
@@ -593,6 +594,8 @@ const ProgramOrganizerDropDown = () => {
     },
   });
 
+  console.log(options,'organizeroptions',queryResult);
+  
 
   const { watch } = useFormContext();
 

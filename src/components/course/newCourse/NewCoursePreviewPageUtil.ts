@@ -18,7 +18,7 @@ export const getRequiredFieldsForValidation = async (
 
   const { data: timeZoneData } = await supabase.from("time_zones").select("*");
 
-  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+  const hasSuperAdminRole = loginUserData?.userData?.user_role.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
 

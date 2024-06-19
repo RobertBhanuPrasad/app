@@ -3,7 +3,7 @@ import { z } from "zod";
 export const validationSchema = (iAmCoTeaching: string, t?:any) => {
   return z.object({
     // Step 1 Schema
-    organization_id: z.number({
+    organization_id: z.string({
       required_error: "Select Organization Name.",
     }),
     organizer_ids: z
@@ -222,7 +222,7 @@ const contactValidationSchema = z.array(
 
 const accommodationValidationSchema = z.array(
   z.object({
-    accommodation_type_id: z.number({
+    accommodation_type_id: z.string({
       required_error: "Accommodation type is required field.",
     }),
     total: z

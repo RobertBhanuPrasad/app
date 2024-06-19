@@ -45,19 +45,21 @@ const Signup = () => {
       email,
       password,
     });
+    console.log('hi');
+    
 
     console.log("heyy register data", data, error);
 
     const fullName=firstName+ " "+ lastName
-    
-    const { data: userData } = await supabase
-      .from("users")
+    // code and auth_ref_id are required fields so we are hard coding it after keycloak have to do
+    const { data: userData} = await supabase
+      .from("user")
       .insert([
-        { user_identifier: data?.user?.id,first_name:firstName,last_name:lastName,email:email,full_name:fullName }
+        { user_identifier:data?.user?.id,auth_ref_id: 123,first_name:firstName,last_name:lastName,email:email,full_name:fullName,code:3 }
       ])
       .select();
 
-    console.log("Created User is",userData)
+    console.log("Created User is",userData,error)
     
     const { data: roleData } = await supabase
       .from("user_roles")

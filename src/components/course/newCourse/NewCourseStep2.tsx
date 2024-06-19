@@ -41,7 +41,7 @@ export default function NewCourseStep2() {
   const { data: loginUserData }: any = useGetIdentity();
 
   // Checking weather login user is super admin or not
-  const hasSuperAdminRole = loginUserData?.userData?.user_roles.find(
+  const hasSuperAdminRole = loginUserData?.userData?.user_role.find(
     (val: { role_id: { order: number } }) => val.role_id?.order == SUPER_ADMIN
   );
   const {optionLabelValue}=optionLabelValueStore()
@@ -74,7 +74,7 @@ export default function NewCourseStep2() {
           <div className="w-80 h-20">
             <DisplayLanguage />
           </div>
-        )}
+         )} 
         {formData?.is_language_translation_for_participants == true && (
           <div className="w-80 h-20">
             <LanguageTranslationDropDown />
@@ -85,7 +85,7 @@ export default function NewCourseStep2() {
           <div className="w-80 h-20 flex items-center">
             <RegistrationGateway />
           </div>
-        )}
+        )} 
         <div className="w-80 h-20">
           <MaximumCapacity />
         </div>
@@ -97,12 +97,12 @@ export default function NewCourseStep2() {
           <div className="w-80 h-20">
             <GeoRestriction />
           </div>
-        )}
+       )}
         {formData?.is_geo_restriction_applicable && (
           <div className="w-80 h-20">
             <AllowedCountriesDropDown />
           </div>
-        )}
+       )}
       </div>
 
       {/* TODO  : for now may-13 release it has to be hidden */}
@@ -182,6 +182,9 @@ export const CourseTypeDropDown = () => {
 
   const courseCategoryType = optionLabelValue?.program_category?.COURSE
 
+  console.log(formData,'formmy');
+  
+
 
   //Requirement: Fetch only the course types of organization selected in Step-1
   let filter: Array<CrudFilter> = [
@@ -191,7 +194,7 @@ export const CourseTypeDropDown = () => {
       value: formData?.organization_id,
     },
     {
-      field: "program_category",
+      field: "product.category",
       operator: "eq",
       value: courseCategoryType,
     },
@@ -213,7 +216,7 @@ export const CourseTypeDropDown = () => {
     }
 
     filter.push({
-      field: "program_type_teachers.user_id",
+      field: "product_teacher.user_id",
       operator: "in",
       value: userIds,
     });
@@ -226,9 +229,9 @@ export const CourseTypeDropDown = () => {
   });
 
   const selectQuery: any = {
-    resource: "product",
+    resource: "organization_product",
     meta: {
-      select: "*,program_type_teachers!inner(user_id)",
+      select: "*,product(*)",
     },
     optionLabel: `name.${languageCode}`,
     optionValue: 'id',
@@ -251,7 +254,21 @@ export const CourseTypeDropDown = () => {
     selectQuery.defaultValue = value;
   }
 
-  const { onSearch, queryResult, options } = useMVPSelect(selectQuery);
+  const { onSearch, queryResult } = useMVPSelect(selectQuery);
+
+  console.log(queryResult,'queryResult',queryResult?.data?.data)
+  
+
+  const options: { label: string; value: number }[] =
+    queryResult?.data?.data?.map((programType) => {
+      return {
+        label: translatedText(programType?.product?.name),
+        value: programType?.id,
+      };
+    }) as any as { label: string; value: number }[];
+
+    console.log(options,'option123');
+    
 
   const {
     field: { value: courseSettings, onChange: setCourseTypeSettings },
@@ -580,7 +597,7 @@ const TeachersDropDown = () => {
    */
   let filter: Array<CrudFilter> = [
     {
-      field: "program_type_teachers.certification_level",
+      field: "product_teacher.ttp_certification_type",
       operator: "in",
       value: [certificationCeritifiedLevel, certificationCoTeachLevel],
     },
@@ -588,7 +605,7 @@ const TeachersDropDown = () => {
 
   if (formData?.program_type_id) {
     filter.push({
-      field: "program_type_teachers.program_type_id",
+      field: "product_teacher.organization_product_id",
       operator: "eq",
       value: formData?.program_type_id,
     });
@@ -597,7 +614,7 @@ const TeachersDropDown = () => {
   // we have to get teachers based on the selected organization
   if (formData?.organization_id) {
     filter.push({
-      field: "program_type_teachers.program_type_id.organization_id",
+      field: "product_teacher.organization_id",
       operator: "eq",
       value: formData?.organization_id,
     });
@@ -608,10 +625,10 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
   /* If the program was created by the organizer, it proceeds to add a filter */
   /* The filter excludes the currently logged-in user from the list of teachers */
   /* This ensures that the organizer is not included in the list of teachers */
-  /* The filter is applied to the 'program_type_teachers.user_id' field */
+  /* The filter is applied to the 'product_teacher.user_id' field */
   if (formData?.program_created_by == iAmOrganizer) {
     filter.push({
-      field: "program_type_teachers.user_id",
+      field: "product_teacher.user_id",
       operator: "ne",
       value: loginUserData?.userData?.id,
     });
@@ -620,12 +637,12 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
   const [pageSize, setPageSize] = useState(10);
 
   const selectQuery: any = {
-    resource: "users",
+    resource: "user",
     meta: {
       select:
-        "*,program_type_teachers!inner(certification_level,program_type_id!inner(organization_id)),full_name)",
+        "*",
     },
-    filters: filter,
+    // filters: filter,
     defaultvalue: temporaryvalue,
     onSearch: (value: any) => [
       {
@@ -646,8 +663,9 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
     selectQuery.defaultValue = value;
   }
 
-  const { options, queryResult, onSearch } = useMVPSelect(selectQuery);
+  const { options, queryResult } = useMVPSelect(selectQuery);
 
+  console.log(options,'teacheroptionss',queryResult);
   
 
   // Handler for bottom reached to load more options
@@ -686,7 +704,7 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
           )}
           data={options}
           onBottomReached={handleOnBottomReached}
-          onSearch={onSearch}
+          onSearch={()=>{}}
           onChange={(val: any) => {
             onChange(val);
           }}
@@ -737,7 +755,7 @@ const AssistantTeachersDropDown = () => {
 
   let filter: Array<CrudFilter> = [
     {
-      field: "program_type_teachers.certification_level",
+      field: "product_teacher.ttp_certification_type",
       operator: "eq",
       value: certificationLevel,
     },
@@ -745,17 +763,17 @@ const AssistantTeachersDropDown = () => {
 
   if (formData?.program_type_id) {
     filter.push({
-      field: "program_type_teachers.program_type_id",
+      field: "product_teacher.organization_product_id",
       operator: "eq",
       value: formData?.program_type_id,
     });
   }
 
   const { queryResult, onSearch } = useMVPSelect({
-    resource: "users",
+    resource: "user",
     meta: {
       select:
-        "*,first_name,last_name,program_type_teachers!inner(program_type_id,certification_level)",
+        "*,first_name,last_name,product_teacher!inner(organization_product_id,ttp_certification_type)",
     },
     filters: filter,
     onSearch: (value) => [
@@ -771,6 +789,7 @@ const AssistantTeachersDropDown = () => {
     },
     defaultValue : value,
   });
+console.log(queryResult,'assis_teacher');
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
@@ -779,6 +798,8 @@ const AssistantTeachersDropDown = () => {
   };
 
   const teachers: any = queryResult.data?.data?.map((val) => {
+    console.log(val?.first_name,'fname');
+    
     return {
       label: val?.first_name + " " + val?.last_name,
       value: val?.id,
@@ -989,7 +1010,7 @@ const LanguageDropDown = () => {
   });
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "product_languages",
+    resource: "organization_language",
     optionLabel: "language_name",
     optionValue: "id",
     defaultValue: value,
@@ -1012,6 +1033,7 @@ const LanguageDropDown = () => {
       mode: "server",
     },
   });
+console.log(options,'languagedata',queryResult);
 
   const filteredOptions = options?.filter((val: any) => {
     if (formData?.translation_language_ids?.includes(val?.value)) return false;
@@ -1068,7 +1090,7 @@ const LanguageTranslationDropDown = () => {
   const [pageSize, setPageSize] = useState(10);
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "product_languages",
+    resource: "organization_language",
     optionLabel: "language_name",
     optionValue: "id",
     filters: [
@@ -1140,6 +1162,7 @@ const AllowedCountriesDropDown = () => {
       value: countryCode,
     })
   );
+
 
   const allowedCountries = formData?.program_type?.allowed_countries;
 
