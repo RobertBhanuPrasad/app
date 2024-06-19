@@ -316,8 +316,6 @@ function index() {
     return field;
   };
 
-  console.log("sorting", sorting);
-
   const {
     tableQueryResult: participantData,
     pageCount,
@@ -330,8 +328,8 @@ function index() {
     pagination: {
       pageSize: 25, //pageSize is set to 25
     },
-    queryOptions:{
-      keepPreviousData: true
+    queryOptions: {
+      keepPreviousData: true,
     },
     meta: {
       select:
@@ -349,8 +347,6 @@ function index() {
   });
 
   const supabase = supabaseClient();
-
-  console.log("Participant table data", participantData);
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [allSelected, setAllSelected] = useState<boolean>();
@@ -837,7 +833,7 @@ function index() {
             columnPinning={true}
             columnSelector={true}
             noRecordsPlaceholder={t("new_strings:there_are_no_participants")}
-            actionComponent = {<BulkActionsSection />}
+            actionComponent={<BulkActionsSection />}
           />
         </div>
       </div>
@@ -871,7 +867,7 @@ function index() {
               <Button
                 variant="outline"
                 className="flex flex-row gap-2 text-sm text-[#7677F4] border  border-[#7677F4] rounded-xl font-bold"
-                disabled={!allSelected}
+                disabled={rowCount <= 0}
               >
                 {loading ? (
                   <div className="loader !w-[25px]"></div>
