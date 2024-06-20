@@ -306,24 +306,29 @@ export function NewCourse() {
     defaultValues[NewCourseStep1FormNames?.organizer_ids] = [loggedUserData];
   }
 
-  // Get staticData from zustand store
-  // staticData contains country config data and time zone data
+  /**
+   *  Get staticData from zustand store
+   * staticData contains country config data and time zone data
+   */
+
   const {staticData} = staticDataStore()
 
-  const countryConfigData = staticData?.countryConfigData
+  const {countryConfigData, timeZoneData} = staticData
 
-  // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
-  const timeZonesData = staticData?.timeZoneData
   
 
-  // check how many records are there in time_zones table
-  // if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
+  /**
+   * check how many records are there in time_zones table
+   * if only one time_zone is there in database then we need to prefill that time_zone_id to store that in program table
+   * Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database 
+   */
+
   if (
-    timeZonesData?.length === 1 &&
+    timeZoneData?.length === 1 &&
     (IsEditCourse(pathname) === false || IsCopyCourse(pathname) === false)
   ) {
     defaultValues[NewCourseStep3FormNames?.time_zone_id] =
-      timeZonesData?.[0]?.id;
+      timeZoneData?.[0]?.id;
   }
 
   //set defaultValue of hour_format_id to data?.data[0]?.hour_format_id if it contains any value other wise set to default timeFormat24HoursId
@@ -521,7 +526,7 @@ export const NewCourseTabs = () => {
 
   const { data: loginUserData }: any = useGetIdentity();
   const {staticData} = staticDataStore()
-  const timeZoneData = staticData?.timeZoneData
+  const { timeZoneData } = staticData
   const [tabsNextButtonClickStatus, setTabsNextButtonClickStatus] =
     useState<ItabsNextButtonClickStatus>(
       new Array(6).fill(NEXT_BUTTON_NOT_CLICKED)

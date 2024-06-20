@@ -42,7 +42,7 @@ function HeaderSection() {
   );
   
   const { staticData } = staticDataStore()  
-  const countryConfigData = staticData?.countryConfigData
+  const { countryConfigData } = staticData
   const totalRevenue = courseData?.data?.revenue;
   const { replace } = useRouter();
   const { programId } = newCourseStore();

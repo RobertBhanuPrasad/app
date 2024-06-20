@@ -48,7 +48,7 @@ export default function CourseTable() {
   });
 
   
-  const organizationsData = staticData?.organizationsData
+  const { organizationsData } = staticData
   const organization = organizationsData?.find(organization=>organization?.id === formData?.organization_id)
 
   return (
@@ -92,7 +92,7 @@ function CourseFeeTable({ courseFeeSettings, organizationData }: any) {
   const { data: loginUserData }: any = useGetIdentity();
 
   const { staticData } = staticDataStore() 
-  const countryConfigData =   staticData?.countryConfigData
+  const { countryConfigData } =   staticData
 
   const { watch } = useFormContext();
 

@@ -9,13 +9,13 @@ import {
 } from "src/constants/CourseConstants"
 import { NATIONAL_ADMIN, SUPER_ADMIN } from "src/constants/OptionValueOrder"
 import { supabaseClient } from "src/utility"
-import { StaticData } from "src/zustandStore/StaticDataStore"
+import { StaticDataType } from "src/zustandStore/StaticDataStore"
 
 export const getRequiredFieldsForValidation = async (
   formData: any,
   loginUserData: any,
   countryCode: any,
-  staticData: {countryConfigData:CountryConfigDataBaseType | null,timeZoneData: TimeZoneDataBaseType | null,organizationsData: OrganizationsDataBaseType[] | null}
+  staticData: StaticDataType
 ) => {
   const supabase = supabaseClient();
 

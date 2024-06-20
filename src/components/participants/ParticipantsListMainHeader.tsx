@@ -56,7 +56,7 @@ export const ParticipantsListMainHeader = () => {
   );
 
   const { staticData } = staticDataStore()
-  const countryConfigData =staticData?.countryConfigData
+  const { countryConfigData } =staticData
 
 
       

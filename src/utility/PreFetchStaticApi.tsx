@@ -1,5 +1,4 @@
-import { SupabaseClient } from "@supabase/supabase-js"
-import { supabaseClient } from "src/utility/supabaseClient"
+import { SupabaseClient, supabaseClient } from "src/utility/supabaseClient"
 
 // combining whole db static data in one single object
 export const fetchStaticDBData = async() => {
@@ -20,13 +19,13 @@ export const fetchStaticDBData = async() => {
     })  
     .catch((error) => {
       console.error("Error fetching static DB data", error)
-      return { countryConfigData: null, timeZoneData: null }
+      return { countryConfigData: null, timeZoneData: null, organizationsData: null }
     })
 
 }
 
 // fetching country config data from db 
-export const fetchCountryConfigData = async (supabase: SupabaseClient<any, string, any>): Promise<CountryConfigDataBaseType | null> => {
+export const fetchCountryConfigData = async (supabase: SupabaseClient): Promise<CountryConfigDataBaseType | null> => {
 
   try {
     const { data: countryConfigData, error } = await supabase.from("country_config").select("*").single()
@@ -44,7 +43,7 @@ export const fetchCountryConfigData = async (supabase: SupabaseClient<any, strin
 }
 
 // fetching time zones data from db
-export const fetchTimeZonesData = async (supabase: SupabaseClient<any, string, any>): Promise<TimeZoneDataBaseType[] | null> => {
+export const fetchTimeZonesData = async (supabase: SupabaseClient): Promise<TimeZoneDataBaseType[] | null> => {
 
   try {
     const { data: timeZonesData, error } = await supabase.from("time_zones").select("*")
@@ -62,7 +61,7 @@ export const fetchTimeZonesData = async (supabase: SupabaseClient<any, string, a
 }
 
 // fetching organization data from db
-export const fetchOrganizationData = async(supabase: SupabaseClient<any, string, any>):Promise<any>=>{
+export const fetchOrganizationData = async(supabase: SupabaseClient):Promise<OrganizationsDataBaseType[] | null>=>{
 
   try {
     const { data: organizationsData, error } = await supabase.from("organizations").select("*")
@@ -74,7 +73,7 @@ export const fetchOrganizationData = async(supabase: SupabaseClient<any, string,
     return organizationsData
 
   } catch (error) {
-    console.error("Error fetching time zones data",error)
+    console.error("Error fetching organizations data",error)
     return null
   }
 }

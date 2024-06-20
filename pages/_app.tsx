@@ -17,7 +17,6 @@ import { getLanguageCodeFromLocale, loadLanguageModule } from "src/utility/useGe
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { staticDataStore } from "src/zustandStore/StaticDataStore";
-import _ from "lodash";
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat' 
 
@@ -71,8 +70,12 @@ function MyApp({
       setCountryCode(countryCode);
       setLanguageCode(languageCode);
 
-      // set country config data and time zone data in zustand store
-      const fetchData= async ()=>{
+      /**
+       * getStaticDataFromLocalStorage function is used to set the static data from the local storage in zustand store
+       * Here we are getting static data from local storage using getItem() function
+       * After getting the static data we set the data in zustand store using setStaticData() void
+       */
+      const getStaticDataFromLocalStorage = async ()=>{
 
         // Getting staticData stored in local storage
         const localStorageDataStr = localStorage.getItem("staticDataFromDB");
@@ -80,7 +83,7 @@ function MyApp({
         setStaticData(localStorageData)
       }
 
-      fetchData()
+      getStaticDataFromLocalStorage()
       
     }, []);
 

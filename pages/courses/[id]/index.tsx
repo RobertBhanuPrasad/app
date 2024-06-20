@@ -227,7 +227,7 @@ function ViewDetails() {
 
   const languageCode = useGetLanguageCode()
 
-  const countryConfigData = staticData?.countryConfigData
+  const { countryConfigData } = staticData
 
       
   //TODO: we need to pass the  currency code as the argument that is taken from country_config table

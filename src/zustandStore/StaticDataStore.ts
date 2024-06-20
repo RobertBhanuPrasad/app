@@ -1,7 +1,13 @@
 import { create } from "zustand";
 
+export interface StaticDataType {
+  countryConfigData: CountryConfigDataBaseType | null,
+  timeZoneData: TimeZoneDataBaseType[] | null,
+  organizationsData: OrganizationsDataBaseType[] | null
+}
+
 export interface StaticData {
-    staticData: {countryConfigData:CountryConfigDataBaseType | null, timeZoneData: TimeZoneDataBaseType[] | null, organizationsData: OrganizationsDataBaseType[] | null}
+    staticData: StaticDataType;
     setStaticData: (data:{countryConfigData:CountryConfigDataBaseType | null, timeZoneData: TimeZoneDataBaseType[] | null, organizationsData: OrganizationsDataBaseType[] | null}) => void;
 }
 

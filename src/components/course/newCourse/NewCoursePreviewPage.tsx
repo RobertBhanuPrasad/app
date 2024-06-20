@@ -321,7 +321,7 @@ export default function NewCourseReviewPage() {
     newCourseData?.visibility_id &&
     getOptionValueObjectById(VISIBILITY, newCourseData?.visibility_id);
 
-  const organizationsData = staticData?.organizationsData
+  const { countryConfigData,organizationsData, timeZoneData } = staticData
   const organization = organizationsData?.find(organization=>organization?.id === newCourseData?.organization_id)
 
   const { data: ProgramOrganizer } = useMany({
@@ -435,7 +435,6 @@ export default function NewCourseReviewPage() {
 
   // Requirement: If there is only one time zone available, we will not display time zone dropdown and we need to store that time zone id in the database
 
-  const timeZoneData = staticData?.timeZoneData
 
   const timeZone = timeZoneData?.find(item => item.id === newCourseData?.time_zone_id);
 
@@ -673,15 +672,6 @@ const sortEnabledFeeLevelData = sortFeeLevels(enabledFeeLevelData)
     }
     setIsSubmitting(false);
   };
-
-  /**
-   * @constant countryConfigData
-   * @description this constant stores the country config data based on the organization
-   * REQUIRMENT we need to show the current currency code befor the ammount in the accommodation details
-   * we will get the currency code in the country config
-   *
-   */
-    const countryConfigData = staticData?.countryConfigData
 
   /**
    * @function schedulesPreprocessing
@@ -1606,7 +1596,7 @@ const Fees = ({
    */
   const { staticData } = staticDataStore()   
 
-  const countryConfigData = staticData?.countryConfigData
+  const { countryConfigData } = staticData
 
 
   //If custom fee is enabled Need to show custom label.
@@ -1693,7 +1683,8 @@ const EarlyBirdFees = ({
    */
 
   const { staticData } = staticDataStore()  
-  const countryConfigData = staticData?.countryConfigData
+
+  const { countryConfigData } = staticData
 
 
   //If custom fee is enabled Need to show custom label.

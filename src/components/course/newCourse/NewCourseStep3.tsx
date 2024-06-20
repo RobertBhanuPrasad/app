@@ -236,7 +236,7 @@ const SchedulesHeader = () => {
 
   const {staticData} = staticDataStore()
 
-  const timeZoneData = staticData?.timeZoneData
+  const { timeZoneData } = staticData
 
   return (
     <div className="h-9 flex">

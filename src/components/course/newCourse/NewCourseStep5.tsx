@@ -76,7 +76,8 @@ export const AccomdationComponent = () => {
   const formData = watch();
 
   const { staticData } = staticDataStore()
-  const countryConfigData = staticData?.countryConfigData
+  
+  const { countryConfigData } = staticData
 
   // Effect to add initial data if no fees are present
   useEffect(() => {

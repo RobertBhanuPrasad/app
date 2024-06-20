@@ -126,7 +126,7 @@ const ButtonsDialog = ({
   const { data: loginUserData }: any = useGetIdentity();  
   const {staticData} = staticDataStore()
 
-  const timeZoneData = staticData?.timeZoneData
+  const { timeZoneData } = staticData
 
     /**
    * In new course setp 2 we have program type dropdown select component

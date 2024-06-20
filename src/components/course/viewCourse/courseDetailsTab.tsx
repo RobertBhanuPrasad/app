@@ -100,7 +100,7 @@ function CourseDetailsTab() {
   
   const { staticData } = staticDataStore()     
 
-  const countryConfigData = staticData?.countryConfigData
+  const { countryConfigData } = staticData
 
   // If the course fee is editable then we can use custom fees otherwise we can use default fees
   const programFeeLevels = courseData?.data?.program_fee_settings_id
