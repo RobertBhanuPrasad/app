@@ -16,7 +16,6 @@ import { getCountryCodeFromLocale } from "src/utility/useGetCountryCode";
 import { getLanguageCodeFromLocale, loadLanguageModule } from "src/utility/useGetLanguageCode";
 import { ConfigStore } from "src/zustandStore/ConfigStore";
 import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
-import { staticDataStore } from "src/zustandStore/StaticDataStore";
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat' 
 
@@ -53,7 +52,6 @@ function MyApp({
     const { setOptionLabelValue } = optionLabelValueStore();
 
     const { setCountryCode, setLanguageCode } = ConfigStore();
-    const { setStaticData } = staticDataStore();
 
     const fetchOptionLabelOptionValueData = async () => {
       const { data } = await supabase
