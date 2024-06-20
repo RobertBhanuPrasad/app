@@ -34,34 +34,25 @@ console.log(options,"options are")
 const handleOnBottomReached = () => {
   setPageSize((previousLimit: number) => previousLimit + 10);
 };
+
+const handleSelectedValue = (val: any)=>{
+  setOpen(false)
+  setValue(val as string)
+}
+
+const handleClick = (val) => {
+  setOpen(val)
+}
   return (
-    <div className="text-3xl">
+    <div >
       {/* <Button>Hello</Button> */}
-      <MVPSelect open={open} onOpenChange={setOpen}>
-      <MVPSelectTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value
-            ? value
-            : "Select framework..."}
-            {value 
-            ? <button onClick={()=>{
-              setValue("")
-            }}><CrossIcon height={10}/></button>
-            : <DropDownArrow/>
-           
-          }
-        </Button>
-      </MVPSelectTrigger>
-      <MVPSelectContent className="w-[200px] p-0">  
+      <MVPSelect open={open} onChange={handleClick}>
+        <MVPSelectTrigger value={value} setValue={setValue}  placeholder="Select city"/>
+      <MVPSelectContent >  
      
           <MVPSelectInput placeholder="Search framework..." />
           <MVPSelectList>
-            <MVPSelectEmpty>No framework found.</MVPSelectEmpty>
+            <MVPSelectEmpty/>
             {options &&
             
             <MVPSelectItems onLoadedData={handleOnBottomReached}>
@@ -70,18 +61,9 @@ const handleOnBottomReached = () => {
                 <MVPSelectItem
                   key={cityData.id}
                   value={cityData.id}
-                  onSelect={(currentValue) => {
-                    console.log(currentValue,"current")
-                    setValue(currentValue)
-                    setOpen(false)
-                  }}
+                  onChange={handleSelectedValue}
                 >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === cityData.label ? "opacity-100" : "opacity-0"
-                    )}
-                  />
+                
                   {cityData.label}
                 </MVPSelectItem>
               )})}
