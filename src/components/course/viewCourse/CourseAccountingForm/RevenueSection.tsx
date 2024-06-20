@@ -1,4 +1,9 @@
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { MainHeader } from "src/ui/TextTags";
 import { CourseInformationAccordion } from "./CourseInformationAccordion";
 import { QuestionInstructionModal } from "./CourseQuestionAndInstruction";
@@ -7,6 +12,7 @@ import { useFieldArray, useController, useFormContext } from "react-hook-form";
 import React from "react";
 import Delete from "@public/assets/Delete";
 import Exclamation from "@public/assets/Exclamation";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Dialog,
   DialogClose,
@@ -21,9 +27,11 @@ import { Button } from "src/ui/button";
 import { useValidateCurrentStepFields } from "src/utility/ValidationSteps";
 import { DateField } from "src/ui/DateField";
 import { Input } from "src/ui/input";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 
 function RevenueSection() {
   const searchParams = useSearchParams();
+  const params = useParams();
   const pathname = usePathname();
   const { replace, back } = useRouter();
   const { getValues } = useFormContext();
@@ -46,15 +54,36 @@ function RevenueSection() {
     setAddButtonDisabled(true);
   };
 
+  /**
+   * This function is used to add the row to the table
+   */
   const addRow = () => {
     append({ deposit_date: new Date() });
   };
 
+  /**
+   * 
+   * @param index The function is used to delete the row in the table of particular index
+   */
   const deleteRow = (index: number) => {
+    //Need to remove the this row when we delete the particular row
     remove(index);
     if (fields.length === 1) {
       setAddButtonDisabled(false);
     }
+
+    //we need to display alert for 3 sec after deleting the row
+    toast("Record deleted successfully", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
   };
 
   const { ValidateCurrentStepFields } = useValidateCurrentStepFields();
@@ -69,10 +98,21 @@ function RevenueSection() {
     }
   };
 
-
   return (
     <div className="bg-[white]">
-      {" "}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />{" "}
       <div className="m-8 text-[#333333] flex flex-col gap-6 text-[23px] font-semibold">
         <div className="flex flex-row justify-between">
           <p>Revenue</p>
