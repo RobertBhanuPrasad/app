@@ -1,13 +1,13 @@
+import { Layout } from "@components/layout";
 import { Authenticated, Refine } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
-import type { GetServerSideProps, NextPage } from "next";
-import { AppProps } from "next/app";
-import "caps-ui/dist/caps.css"
-import { Layout } from "@components/layout";
 import { dataProvider } from "@refinedev/supabase";
 import "@styles/global.css";
+import "caps-ui/dist/caps.css";
+import type { GetServerSideProps, NextPage } from "next";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { AppProps } from "next/app";
 import { withRouter } from "next/router";
 import { useEffect } from "react";
 import { authProvider } from "src/authProvider";
