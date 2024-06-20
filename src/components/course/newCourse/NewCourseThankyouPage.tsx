@@ -73,20 +73,19 @@ useEffect(() => {
     }, 1000)
   }
   const { data, isLoading: isThankyouPageDataIsLoading } = useOne({
-    resource: 'program',
+    resource: 'program_details_with_users',
     id: programId,
     meta: {
       select:
-        'online_url,visibility,program_code,program_type_id,status,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_users(users(full_name)),program_schedules(start_time,end_time),registration_link,details_page_link'
+        '*,online_url,visibility,program_code,program_type_id,status,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_users(users(full_name)),program_schedules(start_time,end_time),registration_link,details_page_link'
     }
   })
+console.log(data,"data");
 
   // Formatting teacher string
-  const teachers = data?.data?.program_users
-    ?.map((teacher: any) => {
-      return teacher?.users?.full_name
-    })
-    .join(',')
+  const teachers = data?.data?.program_teacher_names
+
+console.log(teachers,"teachers");
 
   // Formatting the venue details
 

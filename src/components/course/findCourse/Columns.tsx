@@ -75,7 +75,7 @@ export const column = (
       },
     },
     {
-      accessorKey: "program_types",
+      accessorKey: "product",
       column_name: t("new_strings:course_type_name"),
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
@@ -87,12 +87,8 @@ export const column = (
         );
       },
       cell: ({ row }: any) => {
-        return (
-          <div className="w-[150px]">
-            {translatedText(row?.original?.program_types?.name)}
-          </div>
-        );
-      },
+        return <div className="w-[150px]">{translatedText(row?.original?.product?.name)}</div>
+      }
     },
 
     //TODO : for now may-13 release it has to be hidden
@@ -108,6 +104,18 @@ export const column = (
     //     return <div className="min-w-[150px]">{translatedText(row?.original?.program_type_alias_names?.alias_name)}</div>
     //   }
     // },
+    {
+      accessorKey: "status",
+      column_name: t("course.find_course:course_status"),
+      //These columns are default columns and shouldnt be editable
+      enableHiding: false,
+      header: () => {
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:course_status")}</div>;
+      },
+      cell: ({ row }: any) => {
+        return <div className="min-w-[150px]">{t(`enum:${row?.original?.status}`)} </div>
+      }
+    },
     {
       accessorKey: "program_schedules",
       //These columns are default columns and shouldnt be editable
@@ -199,8 +207,7 @@ export const column = (
       },
     },
     {
-      accessorKey: "program_teachers",
-      //These columns are default columns and shouldnt be editable
+      accessorKey: "program_details_with_users",
       enableHiding: false,
       column_name: t(
         "course.participants:view_participant.course_information_tab.Teachers(S)"
@@ -215,34 +222,28 @@ export const column = (
         );
       },
       cell: ({ row }: any) => {
-        const teachers = row?.original?.program_teachers?.map(
-          (teacher: any) => teacher?.users?.contact_id?.full_name
-        );
+        const teachers = row?.original?.program_teacher_names   
         return (
           <div className="flex flex-wrap min-w-[150px]">
-            <div>{teachers && teachers.join(", ")}</div>
+            <div>{teachers}</div>
           </div>
         );
       },
     },
     {
-      accessorKey: "program_organizers",
-      column_name: t("program_organizer"),
+      accessorKey: "program_details_with_users",
+      column_name: t('program_organizer'),
       header: () => {
         return (
           <div className="min-w-[150px] text-sm">{t("program_organizer")}</div>
         );
       },
       cell: ({ row }: any) => {
-        //Mapping all the programOrganizers in the comma separated name
-        const organizers = row?.original?.program_organizers?.map(
-          (Organizer: any) => Organizer?.users?.contact_id?.full_name
-        );
+        const teachers = row?.original?.program_organizer_names
 
         return (
           <div className="flex flex-wrap min-w-[150px]">
-            {/* If organisers present them map them by comma separated other wise it will display - */}
-            <div>{organizers ? organizers.join(",  ") : "-"}</div>
+            <div>{teachers }</div>
           </div>
         );
       },
@@ -278,6 +279,17 @@ export const column = (
           </div>
         );
       },
+    },
+    {
+      accessorKey: "visibility",
+      column_name: t('new_strings:visibility'),
+      header: () => {
+        return <div className="min-w-[150px] text-sm">{t('new_strings:visibility')}</div>;
+      },
+      cell: ({ row }: any) => {
+
+        return <div className="min-w-[150px]">{t(`enum:${row?.original?.visibility}`)}</div>
+      }
     },
 
     //TODO : for now may-13 release it has to be hidden

@@ -936,12 +936,12 @@ export const CourseStatus = () => {
         <div key={index}>
           <Button
             className={`rounded-full h-[28px] text-sm font-normal ${
-              temporaryValue?.includes(status?.label)
+              temporaryValue?.includes(status?.value)
                 ? "bg-primary text-white  hover:bg-[#5E5FC3]"
                 : "bg-white border border-[#D6D7D8] hover:border-solid hover:border hover:border-[1px] hover:border-[#7677F4]"
             }`}
             variant="outline"
-            onClick={() => toggleCourseStatus(status?.label)}
+            onClick={() => toggleCourseStatus(status?.value)}
           >
             {t(`enum:${status?.value}`)}
           </Button>
@@ -1146,13 +1146,13 @@ export const ProgramOrganiser = () => {
   const { options, queryResult, onSearch } = useMVPSelect({
     resource: "users",
     meta: {
-      select: "*,contact_id!inner(full_name),user_roles!inner(role_id)",
+      select: "*,user_roles!inner(role_id)",
     },
-    optionLabel: "contact_id.full_name",
+    optionLabel: "full_name",
     optionValue: "id",
     onSearch: (value : any) => [
       {
-        field: "contact_id.full_name",
+        field: "full_name",
         operator: "contains",
         value,
       },
@@ -1201,13 +1201,13 @@ export const TeacherDropdown = () => {
     resource: "users",
     meta: {
       select:
-        "*,program_type_teachers!inner(program_type_id),contact_id!inner(first_name,last_name, full_name)",
+        "*,program_type_teachers!inner(program_type_id)",
     },
     optionLabel: "contact_id.full_name",
     optionValue: "id",
     onSearch: (value : any) => [
       {
-        field: "contact_id.full_name",
+        field: "full_name",
         operator: "contains",
         value,
       },
@@ -1216,7 +1216,13 @@ export const TeacherDropdown = () => {
       pageSize: pageSize,
       mode: "server",
     },
-    defaultValue : temporaryValue
+  });
+
+  const teachers: any = queryResult.data?.data?.map((val) => {
+    return {
+      label: val?.first_name + " " + val?.last_name,
+      value: val?.id,
+    };
   });
 
 

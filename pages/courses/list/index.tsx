@@ -118,28 +118,33 @@ function index() {
     });
   }
 
-  //If we select teacher then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.course_teacher) {
-    filters.permanent.push({
-      field: "program_teachers.user_id",
-      operator: "eq",
-      value: AllFilterData?.advanceFilter?.course_teacher,
-    });
-  }
+//   //If we select teacher then we need to write a filter to the data query , here if it presents we will push to filters array
 
-  //If we select program_organiser then we need to write a filter to the data query , here if it presents we will push to filters array
-  if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
-    filters.permanent.push({
-      field: "program_organizers.user_id",
-      operator: "in",
-      value: AllFilterData?.advanceFilter?.program_organiser,
-    });
-  }
+if (AllFilterData?.advanceFilter?.course_teacher) {
 
+  filters.permanent.push(
+      {
+          field: "program_teacher_ids",
+          operator: "cs",
+          value: `{${AllFilterData.advanceFilter.course_teacher}}`
+      }
+  );
+} 
+console.log(AllFilterData.advanceFilter,"sai");
+if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
+  filters.permanent.push(
+
+      {
+          field: "program_organizer_ids",
+          operator: "cs",
+          value: `{${AllFilterData.advanceFilter.program_organiser}}`
+      }
+  );
+}
   //If we select visibility then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.visibility) {
     filters.permanent.push({
-      field: "visibility_id",
+      field: "visibility",
       operator: "eq",
       value: AllFilterData?.advanceFilter?.visibility,
     });
@@ -157,7 +162,7 @@ function index() {
   //If we select course_status then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.course_status?.length > 0) {
     filters.permanent.push({
-      field: "status_id",
+      field: "status",
       operator: "in",
       value: AllFilterData?.advanceFilter?.course_status,
     });
@@ -232,7 +237,7 @@ function index() {
   //If we select course_accounting_status then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.course_accounting_status?.length > 0) {
     filters.permanent.push({
-      field: "program_accounting_status_id",
+      field: "accounting_status",
       operator: "in",
       value: AllFilterData?.advanceFilter?.course_accounting_status,
     });
@@ -327,10 +332,10 @@ function index() {
     setCurrent,
     setFilters,
   } = useTable({
-    resource: "program",
+    resource: "program_details_with_users",
     meta: {
       select:
-        "*,product(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+      "*,product(name) , state(name) , city(name) , center(name) ,program_users!inner(user_type,users!inner(full_name)),program_schedules!inner(*) ",
     },
     filters: filters,
     queryOptions: {
@@ -377,12 +382,12 @@ function index() {
    */
   const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
     useTable({
-      resource: "program",
+      resource: "program_details_with_users",
       //restricting the hook to get the params from URL
       syncWithLocation: false,
       meta: {
         select:
-          "*,product(name) , state(name) , city(name) , center(name) ,program_teachers!inner(users(contact_id(full_name))) , program_organizers!inner(users(contact_id(full_name))) , program_type_alias_names(alias_name) , visibility_id(id,name),program_schedules!inner(*), program_fee_level_settings(is_custom_fee) , status_id(id,name) ,program_accounting_status_id(id,name)",
+        "*,product(name) , state(name) , city(name) , center(name) ,program_users!inner(user_type,users(full_name)),program_schedules!inner(*) ",
       },
       pagination: {
         pageSize: pageSize,
@@ -482,7 +487,7 @@ function index() {
         },
         {
           column_name: t("course.find_course:course_status"),
-          path: ["status_id", "name", languageCode],
+          path: ["status"],
         },
         {
           column_name: t("course.find_course:start_date"),
@@ -502,11 +507,11 @@ function index() {
         },
         {
           column_name: t("course.find_course:teacher(s)"),
-          path: ["program_teachers", "users", "contact_id", "full_name"],
-        },
+          path:  ["program_teacher_names"] ,
+        },    
         {
           column_name: t("program_organizer"),
-          path: ["program_organizers", "users", "contact_id", "full_name"],
+          path: ["program_organizer_names"],
         },
         {
           column_name: t("course.find_course:attendees"),
@@ -514,7 +519,7 @@ function index() {
         },
         {
           column_name: t("new_strings:visibility"),
-          path: ["visibility_id", "name", languageCode],
+          path: ["visibility"],
         },
         // {
         //   column_name: t("course_accounting_status"),
@@ -530,9 +535,9 @@ function index() {
        * This holds the params need to send for export excel function like table name , select query , columns
        */
       const params = new URLSearchParams({
-        table_name: "program",
+        table_name: "program_details_with_users",
         select:
-          "id,created_at,program_code,product(name),status_id(name),start_date,state(name),city(name),center(name),program_teachers!inner(users(contact_id(full_name))), program_organizers!inner(users(contact_id(full_name))),visibility_id(id,name),program_accounting_status_id(id,name),participant_count,revenue",
+        "*,product(name) , state(name) , city(name) , center(name) ,program_users!inner(user_type,user_id(full_name)),program_schedules!inner(*) ",
         columns: JSON.stringify(excelColumns),
         filters: JSON.stringify(exportXlsFilters),
         sorters: JSON.stringify([
