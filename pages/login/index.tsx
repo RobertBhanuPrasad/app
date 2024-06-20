@@ -1,116 +1,129 @@
 import { useRouter } from "next/navigation";
 import nookies from "nookies";
-import { useState } from "react";
-import { supabaseClient } from "src/utility";
+import { useEffect, useState } from "react";
+import { authProvider, signInWithKeycloak } from "src/authProvider";
+
+type LoggedIn =
+  | {
+      isLoggedIn: true;
+      redirectTo: string;
+    }
+  | {
+      isLoggedIn: false;
+      error: string;
+    };
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+  const [loggedIn, setLoggedIn] = useState<LoggedIn>();
   const router = useRouter();
 
-  const supabase = supabaseClient();
+  useEffect(() => {
+    (async () => {
+      // clear URL fragment immediately
+      const url = new URL(window.location.href);
+      history.replaceState(null, "", window.location.pathname);
 
-  const handleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+      const accessToken = new URLSearchParams(url.hash).get("access_token");
+      const redirectTo = url.searchParams.get("to") || "/courses/list";
 
-    console.log("heyy error", error, data);
+      // check if user is already logged in
+      const { authenticated } = await authProvider.check();
 
-    if (data?.session) {
-      nookies.set(null, "token", data.session.access_token, {
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-      });
-
-      const { count, error } = await supabase
-        .from("first_time_users")
-        .select("*", { count: "exact", head: true })
-        .eq("alloted_uuid", data.user.id);
-      console.log(count);
-      if (count === 1) {
-        router.replace("/change-password");
-      } else {
-        router.replace("/courses/list");
+      if (authenticated) {
+        setLoggedIn({ isLoggedIn: true, redirectTo });
+        return;
       }
+
+      // if user is not logged in, process OR initiate authentication flow
+      if (accessToken) {
+        const res = await fetch("/api/exchangeToken", {
+          method: "POST",
+          body: JSON.stringify({
+            token: accessToken,
+          }),
+        });
+        const body = await res.json();
+        if (res.ok) {
+          nookies.set(null, "token", body.token, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          });
+          setLoggedIn({ isLoggedIn: true, redirectTo });
+        } else {
+          setLoggedIn({
+            isLoggedIn: false,
+            error: body.error,
+          });
+        }
+      } else {
+        signInWithKeycloak(redirectTo);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (loggedIn?.isLoggedIn) {
+      router.replace(loggedIn.redirectTo);
     }
-  };
-  return (
-    <div className="login flex min-h-screen bg-neutral justify-center items-center ">
-      <div className="absolute top-6 right-6 font-medium">Beta 1.0</div>
-      <div className="card w-[350px] bg-base-100 px-4 py-8 shadow-xl">
-        <div className="px-4">
-          <h1 className="text-[32px] font-bold text-center my-5">LOGIN</h1>
-        </div>
-        <form
-          className="card-body pt-2 space-y-[10px]"
-          onSubmit={async (ev) => {
-            ev.preventDefault();
-          }}
-        >
-          <div className="form-control flex items-center">
-            <label htmlFor="email" className="label w-1/4">
-              <span className="label-text">Email</span>
-            </label>
-            <input
-              type="text"
-              value={email}
-              onChange={(ev) => setEmail(ev.target.value)}
-              name="email"
-              placeholder="Enter email"
-              className="border-[1px] border-black ml-[5px] p-1 w-3/4"
-              onKeyUp={(e) => (e.key === "Enter" ? handleLogin() : null)}
-            />
-          </div>
+  }, [loggedIn]);
 
-          <div className="form-control mt-0 pb-3 flex items-center">
-            <label htmlFor="password" className="label w-1/4">
-              <span className="label-text">Password</span>
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(ev) => setPassword(ev.target.value)}
-              name="password"
-              placeholder="Enter password"
-              className="border-[1px] border-black ml-[5px] p-1 w-3/4"
-              onKeyUp={(e) => (e.key === "Enter" ? handleLogin() : null)}
-            />
-          </div>
-          {/* <div className="form-control mt-6">
-            <button id="login" type="submit" className="btn">
-              Login
-            </button>
-          </div> */}
-          <div className="form-control mt-6 flex justify-center">
-            <button
-              id="signup"
-              type="button"
-              className="btn font-semibold"
-              onClick={handleLogin}
+  if (!loggedIn)
+    return (
+      <section className="flex justify-center align-center pt-[25%]">
+        <div className="loader"></div>
+      </section>
+    );
+
+  if (loggedIn.isLoggedIn) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <div className="flex justify-center mb-4">
+            <svg
+              className="animate-bounce w-6 h-6 text-blue-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Login
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M3 4a1 1 0 011-1h2a1 1 0 011 1v0a1 1 0 011-1h10a1 1 0 011 1v0a1 1 0 011-1h2a1 1 0 011 1v0a1 1 0 01-1 1H5a1 1 0 00-1 1v15a1 1 0 001 1h14a1 1 0 001-1v-4m-9-4h4m0 0l-2-2m2 2l-2 2"
+              />
+            </svg>
           </div>
-        </form>
+          <h1 className="text-2xl font-bold mb-2">Redirecting to</h1>
+          <p className="text-blue-500">{loggedIn.redirectTo}</p>
+        </div>
+      </div>
+    );
+  }
 
-        {/* <div>
-          If not registered then?{" "}
-          <span
-            onClick={() => {
-              router.push("/register");
-            }}
-            className="font-semibold"
-          >
-            Register
-          </span>
-        </div> */}
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+        <div className="flex justify-center mb-4">
+          <img
+            src={"https://i.imgur.com/hpX2V5d.jpeg"}
+            alt="Sad cat"
+            className="w-60 h-60 rounded-full"
+          />
+        </div>
+        <h1 className="text-2xl font-bold mb-2">Authentication Failed</h1>
+        <p className="text-red-500 mb-4">{loggedIn.error}</p>
+        <button
+          onClick={() => router.refresh()}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+        >
+          Try Again
+        </button>
       </div>
     </div>
   );
 };
+
 export default Login;
 
 Login.requireAuth = false;

@@ -13,7 +13,7 @@ import FilterIcon from "@public/assets/FilterIcon";
 import SearchIcon from "@public/assets/Search";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { useList, useSelect, useTable } from "@refinedev/core";
+import { useList, useTable } from "@refinedev/core";
 import { SortingState } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { GetServerSideProps } from "next";
@@ -1128,10 +1128,6 @@ const AdvanceFilter = ({ hasAliasNameFalse, setCurrent }: any) => {
 const loadPreferences = async (
   supabase: SupabaseClient
 ): Promise<Preferences> => {
-  // accessToken is needed because the /preferences edge function only allows reading our own preferences
-  const accessToken = (await supabase.auth.getSession()).data.session
-    ?.access_token;
-
   const { data, error } = await supabase.functions.invoke("preferences", {
     method: "POST",
     body: {
@@ -1141,9 +1137,6 @@ const loadPreferences = async (
         { key: "city", maxCount: 3 },
         { key: "center", maxCount: 3 },
       ],
-    },
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
     },
   });
 
@@ -1198,17 +1191,11 @@ const savePreferences = async (
   // if there is nothing to update, return
   if (items.length === 0) return;
 
-  // accessToken is needed because the /preferences edge function only allows updating our own preferences
-  const accessToken = (await supabase.auth.getSession()).data.session
-    ?.access_token;
   const { error } = await supabase.functions.invoke("preferences", {
     method: "POST",
     body: {
       operation: "set",
       items,
-    },
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
     },
   });
 

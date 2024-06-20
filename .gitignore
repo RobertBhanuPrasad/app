@@ -10,3 +10,4 @@ node_modules
 !.env.uat
 
 package-lock.json
+.vscode/
