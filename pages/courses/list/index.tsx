@@ -55,6 +55,7 @@ function index() {
   interface ExcelColumn {
     column_name: string;
     path: string[];
+    translate?: boolean;
   }
 
   const { viewPreviewPage, AllFilterData } = newCourseStore();
@@ -82,7 +83,7 @@ function index() {
   //If we select course_type then we need to write a filter to the data query , here if it presents we will push to filters array
   if (AllFilterData?.advanceFilter?.course_type || AllFilterData?.course_type) {
     filters.permanent.push({
-      field: "program_type_id",
+      field: "organization_product_id",
       operator: "eq",
       //here if the course_type from advance filter has value then it will be applied otherwise if there is value in basic filters then it will apply
       value: AllFilterData?.advanceFilter?.course_type
@@ -332,10 +333,10 @@ if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
     setCurrent,
     setFilters,
   } = useTable({
-    resource: "program_details_with_users",
+    resource: "program_view",
     meta: {
       select:
-      "*,product(name) , state(name) , city(name) , center(name) ,program_users!inner(user_type,users!inner(full_name)),program_schedules!inner(*) ",
+      "*,organization_product_id(*,product_id(name)),state(name) , city(name) , center(name) ,program_admin!inner(user!inner(full_name)),program_schedule!inner(*) ",
     },
     filters: filters,
     queryOptions: {
@@ -382,12 +383,12 @@ if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
    */
   const { tableQueryResult: programData, setPageSize: displayDataSetPageSize } =
     useTable({
-      resource: "program_details_with_users",
+      resource: "program_view",
       //restricting the hook to get the params from URL
       syncWithLocation: false,
       meta: {
         select:
-        "*,product(name) , state(name) , city(name) , center(name) ,program_users!inner(user_type,users(full_name)),program_schedules!inner(*) ",
+        "*,organization_product_id(product_id(name)) , state(name) , city(name) , center(name) ,program_admin!inner(user(full_name)),program_schedule!inner(*) ",
       },
       pagination: {
         pageSize: pageSize,
@@ -483,11 +484,12 @@ if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
         },
         {
           column_name: t("new_strings:course_type_name"),
-          path: ["product", "name", languageCode],
+          path: ["organization_product_id","product_id", "name", languageCode],
         },
         {
           column_name: t("course.find_course:course_status"),
           path: ["status"],
+          translate: true,
         },
         {
           column_name: t("course.find_course:start_date"),
@@ -520,6 +522,7 @@ if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
         {
           column_name: t("new_strings:visibility"),
           path: ["visibility"],
+          translate: true,
         },
         // {
         //   column_name: t("course_accounting_status"),
@@ -535,9 +538,9 @@ if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
        * This holds the params need to send for export excel function like table name , select query , columns
        */
       const params = new URLSearchParams({
-        table_name: "program_details_with_users",
+        table_name: "program_view",
         select:
-        "*,product(name) , state(name) , city(name) , center(name) ,program_users!inner(user_type,user_id(full_name)),program_schedules!inner(*) ",
+        "*,organization_product_id(product_id(name)) , state(name) , city(name) , center(name) ,program_admin!inner(user_id(full_name)),program_schedule!inner(*) ",
         columns: JSON.stringify(excelColumns),
         filters: JSON.stringify(exportXlsFilters),
         sorters: JSON.stringify([
@@ -556,6 +559,7 @@ if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
             Authorization:
               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
             "country-code": countryCode,
+            "language-code": "en",
           },
         }
       );
@@ -631,11 +635,12 @@ if (AllFilterData?.advanceFilter?.program_organiser?.length > 0) {
   const { data } = useList<any>({
     resource: "product",
     filters: [
-      {
-        field: "has_alias_name",
-        operator: "eq",
-        value: true,
-      },
+      //TODO:currently alias nam is not requried as for requirment
+      // {
+      //   field: "has_alias_name",
+      //   operator: "eq",
+      //   value: true,
+      // },
     ],
   });
   const { t } = useTranslation([
@@ -858,14 +863,15 @@ export const CourseTypeComponent = ({ name }: any) => {
   const languageCode = useGetLanguageCode()
   
   const { options, onSearch } = useMVPSelect({
-    resource: "product",
-    optionLabel: "name",
+    resource: "organization_product",
+    optionLabel: "product.name",
     optionValue: "id",
+    meta:{select:"*,product(*)"}, 
     //If there is a value which is selected in basic filters it need to be prefilled defaultly
     defaultValue: value && value,
     onSearch: (value: any) => [
       {
-        field: `name->>${languageCode}`,
+        field: `product.name->>${languageCode}`,
         operator: "contains",
         value,
       },

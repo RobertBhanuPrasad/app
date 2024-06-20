@@ -87,7 +87,7 @@ export const column = (
         );
       },
       cell: ({ row }: any) => {
-        return <div className="w-[150px]">{translatedText(row?.original?.product?.name)}</div>
+        return <div className="w-[150px]">{translatedText(row?.original?.organization_product_id?.product_id?.name)}</div>
       }
     },
 
@@ -104,18 +104,6 @@ export const column = (
     //     return <div className="min-w-[150px]">{translatedText(row?.original?.program_type_alias_names?.alias_name)}</div>
     //   }
     // },
-    {
-      accessorKey: "status",
-      column_name: t("course.find_course:course_status"),
-      //These columns are default columns and shouldnt be editable
-      enableHiding: false,
-      header: () => {
-        return <div className="min-w-[150px] text-sm">{t("course.find_course:course_status")}</div>;
-      },
-      cell: ({ row }: any) => {
-        return <div className="min-w-[150px]">{t(`enum:${row?.original?.status}`)} </div>
-      }
-    },
     {
       accessorKey: "program_schedules",
       //These columns are default columns and shouldnt be editable
@@ -149,18 +137,10 @@ export const column = (
       //These columns are default columns and shouldnt be editable
       enableHiding: false,
       header: () => {
-        return (
-          <div className="min-w-[150px] text-sm">
-            {t("course.find_course:course_status")}
-          </div>
-        );
+        return <div className="min-w-[150px] text-sm">{t("course.find_course:course_status")}</div>;
       },
       cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">
-            {translatedText(row?.original?.status_id?.name)}
-          </div>
-        );
+        return <div className="min-w-[150px]">{t(`enum:${row?.original?.status}`)} </div>
       },
     },
     
@@ -280,17 +260,6 @@ export const column = (
         );
       },
     },
-    {
-      accessorKey: "visibility",
-      column_name: t('new_strings:visibility'),
-      header: () => {
-        return <div className="min-w-[150px] text-sm">{t('new_strings:visibility')}</div>;
-      },
-      cell: ({ row }: any) => {
-
-        return <div className="min-w-[150px]">{t(`enum:${row?.original?.visibility}`)}</div>
-      }
-    },
 
     //TODO : for now may-13 release it has to be hidden
     // {
@@ -338,24 +307,17 @@ export const column = (
       },
     },
     {
-      accessorKey: "visibility_id",
-      column_name: t("new_strings:visibility"),
+      accessorKey: "visibility",
+      column_name: t('new_strings:visibility'),
       header: () => {
-        return (
-          <div className="min-w-[150px] text-sm">
-            {t("new_strings:visibility")}
-          </div>
-        );
+        return <div className="min-w-[150px] text-sm">{t('new_strings:visibility')}</div>;
       },
       cell: ({ row }: any) => {
-        return (
-          <div className="min-w-[150px]">
-            {translatedText(row?.original?.visibility_id?.name)}
-          </div>
-        );
-      },
-    },
+console.log(row?.original,"row?.original");
 
+        return <div className="min-w-[150px]">{t(`enum:${row?.original?.visibility}`)}</div>
+      }
+    },
     {
       id: "actions",
       enableHiding: false,

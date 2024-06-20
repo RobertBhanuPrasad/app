@@ -1144,9 +1144,9 @@ export const ProgramOrganiser = () => {
   const [pageSize, setPageSize] = useState(20);
 
   const { options, queryResult, onSearch } = useMVPSelect({
-    resource: "users",
+    resource: "user",
     meta: {
-      select: "*,user_roles!inner(role_id)",
+      select: "*,product_teacher!inner(user_id)",
     },
     optionLabel: "full_name",
     optionValue: "id",
@@ -1198,12 +1198,12 @@ export const TeacherDropdown = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { options, onSearch, queryResult } = useMVPSelect({
-    resource: "users",
+    resource: "user",
     meta: {
       select:
-        "*,program_type_teachers!inner(program_type_id)",
+        "*,product_teacher!inner(user_id)",
     },
-    optionLabel: "contact_id.full_name",
+    optionLabel: "full_name",
     optionValue: "id",
     onSearch: (value : any) => [
       {
@@ -1220,7 +1220,7 @@ export const TeacherDropdown = () => {
 
   const teachers: any = queryResult.data?.data?.map((val) => {
     return {
-      label: val?.first_name + " " + val?.last_name,
+      label: val?.full_name,
       value: val?.id,
     };
   });
