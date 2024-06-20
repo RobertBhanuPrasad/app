@@ -149,7 +149,7 @@ const ButtonsDialog = ({
     }
 
     const { data: programTypeData, error } = await supabase
-      .from("product")
+      .from("organization_product")
       .select("*")
       .eq("id", programTypeId);
 

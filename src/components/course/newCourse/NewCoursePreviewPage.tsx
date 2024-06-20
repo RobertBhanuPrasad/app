@@ -86,7 +86,7 @@ export default function NewCourseReviewPage() {
   } = newCourseStore();
 
   const { data: programTypeData } = useOne({
-    resource: "product",
+    resource: "organization_product",
     id: newCourseData?.program_type_id,
   });
 
@@ -95,7 +95,7 @@ export default function NewCourseReviewPage() {
     centerId: number = 0;
 
   //Finding the state_id ,city_id and center_id where course is going on
-  if (programTypeData?.data?.is_online_program) {
+  if (programTypeData?.data?.is_online) {
     stateId = newCourseData?.state_id;
     cityId = newCourseData?.city_id;
     centerId = newCourseData?.center_id;
@@ -389,8 +389,11 @@ export default function NewCourseReviewPage() {
     .join(", ");
 
   const { data: courseType } = useOne({
-    resource: "product",
+    resource: "organization_product",
     id: newCourseData?.program_type_id,
+    meta: {
+      select:"*,product(name)"
+    }
   });
 
   const venueSessions = () => {
@@ -903,12 +906,12 @@ export default function NewCourseReviewPage() {
                 title={
                   courseType?.data?.name &&
                   newCourseData?.program_type_id !== ""
-                    ? translatedText(courseType?.data?.name)
+                    ? translatedText(courseType?.data?.product?.name)
                     : "-"
                 }
               >
-                {courseType?.data?.name && newCourseData?.program_type_id !== ""
-                  ? translatedText(courseType?.data?.name)
+                {courseType?.data?.product && newCourseData?.program_type_id !== ""
+                  ? translatedText(courseType?.data?.product?.name)
                   : "-"}
               </abbr>
               {errors?.program_type_id && (

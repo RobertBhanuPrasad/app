@@ -14,7 +14,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { translatedText } from 'src/common/translations'
 import { PROGRAM_STATUS, TIME_FORMAT, VISIBILITY } from 'src/constants/OptionLabels'
-import { ACTIVE, PUBLIC, TIME_FORMAT_12_HOURS } from 'src/constants/OptionValueOrder'
+import { ACTIVE, PUBLIC, TEACHER, TIME_FORMAT_12_HOURS } from 'src/constants/OptionValueOrder'
 import { Button } from 'src/ui/button'
 import { formatDateTime } from 'src/utility/DateFunctions'
 import { getOptionValueObjectByOptionOrder } from 'src/utility/GetOptionValuesByOptionLabel'
@@ -22,6 +22,7 @@ import { newCourseStore } from 'src/zustandStore/NewCourseStore'
 import { useTranslation } from 'next-i18next';
 import { optionLabelValueStore } from 'src/zustandStore/OptionLabelValueStore'
 import { TwelveHrFormat, TwentyFourHrFormat } from '../viewCourse/courseDetailsTab'
+import _ from 'lodash'
 
 const NewCourseThankyouPage = () => {
   const {t} = useTranslation(['common', "course.new_course", "new_strings"])
@@ -77,17 +78,16 @@ useEffect(() => {
     id: programId,
     meta: {
       select:
-        'online_url,visibility,program_code,program_type_id,status,time_zone_id,program_type_id(*),venue_id(*,center_id(name),state_id(name),city_id(name)),program_users(users(full_name)),program_schedules(start_time,end_time),registration_link,details_page_link'
+        '*,online_url,visibility,program_code,organization_product(*,product(name)),venue_id(*,center_id(name),state_id(name),city_id(name)),program_schedule(start_time,end_time),program_admin(*,user(full_name))'
     }
   })
 
   // Formatting teacher string
-  const teachers = data?.data?.program_users
-    ?.map((teacher: any) => {
-      return teacher?.users?.full_name
-    })
-    .join(',')
-
+  const teachers = _.map(
+    _.filter(data?.data?.program_admin, { program_user_action: "TEACHER" }),
+    item => item.user.full_name
+  );
+  
   // Formatting the venue details
 
   let venue=""
@@ -127,11 +127,7 @@ useEffect(() => {
 
 
   // getting twelve Hr Time Format id to check whether the particular course time format.
-  const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
-    TIME_FORMAT,
-    TIME_FORMAT_12_HOURS
-  )?.id;
-
+  const twelveHrTimeFormat = optionLabelValue?.hour_format?.HOURS_12
   return (
     <div>
       {isThankyouPageDataIsLoading ? (
@@ -166,7 +162,7 @@ useEffect(() => {
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
               <p className="text-accent-secondary">{t("new_strings:course_name")}</p>
-              <p className="font-bold text-accent-primary">{translatedText(data?.data?.program_type_id?.name)}</p>
+              <p className="font-bold text-accent-primary">{translatedText(data?.data?.organization_product?.product?.name)}</p>
             </div>
             <div className="flex-[1.5] p-4 border-r border-light">
               <p className="text-accent-secondary">{t("teachers")}</p>
@@ -193,12 +189,12 @@ useEffect(() => {
           }
             <div className="flex-[2.5] p-4 ">
               <p className="text-accent-secondary">{t("course.new_course:congratulations_page.course_date")} (UTC 05:00)</p>
-              {data?.data?.program_schedules?.map((schedulesData: any,index:any) => {
+              {data?.data?.program_schedule?.map((schedulesData: any,index:any) => {
                 return (
                   <p className="font-semibold truncate text-accent-secondary" key={index}>
                     {
                       // TODO we need to change the twelveHrTimeFormat to the enum
-                      data?.data?.hour_format_id === twelveHrTimeFormat ? (<TwelveHrFormat item={schedulesData}/>) : (<TwentyFourHrFormat item={schedulesData} />)
+                      data?.data?.hour_format === twelveHrTimeFormat ? (<TwelveHrFormat item={schedulesData}/>) : (<TwentyFourHrFormat item={schedulesData} />)
                     }
                   </p>
                 )

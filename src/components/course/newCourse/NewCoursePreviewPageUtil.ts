@@ -37,7 +37,7 @@ export const getRequiredFieldsForValidation = async (
      * @description this constant stores the data which came from the product table using the program type id which is there in the formData
      */
     const { data: programTypesDataObjects } = await supabase
-      .from("product")
+      .from("organization_product")
       .select("*")
       .eq("id", formData?.program_type_id);
 

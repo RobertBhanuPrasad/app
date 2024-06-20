@@ -85,7 +85,7 @@ function NewCourseStep3() {
   const { program_type_id } = watch();
 
   const { data: programTypeData, isLoading } = useOne({
-    resource: "product",
+    resource: "organization_product",
     id: program_type_id,
   });
 
@@ -96,7 +96,7 @@ function NewCourseStep3() {
   return (
     <div className="space-y-8 w-full">
       <div>
-        {programTypeData?.data?.is_online_program === true ? (
+        {programTypeData?.data?.is_online === true ? (
           <OnlineProgram />
         ) : (
           <Venue />
@@ -1002,7 +1002,7 @@ const CalenderComponent = ({ index, setOpen }: any) => {
 
 
   //we need to check whether it is online program or not and the we need to assign state , city ids
-  if (programTypeData?.data?.is_online_program) {
+  if (programTypeData?.data?.is_online) {
     stateId = formData?.state_id;
     cityId = formData?.city_id;
   } else {
@@ -1300,7 +1300,7 @@ const {
     const supabase = supabaseClient();
 
     const { data } = await supabase
-      .from("venue_view_with_names")
+      .from("venue_view_with_name")
       .select("*")
       .eq("created_by_user_id", loginUserData?.userData?.id)
       .or(
@@ -1314,7 +1314,7 @@ const {
     const supabase = supabaseClient();
 
     const { data } = await supabase
-      .from("venue_view_with_names")
+      .from("venue_view_with_name")
       .select("*")
       .neq("created_by_user_id", loginUserData?.userData?.id)
       .or(
