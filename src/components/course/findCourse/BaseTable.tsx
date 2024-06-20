@@ -151,6 +151,15 @@ interface IBaseTable<TData, TValue> {
    * This variable is used to display the loader in middle of the page and while filtering ideally we dont need to click anything
    */
   isFiltering?: boolean;
+  /**
+   * This variable is used to disabled the horizontal scrolling.
+   */
+  noScroll?: boolean;
+
+  /**
+   * This variable is used pass action component if any. E.g: Bulk Actions in participant listing home page.
+   */
+  actionComponent?: React.ReactNode;
 }
 
 export function BaseTable<TData, TValue>({
@@ -174,6 +183,8 @@ export function BaseTable<TData, TValue>({
   setSorting,
   noRecordsPlaceholder = "No results",
   isFiltering = false,
+  noScroll,
+  actionComponent,
 }: IBaseTable<TData, TValue>) {
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges = columns.reduce(
@@ -341,7 +352,7 @@ export function BaseTable<TData, TValue>({
   const { t } = useTranslation(["common", "course.find_course", "new_strings"]);
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center max-h-[50px]">
+      <div className="flex flex-row justify-between items-center max-h-[50px] gap-4">
         {columnSelector && (
           <div>
             <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -446,6 +457,8 @@ export function BaseTable<TData, TValue>({
         )}
         {/* column selector  */}
 
+        {actionComponent && actionComponent}
+
         {/* If pagination set true then we have to show pagination  */}
         <div>
           {pagination && total > pageSize && (
@@ -509,6 +522,7 @@ export function BaseTable<TData, TValue>({
                                 checkboxSelection ? "left-10" : "left-0"
                               }  bg-[#F1F1FE] drop-shadow-right`
                             } ${
+                              !noScroll &&
                               columnPinning &&
                               index === headerGroup.headers.length - 1 &&
                               `sticky right-0 bg-[#F1F1FE] drop-shadow-left w-[50px]`
@@ -522,7 +536,8 @@ export function BaseTable<TData, TValue>({
                                   header?.getContext()
                                 )}
 
-                            {index === headerGroup.headers.length - 1 &&
+                            {!noScroll &&
+                              index === headerGroup.headers.length - 1 &&
                               columnPinning && (
                                 <div className="flex flex-row gap-2">
                                   <ChevronLeft
@@ -577,6 +592,7 @@ export function BaseTable<TData, TValue>({
                               checkboxSelection ? "left-10" : "left-0"
                             }  top-0 bg-[#FFFFFF] drop-shadow-right`
                           } ${
+                            !noScroll &&
                             columnPinning &&
                             index === row.getVisibleCells().length - 1 &&
                             `sticky right-0 top-0 bg-[#FFFFFF] w-[50px] drop-shadow-left`

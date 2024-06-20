@@ -1,6 +1,6 @@
 {
   "name": "test",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "engines": {
     "node": ">=18.0.0"
@@ -63,13 +63,15 @@
     "@tiptap/pm": "^2.4.0",
     "@tiptap/react": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
-    "caps-ui": "^1.0.13",
+    "caps-ui": "^1.0.15",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.1",
     "date-fns": "^3.6.0",
     "env-cmd": "^10.1.0",
+    "flag-icons": "^7.2.3",
+    "libphonenumber-js": "^1.11.3",
     "loadash": "^1.0.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.302.0",
