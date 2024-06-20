@@ -142,7 +142,6 @@ const RadioCards = () => {
   } = useController({
     name: NewCourseStep1FormNames?.program_created_by,
   });
-console.log(value,'valueradio');
 
   const iAmTeachingType = optionLabelValue?.program_manage_type?.I_AM_TEACHING as string 
   const iAmCoTeachingType = optionLabelValue?.program_manage_type?.I_AM_CO_TEACHING as string 
@@ -241,7 +240,7 @@ console.log(value,'valueradio');
    * @description this const stores the data of the order 3 which is i am organizing the course
    */
   const iAmOrganisingCourse =   t("enum:I_AM_ORGANIZING")
-  console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",value,iAmOrganizerType)
+
   return (
     <RadioGroup value={value} onValueChange={handleOnChange} className="w-full" >
       <div className="flex items-center flex-row gap-7 w-full">
@@ -594,8 +593,6 @@ const ProgramOrganizerDropDown = () => {
     },
   });
 
-  console.log(options,'organizeroptions',queryResult);
-  
 
   const { watch } = useFormContext();
 

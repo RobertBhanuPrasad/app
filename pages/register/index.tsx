@@ -45,8 +45,6 @@ const Signup = () => {
       email,
       password,
     });
-    console.log('hi');
-    
 
     console.log("heyy register data", data, error);
 
@@ -59,7 +57,7 @@ const Signup = () => {
       ])
       .select();
 
-    console.log("Created User is",userData,error)
+    console.log("Created User is",userData)
     
     const { data: roleData } = await supabase
       .from("user_roles")

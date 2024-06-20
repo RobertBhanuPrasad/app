@@ -821,12 +821,8 @@ export const NewCourseTabs = () => {
   useEffect(() => {
     // This function handleCourseFeeData is used to fetch course-fee
     const handleCourseFeeData = async () => {
-      console.log(formData,countryCode,'1234');
       
       const courseFees = await fetchCourseFee({ formData, countryCode });
-
-      console.log(courseFees,'courseFees123');
-      
 
       //If product_fee_settings is present then need to load data in form
       if (courseFees?.length > 0) {

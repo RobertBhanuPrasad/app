@@ -63,9 +63,6 @@ export const AccomdationComponent = () => {
     name: "accommodation",
   });
 
-  console.log(fields,'fields123');
-  
-
   const { watch } = useFormContext();
 
   const formData = watch();

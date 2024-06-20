@@ -140,8 +140,6 @@ export const authProvider: AuthBindings = {
       )
       .eq("user_identifier", data?.user?.id);
 
-    console.log(userData,'userData123');
-    
     if (error) {
       console.error("Error while fetching login user data", error);
     }

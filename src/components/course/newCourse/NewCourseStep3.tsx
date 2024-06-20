@@ -233,7 +233,7 @@ const SchedulesHeader = () => {
       },
     ],
   });
-console.log(options,'tymzone');
+
 
   return (
     <div className="h-9 flex">

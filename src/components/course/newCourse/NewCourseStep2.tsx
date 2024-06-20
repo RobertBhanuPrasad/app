@@ -182,10 +182,6 @@ export const CourseTypeDropDown = () => {
 
   const courseCategoryType = optionLabelValue?.program_category?.COURSE
 
-  console.log(formData,'formmy');
-  
-
-
   //Requirement: Fetch only the course types of organization selected in Step-1
   let filter: Array<CrudFilter> = [
     {
@@ -665,9 +661,6 @@ console.log(formData?.program_created_by,'formData?.program_created_by');
 
   const { options, queryResult } = useMVPSelect(selectQuery);
 
-  console.log(options,'teacheroptionss',queryResult);
-  
-
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
     if (queryResult && (queryResult?.data?.total as number) >= pageSize) {
@@ -789,7 +782,6 @@ const AssistantTeachersDropDown = () => {
     },
     defaultValue : value,
   });
-console.log(queryResult,'assis_teacher');
 
   // Handler for bottom reached to load more options
   const handleOnBottomReached = () => {
@@ -798,8 +790,6 @@ console.log(queryResult,'assis_teacher');
   };
 
   const teachers: any = queryResult.data?.data?.map((val) => {
-    console.log(val?.first_name,'fname');
-    
     return {
       label: val?.first_name + " " + val?.last_name,
       value: val?.id,
@@ -1033,7 +1023,6 @@ const LanguageDropDown = () => {
       mode: "server",
     },
   });
-console.log(options,'languagedata',queryResult);
 
   const filteredOptions = options?.filter((val: any) => {
     if (formData?.translation_language_ids?.includes(val?.value)) return false;

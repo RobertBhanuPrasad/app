@@ -27,8 +27,6 @@ export default function CourseTable() {
   const { watch } = useFormContext();
 
   const formData = watch();
-
-  console.log(formData,'formData123');
   
 
   return (
