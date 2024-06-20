@@ -270,19 +270,19 @@ function CloseParticipantsSection() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItems onBottomReached={() => {}}>
-                  {statusData?.map(
-                    (status: OptionValuesDataBaseType, index: number) => {
-                      return (
-                        <SelectItem
-                          key={index}
-                          value={status.id}
-                          className="h-[44px]"
-                        >
-                          {translatedText(status.name as object)}
-                        </SelectItem>
-                      );
-                    }
-                  )}
+                {statusData?.filter((item: OptionValuesDataBaseType) => item.id !== pendingTransactionStatusId && item.id !== pendingAttendenceStatusId).map(
+                  (status: OptionValuesDataBaseType, index: number) => {            
+                    return (
+                      <SelectItem
+                        key={index}
+                        value={status.id}
+                        className="h-[44px]"  
+                      >
+                        {translatedText(status.name as object)}
+                      </SelectItem>
+                    );
+                  }
+                )}
                 </SelectItems>
               </SelectContent>
             </Select>
