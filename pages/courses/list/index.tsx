@@ -422,32 +422,55 @@ function index() {
 
   const [loading, setIsLoading] = useState(false);
 
+  const programDataForSelectAll = useList({
+    resource: "program",
+    meta: { select: "id" },
+    hasPagination: false,
+    filters: filters.permanent,
+  });
+
   //Whenever the selectall is changed then all cloumns check state need to be changed and whenever the program data is changed then those rows also need to checked or unchecked based on select all state
   useEffect(() => {
-    if (!programData?.data?.data) return;
+    if (!programDataForSelectAll?.data?.data) return;
     const allRowSelection: any = {};
     //If allSelected is true then only i need check rows when i navigate to other pages
     if (allSelected) {
-      programData?.data?.data?.forEach((row: any) => {
+      programDataForSelectAll?.data?.data?.forEach((row: any) => {
         allRowSelection[row?.id] = allSelected;
       });
       setRowSelection(allRowSelection);
     }
-  }, [allSelected, programData?.data?.data]);
+  }, [allSelected, programDataForSelectAll?.data?.data]);
 
   /**
    *Here whenever i check select all then i need to check and unchekc all row selection also
    */
   const handleSelectAll = (val: boolean) => {
-    const allRowSelection: any = {};
-
-    programData?.data?.data?.forEach((row: any) => {
-      allRowSelection[row?.id] = val;
-    });
-    setRowSelection(allRowSelection);
-
-    setAllSelected(val);
+    setAllSelected(!allSelected);
+    if (!allSelected) {
+      const allRowSelection: any = {};
+      programDataForSelectAll?.data?.data?.forEach((row: any) => {
+        allRowSelection[row?.id] = val;
+      });
+      setRowSelection(allRowSelection);
+    } else {
+      setRowSelection([]);
+    }
   };
+
+  useEffect(() => {
+    // It updates the select all button's active state based on whether all available items are selected or not.
+    if (Object.keys(rowSelection).length != programDataForSelectAll?.data?.total) {
+      setAllSelected(false);
+    }
+    // if all available items are selected and there are items present, it ensures the select all button remains active.
+    if (
+      Object.keys(rowSelection).length === programDataForSelectAll?.data?.total &&
+      programDataForSelectAll?.data?.total != 0
+    ) {
+      setAllSelected(true);
+    }
+  }, [rowSelection]);
 
   /**
    *Here whenever the row is unchecked then selected row length will be 0 then i need to uncheck select all also
