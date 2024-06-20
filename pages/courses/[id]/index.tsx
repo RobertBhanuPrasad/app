@@ -200,7 +200,6 @@ function ViewDetails() {
   );
 
   // Check if the tab should be enabled and append the object accordingly
-
   if (isViewCourseAccountingTabToDisplay) {
     tabTriggers.push({
       value: VIEW_COURSE_ACCOUNTING_FORM_TAB,

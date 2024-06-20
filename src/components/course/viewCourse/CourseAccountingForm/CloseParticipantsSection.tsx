@@ -134,7 +134,6 @@ function CloseParticipantsSection() {
       ],
     },
   });
-
   // useController hook  for action dropdown to get value and onChange
   const {
     field: { value: actionValue, onChange: actionOnChange },
@@ -220,9 +219,11 @@ function CloseParticipantsSection() {
   };
 
   return (
-    <div>
-      <div className="m-6 flex flex-col gap-4 bg-[white]">
-        <div className="ml-auto flex flex-row gap-4">
+    <div className="bg-[white]">
+      <div className="m-8 flex flex-col gap-4">
+        <div className="flex flex-row justify-between items-center py-4 gap-4 bg-[white]">
+        <div className="flex font-semibold text-[20px]">Close Registrations</div>
+        <div className="flex flex-row gap-4 justify-end items-center">
           <div>
             {/* select dropdown for displaying actions */}
             <Select
@@ -231,7 +232,7 @@ function CloseParticipantsSection() {
               value={actionValue}
               onValueChange={actionOnChange}
             >
-              <SelectTrigger className="w-[254px]">
+              <SelectTrigger className="w-[254px] border !text-[#333333] !font-semibold text-sm !border-[#999999]">
                 <SelectValue placeholder="Select Action" />
                 {Object.keys(rowSelection).length > 0 && actionValue && (
                   <Text className="text-[#7677F4] font-semibold">
@@ -261,7 +262,7 @@ function CloseParticipantsSection() {
                 handleStatusChange(val);
               }}
             >
-              <SelectTrigger className="w-[254px]">
+              <SelectTrigger className={`w-[254px] border !text-[#333333] !font-semibold text-sm ${statusValue ? "border-[#999999]" : actionValue ? "border-[#7677F4]" : "border-[#999999]"}`}>
                 <SelectValue placeholder="Select Status" />
               </SelectTrigger>
               <SelectContent>
@@ -282,6 +283,7 @@ function CloseParticipantsSection() {
                 </SelectItems>
               </SelectContent>
             </Select>
+            </div>
 
             {/* Dialog definition when we have updated the records it should open */}
             <Dialog open={open} onOpenChange={setOpen}>
@@ -330,7 +332,7 @@ function CloseParticipantsSection() {
               table: "",
               rowStyles: "!important border-none",
               tableContainer: "!h-[350px] !rounded-xl",
-              tableHeader: "bg-[#F1F1FE] sticky top-0 z-10",
+              tableHeader: "bg-[#F1F1FE] sticky top-0 z-1",
             }}
             columns={participantsColumns}
             data={participantData?.data?.data || []}
@@ -354,6 +356,7 @@ function CloseParticipantsSection() {
         <Button
           className="w-[87px] h-[46px]  bg-[#7677F4] rounded-[12px] text-[white]"
           onClick={handleNextClick}
+          type="button"
         >
           Next
         </Button>
@@ -376,12 +379,15 @@ export const participantsColumns: ColumnDef<any>[] = [
       );
     },
     cell: ({ row }) => {
+      const router = useNextRouter();
       return (
         <div
           onClick={() => {}}
           className="min-w-[150px] text-[#7677F4] font-semibold cursor-pointer"
         >
-          <Text className="!text-[#7677F4] font-semibold">
+          <Text className="!text-[#7677F4] font-semibold" onClick={() => {
+                            router.push(`/courses/${row.original.program_id}/participants/${row?.original?.id}`);
+                            }}>
             {/* getting the participant_code from the row data */}
             {row?.original?.participant_code}
           </Text>
@@ -462,6 +468,7 @@ export const participantsColumns: ColumnDef<any>[] = [
         transactionStatusId: row.original.payment_status_id,
         isPPAConsentChecked: row.original.is_program_agreement_checked,
         isHealthDeclarationChecked: row.original.is_health_declaration_checked,
+        balanceDue: row.original.balance_due,
       });
       return (
         <div className="min-w-[150px]">

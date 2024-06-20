@@ -228,8 +228,10 @@ function ExpenseSection() {
   );
 
   return (
-    <div className="px-8">
-      <div className="flex flex-col gap-8">
+    <div className="">
+      <div className="flex flex-col gap-8 px-8">
+        <Header className="text-[23px] mt-4" children={"Expenses"} />
+
         <ExpenseDetails />
         {/*Reimbursement Summary*/}
         {reimbursableFields?.length > 0 && (
@@ -277,13 +279,13 @@ function ExpenseSection() {
         {/* Log table */}
         <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
           <div className="flex h-[48px] min-w-fit bg-[#7677F41A]">
-            <TableHeader className="px-[12px] min-w-[435px] w-full">
+            <TableHeader className="px-[12px] min-w-[435px] text-[#333333] text-[14px] w-full">
               Username
             </TableHeader>
-            <TableHeader className="px-[12px] min-w-[524px] w-full">
+            <TableHeader className="px-[12px] min-w-[524px] text-[#333333] text-[14px] w-full">
               Timestamp
             </TableHeader>
-            <TableHeader className="px-[12px] min-w-[288px] w-full">
+            <TableHeader className="px-[12px] min-w-[288px] text-[#333333] text-[14px] w-full">
               Action
             </TableHeader>
           </div>
@@ -291,13 +293,13 @@ function ExpenseSection() {
           <div className="space-y-[12px] my-[12px]">
             {fields?.map((field: any) => (
               <div className="flex items-center w-full h-auto">
-                <div className="px-[12px] min-w-[435px] w-full">
+                <div className="px-[12px] text-[#333333] text-[14px] min-w-[435px] w-full">
                   {field?.name}
                 </div>
-                <div className="px-[12px] min-w-[524px] w-full">
+                <div className="px-[12px] text-[#333333] text-[14px] min-w-[524px] w-full">
                   {field?.timestamp}
                 </div>
-                <div className="px-[12px] min-w-[288px] w-full">
+                <div className="px-[12px] text-[#333333] text-[14px] min-w-[288px] w-full">
                   {field?.action}
                 </div>
               </div>
