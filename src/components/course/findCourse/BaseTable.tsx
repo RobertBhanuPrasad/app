@@ -728,16 +728,16 @@ const DataPagination = ({
       {/* prev button */}
       {/* Check if there are more than one page, and if so, display a button for navigating to the previous page. */}
       {pageCount > 1 && (
-        <Button
-          variant="outline"
-          className="h-8 w-8 p-0 border-none text-[13px]"
-          onClick={() => setCurrent(current - 1)}
-          disabled={current <= 1}
-        >
-          <div className="!font-semibold">
-            {t("new_strings:prev")}
-          </div>
-        </Button>
+       <Button
+       variant="outline"
+       className="h-8 w-8 p-0 border-none text-[13px]"
+       onClick={() => setCurrent(current - 1)}
+       disabled={current <= 1}
+     >
+       <div className={current <= 1 ? 'text-[#D6D7D8]' : '!font-semibold'}>
+         {t("new_strings:prev")}
+       </div>
+     </Button>
       )}
       {/* pages buttons */}
       {total > pageSize &&
