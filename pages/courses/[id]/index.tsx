@@ -95,6 +95,7 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger 
 import { supabaseClient } from "src/utility/supabaseClient";
 import { newCourseStore } from "src/zustandStore/NewCourseStore";
 import CourseAccountingFormTab from "../../../src/components/course/viewCourse/SubmitCourseAccountingFormTab";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import { getCurrencyFormat, getCurrencySymbol } from "src/utility/CurrencyFormat";
 import useGetCountryCode from "src/utility/useGetCountryCode";
 import useGetLanguageCode from "src/utility/useGetLanguageCode";
@@ -126,9 +127,12 @@ function ViewDetails() {
     id: Id,
     meta: {
       select:
-        "*,program_code,created_by_user_id(contact_id(full_name)),program_type_id(name,is_approval_required,is_online_program),approved_by_user_id(contact_id(full_name)),program_alias_name_id(id,alias_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name,country_id(name))),status_id(id,value),program_schedules(*),last_modified_by_user_id(contact_id(full_name))",
+        "*,program_code,created_by_user_id(full_name),program_type_id(name,is_approval_required,is_online_program),approved_by_user_id(full_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name,country_id(name))),program_schedules(*),last_modified_by_user_id(full_name)",
     },
   });
+
+  console.log(courseData,'headercoursedata');
+  
 
   const totalRevenue = courseData?.data?.revenue;
 
@@ -164,6 +168,7 @@ function ViewDetails() {
     "new_strings",
     "course.particicipants",
     "course.new_course",
+    "enum",
   ]);
 
   const tabTriggers: any = [
@@ -220,6 +225,8 @@ function ViewDetails() {
 
   const { data: loginUserData }: any = useGetIdentity();
 
+  console.log(loginUserData,'loginUserData');
+  
 
   const countryCode = useGetCountryCode()
 
@@ -266,10 +273,18 @@ function ViewDetails() {
   /**
    * Getting pending review status and ID and storing
    */
-  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    PENDING_REVIEW
-  )?.id;
+  
+  const {optionLabelValue}=optionLabelValueStore()
+  const coursePendingReviewStatusId = optionLabelValue?.program_status?.PENDING_REVIEW
+
+  console.log(isApproved(
+    courseData?.data?.program_type_id?.is_approval_required,
+    courseData?.data?.status,
+    loginUserData?.userData?.user_roles[0]?.role_id?.id
+  ),'trueornot');
+  
+
+console.log(courseData?.data?.status,'courseData?.data?.status');
 
   return (
     <div className="flex flex-col text-sm">
@@ -284,7 +299,7 @@ function ViewDetails() {
           </div>
           <div className="flex items-center gap-4">
             <DisplayingCourseStatus
-              statusId={courseData?.data?.status_id?.value}
+              status={t(`enum:${courseData?.data?.status}`)}
             />
             {/* <ShareButton /> */}
           </div>
@@ -467,7 +482,7 @@ function ViewDetails() {
             <div className="ml-auto flex gap-4">
               {isApproved(
                 courseData?.data?.program_type_id?.is_approval_required,
-                courseData?.data?.status_id?.id,
+                courseData?.data?.status,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && <PendingApprovalDropDown courseId={Id} />}
 
@@ -475,7 +490,7 @@ function ViewDetails() {
               <RejectedModalOpen />
 
               {isCourseAccountingFormApprovalNeeded(
-                courseData?.data?.program_accounting_status_id,
+                courseData?.data?.accounting_status,
                 loginUserData?.userData?.user_roles[0]?.role_id?.id
               ) && (
                 <PendingCourseAccountingFormApprovalDropDown
@@ -531,15 +546,12 @@ export default index;
 
 const PendingApprovalDropDown = ({ courseId }: any) => {
   const today = new Date();
-  const courseActiveStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    ACTIVE
-  )?.id;
 
-  const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    DECLINED
-  )?.id;
+  const {optionLabelValue}=optionLabelValueStore()
+  const courseActiveStatusId = optionLabelValue?.program_status?.ACTIVE
+
+  const courseDeclinedStatusId = optionLabelValue?.program_status?.DECLINED
+
   const { t } = useTranslation(["common", "course.view_course", "new_strings"]);
   const options = [
     {
@@ -577,7 +589,7 @@ const PendingApprovalDropDown = ({ courseId }: any) => {
     await mutate({
       resource: "program",
       values: {
-        status_id: courseDeclinedStatusId,
+        status: courseDeclinedStatusId,
         program_rejection_feedback: rejectionFeedback,
       },
       id: courseId,
@@ -793,10 +805,11 @@ export const ActionsDropDown = ({ courseData }: any) => {
 
   const { setNewCourseData, setViewPreviewPage,setProgramCreatedById } = newCourseStore()
   const options = DisplayOptions(
-    courseData?.status_id?.id,
-    courseData?.program_accounting_status_id,
+    courseData?.status,
+    courseData?.accounting_status,
     loginUserData?.userData?.user_roles[0]?.role_id?.id
   );
+console.log(options,'options are');
 
   /**
    * handle the Edit Course
@@ -823,11 +836,9 @@ export const ActionsDropDown = ({ courseData }: any) => {
       router.push(`/courses/${courseId}/copy`);
     }
   };
+  const {optionLabelValue}=optionLabelValueStore()
 
-  const courseCanceledStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    CANCELED
-  )?.id;
+  const courseCanceledStatusId = optionLabelValue?.program_status?.CANCELED
 
   const { mutate } = useUpdate();
 
@@ -836,7 +847,7 @@ export const ActionsDropDown = ({ courseData }: any) => {
     mutate({
       resource: "program",
       values: {
-        status_id: courseCanceledStatusId,
+        status: courseCanceledStatusId,
       },
       id: courseId,
     });
@@ -973,17 +984,19 @@ export const ActionsDropDown = ({ courseData }: any) => {
   );
 };
 
-const DisplayingCourseStatus = ({ statusId }: any) => {
+const DisplayingCourseStatus = ({ status }: any) => {
+  console.log(status,'status123');
+  
   let statusText;
   let statusColor;
   let color;
-  switch (statusId) {
+  switch (status) {
     case "Active":
       statusText = "Active";
       statusColor = "text-[#15AF53] bg-[#15AF530D]";
       color = "#15AF53";
       break;
-    case "Pending Review":
+    case "Pending review":
       statusText = "Pending Review";
       statusColor = "text-[#FFB900] bg-[#FFB9000D]";
       color = "#FFB900";
@@ -1009,6 +1022,7 @@ const DisplayingCourseStatus = ({ statusId }: any) => {
       color = "#15AF53";
       break;
   }
+console.log(statusText,'statusText');
 
   return (
     <div
@@ -1139,6 +1153,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     "course.find_course",
     "course.new_course",
     "course.participants",
+    "enum",
   ]);
 
   if (!authenticated) {
@@ -1171,10 +1186,9 @@ const PendingCourseAccountingFormApprovalDropDown = ({
 }: {
   courseId: number;
 }) => {
-  const accountingClosedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    CLOSED
-  )?.id;
+  const {optionLabelValue}=optionLabelValueStore()
+  const accountingClosedStatus = optionLabelValue?.program_accounting_status?.CLOSED
+
   const { t } = useTranslation(["common", "course.view_course", "new_strings"]);
 
   const supabase = supabaseClient();
@@ -1220,11 +1234,11 @@ const PendingCourseAccountingFormApprovalDropDown = ({
   const approveCourseAccountingForm = async () => {
     await supabase
       .from("program")
-      .update({ program_accounting_status_id: accountingClosedStatusId })
+      .update({ accounting_status: accountingClosedStatus })
       .eq("id", courseId);
 
     await supabase.from("program_accounting_activity").insert({
-      caf_status_id: accountingClosedStatusId,
+      caf_status_id: accountingClosedStatus,
       user_id: loginUserData?.userData?.id,
     });
 
@@ -1414,10 +1428,9 @@ const ViewCourseAccountingRejectedModalOpen = ({
 
   const { data: loginUserData }: any = useGetIdentity();
 
-  const accountingRejectedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    REJECTED
-  )?.id;
+  const {optionLabelValue}=optionLabelValueStore()
+ 
+  const accountingRejectedStatusId =optionLabelValue?.program_accounting_status?.REJECTED
 
   /**
    * Function to reject a course's accounting form
@@ -1431,7 +1444,7 @@ const ViewCourseAccountingRejectedModalOpen = ({
     // Make an asynchronous call to update the program resource
     await supabase
       .from("program")
-      .update({ program_accounting_status_id: accountingRejectedStatusId })
+      .update({ accounting_status: accountingRejectedStatusId })
       .eq("id", courseId);
 
     await supabase.from("program_accounting_activity").insert({

@@ -13,6 +13,7 @@ import { getOptionValueObjectByOptionOrder, getOptionValuesByOptionLabel } from 
 import { useTranslation } from 'next-i18next';
 import _ from "lodash";
 import { sortFeeLevels } from "../newCourse/NewCourseStep4";
+import { optionLabelValueStore } from "src/zustandStore/OptionLabelValueStore";
 import dayjs from "dayjs";
 
 interface fullNameObject {
@@ -65,14 +66,16 @@ function CourseDetailsTab() {
     : undefined;
 
   const { data: courseData } = useOne({
-    resource: "program",
+    resource: "program_details_with_users",
     id: Id,
     meta: {
       select:
-        "*,online_url,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),program_organizers(user_id(contact_id(full_name))),program_translation_languages(language_id(id,language_name)),program_languages(language_id(id,language_name)),program_assistant_teachers(*,user_id(contact_id(id,full_name))),program_teachers(*,user_id(contact_id(id,full_name))),program_accounting_status_id(id,name),program_type_id(*),organization_id(id,name),program_fee_settings_id(is_early_bird_fee_enabled,program_fee_level_settings(*,fee_level_id(name))),program_fee_level_settings(*,fee_level_id(name)),max_capacity,visibility_id(id,name)",
+        "*,online_url,program_accommodations(*,accommodation_type_id(id,name)),program_schedules(*),venue_id(*,center_id(id ,name),city_id(id ,name),state_id(id ,name)),program_contact_details(*),max_capacity,visibility,program_type_id(*),organization_id(id,name),program_fee_settings_id(is_early_bird_fee_enabled,product_fee_level_settings(*,fee_level))",
     },
   });
 
+  console.log(courseData,'courseData');
+  
   
   let venue=""
 
@@ -102,8 +105,9 @@ function CourseDetailsTab() {
 
   // If the course fee is editable then we can use custom fees otherwise we can use default fees
   const programFeeLevels = courseData?.data?.program_fee_settings_id
-    ? courseData?.data?.program_fee_settings_id?.program_fee_level_settings
-    : courseData?.data?.program_fee_level_settings;
+    ? courseData?.data?.program_fee_settings_id?.product_fee_level_settings
+    : courseData?.data?.product_fee_level_settings;
+    
 
   //Need to show only the fee level enabled by the user at the time of course creation.
   const programFees=programFeeLevels?.filter((feeLevel: { is_enable: boolean; })=>feeLevel.is_enable);
@@ -136,8 +140,12 @@ function CourseDetailsTab() {
       setCopiedRegistrationLink(false);
     }, 1000);
   };
-const IsEarlyBirdFeeEnable =courseData?.data?.program_fee_settings_id==null? courseData?.data?.is_early_bird_enabled : courseData?.data?.program_fee_settings_id?.is_early_bird_fee_enabled
-  // getting public visibility id to check whether the particular course is public or private.
+const IsEarlyBirdFeeEnable =courseData?.data?.is_early_bird_enabled==null? courseData?.data?.is_early_bird_enabled : courseData?.data?.is_early_bird_enabled
+console.log(courseData?.data?.program_teacher_names,'courseData?.data?.is_early_bird_enabled');
+console.log(courseData?.data?.program_teacher_ids.length,'courseData?.data?.program_teacher_ids.length');
+
+  
+// getting public visibility id to check whether the particular course is public or private.
   const publicVisibilityId = getOptionValueObjectByOptionOrder(
     VISIBILITY,
     PUBLIC
@@ -192,23 +200,16 @@ const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
             <div>
               <Header2>{t('course_accounting_status')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_accounting_status_id?.name
-                  ? translatedText(
-                      courseData?.data?.program_accounting_status_id?.name
-                    )
+                {courseData?.data?.accounting_status
+                  ? t(`enum:${courseData?.data?.accounting_status}`)
                   : "-"}
               </ItemValue>
             </div>
             <div>
               <Header2>{t('teachers')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_teachers?.length > 0
-                  ? courseData?.data?.program_teachers
-                      .map((item: fullNameObject) => {
-                        return item?.user_id?.contact_id?.full_name;
-                      })
-                      .join(", ")
-                  : "-"}
+                {courseData?.data?.program_teacher_ids.length > 0
+                  ? courseData?.data?.program_teacher_names : "-"}
               </ItemValue>
             </div>
             <div>
@@ -250,8 +251,8 @@ const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
             <div>
               <Header2>{t('program_visibility')}</Header2>
               <ItemValue>
-                {courseData?.data?.visibility_id?.name
-                  ? translatedText(courseData?.data?.visibility_id?.name)
+                {courseData?.data?.visibility
+                  ? t(`enum:${courseData?.data?.visibility}`)
                   : "-"}
               </ItemValue>
             </div>
@@ -266,13 +267,8 @@ const twelveHrTimeFormat = getOptionValueObjectByOptionOrder(
             <div>
               <Header2>{t('new_strings:program_organizer')}</Header2>
               <ItemValue>
-                {courseData?.data?.program_organizers?.length > 0
-                  ? courseData?.data?.program_organizers
-                      ?.map((item: fullNameObject) => {
-                        return item?.user_id?.contact_id?.full_name;
-                      })
-                      .join(", ")
-                  : "-"}
+                {courseData?.data?.program_organizer_ids?.length > 0
+                  ? courseData?.data?.program_organizer_names: "-"}
               </ItemValue>
             </div>
           </CardContent>

@@ -49,23 +49,16 @@ export const isApproved = (
   courseStatusId: any,
   roleId: any
 ) => {
-  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    PENDING_REVIEW
-  )?.id;
-  const superAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    SUPER_ADMIN
-  )?.id;
+  const {optionLabelValue}=optionLabelValueStore()
+  const coursePendingReviewStatus = optionLabelValue?.program_status?.PENDING_REVIEW
 
-  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    NATIONAL_ADMIN
-  )?.id;
+  const superAdminRoleId = 45
+
+  const nationalAdminRoleId = 44
 
   if (
     isApprovalRequired &&
-    courseStatusId == coursePendingReviewStatusId &&
+    courseStatusId == coursePendingReviewStatus &&
     (roleId === superAdminRoleId || roleId === nationalAdminRoleId)
   )
     return true;
@@ -93,85 +86,42 @@ export const DisplayOptions = (
   const { t } = useTranslation(["common", "new_strings", "course.find_course"])
 
   // Getting all the course status ID's
-  const courseActiveStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    ACTIVE
-  )?.id;
-  const courseCanceledStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    CANCELED
-  )?.id;
-  const courseFullStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    FULL
-  )?.id;
+  const {optionLabelValue}=optionLabelValueStore()
+  optionLabelValue?.program_status?.PENDING_REVIEW
 
-  const courseCompletedStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    COMPLETED
-  )?.id;
+  const courseActiveStatusId = optionLabelValue?.program_status?.ACTIVE
 
-  const courseDeclinedStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    DECLINED
-  )?.id;
+  const courseCanceledStatusId = optionLabelValue?.program_status?.CANCELED
 
-  const coursePendingReviewStatusId = getOptionValueObjectByOptionOrder(
-    PROGRAM_STATUS,
-    PENDING_REVIEW
-  )?.id;
+  const courseFullStatusId = optionLabelValue?.program_status?.FULL
+
+  const courseCompletedStatusId = optionLabelValue?.program_status?.COMPLETED
+
+  const courseDeclinedStatusId = optionLabelValue?.program_status?.DECLINED
+
+  const coursePendingReviewStatusId = optionLabelValue?.program_status?.PENDING_REVIEW
 
   //Getting course accounting status id
-  const accountingNotSubmittedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    NOT_SUBMITTED
-  )?.id;
+  const accountingNotSubmittedStatusId = optionLabelValue?.program_accounting_status?.NOT_SUBMITTED
 
-  const accountingRejectedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    REJECTED
-  )?.id;
+  const accountingRejectedStatusId = optionLabelValue?.program_accounting_status?.REJECTED
 
-  const accountingClosedStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    CLOSED
-  )?.id;
+  const accountingClosedStatusId = optionLabelValue?.program_accounting_status?.CLOSED
 
-  const accountingPendingStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    ACCOUNTING_PENDING_REVIEW
-  )?.id;
+  const accountingPendingStatusId = optionLabelValue?.program_accounting_status?.PENDING_REVIEW
 
-  const accountingCanceledStatusId = getOptionValueObjectByOptionOrder(
-    COURSE_ACCOUNTING_STATUS,
-    ACCOUNTING_CANCELED
-  )?.id;
+  const accountingCanceledStatusId = optionLabelValue?.program_accounting_status?.CANCELLED
 
-  const teacherRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    TEACHER
-  )?.id;
+  const teacherRoleId = 42
 
   //Getting roleId id
-  const programOrganizerRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    PROGRAM_ORGANIZER
-  )?.id;
+  const programOrganizerRoleId = 43
 
-  const superAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    SUPER_ADMIN
-  )?.id;
+  const superAdminRoleId = 45
 
-  const nationalAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    NATIONAL_ADMIN
-  )?.id;
+  const nationalAdminRoleId = 44
 
-  const financeAdminRoleId = getOptionValueObjectByOptionOrder(
-    USER_ROLE,
-    FINANCE_ADMIN
-  )?.id;
+  const financeAdminRoleId = 70
   // If course status is Active
   if (courseStatusId === courseActiveStatusId) {
     if (
