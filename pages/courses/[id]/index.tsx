@@ -130,10 +130,7 @@ function ViewDetails() {
         "*,program_code,created_by_user_id(full_name),program_type_id(name,is_approval_required,is_online_program),approved_by_user_id(full_name),venue_id(*,center_id(id,name),city_id(id,name),state_id(id,name,country_id(name))),program_schedules(*),last_modified_by_user_id(full_name)",
     },
   });
-
-  console.log(courseData,'headercoursedata');
   
-
   const totalRevenue = courseData?.data?.revenue;
 
   // getting twelve Hr Time Format id to check whether the particular course time format.
@@ -224,9 +221,6 @@ function ViewDetails() {
   // }
 
   const { data: loginUserData }: any = useGetIdentity();
-
-  console.log(loginUserData,'loginUserData');
-  
 
   const countryCode = useGetCountryCode()
 
@@ -1022,7 +1016,6 @@ const DisplayingCourseStatus = ({ status }: any) => {
       color = "#15AF53";
       break;
   }
-console.log(statusText,'statusText');
 
   return (
     <div
