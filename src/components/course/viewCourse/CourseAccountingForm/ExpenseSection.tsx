@@ -10,7 +10,7 @@ import {
 import { useRouter as useNextRouter } from "next/router";
 
 import React, { useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import { Button } from "src/ui/button";
 import { ExpenseDetails } from "./ExpenseDetailsTable";
 import {
@@ -42,7 +42,8 @@ import { COURSE_ACCOUNTING_STATUS } from "src/constants/OptionLabels";
 import { ACCOUNTING_PENDING_REVIEW } from "src/constants/OptionValueOrder";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { CardValue, TableHeader, Text } from "src/ui/TextTags";
+import { CardValue, Header, TableHeader, Text } from "src/ui/TextTags";
+import { Input } from "src/ui/input";
 
 function ExpenseSection() {
   const searchParams = useSearchParams();
@@ -215,11 +216,28 @@ function ExpenseSection() {
     },
   ];
 
+  const { watch } = useFormContext();
+
+  // formData is a constant we can store the form data which is getting from the watch() from useFormContext
+  const formData = watch();
+
+  console.log(formData?.program_expenses?.length, "forma Dataa issss");
+
+  const reimbursableFields = (formData?.program_expenses ?? []).filter(
+    (item: any) => item?.reimbursable === 1
+  );
+
   return (
     <div className="px-8">
       <div className="flex flex-col gap-8">
         <ExpenseDetails />
-
+        {/*Reimbursement Summary*/}
+        {reimbursableFields?.length > 0 && (
+          <div>
+            <Header className="my-3">ReimburseTable Summary</Header>
+            <ReimburseTable />
+          </div>
+        )}
         {/*Expense summary details */}
         <div className="">
           <Text className="text-[18px] font-semibold">
@@ -386,3 +404,110 @@ function ExpenseSection() {
 }
 
 export default ExpenseSection;
+
+const ReimburseTable = () => {
+  const { watch } = useFormContext();
+
+  // formData is a constant we can store the form data which is getting from the watch() from useFormContext
+  const formData = watch();
+  console.log(formData, "formData");
+
+  const reimburseFields: any = [
+    {
+      columnName: "Name",
+      className: "px-[12px] min-w-[288px] w-full",
+    },
+    {
+      columnName: "Email",
+      className: "px-[12px] min-w-[288px] w-full",
+    },
+    {
+      columnName: "Phone",
+      className: "px-[12px] min-w-[288px] w-full",
+    },
+    {
+      columnName: "Postal Code",
+      className: "px-[12px] min-w-[288px] w-full",
+    },
+  ];
+
+  return (
+    <div>
+      <div>
+        <div className="rounded-[12px] border border-[#D6D7D8] overflow-x-auto">
+          <div className="flex h-[48px] min-w-fit bg-[#7677F41A]">
+            <TableHeader className="px-[12px] min-w-[288px] w-full">
+              Requestor
+            </TableHeader>
+
+            {reimburseFields?.map((field: any, index: number) => (
+              <TableHeader key={index} className={field?.className}>
+                {field?.columnName}
+              </TableHeader>
+            ))}
+
+            <TableHeader className="px-[12px] min-w-[288px] w-full">
+              Amount Requested (EUR)
+            </TableHeader>
+          </div>
+
+          <div className="space-y-[12px] my-[12px]">
+            {formData?.program_expenses.map((item: any, index: any) => {
+              // Check if the item is reimbursable
+              if (item.reimbursable === 1) {
+                return (
+                  <div key={index} className="flex items-center w-full h-auto">
+                    <div className="px-[12px] min-w-[288px] w-full">
+                      {item.new_person_to_reimburse ||
+                        item.name_of_person_to_reimbursable}
+                    </div>
+                    {reimburseFields.map((field: any, subIndex: any) => (
+                      <div
+                        key={subIndex}
+                        className="px-[12px] min-w-[288px] w-full"
+                      >
+                        {/* Assuming you want an input field for each item */}
+                        <ReimburseInputs
+                          fieldName={field.columnName
+                            .toLowerCase()
+                            .replace(" ", "_")}
+                          index={index}
+                        />
+                      </div>
+                    ))}
+                    <div className="px-[12px] min-w-[288px] w-full">
+                      {item.amount}
+                    </div>
+                  </div>
+                );
+              } else {
+                return null; // Skip rendering non-reimbursable items
+              }
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ReimburseInputs = ({ fieldName, index }: any) => {
+  const {
+    field: { value, onChange },
+    fieldState: { error },
+    // We give the type here because we will get the name as per the types we have in the form
+  } = useController<any>({
+    name: `program_expenses.[${index}].${fieldName}`,
+  });
+  return (
+    <div>
+      <Input
+        value={value as number}
+        onChange={onChange}
+        error={error ? true : false}
+        className="w-full h-[34px] rounded-[12px] border border-[#E1E1E1] px-[14px] py-[8px]"
+        placeholder={fieldName}
+      />
+    </div>
+  );
+};

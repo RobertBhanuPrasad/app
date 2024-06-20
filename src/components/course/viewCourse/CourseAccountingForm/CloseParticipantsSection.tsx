@@ -34,7 +34,6 @@ import { useRouter as useNextRouter } from "next/router";
 import Tick from "@public/assets/Tick.png";
 import { translatedText } from "src/common/translations";
 
-
 function CloseParticipantsSection() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -46,8 +45,6 @@ function CloseParticipantsSection() {
     resource: "program",
     id: query?.id as string,
   });
-
-  
 
   const { setValue } = useFormContext();
 
@@ -157,7 +154,7 @@ function CloseParticipantsSection() {
    */
   const attendanceStatusData = getOptionValuesByOptionLabel(
     PARTICIPANT_ATTENDANCE_STATUS
-  )?.[0]?.option_values;
+  );
 
   /**
    * variable for getting the payment status data

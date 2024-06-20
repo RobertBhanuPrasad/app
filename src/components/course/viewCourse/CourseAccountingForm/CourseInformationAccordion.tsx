@@ -32,7 +32,7 @@ const CourseDetails = () => {
     : undefined;
 
   // for fetcing the program table data we are calling API call here
-  const { data: courseData } = useOne({
+  const { data: courseData, } = useOne({
     resource: "program",
     id: Id,
     meta: {
