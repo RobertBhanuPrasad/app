@@ -8,7 +8,7 @@ export interface StaticDataType {
 
 export interface StaticData {
     staticData: StaticDataType;
-    setStaticData: (data:{countryConfigData:CountryConfigDataBaseType | null, timeZoneData: TimeZoneDataBaseType[] | null, organizationsData: OrganizationsDataBaseType[] | null}) => void;
+    setStaticData: (data: StaticDataType) => void;
 }
 
 /**
