@@ -5,7 +5,6 @@ import LogoutIcon from '@public/assets/LogoutIcon'
 import { useGetIdentity } from '@refinedev/core'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { destroyCookie } from 'nookies'
 import { Avatar, AvatarFallback, AvatarImage } from 'src/ui/avatar'
 import { Button } from 'src/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from 'src/ui/dialog'
@@ -205,12 +204,10 @@ const LogoutAlterModal = () => {
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
-    if (!error) {
-      destroyCookie(null, 'token') // Remove the token cookie
-      router.replace('/login') // Redirect to the login page
-      setViewLogoutModal(false)
+    if (error) {
+      console.log('error is', error)
     }
-    console.log('error is', error)
+    setViewLogoutModal(false)
   }
   return (
     <Dialog open={viewLogoutModal}>
