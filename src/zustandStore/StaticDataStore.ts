@@ -34,9 +34,6 @@ if (typeof window !== "undefined") {
     localStorageData = localStorageDataStr ? JSON.parse(localStorageDataStr) : {};
 }
 
-const localStorageDataStr = localStorage.getItem("staticDataFromDB");
-localStorageData = localStorageDataStr ? JSON.parse(localStorageDataStr) : {}; 
-
 export const staticDataStore = create<StaticData>((set)=>({
 
     /**
