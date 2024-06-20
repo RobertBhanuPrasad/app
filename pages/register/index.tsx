@@ -15,41 +15,6 @@ import { supabaseClient } from "src/utility";
 import { getOptionValueObjectByOptionOrder } from "src/utility/GetOptionValuesByOptionLabel";
 
 const Signup = () => {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [firstName, setFirstName] = useState("");
-  // const [lastName, setLastName] = useState("");
-  // const [error, setError] = useState<Error | null>(null);
-  // const [loading, setLoading] = useState(false);
-  // const [roleValue, setRoleValue] = useState(42); // Teacher role id
-
-  // const { data } = useList<any>({
-  //   resource: "option_labels",
-  //   filters: [
-  //     {
-  //       field: "name",
-  //       operator: "eq",
-  //       value: "User Role",
-  //     },
-  //   ],
-  // });
-  // const { options } = useSelect({
-  //   resource: "option_values",
-  //   optionLabel: "name",
-  //   optionValue: "id",
-  //   filters: [
-  //     {
-  //       field: "option_label_id",
-  //       operator: "eq",
-  //       value: data?.data[0]?.id,
-  //     },
-  //   ],
-  // });
-
-  // useEffect(() => {
-  //   console.log(roleValue, "role data which is updating");
-  // }, [roleValue]);
-
   return (
     <div className="login flex min-h-screen bg-neutral justify-center items-center">
       <div className="card w-full flex flex-col gap-y-[5rem] max-w-4xl bg-base-100 px-4 py-8">
@@ -58,13 +23,7 @@ const Signup = () => {
             SIGN UP
           </h1>
         </div>
-        <Form onSubmit={()=> {}} defaultValues={{}}>
-          {/* {error && (
-            <div className="alert alert-error justify-start">
-              <i className="i-feather-alert-triangle"></i>
-              <span className="flex-grow">{error.message}</span>
-            </div>
-          )} */}
+        <Form onSubmit={() => {}} defaultValues={{}}>
           <RegisterComponent />
         </Form>
       </div>
@@ -77,8 +36,7 @@ Signup.requireAuth = false;
 Signup.noLayout = false;
 
 const RegisterComponent = () => {
-
-  const router = useRouter()
+  const router = useRouter();
 
   const supabase = supabaseClient("ca");
   const { getValues } = useFormContext();
@@ -90,49 +48,50 @@ const RegisterComponent = () => {
     name: "program_types",
   });
 
-  // use controller for roles 
+  // use controller for roles
   const {
     field: { value: roles, onChange: onSelectedRole },
   } = useController({
     name: "roles",
   });
 
-   // use controller for user name
+  // use controller for user name
   const {
     field: { value: userName, onChange: onUserName },
   } = useController({
     name: "username",
   });
 
-   // use controller for first name
+  // use controller for first name
   const {
     field: { value: firstName, onChange: onfirstname },
   } = useController({
     name: "firstName",
   });
 
-   // use controller for last name
+  // use controller for last name
   const {
     field: { value: lastName, onChange: onlastName },
   } = useController({
     name: "lastName",
   });
 
-   // use controller for email
+  // use controller for email
   const {
     field: { value: email, onChange: onEmail },
   } = useController({
     name: "email",
   });
 
- // use controller for countries 
+  // use controller for countries
   const {
     field: { value: countries, onChange: onCountries },
   } = useController({
     name: "countries",
+    defaultValue: [],
   });
 
-   // use controller for password 
+  // use controller for password
   const {
     field: { value: password, onChange: onPassword },
   } = useController({
@@ -141,7 +100,8 @@ const RegisterComponent = () => {
 
   useEffect(() => {
     if (fields.length === 0) {
-      append({}); // Changed to setFields to update the state
+      append({});
+      // Changed to setFields to update the state
     }
   }, []);
 
@@ -168,7 +128,7 @@ const RegisterComponent = () => {
     ],
   });
 
-  // fetching the country data from country table 
+  // fetching the country data from country table
   const fetchCountryList = async () => {
     try {
       const { data, error } = await supabase.from("country").select("*");
@@ -191,7 +151,7 @@ const RegisterComponent = () => {
     fetchCountryList();
   }, []);
 
-  // preparaing data for roles multiselect 
+  // preparaing data for roles multiselect
   const selectedRole = options.map((record: any) => {
     return {
       label: record?.label?.en,
@@ -199,7 +159,7 @@ const RegisterComponent = () => {
     };
   });
 
-  // preparaing data for roles countries 
+  // preparaing data for roles countries
   const selectedCountries = selectCountries.map((record: any) => {
     return {
       label: record?.name,
@@ -229,27 +189,34 @@ const RegisterComponent = () => {
   };
 
   const onSubmitForm = async (formData: any) => {
-
     console.log(formData, "data");
-    
-    // changing the string to int as they are id's 
-    formData.program_types = formData.program_types.map((type: any) => ({
-      program_type_id: parseInt(type.program_type_id),
-      certification_level_id: parseInt(type.certification_level_id),
-    }));
-    formData.roles = roleList;
+
+    if (formData) {
+      formData.program_types = formData.program_types?.filter(
+        (individualType:any) => individualType.program_type_id
+      );
+
+      formData.program_types = formData.program_types?.map((type: any) => ({
+        program_type_id: parseInt(type.program_type_id),
+        certification_level_id: parseInt(type.certification_level_id),
+      }));
+
+      formData.roles = roleList;
+    }
 
     const supabase = supabaseClient();
 
-    const {data, error} = await supabase.functions.invoke("create-user", {
+    const { data, error } = await supabase.functions.invoke("create-user", {
       body: formData,
     });
 
-    if(error) {
+    if (error) {
       console.log(error, "error message");
+      const errorMessage = await error.context.json();
+      alert(`${JSON.stringify(errorMessage, null, 2)}`);
     } else {
-      console.log(data, "user-create response")
-      router.push("/login")
+      console.log(data, "user-create response");
+      router.push("/login");
     }
   };
 
@@ -258,7 +225,9 @@ const RegisterComponent = () => {
       {/* user name input column  */}
       <div className="form-control flex items-center justify-between">
         <label htmlFor="email" className="label">
-          <span className="label-text font-semibold text-[20px]">User Name</span>
+          <span className="label-text font-semibold text-[20px]">
+            User Name
+          </span>
         </label>
         <input
           type="text"
@@ -270,7 +239,9 @@ const RegisterComponent = () => {
       </div>
       <div className="form-control flex items-center justify-between">
         <label htmlFor="email" className="label">
-          <span className="label-text font-semibold text-[20px]">First Name</span>
+          <span className="label-text font-semibold text-[20px]">
+            First Name
+          </span>
         </label>
         <input
           type="text"
@@ -282,7 +253,9 @@ const RegisterComponent = () => {
       </div>
       <div className="form-control flex items-center justify-between">
         <label htmlFor="email" className="label">
-          <span className="label-text font-semibold text-[20px]">Last Name</span>
+          <span className="label-text font-semibold text-[20px]">
+            Last Name
+          </span>
         </label>
         <input
           type="text"
@@ -487,7 +460,9 @@ const ProgramCertificationContainer = ({
       </div>
 
       <div className=" form-control flex items-center justify-between">
-        <label className="font-semibold text-[20px] mr-[10px]">Certification:</label>
+        <label className="font-semibold text-[20px] mr-[10px]">
+          Certification:
+        </label>
 
         <select
           onChange={onCertification}
@@ -511,16 +486,16 @@ const ProgramCertificationContainer = ({
             add
           </div>
         )}
-      {index > 0 && ( 
-        <div
-          onClick={(index: any) => {
-            handleRemoveItem(index);
-          }}
-          className="text-[#7677F4] flex flex-row gap-1 justify-center items-center cursor-pointer"
-        >
-          remove
-        </div>
-      )}
+        {index > 0 && (
+          <div
+            onClick={(index: any) => {
+              handleRemoveItem(index);
+            }}
+            className="text-[#7677F4] flex flex-row gap-1 justify-center items-center cursor-pointer"
+          >
+            remove
+          </div>
+        )}
       </div>
     </div>
   );
