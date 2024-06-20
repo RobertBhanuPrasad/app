@@ -563,21 +563,23 @@ const ProgramOrganizerDropDown = () => {
     name: NewCourseStep1FormNames?.organizer_ids,
   });
 
-  const { options, queryResult, onSearch } = useMVPSelect({
+  const { options, queryResult, onSearch,defaultValueQueryResult } = useMVPSelect({
     resource: "user",
     meta: {
-      select: "*,user_role!inner(role_id)",
+      //TODO: Need to show only Program organizer 
+      select: "*,user_role(role_id)",
     }, 
     optionLabel: "full_name",
     optionValue: "id",
     filters: [
+      //TODO: Need to uncomment after User Management
       //Fetch the users with Program Organizer role
-      {
-        field: "user_role.role_id",
-        operator: "eq",
-        //TODO need to change after completion of role managment
-        value: 1,
-      },
+      // {
+      //   field: "user_role.role_id",
+      //   operator: "eq",
+      //   //TODO need to change after completion of role managment
+      //   value: 1,
+      // },
     ],
     defaultValue: value,
     onSearch: (value) => [

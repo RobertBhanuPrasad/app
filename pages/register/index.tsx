@@ -53,7 +53,7 @@ const Signup = () => {
     const { data: userData} = await supabase
       .from("user")
       .insert([
-        { user_identifier:data?.user?.id,auth_ref_id: 123,first_name:firstName,last_name:lastName,email:email,full_name:fullName,code:3 }
+        { user_identifier:data?.user?.id,first_name:firstName,last_name:lastName,email:email,full_name:fullName }
       ])
       .select();
 

@@ -306,7 +306,7 @@ interface ProgramSchedulesDataBaseType {
   end_time?: Date;
   program_schedule_name?: string;
   schedule_type?: number;
-  order?: number;
+  sort_order?: number;
 }
 
 interface ProgramTeachersDataBaseType {

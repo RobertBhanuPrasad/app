@@ -712,7 +712,7 @@ export default function NewCourseReviewPage() {
         end_time: endTime,
         program_schedule_name: `Schedule ${index + 1}`,
         //TODO: schedule_type is optional if need we need to pass here
-        order: index + 1,
+        sort_order: index + 1,
       };
 
       if (scheduleData.id) {

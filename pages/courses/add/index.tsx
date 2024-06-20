@@ -1257,8 +1257,7 @@ export const fetchCourseFee = async ({
     const courseStartDate = `${utcYear}-${utcMonth}-${utcDay}T00:00:00.000Z`;
 
     const courseFeeBody: CourseFeeBody = {
-      // TODO: need to change after organization_id is kept in product_fee_level_settings
-      program_type_id: 10 as number,
+      program_type_id: formData?.program_type_id as number,
     };
 
     if (stateId) {
