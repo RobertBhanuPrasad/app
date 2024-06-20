@@ -1729,16 +1729,17 @@ export const AddOrEditVenue = ({
       {/* TODO : Integrated after solving the error }
       {/* <MapComponent /> */}
       {/* <div className="w-[586px] h-[140px] border my-5"></div> */}
-      <div className="flex flex-row gap-[30px] mt-10">
-        <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-[30px] mt-10" >
+        <div className="flex flex-row gap-5">
           <VenueNameComponent />
-          <PostalCodeComponent />
-          <CityDropDown name="city_id" />
-        </div>
-
-        <div className="flex flex-col gap-5">
           <StreetAddressComponent />
+        </div>
+        <div className="flex flex-row gap-5">
+          <PostalCodeComponent />
           <StateDropDown name="state_id" />
+        </div>
+        <div className="flex flex-row gap-5">
+          <CityDropDown name="city_id" />
           <CenterDropDown name="center_id" />
         </div>
       </div>

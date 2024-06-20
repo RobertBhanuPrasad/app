@@ -33,7 +33,7 @@ export const VenueNameComponent = () => {
     name: "name",
   });
   return (
-    <div className="flex gap-1 flex-col  min-h-[80px]">
+    <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333] flex flex-row gap-1">
         {t("course.new_course:time_and_venue_tab.venue_name")}
       </div>
@@ -84,7 +84,7 @@ export const PostalCodeComponent = () => {
     fetchCityStateData();
   }, [postalCodeValue]);
   return (
-    <div className="flex gap-1 flex-col min-h-[80px]">
+    <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
         {t("course.new_course:time_and_venue_tab.postal_code")}
       </div>
@@ -114,7 +114,7 @@ export const StreetAddressComponent = () => {
     name: "address",
   });
   return (
-    <div className="flex gap-1 flex-col  min-h-[80px]">
+    <div className="flex gap-1 flex-col">
       <div className="text-xs font-normal text-[#333333]">
         {t("course.new_course:time_and_venue_tab.street_address")}
       </div>
@@ -224,7 +224,7 @@ export const CityDropDown = ({
   };
 
   return (
-    <div className="flex gap-1 flex-col min-h-[80px]">
+    <div className="flex gap-1 flex-col w-full">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">{t("city")}</Text>
         <Text className="text-[#7677F4]">*</Text>
@@ -365,7 +365,7 @@ export const StateDropDown = ({
   }
 
   return (
-    <div className="flex gap-1 flex-col w-full min-h-[80px]">
+    <div className="flex gap-1 flex-col w-full">
       <div className="flex flex-row items-center gap-1">
         <Text className="text-xs font-normal text-[#333333]">
           {t("course.find_course:state")}
@@ -509,7 +509,7 @@ export const CenterDropDown = ({
   }
 
   return (
-    <div className="flex gap-1 flex-col min-h-[80px]">
+    <div className="flex gap-1 flex-col w-full">
       <div className="flex flex-row gap-1 items-center">
         <Text className="text-xs font-normal text-[#333333]">
           {" "}
