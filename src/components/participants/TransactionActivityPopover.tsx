@@ -21,6 +21,8 @@ export default function TransactionActivity({
   transactionHistory?: any;
   renderHeader?: any;
 }) {
+
+  console.log("Transaction History objecy", transactionHistory);
   const { t } = useTranslation(['common', 'course.participants', 'new_strings', 'course.view_course', 'course.find_course']);
   const [open, setOpen] = useState(false);
 
@@ -33,41 +35,41 @@ export default function TransactionActivity({
   const currencySymbol = getCurrencySymbol(countryCode, languageCode, countryConfigData?.data?.[0]?.default_currency_code);
   const currencyFormat = getCurrencyFormat(countryCode, languageCode);
 
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case "Sale":
+  const getTransactionIcon = (typeId: number) => {
+    switch (typeId) {
+      case 53: //sale
         return <SuccessGreenTick />;
-      case "Partial refund":
+      case 55: //Partial Refund
         return <RedReverseIcon />;
-      case "Refund":
+      case 54: //Refund
         return <RedReverseIcon />;
       default:
         return null;
     }
   };
 
-  const getTransactionTypeName = (type: string) => {
-    switch (type) {
-      case "Sale":
+  const getTransactionTypeName = (typeId: number) => {
+    switch (typeId) {
+      case 53: //sale
         return <div>{t("new_strings:sale_completed")}</div>;
-      case "Partial refund":
+      case 55: //Partial Refund
         return <div>{t("new_strings:partial_refund_raised")}</div>;
-      case "Refund":
+      case 54: //Refund
         return <div>{t("new_strings:refund_raised")}</div>;
       default:
         return null;
     }
   };
 
-  const getTransactionStatusName = (status: string) => {
-    switch (status) {
-      case "Confirmed":
+  const getTransactionStatusName = (typeId: number) => {
+    switch (typeId) {
+      case 33: //Confirmed
         return <div>{t("course.find_course:completed")}</div>;
-      case "Pending":
+      case 34: //Pending
         return <div>{t('course.participants:edit_participant.participants_information_tab.pending')}</div>;
-      case "Not Received":
+      case 72: //Not Received
         return <div>{t('course.participants:edit_participant.participants_information_tab.not_received')}</div>;
-      case "Failed":
+      case 35: //Failed
         return <div>{t('course.participants:edit_participant.participants_information_tab.failed')}</div>;
       default:
         return null;
@@ -96,7 +98,7 @@ export default function TransactionActivity({
         <div 
           style={{
             color: transactionHistory[0]?.transaction_type_id &&
-              transactionHistory[0]?.transaction_type_id?.value === "Sale"
+              transactionHistory[0]?.transaction_type_id?.id === 53
                 ? "#15AF53"
                 : "#EC7357",
           }}
@@ -125,14 +127,14 @@ export default function TransactionActivity({
               <div key={index} className="flex flex-row gap-4">
                 <div className="flex flex-col items-center justify-start">
                   <div className="flex">
-                    {getTransactionIcon(transaction?.transaction_type_id?.value)}
+                    {getTransactionIcon(transaction?.transaction_type_id?.id)}
                   </div>
                   {index !== transactionHistory.length - 1 && (
                     <div
                       className={`flex !w-[3px] h-[170px] m-t-2 m-b-2`}
                       style={{
                         background: transaction?.transaction_type_id &&
-                          transaction?.transaction_type_id?.value === "Sale"
+                          transaction?.transaction_type_id?.id === 53
                             ? "#15AF53"
                             : "#EC7357",
                       }}
@@ -143,13 +145,13 @@ export default function TransactionActivity({
                   <div
                     className="flex text-xl font-bold m-b-10"
                     style={{
-                      color: transaction.transaction_type_id &&
-                        transaction.transaction_type_id.value === "Sale"
+                      color: transaction?.transaction_type_id &&
+                        transaction?.transaction_type_id?.id === 53
                           ? "#15AF53"
                           : "#EC7357",
                     }}
                   >
-                    {getTransactionTypeName(transaction.transaction_type_id.value)}
+                    {getTransactionTypeName(transaction?.transaction_type_id?.id)}
                   </div>
                   <div className="flex flex-col gap-2">
                     <div className="flex">
@@ -166,6 +168,7 @@ export default function TransactionActivity({
                         {t('course.participants:view_participant.time_stamp')}:
                       </span>
                       <span className="font-normal text-base leading-5">
+                      {/* TO DO : Date Translation */}
                         {formatDateAndTime(transaction?.created_at)}
                       </span>
                     </div>
@@ -184,15 +187,14 @@ export default function TransactionActivity({
                       <span
                         className="font-normal text-base leading-5"
                         style={{
-                          color: transaction.transaction_status_id &&
-                            transaction.transaction_status_id.value === "Confirmed"
+                          color: transaction?.transaction_status_id &&
+                            transaction?.transaction_status_id?.id === 33
                               ? "#15AF53"
                               : "#EC7357",
                         }}
                       >
-                        {/* {getTransactionStatusName(transaction.transaction_status_id.value)} */}
                         {transaction.transaction_status_id.value
-                          ? getTransactionStatusName(transaction.transaction_status_id.value)
+                          ? getTransactionStatusName(transaction?.transaction_status_id?.id)
                           : "-"}
                       </span>
                     </div>
