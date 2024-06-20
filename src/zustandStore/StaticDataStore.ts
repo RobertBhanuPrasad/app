@@ -7,7 +7,7 @@ export interface StaticDataType {
 }
 
 export interface StaticData {
-    staticData: StaticDataType;
+    staticData: StaticDataType | {};
     setStaticData: (data: StaticDataType) => void;
 }
 
@@ -19,17 +19,33 @@ export interface StaticData {
  * Where we are using this store
  * 1. We are using this in supabaseClient.ts file because that is normal file it is not a functional component.
  */
+
+
+/**
+ * The if condition ensures that the code accessing localStorage only runs in the browser environment.
+ * Then we are getting static data from local storage using getItem() function
+*/
+
+let localStorageData = {}
+
+if (typeof window !== "undefined") {
+
+    const localStorageDataStr = localStorage.getItem("staticDataFromDB");
+    localStorageData = localStorageDataStr ? JSON.parse(localStorageDataStr) : {};
+}
+
+const localStorageDataStr = localStorage.getItem("staticDataFromDB");
+localStorageData = localStorageDataStr ? JSON.parse(localStorageDataStr) : {}; 
+
 export const staticDataStore = create<StaticData>((set)=>({
 
     /**
      * There is a variable named staticData
-     * This variable is a type of object, which store country config data and time zones data
+     * This variable is a type of object, which store the static db data
      */
-    staticData: {
-        countryConfigData: null,
-        timeZoneData: null,
-        organizationsData: null
-    },
+
+    
+    staticData: localStorageData,
 
     /**
    * This function is used to store country config data and time zones data as single object

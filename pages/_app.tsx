@@ -69,21 +69,6 @@ function MyApp({
       // set coutry code and language code in zustand store
       setCountryCode(countryCode);
       setLanguageCode(languageCode);
-
-      /**
-       * getStaticDataFromLocalStorage function is used to set the static data from the local storage in zustand store
-       * Here we are getting static data from local storage using getItem() function
-       * After getting the static data we set the data in zustand store using setStaticData() void
-       */
-      const getStaticDataFromLocalStorage = async ()=>{
-
-        // Getting staticData stored in local storage
-        const localStorageDataStr = localStorage.getItem("staticDataFromDB");
-        let localStorageData = localStorageDataStr ? JSON.parse(localStorageDataStr) : {};       
-        setStaticData(localStorageData)
-      }
-
-      getStaticDataFromLocalStorage()
       
     }, []);
 
